@@ -30,6 +30,7 @@ create table llx_facture_fourn
   ref_ext				varchar(255),                  -- reference into an external system (not used by dolibarr)
 
   type					smallint DEFAULT 0 NOT NULL,
+  subtype				smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc				integer NOT NULL,
   
   datec					datetime,                      -- date de creation de la facture

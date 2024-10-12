@@ -1,4 +1,4 @@
-# Copyright (C) ---Put here your own copyright and developer email---
+# Copyright (C) ---Replace with your own copyright and developer email---
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ ModuleMyModuleDesc = MyModule description
 MyModuleSetup = MyModule setup
 Settings = Settings
 MyModuleSetupPage = MyModule setup page
+NewSection=New section
 MYMODULE_MYPARAM1 = My param 1
 MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
 MYMODULE_MYPARAM2=My param 2

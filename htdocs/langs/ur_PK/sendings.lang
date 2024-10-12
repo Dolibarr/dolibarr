@@ -39,7 +39,7 @@ StatusSendingValidatedShort=تصدیق شدہ
 StatusSendingProcessedShort=پروسیس شدہ
 SendingSheet=شپمنٹ شیٹ
 ConfirmDeleteSending=کیا آپ واقعی اس کھیپ کو حذف کرنا چاہتے ہیں؟
-ConfirmValidateSending=کیا آپ واقعی <b> %s </b> حوالہ کے ساتھ اس کھیپ کی توثیق کرنا چاہتے ہیں؟
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=کیا آپ واقعی اس کھیپ کو منسوخ کرنا چاہتے ہیں؟
 DocumentModelMerou=میرو A5 ماڈل
 WarningNoQtyLeftToSend=انتباہ، کوئی پروڈکٹس بھیجے جانے کا انتظار نہیں۔
@@ -48,7 +48,7 @@ DateDeliveryPlanned=ترسیل کی منصوبہ بند تاریخ
 RefDeliveryReceipt=حوالگی کی رسید
 StatusReceipt=حیثیت کی ترسیل کی رسید
 DateReceived=موصول ہونے کی تاریخ
-ClassifyReception=Classify Received
+ClassifyReception=درجہ بندی موصول ہوئی۔
 SendShippingByEMail=ای میل کے ذریعے کھیپ بھیجیں۔
 SendShippingRef=کھیپ جمع کروانا %s
 ActionsOnShipping=شپمنٹ پر واقعات
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=کھلے خریداری کے آرڈ
 NoProductToShipFoundIntoStock=گودام <b> %s </b> میں بھیجنے کے لیے کوئی پروڈکٹ نہیں ملا۔ اسٹاک کو درست کریں یا دوسرا گودام منتخب کرنے کے لیے واپس جائیں۔
 WeightVolShort=وزن/جلد
 ValidateOrderFirstBeforeShipment=ترسیل کرنے کے قابل ہونے سے پہلے آپ کو پہلے آرڈر کی توثیق کرنی ہوگی۔
+NoLineGoOnTabToAddSome=کوئی لائن نہیں، شامل کرنے کے لیے ٹیب "%s" پر جائیں۔
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=مصنوعات کے وزن کا مجموعہ
 # warehouse details
 DetailWarehouseNumber= گودام کی تفصیلات
 DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=سیریل نمبر یا بیچ کے لیے شپمنٹ کی تخلیق کے دوران اسٹاک میں داخلے کی آخری تاریخ دکھائیں۔
+CreationOptions=شپمنٹ کی تخلیق کے دوران دستیاب اختیارات
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=کھیپ کی تقسیم
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=لائن %s کے لیے کوئی ڈسپیچ نہیں کیونکہ گودام، پروڈکٹ، بیچ کوڈ کے بہت زیادہ مجموعے ملے تھے (%s)۔
+ErrorNoCombinationBatchcode=warehouse-product-lot/serial (%s کے مجموعہ کے طور پر %s لائن کو محفوظ نہیں کیا جا سکا، %s, %s) اسٹاک میں نہیں ملا۔
+
+ErrorTooMuchShipped=بھیجی گئی مقدار لائن %s کے لیے آرڈر کی گئی مقدار سے زیادہ نہیں ہونی چاہیے۔

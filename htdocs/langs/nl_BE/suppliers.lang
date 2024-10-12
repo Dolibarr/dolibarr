@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Verkoper
+SupplierInvoices=Facturen leveranciers
+SupplierPrices=Verkoper prijzen
 ApproveThisOrder=Opdracht goedkeuren
 DenyingThisOrder=Wijger deze bestelling
+BuyingPriceNumShort=Verkoper prijzen

@@ -5,163 +5,158 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
-#
-# Menu
-#
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
-
-PaymentEvent=Payment of event
-
-#
+ModuleEventOrganizationName = Tədbirin təşkili
+EventOrganizationDescription = Modul Layihəsi vasitəsilə Tədbirlərin Təşkili
+EventOrganizationDescriptionLong= Tədbirin təşkilini idarə edin (təklif, səs və ya qeydiyyat üçün açıq səhifələri olan şou, konfranslar, iştirakçılar və ya məruzəçilər)
+EventOrganizationMenuLeft = Təşkil olunan tədbirlər
+EventOrganizationConferenceOrBoothMenuLeft = Konfrans və ya stend
+PaymentEvent=Tədbirin ödənilməsi
+EventFee=Event fee
 # Admin page
-#
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Settings
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+NewRegistration=Qeydiyyat
+EventOrganizationSetup=Tədbirin təşkili
+EventOrganization=Tədbirin təşkili
+EventOrganizationSetupPage = Tədbir təşkilatının quraşdırma səhifəsi
+EVENTORGANIZATION_TASK_LABEL = Layihə təsdiq edildikdə avtomatik olaraq yaradılacaq tapşırıqların etiketi
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Tapşırıqları avtomatik yaratmağa ehtiyac yoxdursa, boş saxlayın.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kimsə konfrans təklif etdikdə avtomatik olaraq yaradılan üçüncü tərəflərə əlavə ediləcək kateqoriya
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Üçüncü tərəflərə əlavə ediləcək kateqoriya, onlar kabinə təklif etdikdə avtomatik olaraq yaradılır
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konfrans təklifi aldıqdan sonra göndəriləcək e-poçt şablonu.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Stend təklifi aldıqdan sonra göndəriləcək e-poçt şablonu.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Bir kabinəyə qeydiyyatdan sonra göndəriləcək e-poçt şablonu ödənilir.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Tədbirə qeydiyyat ödənildikdən sonra göndəriləcək e-poçt şablonu.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Natiqlərə "E-poçt göndər" masajından e-poçt göndərərkən istifadə ediləcək e-poçt şablonu
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = İştirakçılar siyahısında "E-poçt göndər" masajından e-poçt göndərərkən istifadə ediləcək e-poçt şablonu
+EVENTORGANIZATION_FILTERATTENDEES_CAT = İştirakçı yaratmaq/əlavə etmək formasında, kateqoriyadakı üçüncü tərəflərin siyahısını məhdudlaşdırır
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = İştirakçı yaratmaq/əlavə etmək formasında üçüncü tərəflərin siyahısını təbiətlə üçüncü tərəflərə məhdudlaşdırır
 # Object
-#
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
-
-#
+OrganizedEvent=Təşkil olunmuş tədbir
+EventOrganizationConfOrBooth= Konfrans və ya stend
+EventOrganizationConfOrBoothes=Conferences or Booths
+ManageOrganizeEvent = Tədbirin təşkilini idarə edin
+ConferenceOrBooth = Konfrans və ya stend
+ConferenceOrBoothTab = Konfrans və ya stend
+AmountPaid = Ödənilmiş məbləğ
+DateOfRegistration = Qeydiyyat tarixi
+ConferenceOrBoothAttendee = Konfrans və ya Stend İştirakçısı
+ApplicantOrVisitor=Ərizəçi və ya ziyarətçi
+Speaker=Natiq
 # Template Mail
-#
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
-
-#
+YourOrganizationEventConfRequestWasReceived = Konfrans üçün müraciətiniz qəbul edildi
+YourOrganizationEventBoothRequestWasReceived = Stend üçün müraciətiniz qəbul edildi
+EventOrganizationEmailAskConf = Konfrans üçün müraciət
+EventOrganizationEmailAskBooth = Stend üçün sorğu
+EventOrganizationEmailBoothPayment = Stendinizin ödənişi
+EventOrganizationEmailRegistrationPayment = Tədbir üçün qeydiyyat
+EventOrganizationMassEmailAttendees = İştirakçılarla ünsiyyət
+EventOrganizationMassEmailSpeakers = Natiqlərlə ünsiyyət
+ToSpeakers=Natiqlərə
 # Event
-#
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
-#
+AllowUnknownPeopleSuggestConf=İnsanlara konfranslar təklif etməyə icazə verin
+AllowUnknownPeopleSuggestConfHelp=Naməlum insanlara etmək istədikləri konfransı təklif etmələrinə icazə verin
+AllowUnknownPeopleSuggestBooth=İnsanlara stend üçün müraciət etməyə icazə verin
+AllowUnknownPeopleSuggestBoothHelp=Naməlum şəxslərin stend üçün müraciət etməsinə icazə verin
+PriceOfRegistration=Qeydiyyat qiyməti
+PriceOfRegistrationHelp=Qeydiyyatdan keçmək və ya tədbirdə iştirak etmək üçün ödənilməli qiymət
+PriceOfBooth=Bir stenddə dayanmaq üçün abunə qiyməti
+PriceOfBoothHelp=Bir stenddə dayanmaq üçün abunə qiyməti
+EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLink=Konfranslar üçün ICS-i əlaqələndirin
+ConferenceOrBoothInformation=Konfrans və ya Booth məlumatı
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
+Attendees=İştirakçılar
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink = ICS linkini yükləyin
+EVENTORGANIZATION_SECUREKEY = Konfrans təklif etmək üçün ictimai qeydiyyat səhifəsinin açarını təmin etmək üçün toxum
+SERVICE_BOOTH_LOCATION = Stand yeri haqqında faktura sırası üçün istifadə edilən xidmət
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tədbirə iştirakçı abunəliyi haqqında faktura sırası üçün istifadə edilən xidmət
+NbVotes=Səslərin sayı
 # Status
-#
-EvntOrgDraft = Draft
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
-EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
-#
-# Public page
-#
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
+EvntOrgDraft = Qaralama
+EvntOrgSuggested = Təklif olunur
+EvntOrgConfirmed = Təsdiq edildi
+EvntOrgNotQualified = İxtisaslı deyil
+EvntOrgDone = Bitdi
+EvntOrgCancelled = Ləğv edildi
+# Other
+SuggestForm = Təklif səhifəsi
+SuggestOrVoteForConfOrBooth = Təklif və ya səs vermək üçün səhifə
+EvntOrgRegistrationHelpMessage = Burada siz konfransa səs verə və ya tədbir üçün yenisini təklif edə bilərsiniz. Tədbir zamanı stend sahibi olmaq üçün də müraciət edə bilərsiniz.
+EvntOrgRegistrationConfHelpMessage = Burada tədbir zamanı canlandırmaq üçün yeni konfrans təklif edə bilərsiniz.
+EvntOrgRegistrationBoothHelpMessage = Burada tədbir zamanı stend sahibi olmaq üçün müraciət edə bilərsiniz.
+ListOfSuggestedConferences = Təklif olunan konfransların siyahısı
+ListOfSuggestedBooths=Təklif olunan kabinələr
+ListOfConferencesOrBooths=Tədbir layihəsinin konfransları və ya stendləri
+SuggestConference = Yeni konfrans təklif edin
+SuggestBooth = Stend təklif edin
+ViewAndVote = Təklif olunan tədbirlərə baxın və səs verin
+PublicAttendeeSubscriptionGlobalPage = Tədbirə qeydiyyat üçün açıq link
+PublicAttendeeSubscriptionPage = Yalnız bu tədbirə qeydiyyat üçün açıq link
+MissingOrBadSecureKey = Təhlükəsizlik açarı yanlışdır və ya yoxdur
+EvntOrgWelcomeMessage = Bu forma tədbirin yeni iştirakçısı kimi qeydiyyatdan keçməyə imkan verir
+EvntOrgDuration = Bu konfrans %s tarixində başlayır və %s tarixində bitir.
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+BoothLocationFee = Tədbir üçün stend məkanı : '%s' %s-dan %s arasında baş verir
+EventType = Hadisə növü
+LabelOfBooth=Stend etiketi
+LabelOfconference=Konfrans etiketi
+ConferenceIsNotConfirmed=Qeydiyyat mövcud deyil, konfrans hələ təsdiqlənməyib
+EventRegistrationAreClosed=Event registrations are closed
+DateMustBeBeforeThan=%s %s-dan əvvəl olmalıdır
+DateMustBeAfterThan=%s %s-dan sonra olmalıdır
+MaxNbOfAttendeesReached=İştirakçıların maksimum sayına çatıldı
+NewSubscription=Qeydiyyat
+OrganizationEventConfRequestWasReceived=Konfrans üçün təklifiniz qəbul edildi
+OrganizationEventBoothRequestWasReceived=Stend üçün müraciətiniz qəbul edildi
+OrganizationEventPaymentOfBoothWasReceived=Stendiniz üçün ödənişiniz qeydə alınıb
+OrganizationEventPaymentOfRegistrationWasReceived=Tədbirin qeydiyyatı üçün ödənişiniz qeydə alınıb
+OrganizationEventBulkMailToAttendees=Bu, tədbirdə iştirakçı kimi iştirakınız haqqında xatırlatmadır
+OrganizationEventBulkMailToSpeakers=Bu, tədbirdə məruzəçi kimi iştirakınız haqqında xatırlatmadır
+OrganizationEventLinkToThirdParty=Üçüncü tərəfə keçid (müştəri, təchizatçı və ya tərəfdaş)
+OrganizationEvenLabelName=Konfransın və ya kabinin ictimai adı
+NewSuggestionOfBooth=Stend üçün ərizə
+NewSuggestionOfConference=Konfrans keçirmək üçün ərizə
+EvntOrgRegistrationWelcomeMessage = Konfrans və ya stend təklifi səhifəsində xoş gəlmisiniz.
+EvntOrgRegistrationConfWelcomeMessage = Konfrans təklifi səhifəsində xoş gəlmisiniz.
+EvntOrgRegistrationBoothWelcomeMessage = Stend təklif səhifəsində xoş gəlmisiniz.
+EvntOrgVoteHelpMessage = Burada layihə üçün təklif olunan tədbirlərə baxa və səs verə bilərsiniz
+VoteOk = Səsiniz qəbul edildi.
+AlreadyVoted = Siz artıq bu tədbirə səs vermisiniz.
+VoteError = Səsvermə zamanı xəta baş verdi, yenidən cəhd edin.
+SubscriptionOk=Qeydiyyatınız qeydə alınıb
+AmountOfRegistrationPaid=Ödənilmiş qeydiyyat məbləği
+ConfAttendeeSubscriptionConfirmation = Tədbirə abunə olduğunuzun təsdiqi
+Attendee = İştirakçı
+PaymentConferenceAttendee = Konfrans iştirakçılarının ödənişi
+PaymentBoothLocation = Stend yeri ödənişi
+DeleteConferenceOrBoothAttendee=İştirakçı silin
+RegistrationAndPaymentWereAlreadyRecorder=<b>%s</b> e-poçtu üçün artıq qeydiyyat və ödəniş qeydə alınıb.
+EmailAttendee=İştirakçı e-poçtu
+EmailCompany=Şirkət e-poçtu
+EmailCompanyForInvoice=Şirkət e-poçtu (iştirakçı e-poçtundan fərqlidirsə, faktura üçün)
+ErrorSeveralCompaniesWithEmailContactUs=Bu e-poçtu olan bir neçə şirkət tapıldı, ona görə də qeydiyyatınızı avtomatik təsdiq edə bilmərik. Əllə yoxlama üçün %s vasitəsilə bizimlə əlaqə saxlayın
+ErrorSeveralCompaniesWithNameContactUs=Bu adda bir neçə şirkət tapıldı, ona görə də qeydiyyatınızı avtomatik təsdiq edə bilmərik. Əllə yoxlama üçün %s vasitəsilə bizimlə əlaqə saxlayın
+NoPublicActionsAllowedForThisEvent=Bu hadisə üçün heç bir ictimai aksiya ictimaiyyətə açıq deyil
+MaxNbOfAttendees=İştirakçıların maksimum sayı
+DateStartEvent=Tədbirin başlama tarixi
+DateEndEvent=Tədbirin bitmə tarixi
+ModifyStatus=Vəziyyəti dəyişdirin
+ConfirmModifyStatus=Status dəyişikliyini təsdiqləyin
+ConfirmModifyStatusQuestion=%s seçilmiş qeydləri dəyişdirmək istədiyinizə əminsiniz?
+RecordsUpdated=%s Qeydlər yeniləndi
+RecordUpdated=Qeyd yeniləndi
+NoRecordUpdated=Heç bir qeyd yenilənmədi
+ProfitPerValidatedAttendee=Profit per attendee

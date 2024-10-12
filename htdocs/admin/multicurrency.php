@@ -1,6 +1,7 @@
 <?php
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +101,7 @@ if ($action == 'add_currency') {
 	$error = 0;
 
 	if (GETPOST('updatecurrency', 'alpha')) {
-		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
+		$fk_multicurrency = GETPOSTINT('fk_multicurrency');
 		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
@@ -117,11 +118,11 @@ if ($action == 'add_currency') {
 			}
 		}
 	} elseif (GETPOST('deletecurrency', 'alpha')) {
-		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
+		$fk_multicurrency = GETPOSTINT('fk_multicurrency');
 		$currency = new MultiCurrency($db);
 
 		if ($currency->fetch($fk_multicurrency) > 0) {
-			if ($currency->delete() > 0) {
+			if ($currency->delete($user) > 0) {
 				setEventMessages($langs->trans('RecordDeleted'), array());
 			} else {
 				setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
@@ -148,7 +149,7 @@ $sql = "SELECT code_iso, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currenc
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		$TAvailableCurrency[$obj->code_iso] = array('code'=>$obj->code_iso, 'active'=>$obj->active);
+		$TAvailableCurrency[$obj->code_iso] = array('code' => $obj->code_iso, 'active' => $obj->active);
 	}
 }
 
@@ -173,7 +174,7 @@ $form = new Form($db);
 $page_name = "MultiCurrencySetup";
 $help_url = '';
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-multicurrency');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -207,7 +208,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', null, null, 0, 0, 0, 2, 0, 1);
+	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
@@ -215,7 +216,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 // Online payment with currency on document. This option should be on by default.
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
 	print '<td class="center">';
@@ -260,51 +261,6 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-print '<br>';
-
-if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
-	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="setapilayer">';
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-
-	$urlforapilayer = 'https://currencylayer.com'; //https://apilayer.net
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";
-	print '<td class="right">';
-	print '<textarea id="response" class="hideobject" name="response"></textarea>';
-	print '<input type="submit" name="modify_apilayer" class="button buttongen" value="'.$langs->trans("Modify").'">';
-	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'" />';
-	print '</td></tr>';
-
-	print '<tr class="oddeven">';
-	print '<td class="fieldrequired"><a target="_blank" rel="noopener noreferrer external" href="'.$urlforapilayer.'">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
-	print '<td class="right">';
-	print '<input type="text" name="MULTICURRENCY_APP_ID" value="'.$conf->global->MULTICURRENCY_APP_ID.'" size="28" />&nbsp;';
-	print '</td></tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
-	print '<td class="right">';
-	print '<input type="text" name="MULTICURRENCY_APP_SOURCE" value="'.$conf->global->MULTICURRENCY_APP_SOURCE.'" size="10" placeholder="USD" />&nbsp;'; // Default: USD
-	print '</form>';
-	print '</td></tr>';
-
-	/*print '<tr class="oddeven">';
-	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
-	print '<td class="right">';
-	print '<input type="text" name="MULTICURRENCY_ALTERNATE_SOURCE" value="'.$conf->global->MULTICURRENCY_ALTERNATE_SOURCE.'" size="10" placeholder="EUR" />&nbsp;'; // Example: EUR
-	print '</td></tr>';*/
-
-	print '</table>';
-	print '</div>';
-	print '<br>';
-
-	print '</form>';
-}
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent nomarginbottom">';
@@ -376,6 +332,53 @@ print '
 		}
 	</script>
 ';
+
+
+print '<br>';
+
+if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setapilayer">';
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	$urlforapilayer = 'https://currencylayer.com'; //https://apilayer.net
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";
+	print '<td class="right">';
+	print '<textarea id="response" class="hideobject" name="response"></textarea>';
+	print '<input type="submit" name="modify_apilayer" class="button buttongen" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'" />';
+	print '</td></tr>';
+
+	print '<tr class="oddeven">';
+	print '<td class="fieldrequired"><a target="_blank" rel="noopener noreferrer external" href="'.$urlforapilayer.'">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
+	print '<td class="right">';
+	print '<input type="text" name="MULTICURRENCY_APP_ID" value="' . getDolGlobalString('MULTICURRENCY_APP_ID').'" size="28" />&nbsp;';
+	print '</td></tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
+	print '<td class="right">';
+	print '<input type="text" name="MULTICURRENCY_APP_SOURCE" value="' . getDolGlobalString('MULTICURRENCY_APP_SOURCE').'" size="10" placeholder="USD" />&nbsp;'; // Default: USD
+	print '</td></tr>';
+
+	/*print '<tr class="oddeven">';
+	 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
+	 print '<td class="right">';
+	 print '<input type="text" name="MULTICURRENCY_ALTERNATE_SOURCE" value="'.$conf->global->MULTICURRENCY_ALTERNATE_SOURCE.'" size="10" placeholder="EUR" />&nbsp;'; // Example: EUR
+	 print '</td></tr>';*/
+
+	print '</table>';
+	print '</div>';
+	print '<br>';
+
+	print '</form>';
+}
+
 
 // End of page
 llxFooter();

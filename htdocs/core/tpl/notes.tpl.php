@@ -20,7 +20,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
@@ -34,11 +34,11 @@ if ($module == "product") {
 }
 $colwidth = (isset($colwidth) ? $colwidth : (empty($cssclass) ? '25' : ''));
 // Set $permission from the $permissionnote var defined on calling page
-$permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : (isset($user->rights->$module->create) ? $user->rights->$module->create : (isset($user->rights->$module->creer) ? $user->rights->$module->creer : 0))));
+$permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : ($user->hasRight($module, 'create') ? $user->rights->$module->create : ($user->hasRight($module, 'creer') ? $user->rights->$module->creer : 0))));
 $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES)) {
+if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES')) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action', 'aZ09') == 'edit'.$note_public) {
 		$value_public = dol_concatdesc($value_public, ($value_public ? "\n" : "")."-- ".$stringtoadd);
@@ -49,7 +49,7 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES)) {
 		}
 	}
 }
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
+if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES')) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action', 'aZ09') == 'edit'.$note_private) {
 		$value_private = dol_concatdesc($value_private, ($value_private ? "\n" : "")."-- ".$stringtoadd);
@@ -73,13 +73,13 @@ if ($module == 'propal') {
 } elseif ($module == 'project_task') {
 	$permission = $user->hasRight("projet", "creer");
 } elseif ($module == 'invoice_supplier') {
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight("fournisseur", "facture", "creer");
 	} else {
 		$permission = $user->hasRight("supplier_invoice", "creer");
 	}
 } elseif ($module == 'order_supplier') {
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight("fournisseur", "commande", "creer");
 	} else {
 		$permission = $user->hasRight("supplier_order", "creer");
@@ -99,14 +99,14 @@ if ($module == 'propal') {
 } elseif ($module == 'user') {
 	$permission = $user->hasRight("user", "self", "write");
 }
-//else dol_print_error('','Bad value '.$module.' for param module');
+//else dol_print_error(null,'Bad value '.$module.' for param module');
 
-if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
+if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC')) {
 	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdatapub = 'textarea:12:95%';
 }
-if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE)) {
+if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE')) {
 	$typeofdatapriv = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdatapriv = 'textarea:12:95%';

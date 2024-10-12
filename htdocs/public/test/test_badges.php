@@ -297,7 +297,7 @@ header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain 
 		<h2 id="helper">Use status helper function</h2>
 		<p>Using the dolGetStatus function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
 		<?php
-		$saveGlobalConf = $conf->global->MAIN_STATUS_USES_CSS;
+		$saveGlobalConf = getDolGlobalString('MAIN_STATUS_USES_CSS');
 		$conf->global->MAIN_STATUS_USES_CSS = 1;
 		?>
 		<h4>Using hidden global conf MAIN_STATUS_USES_CSS=1</h4>

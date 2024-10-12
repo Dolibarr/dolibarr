@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2021  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
 
 /**
  *	    \file       htdocs/core/lib/contact.lib.php
- *		\brief      Ensemble de fonctions de base pour les contacts
+ *		\brief      Ensemble de functions de base pour les contacts
  */
 
 /**
  * Prepare array with list of tabs
  *
  * @param   Contact	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function contact_prepare_head(Contact $object)
 {
@@ -42,8 +43,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin))) {
+	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_CONTACT_ACTIVE'))
+		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
@@ -93,7 +94,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -107,7 +108,7 @@ function contact_prepare_head(Contact $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'core');
 
 	// Notes
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Note");
@@ -173,11 +174,11 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (isModEnabled('project') && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -186,7 +187,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print '<div class="div-table-responsive">';
 		print "\n".'<table class="noborder" width=100%>';
 
-		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
+		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount';
 		$sql .= ', cls.code as opp_status_code, ctc.libelle as type_label';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
@@ -227,7 +228,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->rights->projet->lire && $userAccess > 0) {
+					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
 						// Ref

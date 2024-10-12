@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL om een %s online betalingspagina 
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL voor het aanbieden van een %s online betaalpagina van een willekeurig bedrag zonder bestaand object
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL voor het aanbieden van een %s online betalingspagina voor een lidabonnement
 ToOfferALinkForOnlinePaymentOnDonation=URL om een online betalingspagina voor %s aan te bieden voor de betaling van een donatie
-YouCanAddTagOnUrl=U kunt ook een url-parameter <b>&tag = <i>waarde toevoegen</i></b> aan een van die URL's (alleen verplicht voor betaling die niet is gekoppeld aan een object) om uw eigen tag voor betalingscommentaar toe te voegen. <br> Voor de URL van betalingen zonder bestaand object, kunt u ook de parameter <strong>&noidempotency = 1 toevoegen,</strong> zodat dezelfde link met dezelfde tag meerdere keren kan worden gebruikt (sommige betalingsmodus kan de betaling beperken tot 1 voor elke andere link zonder deze parameter)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=Als u de betalingspagina in een Dolibarr-website wilt integreren, kunt u de parameter opnemen: <b>&ws=website_ref</b>.<br>Daarnaast twee pagina's genaamd <b>betalingok</b> en <b>betalingko</b> moet op de website zijn aangemaakt om de omleiding te ontvangen na een succesvolle of mislukte online betaling.
 SetupStripeToHavePaymentCreatedAutomatically=Stel uw Stripe in met url <b>%s</b> zodat de betaling automatisch wordt aangemaakt wanneer deze door Stripe wordt gevalideerd.
 AccountParameter=Accountwaarden
 UsageParameter=Met gebruik van de waarden
@@ -71,9 +72,19 @@ ToOfferALinkForTestWebhook=Link om Stripe WebHook in te stellen om de IPN te bel
 ToOfferALinkForLiveWebhook=Link om Stripe WebHook in te stellen om de IPN te bellen (live-modus)
 PaymentWillBeRecordedForNextPeriod=De betaling wordt geregistreerd voor de volgende periode.
 ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de strenge regels voor klantauthenticatie moet het aanmaken van een kaart worden gedaan vanuit Stripe backoffice. U kunt hier klikken om Stripe-klantrecord in te schakelen: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de sterke Klant Authenticatie regels, moet het maken van een kaart worden gedaan vanuit de Stripe-backoffice. U kunt hier klikken om het Stripe Klant record in te schakelen: %s
 STRIPE_CARD_PRESENT=Kaart aanwezig voor Stripe Terminals
 TERMINAL_LOCATION=Locatie (adres) voor Stripe Terminals
 RequestDirectDebitWithStripe=Automatische incasso aanvragen met Stripe
+RequesCreditTransferWithStripe=Vraag een overboeking aan met Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Schakel de automatische incasso via Stripe in
-
+STRIPE_KLARNA=Schakel de betalingen via Klarna in
+STRIPE_BANCONTACT=Schakel de betalingen in met BANCONTACT
+STRIPE_IDEAL=Schakel de betalingen in via IDEAL
+STRIPE_GIROPAY=Schakel de betalingen in met GIROPAY
+STRIPE_SOFORT=Schakel de betalingen in met SOFORT
+StripeConnect_Mode=Stripe Connect-modus
+ExampleOnlyForBECustomers=Enkel voor Belgische klanten
+ExampleOnlyForDECustomers=Alleen voor Duitse klanten
+ExampleOnlyForNLCustomers=Alleen voor Nederlandse klanten
+ExampleOnlyForATBEDEITNLESCustomers=Alleen voor klanten uit Oostenrijk, België, Duitsland, Italië, Nederland, Spanje

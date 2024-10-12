@@ -45,7 +45,7 @@ if ($action == 'up' && $permissiontoedit) {
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 		$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
@@ -69,7 +69,7 @@ if ($action == 'down' && $permissiontoedit) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 		$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 

@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Esta pestaña está dedicada a los hooks.
 ModuleBuilderDescwidgets=Esta pestaña está dedicada a administrar/crear widgets.
 ModuleBuilderDescbuildpackage=Puedes generar aquí un archivo comprimido "listo para distribuir" (un archivo .zip normalizado) de tu módulo y un archivo de documentación "listo para distribuir". Simplemente haga clic en el botón para crear el paquete o el archivo de documentación.
 EnterNameOfModuleToDeleteDesc=Puede eliminar su módulo. ATENCIÓN: ¡Todos los ficheros del módulo (generados o creados manualmente), los datos estructurados y la documentación será eliminada definitivamente!
-EnterNameOfObjectToDeleteDesc=Puede eliminar un objeto. ATENCIÓN: ¡Todos los ficheros (generados o creados manualmente) relacionados con el objeto serán eliminados!
-EnterNameOfObjectToDeleteDesc=Puede eliminar un objeto. ATENCIÓN: ¡Todos los ficheros (generados o creados manualmente) relacionados con el objeto serán eliminados!
+EnterNameOfObjectToDeleteDesc=Puede eliminar un objeto. ADVERTENCIA: ¡Todos los archivos de codificación (generados o creados manualmente) relacionados con el objeto se eliminarán!
 DangerZone=Zona peligrosa
 BuildPackage=Crear paquete
 BuildPackageDesc=Puede generar un paquete zip de su módulo para que esté listo para distribuirlo en cualquier Dolibarr. También puede distribuirlo o venderlo en un una tienda como <a href="https://www.dolistore.com">DoliStore.com</a> .
@@ -40,7 +39,7 @@ EditorName=Nombre del editor
 EditorUrl=URL del editor
 DescriptorFile=Fichero del descriptor del módulo
 ClassFile=Fichero para la clase PHP
-ApiClassFile=Fichero para la clase API PHP
+ApiClassFile=Archivo API del módulo
 PageForList=Página PHP para listar registros
 PageForCreateEditView=Página PHP para crear/editar/ver un registro
 PageForAgendaTab=Página de PHP para la pestaña de eventos
@@ -71,7 +70,7 @@ ArrayOfKeyValues=Matriz de llave-valor
 ArrayOfKeyValuesDesc=Matriz de claves y valores si el campo es una lista combinada con valores fijos
 WidgetFile=Fichero del widget
 CSSFile=Archivo CSS
-JSFile=Archivo Javascript
+JSFile=archivo javascript
 ReadmeFile=Fichero leeme
 ChangeLog=Fichero ChangeLog
 TestClassFile=Archivo para la clase de PHP Test
@@ -92,8 +91,8 @@ ListOfMenusEntries=Lista de entradas de menú
 ListOfDictionariesEntries=Listado de entradas de diccionarios
 ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
-EnabledDesc=Condición para tener este campo activo. <br> <br> Ejemplos: <br> 1 <br> isModEnabled('MAIN_MODULE_MYMODULE') <br> getDolGlobalString('MYMODULE_OPTION')==2
-VisibleDesc=¿Se ve el campo? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y formularios de creación/actualización/vista, 2=Visible solo en la lista, 3=Visible solo en el formulario de creación/actualización/vista (no en la lista), 4=Visible en la lista y actualizar/ver formulario solamente (no al crear), 5=Visible solo en el formulario de vista final de la lista (no al crear ni al actualizar) <br> <br> El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).
+EnabledDesc=Condición para tener este campo activo.<br><br>Ejemplos:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=¿Es visible el campo? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y crear/actualizar/ver formularios, 2=Visible solo en la lista, 3=Visible solo en crear/actualizar/ver formulario (no en las listas), 4=Visible en las listas y actualizar/ver formulario únicamente (no crear), 5=Visible en la lista y ver formulario únicamente (no crear, no actualizar).<br><br> Usar un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).
 ItCanBeAnExpression=Puede ser una expresión. Ejemplo: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $usuario->hasRight('vacaciones', 'define_vacaciones')?1:5
 DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br><strong> Para documento : </strong><br> 0 = no mostrar  <br> 1 = mostrar <br> 2 = mostrar solo si no vacio <br>  <br>  <strong> Para lineas de documento : </strong>  <br> 0 = no mostrar  <br> 1 = mostrar en columna <br> 3 = mostrar en la columna de descripción de línea después de la descripción <br> 4 = mostrar en la columna de descripción después de la descripción solo si no está vacío
 DisplayOnPdf=En PDF
@@ -107,7 +106,7 @@ PermissionsDefDesc=Defina aquí los nuevos permisos proporcionados por su módul
 MenusDefDescTooltip=Los menús proporcionados por su módulo/aplicación se definen en la matriz <strong>$this->menus</strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incrustado. <br><br> Nota: Una vez definidos (y el módulo se haya reactivado), los menús también serán visibles en el editor de menú disponible para los usuarios administradores en %s.
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->diccionarios</strong> en el archivo descriptor del módulo. Puede editar este archivo manualmente o usar el editor incorporado. <br><br> Nota: Una vez definidos (y el módulo reactivado), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
 PermissionsDefDescTooltip=Los permisos proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->rights</strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incrustado. <br><br> Nota: Una vez definidos (y el módulo se haya reactivado), los permisos serán visibles en la configuración de permisos predeterminada %s.
-HooksDefDesc=Defina en la propiedad <b>module_parts ['hooks']</b>, en el descriptor del módulo, el contexto de los hooks que desea administrar (puede encontrar la lista de contextos mediante una búsqueda de '<b>initHooks(</b>'  en el código del core). <br>Edite el archivo hook para agregar el código de sus funciones (las funciones se pueden encontrar mediante una búsqueda de  '<b>executeHooks</b>' en el código del core).
+HooksDefDesc=Defina en la propiedad <b>module_parts['hooks']</b>, en el archivo descriptor del módulo, la lista de contextos cuando su gancho debe ejecutarse (la lista de contextos posibles se puede encontrar mediante una búsqueda en '<b>initHooks(</b>' en el código principal) .<br>Luego edite el archivo con el código de enlaces con el código de sus funciones enlazadas (la lista de funciones enlazables se puede encontrar mediante una búsqueda en ' <b>executeHooks</b>' en el código principal).
 TriggerDefDesc=Defina en el archivo de activación el código que desea ejecutar cuando se ejecuta un evento comercial externo a su módulo (eventos activados por otros módulos).
 SeeIDsInUse=Ver IDs en uso en su instalación
 SeeReservedIDsRangeHere=Ver rango de IDs reservados
@@ -128,7 +127,7 @@ RealPathOfModule=Ruta real del módulo
 ContentCantBeEmpty=El contenido del archivo no puede estar vacío
 WidgetDesc=Puede generar y editar aquí los paneles que se incrustarán con su módulo.
 CSSDesc=Puede generar y editar aquí un archivo con CSS personalizado incrustado con su módulo.
-JSDesc=Puede generar y editar aquí un archivo con Javascript personalizado incrustado con su módulo.
+JSDesc=Puede generar y editar aquí un archivo con JavaScript personalizado integrado con su módulo.
 CLIDesc=Puede generar aquí algunos scripts de línea de comandos que desea proporcionar con su módulo.
 CLIFile=Archivo CLI
 NoCLIFile=No hay archivos CLI
@@ -148,8 +147,8 @@ CSSViewClass=CSS para formulario de lectura
 CSSListClass=CSS para lista
 NotEditable=No editable
 ForeignKey=Foreign key
-ForeignKeyDesc=Si se debe garantizar que el valor de este campo existe en otra tabla. Ingrese aquí una sintaxis de coincidencia de valor: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Ejemplo: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' significa que agregamos un botón + después del combo para crear el registro <br> 'filter' es una condición sql, ejemplo: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=Si se debe garantizar que el valor de este campo exista en otra tabla. Introduzca aquí un valor que coincida con la sintaxis: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Ejemplo:<br>varchar(99)<br>correo electrónico<br>teléfono<br>ip<br>url<br>contraseña<br>double(24,8)<br>real<br>text<br>html <br>fecha<br>fecha y hora<br>marca de tiempo <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' significa que agregamos un botón + después del combo para crear el registro<br>'filter' es un Condición de sintaxis del filtro universal, ejemplo: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Este es el tipo del campo/atributo.
 AsciiToHtmlConverter=Conversor de ASCII a HTML
 AsciiToPdfConverter=Conversor de ASCII a PDF
@@ -174,6 +173,7 @@ PermissionAddedSuccesfuly=El permiso se ha agregado con éxito
 MenuDeletedSuccessfuly=El menú ha sido eliminado con éxito
 MenuAddedSuccessfuly=El menú se ha agregado con éxito
 MenuUpdatedSuccessfuly=El menú ha sido actualizado con éxito
+AddAPIsForThisObject=Agregar API para este objeto
 ApiObjectDeleted=La API para el objeto %s se eliminó con éxito
 CRUDRead=Leido
 CRUDCreateWrite=Crear o Actualizar
@@ -181,3 +181,9 @@ FailedToAddCodeIntoDescriptor=No se pudo agregar el código en el descriptor. Ve
 DictionariesCreated=Diccionario <b> %s </b> creado correctamente
 DictionaryDeleted=Diccionario <b> %s </b> eliminado correctamente
 PropertyModuleUpdated=La propiedad <b> %s </b> se ha actualizado correctamente
+InfoForApiFile=* Cuando genere un archivo por primera vez, se crearán todos los métodos <strong>para cada objeto.</strong><br>* Cuando haces clic en <strong>eliminar</strong> simplemente eliminas todos los métodos para la <strong>objeto seleccionado</strong>.
+SetupFile=Página para la configuración del módulo
+EmailingSelectors=Selectores de correos electrónicos
+EmailingSelectorDesc=Puede generar y editar aquí los archivos de clase para proporcionar nuevos selectores de destino de correo electrónico para el módulo de envío masivo de correos electrónicos.
+EmailingSelectorFile=Archivos de selección de correos electrónicos
+NoEmailingSelector=No hay archivo de selección de correos electrónicos

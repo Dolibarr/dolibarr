@@ -46,9 +46,9 @@ if (!defined('NOREQUIREHTML')) {
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $mode = GETPOST('mode', 'aZ09');
-$discard_closed = GETPOST('discardclosed', 'int');
+$discard_closed = GETPOSTINT('discardclosed');
 
 // Security check
 restrictedArea($user, 'projet', 0, 'projet&project');
@@ -84,7 +84,7 @@ if ($mode == 'gettasks') {
 	top_httphead();
 
 	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOSTINT('projectid'), '');
 
 	$db->close();
 

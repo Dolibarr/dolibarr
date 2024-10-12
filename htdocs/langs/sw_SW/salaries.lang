@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Akaunti (kutoka Chati ya Akaunti) inayotumiwa kwa chaguo-msingi kwa wahusika wengine wa "mtumiaji".
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Akaunti maalum iliyofafanuliwa kwenye kadi ya mtumiaji itatumika kwa uhasibu wa Subledger pekee. Hii itatumika kwa Leja Kuu na kama thamani chaguomsingi ya uhasibu wa Subledger ikiwa akaunti maalum ya uhasibu ya mtumiaji haijabainishwa.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Akaunti ya uhasibu kwa chaguo-msingi kwa malipo ya mishahara
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Kwa chaguo-msingi, acha tupu chaguo "Unda jumla ya malipo kiotomatiki" wakati wa kuunda Mshahara
 Salary=Mshahara
@@ -25,3 +25,9 @@ SalariesAndPayments=Mishahara na malipo
 ConfirmDeleteSalaryPayment=Je, ungependa kufuta malipo haya ya mishahara?
 FillFieldFirst=Jaza uwanja wa wafanyikazi kwanza
 UpdateAmountWithLastSalary=Weka kiasi cha mshahara wa mwisho
+MakeTransferRequest=Make transfer request
+VirementOrder=Credit transfer request
+BankTransferAmount=Amount of credit transfer
+WithdrawalReceipt=Credit transfer order
+OrderWaiting=Pending order
+FillEndOfMonth=Fill with end of month

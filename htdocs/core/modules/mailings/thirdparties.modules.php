@@ -2,6 +2,7 @@
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -58,7 +59,7 @@ class mailing_thirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -69,8 +70,8 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		$addFilter = "";
-		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") <> '-1') {
-			$addFilter .= " AND s.client=".((int) GETPOST("filter_client_thirdparties", 'int'));
+		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") != '-1') {
+			$addFilter .= " AND s.client=".(GETPOSTINT("filter_client_thirdparties"));
 			$addDescription = $langs->trans('ProspectCustomer')."=";
 			if (GETPOST("filter_client_thirdparties") == 0) {
 				$addDescription .= $langs->trans('NorProspectNorCustomer');
@@ -84,8 +85,8 @@ class mailing_thirdparties extends MailingTargets
 				$addDescription .= "Unknown status ".GETPOST("filter_client_thirdparties");
 			}
 		}
-		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") <> '-1') {
-			$addFilter .= " AND s.fournisseur = ".((int) GETPOST("filter_supplier_thirdparties", 'int'));
+		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") != '-1') {
+			$addFilter .= " AND s.fournisseur = ".(GETPOSTINT("filter_supplier_thirdparties"));
 			$addDescription = $langs->trans('Supplier')."=";
 			if (GETPOST("filter_supplier_thirdparties") == 0) {
 				$addDescription .= $langs->trans('No');
@@ -149,8 +150,8 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			if (GETPOST('filter_thirdparties', 'int') > 0) {
-				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
+			if (GETPOSTINT('filter_thirdparties') > 0) {
+				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
 			if (empty($this->evenunsubscribe)) {
 				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
@@ -164,8 +165,8 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			if (GETPOST('filter_thirdparties', 'int') > 0) {
-				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
+			if (GETPOSTINT('filter_thirdparties') > 0) {
+				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
 			if (empty($this->evenunsubscribe)) {
 				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
@@ -188,7 +189,7 @@ class mailing_thirdparties extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("Category").'='.$obj->label : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -226,11 +227,11 @@ class mailing_thirdparties extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -290,7 +291,7 @@ class mailing_thirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (!isModEnabled("categorie")) {
+			if (!isModEnabled("category")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 
@@ -330,13 +331,13 @@ class mailing_thirdparties extends MailingTargets
 		// filter_client_thirdparties
 		$s .= '<select id="filter_client_thirdparties" name="filter_client_thirdparties" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans('ProspectCustomer').'</option>';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$s .= '<option value="2">'.$langs->trans('Prospect').'</option>';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 			$s .= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$s .= '<option value="1">'.$langs->trans('Customer').'</option>';
 		}
 		$s .= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';

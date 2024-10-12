@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Настройка на модул PayBox
-PayBoxDesc=Този модул предлага страници позволяващи плащане с <a href="http://www.paybox.com" target="_blank">Paybox</a> от клиенти. Може да се използва за свободно плащане или за плащане по определен Dolibar обект (фактура, поръчка, ...)
-FollowingUrlAreAvailableToMakePayments=Следните URL адреси са налични, за да осигурят достъп на клиент, за да извърши плащане по Dolibarr обекти
-PaymentForm=Формуляр за плащане
-WelcomeOnPaymentPage=Добре дошли в страницата на нашата онлайн услуга за плащане
-ThisScreenAllowsYouToPay=Този екран ви позволява да направите онлайн плащане по %s
-ThisIsInformationOnPayment=Това е информация за плащането, което трябва да направите
-ToComplete=За завършване
-YourEMail=Имейл за получаване на потвърждение за плащане
-Creditor=Кредитор
-PaymentCode=Код за плащане
+PayBoxDesc=Този модул предлага страници за разрешаване на плащане на <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> от клиенти. Това може да се използва за безплатен плащане или за плащане на конкретен обект на Dolibarr (фактура, поръчка, ...)
 PayBoxDoPayment=Плащане с Paybox
 YouWillBeRedirectedOnPayBox=Ще бъдете пренасочени към защитена Paybox страница, за да въведете информация за вашата кредитна карта
-Continue=Следваща
 SetupPayBoxToHavePaymentCreatedAutomatically=Настройте вашият Paybox с URL <b>%s</b>, за да се създава автоматично плащане след като бъде потвърдено от Paybox.
 YourPaymentHasBeenRecorded=Тази страница потвърждава, че вашето плащане е регистрирано. Благодаря!
 YourPaymentHasNotBeenRecorded=Вашето плащане не е регистрирано и транзакцията е анулирана. Благодаря!
-AccountParameter=Параметри на сметката
-UsageParameter=Параметри за използване
-InformationToFindParameters=Помогнете, за да намерим вашата %s информация за сметка
 PAYBOX_CGI_URL_V2=URL адрес на Paybox CGI модул за плащане
-VendorName=Име на доставчик
-CSSUrlForPaymentForm=URL адрес на CSS страница с формуляр за плащане
 NewPayboxPaymentReceived=Получено е ново плащане, чрез Paybox.
 NewPayboxPaymentFailed=Нов опит за Paybox плащане не бе успешен
 PAYBOX_PAYONLINE_SENDEMAIL=Имейл известие след опит за плащане (успешно или неуспешно)

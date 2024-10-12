@@ -14,5 +14,4 @@ CurrenciesUsed_help_to_add=Agregue las diferentes monedas y tasas que necesita u
 rate=Tasa
 MulticurrencyReceived=Recibido, moneda original
 MulticurrencyRemainderToTake=Importe restante, moneda original.
-MulticurrencyPaymentAmount=Monto a pagar, moneda de origen
 AmountToOthercurrency=Cantidad a (en la moneda de la cuenta receptora)

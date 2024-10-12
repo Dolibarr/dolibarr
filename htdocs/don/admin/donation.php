@@ -5,6 +5,7 @@
  * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,11 +63,12 @@ if ($action == 'specimen') {
 	// Search template files
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/dons/";
 	$file = $modele.".modules.php";
-	if (file_exists($dir.$file)) {
-		$classname = $modele;
+	if ($modele !== '' && file_exists($dir.$file)) {
 		require_once $dir.$file;
 
+		$classname = (string) $modele;
 		$obj = new $classname($db);
+		'@phan-var-force ModeleDon $obj';
 
 		if ($obj->write_file($don, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
@@ -173,7 +175,9 @@ if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
-llxHeader('', $langs->trans("DonationsSetup"), 'DonConfiguration');
+$help_url = '';
+llxHeader('', $langs->trans("DonationsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-admin');
+
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
@@ -197,7 +201,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -226,12 +232,13 @@ if (is_resource($handle)) {
 
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
+			'@phan-var-force ModeleDon $module';
 
 			// Show modules according to features level
-			if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 				continue;
 			}
-			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+			if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 				continue;
 			}
 
@@ -336,9 +343,9 @@ $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
 if (isModEnabled('accounting')) {
-	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {
-	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="'.$conf->global->DONATION_ACCOUNTINGACCOUNT.'">';
+	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';
 }
 print '</td><td class="center">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
@@ -351,7 +358,7 @@ print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
-print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
+print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">' . getDolGlobalString('DONATION_MESSAGE').'</textarea>';
 print '</td><td class="center">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,10 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$id = GETPOST('socid', 'int') || GETPOST('id_fourn', 'int');
+$id = GETPOSTINT('socid');
+if ($id == 0) {
+	$id = GETPOSTINT('id_fourn');
+}
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -75,31 +79,31 @@ $return_arr = array();
 // Define filter on text typed
 $socid = GETPOST('newcompany');
 if (!$socid) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if (!$socid) {
-	$socid = GETPOST('id_fourn', 'int');
+	$socid = GETPOSTINT('id_fourn');
 }
 
 // Generate list of companies
 if (! $socid) {
-	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+	echo json_encode(array('nom' => 'ErrorBadParameter', 'label' => 'ErrorBadParameter', 'key' => 'ErrorBadParameter', 'value' => 'ErrorBadParameter'));
 	exit;
 }
 
 $sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6, s.client, s.fournisseur, s.datec, s.logo";
-if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	$sql .= ", dictp.code as country_code";
 }
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 }
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if ($socid) {
 	$sql .= " AND (";
 	// Add criteria on name/code
-	if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {   // Can use index
+	if (getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {   // Can use index
 		$sql .= "s.nom LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.name_alias LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_client LIKE '".$db->escape($db->escapeforlike($socid))."%'";
@@ -110,7 +114,7 @@ if ($socid) {
 		$sql .= " OR s.code_client LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 	}
-	if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) {
+	if (getDolGlobalString('SOCIETE_ALLOW_SEARCH_ON_ROWID')) {
 		$sql .= " OR s.rowid = ".((int) $socid);
 	}
 	$sql .= ")";
@@ -127,7 +131,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	while ($row = $db->fetch_array($resql)) {
 		$label = '';
-		if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+		if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 			if (($row['client']) && (!empty($row['code_client']))) {
 				$label = $row['code_client'].' - ';
 			}
@@ -138,7 +142,7 @@ if ($resql) {
 
 		$label .= $row['nom'];
 
-		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 			$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');
 			if (!empty($row['country_code'])) {
 				$label .= ', '.$langs->trans('Country'.$row['country_code']);
@@ -147,6 +151,7 @@ if ($resql) {
 		if ($socid) {
 			$label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 		}
+		$row_array = array();
 		$row_array['label'] = $label;
 
 		$row_array['value'] = $row['nom'];
@@ -175,5 +180,5 @@ if ($resql) {
 
 	echo json_encode($return_arr);
 } else {
-	echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
+	echo json_encode(array('nom' => 'Error', 'label' => 'Error', 'key' => 'Error', 'value' => 'Error'));
 }

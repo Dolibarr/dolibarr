@@ -83,8 +83,8 @@ $Config['HtmlExtensions'] = array("html", "htm", "xml", "xsd", "txt", "js");
 // Set to 0 to disable this feature.
 // Note: not needed on Windows-based servers.
 $newmask = '0644';
-if (!empty($conf->global->MAIN_UMASK)) {
-	$newmask = $conf->global->MAIN_UMASK;
+if (getDolGlobalString('MAIN_UMASK')) {
+	$newmask = getDolGlobalString('MAIN_UMASK');
 }
 $Config['ChmodOnUpload'] = $newmask;
 
@@ -92,7 +92,7 @@ $Config['ChmodOnUpload'] = $newmask;
 // Used when creating folders that does not exist.
 $newmask = '0755';
 $dirmaskdec = octdec($newmask);
-if (!empty($conf->global->MAIN_UMASK)) {
+if (getDolGlobalString('MAIN_UMASK')) {
 	$dirmaskdec = octdec($conf->global->MAIN_UMASK);
 }
 $dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files

@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +64,8 @@ $mode = $argv[1];
 $filepath = $argv[2];
 $filepatherr = $filepath.'.err';
 //$defaultlang = empty($argv[3])?'en_US':$argv[3];
-$startlinenb = empty($argv[3])?1:$argv[3];
-$endlinenb = empty($argv[4])?0:$argv[4];
+$startlinenb = empty($argv[3]) ? 1 : $argv[3];
+$endlinenb = empty($argv[4]) ? 0 : $argv[4];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
@@ -124,7 +125,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) 
 	$nboflines++;
 
 	$object = new User($db);
-	$object->statut = 1;
+	$object->status = 1;
 
 	$tmp=explode(' ', $fields[3], 2);
 	$object->firstname = trim($tmp[0]);

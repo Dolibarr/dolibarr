@@ -1,5 +1,4 @@
 BlockedLog=Kumbukumbu zisizoweza kubadilishwa
-Field=Shamba
 BlockedLogDesc=Sehemu hii hufuatilia baadhi ya matukio hadi kwenye logi isiyoweza kubadilishwa (ambayo huwezi kuirekebisha ikisharekodiwa) hadi kwenye msururu wa kuzuia, kwa wakati halisi. Moduli hii inatoa upatanifu na mahitaji ya sheria za baadhi ya nchi (kama vile Ufaransa na sheria Finance 2016 - Norme NF525).
 Fingerprints=Matukio yaliyowekwa kwenye kumbukumbu na alama za vidole
 FingerprintsDesc=Hii ni zana ya kuvinjari au kutoa kumbukumbu zisizoweza kubadilishwa. Kumbukumbu zisizoweza kubadilishwa hutengenezwa na kuhifadhiwa kwenye kumbukumbu ndani ya jedwali maalum, kwa wakati halisi unaporekodi tukio la biashara. Unaweza kutumia zana hii kuhamisha kumbukumbu hii na kuihifadhi kwenye usaidizi wa nje (baadhi ya nchi, kama vile Ufaransa, zinaomba uifanye kila mwaka). Kumbuka kuwa, hakuna kipengele cha kufuta logi hii na kila badiliko lililojaribu kufanywa moja kwa moja kwenye logi hii (na mdukuzi kwa mfano) litaripotiwa kwa alama ya vidole isiyo sahihi. Iwapo unahitaji kuondoa jedwali hili kwa sababu ulitumia programu yako kwa madhumuni ya onyesho/jaribio na ungependa kusafisha data yako ili kuanza uzalishaji wako, unaweza kumwomba muuzaji au kiunganishi chako kuweka upya hifadhidata yako (data yako yote itaondolewa).
@@ -13,16 +12,13 @@ OkCheckFingerprintValidity=Rekodi ya kumbukumbu iliyohifadhiwa ni halali. Data k
 OkCheckFingerprintValidityButChainIsKo=Kumbukumbu iliyohifadhiwa inaonekana kuwa halali ikilinganishwa na ya awali lakini mlolongo uliharibika hapo awali.
 AddedByAuthority=Imehifadhiwa katika mamlaka ya mbali
 NotAddedByAuthorityYet=Bado haijahifadhiwa kwenye mamlaka ya mbali
-ShowDetails=Onyesha maelezo yaliyohifadhiwa
 BlockedLogBillDownload=Upakuaji wa ankara ya mteja
 BlockedLogBillPreview=Onyesho la kukagua ankara ya mteja
 BlockedlogInfoDialog=Maelezo ya logi
 ListOfTrackedEvents=Orodha ya matukio yanayofuatiliwa
 Fingerprint=Alama ya vidole
 DownloadLogCSV=Hamisha kumbukumbu zilizohifadhiwa (CSV)
-logDOC_PREVIEW=Onyesho la kukagua hati iliyoidhinishwa ili kuchapisha au kupakua
-logDOC_DOWNLOAD=Pakua hati iliyoidhinishwa ili kuchapisha au kutuma
-DataOfArchivedEvent=Data kamili ya tukio lililohifadhiwa kwenye kumbukumbu
+DataOfArchivedEvent=Full data of archived event
 ImpossibleToReloadObject=Kitu asili (aina %s, id %s) haijaunganishwa (angalia safu wima ya 'data kamili' ili kupata data iliyohifadhiwa isiyoweza kubadilishwa)
 BlockedLogAreRequiredByYourCountryLegislation=Moduli ya Kumbukumbu Zisizoweza kubadilishwa inaweza kuhitajika na sheria ya nchi yako. Kuzima sehemu hii kunaweza kufanya miamala yoyote ya siku zijazo kuwa batili kwa heshima na sheria na matumizi ya programu za kisheria kwa kuwa haiwezi kuthibitishwa na ukaguzi wa kodi.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Moduli ya Kumbukumbu Zisizoweza Kubadilishwa imewezeshwa kwa sababu ya sheria ya nchi yako. Kuzima sehemu hii kunaweza kufanya miamala yoyote ya siku zijazo kuwa batili kwa heshima na sheria na matumizi ya programu za kisheria kwani haiwezi kuthibitishwa na ukaguzi wa kodi.
@@ -33,6 +29,7 @@ RestrictYearToExport=Zuia mwezi / mwaka ili kusafirisha nje
 BlockedLogEnabled=Mfumo wa kufuatilia matukio katika kumbukumbu zisizoweza kubadilishwa umewashwa
 BlockedLogDisabled=Mfumo wa kufuatilia matukio katika kumbukumbu zisizoweza kubadilishwa umezimwa baada ya baadhi ya kurekodi kufanywa. Tulihifadhi Alama maalum ya Kidole ili kufuatilia mnyororo kama umekatika
 BlockedLogDisabledBis=Mfumo wa kufuatilia matukio katika kumbukumbu zisizobadilika umezimwa. Hili linawezekana kwa sababu hakuna rekodi iliyofanywa bado.
+LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
 
 ## logTypes
 logBILL_DELETE=Ankara ya mteja imefutwa kimantiki

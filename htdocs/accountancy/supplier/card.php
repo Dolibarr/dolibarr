@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2013-2017  Alexandre Spangaro    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro    <aspangaro@easya.solutions>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent         <jmenent@2byte.es>
@@ -38,8 +38,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil', 'int');
-$id = GETPOST('id', 'int');
+$codeventil = GETPOSTINT('codeventil');
+$id = GETPOSTINT('id');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -48,7 +48,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -88,7 +88,9 @@ if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 /*
  * View
  */
-llxHeader("", $langs->trans('FicheVentilation'));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader("", $langs->trans('FicheVentilation'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-supplier page-card');
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
@@ -102,7 +104,7 @@ $formaccounting = new FormAccounting($db);
 if (!empty($id)) {
 	$sql = "SELECT f.ref as ref, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label,";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " ppe.accountancy_code_buy as code_buy,";
 	} else {
 		$sql .= " p.accountancy_code_buy as code_buy,";
@@ -110,7 +112,7 @@ if (!empty($id)) {
 	$sql .= " aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
@@ -139,20 +141,23 @@ if (!empty($id)) {
 
 			print '<table class="border centpercent">';
 
-			// ref invoice
+			// Ref invoice
 			print '<tr><td>'.$langs->trans("BillsSuppliers").'</td>';
 			$facturefournisseur_static->ref = $objp->ref;
 			$facturefournisseur_static->id = $objp->facid;
 			print '<td>'.$facturefournisseur_static->getNomUrl(1).'</td>';
 			print '</tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("Line").'</td>';
-			print '<td>'.stripslashes(nl2br($objp->description)).'</td></tr>';
-			print '<tr><td width="20%">'.$langs->trans("ProductLabel").'</td>';
-			print '<td>'.dol_trunc($objp->product_label, 24).'</td>';
-			print '<tr><td width="20%">'.$langs->trans("Account").'</td><td>';
+			print '<tr><td>'.$langs->trans("Description").'</td>';
+			print '<td>'.dolPrintHTML($objp->description).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("ProductLabel").'</td>';
+			print '<td>'.dol_trunc($objp->product_label, 24).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("Account").'</td><td>';
 			print $formaccounting->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
+
 			print '</table>';
 
 			print dol_get_fiche_end();

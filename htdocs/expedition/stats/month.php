@@ -18,7 +18,7 @@
 
 /**
  *    \file       htdocs/expedition/stats/month.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      Page des stats expeditions par mois
  */
 
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$year = GETPOST('year', 'int');
+$year = GETPOSTINT('year');
 
 // Security check
 if ($user->socid) {
@@ -41,7 +41,7 @@ restrictedArea($user, 'expedition');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-stats_month');
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');

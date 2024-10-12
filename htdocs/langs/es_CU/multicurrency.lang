@@ -13,7 +13,6 @@ CurrenciesUsed=Monedas utilizadas
 CurrenciesUsed_help_to_add=Agregue las diferentes monedas y tasas que necesita usar en sus propuestas <b> </b>, pedidos <b> </b>, etc.
 MulticurrencyReceived=Recibido, moneda original
 MulticurrencyRemainderToTake=Importe restante, moneda original
-MulticurrencyPaymentAmount=Importe del pago, moneda original
 AmountToOthercurrency=Importe hasta (en la moneda de la cuenta receptora)
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Usar la moneda del documento para pagos en línea
 TabTitleMulticurrencyRate=Lista de tarifas

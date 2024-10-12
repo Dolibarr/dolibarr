@@ -125,7 +125,10 @@ function addDispatchLine(index, type, mode) {
 
 		//create new select2 to avoid duplicate id of cloned one
 		$row.find("select[name='" + 'entrepot_' + nbrTrs + '_' + index + "']").select2();
-		// TODO find solution to copy selected option to new select
+		// Copy selected option to new select
+		let $prevRow = $("tr[name^='" + type + "_'][name$='_" + index + "']:last")
+		let $prevEntr = Number($prevRow.find("select[name='" + 'entrepot_' + (nbrTrs-1) + '_' + index + "']").val())
+		$row.find("select[name='" + 'entrepot_' + nbrTrs + '_' + index + "']").val($prevEntr)
 		// TODO find solution to keep new tr's after page refresh
 		//clear value
 		$row.find("input[name^='qty']").val('');

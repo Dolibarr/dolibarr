@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Actualización de los datos de expediciones de pe
 MigrationShippingDelivery=Actualización de los datos de expediciones
 MigrationShippingDelivery2=Actualización de los datos de expediciones 2
 MigrationFinished=Actualización terminada
-LastStepDesc=<strong>Último paso</strong>: Indique aquí el usuario y la contraseña que utilizará para conectarse a la aplicación. <b>No pierda estos identificadores, es la cuenta que permite administrar el resto</b>.
+LastStepDesc=<strong>Último paso</strong>: Defina aquí el nombre de usuario y la contraseña que desea utilizar para conectarse a Dolibarr. <b>No la pierda, ya que es la cuenta principal para administrar todas las demás cuentas de usuario adicionales.</b>
 ActivateModule=Activación del módulo %s
 ShowEditTechnicalParameters=Pulse aquí para ver/editar los parámetros técnicos (modo experto)
 WarningUpgrade=Advertencia: \\\n¿Ha realizado una copia de seguridad de su base de datos antes? \\\nEsto es altamente recomendado: por ejemplo, debido a algunos errores en los sistemas de bases de datos (por ejemplo MySQL versión 5.5.40/41/42/43), algunos datos o tablas pueden perderse durante este proceso, por lo que es altamente recomendado tener un volcado completo de la base de datos antes de iniciar la actualización.\n\nHaga clic en Aceptar para iniciar el proceso de actualización...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Está utilizando el asistente de instalación Dolibarr de u
 KeepDefaultValuesMamp=Está utilizando el asistente de instalación DoliMamp, los valores propuestos aquí están optimizados. Cámbielos solamente si está seguro de ello.
 KeepDefaultValuesProxmox=Está utilizando el asistente de instalación Dolibarr desde una máquina virtual Proxmox, los valores propuestos aquí están optimizados. Cámbielos solamente si está seguro de ello.
 UpgradeExternalModule=Ejecutar proceso dedicado para actualizar módulos externos
-SetAtLeastOneOptionAsUrlParameter=Establezca al menos una opción como parámetro en URL. Por ejemplo: '... repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nada para limpiar/eliminar
 NothingToDo=Nada que hacer
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=La aplicación intenta instalar la actualizació
 YouTryUpgradeDisabledByMissingFileUnLock=La aplicación intentó autoactualizarse, pero el proceso de actualización actualmente no está permitido. <br>
 ClickHereToGoToApp=Haga clic aquí para ir a su aplicación
 ClickOnLinkOrRemoveManualy=Si hay una actualización en curso, espere. Si no, haga clic en el siguiente enlace. Si siempre ve esta misma página, debe eliminar/cambiar el nombre del archivo install.lock en el directorio de documentos.
-ClickOnLinkOrCreateUnlockFileManualy=Si hay una actualización en curso, espere... De lo contrario, debe crear un archivo upgrade.unlock en el directorio de documentos de Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Cargado
 FunctionTest=Prueba de funcionamiento
 NodoUpgradeAfterDB=Ninguna acción solicitada por módulos externos después de la actualización de la base de datos

@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent   <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
@@ -30,7 +31,9 @@ global $user, $db, $hookmanager;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force array<CommonObject> $linkedObjectBlock';
 $object = $GLOBALS['object'];
 
 // Load translation files required by the page
@@ -43,8 +46,9 @@ if ($object->element == 'mo') {
 	$mo_static = new Mo($db);
 	$res = $mo_static->fetch($object->id);
 	$TMoChilds = $mo_static->getMoChilds();
+	'@phan-var-force Mo[] $TMoChilds';
 
-	$hookmanager->initHooks('LinesLinkedObjectBlock');
+	$hookmanager->initHooks(array('LinesLinkedObjectBlock'));
 	$parameters = array('TMoChilds' => $TMoChilds);
 	$reshook = $hookmanager->executeHooks('LinesLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
@@ -56,7 +60,7 @@ if ($object->element == 'mo') {
 			echo '<tr class="' . $trclass . '" >';
 			echo '<td class="linkedcol-element tdoverflowmax100">' . $langs->trans("ManufacturingOrder");
 			if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
+				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines&amp;token='.newToken().'" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
 			}
 			echo '</td>';
 			echo '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
@@ -77,7 +81,9 @@ if ($object->element == 'mo') {
 			$k = 0;
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj->rowid && $obj->rowid > 0) $k = $obj->rowid;
+				if ($obj->rowid && $obj->rowid > 0) {
+					$k = $obj->rowid;
+				}
 			}
 			echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $k . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
 			echo '</td>';
@@ -86,7 +92,7 @@ if ($object->element == 'mo') {
 	}
 } else {
 	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-
+	'@phan-var-force array<CommonObject> $linkedObjectBlock';
 	$total = 0;
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {
@@ -100,7 +106,7 @@ if ($object->element == 'mo') {
 		print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("ManufacturingOrder");
 		if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
 			$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$objectlink->id;
-			print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+			print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 		}
 		print '</td>';
 

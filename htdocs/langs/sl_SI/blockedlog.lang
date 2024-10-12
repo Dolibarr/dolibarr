@@ -1,5 +1,4 @@
 BlockedLog=Nespremenljivi dnevniki
-Field=Polje
 BlockedLogDesc=Ta modul sledi nekaterim dogodkom v nespremenljiv dnevnik (ki ga ne morete spreminjati, ko je enkrat zabeležen) v verigo blokov v realnem času. Ta modul zagotavlja združljivost z zahtevami zakonov nekaterih držav (na primer Francija z zakonom Finance 2016 - Norme NF525).
 Fingerprints=Arhivirani dogodki in prstni odtisi
 FingerprintsDesc=To je orodje za brskanje ali ekstrahiranje nespremenljivih dnevnikov. Nespremenljivi dnevniki se ustvarijo in arhivirajo lokalno v namensko tabelo, v realnem času, ko zabeležite poslovni dogodek. S tem orodjem lahko izvozite ta arhiv in ga shranite v zunanjo podporo (nekatere države, kot je Francija, zahtevajo, da to storite vsako leto). Upoštevajte, da ni funkcije za čiščenje tega dnevnika in vsaka sprememba, ki jo poskusite narediti neposredno v tem dnevniku (na primer heker), bo prijavljena z neveljavnim prstnim odtisom. Če res morate počistiti to tabelo, ker ste svojo aplikacijo uporabili za predstavitvene/testne namene in želite očistiti svoje podatke za začetek proizvodnje, lahko prosite svojega prodajalca ali integratorja, da ponastavi vašo zbirko podatkov (vsi vaši podatki bodo odstranjeni).
@@ -13,15 +12,12 @@ OkCheckFingerprintValidity=Arhiviran dnevniški zapis je veljaven. Podatki v tej
 OkCheckFingerprintValidityButChainIsKo=Arhiviran dnevnik se zdi veljaven v primerjavi s prejšnjim, vendar je bila veriga prej poškodovana.
 AddedByAuthority=Shranjeno v oddaljenem organu
 NotAddedByAuthorityYet=Še ni shranjeno v oddaljenem organu
-ShowDetails=Pokaži shranjene podrobnosti
 BlockedLogBillDownload=Prenos računa stranke
 BlockedLogBillPreview=Predogled računa stranke
 BlockedlogInfoDialog=Podrobnosti dnevnika
 ListOfTrackedEvents=Seznam spremljanih dogodkov
 Fingerprint=Prstni odtis
 DownloadLogCSV=Izvozi arhivirane dnevnike (CSV)
-logDOC_PREVIEW=Predogled potrjenega dokumenta za tiskanje ali prenos
-logDOC_DOWNLOAD=Prenos potrjenega dokumenta za tiskanje ali pošiljanje
 DataOfArchivedEvent=Celotni podatki arhiviranega dogodka
 ImpossibleToReloadObject=Izvirni predmet (tip %s, id %s) ni povezan (glejte stolpec »Celotni podatki«, da dobite nespremenljive shranjene podatke)
 BlockedLogAreRequiredByYourCountryLegislation=Zakonodaja vaše države morda zahteva modul Unalterable Logs. Če onemogočite ta modul, lahko morebitne prihodnje transakcije postanejo neveljavne glede na zakonodajo in uporabo zakonite programske opreme, saj jih ne more potrditi davčna revizija.
@@ -33,6 +29,7 @@ RestrictYearToExport=Omejite mesec/leto za izvoz
 BlockedLogEnabled=Sistem za sledenje dogodkov v nespremenljive dnevnike je bil omogočen
 BlockedLogDisabled=Sistem za sledenje dogodkov v nespremenljive dnevnike je bil onemogočen, potem ko je bilo opravljeno nekaj snemanja. Shranili smo poseben prstni odtis za sledenje verigi kot zlomljeni
 BlockedLogDisabledBis=Sistem za sledenje dogodkov v nespremenljive dnevnike je onemogočen. To je mogoče, ker še ni bil narejen noben zapis.
+LinkHasBeenDisabledForPerformancePurpose=Zaradi zmogljivosti neposredna povezava do dokumenta ni prikazana po 100. vrstici.
 
 ## logTypes
 logBILL_DELETE=Račun stranke logično izbrisan

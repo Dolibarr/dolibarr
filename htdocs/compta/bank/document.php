@@ -21,7 +21,7 @@
 /**
  * 	\file       htdocs/compta/bank/document.php
  * 	\ingroup    banque
- * 	\brief      Page de gestion des documents attaches a un compte bancaire
+ * 	\brief      Page to manage documents attached to a bank account
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php";
@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'companies', 'other'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankaccountdocuments', 'globalcard'));
 
 // Security check
@@ -51,10 +51,10 @@ if ($user->socid) {
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -76,7 +76,7 @@ if ($id > 0 || !empty($ref)) {
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
-$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -139,15 +139,15 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$modulepart = 'bank';
-		$permissiontoadd = $user->rights->banque->modifier;
-		$permtoedit = $user->rights->banque->modifier;
+		$permissiontoadd = $user->hasRight('banque', 'modifier');
+		$permtoedit = $user->hasRight('banque', 'modifier');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}
 } else {
-	Header('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

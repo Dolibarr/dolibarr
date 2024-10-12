@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL per il pagamento %s di una riga d
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL per il pagamento %s di un importo senza riferimenti
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per il pagamento %s dell'adesione di un membro
 ToOfferALinkForOnlinePaymentOnDonation=URL per offrire una pagina di pagamento online %s per il pagamento di una donazione
-YouCanAddTagOnUrl=Puoi anche aggiungere a qualunque di questi url il parametro <b>&tag=<i>value</i></b> (richiesto solo per il pagamento gratuito) per aggiungere una tag con un tuo commento.
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=Se desideri integrare la pagina pagamento in un sito web Dolibarr, puoi includere il parametro: <b>&ws=website_ref</b>.<br>Inoltre, due pagine denominate <b>paymentok</b> e <b>paymentko</b> deve essere creato in il sito web per ricevere il reindirizzamento dopo un pagamento online riuscito o non riuscito.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Dati account
 UsageParameter=Parametri d'uso
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Importa pagamenti Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Esempio della carta di credito per un test pagamento: %s => valido, %s => errore CVC, %s => scaduto, %s => la carica fallisce
+ExampleOfTestBankAcountForSEPA=Esempio di Conto bancario BAN per Domiciliazione test: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe account
 StripeChargeList=Elenco addebiti Stripe
 StripeTransactionList=Elenco transazioni Stripe
 StripeCustomerId=ID Cliente Stripe
+StripePaymentId=Stripe pagamento id
 StripePaymentModes=Tipo di pagamento Stripe
 LocalID=Local ID
 StripeID=Stripe ID
@@ -62,7 +64,7 @@ DeleteACard=Elimina Carta
 ConfirmDeleteCard=Sei sicuro che vuoi cancellare questa Carta di Credito/Debito?
 CreateCustomerOnStripe=Crea cliente su Stripe
 CreateCardOnStripe=Crea carta su Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=creare fai affidamento su Stripe
 ShowInStripe=Visualizza su Stripe
 StripeUserAccountForActions=Conto utente da utilizzare per le notifiche e-mail di alcuni eventi Stripe (pagamenti Stripe)
 StripePayoutList=Elenco pagamenti Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Clicca qui per riprovare...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa delle forti regole di autenticazione del cliente, la creazione di una carta deve essere effettuata dal backoffice di Stripe. È possibile fare clic qui per attivare il record cliente Stripe: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa delle forti regole cliente Autenticazione, la creazione di una carta deve essere effettuata dal back office di Stripe. Puoi fare clic qui per attivare il record Stripe cliente: %s
+STRIPE_CARD_PRESENT=Carta presente per terminali Stripe
+TERMINAL_LOCATION=Posizione (indirizzo) per i terminali Stripe
+RequestDirectDebitWithStripe=Richiesta Domiciliazione con Stripe
+RequesCreditTransferWithStripe=Richiesta Bonifico con Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Abilita i pagamenti Domiciliazione tramite Stripe
+STRIPE_KLARNA=Abilita i pagamenti utilizzando Klarna
+STRIPE_BANCONTACT=Abilita i pagamenti utilizzando BANCONTACT
+STRIPE_IDEAL=Abilita i pagamenti utilizzando IDEAL
+STRIPE_GIROPAY=Abilita i pagamenti tramite GIROPAY
+STRIPE_SOFORT=Abilita i pagamenti tramite SOFORT
+StripeConnect_Mode=Modalità Stripe Connect
+ExampleOnlyForBECustomers=Solo per i clienti belgi
+ExampleOnlyForDECustomers=Solo per clienti tedeschi
+ExampleOnlyForNLCustomers=Solo per clienti olandesi
+ExampleOnlyForATBEDEITNLESCustomers=Solo per clienti provenienti da Austria, Belgio, Germania, Italia, Paesi Bassi, Spagna

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,16 +38,16 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 
 // View
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Info");
 
-$help_url = "EN:Module_Double_Entry_Accounting";
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_fiscalyear_info');
 
 if ($id) {
 	$object = new Fiscalyear($db);
@@ -56,13 +56,23 @@ if ($id) {
 
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), -1, $object->picto);
 
-	print '<table width="100%"><tr><td>';
-	dol_print_object_info($object);
-	print '</td></tr></table>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref = '';
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
+	$object->info($object->id);
+	dol_print_object_info($object, 1);
 
 	print '</div>';
+
+	print dol_get_fiche_end();
 }
 
 // End of page

@@ -43,7 +43,7 @@ ConfirmValidateSending=¿Está certo de querer validar esta expedición coa refe
 ConfirmCancelSending=¿Está certo de querer anular esta expedición?
 DocumentModelMerou=Modelo Merou A5
 WarningNoQtyLeftToSend=Alerta, ningún produto agardando para ser enviado.
-StatsOnShipmentsOnlyValidated=As estatísticas son só para envíos validados. A data utilizada é a data de validación do envío (non sempre é coñecida a data de entrega prevista) 
+StatsOnShipmentsOnlyValidated=As estatísticas son só para envíos validados. A data utilizada é a data de validación do envío (non sempre é coñecida a data de entrega prevista)
 DateDeliveryPlanned=Data prevista de entrega
 RefDeliveryReceipt=Ref. nota de entrega
 StatusReceipt=Estado nota de entrega
@@ -53,7 +53,7 @@ SendShippingByEMail=Envío de expedición por correo electrónico
 SendShippingRef=Envío da expedición %s
 ActionsOnShipping=Eventos sobre a expedición
 LinkToTrackYourPackage=Ligazón para o seguimento do seu paquete
-ShipmentCreationIsDoneFromOrder=Polo momento, a creación dun novo envío faise a partir do rexistro de pedimentos de venda. 
+ShipmentCreationIsDoneFromOrder=Polo momento, a creación dun novo envío faise a partir do rexistro de pedimentos de venda.
 ShipmentLine=Liña de expedición
 ProductQtyInCustomersOrdersRunning=Cantidade en pedimentos de clientes abertos
 ProductQtyInSuppliersOrdersRunning=Cantidade en pedimentos a provedores abertos
@@ -62,6 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidade en pedimentos a proveedor
 NoProductToShipFoundIntoStock=Non se atopou ningún produto para enviar no almacén <b>% s </b>. Corrixir o stock ou voltar a escoller outro almacén.
 WeightVolShort=Peso/Vol.
 ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar o pedimento.
+NoLineGoOnTabToAddSome=Sen liña, vai á lapela "%s" para engadir
+CreateInvoiceForThisCustomerFromSendings=Crear facturas
+IfValidateInvoiceIsNoSendingStayUnbilled=Se a validación da factura é "Non", o envío permanecerá no estado "Non facturado" ata que se valide a factura.
+OptionToSetSendingBilledNotEnabled=A opción do módulo Fluxo de traballo, para establecer o envío como 'Facturado' automaticamente cando se valida a factura, non está habilitada, polo que terá que configurar o estado dos envíos en 'Facturado' manualmente despois de xerar a factura.
 
 # Sending methods
 # ModelDocument
@@ -70,12 +74,12 @@ DocumentModelStorm=Modelo de documento máis completo para a compatibilidade de 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma do volume dos produtos
 SumOfProductWeights=Suma do peso dos produtos
-
 # warehouse details
 DetailWarehouseNumber= Detalles do almacén
 DetailWarehouseFormat= Alm.:%s (Cant. : %d)
-
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Mostra a última data de entrada en stock durante a creación do envío para o número de serie ou o lote
+CreationOptions=Opcións dispoñibles durante a creación do envío
 ShipmentDistribution=Distribución do envío
-
-ErrorTooManyCombinationBatchcode=Non hai envío para a liña %s xa que se atoparon demasiadas combinacións de almacén, produto e código de lote (%s).
-ErrorNoCombinationBatchcode=Non se atopou ningún envío para a liña %s xa que non se atopou ningunha combinación de almacén, produto e código de lote.
+ErrorTooManyCombinationBatchcode=Non hai envío para a liña %s xa que se atoparon demasiadas combinacións de código de almacén, produto e lote (%s).
+ErrorNoCombinationBatchcode=Non se puido gardar a liña %s como a combinación de almacén-produto-lote/serie (%s, %s, %s) non se atopou en stock.
+ErrorTooMuchShipped=A cantidade enviada non debe ser superior á cantidade solicitada para a liña %s

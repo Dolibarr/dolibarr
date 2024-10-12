@@ -1,0 +1,19 @@
+{
+  "name": "dolibarr/rector",
+  "type": "project",
+  "license": "GplV3",
+  "authors": [
+    {
+      "name": "Dev2a",
+      "email": "contact@dev2a.pro"
+    }
+  ],
+  "require-dev": {
+    "rector/rector": "^0.18.5"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Dolibarr\\Rector\\": "./src"
+    }
+  }
+}

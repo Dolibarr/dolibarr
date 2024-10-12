@@ -86,21 +86,27 @@ print "<td>".$langs->trans("Value")."</td>";
 print "<td></td>";
 print "</tr>";
 
+// Security key for cron (if CRON_DISABLE_KEY_CHANGE is 1: modification is not allowed, -1: no button refresh)
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
 $disabled = '';
-if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) {
+if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') > 0) {
 	$disabled = ' disabled="disabled"';
 }
 print '<td>';
-if (empty($conf->global->CRON_DISABLE_KEY_CHANGE)) {
-	print '<input type="text" class="flat minwidth300"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
-	if (!empty($conf->use_javascript_ajax)) {
-		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') != 1) {
+	print '<input type="text" class="flat minwidth300 widthcentpercentminusx"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY')).'">';
+	if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') == 0) {
+		if (!empty($conf->use_javascript_ajax)) {
+			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+		}
+	} elseif (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') == -1) {
+		$langs->load("errors");
+		print '&nbsp;'.img_picto($langs->trans("WarningChangingThisMayBreakStopTaskScheduler"), 'info');
 	}
 } else {
-	print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
-	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
+	print getDolGlobalString('CRON_KEY');
+	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY')).'">';
 }
 print '</td>';
 print '<td>&nbsp;</td>';
@@ -110,7 +116,9 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Save", '');
+if (!getDolGlobalString('CRON_DISABLE_KEY_CHANGE')) {
+	print $form->buttonsSaveCancel("Save", '');
+}
 
 print '</form>';
 
@@ -118,8 +126,8 @@ print '</form>';
 print '<br><br><br>';
 
 //print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
-if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
-	print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
+if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
+	print info_admin($langs->trans("WarningCronDelayed", getDolGlobalString('CRON_WARNING_DELAY_HOURS'))).'<br>';
 }
 
 print '<br>';

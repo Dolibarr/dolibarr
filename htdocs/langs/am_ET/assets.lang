@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,170 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+NewAsset=አዲስ ንብረት
+AccountancyCodeAsset=የሂሳብ ኮድ (ንብረት)
+AccountancyCodeDepreciationAsset=የሂሳብ ኮድ (የዋጋ ቅነሳ የንብረት መለያ)
+AccountancyCodeDepreciationExpense=የሂሳብ ኮድ (የዋጋ ቅናሽ ሂሳብ)
+AssetsLines=ንብረቶች
+DeleteType=ሰርዝ
+DeleteAnAssetType=የንብረት ሞዴልን ሰርዝ
+ConfirmDeleteAssetType=እርግጠኛ ነዎት ይህን የንብረት ሞዴል መሰረዝ ይፈልጋሉ?
+ShowTypeCard=ሞዴል '%s' አሳይ
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=ንብረቶች
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=የንብረት መግለጫ
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=የንብረት ማዋቀር
+AssetSetupPage=የንብረት ማዋቀር ገጽ
+ExtraFieldsAssetModel=ተጨማሪ ባህሪያት (የንብረት ሞዴል)
+
+AssetsType=የንብረት ሞዴል
+AssetsTypeId=የንብረት ሞዴል መታወቂያ
+AssetsTypeLabel=የንብረት ሞዴል መለያ
+AssetsTypes=የንብረት ሞዴሎች
+ASSET_ACCOUNTANCY_CATEGORY=ቋሚ የንብረት ሒሳብ ቡድን
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets=ንብረቶች
+MenuNewAsset=አዲስ ንብረት
+MenuAssetModels=የሞዴል ንብረቶች
+MenuListAssets=ዝርዝር
+MenuNewAssetModel=አዲስ የንብረት ሞዴል
+MenuListAssetModels=ዝርዝር
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=ይህን ንብረት በእርግጥ ማስወገድ ይፈልጋሉ?
+
+#
+# Tab
+#
+AssetDepreciationOptions=የዋጋ ቅነሳ አማራጮች
+AssetAccountancyCodes=የሂሳብ አያያዝ መለያዎች
+AssetDepreciation=የዋጋ ቅነሳ
+
+#
+# Asset
+#
+Asset=ንብረት
+Assets=ንብረቶች
+AssetReversalAmountHT=የተገላቢጦሽ መጠን (ያለ ታክስ)
+AssetAcquisitionValueHT=የማግኛ መጠን (ያለ ታክስ)
+AssetRecoveredVAT=የተመለሰ ተ.እ.ታ
+AssetReversalDate=የተገላቢጦሽ ቀን
+AssetDateAcquisition=የተገኘበት ቀን
+AssetDateStart=የተጀመረበት ቀን
+AssetAcquisitionType=የግዢ አይነት
+AssetAcquisitionTypeNew=አዲስ
+AssetAcquisitionTypeOccasion=ጥቅም ላይ የዋለ
+AssetType=የንብረት አይነት
+AssetTypeIntangible=የማይዳሰስ
+AssetTypeTangible=የሚዳሰስ
+AssetTypeInProgress=በሂደት ላይ
+AssetTypeFinancial=የገንዘብ
+AssetNotDepreciated=አልቀነሰም።
+AssetDisposal=ማስወገድ
+AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
+AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=በሂደት ላይ
+AssetDisposed=ተወግዷል
+AssetRecorded=ተቆጥሯል።
+
+#
+# Asset disposal
+#
+AssetDisposalDate=የሚወገድበት ቀን
+AssetDisposalAmount=የማስወገጃ ዋጋ
+AssetDisposalType=የማስወገጃ አይነት
+AssetDisposalDepreciated=የዝውውር ዓመት ዋጋን ይቀንሱ
+AssetDisposalSubjectToVat=አወጋገድ ተ.እ.ታ
+
+#
+# Asset model
+#
+AssetModel=የንብረት ሞዴል
+AssetModels=የንብረት ሞዴሎች
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=የኢኮኖሚ ዋጋ መቀነስ
+AssetDepreciationOptionAcceleratedDepreciation=የተፋጠነ የዋጋ ቅናሽ (ግብር)
+AssetDepreciationOptionDepreciationType=የዋጋ ቅነሳ ዓይነት
+AssetDepreciationOptionDepreciationTypeLinear=መስመራዊ
+AssetDepreciationOptionDepreciationTypeDegressive=ወራዳ
+AssetDepreciationOptionDepreciationTypeExceptional=ልዩ
+AssetDepreciationOptionDegressiveRate=የማሽቆልቆል መጠን
+AssetDepreciationOptionDuration=ቆይታ
+AssetDepreciationOptionDurationType=የቆይታ ጊዜ ይተይቡ
+AssetDepreciationOptionDurationTypeAnnual=አመታዊ
+AssetDepreciationOptionDurationTypeMonthly=ወርሃዊ
+AssetDepreciationOptionDurationTypeDaily=በየቀኑ
+AssetDepreciationOptionRate=ደረጃ ይስጡ (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=የዋጋ ቅናሽ መሰረት (ከተጨማሪ እሴት ታክስ በስተቀር)
+AssetDepreciationOptionAmountBaseDeductibleHT=የሚቀነሰው መሠረት (ከተጨማሪ እሴት ታክስ በስተቀር)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=የዋጋ ቅናሽ ጠቅላላ መጠን (ከተጨማሪ እሴት ታክስ በስተቀር)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=የኢኮኖሚ ዋጋ መቀነስ
+AssetAccountancyCodeAsset=ንብረት
+AssetAccountancyCodeDepreciationAsset=የዋጋ ቅነሳ
+AssetAccountancyCodeDepreciationExpense=የዋጋ ቅነሳ ወጪ
+AssetAccountancyCodeValueAssetSold=የተጣለ ንብረት ዋጋ
+AssetAccountancyCodeReceivableOnAssignment=በመጣል ላይ ደረሰኝ
+AssetAccountancyCodeProceedsFromSales=ከማስወገድ የሚገኘው ገቢ
+AssetAccountancyCodeVatCollected=የተሰበሰበ ተ.እ.ታ
+AssetAccountancyCodeVatDeductible=በንብረቶች ላይ የተመለሰ ተ.እ.ታ
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=የተፋጠነ የዋጋ ቅናሽ (ግብር)
+AssetAccountancyCodeAcceleratedDepreciation=መለያ
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=የዋጋ ቅነሳ ወጪ
+AssetAccountancyCodeProvisionAcceleratedDepreciation=መልሶ ማግኘት/ አቅርቦት
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=የዋጋ ቅናሽ መሰረት (ከተጨማሪ እሴት ታክስ በስተቀር)
+AssetDepreciationBeginDate=የዋጋ ቅነሳ ጅምር በርቷል።
+AssetDepreciationDuration=ቆይታ
+AssetDepreciationRate=ደረጃ ይስጡ (%%)
+AssetDepreciationDate=የዋጋ ቅነሳ ቀን
+AssetDepreciationHT=የዋጋ ቅነሳ (ከተጨማሪ እሴት ታክስ በስተቀር)
+AssetCumulativeDepreciationHT=ድምር የዋጋ ቅናሽ (ከተጨማሪ እሴት ታክስ በስተቀር)
+AssetResidualHT=ቀሪ እሴት (ከተጨማሪ እሴት ታክስ በስተቀር)
+AssetDispatchedInBookkeeping=የዋጋ ቅናሽ ተመዝግቧል
+AssetFutureDepreciationLine=የወደፊት የዋጋ ቅነሳ
+AssetDepreciationReversal=መቀልበስ
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=የንብረቱ መታወቂያ ወይም የተገኘው ሞዴል አልቀረበም።
+AssetErrorFetchAccountancyCodesForMode=ለ'%sየዋጋ ቅነሳ ሁነታ የሂሳብ መለያዎችን በማውጣት ላይ ስህተት
+AssetErrorDeleteAccountancyCodesForMode=የሒሳብ መለያዎችን ከ'%sየዋጋ ቅነሳ ሁነታ ሲሰረዝ ስህተት
+AssetErrorInsertAccountancyCodesForMode=የዋጋ ቅነሳ ሁነታ '%s' የሂሳብ መለያዎችን ሲያስገቡ ስህተት
+AssetErrorFetchDepreciationOptionsForMode=የ%sየዋጋ ቅነሳ ሁነታ አማራጮችን በማውጣት ላይ ስህተት
+AssetErrorDeleteDepreciationOptionsForMode=የ%sየዋጋ ቅነሳ ሁነታ አማራጮችን ሲሰርዝ ስህተት
+AssetErrorInsertDepreciationOptionsForMode=የ%s የዋጋ ቅነሳ ሁነታ አማራጮችን ሲያስገቡ ስህተት
+AssetErrorFetchDepreciationLines=የተመዘገቡ የዋጋ ቅነሳ መስመሮችን በማውጣት ላይ ስህተት
+AssetErrorClearDepreciationLines=የተመዘገቡ የዋጋ ቅነሳ መስመሮችን (ተገላቢጦሽ እና ወደፊት) በማጽዳት ጊዜ ስህተት
+AssetErrorAddDepreciationLine=የዋጋ ቅነሳ መስመር ሲጨመር ስህተት
+AssetErrorCalculationDepreciationLines=የዋጋ ቅነሳ መስመሮችን (ማግኛ እና የወደፊት) ሲያሰሉ ስህተት
+AssetErrorReversalDateNotProvidedForMode=የተገላቢጦሹ ቀን ለ'%sየዋጋ ቅነሳ ዘዴ አልቀረበም።
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=ለ%sየዋጋ ቅነሳ ዘዴ ከአሁኑ የበጀት ዓመት መጀመሪያ የሚበልጥ ወይም እኩል መሆን አለበት።
+AssetErrorReversalAmountNotProvidedForMode=የተገላቢጦሹ መጠን ለዋጋ ቅናሽ ሁነታ '%s' አልቀረበም።
+AssetErrorFetchCumulativeDepreciation=የተጠራቀመውን የዋጋ ቅናሽ መጠን ከዋጋ ቅናሽ መስመር በማውጣት ላይ ስህተት
+AssetErrorSetLastCumulativeDepreciation=የመጨረሻውን የተጠራቀመ የዋጋ ቅናሽ መጠን ሲመዘገብ ስህተት
