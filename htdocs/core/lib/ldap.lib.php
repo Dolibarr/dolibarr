@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,15 +126,13 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
  * @param	array<'count'|int|string,int|string|array>	$result	Array to show. This array is already encoded into charset_output
  * @param   int			$level		Level
  * @param   int			$count		Count
- * @param   string		$var		Var
+ * @param   bool		$var		Var deprecated (replaced by css oddeven)
  * @param   int<0,1>	$hide		Hide
  * @param   int			$subcount	Subcount
  * @return  int
  */
 function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)
 {
-	global $bc, $conf;
-
 	$count--;
 	if ($count == 0) {
 		return -1; // To stop loop

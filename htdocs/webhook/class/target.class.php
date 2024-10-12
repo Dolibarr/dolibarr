@@ -95,7 +95,7 @@ class Target extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'index' => 1, 'searchall' => 1, 'validate' => 1, 'comment' => "Reference of object"),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 2, 'validate' => 1, 'autofocusoncreate'=>1),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 2, 'validate' => 1, 'autofocusoncreate' => 1),
 		'trigger_codes' => array('type' => 'text', 'label' => 'TriggerCodes', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1, 'help' => "TriggerCodeInfo", 'tdcss' => 'titlefieldmiddle', 'csslist' => 'tdoverflowmax200', 'css' => 'minwidth400', 'arrayofkeyval' => array('defined_in_constructor' => 'defined_from_c_action_trigger'), 'multiinput' => 1,),
 		'url' => array('type' => 'url', 'label' => 'Url', 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'visible' => 1,),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
@@ -106,7 +106,8 @@ class Target extends CommonObject
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'default' => '1', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Disabled', '1' => 'Enabled'), 'validate' => 1,),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'default' => '1', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Disabled', '1' => 'AutomaticTrigger', '2' => 'ManualTrigger'), 'validate' => 1,),
+		"trigger_stack" => array("type" => "text", "label" => "TriggerStack", "enabled" => "1", 'position' => 59, 'notnull' => 0, "visible" => "0",),
 	);
 	public $rowid;
 	public $ref;
@@ -123,6 +124,11 @@ class Target extends CommonObject
 	 * @var string	List of trigger codes separated by a comma. Example: 'BILL_VALIDATE,PROPAL_DELETE,...'
 	 */
 	public $trigger_codes;
+
+	/**
+	 * @var string Json array to store manual trigger that needs to be send
+	 */
+	public $trigger_stack;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -301,9 +307,11 @@ class Target extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {

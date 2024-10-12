@@ -8,7 +8,8 @@
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017-2018  Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
@@ -314,13 +315,14 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, (is_object($outputlangsbis) ? $outputlangsbis : null));
+				$pagehead = $this->_pagehead($pdf, $object, 1, $outputlangs, (is_object($outputlangsbis) ? $outputlangsbis : null));
+				$top_shift = $pagehead['top_shift'];
+				$shipp_shift = $pagehead['shipp_shift'];
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-
-				$tab_top = 90 + $top_shift;
+				$tab_top = 90 + $top_shift + $shipp_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// Incoterm
@@ -337,7 +339,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
+						$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
 
 						$tab_top = $nexY + 6;
 					}
@@ -377,7 +379,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1, $this->corner_radius, '1234', 'D');
 
 					$tab_top = $nexY + 6;
 				}
@@ -1200,7 +1202,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1208,7 +1210,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidetop)) {
 			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5); // line takes a position y in 2nd parameter and 4th parameter
@@ -1273,7 +1275,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	float|int                   Return topshift value
+	 *  @return	array<string, int|float>	top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
@@ -1408,6 +1410,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy += 2;
 
 		$top_shift = 0;
+		$shipp_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
@@ -1450,7 +1453,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, 82, $hautcadre, $this->corner_radius, '1234', 'F');
 				$pdf->SetTextColor(0, 0, 60);
 			}
 
@@ -1506,7 +1509,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
 				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
@@ -1522,11 +1525,54 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetXY($posx + 2, $posy);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
+
+			// Show shipping address
+			if (getDolGlobalInt('SALES_ORDER_SHOW_SHIPPING_ADDRESS')) {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$companystatic = new Societe($this->db);
+					$companystatic->fetch($object->contact->fk_soc);
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, ($usecontact ? 1 : 0), 'target', $object);
+				} else {
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+				}
+				if (!empty($carac_client_shipping)) {
+					$posy += $hautcadre;
+
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+
+					// Show shipping frame
+					$pdf->SetXY($posx + 2, $posy - 5);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
+					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
+
+					// Show shipping name
+					$pdf->SetXY($posx + 2, $posy + 1);
+					$pdf->SetFont('', 'B', $default_font_size);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, '', 'L');
+
+					$posy = $pdf->getY();
+
+					// Show shipping information
+					$pdf->SetXY($posx + 2, $posy);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
+
+					$shipp_shift += $hautcadre + 10;
+				}
+			}
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		return $top_shift;
+		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+
+		return $pagehead;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

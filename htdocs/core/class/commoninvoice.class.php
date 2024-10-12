@@ -439,15 +439,15 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @see $error Empty string '' if no error.
 	 *
-	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
-	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
+	 *	@param		string	$filtertype			1 to filter on type of payment == 'PRE' for the payment lines
+	 *  @param      int     $multicurrency  	Return multicurrency_amount instead of amount
+	 *  @param		int		$mode				0=payments + discount, 1=payments only
 	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
 	 */
-	public function getListOfPayments($filtertype = '', $multicurrency = 0)
+	public function getListOfPayments($filtertype = '', $multicurrency = 0, $mode = 0)
 	{
 		$retarray = array();
-		// By default no error, list can be empty.
-		$this->error = '';
+		$this->error = '';	// By default no error, list can be empty.
 
 		$table = 'paiement_facture';
 		$table2 = 'paiement';
@@ -465,36 +465,50 @@ abstract class CommonInvoice extends CommonObject
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
-		$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
-		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
-		$sql .= " AND pf.".$field2." = p.rowid";
-		$sql .= ' AND p.fk_paiement = t.id';
-		$sql .= ' AND p.entity IN ('.getEntity($sharedentity).')';
-		if ($filtertype) {
-			$sql .= " AND t.code='PRE'";
+		// List of payments
+		if (empty($mode) || $mode == 1) {
+			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
+			$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
+			$sql .= " WHERE pf.".$field." = ".((int) $this->id);
+			$sql .= " AND pf.".$field2." = p.rowid";
+			$sql .= ' AND p.fk_paiement = t.id';
+			$sql .= ' AND p.entity IN ('.getEntity($sharedentity).')';
+			if ($filtertype) {
+				$sql .= " AND t.code='PRE'";
+			}
+
+			dol_syslog(get_class($this)."::getListOfPayments filtertype=".$filtertype." multicurrency=".$multicurrency." mode=".$mode, LOG_DEBUG);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					if ($multicurrency) {
+						$tmp = array('amount' => $obj->multicurrency_amount, 'type' => $obj->code, 'typeline' => 'payment', 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
+					} else {
+						$tmp = array('amount' => $obj->amount, 'type' => $obj->code, 'typeline' => 'payment', 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
+					}
+					if (!empty($field3)) {
+						$tmp['ref_ext'] = $obj->ref_ext;
+					}
+					if (!empty($field4)) {
+						$tmp['fk_bank_line'] = $obj->fk_bank;
+					}
+					$retarray[] = $tmp;
+					$i++;
+				}
+				$this->db->free($resql);
+			} else {
+				$this->error = $this->db->lasterror();
+				dol_print_error($this->db);
+				return array();
+			}
 		}
 
-		dol_syslog(get_class($this)."::getListOfPayments", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-				$tmp = array('amount' => $obj->amount, 'type' => $obj->code, 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
-				if (!empty($field3)) {
-					$tmp['ref_ext'] = $obj->ref_ext;
-				}
-				if (!empty($field4)) {
-					$tmp['fk_bank_line'] = $obj->fk_bank;
-				}
-				$retarray[] = $tmp;
-				$i++;
-			}
-			$this->db->free($resql);
-
-			//look for credit notes and discounts and deposits
+		// Look for credit notes and discounts and deposits
+		if (empty($mode) || $mode == 2) {
 			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice') {
 				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
@@ -516,9 +530,9 @@ abstract class CommonInvoice extends CommonObject
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 						if ($multicurrency) {
-							$retarray[] = array('amount' => $obj->multicurrency_amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '0', 'ref' => $obj->ref);
+							$retarray[] = array('amount' => $obj->multicurrency_amount, 'type' => $obj->type, 'typeline' => 'discount', 'date' => $obj->date, 'num' => '0', 'ref' => $obj->ref);
 						} else {
-							$retarray[] = array('amount' => $obj->amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '', 'ref' => $obj->ref);
+							$retarray[] = array('amount' => $obj->amount, 'type' => $obj->type, 'typeline' => 'discount', 'date' => $obj->date, 'num' => '', 'ref' => $obj->ref);
 						}
 						$i++;
 					}
@@ -528,14 +542,14 @@ abstract class CommonInvoice extends CommonObject
 					return array();
 				}
 				$this->db->free($resql);
+			} else {
+				$this->error = $this->db->lasterror();
+				dol_print_error($this->db);
+				return array();
 			}
-
-			return $retarray;
-		} else {
-			$this->error = $this->db->lasterror();
-			dol_print_error($this->db);
-			return array();
 		}
+
+		return $retarray;
 	}
 
 
@@ -609,7 +623,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Return if an invoice was dispatched into bookkeeping
+	 *	Return if an invoice was transferred into accountnancy.
+	 *  This is true if at least on line was transferred into table accounting_bookkeeping
 	 *
 	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
@@ -622,7 +637,9 @@ abstract class CommonInvoice extends CommonObject
 			$type = 'supplier_invoice';
 		}
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".$this->db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".$this->db->prefix()."accounting_bookkeeping as ab";
+		$sql .= " WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

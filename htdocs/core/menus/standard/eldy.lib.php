@@ -498,6 +498,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
 		$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+		'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
 
 		// url = url from host, shorturl = relative path into dolibarr sources
 		$url = $shorturl = $newTabMenu[$i]['url'];
@@ -2001,7 +2002,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (isModEnabled('category')) {
 			$langs->load("categories");
 			$newmenu->add("/categories/index.php?type=5", $langs->trans("Rubriques"), 1, $user->hasRight('categorie', 'creer'), '', $mainmenu, 'tags');
-			$newmenu->add("/compta/bank/categ.php", $langs->trans("RubriquesTransactions"), 1, $user->hasRight('banque', 'configurer'), '', $mainmenu, 'tags');
+			$newmenu->add("/categories/index.php?type=8", $langs->trans("RubriquesTransactions"), 1, $user->hasRight('banque', 'configurer'), '', $mainmenu, 'tags');
 		}
 
 		// Direct debit order

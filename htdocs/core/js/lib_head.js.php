@@ -1321,7 +1321,7 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
-	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		let parentHolder = jQuery(event.target).parent();
 		let dropDownContent = parentHolder.children(".dropdown-content");
@@ -1333,7 +1333,8 @@ jQuery(document).ready(function() {
 		if (widthPopup + right >= widthDocument) {
 			//right = 10;
 		}
-		parentHolder.toggleClass("open");
+
+		parentHolder.toggleClass("open");	/* If open, it closes, if closed, it opens */
 
 		// Check tooltip is in viewport
 		let dropDownContentTop = dropDownContent.offset().top;
@@ -1363,9 +1364,10 @@ jQuery(document).ready(function() {
 	// Close drop down
 	jQuery(document).on("click", function(event) {
 		// search if click was outside drop down
-		if (!$(event.target).closest('.dropdown-toggle').length) {
-			let parentholder = jQuery(".dropdown-toggle").closest(".dropdown.open");
-			if(parentholder){
+		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
+			/* console.log("click close butAction - we click outside"); */
+			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+			if (parentholder){
 				// Hide the menus.
 				parentholder.removeClass("open --up --left");
 			}

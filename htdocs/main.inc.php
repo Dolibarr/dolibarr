@@ -511,7 +511,7 @@ if (GETPOST('theme', 'aZ09')) {
 }
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
-if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
+if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
 }
 
@@ -2148,7 +2148,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 				if ($enablebrowsernotif) {
 					print '<!-- Includes JS of Dolibarr (browser layout = '.$conf->browser->layout.')-->'."\n";
-					print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 				}
 			}
 
@@ -2514,6 +2514,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
+	// Return empty in some case
+	if ($conf->browser->name == 'textbrowser') {
+		return '';
+	}
+
 	$langs->load('companies');
 
 	$userImage = $userDropDownImage = '';
@@ -2735,14 +2740,14 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
         <!-- Code to show/hide the user drop-down -->
         <script>
 		function closeTopMenuLoginDropdown() {
-			//console.log("close login dropdown");	// This is call at each click on page, so we disable the log
+			console.log("close login dropdown");	// This is called at each click on page, so we disable the log
 			// Hide the menus.
             jQuery("#topmenu-login-dropdown").removeClass("open");
 		}
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
-				// console.log("Click somewhere on screen");
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+					/* console.log("click close login - we click outside"); */
 					closeTopMenuLoginDropdown();
                 }
             });
@@ -2821,7 +2826,8 @@ function top_menu_quickadd()
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
-                    // Hide the menus.
+                    /* console.log("click close quick add - we click outside"); */
+					// Hide the menus.
                     $("#topmenu-quickadd-dropdown").removeClass("open");
                 }
             });
@@ -3050,10 +3056,15 @@ function top_menu_bookmark()
 
 	$html = '';
 
-	// Define $bookmarks
+	// Return empty in some case
 	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire')) {
+		return '';
+	}
+	/*
+	if ($conf->browser->name == 'textbrowser') {
 		return $html;
 	}
+	*/
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
@@ -3093,7 +3104,7 @@ function top_menu_bookmark()
 	        jQuery(document).ready(function() {
 	            jQuery(document).on("click", function(event) {
 	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-						//console.log("close bookmark dropdown - we click outside");
+						/* console.log("close bookmark dropdown - we click outside"); */
 	                    // Hide the menus.
 	                    $("#topmenu-bookmark-dropdown").removeClass("open");
 	                }
@@ -3362,7 +3373,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 				//$textsearch = $langs->trans("Search");
 				$textsearch = '<span class="fa fa-search paddingright pictofixedwidth"></span>'.$langs->trans("Search");
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					// @phan-suppress-next-line PhanEmptyForeach // array is really empty in else case.

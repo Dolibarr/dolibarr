@@ -307,7 +307,7 @@ if (empty($reshook)) {
 		}
 
 		$db->begin();
-
+		$old_start_date = null;
 		if (!$error) {
 			$object->oldcopy = clone $object;
 
@@ -622,6 +622,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Search template files
 	$file = '';
 	$classname = '';
+	$reldir = '';
 	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
@@ -637,7 +638,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 		if (class_exists($classname)) {
 			$modProject = new $classname();
-
+			'@phan-var-force ModeleNumRefProjects $modProject';
 			$defaultref = $modProject->getNextValue($thirdparty, $object);
 		}
 	}
@@ -891,7 +892,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
 		$arrayselected = GETPOST('categories', 'array');
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -981,7 +982,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'delete') {
 		$text = $langs->trans("ConfirmDeleteAProject");
 		$task = new Task($db);
-		$taskarray = $task->getTasksArray(0, 0, $object->id, 0, 0);
+		$taskarray = $task->getTasksArray(null, null, $object->id, 0, 0);
 		$nboftask = count($taskarray);
 		if ($nboftask) {
 			$text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks", $nboftask);
@@ -993,7 +994,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'clone') {
 		$formquestion = array(
 			'text' => $langs->trans("ConfirmClone"),
-			0 => array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
+			0 => array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, array(), 0, 'minwidth200 maxwidth250')),
 			1 => array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
 			2 => array('type' => 'checkbox', 'name' => 'clone_tasks', 'label' => $langs->trans("CloneTasks"), 'value' => true),
 			3 => array('type' => 'checkbox', 'name' => 'move_date', 'label' => $langs->trans("CloneMoveDate"), 'value' => true),
@@ -1659,9 +1660,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				}
 			}
 
+
 			// Buttons Create
 			if (!getDolGlobalString('PROJECT_HIDE_CREATE_OBJECT_BUTTON')) {
 				$arrayforbutaction = array(
+					//1 => array('lang' => 'propal', 'enabled' => 1, 'perm' => 1, 'label' => 'XXX'),
 					10 => array('lang' => 'propal', 'enabled' => isModEnabled("propal"), 'perm' => $user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url' => '/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					20 => array('lang' => 'orders', 'enabled' => isModEnabled("order"), 'perm' => $user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url' => '/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					30 => array('lang' => 'bills', 'enabled' => isModEnabled("invoice"), 'perm' => $user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url' => '/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
@@ -1671,10 +1674,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 					70 => array('lang' => 'interventions', 'enabled' => isModEnabled("intervention"), 'perm' => $user->hasRight('fichinter', 'creer'), 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					80 => array('lang' => 'contracts', 'enabled' => isModEnabled("contract"), 'perm' => $user->hasRight('contrat', 'creer'), 'label' => 'AddContract', 'url' => '/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					90 => array('lang' => 'trips', 'enabled' => isModEnabled("expensereport"), 'perm' => $user->hasRight('expensereport', 'creer'), 'label' => 'AddTrip', 'url' => '/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-				   100 => array('lang' => 'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer'), 'label' => 'AddDonation', 'url' => '/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					100 => array('lang' => 'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer'), 'label' => 'AddDonation', 'url' => '/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 				);
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);
+				//$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id, 'isDropDown' => true);
 
 				print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, '', 1, $params);
 			}

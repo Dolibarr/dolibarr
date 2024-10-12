@@ -1084,6 +1084,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 	dol_mkdir($destdir.'/lib');
 	dol_mkdir($destdir.'/scripts');
 	dol_mkdir($destdir.'/sql');
+	dol_mkdir($destdir.'/ajax');
 
 	// Scan dir class to find if an object with the same name already exists.
 	if (!$error) {
@@ -1370,6 +1371,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			//'scripts/mymodule.php' => 'scripts/'.strtolower($objectname).'.php',
 			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
 			//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
+			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
 		);
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
@@ -4083,6 +4085,7 @@ if ($module == 'initmodule') {
 						print '<option>date</option>';
 						print '<option>datetime</option>';
 						print '<option>integer</option>';
+						print '<option>stars(5)</option>';
 						print '<option>double(28,4)</option>';
 						print '<option>real</option>';
 						print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
@@ -4462,14 +4465,15 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
-							print '<br><br>';
+							print '<br><br class="clearboth">';
+							print '<br class="clearboth">';
 
 							$mod = strtolower($module);
 							$obj = strtolower($tabobj);
 							$newproperty = dolGetButtonTitle($langs->trans('NewProperty'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module).'&tabobj=createproperty&obj='.urlencode($tabobj));
 							$nbOfProperties = count($reflectorpropdefault['fields']);
 
-							print_barre_liste($langs->trans("ObjectProperties"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $nbOfProperties, '', 0, $newproperty, '', 0, 0, 0, 1);
+							print_barre_liste($langs->trans("ObjectProperties"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $nbOfProperties, '', 0, $newproperty, 'margintoponly', 0, 0, 0, 1);
 
 							//var_dump($reflectorpropdefault);exit;
 							print '<!-- Table with properties of object -->'."\n";
@@ -4650,6 +4654,8 @@ if ($module == 'initmodule') {
 											$pictoType = 'datetime';
 										} elseif (strpos($proptype, 'real') === 0) {
 											$pictoType = 'double';
+										} elseif (strpos($proptype, 'stars') === 0) {
+											$pictoType = 'stars';
 										}
 										print(!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';

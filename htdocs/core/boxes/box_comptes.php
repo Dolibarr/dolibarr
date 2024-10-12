@@ -74,7 +74,9 @@ class box_comptes extends ModeleBoxes
 
 		$this->max = $max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleCurrentAccounts").'<a class="paddingleft" href="'.DOL_URL_ROOT.'/compta/bank/list.php?search_status=opened"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('banque', 'lire')) {
 			$sql = "SELECT b.rowid, b.ref, b.label, b.bank, b.number, b.courant, b.clos, b.rappro, b.url";
@@ -160,6 +162,13 @@ class box_comptes extends ModeleBoxes
 						'text' => '<span class="amount">'.price($solde, 0, $langs, 0, -1, -1, $key).'</span>'
 					);
 					$line++;
+				}
+
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center"',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedBankAccounts").'</span>'
+					);
 				}
 
 				$this->db->free($result);

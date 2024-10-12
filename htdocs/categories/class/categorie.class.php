@@ -258,7 +258,7 @@ class Categorie extends CommonObject
 	public $type;
 
 	/**
-	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>  Categories table in memory
+	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:?int}>  Categories table in memory
 	 */
 	public $cats = array();
 
@@ -356,6 +356,16 @@ class Categorie extends CommonObject
 		}
 
 		return $mapList;
+	}
+
+	/**
+	 * Get MAP_ID
+	 *
+	 * @return	array
+	 */
+	public function getMapId()
+	{
+		return $this->MAP_ID;
 	}
 
 	/**
@@ -1167,7 +1177,7 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
-	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
+	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:?int}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
 	public function get_full_arbo($type, $fromid = 0, $include = 0)
 	{
@@ -1244,7 +1254,7 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
 		foreach ($this->cats as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
-			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
+			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent) and adds kevek to $this->cats items
 		}
 
 		// Include or exclude leaf (including $fromid) from tree
@@ -1262,7 +1272,7 @@ class Categorie extends CommonObject
 					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath));
 
 				if (($test && !$include) || (!$test && $include)) {
-					unset($this->cats[$key]);
+					unset($this->cats[$key]);  // @phpstan-ignore-line
 				}
 			}
 		}
@@ -1562,10 +1572,10 @@ class Categorie extends CommonObject
 			$type = Categorie::$MAP_ID_TO_CODE[$type];
 		}
 
-		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_category_bank into llx_categorie
+		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this after migration of llx_category_bankline into llx_categorie_bankline
 			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."category_bankline as a, ".MAIN_DB_PREFIX."category_bank as c";
+			$sql .= " FROM ".MAIN_DB_PREFIX."category_bankline as a, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE a.lineid=".((int) $id)." AND a.fk_categ = c.rowid";
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";

@@ -176,7 +176,7 @@ class Adherent extends CommonObject
 	public $morphy;
 
 	/**
-	 * @var int Info can be public
+	 * @var int<0,1> Info can be public
 	 */
 	public $public;
 

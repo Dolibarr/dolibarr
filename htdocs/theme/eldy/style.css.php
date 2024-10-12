@@ -338,7 +338,7 @@ if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
 	$maxwidthloginblock += 55;
 }
-if (!empty($conf->bookmark->enabled)) {
+if (isModEnabled('bookmark')) {
 	$maxwidthloginblock += 55;
 }
 

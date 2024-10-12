@@ -93,6 +93,8 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 $ret = 0;
+$pu_ht = null;  // Init for static analysis
+$pu_ttc = null;  // Init for static analysis
 
 // Load object
 if ($id > 0 || !empty($ref) && $action != 'add') {
@@ -1469,7 +1471,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
+			$morehtmlref .= ' <span class="otherlink">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -2272,7 +2274,7 @@ if ($action == 'create') {
 				$arrayforbutaction = array();
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
 					$arrayforbutaction[] = array(
-						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(),
+						'url' => '/contrat/card.php?id='.$object->id.'&action=activate&token='.newToken(),
 						'label' => $langs->trans('ActivateAllContracts'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'activer'),
@@ -2281,7 +2283,7 @@ if ($action == 'create') {
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
 					$arrayforbutaction[] = array(
-						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(),
+						'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
 						'label' => $langs->trans('CloseAllContracts'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'desactiver'),

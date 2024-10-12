@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Expedition	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function shipping_prepare_head($object)
@@ -285,7 +285,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
-			if (!empty($conf->productbatch->enabled))
+			if (isModEnabled('productbatch'))
 			{
 				print '<td>';
 				print '</td>';
@@ -320,6 +320,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					// Define output language
 					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$object = new $origin($db);
+						'@phan-var-force CommonObject $object';
 						$object->fetch($origin_id);
 						$object->fetch_thirdparty();
 
@@ -356,7 +357,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text, $description, 3, '', '', $i);
+					print $form->textwithtooltip($text, $description, 3, 0, '', $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
@@ -377,7 +378,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text, $objp->description, 3, '', '', $i);
+						print $form->textwithtooltip($text, $objp->description, 3, 0, '', $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
@@ -410,7 +411,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Batch number management
 				/*TODO Add link to expeditiondet_batch
-				if (!empty($conf->productbatch->enabled))
+				if (isModEnabled('productbatch'))
 				{
 					//var_dump($objp->edrowid);
 					$lines[$i]->detail_batch
@@ -452,6 +453,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($receiving)) {
+						'@phan-var-force Delivery $receiving';
 						// $expedition->fk_elementdet = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order
 						// $receiving->origin may be 'shipping'

@@ -518,6 +518,7 @@ if (!empty($arrayfields['i']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pndf.rowid']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pndf.rowid']['label'], $_SERVER["PHP_SELF"], 'pndf.rowid', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

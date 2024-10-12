@@ -33,10 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills"));
 
-$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel');
 
+$chid = GETPOSTINT("id");
 $amounts = array();
 
 // Security check
@@ -45,12 +46,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {

@@ -38,6 +38,9 @@ class mod_recruitmentcandidature_standard extends ModeleNumRefRecruitmentCandida
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string
+	 */
 	public $prefix = 'JOA';
 
 	/**

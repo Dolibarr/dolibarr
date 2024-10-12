@@ -40,6 +40,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Include Dolibarr environment
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 // After this $db is an opened handler to database. We close it at end of file.
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php";

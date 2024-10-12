@@ -281,7 +281,7 @@ function various_payment_prepare_head($object)
  *      @param	?string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
  *      @return boolean                 True if information are valid, false otherwise
  */
-function checkSwiftForAccount(Account $account = null, $swift = null)
+function checkSwiftForAccount($account = null, $swift = null)
 {
 	if ($account == null && $swift == null) {
 		return false;
@@ -302,7 +302,7 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
  *      @param	?string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
  *      @return boolean                 	True if information are valid, false otherwise
  */
-function checkIbanForAccount(Account $account = null, $ibantocheck = null)
+function checkIbanForAccount($account = null, $ibantocheck = null)
 {
 	if ($account == null && $ibantocheck == null) {
 		return false;

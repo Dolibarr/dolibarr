@@ -59,6 +59,9 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_create = '';
 
 	/**
@@ -161,9 +164,19 @@ class Holiday extends CommonObject
 	public $events = array();
 	public $logs = array();
 
+
+	/**
+	 * @var string
+	 */
 	public $optName = '';
+	/**
+	 * @var string
+	 */
 	public $optValue = '';
-	public $optRowid = '';
+	/**
+	 * @var int
+	 */
+	public $optRowid = 0;
 
 	/**
 	 * Draft status
@@ -204,7 +217,7 @@ class Holiday extends CommonObject
 	 *  Returns the reference to the following non used Order depending on the active numbering module
 	 *  defined into HOLIDAY_ADDON
 	 *
-	 *	@param	Societe		$objsoc     third party object
+	 *	@param	?Societe	$objsoc     third party object
 	 *  @return string      			Holiday free reference
 	 */
 	public function getNextNumRef($objsoc)
@@ -492,6 +505,7 @@ class Holiday extends CommonObject
 	 */
 	public function fetchByUser($user_id, $order = '', $filter = '')
 	{
+		$this->holiday = [];
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
@@ -746,9 +760,9 @@ class Holiday extends CommonObject
 	/**
 	 *	Validate leave request
 	 *
-	 *  @param	User	$user        	User that validate
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user        	User that validate
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function validate($user = null, $notrigger = 0)
 	{
@@ -871,8 +885,8 @@ class Holiday extends CommonObject
 	/**
 	 *	Approve leave request
 	 *
-	 *  @param	User	$user        	User that approve
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @param	User		$user        	User that approve
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user = null, $notrigger = 0)
@@ -998,8 +1012,8 @@ class Holiday extends CommonObject
 	/**
 	 *	Update database
 	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @param	User		$user        	User that modify
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
@@ -1268,7 +1282,7 @@ class Holiday extends CommonObject
 	 * 	@param 	int			$fk_user				Id user
 	 *  @param	integer	    $timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
 	 *  @param	string		$status					Filter on holiday status. '-1' = no filter.
-	 * 	@return array								array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
+	 * 	@return array{morning_reason?:string,afternoon_reason?:string}		array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
 	 *  @see verifDateHolidayCP()
 	 */
 	public function verifDateHolidayForTimestamp($fk_user, $timestamp, $status = '-1')
@@ -1644,35 +1658,35 @@ class Holiday extends CommonObject
 	 */
 	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
-		global $user, $langs;
+		global $user, $langs, $conf;
 
 		$error = 0;
 
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
 			$langs->load("holiday");
 
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
+
 			// Si mise à jour pour tout le monde en début de mois
 			$now = dol_now();
 
-			$month = date('m', $now);
-			$newdateforlastupdate = dol_print_date($now, '%Y%m%d%H%M%S');
-
 			// Get month of last update
-			$lastUpdate = $this->getConfCP('lastUpdate', $newdateforlastupdate);
-			$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+			$lastUpdate = dol_stringtotime($this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S')));
 			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
-			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user.
-			if ($month != $monthLastUpdate) {
+			$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
+			$yearMonthNow = dol_print_date($now, '%Y%m');
+
+			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user,
+			// catching up to the current month if a gap is detected
+			while ($yearMonthLastUpdate < $yearMonthNow) {
 				$this->db->begin();
+
+				$year = dol_print_date($lastUpdate, '%Y');
+				$month = dol_print_date($lastUpdate, '%m');
 
 				$users = $this->fetchUsers(false, false, ' AND u.statut > 0');
 				$nbUser = count($users);
-
-				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-				$sql .= " value = '".$this->db->escape($newdateforlastupdate)."'";
-				$sql .= " WHERE name = 'lastUpdate'";
-				$result = $this->db->query($sql);
 
 				$typeleaves = $this->getTypes(1, 1);
 
@@ -1685,30 +1699,92 @@ class Holiday extends CommonObject
 
 					dol_syslog("We update leave type id ".$userCounter['type']." for user id ".$userCounter['rowid'], LOG_DEBUG);
 
-					$nowHoliday = $userCounter['nb_holiday'];
+					$nowHoliday = (float) $userCounter['nb_holiday'];
 					$newSolde = $nowHoliday + $nbDaysToAdd;
 
-					// We add a log for each user
-					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
+					// We add a log for each user when its balance gets increased
+					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidayMonthlyCredit'), $newSolde, $userCounter['type']);
 
 					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
 
 					if ($result < 0) {
-						$error++;
-						break;
+						$this->db->rollback();
+						return -1;
+					}
+
+					if (empty($decrease)) {
+						continue;
+					}
+
+					// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
+					$filter = " AND cp.statut = ".((int) self::STATUS_APPROVED);
+					$filter .= " AND cp.date_fin >= '".$this->db->idate(dol_stringtotime(dol_print_date($lastUpdate, '%Y-%m-01')))."'";
+					$filter .= " AND cp.date_debut <= '".$this->db->idate(dol_stringtotime(dol_print_date($lastUpdate, '%Y-%m-t')))."'";
+					$filter .= " AND cp.fk_type = ".((int) $userCounter['type']);
+					$this->fetchByUser($userCounter['id'], '', $filter);
+
+					if (empty($this->holiday)) {
+						continue;
+					}
+
+					$startOfMonth = dol_mktime(0, 0, 0, (int) $month, 1, (int) $year, 1);
+					$endOfMonth = dol_mktime(0, 0, 0, (int) $month, (int) dol_print_date($lastUpdate, 't'), (int) $year, 1);
+
+					foreach ($this->holiday as $obj) {
+						$startDate = $obj['date_debut_gmt'];
+						$endDate = $obj['date_fin_gmt'];
+
+						if ($startDate <= $endOfMonth && $startDate < $startOfMonth) {
+							$startDate = $startOfMonth;
+						}
+
+						if ($startOfMonth <= $endDate && $endDate > $endOfMonth) {
+							$endDate = $endOfMonth;
+						}
+
+						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
+
+						if ($nbDaysToDeduct <= 0) {
+							continue;
+						}
+
+						$newSolde -= $nbDaysToDeduct;
+
+						// We add a log for each user when its balance gets decreased
+						$this->addLogCP($user->id, $userCounter['rowid'], $obj['ref'].' - '.$langs->trans('HolidayConsumption'), $newSolde, $userCounter['type']);
+
+						$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
+
+						if ($result < 0) {
+							$this->db->rollback();
+							return -1;
+						}
 					}
 				}
 
-				if (!$error) {
-					$this->db->commit();
-					return 1;
-				} else {
+				//updating the date of the last monthly balance update
+				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
+				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+				$sql .= " value = '".$this->db->escape(dol_print_date($lastUpdate, '%Y%m%d%H%M%S'))."'";
+				$sql .= " WHERE name = 'lastUpdate'";
+				$result = $this->db->query($sql);
+
+				if (!$result) {
 					$this->db->rollback();
 					return -1;
 				}
+
+				$this->db->commit();
+
+				$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
 			}
 
-			return 0;
+			if (!$error) {
+				return 1;
+			} else {
+				return 0;
+			}
 		} else {
 			// Mise à jour pour un utilisateur
 			$nbHoliday = price2num($nbHoliday, 5);
@@ -1794,7 +1870,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	int		$user_id    User ID
 	 *  @param	int		$fk_type	Filter on type
-	 *  @return float|null     		Balance of annual leave if OK, null if KO.
+	 *  @return ?float	     		Balance of annual leave if OK, null if KO.
 	 */
 	public function getCPforUser($user_id, $fk_type = 0)
 	{
@@ -1821,12 +1897,12 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *    Get list of Users or list of vacation balance.
+	 *	Get list of Users or list of vacation balance.
 	 *
-	 *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array with detail.
-	 *    @param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *    @param      string            $filters        Filters. Warning: This must not contains data from user input.
-	 *    @return     array|string|int      			Return an array
+	 *	@param	boolean		$stringlist	    If true return a string list of id. If false, return an array with detail.
+	 *	@param	boolean		$type			If true, read Dolibarr user list, if false, return vacation balance list.
+	 *	@param	string		$filters        Filters. Warning: This must not contains data from user input.
+	 *	@return array<array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:int,employee:int,photo:string,fk_user:int,type?:int,nb_holiday?:int}>|string|int<-1,-1>	Return an array
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
@@ -1961,16 +2037,16 @@ class Holiday extends CommonObject
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
-						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
-						$tab_result[$i]['id'] = $obj->rowid; // id of user
+						$tab_result[$i]['rowid'] = (int) $obj->rowid; // rowid of user
+						$tab_result[$i]['id'] = (int) $obj->rowid; // id of user
 						$tab_result[$i]['name'] = $obj->lastname; // deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
 						$tab_result[$i]['gender'] = $obj->gender;
-						$tab_result[$i]['status'] = $obj->status;
-						$tab_result[$i]['employee'] = $obj->employee;
+						$tab_result[$i]['status'] = (int) $obj->status;
+						$tab_result[$i]['employee'] = (int) $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
-						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
+						$tab_result[$i]['fk_user'] = (int) $obj->fk_user; // rowid of manager
 						//$tab_result[$i]['type'] = $obj->type;
 						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
@@ -2037,7 +2113,7 @@ class Holiday extends CommonObject
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
 	 *
-	 * @return  array|int       Array of user ids or -1 if error
+	 * @return  int[]|int<-1,-1>	Array of user ids or -1 if error
 	 */
 	public function fetch_users_approver_holiday()
 	{
@@ -2266,9 +2342,9 @@ class Holiday extends CommonObject
 	/**
 	 *  Return array with list of types
 	 *
-	 *  @param		int		$active		Status of type. -1 = Both
-	 *  @param		int		$affect		Filter on affect (a request will change sold or not). -1 = Both
-	 *  @return     array	    		Return array with list of types
+	 *  @param	int		$active		Status of type. -1 = Both
+	 *  @param	int		$affect		Filter on affect (a request will change sold or not). -1 = Both
+	 *	@return	array<int,array{id:int,rowid:int,code:string,label:string,affect:int,delay:int,newbymonth:int}>		Return array with list of types
 	 */
 	public function getTypes($active = -1, $affect = -1)
 	{
@@ -2481,7 +2557,7 @@ class Holiday extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Label of holiday type (if known)
+	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:int}	$arraydata		Label of holiday type (if known)
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

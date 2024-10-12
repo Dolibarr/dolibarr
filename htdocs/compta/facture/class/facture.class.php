@@ -180,7 +180,7 @@ class Facture extends CommonInvoice
 	 */
 	public $module_source;
 	/**
-	 * @var int key of pos source ('0', '1', ...)
+	 * @var string key of pos source ('0', '1', ...)
 	 */
 	public $pos_source;
 	/**
@@ -554,13 +554,15 @@ class Facture extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
-			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
-				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : $origin_user_author_id);
-			}
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
+
+			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
+				// If option MODEL_FAC_REC_AUTHOR is set, we want the same author than the author of recurring invoice instead of current user
+				$origin_user_author_id = ($_facrec->user_creation_id > 0 ? $_facrec->user_creation_id : $origin_user_author_id);
+			}
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;
@@ -4119,7 +4121,7 @@ class Facture extends CommonInvoice
 	 *  @param	float		$remise_percent  	Percentage discount of the line
 	 *  @param	int		    $date_start      	Date de debut de validite du service
 	 *  @param	int		    $date_end        	Date de fin de validite du service
-	 *  @param	float		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
+	 *  @param	float|string	$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	float		$txlocaltax2		Local tax 2 rate
 	 * 	@param	string		$price_base_type 	HT or TTC
@@ -4142,7 +4144,8 @@ class Facture extends CommonInvoice
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
-		global $conf, $user;
+		global $user;
+
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__.": using line label is deprecated", LOG_WARNING);
@@ -4635,8 +4638,8 @@ class Facture extends CommonInvoice
 	 *      Return next reference of customer invoice not already used (or last reference)
 	 *      according to numbering module defined into constant FACTURE_ADDON
 	 *
-	 *      @param	   Societe		$soc		object company
-	 *      @param     string		$mode		'next' for next value or 'last' for last value
+	 *      @param	   Societe			$soc	object company
+	 *      @param     'next'|'last'	$mode	'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
 	public function getNextNumRef($soc, $mode = 'next')
@@ -4779,15 +4782,15 @@ class Facture extends CommonInvoice
 	/**
 	 *  Return list of invoices (eventually filtered on a user) into an array
 	 *
-	 *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
-	 *  @param      int		$draft      	0=not draft, 1=draft
-	 *  @param      User	$excluser      	Object user to exclude
-	 *  @param    	int		$socid			Id third party
-	 *  @param    	int		$limit			For pagination
-	 *  @param    	int		$offset			For pagination
-	 *  @param    	string	$sortfield		Sort criteria
-	 *  @param    	string	$sortorder		Sort order
-	 *  @return     array|int             	-1 if KO, array with result if OK
+	 *  @param	int<0,1>	$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
+	 *  @param	int			$draft      	0=not draft, 1=draft
+	 *  @param	?User		$excluser      	Object user to exclude
+	 *  @param	int			$socid			Id third party
+	 *  @param	int			$limit			For pagination
+	 *  @param	int			$offset			For pagination
+	 *  @param	string		$sortfield		Sort criteria
+	 *  @param	string		$sortorder		Sort order
+	 *	@return	array<int,string>|array<array{id:int,ref:string,name:string}>|int<-1,-1>	Array with result if OK, -1 if KO,
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $excluser = null, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
 	{
@@ -4861,8 +4864,8 @@ class Facture extends CommonInvoice
 	 *	Invoices matching the following rules are returned:
 	 *	(Status validated or abandoned for a reason 'other') + not paid + no payment at all + not already replaced
 	 *
-	 *	@param		int			$socid		Id thirdparty
-	 *	@return    	array|int				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param	int		$socid		Id thirdparty
+	 *	@return	int<-1,-1>|array<int,array{id:int,ref:string,status:int,paid:int<0,1>,alreadypaid:int<0,1>}>	Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	public function list_replacable_invoices($socid = 0)
 	{
@@ -4915,8 +4918,9 @@ class Facture extends CommonInvoice
 	 *	Invoices matching the following rules are returned:
 	 *	(validated + payment on process) or classified (paid completely or paid partiely) + not already replaced + not already a credit note
 	 *
-	 *	@param		int			$socid		Id thirdparty
-	 *	@return    	array|int				Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@param	int			$socid		Id thirdparty
+	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>}>|int<-1,-1>
+	 *	Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
 	public function list_qualified_avoir_invoices($socid = 0)
 	{
@@ -5364,7 +5368,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Returns an array containing the previous situations as Facture objects
 	 *
-	 * @return mixed -1 if error, array of previous situations
+	 * @return Facture[]|int<-1,-1>	-1 if error, array of previous situations
 	 */
 	public function get_prev_sits()
 	{

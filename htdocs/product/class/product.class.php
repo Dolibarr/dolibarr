@@ -269,7 +269,7 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	/**
-	 * @var int	French VAT NPR is used (0 or 1)
+	 * @var int<0,1>	French VAT NPR is used (0 or 1)
 	 */
 	public $tva_npr = 0;
 
@@ -617,6 +617,9 @@ class Product extends CommonObject
 	public $stats_proposal_supplier = array();
 	public $stats_commande_fournisseur = array();
 	public $stats_expedition = array();
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float}
+	 */
 	public $stats_reception = array();
 	public $stats_mo = array();
 	public $stats_bom = array();
@@ -821,7 +824,7 @@ class Product extends CommonObject
 		'import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
-		'mandatory_period' => array('type' => 'integer', 'label' => 'mandatoryperiod', 'enabled' => 1, 'visible' => 1,  'notnull' => 1, 'default' => '0', 'index' => 1,  'position' => 1000),
+		'mandatory_period' => array('type' => 'integer', 'label' => 'mandatoryperiod', 'enabled' => 1, 'visible' => -1,  'notnull' => 1, 'default' => '0', 'index' => 1,  'position' => 1000),
 	);
 
 	/**
@@ -1972,6 +1975,7 @@ class Product extends CommonObject
 					$sql2 .= " label = '".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2 .= " description = '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$sql2 .= ", note = '".$this->db->escape($this->multilangs["$key"]["other"])."'";
 					}
 					$sql2 .= " WHERE fk_product = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
@@ -1984,6 +1988,7 @@ class Product extends CommonObject
 					$sql2 .= " VALUES(".((int) $this->id).",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2 .= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["other"])."'";
 					}
 					$sql2 .= ")";
@@ -2307,7 +2312,7 @@ class Product extends CommonObject
 				}
 			}
 
-			if ( !$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
+			if (!$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
 				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
@@ -3763,11 +3768,11 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats réception fournisseur pour le produit/service
 	 *
-	 * @param  int    	$socid           	Id thirdparty to filter on a thirdparty
-	 * @param  string 	$filtrestatut    	Id status to filter on a status
-	 * @param  int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
+	 * @param	int    	$socid           	Id thirdparty to filter on a thirdparty
+	 * @param	string 	$filtrestatut    	Id status to filter on a status
+	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @return int                     		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
+	 * @return	int                   		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
 	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
 	{

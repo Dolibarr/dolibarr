@@ -57,9 +57,9 @@ class mailing_advthirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @param	array	$socid  		Array of id soc to add
+	 *    @param	int[]	$socid  		Array of id soc to add
 	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
-	 *    @param	array	$contactid 		Array of contact id to add
+	 *    @param	int[]	$contactid 		Array of contact id to add
 	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
@@ -290,7 +290,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  Can include an URL link on each record provided by selector shown on target page.
 	 *
 	 *  @param	int		$id		ID
-	 *  @param	string		$type	type
+	 *  @param	string	$type	type
 	 *  @return string      	Url link
 	 */
 	public function url($id, $type)

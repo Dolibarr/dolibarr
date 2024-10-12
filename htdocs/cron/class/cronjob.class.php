@@ -664,11 +664,11 @@ class Cronjob extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update(User $user = null, int $notrigger = 0)
+	public function update($user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 
