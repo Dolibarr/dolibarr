@@ -920,7 +920,7 @@ class EcmFiles extends CommonObject
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowFile")];
 		}
-		$datas['picto'] = '<u>'.$langs->trans("ShowFile").'</u>';
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("ShowFile") . '</u>';
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
