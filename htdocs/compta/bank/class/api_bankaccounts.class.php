@@ -170,6 +170,8 @@ class BankAccounts extends DolibarrApi
 		}
 		// Date of the initial balance (required to create an account).
 		$account->date_solde = time();
+		// Use the value of date_solde sent through API otherwise let date_solde value to now which was initialised just before
+		if (isset($request_data['date_solde'])) { $account->date_solde = $this->_checkValForAPI('date_solde', $request_data['date_solde'], $account); }
 		// courant and type are the same thing but the one used when
 		// creating an account is courant
 		$account->courant = $account->type; // deprecated
