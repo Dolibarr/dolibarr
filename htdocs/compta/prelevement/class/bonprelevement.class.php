@@ -962,7 +962,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get number of invoices waiting for payment
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
+	 *	@param	'direct-debit'|'bank-transfer'	$mode	'direct-debit' or 'bank-transfer'
 	 *  @param  string  $type        for salary invoice
 	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
