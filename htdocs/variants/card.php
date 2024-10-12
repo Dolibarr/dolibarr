@@ -284,6 +284,9 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 	print '</table>';
 	print '</div>';
 	print '</div>';
