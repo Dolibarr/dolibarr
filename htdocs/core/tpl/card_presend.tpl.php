@@ -55,10 +55,14 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
-  
-	if (!isset($file)) $file = null;
-	if (!isset($files)) $files = array();
-  
+	
+	if (!isset($file)) {
+		$file = null;
+	}
+	if (!isset($files)) {
+		$files = array();
+	}
+	
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -79,18 +83,18 @@ if ($action == 'presend') {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 		}
-    
+		
 		//$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
 		if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($fileparams) > 0) {
-			for ($i = 0; $i < count($fileparams); $i++) {
+			$countfileparams = count($fileparams);
+			for ($i = 0; $i < $countfileparams; $i++) {
 				$files[$i] = isset($fileparams[$i]['fullname']) ? $fileparams[$i]['fullname'] : null;
 			}
 		} else {
 			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
 		}
-
 	}
-  
+	
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
@@ -426,18 +430,19 @@ if ($action == 'presend') {
 	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-  
+	
 	//$formmail->param['fileinit'] = array($file);
 	if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($files) > 0) {
-		for ($i = 0; $i < count($files); $i++) {
+		$countfiles = count($files);
+		for ($i = 0; $i < $countfiles; $i++) {
 			$formmail->param['fileinit'] = $files;
-      $formmail->param['object_entity'] = $object->entity;
+			$formmail->param['object_entity'] = $object->entity;
 		}
 	} else {
-    $formmail->param['fileinit'] = array($file);
-    $formmail->param['object_entity'] = $object->entity;
+		$formmail->param['fileinit'] = array($file);
+		$formmail->param['object_entity'] = $object->entity;
 	}
-  
+	
 	// Show form
 	print $formmail->get_form();
 
