@@ -673,6 +673,7 @@ class FormSetupItem
 	 */
 	public $cssClass = '';
 
+
 	/**
 	 * Constructor
 	 *
@@ -904,7 +905,11 @@ class FormSetupItem
 			$out .=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey);
+				$input = $this->fieldParams['input'] ?? array();
+				$revertonoff = $this->fieldParams['revertonoff'] ? 1 : 0;
+				$forcereload = $this->fieldParams['forcereload'] ? 1 : 0;
+
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
 			} else {
 				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 			}
@@ -1218,7 +1223,10 @@ class FormSetupItem
 			$out .=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey, array(), $this->entity); // TODO possibility to add $input parameter
+				$revertonoff = $this->fieldParams['revertonoff'] ? 1 : 0;
+				$forcereload = $this->fieldParams['forcereload'] ? 1 : 0;
+
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload);
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');
