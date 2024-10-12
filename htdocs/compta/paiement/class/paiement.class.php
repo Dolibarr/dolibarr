@@ -166,7 +166,7 @@ class Paiement extends CommonObject
 	public $ext_payment_id;
 
 	/**
-	 * @var string Id of prelevement
+	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
 

@@ -62,23 +62,68 @@ class BonPrelevement extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int|string
+	 */
 	public $date_echeance;
+	/**
+	 * @var string
+	 */
 	public $raison_sociale;
+	/**
+	 * @var string
+	 */
 	public $reference_remise;
+	/**
+	 * @var string
+	 */
 	public $emetteur_code_guichet;
+	/**
+	 * @var string
+	 */
 	public $emetteur_numero_compte;
+	/**
+	 * @var string
+	 */
 	public $emetteur_code_banque;
+	/**
+	 * @var string
+	 */
 	public $emetteur_number_key;
+	/**
+	 * @var bool
+	 */
 	public $sepa_xml_pti_in_ctti;
 
+	/**
+	 * @var string
+	 */
 	public $emetteur_iban;
+	/**
+	 * @var string
+	 */
 	public $emetteur_bic;
+	/**
+	 * @var string
+	 */
 	public $emetteur_ics;
 
+	/**
+	 * @var int
+	 */
 	public $user_trans;
+	/**
+	 * @var int
+	 */
 	public $user_credit;
 
+	/**
+	 * @var float|int|string
+	 */
 	public $total;
+	/**
+	 * @var int
+	 */
 	public $fetched;
 	public $labelStatus = array();
 
@@ -167,14 +212,26 @@ class BonPrelevement extends CommonObject
 		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
 		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int|string
+	 */
 	public $datec;
+	/**
+	 * @var float
+	 */
 	public $amount;
 
 	/**
 	 * @var int	Status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $statut;
 	/**
@@ -182,17 +239,41 @@ class BonPrelevement extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var int
+	 */
 	public $credite;
+	/**
+	 * @var string
+	 */
 	public $note;
+	/**
+	 * @var int|string
+	 */
 	public $date_trans;
 	/**
 	 * @var int Current transport method, index to $methodes_trans
 	 */
 	public $method_trans;
+	/**
+	 * @var int
+	 */
 	public $fk_user_trans;
+	/**
+	 * @var int|string
+	 */
 	public $date_credit;
+	/**
+	 * @var int
+	 */
 	public $fk_user_credit;
+	/**
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * @var int
+	 */
 	public $fk_bank_account;
 	// END MODULEBUILDER PROPERTIES
 
@@ -1775,6 +1856,7 @@ class BonPrelevement extends CommonObject
 
 				// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.
 				$resql = $this->db->query($sql);
+				$nbtotalDrctDbtTxInf = -1;
 				if ($resql) {
 					$cachearraytotestduplicate = array();
 
@@ -1912,6 +1994,8 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND rib.type = 'ban'";
 				}
 				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
+				$nbtotalDrctDbtTxInf = -1;
+
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$cachearraytotestduplicate = array();
