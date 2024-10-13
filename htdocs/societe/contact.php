@@ -140,19 +140,26 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 	if (!empty($id) && $socid > 0) {
 		$db->begin();
 
-		$sql = "DELETE t, et FROM ".MAIN_DB_PREFIX."socpeople AS t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields AS et ON t.rowid = et.fk_object";
-		$sql .= " WHERE t.fk_soc = ".((int) $socid);
-		$sql .= " AND t.rowid = ".((int) $id);
-		$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople_extrafields";
+		$sql .= " WHERE fk_object = ".((int) $socid);
+		$sql .= " AND fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople as sp WHERE sp.rowid = ".((int) $socid);
+		$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0))";
 
-		$result = $db->query($sql);
-		if (!$result) {
+		$result1 = $db->query($sql);
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
+		$sql .= " WHERE fk_soc = ".((int) $socid);
+		$sql .= " AND rowid = ".((int) $id);
+		$sql .= " AND ((fk_user_creat = ".((int) $user->id)." AND priv = 1) OR priv = 0)";
+
+		$result2 = $db->query($sql);
+
+		if (!$result1 || !$result2) {
 			setEventMessages($db->lasterror(), null, 'errors');
 			$db->rollback();
 		} else {
 			$db->commit();
-			setEventMessages('ContactDeleted', null, 'mesgs');
+			setEventMessages('RecordDeleted', null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
 			exit();
 		}
