@@ -119,6 +119,7 @@ parameters:
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
 		- '#colorHexToHsl expects float\|false, true#'
 		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
+		- '#(?:make_substitutions expects array<string, string>,) string given\.#'
 
 	internalErrorsCountLimit: 50
 	cache:

@@ -192,7 +192,7 @@ class ContratLigne extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var int|string
+	 * @var float|string
 	 */
 	public $remise_percent;
 

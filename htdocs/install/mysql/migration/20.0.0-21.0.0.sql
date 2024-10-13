@@ -134,28 +134,6 @@ ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_webhook_target ADD COLUMN trigger_stack text;
 
--- Product attribut extrafields
-CREATE TABLE llx_product_attribute_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          -- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_product_attribute_extrafields ADD INDEX idx_product_attribute_extrafields (fk_object);
-
--- Product attribut value extrafields
-CREATE TABLE llx_product_attribute_value_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          -- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_product_attribute_value_extrafields ADD INDEX idx_product_attribute_value_extrafields (fk_object);
-
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY fk_user_creat integer NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN agenda_id integer;
@@ -172,6 +150,12 @@ ALTER TABLE llx_societe MODIFY COLUMN code_compta varchar(32);
 ALTER TABLE llx_societe MODIFY COLUMN code_compta_fournisseur varchar(32);
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_customer varchar(32);
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_supplier varchar(32);
+
+
+ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 
 
 -- Copy categories from llx_category_bank into llx_categorie

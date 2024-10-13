@@ -194,7 +194,7 @@ class AccountancyCategory // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_accounting_category(";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		if ($this->rowid > 0) {
 			$sql .= "rowid, ";
 		}
@@ -269,7 +269,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " t.position,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
@@ -354,7 +354,7 @@ class AccountancyCategory // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_accounting_category SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " range_account=".(isset($this->range_account) ? "'".$this->db->escape($this->range_account)."'" : "null").",";
@@ -402,7 +402,7 @@ class AccountancyCategory // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_accounting_category";
+		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -439,7 +439,7 @@ class AccountancyCategory // extends CommonObject
 	{
 		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
@@ -475,8 +475,8 @@ class AccountancyCategory // extends CommonObject
 		global $conf;
 
 		$sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
+		$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " WHERE (aa.fk_accounting_category <> ".((int) $id)." OR aa.fk_accounting_category IS NULL)";
 		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
@@ -522,8 +522,8 @@ class AccountancyCategory // extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 		$sql = "SELECT aa.rowid, aa.account_number";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
+		$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
@@ -550,7 +550,7 @@ class AccountancyCategory // extends CommonObject
 			if (array_key_exists($account_number_formated, $cpts)) {
 				$accountincptsadded[$account_number_formated] = 1;
 				// We found an account number that is in list $cpts of account to add
-				$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
+				$sql = "UPDATE ".$this->db->prefix()."accounting_account";
 				$sql .= " SET fk_accounting_category=".((int) $id_cat);
 				$sql .= " WHERE rowid=".((int) $obj->rowid);
 				dol_syslog(__METHOD__, LOG_DEBUG);
@@ -589,7 +589,7 @@ class AccountancyCategory // extends CommonObject
 	{
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account as aa";
+		$sql = "UPDATE ".$this->db->prefix()."accounting_account as aa";
 		$sql .= " SET fk_accounting_category= 0";
 		$sql .= " WHERE aa.rowid = ".((int) $cpt_id);
 		$this->db->begin();
@@ -657,7 +657,7 @@ class AccountancyCategory // extends CommonObject
 		if (is_array($cpt)) {
 			$sql .= ", t.numero_compte as accountancy_account";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping as t";
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
 		$sql .= " WHERE t.entity = ".((int) $conf->entity);
 		if (is_array($cpt)) {
@@ -727,9 +727,9 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT t.rowid, t.account_number, t.label as account_label,";
 		$sql .= " cat.code, cat.position, cat.label as name_cat, cat.sens, cat.category_type, cat.formula";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t, ".MAIN_DB_PREFIX."c_accounting_category as cat";
+		$sql .= " FROM ".$this->db->prefix()."accounting_account as t, ".$this->db->prefix()."c_accounting_category as cat";
 		$sql .= " WHERE t.fk_accounting_category IN (SELECT c.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = 1";
 		$sql .= " AND c.entity = ".$conf->entity;
 		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
@@ -788,7 +788,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
@@ -860,7 +860,7 @@ class AccountancyCategory // extends CommonObject
 
 		if (!empty($cat_id)) {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
+			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " AND t.active = 1";
@@ -868,7 +868,7 @@ class AccountancyCategory // extends CommonObject
 			$sql .= " ORDER BY t.account_number";
 		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
+			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= ' AND t.active = 1';
