@@ -1575,10 +1575,12 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
 
+						$i = -1;  // Ensure initialised for static analysis, but with invalid idx.
 						// If deposit invoice - down payment with 1 line (fixed amount or percent)
 						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
 							// Define the array $amountdeposit
 							$amountdeposit = array();
+							$lines = array();
 							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {	// We want to split the discount line into several lines, one per vat rate.
 								if ($typeamount == 'amount') {
 									$amount = (float) $valuedeposit;
@@ -1670,13 +1672,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$lines[$i]->info_bits, // info_bits
+									$i >= 0 ? $lines[$i]->info_bits : 0, // info_bits
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$lines[$i]->special_code,
+									$i >= 0 ? $lines[$i]->special_code : 0,
 									$object->origin,
 									0,
 									0,
@@ -1704,6 +1706,8 @@ if (empty($reshook)) {
 
 						// standard invoice, credit note, or down payment from a percent of all lines
 						if (GETPOST('type') != Facture::TYPE_DEPOSIT || (GETPOST('type') == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines')) {
+							$lines = array();
+
 							if ($result > 0) {
 								$lines = $srcobject->lines;
 								if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
@@ -1819,6 +1823,7 @@ if (empty($reshook)) {
 											$fk_parent_line = 0;
 										}
 
+										$array_options = array();
 										// Extrafields
 										if (method_exists($lines[$i], 'fetch_optionals')) {
 											$lines[$i]->fetch_optionals();
@@ -3297,7 +3302,8 @@ if ($action == 'create') {
 				$classname = ucfirst($subelem);
 
 				$expesrc = new $classname($db);
-				'@phan-var-force CommonObject $expesrc';
+				'@phan-var-force Expedition $expesrc';
+				dol_syslog("Is type Facture|Commande or Expedition: $element...expesrc($classname)=".get_class($expesrc));
 				$expesrc->fetch($expeoriginid);
 
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
@@ -3960,8 +3966,9 @@ if ($action == 'create') {
 
 			$retained_warranty = GETPOSTINT('retained_warranty');
 			if (empty($retained_warranty)) {
-				if (!empty($objectsrc->retained_warranty)) { // use previous situation value
-					$retained_warranty = $objectsrc->retained_warranty;
+				if ($objectsrc !== null && property_exists($objectsrc, 'retained_warranty') && !empty($objectsrc->retained_warranty)) { // use previous situation value
+					// Facture->retained_warranty  (does not exist on Expedition)
+					$retained_warranty = $objectsrc->retained_warranty;  // @phan-suppress-current-line PhanUndeclaredProperty
 				}
 			}
 			$retained_warranty_js_default = !empty($retained_warranty) ? $retained_warranty : getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
@@ -4324,6 +4331,8 @@ if ($action == 'create') {
 			$type_fac = 'CreditNote';
 		} elseif ($object->type == Facture::TYPE_DEPOSIT) {
 			$type_fac = 'Deposit';
+		} else {
+			$type_fac = '';
 		}
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
 		$text .= '<br>'.$langs->trans('ConfirmConvertToReduc2');
@@ -4566,6 +4575,9 @@ if ($action == 'create') {
 	if ($action == 'canceled') {
 		// If there is a replacement invoice not yet validated (draft state),
 		// it is not allowed to classify the invoice as abandoned.
+
+		$statusreplacement = 0;
+
 		if ($objectidnext) {
 			$facturereplacement = new Facture($db);
 			$facturereplacement->fetch($objectidnext);
@@ -4924,6 +4936,8 @@ if ($action == 'create') {
 
 
 
+		$displayWarranty = false;
+
 		if (!empty($object->retained_warranty) || getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$displayWarranty = true;
 			if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
@@ -5179,6 +5193,9 @@ if ($action == 'create') {
 			$nbrows += 1;
 		}
 
+		$total_prev_ht = $total_prev_ttc = 0;
+		$total_global_ht = $total_global_ttc = 0;
+
 		// List of previous situation invoices
 		if (($object->situation_cycle_ref > 0) && getDolGlobalString('INVOICE_USE_SITUATION')) {
 			print '<!-- List of situation invoices -->';
@@ -5195,9 +5212,6 @@ if ($action == 'create') {
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
-
-			$total_prev_ht = $total_prev_ttc = 0;
-			$total_global_ht = $total_global_ttc = 0;
 
 			if (count($object->tab_previous_situation_invoice) > 0) {
 				// List of previous invoices
