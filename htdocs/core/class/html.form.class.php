@@ -1360,7 +1360,7 @@ class Form
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
-				print $langs->trans("RefOrLabel") . ' : ';
+				$out .= $langs->trans("RefOrLabel") . ' : ';
 			} elseif ($hidelabel > 1) {
 				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {
