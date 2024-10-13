@@ -299,7 +299,7 @@ class DolEditor
 			$found = 1;
 			$format = $option;
 
-			$out .= "\n".'<!-- Output Ace editor -->'."\n";
+			$out .= "\n".'<!-- Output Ace editor '.dol_string_nohtmltag($this->htmlname).' -->'."\n";
 
 			if ($titlecontent) {
 				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
