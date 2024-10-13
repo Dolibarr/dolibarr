@@ -761,8 +761,8 @@ print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 print "</td></tr>";
 
 // Structured communication
-// France / Germany / Netherlands do not use this structured system of invoice's payment
-if ($mysoc->country_code != 'FR' && $mysoc->country_code != 'DE' && $mysoc->country_code != 'NL') {
+// Specific to Belgium - See core/lib/functions_be.lib.php
+if ($mysoc->country_code == 'BE') {
 	print '<tr class="oddeven"><td>' . $langs->trans("InvoicePaymentManageStructuredCommunication") . '&nbsp;';
 	print $form->textwithpicto('', $langs->trans("InvoicePaymentManageStructuredCommunicationHelp"), 1, 'help') . '</td>';
 	print '<td class="left" colspan="2">';
