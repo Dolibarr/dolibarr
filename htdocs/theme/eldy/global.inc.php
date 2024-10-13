@@ -5372,9 +5372,10 @@ div.titre {
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
-table.table-fiche-title .col-title div.titre span {
+table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 	line-height: normal;
 }
+
 table.table-fiche-title, div.fiche>table.table-fiche-title {
 	margin-bottom: 18px;
 }
