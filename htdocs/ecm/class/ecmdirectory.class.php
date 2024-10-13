@@ -498,9 +498,6 @@ class EcmDirectory extends CommonObject
 		}
 		$linkend = '</a>';
 
-		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
-		$picto = 'dir';
-
 		$result .= $linkstart;
 		if ($withpicto) {
 			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
@@ -614,7 +611,7 @@ class EcmDirectory extends CommonObject
 	public static function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+
 		return '';
 	}
 
