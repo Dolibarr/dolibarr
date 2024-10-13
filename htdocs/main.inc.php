@@ -2459,8 +2459,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-			// Add search dropdown
+			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
+		}
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
 		}
 
 		// Add bookmark dropdown
@@ -2783,7 +2788,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 }
 
 /**
- * Build the tooltip on top menu quick add
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
  *
  * @return  string                  HTML content
  */
@@ -2865,6 +2871,50 @@ function top_menu_quickadd()
 
 	return $html;
 }
+
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set.
+ *
+ * @return  string                  HTML content
+ */
+function top_menu_importfile()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}
+
+	$html = '';
+
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + key for all browsers
+	$stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->os === 'macintosh') {
+		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
+	}
+
+	if (!empty($conf->use_javascript_ajax)) {
+		$html .= '<!-- div for upload file link -->
+    <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
+        <a accesskey="u" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' a)"><i class="fa fa-upload"></i></a>
+    </div>';
+	}
+
+	return $html;
+}
+
 
 /**
  * Generate list of quickadd items
