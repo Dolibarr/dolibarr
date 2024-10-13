@@ -1626,7 +1626,8 @@ if (!empty($arrayfields['staff.code']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['legalform.code']['checked'])) {
-	print_liste_field_titre($arrayfields['legalform.code']['label'], $_SERVER["PHP_SELF"], "legalform.code", "", $param, '', $sortfield, $sortorder);
+	// s.fk_forme_juridique as legalform_code
+	print_liste_field_titre($arrayfields['legalform.code']['label'], $_SERVER["PHP_SELF"], "legalform_code", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.price_level']['checked'])) {
