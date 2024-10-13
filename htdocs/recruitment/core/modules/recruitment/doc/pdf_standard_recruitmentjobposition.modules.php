@@ -98,12 +98,12 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $tabTitleHeight;
 
 	/**
-	 * @var array defaultContentsFieldsStyle
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} defaultContentsFieldsStyle
 	 */
 	public $defaultContentsFieldsStyle = array();
 
 	/**
-	 * @var array defaultTitlesFieldsStyle
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} defaultTitlesFieldsStyle
 	 */
 	public $defaultTitlesFieldsStyle = array();
 

@@ -63,9 +63,9 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
  * Actions
  */
 
-if ($action == 'aaa') {	// Test on permission not required here. Test will be done on the targeted page.
-	//
-}
+// if ($action == 'aaa') {	// Test on permission not required here. Test will be done on the targeted page.
+
+// }
 
 
 /*
