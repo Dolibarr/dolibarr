@@ -3303,6 +3303,7 @@ if ($action == 'create') {
 
 				$expesrc = new $classname($db);
 				'@phan-var-force Expedition $expesrc';
+				dol_syslog("Is type Facture|Commande or Expedition: $element...expesrc($classname)=".get_class($expesrc));
 				$expesrc->fetch($expeoriginid);
 
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
