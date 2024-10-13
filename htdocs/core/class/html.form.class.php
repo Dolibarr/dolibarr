@@ -1322,7 +1322,7 @@ class Form
 	 * @param string 		$morecss 				Add more css styles to the SELECT component
 	 * @param string 		$moreparam 				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder 'Search', 3 search icon after)
 	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
 	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
 	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
@@ -1358,7 +1358,9 @@ class Form
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
-				print $langs->trans("RefOrLabel") . ' : ';
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel == 1 && !is_numeric($showempty)) {
+				$placeholder = $showempty;
 			} elseif ($hidelabel > 1) {
 				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {

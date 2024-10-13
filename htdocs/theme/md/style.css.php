@@ -1960,6 +1960,20 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 .flex-item {
 	flex:1;
 }
+.flex-item-uploadfile {
+	border: 2px solid #888;
+	border-radius: 5px;
+	cursor: pointer;
+	tet-align: center;
+	min-height: 40px;
+	background: #eee;
+	padding: 20px 10px 20px 10px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
+	width: 280px;
+	margin: 20px 20px 20px 20px;
+}
 
 .flexcontainer {
 	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
