@@ -295,7 +295,7 @@ class Facture extends CommonInvoice
 		'datef' => array('type' => 'date', 'label' => 'DateInvoice', 'enabled' => 1, 'visible' => 1, 'position' => 20),
 		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 22),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateDue', 'enabled' => 1, 'visible' => 1, 'position' => 25),
-		'date_closing' => array('type' => 'datetime', 'label' => 'Date closing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'date_closing' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'paye' => array('type' => 'smallint(6)', 'label' => 'InvoicePaidCompletely', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
 		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
