@@ -8016,11 +8016,12 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
  *  @param	int			$allowlink				Allow "link" tags (for head html section)
  *  @param	int			$allowscript			Allow "script" tags (for head html section)
+ *  @param	int			$allowstyle				Allow "style" tags (for head html section)
  *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
@@ -8043,6 +8044,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if ($allowscript) {
 		if (!in_array('script', $allowed_tags)) {
 			$allowed_tags[] = "script";
+		}
+	}
+	if ($allowstyle) {
+		if (!in_array('style', $allowed_tags)) {
+			$allowed_tags[] = "style";
 		}
 	}
 
@@ -8421,7 +8427,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1, 1);
 			} elseif ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {
@@ -12450,7 +12456,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                      ],
  *                                      ]
  * // phpcs:enable
- * @return string               	html button
+ *                                                                                                                                                                                                                                                                                                                                      Example: array('attr' => array('class' => 'reposition'))
+ * @return string               		html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
