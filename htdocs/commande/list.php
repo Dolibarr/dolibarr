@@ -70,6 +70,8 @@ $mode        = GETPOST('mode', 'alpha');
 
 if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 	$userschilds = $user->getAllChildIds();
+} else {
+	$userschilds = array();
 }
 
 // Search Parameters
@@ -131,6 +133,12 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '-2';
 }
+$search_orderday = '';
+$search_ordermonth = '';
+$search_orderyear = '';
+$search_deliveryday = '';
+$search_deliverymonth = '';
+$search_deliveryyear = '';
 
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
@@ -249,6 +257,12 @@ if ($user->socid) {
 }
 
 $permissiontoreadallthirdparty = $user->hasRight('societe', 'client', 'voir');
+$permissiontoread = false;
+$permissiontovalidate = false;
+$permissiontoclose = false;
+$permissiontocancel = false;
+$permissiontosendbymail = false;
+$objectclass = null;
 
 
 $result = restrictedArea($user, 'commande', $id, '');
@@ -447,6 +461,7 @@ if (empty($reshook)) {
 
 					$fk_parent_line = 0;
 					$num = count($lines);
+					$array_options = array();
 
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
@@ -732,7 +747,7 @@ if (empty($reshook)) {
 		}
 	}
 }
-if ($action == 'validate' && $permissiontoadd) {
+if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 	if (GETPOST('confirm') == 'yes') {
 		$objecttmp = new $objectclass($db);
 		$db->begin();
@@ -768,7 +783,7 @@ if ($action == 'validate' && $permissiontoadd) {
 		}
 	}
 }
-if ($action == 'shipped' && $permissiontoadd) {
+if ($action == 'shipped' && $permissiontoadd && $objectclass !== null) {
 	if (GETPOST('confirm') == 'yes') {
 		$objecttmp = new $objectclass($db);
 		$db->begin();
@@ -801,7 +816,7 @@ if ($action == 'shipped' && $permissiontoadd) {
 }
 
 // Closed records
-if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+if (!$error && $massaction === 'setbilled' && $permissiontoclose && $objectclass !== null) {
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
@@ -1535,7 +1550,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, array(), 1);
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
@@ -2435,7 +2450,7 @@ while ($i < $imaxinloop) {
 		// Channel
 		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 			print '<td>';
-			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
+			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', 0);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2710,6 +2725,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && isModEnabled('stock')) {
+				$text_icon = '';
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
 					$generic_commande->getLinesArray(); 	// Load array ->lines
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
@@ -2757,6 +2773,7 @@ while ($i < $imaxinloop) {
 											$generic_product->load_stats_commande(0, '1,2');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
 										} else {
+											// @phan-suppress-next-line PhanTypeInvalidDimOffset
 											$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
 										}
 										$stock_order = $generic_product->stats_commande['qty'];
@@ -2766,6 +2783,7 @@ while ($i < $imaxinloop) {
 											$generic_product->load_stats_commande_fournisseur(0, '3');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
 										} else {
+											// @phan-suppress-next-line PhanTypeInvalidDimOffset
 											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
 										}
 										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
