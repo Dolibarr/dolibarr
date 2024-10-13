@@ -2639,7 +2639,7 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.col-picto {
-	color: #bbb;
+	color: var(--colortexttitlenotab);
 	opacity: 0.85;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
