@@ -1364,7 +1364,7 @@ class pdf_octopus extends ModelePDFFactures
 			foreach ($this->tva_array as $tvakey => $tvaval) {
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($this->marge_gauche, $posy);
-				$titre = round($tvakey, 2) . "%";
+				$titre = round((float) $tvakey, 2) . "%";
 				$pdf->MultiCell(25, 4, $titre, 0, 'L');
 
 				$pdf->SetFont('', '', $default_font_size - 2);
