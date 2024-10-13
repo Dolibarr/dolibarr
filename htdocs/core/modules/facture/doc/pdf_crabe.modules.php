@@ -1320,19 +1320,19 @@ class pdf_crabe extends ModelePDFFactures
 					$account = new Account($this->db);
 					$account->fetch($bankid);
 
-					if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
-						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
-						$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
-
-						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset('StructuredCommunication'). $object->type . ": " . $outputlangs->convToOutputCharset($invoicePaymentKey), 0, 'L', 0);
-					}
-
 					$curx = $this->marge_gauche;
 					$cury = $posy;
 
 					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
 
 					$posy += 2;
+
+					if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+						$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
+
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('StructuredCommunication').": " . $outputlangs->convToOutputCharset($invoicePaymentKey), 0, 'L', 0);
+					}
 				}
 			}
 		}
