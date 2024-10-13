@@ -950,11 +950,11 @@ class FormMail extends Form
 
 				$this->substit['__ONLINE_INTERVIEW_SCHEDULER_TEXT_AND_URL__'] = '';
 
-				// Add lines substitution key from each line
+				// Generate the string with the template for lines repeated and filled for each line
 				$lines = '';
 				$defaultlines = $arraydefaultmessage->content_lines;
 				if (isset($defaultlines)) {
-					foreach ($this->substit_lines as $substit_line) {
+					foreach ($this->substit_lines as $lineid => $substit_line) {
 						$lines .= make_substitutions($defaultlines, $substit_line)."\n";
 					}
 				}
@@ -1971,7 +1971,8 @@ class FormMail extends Form
 						}
 					}
 				}
-				$this->substit_lines[] = $substit_line;
+
+				$this->substit_lines[$line->id] = $substit_line;
 			}
 		}
 	}
@@ -2132,7 +2133,7 @@ class ModelMail extends CommonObject
 		"active" => array("type" => "integer", "label" => "Active", "enabled" => "1", 'position' => 65, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
 		"topic" => array("type" => "text", "label" => "Topic", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
 		"content" => array("type" => "mediumtext", "label" => "Content", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')", 'position' => 80, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
 		"enabled" => array("type" => "varchar(255)", "label" => "Enabled", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
 		"joinfiles" => array("type" => "varchar(255)", "label" => "Joinfiles", "enabled" => "1", 'position' => 90, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
 		"email_from" => array("type" => "varchar(255)", "label" => "Emailfrom", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
@@ -2175,10 +2176,14 @@ class ModelMail extends CommonObject
 	public $topic;
 
 	/**
-	 * @var string Model mail content
+	 * @var string 	Model mail content
 	 */
 	public $content;
+	/**
+	 * @var string 	Model to use to generate the string with each lines
+	 */
 	public $content_lines;
+
 	public $lang;
 	public $joinfiles;
 
