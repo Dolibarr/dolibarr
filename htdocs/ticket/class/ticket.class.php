@@ -3143,8 +3143,8 @@ class Ticket extends CommonObject
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *  @param          User	$user   Object user
-	 *  @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *  @return         WorkboardResponse|int             Return integer <0 if KO, WorkboardResponse if OK
+	 *  @param          'opened'|'signed'		$mode   "opened" for askprice to close, "signed" for proposal to invoice
+	 *  @return         WorkboardResponse|int<-1,-1>	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{

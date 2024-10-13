@@ -1480,7 +1480,7 @@ if (empty($reshook)) {
 				$object->model_pdf          = GETPOST('model');
 				$object->fk_project			= GETPOSTINT('projectid');
 				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
-				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
+				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = price2num(GETPOST('amount'));
 				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
@@ -1826,7 +1826,7 @@ if (empty($reshook)) {
 										}
 
 										$tva_tx = $lines[$i]->tva_tx;
-										if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+										if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 											$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 										}
 

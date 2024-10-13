@@ -919,7 +919,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 					$id = $reg[1];
 				}
 
-				if ($id || $ref) {
+				if (($id || $ref) && $object_instance !== null) {
 					//print 'Fetch '.$id.' or '.$ref.'<br>';
 					$result = $object_instance->fetch($id, $ref);
 					//print $result.'<br>';
