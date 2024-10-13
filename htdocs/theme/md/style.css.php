@@ -3523,7 +3523,8 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other, div.login_block_tools { padding-top: 15px; }
+div.login_block_other { padding-top: 15px; }
+div.login_block_tools { padding-top: 0px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -8290,7 +8291,7 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2', round($nbtopmenuentries * 69, 0) + 130); ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2', round($nbtopmenuentries * 66, 0) + 220); ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -8314,12 +8315,32 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: 570px)
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 44, 0) + 320); ?>px)	/* reduction 2 */
 {
+	div.login_block_tools > div {
+		position: unset;
+	}
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-login-dropdown {
+		position: unset;
+	}
+
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown {
+		line-height: unset;
+	}
+
+	/*
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 		top: auto;
 	}
+	*/
 
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
@@ -8337,9 +8358,11 @@ table.jPicker {
 		padding-right: 1px;
 	}
 
+	/*
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	*/
 	div.login_block_other, div.login_block_tools {
 		display: inline-block;
 	}

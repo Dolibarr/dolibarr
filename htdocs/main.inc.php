@@ -2337,13 +2337,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= top_menu_quickadd();
 		}
 
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
 			// Add the import file link
 			$toprightmenu .= top_menu_importfile();
 		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
 
 		$toprightmenu .= '</div>';
 
