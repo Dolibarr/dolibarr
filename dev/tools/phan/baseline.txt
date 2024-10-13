@@ -9,10 +9,10 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 810+ occurrences
-    // PhanPluginUnknownPropertyType : 780+ occurrences
+    // PhanUndeclaredProperty : 800+ occurrences
+    // PhanPluginUnknownPropertyType : 740+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 600+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 440+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 430+ occurrences
     // PhanUndeclaredGlobalVariable : 380+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 320+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 270+ occurrences
@@ -23,8 +23,8 @@ return [
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
     // PhanPluginUnknownArrayPropertyType : 60+ occurrences
     // PhanPluginUnknownArrayFunctionReturnType : 55+ occurrences
-    // PhanPluginEmptyStatementIf : 50+ occurrences
     // PhanRedefineFunction : 50+ occurrences
+    // PhanPluginEmptyStatementIf : 45+ occurrences
     // PhanTypeMismatchDimFetch : 40+ occurrences
     // PhanTypeSuspiciousNonTraversableForeach : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 25+ occurrences
@@ -234,7 +234,6 @@ return [
         'htdocs/core/ajax/ajaxdirtree.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/ajax/fileupload.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/ajax/onlineSign.php' => ['PhanPluginUnknownArrayFunctionParamType'],
-        'htdocs/core/ajax/saveinplace.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/ajax/selectobject.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/ajax/selectsearchbox.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/core/boxes/box_actions.php' => ['PhanPossiblyUndeclaredVariable'],
