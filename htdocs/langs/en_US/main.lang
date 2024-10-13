@@ -1314,3 +1314,5 @@ NbRecordQualified=Number of qualified records
 auto=auto
 UploadFile=Fast document import
 OrClickToSelectAFile=or click to select a file on disk
+NetTotal=Net total
+VATAmount=VAT amount
