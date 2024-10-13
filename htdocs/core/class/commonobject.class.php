@@ -3349,7 +3349,7 @@ abstract class CommonObject
 			if ($resql) {
 				$i = 0;
 				$num = $this->db->num_rows($resql);
-				$grandchild = getDolGlobalInt('CARE_GRANDCHILD');
+				$grandchild = getDolGlobalInt('MAIN_CARE_GRANDCHILD');
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
