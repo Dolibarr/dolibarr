@@ -10,9 +10,9 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022-2024	Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024	   Nick Fragoulis
+ * Copyright (C) 2024		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1449,6 +1449,14 @@ class pdf_sponge extends ModelePDFFactures
 						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
 						$posy = $pdf->GetY() + 2;
 					}
+
+                    // Show structured communication
+                    if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+                        include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+                        $invoicePaymentKey = getStructuredCommunication($object->ref, $object->type);
+
+                        $pdf->MultiCell(100,3, $outputlangs->transnoentities('StructuredCommunication').": " . $outputlangs->convToOutputCharset($invoicePaymentKey),0, 'L', 0);
+                    }
 				}
 			}
 		}
