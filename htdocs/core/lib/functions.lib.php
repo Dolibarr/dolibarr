@@ -9305,8 +9305,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 				// Show structured communication
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = getStructuredCommunication($object->ref, $object->type);
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication($object->ref, $object->type);
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
