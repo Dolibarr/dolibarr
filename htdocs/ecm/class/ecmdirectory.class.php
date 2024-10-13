@@ -483,7 +483,7 @@ class EcmDirectory extends CommonObject
 		$result = '';
 		//$newref=str_replace('_',' ',$this->ref);
 		$newref = $this->ref;
-		$label = $langs->trans("ShowECMSection").': '.$newref;
+		$label = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . $langs->trans("ShowECMSection") . ': ' . $newref;
 		$linkclose = '"'.($more ? ' '.$more : '').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/dir_card.php?section='.$this->id.$linkclose;
