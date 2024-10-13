@@ -372,7 +372,7 @@ function isModEnabled($module)
 function isDolTms($timestamp)
 {
 	if ($timestamp === '') {
-		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"] . getCallerInfoString(), LOG_NOTICE);
 		return false;
 	}
 	if (is_null($timestamp) || !is_numeric($timestamp)) {
@@ -617,8 +617,12 @@ function getBrowserInfo($user_agent)
 		$version = end($reg);
 	} elseif (preg_match('/l[iy]n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
 		// MS products at end
-		$name = 'lynxlinks';
+		$name = 'textbrowser';
 		$version = empty($reg[3]) ? '' : $reg[3];
+	} elseif (preg_match('/w3m\/([\d\.]+)/i', $user_agent, $reg)) {
+		// MS products at end
+		$name = 'textbrowser';
+		$version = empty($reg[1]) ? '' : $reg[1];
 	}
 
 	if ($tablet) {
@@ -1900,7 +1904,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- *  Returns text escaped for all protocols (so only alpha chars and numbers
+ *  Returns text escaped for all protocols (so only alpha chars and numbers)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @return     string     		 				Escaped string for XML content.
@@ -2180,6 +2184,25 @@ function dol_ucwords($string, $encoding = "UTF-8")
 	} else {
 		return ucwords($string);
 	}
+}
+
+
+/**
+ * Get caller info as a string that can be appended to a log message.
+ *
+ * @return string
+ */
+function getCallerInfoString()
+{
+	$backtrace = debug_backtrace();
+	$msg = "";
+	if (count($backtrace) >= 2) {
+		$trace = $backtrace[1];
+		if (isset($trace['file'], $trace['line'])) {
+			$msg = " From {$trace['file']}:{$trace['line']}.";
+		}
+	}
+	return $msg;
 }
 
 /**
@@ -3039,7 +3062,16 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
+		$totalallpayments = $object->getSommePaiement(0);
+		$totalallpayments += $object->getSumCreditNotesUsed(0);
+		$totalallpayments += $object->getSumDepositsUsed(0);
+		$tmptxt = $object->getLibStatut(6, $totalallpayments);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5, $totalallpayments);
+		}
+		$morehtmlstatus .= $tmptxt;
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -3293,7 +3325,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
- *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
+ *	@param	?Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formatted date or '' if time is null
  *
@@ -3837,7 +3869,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= 'mailto:';
 		}
 		$newemail .= $email;
-		$newemail .= '">';
+		$newemail .= '" target="_blank">';
 
 		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '');
 
@@ -5011,7 +5043,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
+				'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 				'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
@@ -5059,7 +5091,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			$arrayconvpictotofa = array(
 				'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'ai' => 'magic',
 				'asset' => 'money-check-alt', 'autofill' => 'fill',
-				'bank_account' => 'university',
+				'back' => 'arrow-left', 'bank_account' => 'university',
 				'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
 				'bookcal' => 'calendar-check',
 				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
@@ -6402,7 +6434,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">';
-	print '<span class="inline-block valignmiddle">'.dolPrintLabel($title).'</span>';	// $title may contains HTML
+	print '<span class="inline-block valignmiddle print-barre-liste">'.$title.'</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
@@ -6453,7 +6485,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page) {
-						$pagelist .= '<li class="pagination pageplusone"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						$pagelist .= '<li class="pagination pageplusone valignmiddle"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
 						$pagelist .= '/';
 					}
 				} else {
@@ -8003,11 +8035,12 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
  *  @param	int			$allowlink				Allow "link" tags (for head html section)
  *  @param	int			$allowscript			Allow "script" tags (for head html section)
+ *  @param	int			$allowstyle				Allow "style" tags (for head html section)
  *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
@@ -8030,6 +8063,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if ($allowscript) {
 		if (!in_array('script', $allowed_tags)) {
 			$allowed_tags[] = "script";
+		}
+	}
+	if ($allowstyle) {
+		if (!in_array('style', $allowed_tags)) {
+			$allowed_tags[] = "style";
 		}
 	}
 
@@ -8408,7 +8446,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1, 1);
 			} elseif ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {
@@ -9872,7 +9910,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
 function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0, $attop = 0)
 {
 	if (empty($mesg) && empty($mesgs)) {
-		dol_syslog("Try to add a message in stack, but value to add is empty message", LOG_WARNING);
+		dol_syslog("Try to add a message in stack, but value to add is empty message" . getCallerInfoString(), LOG_WARNING);
 	} else {
 		if ($messagekey) {
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -10551,27 +10589,15 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 
 		//print $s."<br>\n";
 		if ($returnvalue) {
-			if ($hideerrors) {
-				ob_start();	// An evaluation has no reason to output data
-				$isObBufferActive = true;
-				$tmps = @eval('return '.$s.';');
-				$tmpo = ob_get_clean();
-				$isObBufferActive = false;
-				if ($tmpo) {
-					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
-				}
-				return $tmps;
-			} else {
-				ob_start();	// An evaluation has no reason to output data
-				$isObBufferActive = true;
-				$tmps = eval('return '.$s.';');
-				$tmpo = ob_get_clean();
-				$isObBufferActive = false;
-				if ($tmpo) {
-					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
-				}
-				return $tmps;
+			ob_start(); // An evaluation has no reason to output data
+			$isObBufferActive = true;
+			$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
+			$tmpo = ob_get_clean();
+			$isObBufferActive = false;
+			if ($tmpo) {
+				print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
 			}
+			return $tmps;
 		} else {
 			dol_syslog('Do not use anymore dol_eval with param returnvalue=0', LOG_WARNING);
 			if ($hideerrors) {
@@ -12415,6 +12441,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                  $arrayforbutaction = array(
  *                                                                                                                                                  10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
  *                                                                                                                                                  20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                                                  30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                                                  );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param int|boolean	$userRight  	User action right
@@ -12436,7 +12463,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                      ],
  *                                      ]
  * // phpcs:enable
- * @return string               	html button
+ *                                                                                                                                                                                                                                                                                                                                      Example: array('attr' => array('class' => 'reposition'))
+ * @return string               		html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -12480,17 +12508,18 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$langs->load($subbutton['lang']);
 				}
 
-				if (!empty($subbutton['urlroot'])) {
-					$tmpurl = $subbutton['urlroot'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				if (!empty($subbutton['urlraw'])) {
+					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
-					$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$subbuttonparam = array();
 				if (!empty($subbutton['attr'])) {
 					$subbuttonparam['attr'] = $subbutton['attr'];
 				}
-				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? $subbutton['isDropDown'] : $params['isDropDown']);
+				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown'] ?? false) : $params['isDropDown']);
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
@@ -12502,10 +12531,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$langs->load($subbutton['lang']);
 				}
 
-				if (!empty($subbutton['urlroot'])) {
-					$tmpurl = $subbutton['urlroot'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				if (!empty($subbutton['urlraw'])) {
+					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
-					$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], $params);
@@ -12639,6 +12669,42 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		return $hookmanager->resPrint;
 	}
 }
+
+
+/**
+ * An function to complete dropdown url in dolGetButtonAction
+ *
+ * @param string 				$url 			the Url to complete
+ * @param array|array<string> 	$params 		params of dolGetButtonAction function
+ * @param bool 					$addDolUrlRoot 	to add root url
+ * @return string
+ */
+function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDolUrlRoot = true)
+{
+	if (empty($url)) {
+		return '';
+	}
+
+	$parsedUrl = parse_url($url);
+	if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'mailto', 'tel'])) || strpos($url, '#') === 0) {
+		return $url;
+	}
+
+	if (!empty($parsedUrl['query'])) {
+		// Use parse_str() function to parse the string passed via URL
+		parse_str($parsedUrl['query'], $urlQuery);
+		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
+			$url .= '&amp;backtopage='.urlencode($params['backtopage']);
+		}
+	}
+
+	if (!isset($parsedUrl['scheme']) && $addDolUrlRoot) {
+		$url = DOL_URL_ROOT.$url;
+	}
+
+	return $url;
+}
+
 
 /**
  * Add space between dolGetButtonTitle

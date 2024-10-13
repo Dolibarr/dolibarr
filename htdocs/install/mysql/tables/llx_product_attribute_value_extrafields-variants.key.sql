@@ -1,6 +1,4 @@
--- ========================================================================
--- Copyright (C) 2016		Pierre-Henry Favre		<phf@atm-consulting.fr>
--- Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+-- ===================================================================
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,15 +13,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===================================================================
 
-CREATE TABLE llx_multicurrency
-(
-	rowid 		integer AUTO_INCREMENT PRIMARY KEY,
-	date_create datetime DEFAULT NULL,
-	code 		varchar(255) DEFAULT NULL,
-	name 		varchar(255) DEFAULT NULL,
-	entity 		integer DEFAULT 1,
-	fk_user 	integer DEFAULT NULL,
-	tms         timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_value_extrafields ADD INDEX idx_product_attribute_value_extrafields (fk_object);

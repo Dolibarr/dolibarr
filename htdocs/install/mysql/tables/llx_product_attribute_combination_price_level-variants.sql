@@ -1,6 +1,5 @@
--- ========================================================================
--- Copyright (C) 2016		Pierre-Henry Favre		<phf@atm-consulting.fr>
--- Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+-- ============================================================================
+-- Copyright (C) 2020      John BOTELLA         <john.botella@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,15 +14,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ============================================================================
 
-CREATE TABLE llx_multicurrency
+CREATE TABLE llx_product_attribute_combination_price_level
 (
-	rowid 		integer AUTO_INCREMENT PRIMARY KEY,
-	date_create datetime DEFAULT NULL,
-	code 		varchar(255) DEFAULT NULL,
-	name 		varchar(255) DEFAULT NULL,
-	entity 		integer DEFAULT 1,
-	fk_user 	integer DEFAULT NULL,
-	tms         timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=innodb;
+  rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_attribute_combination INTEGER DEFAULT 1 NOT NULL,
+  fk_price_level INTEGER DEFAULT 1 NOT NULL,
+  variation_price DOUBLE(24,8) NOT NULL,
+  variation_price_percentage INTEGER NULL
+)ENGINE=innodb;

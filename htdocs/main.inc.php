@@ -511,7 +511,7 @@ if (GETPOST('theme', 'aZ09')) {
 }
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
-if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
+if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
 }
 
@@ -2317,8 +2317,40 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
+
 		print '<div class="login_block usedropdown">'."\n";
 
+
+		// Add block for tools
+		$toprightmenu .= '<div class="login_block_tools valignmiddle">';
+
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap" style="padding: 0px;">';
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
+			// Add the quick add object dropdown
+			$toprightmenu .= top_menu_quickadd();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
+		}
+
+		$toprightmenu .= '</div>';
+
+		$toprightmenu .= '</div>'."\n";		 // end div class="login_block_tools"
+
+
+		// Add block for other tools
 		$toprightmenu .= '<div class="login_block_other valignmiddle">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
@@ -2447,29 +2479,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$toprightmenu .= '</div>'; // end div class="login_block_other"
 
 
-		// Add block for tools
-		$toprightmenu .= '<div class="login_block_tools valignmiddle">';
-
-		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap" style="padding: 0px;">';
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-			// Add search dropdown
-			$toprightmenu .= top_menu_search();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-			// Add search dropdown
-			$toprightmenu .= top_menu_quickadd();
-		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
-
-		$toprightmenu .= '</div>';
-
-		$toprightmenu .= '</div>'."\n";
-
 		// Add block for user photo and name
 		$toprightmenu .= '<div class="login_block_user">';
 
@@ -2513,6 +2522,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
+
+	// Return empty in some case
+	if ($conf->browser->name == 'textbrowser') {
+		return '';
+	}
 
 	$langs->load('companies');
 
@@ -2778,7 +2792,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 }
 
 /**
- * Build the tooltip on top menu quick add
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
  *
  * @return  string                  HTML content
  */
@@ -2860,6 +2875,50 @@ function top_menu_quickadd()
 
 	return $html;
 }
+
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set.
+ *
+ * @return  string                  HTML content
+ */
+function top_menu_importfile()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}
+
+	$html = '';
+
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + key for all browsers
+	$stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->os === 'macintosh') {
+		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
+	}
+
+	if (!empty($conf->use_javascript_ajax)) {
+		$html .= '<!-- div for upload file link -->
+    <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
+        <a accesskey="u" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' u)"><i class="fa fa-upload"></i></a>
+    </div>';
+	}
+
+	return $html;
+}
+
 
 /**
  * Generate list of quickadd items
@@ -3051,10 +3110,15 @@ function top_menu_bookmark()
 
 	$html = '';
 
-	// Define $bookmarks
+	// Return empty in some case
 	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire')) {
+		return '';
+	}
+	/*
+	if ($conf->browser->name == 'textbrowser') {
 		return $html;
 	}
+	*/
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers

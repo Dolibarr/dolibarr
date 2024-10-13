@@ -114,8 +114,6 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
-$nbofsearch = 0;
-
 // Instantiate hooks of thirdparty module
 $hookmanager->initHooks(array('searchform'));
 

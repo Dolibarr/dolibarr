@@ -223,7 +223,8 @@ $h++;
 
 print dol_get_fiche_head($head, 'editor', '', -1);
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span>";
+print '<br class="hideonsmartphone">'."\n";
 print "<br>\n";
 
 

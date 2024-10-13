@@ -1,6 +1,4 @@
 -- ========================================================================
--- Copyright (C) 2016		Pierre-Henry Favre		<phf@atm-consulting.fr>
--- Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,13 +15,10 @@
 --
 -- ========================================================================
 
-CREATE TABLE llx_multicurrency_rate
+CREATE TABLE llx_product_attribute_extrafields
 (
-	rowid 				integer AUTO_INCREMENT PRIMARY KEY,
-	date_sync 			datetime DEFAULT NULL,
-	rate 				double NOT NULL DEFAULT 0,
-	rate_indirect 		double DEFAULT 0,
-	fk_multicurrency 	integer NOT NULL,
-	entity 				integer DEFAULT 1,
-	tms           		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
 ) ENGINE=innodb;

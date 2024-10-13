@@ -546,7 +546,7 @@ class FormProjets extends Form
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') {
-			return ''; // Special cas of element we never link to a project (already always done)
+			return ''; // Special case of element we never link to a project (already always done)
 		}
 
 		$linkedtothirdparty = false;

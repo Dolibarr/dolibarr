@@ -1,26 +1,26 @@
 <?php
-/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
- * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
- * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
- * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
- * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
- * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2003		Brian Fraval				<brian@fraval.org>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2008		Patrick Raguin				<patrick.raguin@auguria.net>
+ * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013		Peter Fontaine				<contact@peterfontaine.fr>
+ * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018		Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2019-2020	Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
+ * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
+ * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -664,15 +664,13 @@ class Societe extends CommonObject
 	public $code_compta_client;
 
 	/**
-	 * Duplicate of code_compta_client (for backward compatibility)
+	 * Accounting general account for customer
 	 * @var string
-	 * @deprecated  Use $code_compta_client
-	 * @see $code_compta_client
 	 */
-	public $code_compta;
+	public $accountancy_code_customer_general;
 
 	/**
-	 * Accounting code for customer
+	 * Accounting auxiliary account for customer
 	 * @var string
 	 */
 	public $accountancy_code_customer;
@@ -912,6 +910,21 @@ class Societe extends CommonObject
 	 */
 	const SUPPLIER = 1;
 
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>
+	 */
+	protected function deprecatedProperties()
+	{
+		return
+			array(
+				'code_compta' => 'code_compta_client',
+			)
+			+ parent::deprecatedProperties();
+	}
+
+
 
 	/**
 	 *    Constructor
@@ -972,8 +985,9 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim((string) $this->import_key);
 
-		$this->code_compta_client = trim(empty($this->code_compta_client) ? $this->code_compta : $this->code_compta_client);
+		$this->code_compta_client = trim($this->code_compta_client);
 
+		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
 		$this->accountancy_code_customer = trim((string) $this->code_compta_client);
 		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
@@ -1073,6 +1087,7 @@ class Societe extends CommonObject
 					$sql .= " fk_soc";
 					$sql .= ", entity";
 					$sql .= ", vat_reverse_charge";
+					$sql .= ", accountancy_code_customer_general";
 					$sql .= ", accountancy_code_customer";
 					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
@@ -1081,6 +1096,7 @@ class Societe extends CommonObject
 					$sql .= $this->id;
 					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
+					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
@@ -1286,7 +1302,7 @@ class Societe extends CommonObject
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
 			if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
-				$keymin = 'code_compta';
+				$keymin = 'code_compta_client';
 			} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') {
 				$keymin = 'code_compta_fournisseur';
 			}
@@ -1487,8 +1503,7 @@ class Societe extends CommonObject
 			$this->get_codefournisseur($this, 1);
 		}
 
-		$this->code_compta_client = trim(empty($this->code_compta_client) ? $this->code_compta : $this->code_compta_client);
-		$this->code_compta = $this->code_compta_client; // for backward compatibility
+		$this->code_compta_client = trim($this->code_compta_client);
 		$this->code_compta_fournisseur = (empty($this->code_compta_fournisseur) ? '' : trim($this->code_compta_fournisseur));
 
 		// Check parameters. More tests are done later in the ->verify()
@@ -1666,6 +1681,7 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
 				if ($customer) {
+					$sql .= ", accountancy_code_customer_general = ".(!empty($this->accountancy_code_customer_general) ? "'".$this->db->escape($this->accountancy_code_customer_general)."'" : "null");
 					$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
 				}
 
@@ -1761,6 +1777,7 @@ class Societe extends CommonObject
 					$sql .= " fk_soc";
 					$sql .= ", entity";
 					$sql .= ", vat_reverse_charge";
+					$sql .= ", accountancy_code_customer_general";
 					$sql .= ", accountancy_code_customer";
 					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
@@ -1769,6 +1786,7 @@ class Societe extends CommonObject
 					$sql .= $this->id;
 					$sql .= ", ".$conf->entity;
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
+					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
 					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
 					$sql .= ", '".$this->db->escape($this->code_compta_fournisseur)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
@@ -1874,10 +1892,14 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf, s.last_main_doc';
 		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-			$sql .= ', s.code_compta, s.code_compta_fournisseur, s.accountancy_code_buy, s.accountancy_code_sell';
+			$sql .= ', s.accountancy_code_customer_general, s.code_compta';
+			$sql .= ', s.code_compta_fournisseur';
+			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
 			$sql .= ', s.vat_reverse_charge as soc_vat_reverse_charge';
 		} else {
-			$sql .= ', spe.accountancy_code_customer as code_compta, spe.accountancy_code_supplier as code_compta_fournisseur, spe.accountancy_code_buy, spe.accountancy_code_sell';
+			$sql .= ', spe.accountancy_code_customer_general, spe.accountancy_code_customer as code_compta';
+			$sql .= ', spe.accountancy_code_supplier as code_compta_fournisseur';
+			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
 			$sql .= ', spe.vat_reverse_charge as spe_vat_reverse_charge';
 		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
@@ -2034,7 +2056,7 @@ class Societe extends CommonObject
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
 
-				$this->code_compta = $obj->code_compta;			// For backward compatibility
+				$this->accountancy_code_customer_general = $obj->accountancy_code_customer_general;
 				$this->code_compta_client = $obj->code_compta;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
@@ -2929,7 +2951,7 @@ class Societe extends CommonObject
 		}
 		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
 			$langs->load('compta');
-			$datas['accountancycustomercode'] = '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
+			$datas['accountancycustomercode'] = '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.$this->code_compta_client;
 		}
 		// show categories for this record only in ajax to not overload lists
 		if (!$nofetch && isModEnabled('category') && $this->client) {
@@ -3718,7 +3740,7 @@ class Societe extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Assigns a accounting code from the accounting code module.
-	 *      Computed value is stored into this->code_compta or this->code_compta_fournisseur according to $type.
+	 *      Computed value is stored into this->code_compta_client or this->code_compta_fournisseur according to $type.
 	 *      May be identical to the one entered or generated automatically. Currently, only the automatic generation is implemented.
 	 *
 	 *    	@param	string	$type		Type of thirdparty ('customer' or 'supplier')
@@ -3749,7 +3771,6 @@ class Societe extends CommonObject
 
 				if ($type == 'customer') {
 					$this->code_compta_client = $mod->code;
-					$this->code_compta = $this->code_compta_client; // For backward compatibility
 				} elseif ($type == 'supplier') {
 					$this->code_compta_fournisseur = $mod->code;
 				}
@@ -3762,7 +3783,6 @@ class Societe extends CommonObject
 		} else {
 			if ($type == 'customer') {
 				$this->code_compta_client = '';
-				$this->code_compta = '';	// For backward compatibility
 			} elseif ($type == 'supplier') {
 				$this->code_compta_fournisseur = '';
 			}
