@@ -955,7 +955,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
-					if  (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+					if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
 						}
@@ -1241,7 +1241,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 		
 		krsort($this->tva_array);
-		
+
 		// Show VAT details
 		if ($object->total_tva != 0 && getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 			$pdf->SetFillColor(224, 224, 224);
@@ -1865,7 +1865,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				if  (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
 					foreach ($this->tva_array as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
