@@ -498,8 +498,7 @@ function getStructuredCommunication($ref = '', $type = 0)
 		$ref = substr('00000000'.$ref, -8);
 
 		// Prefix with invoice type
-		switch ($type)
-		{
+		switch ($type) {
 			case '0':
 				$type = '20'; // invoice type standard
 				break;
@@ -520,7 +519,7 @@ function getStructuredCommunication($ref = '', $type = 0)
 		}
 
 		// Calculate module97
-        $ref = $type.$ref;
+		$ref = $type.$ref;
 		$mod97 = intval($ref) % 97;
 		$controlKey = ($mod97 === 0) ? 97 : $mod97;
 

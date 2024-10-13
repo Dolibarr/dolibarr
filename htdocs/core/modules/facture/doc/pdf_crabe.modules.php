@@ -1323,7 +1323,7 @@ class pdf_crabe extends ModelePDFFactures
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 						$invoicePaymentKey = getStructuredCommunication($object->ref, $object->type);
 
-						$pdf->MultiCell(100,3, $outputlangs->convToOutputCharset('StructuredCommunication'). $object->type . ": " . $outputlangs->convToOutputCharset($invoicePaymentKey),0, 'L', 0);
+						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset('StructuredCommunication'). $object->type . ": " . $outputlangs->convToOutputCharset($invoicePaymentKey), 0, 'L', 0);
 					}
 
 					$curx = $this->marge_gauche;
