@@ -23,14 +23,14 @@
 /**
  *       \file       htdocs/core/class/commoninvoice.class.php
  *       \ingroup    core
- *       \brief      File of the superclass of invoices classes (customer and supplier)
+ *       \brief      File of the superclass of invoice classes (customer and supplier)
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
- * 	Superclass for invoices classes
+ * 	Superclass for invoice classes
  */
 abstract class CommonInvoice extends CommonObject
 {
@@ -53,7 +53,7 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
-	 * @deprecated
+	 * @deprecated Use $socid
 	 * @see $socid
 	 */
 	public $fk_soc;
@@ -62,12 +62,15 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $paye;
 
 	/**
 	 * Invoice date (date)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $date;
 
@@ -76,13 +79,31 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $date_lim_reglement;
 
+	/**
+	 * @var int
+	 */
 	public $cond_reglement_id; // Id in llx_c_paiement
+	/**
+	 * @var string|int Code in llx_c_paiement
+	 */
 	public $cond_reglement_code; // Code in llx_c_paiement
+	/**
+	 * @var string
+	 */
 	public $cond_reglement_label;
-	public $cond_reglement_doc; // Code in llx_c_paiement
+	/**
+	 * @var string Code in llx_c_paiement
+	 */
+	public $cond_reglement_doc;
 
+	/**
+	 * @var int
+	 */
 	public $mode_reglement_id;
-	public $mode_reglement_code; // Code in llx_c_paiement
+	/**
+	 * @var string Code in llx_c_paiement
+	 */
+	public $mode_reglement_code;
 
 	/**
 	 * @var string
@@ -90,20 +111,50 @@ abstract class CommonInvoice extends CommonObject
 	public $mode_reglement;
 
 	/**
-	 * @var double
+	 * @var float
 	 */
 	public $revenuestamp;
 
+	/**
+	 * @var float
+	 */
 	public $totalpaid;			// duplicate with sumpayed
+	/**
+	 * @var int|float
+	 */
 	public $totaldeposits;		// duplicate with sumdeposit
+	/**
+	 * @var int|float
+	 */
 	public $totalcreditnotes;	// duplicate with sumcreditnote
 
+	/**
+	 * @var int|float
+	 */
 	public $sumpayed;
+	/**
+	 * @var int|float
+	 */
 	public $sumpayed_multicurrency;
+	/**
+	 * @var int|float
+	 */
 	public $sumdeposit;
+	/**
+	 * @var int|float
+	 */
 	public $sumdeposit_multicurrency;
+	/**
+	 * @var int|float
+	 */
 	public $sumcreditnote;
+	/**
+	 * @var int|float
+	 */
 	public $sumcreditnote_multicurrency;
+	/**
+	 * @var string
+	 */
 	public $remaintopay;
 
 	/**
@@ -221,7 +272,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		float					Remain of amount to pay
+	 *	@return		float|string			Remain of amount to pay
 	 */
 	public function getRemainToPay($multicurrency = 0)
 	{
@@ -241,8 +292,8 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
 	 *
-	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
-	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
+	 *  @param 		int<-1,1>		$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|int|array{alreadypaid:float,alreadypaid_multicurrency:float}	Amount of payment already done, <0 and set ->error if KO
 	 *  @see getSumDepositsUsed(), getSumCreditNotesUsed()
 	 */
 	public function getSommePaiement($multicurrency = 0)
@@ -372,7 +423,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Returns array of credit note ids from the invoice
 	 *
-	 *	@return		array		Array of credit note ids
+	 *	@return		int[]		Array of credit note ids
 	 */
 	public function getListIdAvoirFromInvoice()
 	{
@@ -681,6 +732,7 @@ abstract class CommonInvoice extends CommonObject
 		global $langs;
 
 		$labellong = "Unknown";
+		$labelshort = "Unknown";
 		if ($this->type == CommonInvoice::TYPE_STANDARD) {
 			$labellong = "InvoiceStandard";
 			$labelshort = "InvoiceStandardShort";
@@ -749,8 +801,8 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *    	Retrieve a list of invoice subtype labels or codes.
 	 *
-	 *		@param	int		$mode		0=Return id+label, 1=Return code+id
-	 *    	@return array      			Array of subtypes
+	 *		@param	int<0,1>	$mode		0=Return id+label, 1=Return code+id
+	 *    	@return array<int,string>|array<string,int>		Array of subtypes
 	 */
 	public function getArrayOfInvoiceSubtypes($mode = 0)
 	{
@@ -1268,6 +1320,7 @@ abstract class CommonInvoice extends CommonObject
 						}
 					}
 
+					$paymentintent = null;
 					if (!$error) {
 						if ($amountstripe > 0) {
 							try {
@@ -1593,7 +1646,7 @@ abstract class CommonInvoice extends CommonObject
 						}
 					}
 
-					if (!$error && !$errorforinvoice) {
+					if (!$error && !$errorforinvoice && $paymentintent !== null) {
 						// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
 						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
 						$sql .= " ext_payment_id = '".$this->db->escape($paymentintent->id)."',";
@@ -1900,16 +1953,19 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * Custom label of line. Not used by default.
 	 * @deprecated
+	 * @var string
 	 */
 	public $label;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $product_ref
 	 * @see $product_ref
+	 * @var string
 	 */
 	public $ref; // Product ref (deprecated)
 	/**
-	 * @deprecated
+	 * @var string
+	 * @deprecated Use $product_label
 	 * @see $product_label
 	 */
 	public $libelle; // Product label (deprecated)
@@ -1940,7 +1996,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Quantity
-	 * @var double
+	 * @var float
 	 */
 	public $qty;
 
@@ -1971,7 +2027,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * VAT %  Vat rate can be like "21.30 (CODE)"
-	 * @var string|float
+	 * @var float|string
 	 */
 	public $tva_tx;
 
@@ -2044,14 +2100,37 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $total_ttc;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $date_start_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
+	/**
+	 * @var int<0,1>
+	 */
 	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
 
+	/**
+	 * @var float
+	 */
 	public $buy_price_ht;
-	public $buyprice; // For backward compatibility
-	public $pa_ht; // For backward compatibility
+	/**
+	 * @var float
+	 * @deprecated For backward compatibility
+	 */
+	public $buyprice;
+	/**
+	 * @var float|int|string
+	 * @deprecated For backward compatibility
+	 */
+	public $pa_ht;
 
+	/**
+	 * @var string
+	 */
 	public $marge_tx;
+	/**
+	 * @var string
+	 */
 	public $marque_tx;
 
 	/**
@@ -2073,14 +2152,19 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $special_code = 0;
 
 	/**
+	 * @var int
 	 * @deprecated	Use user_creation_id
 	 */
 	public $fk_user_author;
 
 	/**
+	 * @var int
 	 * @deprecated	Use user_modification_id
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var int
+	 */
 	public $fk_accounting_account;
 }

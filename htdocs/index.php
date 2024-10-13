@@ -516,9 +516,8 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	// Show dashboard
 	$nbworkboardempty = 0;
 	$isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
+	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
-		$openedDashBoard = '';
-
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
 
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
