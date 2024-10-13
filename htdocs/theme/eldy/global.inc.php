@@ -4564,8 +4564,7 @@ table.hidepaginationnext .paginationnext {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
-.oddeven, .evenodd, .impair, .pair, .nohover .impair:hover, tr.impair td.nohover, tr.pair td.nohover, .tagtr.oddeven
-{
+.oddeven, .evenodd, .impair, .pair, .nohover .impair:hover, tr.impair td.nohover, tr.pair td.nohover, .tagtr.oddeven {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: var(--oddevencolor);
@@ -5065,6 +5064,12 @@ span.dashboardlineko {
 
 .fichecenter .tableforfield tr td, .tagtr.table-border-row {
 	background: var(--colorbacklineimpair2) !important;
+}
+table.liste tr.oddeven:nth-of-type(odd) td{
+	background: var(--colorbacklineimpair2) !important;
+}
+table.liste tr.oddeven:nth-of-type(even) td{
+	background: var(--colorbacklinepair2) !important;
 }
 
 .boxtable {
