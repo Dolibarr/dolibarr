@@ -107,7 +107,7 @@ $hookmanager->initHooks(array('uploadform'));
 $uploadform = '';
 
 
-$uploadform = '<div class="flex">';
+$uploadform = '<div class="display-flex">';
 
 $langs->load("bills");
 $uploadform .= '
@@ -154,7 +154,7 @@ print '<input type="hidden" name="action" value="uploadfile">';
 
 print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
-print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
+print '<div id="blockupload" class="center">'."\n";
 //print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
 print $uploadform;
 

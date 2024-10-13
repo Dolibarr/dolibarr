@@ -1964,7 +1964,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	border: 2px solid #888;
 	border-radius: 5px;
 	cursor: pointer;
-	tet-align: center;
+	text-align: center;
 	min-height: 40px;
 	background: #eee;
 	padding: 20px 10px 20px 10px;

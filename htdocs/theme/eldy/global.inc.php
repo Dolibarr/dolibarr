@@ -1765,7 +1765,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 .display-flex {
 	display: flex;
 	flex-wrap: wrap;
-	  justify-content: space-between;
+	justify-content: space-between;
 }
 .flex-item {
 	flex:1;
@@ -1774,7 +1774,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	border: 2px solid #888;
 	border-radius: 5px;
 	cursor: pointer;
-	tet-align: center;
+	text-align: center;
 	min-height: 40px;
 	background: #eee;
 	padding: 20px 10px 20px 10px;
@@ -3380,10 +3380,11 @@ div.login a:hover {
 .login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
 	vertical-align: middle;
 }
-div.login_block_tools, div.login_block_user {
+div.login_block_tools {
+	margin-<?php echo $right ?>: 8px;
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '53'; ?>px;
 	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
 div.login_block_other {
@@ -3392,8 +3393,13 @@ div.login_block_other {
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
 	text-align: <?php echo $right ?>;
-	margin-<?php echo $right ?>: 8px;
 	max-width: 200px;
+}
+div.login_block_user {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
 
 .login_block_elem {
