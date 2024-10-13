@@ -28,7 +28,7 @@
 /**
  * Initialize the array of tabs for customer invoice
  *
- * @return	array					Array of head tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ldap_prepare_head()
 {

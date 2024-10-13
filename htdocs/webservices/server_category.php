@@ -202,7 +202,7 @@ $server->register(
 /**
  * Get category infos and children
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,entity?:int}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @return	mixed
  */
