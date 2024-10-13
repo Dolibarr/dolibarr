@@ -2923,7 +2923,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $qty;
 	/**
-	 * @var int|float
+	 * @var float|string
 	 */
 	public $tva_tx;
 	/**
