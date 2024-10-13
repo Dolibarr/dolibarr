@@ -174,6 +174,12 @@ ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_customer varcha
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_supplier varchar(32);
 
 
+ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+
 -- Copy categories from llx_category_bank into llx_categorie
 
 INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
