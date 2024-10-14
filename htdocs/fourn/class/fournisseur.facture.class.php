@@ -2425,7 +2425,7 @@ class FactureFournisseur extends CommonInvoice
 			$info_bits = 0;
 		}
 
-		//Fetch current line from the database and then clone the object and set it in $oldline property
+		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new SupplierInvoiceLine($this->db);
 		$line->fetch($id);
 		$line->fetch_optionals();
