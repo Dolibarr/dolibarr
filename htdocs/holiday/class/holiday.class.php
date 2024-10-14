@@ -505,6 +505,7 @@ class Holiday extends CommonObject
 	 */
 	public function fetchByUser($user_id, $order = '', $filter = '')
 	{
+		$this->holiday = [];
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
@@ -1657,35 +1658,35 @@ class Holiday extends CommonObject
 	 */
 	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
-		global $user, $langs;
+		global $user, $langs, $conf;
 
 		$error = 0;
 
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
 			$langs->load("holiday");
 
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
+
 			// Si mise à jour pour tout le monde en début de mois
 			$now = dol_now();
 
-			$month = date('m', $now);
-			$newdateforlastupdate = dol_print_date($now, '%Y%m%d%H%M%S');
-
 			// Get month of last update
-			$lastUpdate = $this->getConfCP('lastUpdate', $newdateforlastupdate);
-			$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+			$lastUpdate = dol_stringtotime($this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S')));
 			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
-			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user.
-			if ($month != $monthLastUpdate) {
+			$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
+			$yearMonthNow = dol_print_date($now, '%Y%m');
+
+			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user,
+			// catching up to the current month if a gap is detected
+			while ($yearMonthLastUpdate < $yearMonthNow) {
 				$this->db->begin();
+
+				$year = dol_print_date($lastUpdate, '%Y');
+				$month = dol_print_date($lastUpdate, '%m');
 
 				$users = $this->fetchUsers(false, false, ' AND u.statut > 0');
 				$nbUser = count($users);
-
-				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-				$sql .= " value = '".$this->db->escape($newdateforlastupdate)."'";
-				$sql .= " WHERE name = 'lastUpdate'";
-				$result = $this->db->query($sql);
 
 				$typeleaves = $this->getTypes(1, 1);
 
@@ -1701,27 +1702,89 @@ class Holiday extends CommonObject
 					$nowHoliday = (float) $userCounter['nb_holiday'];
 					$newSolde = $nowHoliday + $nbDaysToAdd;
 
-					// We add a log for each user
-					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
+					// We add a log for each user when its balance gets increased
+					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidayMonthlyCredit'), $newSolde, $userCounter['type']);
 
 					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
 
 					if ($result < 0) {
-						$error++;
-						break;
+						$this->db->rollback();
+						return -1;
+					}
+
+					if (empty($decrease)) {
+						continue;
+					}
+
+					// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
+					$filter = " AND cp.statut = ".((int) self::STATUS_APPROVED);
+					$filter .= " AND cp.date_fin >= '".$this->db->idate(dol_stringtotime(dol_print_date($lastUpdate, '%Y-%m-01')))."'";
+					$filter .= " AND cp.date_debut <= '".$this->db->idate(dol_stringtotime(dol_print_date($lastUpdate, '%Y-%m-t')))."'";
+					$filter .= " AND cp.fk_type = ".((int) $userCounter['type']);
+					$this->fetchByUser($userCounter['id'], '', $filter);
+
+					if (empty($this->holiday)) {
+						continue;
+					}
+
+					$startOfMonth = dol_mktime(0, 0, 0, (int) $month, 1, (int) $year, 1);
+					$endOfMonth = dol_mktime(0, 0, 0, (int) $month, (int) dol_print_date($lastUpdate, 't'), (int) $year, 1);
+
+					foreach ($this->holiday as $obj) {
+						$startDate = $obj['date_debut_gmt'];
+						$endDate = $obj['date_fin_gmt'];
+
+						if ($startDate <= $endOfMonth && $startDate < $startOfMonth) {
+							$startDate = $startOfMonth;
+						}
+
+						if ($startOfMonth <= $endDate && $endDate > $endOfMonth) {
+							$endDate = $endOfMonth;
+						}
+
+						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
+
+						if ($nbDaysToDeduct <= 0) {
+							continue;
+						}
+
+						$newSolde -= $nbDaysToDeduct;
+
+						// We add a log for each user when its balance gets decreased
+						$this->addLogCP($user->id, $userCounter['rowid'], $obj['ref'].' - '.$langs->trans('HolidayConsumption'), $newSolde, $userCounter['type']);
+
+						$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
+
+						if ($result < 0) {
+							$this->db->rollback();
+							return -1;
+						}
 					}
 				}
 
-				if (!$error) {
-					$this->db->commit();
-					return 1;
-				} else {
+				//updating the date of the last monthly balance update
+				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
+				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+				$sql .= " value = '".$this->db->escape(dol_print_date($lastUpdate, '%Y%m%d%H%M%S'))."'";
+				$sql .= " WHERE name = 'lastUpdate'";
+				$result = $this->db->query($sql);
+
+				if (!$result) {
 					$this->db->rollback();
 					return -1;
 				}
+
+				$this->db->commit();
+
+				$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
 			}
 
-			return 0;
+			if (!$error) {
+				return 1;
+			} else {
+				return 0;
+			}
 		} else {
 			// Mise à jour pour un utilisateur
 			$nbHoliday = price2num($nbHoliday, 5);

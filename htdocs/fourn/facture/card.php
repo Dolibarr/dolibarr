@@ -938,7 +938,7 @@ if (empty($reshook)) {
 							$line->fk_parent_line = $fk_parent_line;
 
 							$line->subprice = -$line->subprice; // invert price for object
-							$line->pa_ht = -$line->pa_ht;
+							$line->pa_ht = -((float) $line->pa_ht);
 							$line->total_ht = -$line->total_ht;
 							$line->total_tva = -$line->total_tva;
 							$line->total_ttc = -$line->total_ttc;

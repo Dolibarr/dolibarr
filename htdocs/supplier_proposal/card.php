@@ -290,7 +290,7 @@ if (empty($reshook)) {
 					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 					$object->fk_account = GETPOSTINT('fk_account');
-					$object->socid = GETPOST('socid');
+					$object->socid = GETPOSTINT('socid');
 					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated

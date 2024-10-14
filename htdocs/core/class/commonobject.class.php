@@ -3349,10 +3349,11 @@ abstract class CommonObject
 			if ($resql) {
 				$i = 0;
 				$num = $this->db->num_rows($resql);
+				$grandchild = getDolGlobalInt('MAIN_CARE_GRANDCHILD');
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$children = $this->getChildrenOfLine($row[0]);
+					$children = $this->getChildrenOfLine($row[0], $grandchild);
 					if (!empty($children)) {
 						foreach ($children as $child) {
 							array_push($rows, $child);
@@ -5576,7 +5577,7 @@ abstract class CommonObject
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		}
-		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
+		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate((string) $line->remise_percent, true) : '&nbsp;';
 
 		// Is the line strike or not
 		$this->tpl['strike'] = 0;

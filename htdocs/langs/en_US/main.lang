@@ -1312,3 +1312,5 @@ TranslationOfKey=Translation of the key AnyTranslationKey
 SignedStatus=Signed status
 NbRecordQualified=Number of qualified records
 auto=auto
+UploadFile=Fast document import
+OrClickToSelectAFile=or click to select a file on disk

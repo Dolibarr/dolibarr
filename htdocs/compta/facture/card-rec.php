@@ -235,7 +235,7 @@ if (empty($reshook)) {
 			$object->note_private          = GETPOST('note_private', 'restricthtml');
 			$object->note_public           = GETPOST('note_public', 'restricthtml');
 			$object->model_pdf             = GETPOST('modelpdf', 'alphanohtml');
-			$object->usenewprice           = GETPOST('usenewprice', 'alphanohtml');
+			$object->usenewprice           = GETPOSTINT('usenewprice');
 
 			$object->mode_reglement_id     = GETPOSTINT('mode_reglement_id');
 			$object->cond_reglement_id     = GETPOSTINT('cond_reglement_id');
@@ -691,7 +691,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice, $fk_parent_line);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -985,6 +985,8 @@ $form = new Form($db);
 $formother = new FormOther($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
+} else {
+	$formproject = null;
 }
 $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
@@ -1101,7 +1103,7 @@ if ($action == 'create') {
 		print $object->showOptionals($extrafields, 'create', $parameters);
 
 		// Project
-		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0 && is_object($formproject)) {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';

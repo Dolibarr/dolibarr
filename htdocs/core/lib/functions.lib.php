@@ -9,7 +9,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2021	Alexandre Spangaro			<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
@@ -234,6 +234,21 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Return a Dolibarr global constant float value.
+ * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
+ *
+ * @param string 	$key 		Key to return value, return $default if not set
+ * @param float 		$default 	Value to return if not defined
+ * @return float					Value returned
+ * @see getDolUserInt()
+ */
+function getDolGlobalFloat($key, $default = 0)
+{
+	global $conf;
+	return (float) (isset($conf->global->$key) ? $conf->global->$key : $default);
+}
+
+/**
  * Return a Dolibarr global constant boolean value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -372,7 +387,7 @@ function isModEnabled($module)
 function isDolTms($timestamp)
 {
 	if ($timestamp === '') {
-		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"] . getCallerInfoString(), LOG_NOTICE);
 		return false;
 	}
 	if (is_null($timestamp) || !is_numeric($timestamp)) {
@@ -1904,7 +1919,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- *  Returns text escaped for all protocols (so only alpha chars and numbers
+ *  Returns text escaped for all protocols (so only alpha chars and numbers)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @return     string     		 				Escaped string for XML content.
@@ -2184,6 +2199,25 @@ function dol_ucwords($string, $encoding = "UTF-8")
 	} else {
 		return ucwords($string);
 	}
+}
+
+
+/**
+ * Get caller info as a string that can be appended to a log message.
+ *
+ * @return string
+ */
+function getCallerInfoString()
+{
+	$backtrace = debug_backtrace();
+	$msg = "";
+	if (count($backtrace) >= 2) {
+		$trace = $backtrace[1];
+		if (isset($trace['file'], $trace['line'])) {
+			$msg = " From {$trace['file']}:{$trace['line']}.";
+		}
+	}
+	return $msg;
 }
 
 /**
@@ -3306,7 +3340,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
- *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
+ *	@param	?Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formatted date or '' if time is null
  *
@@ -3850,7 +3884,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= 'mailto:';
 		}
 		$newemail .= $email;
-		$newemail .= '">';
+		$newemail .= '" target="_blank">';
 
 		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '');
 
@@ -6415,7 +6449,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">';
-	print '<span class="inline-block valignmiddle">'.dolPrintLabel($title).'</span>';	// $title may contains HTML
+	print '<span class="inline-block valignmiddle print-barre-liste">'.$title.'</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
@@ -6466,7 +6500,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page) {
-						$pagelist .= '<li class="pagination pageplusone"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						$pagelist .= '<li class="pagination pageplusone valignmiddle"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
 						$pagelist .= '/';
 					}
 				} else {
@@ -8016,11 +8050,12 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
  *  @param	int			$allowlink				Allow "link" tags (for head html section)
  *  @param	int			$allowscript			Allow "script" tags (for head html section)
+ *  @param	int			$allowstyle				Allow "style" tags (for head html section)
  *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
@@ -8043,6 +8078,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if ($allowscript) {
 		if (!in_array('script', $allowed_tags)) {
 			$allowed_tags[] = "script";
+		}
+	}
+	if ($allowstyle) {
+		if (!in_array('style', $allowed_tags)) {
+			$allowed_tags[] = "style";
 		}
 	}
 
@@ -8421,7 +8461,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1, 1);
 			} elseif ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {
@@ -9278,6 +9318,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = ($paymenturl ? str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)) : '');
 				$substitutionarray['__ONLINE_PAYMENT_URL__'] = $paymenturl;
 
+				// Show structured communication
+				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication($object->ref, $object->type);
+				}
+
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
@@ -9885,7 +9931,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
 function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0, $attop = 0)
 {
 	if (empty($mesg) && empty($mesgs)) {
-		dol_syslog("Try to add a message in stack, but value to add is empty message", LOG_WARNING);
+		dol_syslog("Try to add a message in stack, but value to add is empty message" . getCallerInfoString(), LOG_WARNING);
 	} else {
 		if ($messagekey) {
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -10564,27 +10610,15 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 
 		//print $s."<br>\n";
 		if ($returnvalue) {
-			if ($hideerrors) {
-				ob_start();	// An evaluation has no reason to output data
-				$isObBufferActive = true;
-				$tmps = @eval('return '.$s.';');
-				$tmpo = ob_get_clean();
-				$isObBufferActive = false;
-				if ($tmpo) {
-					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
-				}
-				return $tmps;
-			} else {
-				ob_start();	// An evaluation has no reason to output data
-				$isObBufferActive = true;
-				$tmps = eval('return '.$s.';');
-				$tmpo = ob_get_clean();
-				$isObBufferActive = false;
-				if ($tmpo) {
-					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
-				}
-				return $tmps;
+			ob_start(); // An evaluation has no reason to output data
+			$isObBufferActive = true;
+			$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
+			$tmpo = ob_get_clean();
+			$isObBufferActive = false;
+			if ($tmpo) {
+				print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
 			}
+			return $tmps;
 		} else {
 			dol_syslog('Do not use anymore dol_eval with param returnvalue=0', LOG_WARNING);
 			if ($hideerrors) {
@@ -12450,7 +12484,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                      ],
  *                                      ]
  * // phpcs:enable
- * @return string               	html button
+ *                                                                                                                                                                                                                                                                                                                                      Example: array('attr' => array('class' => 'reposition'))
+ * @return string               		html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -12505,7 +12540,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				if (!empty($subbutton['attr'])) {
 					$subbuttonparam['attr'] = $subbutton['attr'];
 				}
-				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown']??false)  : $params['isDropDown']);
+				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown'] ?? false) : $params['isDropDown']);
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
@@ -12680,7 +12715,7 @@ function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDol
 		// Use parse_str() function to parse the string passed via URL
 		parse_str($parsedUrl['query'], $urlQuery);
 		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
-			$url.= '&amp;backtopage='.urlencode($params['backtopage']);
+			$url .= '&amp;backtopage='.urlencode($params['backtopage']);
 		}
 	}
 

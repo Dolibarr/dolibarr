@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 /**
  *  Return array head with list of tabs to view object information
  *
- *  @return array Tabs of the module
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function mailmanspip_admin_prepare_head()
 {
