@@ -66,6 +66,10 @@ if (isModEnabled('member')) {
 if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks'));
@@ -373,12 +377,20 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		if (isModEnabled('accounting')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$formaccounting = new FormAccounting($db);
+
 			print '<tr>';
 			print '<td>';
 			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->hasRight('societe', 'creer'));
 			print '</td><td>';
-			print $form->editfieldval("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->hasRight('societe', 'creer'));
+			if ($action == 'editcustomeraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_customer_general, 'customeraccountancycodegeneral', 0, 1, '', 1);
+			} else {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->accountancy_code_customer_general, 1);
+
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
 			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . ")";
 			print (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') ? $accountingAccountByDefault : '');
 			print '</td>';
