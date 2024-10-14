@@ -159,6 +159,12 @@ if ($action == 'updateMask') {
 		if (!($res > 0)) {
 			$error++;
 		}
+
+		$param_auto_assign = GETPOST('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
 
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
@@ -588,6 +594,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Enable open only filter on other ticket list
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsClientOtherTicketOnlyOpen").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN", $arrval, getDolGlobalString('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsClientOtherTicketOnlyOpenHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
