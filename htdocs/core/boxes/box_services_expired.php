@@ -48,6 +48,9 @@ class box_services_expired extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('contrat', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoExpiredServices';
 	}
 
 	/**
@@ -155,13 +158,6 @@ class box_services_expired extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) {
-					$langs->load("contracts");
-					$this->info_box_contents[$i][] = array(
-						'td' => 'class="nohover center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoExpiredServices").'</span>'
-					);
-				}
 
 				$this->db->free($resql);
 			} else {

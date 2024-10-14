@@ -51,6 +51,9 @@ class box_mos extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('bom', 'read');
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/mrp/mo_card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedOrders';
 	}
 
 	/**
@@ -146,12 +149,6 @@ class box_mos extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
-					);
-				}
 
 				$this->db->free($result);
 			} else {

@@ -47,6 +47,8 @@ class box_bookmarks extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('bookmark', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/bookmarks/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedBookmarks';
 	}
 
 	/**
@@ -109,17 +111,17 @@ class box_bookmarks extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$mytxt = $langs->trans("NoRecordedBookmarks");
-					if ($user->hasRight("bookmark", "creer")) {
-						$mytxt .= ' '.$langs->trans("ClickToAdd");
-					}
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center" colspan="2"',
-						'tooltip' => $mytxt,
-						'url' => DOL_URL_ROOT.'/bookmarks/list.php', 'text' => $mytxt,
-					);
-				}
+				// if ($num == 0) {
+				// 	$mytxt = $langs->trans("NoRecordedBookmarks");
+				// 	if ($user->hasRight("bookmark", "creer")) {
+				// 		$mytxt .= ' '.$langs->trans("ClickToAdd");
+				// 	}
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center" colspan="2"',
+				// 		'tooltip' => $mytxt,
+				// 		'url' => DOL_URL_ROOT.'/bookmarks/list.php', 'text' => $mytxt,
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
