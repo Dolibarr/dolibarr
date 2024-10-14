@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -483,7 +483,7 @@ class EcmDirectory extends CommonObject
 		$result = '';
 		//$newref=str_replace('_',' ',$this->ref);
 		$newref = $this->ref;
-		$label = $langs->trans("ShowECMSection").': '.$newref;
+		$label = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . $langs->trans("ShowECMSection") . ': ' . $newref;
 		$linkclose = '"'.($more ? ' '.$more : '').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/dir_card.php?section='.$this->id.$linkclose;
@@ -497,9 +497,6 @@ class EcmDirectory extends CommonObject
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
 		}
 		$linkend = '</a>';
-
-		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
-		$picto = 'dir';
 
 		$result .= $linkstart;
 		if ($withpicto) {
@@ -614,7 +611,7 @@ class EcmDirectory extends CommonObject
 	public static function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+
 		return '';
 	}
 

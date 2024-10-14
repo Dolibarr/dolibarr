@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -904,10 +904,38 @@ class EcmFiles extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v21
+	 * @return array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->load('ecm');
+		$datas = [];
+		$nofetch = !empty($params['nofetch']);
+
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowFile")];
+		}
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("ShowFile") . '</u>';
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (!empty($this->gen_or_uploaded)) {
+			$datas['gen_or_upload'] .= '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
+	 *	@param	string	$option				On what the link point to (propal, etc) module name
 	 *  @param	int  	$notooltip			1=Disable tooltip
 	 *  @param	int		$maxlen				Max length of visible user name
 	 *  @param  string  $morecss            Add more css on link
@@ -915,9 +943,7 @@ class EcmFiles extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
-		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager, $hookmanager;
+		global $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -925,35 +951,58 @@ class EcmFiles extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("File").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
-		$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+		if ($option) {
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/[a-zA-Z]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
+		} else {
+			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowProject");
+				$label = $langs->trans("ShowFile");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
 		$linkstart = '<a href="'.$url.'"';
+		if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+			$linkstart .= 'target="_blank" ';
+		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+			if (empty($this->filename)) {
+				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
+			} else {
+				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : $label), ($notooltip ? '' : 'class="paddingright"')).$linkend);
+			}
 			if ($withpicto != 2) {
 				$result .= ' ';
 			}
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+		$result .= $linkstart.$this->filename.$linkend;
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -964,6 +1013,7 @@ class EcmFiles extends CommonObject
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
