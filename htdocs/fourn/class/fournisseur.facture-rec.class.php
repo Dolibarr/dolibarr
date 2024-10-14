@@ -1352,7 +1352,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
 					$new_fac_fourn->subtype = $facturerec->subtype;
-					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$new_fac_fourn->socid = $facturerec->socid;

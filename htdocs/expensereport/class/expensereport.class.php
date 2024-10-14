@@ -111,7 +111,7 @@ class ExpenseReport extends CommonObject
 	 * @var int		Status
 	 * @deprecated Use $status
 	 */
-	public $fk_statut;
+	private $fk_statut;
 
 	/**
 	 * @var int ID
@@ -291,6 +291,7 @@ class ExpenseReport extends CommonObject
 	 */
 	const STATUS_REFUSED = 99;
 
+
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 15),
@@ -336,6 +337,19 @@ class ExpenseReport extends CommonObject
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
 		'fk_statut' => array('type' => 'integer', 'label' => 'Fk statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	);
+
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>  Old property to new property mapping
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'fk_statut' => 'status',
+		) + parent::deprecatedProperties();
+	}
+
 
 	/**
 	 *  Constructor
@@ -419,7 +433,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ", ".($this->fk_user_validator > 0 ? ((int) $this->fk_user_validator) : "null");
 		$sql .= ", ".($this->fk_user_approve > 0 ? ((int) $this->fk_user_approve) : "null");
 		$sql .= ", ".($this->fk_user_modif > 0 ? ((int) $this->fk_user_modif) : "null");
-		$sql .= ", ".($this->fk_statut > 1 ? ((int) $this->fk_statut) : 0);
+		$sql .= ", ".($this->status > 1 ? ((int) $this->status) : 0);
 		$sql .= ", ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
 		$sql .= ", 0";
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
@@ -556,7 +570,6 @@ class ExpenseReport extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->status = 0;
-		$this->fk_statut = 0; // deprecated
 
 		// Clear fields
 		$this->fk_user_creat = $user->id;
@@ -634,7 +647,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
 		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
 		$sql .= " , fk_user_modif = ".$user->id;
-		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut : '0');
+		$sql .= " , fk_statut = ".($this->status >= 0 ? (int) $this->status : '0');
 		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement : "null");
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
 		$sql .= " , note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "''");
@@ -751,7 +764,6 @@ class ExpenseReport extends CommonObject
 				}
 				$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-				$this->fk_statut                = $obj->status; // deprecated
 				$this->status                   = $obj->status;
 				$this->fk_c_paiement            = $obj->fk_c_paiement;
 				$this->paid                     = $obj->paid;
@@ -1552,7 +1564,6 @@ class ExpenseReport extends CommonObject
 			$sql .= " fk_user_approve = NULL";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
-				$this->fk_statut = 99; // deprecated
 				$this->status = 99;
 				$this->fk_user_refuse = $fuser->id;
 				$this->detail_refuse = $details;

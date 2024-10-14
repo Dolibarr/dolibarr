@@ -130,14 +130,6 @@ class Propal extends CommonObject
 	/**
 	 * Status of the quote
 	 * @var int
-	 * @deprecated Try to use $status now
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
-	 */
-	public $statut;
-
-	/**
-	 * Status of the quote
-	 * @var int
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $status;

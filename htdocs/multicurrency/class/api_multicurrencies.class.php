@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022   J-F Bouculat     <jfbouculat@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -349,10 +350,14 @@ class MultiCurrencies extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   MultiCurrency	$object		Object to clean
-	 * @return  Object						Object with cleaned properties
+	 * @template T of Object
+	 * @param   T  $object     Object to clean
+	 * @phan-param Object  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return Object
+	 * @suppress PhanTemplateTypeNotUsedInFunctionReturn
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -378,12 +383,14 @@ class MultiCurrencies extends DolibarrApi
 	 * Clean sensible MultiCurrencyRate object datas
 	 *
 	 * @param   MultiCurrency	$object     Object to clean
-	 * @return  Object						Object with cleaned properties
+	 * @return  MultiCurrency				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatasRate($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
+
+		'@phan-var-force MultiCurrency $object';
 
 		// Clear all fields out of interest
 		foreach ($object as $key => $value) {

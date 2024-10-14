@@ -151,7 +151,7 @@ class Fichinter extends CommonObject
 	/**
 	 * @var int status
 	 */
-	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
+	public $status = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
 	/**
 	 * @var string description
@@ -337,8 +337,8 @@ class Fichinter extends CommonObject
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : 0);
 		$sql .= ", ".($this->fk_contrat ? ((int) $this->fk_contrat) : 0);
-		$sql .= ", ".((int) $this->statut);
-		$sql .= ", ".($this->signed_status);
+		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((int) $this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ")";
@@ -498,7 +498,6 @@ class Fichinter extends CommonObject
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
 				$this->status       = $obj->status;
-				$this->statut       = $obj->status;	// deprecated
 				$this->signed_status = $obj->signed_status;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
@@ -552,7 +551,7 @@ class Fichinter extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -577,7 +576,7 @@ class Fichinter extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_DRAFT;
+				$this->status = self::STATUS_DRAFT;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -695,7 +694,6 @@ class Fichinter extends CommonObject
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
-				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 				$this->db->commit();
 				return 1;
@@ -722,7 +720,7 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut == self::STATUS_CLOSED) {
+		if ($this->status == self::STATUS_CLOSED) {
 			return 0;
 		} else {
 			$this->db->begin();
@@ -748,7 +746,7 @@ class Fichinter extends CommonObject
 				}
 
 				if (!$error) {
-					$this->statut = self::STATUS_CLOSED;
+					$this->status = self::STATUS_CLOSED;
 					$this->db->commit();
 					return 1;
 				} else {
@@ -825,7 +823,7 @@ class Fichinter extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1330,7 +1328,6 @@ class Fichinter extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->status = self::STATUS_DRAFT;
-		$this->statut = self::STATUS_DRAFT;	//  deprecated
 
 		// Clear fields
 		$this->user_author_id     = $user->id;

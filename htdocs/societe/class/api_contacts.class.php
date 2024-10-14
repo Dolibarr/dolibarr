@@ -584,10 +584,14 @@ class Contacts extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of Object
+	 * @param   T  $object     Object to clean
+	 * @phan-param Object  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return Object
+	 * @suppress PhanTemplateTypeNotUsedInFunctionReturn
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -610,8 +614,8 @@ class Contacts extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   string[]|null     $data   Data to validate
-	 * @return  string[]
+	 * @param   ?array<string,mixed>     $data   Data to validate
+	 * @return  array<string,mixed>
 	 * @throws  RestException
 	 */
 	private function _validate($data)

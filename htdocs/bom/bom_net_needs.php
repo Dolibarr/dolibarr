@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +127,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans('BOM');
-$help_url ='EN:Module_BOM';
+$help_url = 'EN:Module_BOM';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-net_needs');
 
@@ -233,6 +234,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</thead>';
 	print '<tbody>';
 	if (!empty($TChildBom)) {
+		'@phan-var-force array<int,array{bom:BOM,parentid:int,level:int,qty:float,product:array<int,array{level:int,qty:float}>}> $TChildBom';
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';

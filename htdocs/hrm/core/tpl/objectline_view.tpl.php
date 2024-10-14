@@ -48,6 +48,8 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
+'@phan-var-force CommonObject $this';
+
 global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 

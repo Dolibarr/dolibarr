@@ -5,6 +5,7 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,14 +461,13 @@ if ($sql_select) {
 		$documentstatic->type = $objp->doc_type;
 
 		$documentstatic->fk_statut = $objp->status;
-		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
 
 		$documentstatic->paye = $objp->paid;
 		$documentstatic->paid = $objp->paid;
 
 		if (is_object($documentstaticline)) {
-			$documentstaticline->statut = $objp->status;
+			$documentstaticline->status = $objp->status;
 		}
 
 		print '<tr class="oddeven">';

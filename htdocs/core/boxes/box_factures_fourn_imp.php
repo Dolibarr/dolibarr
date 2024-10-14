@@ -141,7 +141,6 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					//$alreadypaid = $facturestatic->getSommePaiement();
 
-					$facturestatic->paye = $objp->paye;
 					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
 					$facturestatic->totalpaid = $objp->am;

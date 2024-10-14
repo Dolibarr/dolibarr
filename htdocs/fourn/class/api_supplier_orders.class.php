@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -699,9 +700,9 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		foreach ($lines as $line) {
-			$lineObj =(object) $line;
+			$lineObj = (object) $line;
 
-			$result=$this->order->dispatchProduct(
+			$result = $this->order->dispatchProduct(
 				DolibarrApiAccess::$user,
 				$lineObj->fk_product,
 				$lineObj->qty,
@@ -739,10 +740,14 @@ class SupplierOrders extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of Object
+	 * @param   T  $object     Object to clean
+	 * @phan-param Object  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return Object
+	 * @suppress PhanTemplateTypeNotUsedInFunctionReturn
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -761,8 +766,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Datas to validate
-	 * @return array
+	 * @param array<string,mixed> $data   Datas to validate
+	 * @return array<string,mixed>
 	 *
 	 * @throws RestException
 	 */

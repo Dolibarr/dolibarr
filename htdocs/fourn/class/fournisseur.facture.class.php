@@ -123,14 +123,6 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Supplier invoice status
 	 * @var int
-	 * @deprecated
-	 * @see $status
-	 */
-	public $statut;
-
-	/**
-	 * Supplier invoice status
-	 * @var int
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
 	public $status;
@@ -141,14 +133,15 @@ class FactureFournisseur extends CommonInvoice
 	 * @deprecated
 	 * @see $status
 	 */
-	public $fk_statut;
+	private $fk_statut;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int<0,1>
 	 * @deprecated Use $paid
 	 */
-	public $paye;
+	private $paye;
+
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int<0,1>
@@ -377,6 +370,18 @@ class FactureFournisseur extends CommonInvoice
 	const CLOSECODE_REPLACED = 'replaced';
 
 	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'fk_statut' => 'status',
+		) + parent::deprecatedProperties();
+	}
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -484,7 +489,6 @@ class FactureFournisseur extends CommonInvoice
 				$this->mode_reglement_id = 0;
 			}
 			$this->status = self::STATUS_DRAFT;
-			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -957,7 +961,6 @@ class FactureFournisseur extends CommonInvoice
 				$this->tms                  = $this->db->jdate($obj->tms);
 				$this->libelle              = $obj->label; // deprecated
 				$this->label				= $obj->label;
-				$this->paye					= $obj->paye;
 				$this->paid					= $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
@@ -967,8 +970,6 @@ class FactureFournisseur extends CommonInvoice
 				$this->total_tva			= $obj->total_tva;
 				$this->total_ttc			= $obj->total_ttc;
 				$this->status				= $obj->status;
-				$this->statut				= $obj->status;	// For backward compatibility
-				$this->fk_statut			= $obj->status;	// For backward compatibility
 				$this->user_creation_id     = $obj->fk_user_author;
 				$this->author				= $obj->fk_user_author;	// deprecated
 				$this->user_validation_id   = $obj->fk_user_valid;
@@ -1179,11 +1180,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->label = trim($this->label);
 		}
 		if (isset($this->paid)) {
-			$this->paid = (int) (bool) $this->paye;
-			$this->paye = $this->paid;
-		} elseif (isset($this->paye)) {
-			$this->paid = (int) (bool) $this->paye;
-			$this->paye = $this->paid;
+			$this->paid = (int) (bool) $this->paid;
 		}
 		if (isset($this->close_code)) {
 			$this->close_code = trim($this->close_code);
@@ -1202,10 +1199,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->status)) {
 			$this->status = (int) $this->status;
-			$this->statut = $this->status;
-		} elseif (isset($this->statut)) {
-			$this->status = (int) $this->statut;
-			$this->statut = $this->status;
 		}
 		if (isset($this->author)) {  // TODO: user_creation_id?
 			$this->author = (int) $this->author;
@@ -1267,7 +1260,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : (isset($this->statut) ? ((int) $this->statut) : "null")).",";
+		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->author) ? ((int) $this->author) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? ((int) $this->fk_user_valid) : "null").",";
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
@@ -1958,7 +1951,6 @@ class FactureFournisseur extends CommonInvoice
 			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $this->newref;
-				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
 				//$this->date_validation=$now; this is stored into log table
 			}
@@ -2734,7 +2726,6 @@ class FactureFournisseur extends CommonInvoice
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
-				$facturestatic->statut = $obj->status;	// For backward compatibility
 				$facturestatic->status = $obj->status;
 
 				$response->nbtodo++;
@@ -3169,7 +3160,6 @@ class FactureFournisseur extends CommonInvoice
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = self::STATUS_DRAFT;	// For backward compatibility
 		$object->status = self::STATUS_DRAFT;
 
 		$object->fetch_thirdparty(); // We need it to recalculate VAT localtaxes according to main sale taxes and vendor
@@ -3321,7 +3311,7 @@ class FactureFournisseur extends CommonInvoice
 			return false;
 		}
 
-		$status = isset($this->status) ? $this->status : $this->statut;
+		$status = $this->status;
 
 		return ($status == self::STATUS_VALIDATED) && ($this->date_echeance < ($now - $conf->facture->fournisseur->warning_delay));
 	}

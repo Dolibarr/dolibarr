@@ -121,11 +121,7 @@ class WebPortalInvoice extends Facture
 	//public $multicurrency_total_ht;
 	//public $multicurrency_total_tva;
 	//public $multicurrency_total_ttc;
-
-	/**
-	 * @var int status
-	 */
-	public $fk_statut;
+	//public $fk_statut; // Managed in parent
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -308,7 +304,7 @@ class WebPortalInvoice extends Facture
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->paye, $this->fk_statut, $mode, -1, $this->type);
+		return $this->LibStatut($this->paid, $this->status, $mode, -1, $this->type);
 	}
 
 	/**
@@ -320,7 +316,7 @@ class WebPortalInvoice extends Facture
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->fk_statut, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->paid, $this->status, $mode, $alreadypaid, $this->type);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -328,16 +324,16 @@ class WebPortalInvoice extends Facture
 	/**
 	 *  Return label of a status
 	 *
-	 * @param	int		$paye			Status field paye
+	 * @param	int		$paid			Status field paid
 	 * @param	int		$status			Id status
 	 * @param	int 	$mode 			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 * @param	int 	$alreadypaid	0=No payment already done, >0=Some payments were already done
 	 * @param	int 	$type 			Type invoice. If -1, we use $this->type
 	 * @return  string	Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
+	public function LibStatut($paid, $status, $mode = 0, $alreadypaid = -1, $type = -1)
 	{
 		// phpcs:enable
-		return $this->getInvoiceStatic()->LibStatut($paye, $status, $mode, $alreadypaid, $type);
+		return $this->getInvoiceStatic()->LibStatut($paid, $status, $mode, $alreadypaid, $type);
 	}
 }

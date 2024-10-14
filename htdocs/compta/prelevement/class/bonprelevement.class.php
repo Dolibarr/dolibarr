@@ -228,12 +228,6 @@ class BonPrelevement extends CommonObject
 	 * @var float
 	 */
 	public $amount;
-
-	/**
-	 * @var int	Status
-	 * @deprecated Use $status
-	 */
-	public $statut;
 	/**
 	 * @var int	Status
 	 */
@@ -523,7 +517,6 @@ class BonPrelevement extends CommonObject
 				if (empty($this->status)) {		// Value is sometimes null in database
 					$this->status = 0;
 				}
-				$this->statut         = $this->status; // For backward compatibility
 
 				$this->fetched = 1;
 
@@ -752,7 +745,6 @@ class BonPrelevement extends CommonObject
 			// End of procedure
 			if ($error == 0) {
 				$this->date_credit = $date;		// date credit or debit
-				$this->statut = self::STATUS_CREDITED;
 				$this->status = self::STATUS_CREDITED;
 
 				$this->db->commit();
@@ -808,7 +800,6 @@ class BonPrelevement extends CommonObject
 
 			if ($error == 0) {
 				$this->date_trans = $date;
-				$this->statut = self::STATUS_TRANSFERED;
 				$this->status = self::STATUS_TRANSFERED;
 				$this->user_trans = $user->id;
 
@@ -2749,7 +2740,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -867,7 +867,6 @@ if ($rowid > 0) {
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
-				$adh->statut = $objp->status;
 				$adh->status = $objp->status;
 				$adh->email = $objp->email;
 				$adh->photo = $objp->photo;

@@ -187,8 +187,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
-				$propalstatic->statut = $obj->status;
-				$propalstatic->statut = $obj->status;
+				$propalstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -286,7 +285,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 				$supplierproposalstatic->total_ht = $obj->total_ht;
 				$supplierproposalstatic->total_tva = $obj->total_tva;
 				$supplierproposalstatic->total_ttc = $obj->total_ttc;
-				$supplierproposalstatic->statut = $obj->status;
+				$supplierproposalstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -385,7 +384,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
-				$orderstatic->statut = $obj->status;
+				$orderstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -486,7 +485,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$supplierorderstatic->total_ht = $obj->total_ht;
 				$supplierorderstatic->total_tva = $obj->total_tva;
 				$supplierorderstatic->total_ttc = $obj->total_ttc;
-				$supplierorderstatic->statut = $obj->status;
+				$supplierorderstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -574,7 +573,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 
 				$fichinterstatic->id = $obj->rowid;
 				$fichinterstatic->ref = $obj->ref;
-				$fichinterstatic->statut = $obj->fk_statut;
+				$fichinterstatic->status = $obj->fk_statut;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;

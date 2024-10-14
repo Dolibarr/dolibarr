@@ -2562,10 +2562,8 @@ if ($action == 'create') {
 						$newinvoice_static->id = $key;
 						$newinvoice_static->ref = $valarray ['ref'];
 						$newinvoice_static->status = $valarray ['status'];
-						$newinvoice_static->statut = $valarray ['status'];
 						$newinvoice_static->type = $valarray ['type'];
 						$newinvoice_static->paid = $valarray ['paye'];
-						$newinvoice_static->paye = $valarray ['paye'];
 
 						$optionsav .= '<option value="'.$key.'"';
 						if ($key == GETPOSTINT('fac_avoir')) {

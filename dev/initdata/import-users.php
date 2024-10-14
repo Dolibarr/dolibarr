@@ -3,6 +3,7 @@
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,27 +30,27 @@
 // Test si mode batch
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit;
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/import-users.php/i', '', $_SERVER["PHP_SELF"]);
+$path = preg_replace('/import-users.php/i', '', $_SERVER["PHP_SELF"]);
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$delimiter=',';
-$enclosure='"';
-$linelength=10000;
-$escape='/';
+$delimiter = ',';
+$enclosure = '"';
+$linelength = 10000;
+$escape = '/';
 
 // Global variables
-$version=DOL_VERSION;
-$confirmed=1;
-$error=0;
+$version = DOL_VERSION;
+$confirmed = 1;
+$error = 0;
 
 
 /*
@@ -79,7 +80,7 @@ if (! file_exists($filepath)) {
 	exit(-1);
 }
 
-$ret=$user->fetch('', 'admin');
+$ret = $user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
@@ -109,11 +110,11 @@ if (! $fhandleerr) {
 
 $db->begin();
 
-$i=0;
-$nboflines=0;
-while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) {
+$i = 0;
+$nboflines = 0;
+while ($fields = fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) {
 	$i++;
-	$errorrecord=0;
+	$errorrecord = 0;
 
 	if ($startlinenb && $i < $startlinenb) {
 		continue;
@@ -127,20 +128,20 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) 
 	$object = new User($db);
 	$object->status = 1;
 
-	$tmp=explode(' ', $fields[3], 2);
+	$tmp = explode(' ', $fields[3], 2);
 	$object->firstname = trim($tmp[0]);
 	$object->lastname = trim($tmp[1]);
 	if ($object->lastname) {
 		$object->login = strtolower(substr($object->firstname, 0, 1)) . strtolower(substr($object->lastname, 0));
 	} else {
-		$object->login=strtolower($object->firstname);
+		$object->login = strtolower($object->firstname);
 	}
-	$object->login=preg_replace('/ /', '', $object->login);
+	$object->login = preg_replace('/ /', '', $object->login);
 	$object->password = 'init';
 
 	print "Process line nb ".$i.", login ".$object->login;
 
-	$ret=$object->create($user);
+	$ret = $object->create($user);
 	if ($ret < 0) {
 		print " - Error in create result code = ".$ret." - ".$object->errorsToString();
 		$errorrecord++;

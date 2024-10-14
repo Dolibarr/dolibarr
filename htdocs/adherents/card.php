@@ -340,7 +340,6 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut = GETPOSTINT("statut");
 			$object->status = GETPOSTINT("statut");
 			$object->public = GETPOSTINT("public");
 

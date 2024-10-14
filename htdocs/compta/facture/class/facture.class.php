@@ -169,11 +169,11 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 *
 	 * @var int<0,1> 1 if invoice paid COMPLETELY, 0 otherwise
-	 * @deprecated * Use statut and close_code)
+	 *
+	 * @deprecated Use $status and close_code
 	 */
-	public $paye;
+	public $paid;
 
 	/**
 	 * @var string key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
@@ -494,7 +494,6 @@ class Facture extends CommonInvoice
 		$this->ref_client = trim($this->ref_client);
 
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
-		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
 		$this->note_public = trim($this->note_public);
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;
@@ -503,7 +502,6 @@ class Facture extends CommonInvoice
 			$this->mode_reglement_id = 0;
 		}
 		$this->status = self::STATUS_DRAFT;
-		$this->statut = self::STATUS_DRAFT;	// deprecated
 
 		if (!empty($this->multicurrency_code)) {
 			// Multicurrency (test on $this->multicurrency_tx because we should take the default rate of multicurrency_code only if not using original rate)
@@ -615,7 +613,6 @@ class Facture extends CommonInvoice
 				$this->mode_reglement_id = 0;
 			}
 			$this->status = self::STATUS_DRAFT;
-			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -1293,7 +1290,6 @@ class Facture extends CommonInvoice
 		}
 
 		$object->id = 0;
-		$object->statut = self::STATUS_DRAFT;
 		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
@@ -2239,7 +2235,7 @@ class Facture extends CommonInvoice
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
 				$this->revenuestamp         = $obj->revenuestamp;
-				$this->paye                 = $obj->paye;
+				$this->paid                 = $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 
@@ -2249,7 +2245,6 @@ class Facture extends CommonInvoice
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
-				$this->statut = $obj->status;	// deprecated
 				$this->status = $obj->status;
 
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
@@ -2263,7 +2258,6 @@ class Facture extends CommonInvoice
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
-				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_creation_id     = $obj->fk_user_author;
@@ -2527,11 +2521,8 @@ class Facture extends CommonInvoice
 		if (isset($this->close_note)) {
 			$this->close_note = trim($this->close_note);
 		}
-		if (isset($this->note) || isset($this->note_private)) {
-			$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-		}
-		if (isset($this->note) || isset($this->note_private)) {
-			$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
+		if (isset($this->note_private)) {
+			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->note_public)) {
 			$this->note_public = trim($this->note_public);
@@ -2563,7 +2554,7 @@ class Facture extends CommonInvoice
 		$sql .= " datef=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " paye=".(isset($this->paye) ? $this->db->escape($this->paye) : 0).",";
+		$sql .= " paye=".(isset($this->paid) ? (int) $this->paid : 0).",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
@@ -2933,9 +2924,9 @@ class Facture extends CommonInvoice
 
 					// On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
-					if ($conf->facture->dir_output && !empty($this->ref)) {
-						$dir = $conf->facture->dir_output."/".$ref;
-						$file = $conf->facture->dir_output."/".$ref."/".$ref.".pdf";
+					if ($conf->invoice->dir_output && !empty($this->ref)) {
+						$dir = $conf->invoice->dir_output."/".$ref;
+						$file = $conf->invoice->dir_output."/".$ref."/".$ref.".pdf";
 						if (file_exists($file)) {	// We must delete all files before deleting directory
 							$ret = dol_delete_preview($this);
 
@@ -2980,7 +2971,7 @@ class Facture extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
+	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paid=1
 	 *  or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
 	 *	@deprecated
@@ -2999,8 +2990,8 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  Tag the invoice as :
-	 *  - paid completely (if close_code is not filled) => this->fk_statut=2, this->paye=1
-	 *  - or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
+	 *  - paid completely (if close_code is not filled) => this->fk_statut=2, this->paid=1
+	 *  - or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paid stay 0
 	 *
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code set when forcing to set the invoice as fully paid while in practice it is incomplete (because of a discount (fr:escompte) for instance)
@@ -3011,7 +3002,7 @@ class Facture extends CommonInvoice
 	{
 		$error = 0;
 
-		if ($this->paye != 1) {
+		if ($this->paid != 1) {
 			$this->db->begin();
 
 			$now = dol_now();
@@ -3589,15 +3580,15 @@ class Facture extends CommonInvoice
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
-					$dirsource = $conf->facture->dir_output.'/'.$oldref;
-					$dirdest = $conf->facture->dir_output.'/'.$newref;
+					$dirsource = $conf->invoice->dir_output.'/'.$oldref;
+					$dirdest = $conf->invoice->dir_output.'/'.$newref;
 					if (!$error && file_exists($dirsource)) {
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest)) {
 							dol_syslog("Rename ok");
 							// Rename docs starting with $oldref with $newref
-							$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+							$listoffiles = dol_dir_list($conf->invoice->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 							foreach ($listoffiles as $fileentry) {
 								$dirsource = $fileentry['name'];
 								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -3619,7 +3610,6 @@ class Facture extends CommonInvoice
 			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->status = self::STATUS_VALIDATED;
 				$this->date_validation = $now;
 				$i = 0;
@@ -3773,16 +3763,14 @@ class Facture extends CommonInvoice
 			}
 
 			if ($error == 0) {
-				$old_statut = $this->status;
-				$this->statut = self::STATUS_DRAFT;	// deprecated
+				$old_status = $this->status;
 				$this->status = self::STATUS_DRAFT;
 
 				// Call trigger
 				$result = $this->call_trigger('BILL_UNVALIDATE', $user);
 				if ($result < 0) {
 					$error++;
-					$this->statut = $old_statut; // deprecated
-					$this->status = $old_statut;
+					$this->status = $old_status;
 				}
 				// End call triggers
 			} else {
@@ -4343,7 +4331,7 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 		} else {
-			$this->error = "Invoice statut makes operation forbidden";
+			$this->error = "Invoice status makes operation forbidden";
 			return -2;
 		}
 	}
@@ -5024,7 +5012,7 @@ class Facture extends CommonInvoice
 			$now = dol_now();
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->facture->client->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->invoice->client->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");
 			$response->labelShort = $langs->trans("Unpaid");
 			$response->url = DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=billing&leftmenu=customers_bills';
@@ -5034,7 +5022,6 @@ class Facture extends CommonInvoice
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
-				$generic_facture->statut = $obj->status;
 				$generic_facture->status = $obj->status;
 
 				$response->nbtodo++;
@@ -5134,7 +5121,6 @@ class Facture extends CommonInvoice
 
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
-		$this->note = 'This is a comment (private)';
 
 		$this->fk_user_author = $user->id;
 
@@ -5522,15 +5508,15 @@ class Facture extends CommonInvoice
 			return false;
 		}
 
-		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		$hasDelay = $this->date_lim_reglement < ($now - $conf->invoice->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
 			$totalpaid = $this->getSommePaiement();
 			$totalpaid = (float) $totalpaid;
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
-				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
+				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->invoice->client->warning_delay)) {
 					$hasDelay = 1;
-				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay)) {
+				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->invoice->client->warning_delay)) {
 					$hasDelay = 1;
 				} else {
 					$hasDelay = 0;

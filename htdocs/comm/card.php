@@ -1205,7 +1205,6 @@ if ($object->id > 0) {
 				$contrat->ref_customer = $objp->refcus;
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->fk_project = $objp->fk_projet;
-				$contrat->statut = $objp->contract_status;
 				$contrat->status = $objp->contract_status;
 				$contrat->last_main_doc = $objp->last_main_doc;
 				$contrat->model_pdf = $objp->model_pdf;
@@ -1213,7 +1212,7 @@ if ($object->id > 0) {
 
 				$late = '';
 				foreach ($contrat->lines as $line) {
-					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
+					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->status == ContratLigne::STATUS_OPEN) {
 						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
@@ -1317,7 +1316,6 @@ if ($object->id > 0) {
 
 				$fichinter_static->id = $objp->id;
 				$fichinter_static->ref = $objp->ref;
-				$fichinter_static->statut = $objp->fk_statut;
 				$fichinter_static->fk_project = $objp->fk_projet;
 
 				print '<tr class="oddeven">';
@@ -1540,7 +1538,6 @@ if ($object->id > 0) {
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
-				$facturestatic->statut = $objp->status;
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
 				$facturestatic->alreadypaid = $objp->am;

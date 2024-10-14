@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 /**
  * API class for shipments
@@ -701,10 +702,14 @@ class Shipments extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of Object
+	 * @param   T  $object     Object to clean
+	 * @phan-param Object  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return Object
+	 * @suppress PhanTemplateTypeNotUsedInFunctionReturn
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -715,7 +720,7 @@ class Shipments extends DolibarrApi
 
 		unset($object->thirdparty); // id already returned
 
-		unset($object->note);
+		// unset($object->note);  // Not unsetting note as this also unsets note_private
 		unset($object->address);
 		unset($object->barcode_type);
 		unset($object->barcode_type_code);
@@ -748,8 +753,8 @@ class Shipments extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param   array<string,mixed>	$data   Array with data to verify
+	 * @return  array<string,mixed>
 	 * @throws  RestException
 	 */
 	private function _validate($data)

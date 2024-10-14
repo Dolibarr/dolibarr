@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +153,6 @@ if ($result) {
 			$fiscalyearstatic->id = $obj->rowid;
 			$fiscalyearstatic->date_start = $obj->date_start;
 			$fiscalyearstatic->date_end = $obj->date_end;
-			$fiscalyearstatic->statut = $obj->status;
 			$fiscalyearstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';
