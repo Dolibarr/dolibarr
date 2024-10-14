@@ -419,6 +419,8 @@ if (empty($reshook) && $action == 'add') {
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) {
 		$error++;
+        $donotclearsession = 1;
+		$action = 'create';
 	}
 
 
