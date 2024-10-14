@@ -2083,7 +2083,7 @@ class Categorie extends CommonObject
 	public function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".$this->db->prefix()."categorie_lang";
-		$sql .= " WHERE fk_categorie = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
+		$sql .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
 
 		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
