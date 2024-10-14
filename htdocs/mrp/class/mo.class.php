@@ -485,7 +485,7 @@ class Mo extends CommonObject
 		}
 
 		$this->socid = $this->fk_soc;
-		if(empty($this->model_pdf)){
+		if (empty($this->model_pdf)) {
 			$this->model_pdf = 'vinci';
 		}
 		return $result;
