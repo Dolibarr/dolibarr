@@ -138,30 +138,22 @@ if (empty($reshook)) {
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
 	$id = GETPOST('id', 'int');
 	if (!empty($id) && $socid > 0) {
-		$db->begin();
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople_extrafields";
-		$sql .= " WHERE fk_object = ".((int) $socid);
-		$sql .= " AND fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople as sp WHERE sp.rowid = ".((int) $socid);
-		$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0))";
-
-		$result1 = $db->query($sql);
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE fk_soc = ".((int) $socid);
-		$sql .= " AND rowid = ".((int) $id);
-		$sql .= " AND ((fk_user_creat = ".((int) $user->id)." AND priv = 1) OR priv = 0)";
-
-		$result2 = $db->query($sql);
-
-		if (!$result1 || !$result2) {
-			setEventMessages($db->lasterror(), null, 'errors');
-			$db->rollback();
+		$contact = new Contact($db);
+		$ret = $contact->fetch($id);
+		if ($ret > 0) {
+			if ($contact->priv == 0  || ($contact->user_modification_id == ((int) $user->id) && $contact->priv == 1)) {
+				$contact->oldcopy = clone $contact; // @phan-suppress-current-line PhanTypeMismatchProperty
+				$result = $contact->delete($user);
+				if ($result > 0) {
+					setEventMessages('RecordDeleted', null, 'mesgs');
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
+					exit();
+				} else {
+					setEventMessages($contact->error, $contact->errors, 'errors');
+				}
+			}
 		} else {
-			$db->commit();
-			setEventMessages('RecordDeleted', null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
-			exit();
+			setEventMessages($contact->error, $contact->errors, 'errors');
 		}
 	}
 }
