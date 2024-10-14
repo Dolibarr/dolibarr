@@ -2,6 +2,31 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 21.0.0 compared to 20.0 *****
+
+For users:
+----------
+NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
+NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
+
+For developers:
+---------------
+
+
+
+WARNING:
+--------
+
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Prepare your module for deprecation of triggers code XXX_INSERT to support also XXX_CREATE.
+* More class properties (with old name in french) are now deprecated in favor of the property name in english.
+* The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
+* The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
+* The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
+  be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
+* The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
+* The trigger code CATEGORY_LINK and CATEGORY_UNLINK has been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff' to detect we want to make a link or unlink.
+
 ***** ChangeLog for 20.0.1 compared to 20.0.0 *****
 
 FIX: #30960 show and search extrafields (#31026)
@@ -51,32 +76,6 @@ FIX: webhook must send POST in body. Add WEBHOOK_POST_SEND_DATA_IN_BODY
 FIX: when qty is not an integer, apply price() (#31138)
 FIX: Wrong price for BOM with workstation (#31142)
 FIX: determine multi-currency price on object line create tpl (#28021)
-
-
-***** ChangeLog for 21.0.0 compared to 20.0 *****
-
-For users:
-----------
-NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
-NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
-
-For developers:
----------------
-
-
-
-WARNING:
---------
-
-The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Prepare your module for deprecation of triggers code XXX_INSERT to support also XXX_CREATE.
-* More class properties (with old name in french) are now deprecated in favor of the property name in english.
-* The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
-* The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
-* The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
-  be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
-* The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
-
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
 

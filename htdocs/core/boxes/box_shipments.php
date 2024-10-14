@@ -51,6 +51,9 @@ class box_shipments extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('expedition', 'lire');
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/expedition/card.php?action=create2';
+		$this->msgNoRecords = 'NoRecordedShipments';
 	}
 
 	/**
@@ -163,12 +166,12 @@ class box_shipments extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 	'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
