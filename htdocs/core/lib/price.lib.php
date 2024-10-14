@@ -174,7 +174,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// pu calculation from pu_devise if pu empty
 	if (empty($pu) && !empty($pu_devise)) {
 		if (!empty($multicurrency_tx)) {
-			$pu = price2num($pu_devise / $multicurrency_tx, 'MT');
+			$pu = price2num($pu_devise / $multicurrency_tx, 'MU');
 		} else {
 			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (multicurrency_tx empty when pu_devise not) ', LOG_ERR);
 			return array();
