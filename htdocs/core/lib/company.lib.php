@@ -1667,7 +1667,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 					print img_delete();
 					print '</a>';
 				}
