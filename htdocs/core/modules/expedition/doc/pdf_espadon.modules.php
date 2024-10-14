@@ -88,6 +88,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -104,7 +105,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
+		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 
@@ -179,9 +180,9 @@ class pdf_espadon extends ModelePdfExpedition
 
 				$realpath = '';
 
+				$arephoto = false;
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {
-						// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
 						} else {
@@ -192,11 +193,12 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					$realpath = $dir.$filename;
+					$arephoto = true;
 					$this->atleastonephoto = true;
 					break;
 				}
 
-				if ($realpath) {
+				if ($realpath && $arephoto) {
 					$realpatharray[$i] = $realpath;
 				}
 			}
@@ -318,7 +320,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 
-				// Public note and Tracking code
+				// Displays notes. Here we are still on code executed only for the first page.
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
 				// Extrafields in note
@@ -571,6 +573,10 @@ class pdf_espadon extends ModelePdfExpedition
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 					$heightforsignature = 0;
+
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
+					}
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -1271,6 +1277,24 @@ class pdf_espadon extends ModelePdfExpedition
 		 */
 
 		$rank = 0; // do not use negative rank
+		$this->cols['position'] = array(
+			'rank' => $rank,
+			'width' => 10,
+			'status' => getDolGlobalInt('PDF_ESPADON_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
+			'title' => array(
+				'textkey' => '#', // use lang key is useful in somme case with module
+				'align' => 'C',
+				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+				// 'label' => ' ', // the final label
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+			'content' => array(
+				'align' => 'C',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+		);
+
+		$rank = 5; // do not use negative rank
 		$this->cols['desc'] = array(
 			'rank' => $rank,
 			'width' => false, // only for desc
@@ -1280,15 +1304,16 @@ class pdf_espadon extends ModelePdfExpedition
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
-				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'content' => array(
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
-		$rank = $rank + 10;
+		// Image of product
+		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
 			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
