@@ -49,6 +49,8 @@ class box_factures extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('facture', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedInvoices';
 	}
 
 	/**
@@ -197,12 +199,12 @@ class box_factures extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedInvoices").'</span>',
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedInvoices").'</span>',
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

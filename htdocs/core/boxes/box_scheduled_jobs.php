@@ -51,6 +51,9 @@ class box_scheduled_jobs extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('cron', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/cron/card.php?action=create';
+		$this->msgNoRecords = 'NoScheduledJobs';
 	}
 
 	/**
@@ -159,26 +162,27 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 					$line++;
 				}
-
-				// Line nb job in error
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="tdoverflowmax300" colspan="3"',
-					'text' => $langs->trans("NumberScheduledJobError")
-				);
-				$textnoformat = '';
-				if ($nbjobsnotfinished) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly'.($nbjobsinerror ? ' marginrightonly' : '').' minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
+				if ($num > 0) {
+					// Line nb job in error
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax300" colspan="3"',
+						'text' => $langs->trans("NumberScheduledJobError")
+					);
+					$textnoformat = '';
+					if ($nbjobsnotfinished) {
+						$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly'.($nbjobsinerror ? ' marginrightonly' : '').' minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
+					}
+					if ($nbjobsinerror) {
+						$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
+					}
+					if (empty($nbjobsnotfinished) && empty($nbjobsinerror)) {
+						$textnoformat .= '<a class="inline-block paddingleft marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
+					}
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'textnoformat' => $textnoformat
+					);
 				}
-				if ($nbjobsinerror) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
-				}
-				if (empty($nbjobsnotfinished) && empty($nbjobsinerror)) {
-					$textnoformat .= '<a class="inline-block paddingleft marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
-				}
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'textnoformat' => $textnoformat
-				);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
