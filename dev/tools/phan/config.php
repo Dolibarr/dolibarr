@@ -40,14 +40,14 @@ $sanitizeRegex
  * Map deprecated module names to new module names
  */
 $DEPRECATED_MODULE_MAPPING = array(
-	'actioncomm' => 'agenda',
+	// 'actioncomm' => 'agenda',  // Not aliased, unsupported
 	'adherent' => 'member',
-	'adherent_type' => 'member_type',
+	// 'adherent_type' => 'member_type',  // Not aliased, unsupported
 	'banque' => 'bank',
 	'categorie' => 'category',
 	'commande' => 'order',
 	'contrat' => 'contract',
-	'entrepot' => 'stock',
+	// 'entrepot' => 'stock',  // Not aliased, unsupported
 	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
