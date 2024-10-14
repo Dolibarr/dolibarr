@@ -135,6 +135,7 @@ if (GETPOSTISARRAY('search_status')) {
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
+
 $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '1,2';
@@ -783,14 +784,6 @@ if ($socid > 0) {
 	$title .= ' - '.$fourn->name;
 }
 
-/*if ($search_status)
-{
-	if ($search_status == '1,2') $title .= ' - '.$langs->trans("SuppliersOrdersToProcess");
-	elseif ($search_status == '3,4') $title .= ' - '.$langs->trans("SuppliersOrdersAwaitingReception");
-	elseif ($search_status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
-	elseif ($search_status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
-	elseif (is_numeric($search_status) && $search_status >= 0) $title .= ' - '.$commandestatic->LibStatut($search_status);
-}*/
 if ($search_billed > 0) {
 	$title .= ' - '.$langs->trans("Billed");
 }
@@ -1537,7 +1530,7 @@ if ($resql) {
 	// Status
 	if (!empty($arrayfields['cf.fk_statut']['checked'])) {
 		print '<td class="liste_titre center parentonrightofpage">';
-		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status', 'search_status width100 onrightofpage');
+		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status', 'search_status width125 onrightofpage');
 		print '</td>';
 	}
 	// Date valid
