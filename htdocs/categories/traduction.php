@@ -76,6 +76,13 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
+// delete a translation
+if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $user->hasRight('categorie', 'creer')) {
+	$object->fetch($id);
+	$res = $object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
+	setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	$action = '';
+}
 
 // validation of addition
 if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
