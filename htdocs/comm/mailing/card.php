@@ -852,13 +852,13 @@ if ($action == 'create') {	// aaa
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'emailing';
 	$formmail->withaiprompt = 'html';
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
 	$out = '';
-	$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
+	$showlinktolayout = ($formmail->withfckeditor ? $formmail->withlayout : '');
 	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
@@ -1245,7 +1245,7 @@ if ($action == 'create') {	// aaa
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
-				$formmail->withlayout = 0;
+				$formmail->withlayout = '';
 				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;

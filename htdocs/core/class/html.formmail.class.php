@@ -164,7 +164,7 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
-	 * @var int<0,1>		1=Add a button "Fill with layout"
+	 * @var string					Use case string to a button "Fill with layout" for this use case. Example 'wesitepage', 'emailing', 'email', ...
 	 */
 	public $withlayout;
 
@@ -1090,7 +1090,7 @@ class FormMail extends Form
 				$out .= '<td class="tdtop">';
 
 				$formmail = $this;
-				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT');
+				$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
@@ -1593,12 +1593,13 @@ class FormMail extends Form
 	/**
 	 * Return HTML code for selection of email layout
 	 *
-	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
-	 * @return  string                      HTML for model email boxes
+	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill
+	 * @param	string		$showlinktolayout	Show link to layout
+	 * @return  string                      	HTML for model email boxes
 	 */
-	public function getModelEmailTemplate($htmlContent = 'message')
+	public function getModelEmailTemplate($htmlContent = 'message', $showlinktolayout = 'email')
 	{
-		global $websitepage, $langs, $user;
+		global $websitepage, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1608,24 +1609,35 @@ class FormMail extends Form
 		$websitepage = new WebsitePage($this->db);
 		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
 
-		$out = '<div id="template-selector" class="template-container">';
-		$templates = array(
+		$out = '<div id="template-selector" class="template-container" style="display:none;">';
+
+		// Define list of email layouts to use
+		$layouts = array(
 			'empty' => 'empty',
 		);
-
+		// Search available layouts on disk
 		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
 		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
 			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
-			$templates[$layoutname] = ucfirst($layoutname);
+
+			// Exclude some layouts for some use cases
+			if ($layoutname == 'news' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+				continue;
+			}
+			if ($layoutname == 'products' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+				continue;
+			}
+
+			$layouts[$layoutname] = ucfirst($layoutname);
 		}
 		//}
 		// TODO Add a hook to allow to complete the list
 
-		foreach ($templates as $template => $templateFunction) {
-			$contentHtml = getHtmlOfLayout($template);
+		foreach ($layouts as $layout => $templateFunction) {
+			$contentHtml = getHtmlOfLayout($layout);
 
-			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
-			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			$out .= '<div class="template-option" data-template="'.$layout.'" data-content="'.htmlentities($contentHtml).'">';
+			$out .= '<img class="maillayout" alt="'.$layout.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$layout.'.png" />';
 			$out .= '<span class="template-option-text">'.$langs->trans($templateFunction).'</span>';
 			$out .= '</div>';
 		}
@@ -1677,10 +1689,13 @@ class FormMail extends Form
 					$.ajax({
 						type: "POST",
 						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: {  content: contentHtml, token: csrfToken },
-						url: "/core/ajax/mailtemplate.php",
 						data: {
-              template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc,
+							template: template,
+							subject: subject,
+							fromtype: fromtype,
+							sendto: sendto,
+							sendtocc: sendtocc,
+							sendtoccc: sendtoccc,
 							content: contentHtml,
 							selectedPosts: "[]",
 							token: csrfToken
