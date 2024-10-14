@@ -4,6 +4,7 @@
  * Copyright (C) 2019	Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
  * Function for return different onglet of socialnetworks admin page
- * @return  array   Tabs for the admin section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the admin section
  */
 function socialnetwork_prepare_head()
 {

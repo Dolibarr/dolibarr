@@ -466,6 +466,7 @@ ExtrafieldPointGeo=Geometric Point
 ExtrafieldMultiPointGeo=Geometric Multi Point
 ExtrafieldLinestringGeo=Geometric Linestring
 ExtrafieldPolygonGeo=Geometric Polygon
+ExtrafieldStars=Stars
 ComputedFormula=Computed field
 ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Store computed field
@@ -1486,6 +1487,8 @@ ForceInvoiceDate=Force invoice date to validation date
 SuggestedPaymentModesIfNotDefinedInInvoice=Suggested payments mode on invoice by default if not defined on the invoice
 SuggestPaymentByRIBOnAccount=Suggest payment by withdrawal on account
 SuggestPaymentByChequeToAddress=Suggest payment by check to
+InvoicePaymentManageStructuredCommunication=Generate structured communication for invoice payment
+InvoicePaymentManageStructuredCommunicationHelp=In some countries, it is necessary to display a structured reference to facilitate payments and their reconciliation
 FreeLegalTextOnInvoices=Free text on invoices
 WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
 PaymentsNumberingModule=Payments numbering model
