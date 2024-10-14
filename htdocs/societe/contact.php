@@ -142,6 +142,7 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 		$ret = $contact->fetch($id);
 		if ($ret > 0) {
 			if ($contact->priv == 0  || ($contact->user_modification_id == ((int) $user->id) && $contact->priv == 1)) {
+				$contact->oldcopy = clone $contact; // @phan-suppress-current-line PhanTypeMismatchProperty
 				$result = $contact->delete($user);
 				if ($result > 0) {
 					setEventMessages('RecordDeleted', null, 'mesgs');
