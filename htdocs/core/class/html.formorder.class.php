@@ -38,9 +38,10 @@ class FormOrder extends Form
 	 *  @param	int		$short		Use short labels
 	 *  @param	string	$hmlname	Name of HTML select element
 	 *  @param	string	$morecss	More CSS
+	 *  @param	int		$multi		Use a multiselect
 	 *  @return	void
 	 */
-	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status', $morecss = '')
+	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status', $morecss = '', $multi = 1)
 	{
 		$options = array();
 
@@ -60,6 +61,7 @@ class FormOrder extends Form
 
 		foreach ($statustohow as $key => $value) {
 			$tmpsupplierorder->statut = $key;
+			$tmpsupplierorder->status = $key;
 			$options[$value] = $tmpsupplierorder->getLibStatut($short);
 		}
 
@@ -69,7 +71,17 @@ class FormOrder extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss, 0, 150);
+		if (!empty($selectedarray[6])) {	// special case for status '6,7'
+			unset($selectedarray[6]);
+			unset($selectedarray[7]);
+			$selectedarray['6,7']='6,7';
+		}
+
+		if ($multi) {
+			print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss, 0, 0);
+		} else {
+			print Form::selectarray($hmlname, $options, $selectedarray, 0, 0, 0, '', 0, 0, 0, '', $morecss);
+		}
 	}
 
 	/**
