@@ -422,7 +422,8 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= ' WHERE s.entity IN ('.getEntity('societe').') AND sp.fk_soc = s.rowid';
+$sql .= " WHERE s.entity IN (".getEntity('societe').") AND sp.fk_soc = s.rowid";
+$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
