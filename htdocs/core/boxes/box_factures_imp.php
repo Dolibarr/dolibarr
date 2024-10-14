@@ -53,6 +53,8 @@ class box_factures_imp extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('facture', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		$this->msgNoRecords = 'NoUnpaidCustomerBills';
 	}
 
 	/**
@@ -220,10 +222,10 @@ class box_factures_imp extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center" colspan="3"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
-					);
+					// $this->info_box_contents[$line][0] = array(
+					// 	'td' => 'class="center" colspan="3"',
+					// 	'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
+					// );
 				} else {
 					$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
 
