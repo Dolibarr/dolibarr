@@ -120,7 +120,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $localtax1_tx;
 
 	/**
-	 * @var int
+	 * @var int<0, 6>
 	 */
 	public $localtax1_type;
 
@@ -130,7 +130,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $localtax2_tx;
 
 	/**
-	 * @var int
+	 * @var int<0, 6>
 	 */
 	public $localtax2_type;
 
