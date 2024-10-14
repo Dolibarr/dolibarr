@@ -17,7 +17,7 @@
 --
 -- ============================================================================
 
-Create Table llx_product_customer_price_extrafields (
+CREATE TABLE llx_product_customer_price_extrafields (
 	rowid               integer AUTO_INCREMENT PRIMARY KEY,
 	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_object           integer NOT NULL,
