@@ -929,9 +929,9 @@ class ImportCsv extends ModeleImports
 								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
-								if (empty($keyfield)) {
+								//if (empty($keyfield)) { keyfield may content any hidden update field !!!
 									$keyfield = 'rowid';
-								}
+								//}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -974,9 +974,9 @@ class ImportCsv extends ModeleImports
 								}
 								$sqlstart .= " SET ".implode(', ', $set);
 
-								if (empty($keyfield)) {
+								//if (empty($keyfield)) { keyfield may content any hidden update field !!!
 									$keyfield = 'rowid';
-								}
+								//}
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
