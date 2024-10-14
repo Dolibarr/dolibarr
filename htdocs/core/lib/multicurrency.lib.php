@@ -56,7 +56,7 @@ function multicurrencyAdminPrepareHead()
 /**
  * Prepare array with list of currency tabs
  *
- * @param	array	$aCurrencies	Currencies array
+ * @param	string[]	$aCurrencies	Currencies array
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function multicurrencyLimitPrepareHead($aCurrencies)

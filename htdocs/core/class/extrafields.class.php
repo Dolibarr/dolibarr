@@ -101,6 +101,7 @@ class ExtraFields
 		'linestrg' => 'ExtrafieldLinestringGeo',
 		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
+		'stars' => 'ExtrafieldStars',
 	);
 
 	/**
@@ -337,6 +338,9 @@ class ExtraFields
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
+			} elseif ($type == 'stars') {
+				$typedb = 'int';
+				$lengthdb = $length;
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;
@@ -714,6 +718,9 @@ class ExtraFields
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
+			} elseif ($type == 'stars') {
+				$typedb = 'int';
+				$lengthdb = $length;
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;
@@ -1871,6 +1878,45 @@ class ExtraFields
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
 			$out .= '<input autocomplete="new-password" type="'.($keyprefix == 'search_' ? 'text' : 'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'stars') {
+			$out = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$out .= '<div class="star-selection" id="'.$keyprefix.$key.$keysuffix.'_selection">';
+			$i = 1;
+			while ($i <= $size) {
+				$out .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$i++;
+			}
+			$out .= '</div>';
+			$out .= '<script>
+				jQuery(function($) {
+					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
+					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});
+					container.find(".star").on("mouseover", function() {
+						let selectedStar = $(this).data("value");
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+						});
+					});
+					container.on("mouseout", function() {
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+					container.find(".star").off("click").on("click", function() {
+						selectedStars = $(this).data("value");
+						if (selectedStars === 1 && $("#'.$keyprefix.$key.$keysuffix.'").val() == 1) {
+							selectedStars = 0;
+						}
+						$("#'.$keyprefix.$key.$keysuffix.'").val(selectedStars);
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+				});
+			</script>';
 		}
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
@@ -1898,7 +1944,7 @@ class ExtraFields
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $object;
 
 		if (is_null($outputlangs) || !is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -2256,6 +2302,63 @@ class ExtraFields
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
+		} elseif ($type == 'stars') {
+			$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$object->id.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$value .= '<div class="star-selection" id="'.$key.$object->id.'_selection">';
+			$i = 1;
+			while ($i <= $size) {
+				$value .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$i++;
+			}
+			$value .= '</div>';
+			$value .= '<script>
+				$(document).ready(function() {
+						let container = $("#'.$key.$object->id.'_selection");
+						let selectedStars = parseInt($("#'.$key.$object->id.'").val()) || 0;
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+						container.find(".star").on("mouseover", function() {
+							let selectedStar = $(this).data("value");
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+							});
+						});
+						container.on("mouseout", function() {
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+							});
+						});
+						container.find(".star").off("click").on("click", function() {
+							selectedStars = $(this).data("value");
+							if (selectedStars == 1 && $("#'.$key.$object->id.'").val() == 1) {
+								selectedStars = 0;
+							}
+							container.find("#'.$key.$object->id.'").val(selectedStars);
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+							});
+							$.ajax({
+								url: "'.DOL_URL_ROOT.'/core/ajax/editextrafield.php",
+								method: "POST",
+								data: {
+									objectType: "'.$extrafieldsobjectkey.'",
+									objectId: "'.$object->id.'",
+									field: "'.$key.'",
+									value: selectedStars,
+									token: "'.newToken().'"
+								},
+								success: function(response) {
+									var res = JSON.parse(response);
+									console[res.status === "success" ? "log" : "error"](res.message);
+								},
+								error: function(xhr, status, error) {
+									console.log("Ajax request failed while updating '.$key.':", error);
+								}
+							});
+						});
+				});
+			</script>';
 		} else {
 			$showsize = round((float) $size);
 			if ($showsize > 48) {

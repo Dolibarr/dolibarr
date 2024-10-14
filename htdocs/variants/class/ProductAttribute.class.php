@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	    Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2022       Open-Dsi			<support@open-dsi.fr>
  * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ class ProductAttribute extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->isextrafieldmanaged = 0;
+		$this->isextrafieldmanaged = 1;
 		$this->entity = $conf->entity;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -255,6 +255,10 @@ class ProductAttribute extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -322,6 +326,7 @@ class ProductAttribute extends CommonObject
 			$this->label = $obj->label;
 			$this->rang = $obj->position; // deprecated
 			$this->position = $obj->position;
+			$this->fetch_optionals();
 		}
 		$this->db->free($resql);
 
@@ -418,7 +423,12 @@ class ProductAttribute extends CommonObject
 			$this->errors[] = "Error " . $this->db->lasterror();
 			$error++;
 		}
-
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
@@ -575,6 +585,7 @@ class ProductAttribute extends CommonObject
 				$line->ref = $obj->ref;
 				$line->value = $obj->value;
 				$line->position = $obj->position;
+				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 				$i++;

@@ -137,7 +137,7 @@ class PropaleStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -161,7 +161,7 @@ class PropaleStats extends Stats
 	/**
 	 * Return propals number per year
 	 *
-	 * @return	array	Array with number by year
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 *
 	 */
 	public function getNbByYear()
@@ -186,7 +186,7 @@ class PropaleStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with amount by month
+	 * @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -211,7 +211,7 @@ class PropaleStats extends Stats
 	 * Return the propals amount average by month for a year
 	 *
 	 * @param	int		$year	year for stats
-	 * @return	array			array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -234,7 +234,7 @@ class PropaleStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array	Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
 	 */
 	public function getAllByYear()
 	{

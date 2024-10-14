@@ -172,6 +172,13 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
+if ($dates === '') {
+	$dates = null;
+}
+if ($datee === '') {
+	$datee = null;
+}
+
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
@@ -1099,7 +1106,7 @@ foreach ($listofreferent as $key => $value) {
 
 		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
-			if ($selectList < 0) {
+			if ((int) $selectList < 0) {  // cast to int because ''<0 is true.
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			} elseif ($selectList) {
 				// Define form with the combo list of elements to link
