@@ -147,8 +147,12 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 					setEventMessages('RecordDeleted', null, 'mesgs');
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
 					exit();
+				} else {
+					setEventMessages($contact->error, $contact->errors, 'errors');
 				}
 			}
+		} else {
+			setEventMessages($contact->error, $contact->errors, 'errors');
 		}
 	}
 }
