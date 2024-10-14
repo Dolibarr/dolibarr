@@ -791,7 +791,7 @@ if ($action == 'create') {	// aaa
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head(array(), '', '', -3);
+	print dol_get_fiche_head(array(), '', '', -4, '', 0, '', '');
 
 	print '<table class="border centpercent">';
 
@@ -855,6 +855,8 @@ if ($action == 'create') {	// aaa
 	$formmail->withlayout = 'emailing';
 	$formmail->withaiprompt = 'html';
 
+	print '<tr class="fieldsforemail"><td></td><td class="tdtop"></td></tr>';
+
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
 	$out = '';
@@ -872,6 +874,7 @@ if ($action == 'create') {	// aaa
 
 	print '</td></tr>';
 	print '</table>';
+
 
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor

@@ -1499,7 +1499,7 @@ class FormMail extends Form
 
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<div id="ai_input'.$htmlContent.'" class="hidden">';
+		$out = '<div id="ai_input'.$htmlContent.'" class="hidden paddingtop paddingbottom">';
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
@@ -1609,7 +1609,7 @@ class FormMail extends Form
 		$websitepage = new WebsitePage($this->db);
 		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
 
-		$out = '<div id="template-selector" class="template-container" style="display:none;">';
+		$out = '<div id="template-selector" class="email-layout-container hidden" style="display:none;">';
 
 		// Define list of email layouts to use
 		$layouts = array(
@@ -1652,7 +1652,7 @@ class FormMail extends Form
 		}
 
 		// Use the multiselect array function to create the dropdown
-		$out .= '<div id="post-dropdown-container" style="display:none;">';
+		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
 		$out .= self::multiselectarray('blogpost-select', $blogArray);
 		$out .= '</div>';

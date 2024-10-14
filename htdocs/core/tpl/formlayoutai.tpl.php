@@ -85,9 +85,10 @@ if ($showlinktoai) {
 								event.preventDefault();
 								jQuery("#ai_input'.$htmlname.'").toggle();
 								jQuery("#template-selector").hide();
+								jQuery(".email-layout-container").hide();
 								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
-									console.log("Set focus on input field");
-									jQuery("#ai_instructions").focus();
+									console.log("Set focus on input field #ai_instructions'.$htmlname.'");
+									jQuery("#ai_instructions'.$htmlname.'").focus();
 									if (!jQuery("pageContent").is(":hidden")) {		// May exists for website page only
 										jQuery("#pageContent").show();
 									}
