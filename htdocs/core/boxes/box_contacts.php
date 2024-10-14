@@ -54,6 +54,9 @@ class box_contacts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contact/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedContacts';
 	}
 
 	/**
@@ -183,13 +186,13 @@ class box_contacts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
-						'asis' => 1
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+				// 		'asis' => 1
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

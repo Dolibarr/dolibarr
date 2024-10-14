@@ -55,6 +55,8 @@ class box_produits extends ModeleBoxes
 		$tmpentry = array('enabled' => (isModEnabled("product") || isModEnabled("service")), 'perms' => ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')), 'module' => 'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
+		$this->urltoaddentry = DOL_URL_ROOT.'/product/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedProducts';
 	}
 
 	/**
@@ -210,12 +212,12 @@ class box_produits extends ModeleBoxes
 
 					$line++;
 				}
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedProducts"),
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => $langs->trans("NoRecordedProducts"),
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
