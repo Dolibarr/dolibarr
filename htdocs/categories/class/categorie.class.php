@@ -459,7 +459,7 @@ class Categorie extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 		$langs->load('categories');
 
 		$type = $this->type;
@@ -809,7 +809,7 @@ class Categorie extends CommonObject
 
 			// Call trigger
 			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_LINK', $user);
+			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -869,7 +869,7 @@ class Categorie extends CommonObject
 		if ($this->db->query($sql)) {
 			// Call trigger
 			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_UNLINK', $user);
+			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}
