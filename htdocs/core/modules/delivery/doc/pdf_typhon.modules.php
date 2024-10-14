@@ -108,12 +108,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
-		}
-
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
 		$this->posxcomm = 112;	// customer comment
@@ -130,6 +124,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$this->posxqty -= 20;
 			//$this->posxdiscount-=20;
 			//$this->postotalht-=20;
+		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 

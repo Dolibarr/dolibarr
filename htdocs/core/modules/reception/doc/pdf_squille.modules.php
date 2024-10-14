@@ -88,12 +88,6 @@ class pdf_squille extends ModelePdfReception
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
-
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
 		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 78;
@@ -123,6 +117,17 @@ class pdf_squille extends ModelePdfReception
 			$this->posxweightvol += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxpicture += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxqtyordered = $this->posxqtytoship;
+		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 	}
 
