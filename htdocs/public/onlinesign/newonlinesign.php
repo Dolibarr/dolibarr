@@ -24,6 +24,8 @@
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  *					Example of URL: https://localhost/public/onlinesign/newonlinesign.php?ref=PR...
+ *
+ *					The signature is added by calling the file /htdocs/core/ajax/onlinSign.php
  */
 
 if (!defined('NOLOGIN')) {
