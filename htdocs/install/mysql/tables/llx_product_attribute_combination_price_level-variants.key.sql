@@ -1,5 +1,5 @@
--- ===================================================================
--- Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro@open-dsi.fr>
+-- ============================================================================
+-- Copyright (C) 2020      John BOTELLA         <john.botella@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table with category for accounting account
--- ===================================================================
+-- ============================================================================
 
-ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code,entity);
 
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);

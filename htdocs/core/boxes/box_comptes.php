@@ -60,6 +60,8 @@ class box_comptes extends ModeleBoxes
 		}
 
 		$this->hidden = !$user->hasRight('banque', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/compta/bank/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedBankAccounts';
 	}
 
 	/**
@@ -74,7 +76,9 @@ class box_comptes extends ModeleBoxes
 
 		$this->max = $max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleCurrentAccounts").'<a class="paddingleft" href="'.DOL_URL_ROOT.'/compta/bank/list.php?search_status=opened"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('banque', 'lire')) {
 			$sql = "SELECT b.rowid, b.ref, b.label, b.bank, b.number, b.courant, b.clos, b.rappro, b.url";
@@ -161,6 +165,7 @@ class box_comptes extends ModeleBoxes
 					);
 					$line++;
 				}
+
 
 				$this->db->free($result);
 			} else {

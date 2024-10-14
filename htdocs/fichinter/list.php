@@ -1008,7 +1008,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['fd.description']['checked'])) {
 			$text = dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1));
 			print '<td>';
-			print '<div class="classfortooltip tdoverflowmax250" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
+			print '<div class="classfortooltip tdoverflowmax250 small" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
 			print dol_escape_htmltag($text);
 			print '</div>';
 			print '</td>';

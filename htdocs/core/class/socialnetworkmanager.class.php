@@ -97,7 +97,15 @@ class SocialNetworkManager
 		if (!$this->handler) {
 			return false;
 		}
-		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
+
+		// This fetch URL
+		$result = $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
+
+		if (!empty($this->handler->error)) {
+			$this->error = $this->handler->error;
+		}
+
+		return $result;
 	}
 
 	/**

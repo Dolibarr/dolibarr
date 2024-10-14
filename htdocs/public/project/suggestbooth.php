@@ -67,7 +67,7 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$eventtype = GETPOST("eventtype");
+$eventtype = GETPOSTINT("eventtype");
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
@@ -118,8 +118,8 @@ if (empty($conf->eventorganization->enabled)) {
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
@@ -233,10 +233,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 
+	$thirdparty = null;
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+		$resultfetchthirdparty = $thirdparty->fetch(0, $societe);
 
 		if ($resultfetchthirdparty < 0) {
 			// If an error was found
@@ -274,6 +275,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				}
 			}
 			$modCodeClient = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -292,7 +294,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		// From there we have a thirdparty, now looking for the contact
 		if (!$error) {
 			$contact = new Contact($db);
-			$resultcontact = $contact->fetch('', '', '', $email);
+			$resultcontact = $contact->fetch(0, null, '', $email);
 			if ($resultcontact <= 0) {
 				// Need to create a contact
 				$contact->socid = $thirdparty->id;
@@ -344,6 +346,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						}
 					}
 					$modCodeFournisseur = new $module($db);
+					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -416,6 +419,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					$errmsg .= $conforbooth->error;
 				} else {
 					// If this is a paying booth, we have to redirect to payment page and create an invoice
+					$facture = null;
 					if (!empty((float) $project->price_booth)) {
 						$productforinvoicerow = new Product($db);
 						$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_BOOTH_LOCATION'));
@@ -451,10 +455,10 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							}
 						}
 
-						if (!$error) {
+						if (!$error && is_object($facture)) {
 							// Add line to draft invoice
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, 0, 'HT', 0, 1);
 							if ($result <= 0) {
 								$contact->error = $facture->error;
 								$contact->errors = $facture->errors;
@@ -486,7 +490,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}
 	}
 
-	if (!$error) {
+	if (!$error && is_object($thirdparty)) {
 		$db->commit();
 
 		// Sending mail
@@ -506,6 +510,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 		}
 
+		$subject = '';
+		$msg = '';
 		if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 			$subject = $arraydefaultmessage->topic;
 			$msg     = $arraydefaultmessage->content;

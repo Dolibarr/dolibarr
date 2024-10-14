@@ -84,7 +84,7 @@ abstract class CommonDocGenerator
 	public $description;
 
 	/**
-	 * @var array
+	 * @var array{0:float,1:float}
 	 */
 	public $format;
 
@@ -131,20 +131,52 @@ abstract class CommonDocGenerator
 	/**
 	 * @var int<0,1> option logo
 	 */
-
 	public $option_logo;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_tva;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_multilang;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_freetext;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_draft_watermark;
+	/**
+	 * @var string
+	 */
 	public $watermark;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_modereg;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_condreg;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_escompte;
+	/**
+	 * @var int<0,1>
+	 */
 	public $option_credit_note;
 
+	/**
+	 * @var array<string,float>
+	 */
 	public $tva;
+	/**
+	 * @var array<string,array{amount:float}>
+	 */
 	public $tva_array;
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
@@ -166,12 +198,12 @@ abstract class CommonDocGenerator
 	public $tabTitleHeight;
 
 	/**
-	 * @var array default title fields style
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} default title fields style
 	 */
 	public $defaultTitlesFieldsStyle;
 
 	/**
-	 * @var array default content fields style
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} default content fields style
 	 */
 	public $defaultContentsFieldsStyle;
 
@@ -196,23 +228,77 @@ abstract class CommonDocGenerator
 	 */
 	public $result;
 
+	/**
+	 * @var float
+	 */
 	public $posxlabel;
+	/**
+	 * @var float
+	 */
 	public $posxup;
+	/**
+	 * @var float
+	 */
 	public $posxref;
+	/**
+	 * @var float
+	 */
 	public $posxpicture;	// For picture
+	/**
+	 * @var float
+	 */
 	public $posxdesc;		// For description
+	/**
+	 * @var float
+	 */
 	public $posxqty;
+	/**
+	 * @var float
+	 */
 	public $posxpuht;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float|int
+	 */
 	public $posxtotalht;
+	/**
+	 * @var float
+	 */
 	public $postotalht;
+	/**
+	 * @var float
+	 */
 	public $posxunit;
+	/**
+	 * @var float
+	 */
 	public $posxdiscount;
+	/**
+	 * @var float
+	 */
 	public $posxworkload;
+	/**
+	 * @var float
+	 */
 	public $posxtimespent;
+	/**
+	 * @var float
+	 */
 	public $posxprogress;
+	/**
+	 * @var bool
+	 */
 	public $atleastonephoto;
+	/**
+	 * @var int<0,1>
+	 */
 	public $atleastoneratenotnull;
+	/**
+	 * @var bool|int<0,1>
+	 */
 	public $atleastonediscount;
 
 	/**
@@ -594,10 +680,10 @@ abstract class CommonDocGenerator
 		$resarray = array(
 			$array_key.'_id' => $object->id,
 			$array_key.'_ref' => (property_exists($object, 'ref') ? $object->ref : ''),
-			$array_key.'_label' => (property_exists($object, 'label') ? $object->label : ''),
+			$array_key.'_label' => (property_exists($object, 'label') ? $object->label : ''),  // @phan-suppress-current-line PhanUndeclaredProperty
 			$array_key.'_ref_ext' => (property_exists($object, 'ref_ext') ? $object->ref_ext : ''),
 			$array_key.'_ref_customer' => (!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
-			$array_key.'_ref_supplier' => (!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
+			$array_key.'_ref_supplier' => (!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),  // @phan-suppress-current-line PhanUndeclaredProperty
 			$array_key.'_source_invoice_ref' => ((empty($invoice_source) || empty($invoice_source->ref)) ? '' : $invoice_source->ref),
 			// Dates
 			$array_key.'_hour' => dol_print_date($date, 'hour'),
@@ -605,7 +691,7 @@ abstract class CommonDocGenerator
 			$array_key.'_date_rfc' => dol_print_date($date, 'dayrfc'),
 			$array_key.'_date_limit' => (!empty($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day') : ''),
 			$array_key.'_date_limit_rfc' => (!empty($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'dayrfc') : ''),
-			$array_key.'_date_end' => (!empty($object->fin_validite) ? dol_print_date($object->fin_validite, 'day') : ''),
+			$array_key.'_date_end' => (!empty($object->fin_validite) ? dol_print_date($object->fin_validite, 'day') : ''),  // @phan-suppress-current-line PhanUndeclaredProperty
 			$array_key.'_date_creation' => dol_print_date($object->date_creation, 'day'),
 			$array_key.'_date_modification' => (!empty($object->date_modification) ? dol_print_date($object->date_modification, 'day') : ''),
 			$array_key.'_date_validation' => (!empty($object->date_validation) ? dol_print_date($object->date_validation, 'dayhour') : ''),
@@ -621,13 +707,13 @@ abstract class CommonDocGenerator
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
 			$array_key.'_total_ht_locale' => price($object->total_ht, 0, $outputlangs),
-			$array_key.'_total_vat_locale' => (!empty($object->total_vat) ? price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
+			$array_key.'_total_vat_locale' => (!empty($object->total_vat) ? price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),  // @phan-suppress-current-line PhanUndeclaredProperty
 			$array_key.'_total_localtax1_locale' => price($object->total_localtax1, 0, $outputlangs),
 			$array_key.'_total_localtax2_locale' => price($object->total_localtax2, 0, $outputlangs),
 			$array_key.'_total_ttc_locale' => price($object->total_ttc, 0, $outputlangs),
 
 			$array_key.'_total_ht' => price2num($object->total_ht),
-			$array_key.'_total_vat' => (!empty($object->total_vat) ? price2num($object->total_vat) : price2num($object->total_tva)),
+			$array_key.'_total_vat' => (!empty($object->total_vat) ? price2num($object->total_vat) : price2num($object->total_tva)),  // @phan-suppress-current-line PhanUndeclaredProperty
 			$array_key.'_total_localtax1' => price2num($object->total_localtax1),
 			$array_key.'_total_localtax2' => price2num($object->total_localtax2),
 			$array_key.'_total_ttc' => price2num($object->total_ttc),
@@ -775,7 +861,6 @@ abstract class CommonDocGenerator
 			'line_fulldesc' => doc_getlinedesc($line, $outputlangs),
 
 			'line_product_ref' => (empty($line->product_ref) ? '' : $line->product_ref),
-			'line_product_ref_fourn' => (empty($line->ref_fourn) ? '' : $line->ref_fourn), // for supplier doc lines
 			'line_product_label' => (empty($line->product_label) ? '' : $line->product_label),
 			'line_product_type' => (empty($line->product_type) ? '' : $line->product_type),
 			'line_product_barcode' => (empty($line->product_barcode) ? '' : $line->product_barcode),
@@ -783,8 +868,6 @@ abstract class CommonDocGenerator
 
 			'line_desc' => $line->desc,
 			'line_vatrate' => vatrate($line->tva_tx, true, $line->info_bits),
-			'line_localtax1_rate' => vatrate($line->localtax1_tx),
-			'line_localtax2_rate' => vatrate($line->localtax1_tx),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
@@ -797,13 +880,6 @@ abstract class CommonDocGenerator
 			'line_price_ht_locale' => price($line->total_ht, 0, $outputlangs),
 			'line_price_ttc_locale' => price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale' => price($line->total_tva, 0, $outputlangs),
-			// Dates
-			'line_date_start' => dol_print_date($line->date_start, 'day'),
-			'line_date_start_locale' => dol_print_date($line->date_start, 'day', 'tzserver', $outputlangs),
-			'line_date_start_rfc' => dol_print_date($line->date_start, 'dayrfc'),
-			'line_date_end' => dol_print_date($line->date_end, 'day'),
-			'line_date_end_locale' => dol_print_date($line->date_end, 'day', 'tzserver', $outputlangs),
-			'line_date_end_rfc' => dol_print_date($line->date_end, 'dayrfc'),
 
 			'line_multicurrency_code' => price2num($line->multicurrency_code),
 			'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
@@ -815,6 +891,36 @@ abstract class CommonDocGenerator
 			'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
 			'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
+
+		if (property_exists($line, 'ref_fourn')) {
+			$resarray['line_product_ref_fourn'] = $line->ref_fourn; // for supplier doc lines @phan-suppress-current-line PhanUndeclaredProperty
+		} else {
+			$resarray['line_product_ref_fourn'] = '';
+		}
+		$vat_specs = array(
+			'line_localtax1_rate' => 'localtax1_tx',
+			'line_localtax2_rate' => 'localtax2_tx',
+		);
+		foreach ($vat_specs as $vat_spec) {
+			if (property_exists($line, $vat_spec[1])) {
+				$resarray[$vat_spec[0]] = vatrate($line->${$vat_spec[1]});
+			}
+		}
+
+		// Dates (fields not available on all line classes)
+		$date_specs = array(
+			array('line_date_start', 'date_start', 'day', 'auto', null),
+			array('line_date_start_locale', 'date_start', 'day', 'tzserver', $outputlangs),
+			array('line_date_start_rfc', 'date_start', 'dayrfc', 'auto', null),
+			array('line_date_end', 'date_end', 'day', 'auto', null),
+			array('line_date_end_locale', 'date_end', 'day', 'tzserver', $outputlangs),
+			array('line_date_end_rfc', 'date_end', 'dayrfc', 'auto', null)
+		);
+		foreach ($date_specs as $date_spec) {
+			if (property_exists($line, $date_spec[1])) {
+				$resarray[$date_spec[0]] = dol_print_date($line->${$date_spec[1]}, $date_spec[2], $date_spec[3], $date_spec[4]);
+			}
+		}
 
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -957,16 +1063,16 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   array<string,mixed>	$object	Dolibarr Object
+	 * @param   array<string,CommonObject|float|int|string>	$object	Dolibarr Object
 	 * @param   Translate	$outputlangs	Language object for output
 	 * @param   boolean|int	$recursive		Want to fetch child array or child object.
-	 * @return	array<string,mixed>		Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = 1)
 	{
 		// phpcs:enable
 		$array_other = array();
-		if (!empty($object)) {
+		if (is_array($object) && count($object)) {
 			foreach ($object as $key => $value) {
 				if (in_array($key, array('db', 'fields', 'lines', 'modelpdf', 'model_pdf'))) {		// discard some properties
 					continue;

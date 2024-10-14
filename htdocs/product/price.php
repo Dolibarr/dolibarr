@@ -1473,7 +1473,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print '</tr>';
 
 		// Only show price mode and expression selector if module is enabled
-		if (!empty($conf->dynamicprices->enabled)) {
+		if (isModEnabled('dynamicprices')) {
 			// Price mode selector
 			print '<!-- Show price mode of dynamicprices editor -->'."\n";
 			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
@@ -2345,7 +2345,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 				print '<td class="right">'.$langs->trans("INCT").'</td>';
 			}
-			if (!empty($conf->dynamicprices->enabled)) {
+			if (isModEnabled('dynamicprices')) {
 				print '<td class="right">'.$langs->trans("PriceExpressionSelected").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
@@ -2460,7 +2460,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 						print $resultarray[2];
 						print '</td>';
 					}
-					if (!empty($conf->dynamicprices->enabled)) { //Only if module is enabled
+					if (isModEnabled('dynamicprices')) { // Only if module is enabled
 						print '<td class="right"></td>';
 					}
 				}

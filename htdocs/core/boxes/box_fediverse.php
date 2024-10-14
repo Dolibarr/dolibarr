@@ -50,6 +50,8 @@ class box_fediverse extends ModeleBoxes
 	{
 		$this->db = $db;
 		$this->paramdef = $param;
+		$this->urltoaddentry = DOL_URL_ROOT.'/admin/fediverse.php';
+		$this->msgNoRecords = 'NoRecordFound';
 	}
 
 	/**
@@ -61,7 +63,8 @@ class box_fediverse extends ModeleBoxes
 	 */
 	public function loadBox($max = 5, $cachedelay = 3600)
 	{
-		global $langs, $conf;
+		global $langs;
+
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -115,6 +118,7 @@ class box_fediverse extends ModeleBoxes
 		}
 
 		$posts = $fediverseParser->getPosts();
+
 		$nbitems = count($posts);
 
 		for ($line = 0; $line < $max && $line < $nbitems; $line++) {
@@ -146,6 +150,14 @@ class box_fediverse extends ModeleBoxes
 				'text' => $date,
 			);
 		}
+
+
+		// if ($nbitems == 0) {
+		// 	$this->info_box_contents[$line][0] = array(
+		// 		'td' => 'class="center"',
+		// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>'
+		// 	);
+		// }
 	}
 
 

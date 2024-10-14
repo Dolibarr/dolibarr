@@ -132,7 +132,123 @@ ALTER TABLE llx_societe ADD COLUMN ip varchar(250);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN ip varchar(250);
 ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
 
+ALTER TABLE llx_webhook_target ADD COLUMN trigger_stack text;
+
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY fk_user_creat integer NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN agenda_id integer;
 
+-- Add accountancy code general on user / customer / supplier subledger
+ALTER TABLE llx_user ADD COLUMN accountancy_code_user_general varchar(32) DEFAULT NULL AFTER fk_barcode_type;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER code_fournisseur;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER code_compta;
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER entity;
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER accountancy_code_customer;
+
+-- Uniformize length of accountancy account
+ALTER TABLE llx_societe MODIFY COLUMN code_compta varchar(32);
+ALTER TABLE llx_societe MODIFY COLUMN code_compta_fournisseur varchar(32);
+ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_customer varchar(32);
+ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_supplier varchar(32);
+
+
+ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+
+-- Copy categories from llx_category_bank into llx_categorie
+
+INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
+SELECT
+  llx_category_bank.entity,
+  0 AS fk_parent,
+  llx_category_bank.label,
+  8 AS type,
+  '' AS description,
+  '' AS color,
+  0 AS position,
+  1 AS visible,
+  NOW() AS date_creation
+FROM llx_category_bank
+LEFT JOIN llx_categorie
+  ON llx_category_bank.label = llx_categorie.label
+  AND llx_category_bank.entity = llx_categorie.entity
+  AND llx_categorie.type = 8
+WHERE llx_categorie.rowid IS NULL;
+
+-- Update llx_category_bankline with the new rowid from llx_categorie
+UPDATE llx_category_bankline AS bl
+INNER JOIN llx_category_bank AS b
+  ON bl.fk_categ = b.rowid
+INNER JOIN llx_categorie AS c
+  ON b.label = c.label
+  AND b.entity = c.entity
+  AND c.type = 8
+SET bl.fk_categ = c.rowid
+WHERE c.rowid IS NOT NULL;
+
+INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
+SELECT
+  llx_bank_categ.entity,
+  0 AS fk_parent,
+  llx_bank_categ.label,
+  8 AS type,
+  '' AS description,
+  '' AS color,
+  0 AS position,
+  1 AS visible,
+  NOW() AS date_creation
+FROM llx_bank_categ
+LEFT JOIN llx_categorie
+  ON llx_bank_categ.label = llx_categorie.label
+  AND llx_bank_categ.entity = llx_categorie.entity
+  AND llx_categorie.type = 8
+WHERE llx_categorie.rowid IS NULL;
+
+-- Update llx_category_bankline with the new rowid from llx_categorie
+UPDATE llx_category_bankline AS bl
+INNER JOIN llx_bank_categ AS b
+  ON bl.fk_categ = b.rowid
+INNER JOIN llx_categorie AS c
+  ON b.label = c.label
+  AND b.entity = c.entity
+  AND c.type = 8
+SET bl.fk_categ = c.rowid
+WHERE c.rowid IS NOT NULL;
+
+-- Accounting - Add personalized multi-report
+create table llx_c_accounting_report
+(
+  rowid 				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity 				integer NOT NULL DEFAULT 1,
+  code 					varchar(16) NOT NULL,
+  label 				varchar(255) NOT NULL,
+  fk_country 			integer DEFAULT NULL,
+  active 				integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_report ADD UNIQUE INDEX uk_c_accounting_report (code,entity);
+
+INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report personalized', 1);
+
+ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
+
+ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
+
+create table llx_accounting_category_account
+(
+  rowid           			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_category	integer,
+  fk_accounting_account		bigint
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_account_fk_accounting_category (fk_accounting_category);
+ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_category FOREIGN KEY (fk_accounting_category) REFERENCES llx_c_accounting_category (rowid);
+
+ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_account_fk_accounting_account (fk_accounting_account);
+ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_account FOREIGN KEY (fk_accounting_account) REFERENCES llx_accounting_account (rowid);
+
+ALTER TABLE llx_accounting_category_account ADD UNIQUE INDEX uk_accounting_category_account(fk_accounting_category, fk_accounting_account);

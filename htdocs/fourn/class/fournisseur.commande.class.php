@@ -285,6 +285,9 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int Date of the purchase order payment deadline
 	 */
 	public $date_lim_reglement;
+	/**
+	 * @var array<int,float>
+	 */
 	public $receptions = array();
 
 	// Multicurrency

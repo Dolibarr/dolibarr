@@ -33,6 +33,9 @@ class mod_reception_moonstone extends ModelNumRefReception
 {
 	public $version = 'dolibarr';
 	public $error = '';
+	/**
+	 * @var string
+	 */
 	public $nom = 'Moonstone';
 
 	/**

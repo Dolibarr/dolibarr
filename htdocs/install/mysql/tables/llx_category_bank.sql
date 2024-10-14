@@ -1,5 +1,6 @@
--- ============================================================================
--- Copyright (C) 2020      John BOTELLA         <john.botella@atm-consulting.fr>
+-- ===================================================================
+-- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,14 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ============================================================================
+-- ===================================================================
 
-CREATE TABLE llx_product_attribute_combination_price_level
+-- TODO : Remove this file, content of this table has been moved into llx_categories table
+
+create table llx_category_bank
 (
-  rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_attribute_combination INTEGER DEFAULT 1 NOT NULL,
-  fk_price_level INTEGER DEFAULT 1 NOT NULL,
-  variation_price DOUBLE(24,8) NOT NULL,
-  variation_price_percentage INTEGER NULL
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  label           varchar(255),
+  entity          integer DEFAULT 1 NOT NULL  	-- multi company id
 )ENGINE=innodb;
-

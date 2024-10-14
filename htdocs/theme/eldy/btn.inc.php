@@ -236,7 +236,7 @@ TITLE BUTTON
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
-	background-color: var(--btncolorbg);
+	/* background-color: var(--btncolorbg); */
 	border: 1px solid var(--btncolorborder);
 }
 

@@ -98,12 +98,12 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $tabTitleHeight;
 
 	/**
-	 * @var array defaultContentsFieldsStyle
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} defaultContentsFieldsStyle
 	 */
 	public $defaultContentsFieldsStyle = array();
 
 	/**
-	 * @var array defaultTitlesFieldsStyle
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} defaultTitlesFieldsStyle
 	 */
 	public $defaultTitlesFieldsStyle = array();
 
@@ -645,9 +645,9 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{

@@ -193,6 +193,7 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
@@ -315,10 +316,10 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object information.
-*
-*  @return	array   	        head array with tabs
-*/
+ *  Return array head with list of tabs to view object information.
+ *
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
 function product_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
@@ -378,7 +379,7 @@ function product_admin_prepare_head()
 /**
  * Return array head with list of tabs to view object information.
  *
- * @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_lot_admin_prepare_head()
 {

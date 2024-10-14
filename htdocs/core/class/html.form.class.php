@@ -1322,7 +1322,7 @@ class Form
 	 * @param string 		$morecss 				Add more css styles to the SELECT component
 	 * @param string 		$moreparam 				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder 'Search', 3 search icon after)
 	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
 	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
 	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
@@ -1358,7 +1358,9 @@ class Form
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
-				print $langs->trans("RefOrLabel") . ' : ';
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel == 1 && !is_numeric($showempty)) {
+				$placeholder = $showempty;
 			} elseif ($hidelabel > 1) {
 				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {
@@ -3409,14 +3411,14 @@ class Form
 		$labeltoshowhtmlstock = '';
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 			if ($user->hasRight('stock', 'lire')) {
-				$labeltoshowstock .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+				$labeltoshowstock .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 
 				if ($objp->stock > 0) {
 					$labeltoshowhtmlstock .= ' - <span class="product_line_stock_ok">';
 				} elseif ($objp->stock <= 0) {
 					$labeltoshowhtmlstock .= ' - <span class="product_line_stock_too_low">';
 				}
-				$labeltoshowhtmlstock .= $langs->transnoentities("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+				$labeltoshowhtmlstock .= $langs->transnoentities("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 				$labeltoshowhtmlstock .= '</span>';
 
 				if (empty($novirtualstock) && getDolGlobalString('STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO')) {  // Warning, this option may slow down combo list generation
@@ -3554,7 +3556,6 @@ class Form
 			$outtva_tx = $objp->tva_tx;
 			$outdefault_vat_code = $objp->default_vat_code;
 		}
-
 
 		// Build options
 		$opt = '<option value="' . $objp->rowid . '"';
@@ -3980,7 +3981,7 @@ class Form
 					$novirtualstock = ($showstockinlist == 2);
 
 					if ($user->hasRight('stock', 'lire')) {
-						$outvallabel .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+						$outvallabel .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 
 						if ($objp->stock > 0) {
 							$optlabel .= ' - <span class="product_line_stock_ok">';
@@ -5150,41 +5151,42 @@ class Form
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			if ($num) {
-				$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
 
+			$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
+
+			if ($num == 0) {
+				if ($status == 0) {
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
+				} else {
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountFound") . '</span>';
+				}
+			} else {
 				if (!empty($useempty) && !is_numeric($useempty)) {
 					$out .= '<option value="-1">'.$langs->trans($useempty).'</option>';
 				} elseif ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					$out .= '<option value="-1">&nbsp;</option>';
 				}
-
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-						$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
-					} else {
-						$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
-					}
-					$out .= trim($obj->label);
-					if ($showcurrency) {
-						$out .= ' (' . $obj->currency_code . ')';
-					}
-					if ($status == 2 && $obj->status == 1) {
-						$out .= ' (' . $langs->trans("Closed") . ')';
-					}
-					$out .= '</option>';
-					$i++;
-				}
-				$out .= "</select>";
-				$out .= ajax_combobox('select' . $htmlname);
-			} else {
-				if ($status == 0) {
-					$out .= '<span class="opacitymedium">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
-				} else {
-					$out .= '<span class="opacitymedium">' . $langs->trans("NoBankAccountFound") . '</span>';
-				}
 			}
+
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
+				} else {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
+				}
+				$out .= trim($obj->label);
+				if ($showcurrency) {
+					$out .= ' (' . $obj->currency_code . ')';
+				}
+				if ($status == 2 && $obj->status == 1) {
+					$out .= ' (' . $langs->trans("Closed") . ')';
+				}
+				$out .= '</option>';
+				$i++;
+			}
+			$out .= "</select>";
+			$out .= ajax_combobox('select' . $htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -5316,7 +5318,7 @@ class Form
 	 * @param 	string 				$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels
-	 * @param 	int|string|array	$fromid 		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 * @param 	int|string|int[]	$fromid 		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
 	 *                             	    	     	$fromid can be an :
 	 *                                 	    	 	- int (id of category)
 	 *                                 		 		- string (categories ids separated by comma)
@@ -5324,7 +5326,7 @@ class Form
 	 * @param 	int<0,3>			$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
-	 * @param	  int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
+	 * @param	int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
 	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
@@ -5342,11 +5344,12 @@ class Form
 		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {
-			// TODO Move this into common category feature
+			// TODO Move this into common category feature after migration of llx_category_bankline into llx_categorie_bankline
+			$cat = new Categorie($this->db);
 			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM " . $this->db->prefix() . "category_bank as c";
-			$sql .= " WHERE entity = " . $conf->entity;
+			$sql .= " FROM " . $this->db->prefix() . "categorie as c";
+			$sql .= " WHERE entity = " . $conf->entity . " AND type = " . ((int) $cat->getMapId()[$type]);
 			$sql .= " ORDER BY c.label";
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -6713,22 +6716,22 @@ class Form
 	 *  Output an HTML select vat rate.
 	 *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
 	 *
-	 *  @param	string	      $htmlname           Name of HTML select field
-	 *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
-	 *  @param  Societe	      $societe_vendeuse   Thirdparty seller
-	 *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
-	 *  @param  int		      $idprod             Id product. O if unknown of NA.
-	 *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
-	 *  @param  int|string    $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-	 *                                            If seller not subject to VAT, default VAT=0. End of rule.
-	 *                                            If (seller country==buyer country), then default VAT=product's VAT. End of rule.
-	 *                                            If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
-	 *                                            If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
-	 *                                            If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
-	 *                                            Else, default proposed VAT==0. End of rule.
-	 *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
-	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
-	 *  @param  int          $type_vat            0=All type, 1=VAT rate sale, 2=VAT rate purchase
+	 *  @param	string			$htmlname           Name of HTML select field
+	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	 *  @param  ?Societe		$societe_vendeuse   Thirdparty seller
+	 *  @param  ?Societe		$societe_acheteuse  Thirdparty buyer
+	 *  @param  int				$idprod             Id product. O if unknown of NA.
+	 *  @param  int				$info_bits          Miscellaneous information on line (1 for NPR)
+	 *  @param  int<0,1>|''		$type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+	 *                                              If seller not subject to VAT, default VAT=0. End of rule.
+	 *                                              If (seller country==buyer country), then default VAT=product's VAT. End of rule.
+	 *                                              If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
+	 *                                              If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
+	 *                                              If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
+	 *                                              Else, default proposed VAT==0. End of rule.
+	 *  @param	bool		$options_only			Return HTML options lines only (for ajax treatment)
+	 *  @param  int<-1,1>	$mode					0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
+	 *  @param  int<0,2>	$type_vat				0=All type, 1=VAT rate sale, 2=VAT rate purchase
 	 *  @return	string
 	 */
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
@@ -9558,6 +9561,9 @@ class Form
 		}
 
 		$possiblelinks = array();
+
+		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
+
 		if (is_object($object->thirdparty) && !empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$listofidcompanytoscan = $object->thirdparty->id;
 			if (($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
@@ -9578,27 +9584,27 @@ class Form
 					'enabled' => isModEnabled('propal'),
 					'perms' => 1,
 					'label' => 'LinkToProposal',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('propal') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('propal') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 4' : '')),
 				'shipping' => array(
 					'enabled' => isModEnabled('shipping'),
 					'perms' => 1,
 					'label' => 'LinkToExpedition',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('shipping') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('shipping') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 2' : '')),
 				'order' => array(
 					'enabled' => isModEnabled('order'),
 					'perms' => 1,
 					'label' => 'LinkToOrder',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'.($dontIncludeCompletedItems ? ' AND t.facture < 1' : '')),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),
 					'perms' => 1,
 					'label' => 'LinkToInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : '')),
 				'invoice_template' => array(
 					'enabled' => isModEnabled('invoice'),
 					'perms' => 1,
 					'label' => 'LinkToTemplateInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : '')),
 				'contrat' => array(
 					'enabled' => isModEnabled('contract'),
 					'perms' => 1,
@@ -9615,33 +9621,33 @@ class Form
 					'enabled' => isModEnabled('supplier_proposal'),
 					'perms' => 1,
 					'label' => 'LinkToSupplierProposal',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('supplier_proposal') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('supplier_proposal') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 4' : '')),
 				'order_supplier' => array(
 					'enabled' => isModEnabled("supplier_order"),
 					'perms' => 1,
 					'label' => 'LinkToSupplierOrder',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande_fournisseur') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande_fournisseur') . ')'.($dontIncludeCompletedItems ? ' AND t.billed < 1' : '')),
 				'invoice_supplier' => array(
 					'enabled' => isModEnabled("supplier_invoice"),
 					'perms' => 1, 'label' => 'LinkToSupplierInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('facture_fourn') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('facture_fourn') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : '')),
 				'ticket' => array(
 					'enabled' => isModEnabled('ticket'),
 					'perms' => 1,
 					'label' => 'LinkToTicket',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('ticket') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('ticket') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 8' : '')),
 				'mo' => array(
 					'enabled' => isModEnabled('mrp'),
 					'perms' => 1,
 					'label' => 'LinkToMo',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM " . $this->db->prefix() . "societe as s INNER JOIN " . $this->db->prefix() . "mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('mo') . ')')
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM " . $this->db->prefix() . "societe as s INNER JOIN " . $this->db->prefix() . "mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('mo') . ')'.($dontIncludeCompletedItems ? ' AND t.status < 3' : ''))
 			);
 		}
 
 		if ($object->table_element == 'commande_fournisseur') {
-			$possiblelinks['mo']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix().'mrp_mo as t ON t.fk_soc = s.rowid  WHERE t.entity IN ('.getEntity('mo').')';
+			$possiblelinks['mo']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix().'mrp_mo as t ON t.fk_soc = s.rowid  WHERE t.entity IN ('.getEntity('mo').')'.($dontIncludeCompletedItems ? ' AND t.status < 3' : '');
 		} elseif ($object->table_element == 'mrp_mo') {
-			$possiblelinks['order_supplier']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix().'commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.entity IN ('.getEntity('commande_fournisseur').')';
+			$possiblelinks['order_supplier']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix().'commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.entity IN ('.getEntity('commande_fournisseur').')'.($dontIncludeCompletedItems ? ' AND t.billed < 1' : '');
 		}
 
 		$reshook = 0; // Ensure $reshook is defined for static analysis
