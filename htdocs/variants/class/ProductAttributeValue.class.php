@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->isextrafieldmanaged = 0;
+		$this->isextrafieldmanaged = 1;
 		$this->entity = $conf->entity;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -177,6 +177,11 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Value"));
 			$error++;
 		}
+		// Position to use
+		if (empty($this->position)) {
+			$positionmax = $this->getMaxAttributesValuesPosition($this->fk_product_attribute);
+			$this->position = $positionmax + 1;
+		}
 		if ($error) {
 			dol_syslog(__METHOD__ . ' ' . $this->errorsToString(), LOG_ERR);
 			return -1;
@@ -204,6 +209,10 @@ class ProductAttributeValue extends CommonObjectLine
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -269,6 +278,7 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->fk_product_attribute = $obj->fk_product_attribute;
 			$this->ref = $obj->ref;
 			$this->value = $obj->value;
+			$this->fetch_optionals();
 		}
 		$this->db->free($resql);
 
@@ -454,7 +464,12 @@ class ProductAttributeValue extends CommonObjectLine
 				$error++;
 			}
 		}
-
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -462,6 +477,27 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->db->rollback();
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Get max value used for position of attributes
+	 * @param int $fk_product_attribute Id of attribute
+	 *
+	 * @return int  Max value of position in table of attributes
+	 */
+	public function getMaxAttributesValuesPosition($fk_product_attribute)
+	{
+		// Search the last position of attributes
+		$sql = "SELECT max(position) FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
+		$sql .= ' AND fk_product_attribute='.(int) $fk_product_attribute;
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$row = $this->db->fetch_row($resql);
+			return $row[0];
+		}
+		return 0;
 	}
 
 	/**

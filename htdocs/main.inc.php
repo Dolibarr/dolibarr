@@ -2317,8 +2317,40 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
+
 		print '<div class="login_block usedropdown">'."\n";
 
+
+		// Add block for tools
+		$toprightmenu .= '<div class="login_block_tools valignmiddle">';
+
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap" style="padding: 0px;">';
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
+			// Add the quick add object dropdown
+			$toprightmenu .= top_menu_quickadd();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
+		}
+
+		$toprightmenu .= '</div>';
+
+		$toprightmenu .= '</div>'."\n";		 // end div class="login_block_tools"
+
+
+		// Add block for other tools
 		$toprightmenu .= '<div class="login_block_other valignmiddle">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
@@ -2446,34 +2478,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		$toprightmenu .= '</div>'; // end div class="login_block_other"
 
-
-		// Add block for tools
-		$toprightmenu .= '<div class="login_block_tools valignmiddle">';
-
-		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap" style="padding: 0px;">';
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-			// Add search dropdown
-			$toprightmenu .= top_menu_search();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-			// Add the quick add object dropdown
-			$toprightmenu .= top_menu_quickadd();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
-			// Add the import file link
-			$toprightmenu .= top_menu_importfile();
-		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
-
-		$toprightmenu .= '</div>';
-
-		$toprightmenu .= '</div>'."\n";
 
 		// Add block for user photo and name
 		$toprightmenu .= '<div class="login_block_user">';
@@ -2908,7 +2912,7 @@ function top_menu_importfile()
 	if (!empty($conf->use_javascript_ajax)) {
 		$html .= '<!-- div for upload file link -->
     <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="u" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' a)"><i class="fa fa-upload"></i></a>
+        <a accesskey="u" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' u)"><i class="fa fa-upload"></i></a>
     </div>';
 	}
 

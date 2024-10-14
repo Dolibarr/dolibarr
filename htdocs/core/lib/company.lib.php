@@ -10,7 +10,7 @@
  * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@
  * Return array of tabs to used on pages for third parties cards.
  *
  * @param 	Societe	$object		Object company shown
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_prepare_head(Societe $object)
 {
@@ -477,7 +477,7 @@ function societe_prepare_head(Societe $object)
  * Return array of tabs to used on page
  *
  * @param	Object	$object		Object for tabs
- * @return	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_prepare_head2($object)
 {
@@ -503,7 +503,7 @@ function societe_prepare_head2($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_admin_prepare_head()
 {
@@ -1026,7 +1026,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc on ec.fk_c_type_contact = tc.rowid";
 			$sql .= " WHERE sc.fk_soc = ".((int) $object->id);
 			$sql .= " AND p.entity IN (".getEntity('project').")";
-			$sql .= " AND tc.element = 'project'";
+			$sql .= " AND tc.element = 'project' AND tc.source = 'external'";
 			$sql .= " ORDER BY p.dateo DESC";
 
 			$result = $db->query($sql);
@@ -1567,7 +1567,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 					print img_delete();
 					print '</a>';
 				}

@@ -90,6 +90,12 @@ if ($action == 'add') {
 			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
 			$action = 'create';
 		}
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesg[] = $langs->trans("ErrorSizeForStarsType");
+			$action = 'create';
+		}
 		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
@@ -280,6 +286,12 @@ if ($action == 'update') {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
+			$action = 'edit';
+		}
+		if ($type == 'stars' && ($extrasize < 1|| $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesg[] = $langs->trans("ErrorSizeForStarsType");
 			$action = 'edit';
 		}
 		if ($type == 'checkbox' && !$param) {

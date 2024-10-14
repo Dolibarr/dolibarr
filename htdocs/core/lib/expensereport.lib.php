@@ -94,7 +94,7 @@ function expensereport_prepare_head($object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param	PaymentExpenseReport	$object		Current payment object
- * @return	array								Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
@@ -127,7 +127,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_admin_prepare_head()
 {

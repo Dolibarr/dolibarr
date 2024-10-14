@@ -134,28 +134,6 @@ ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_webhook_target ADD COLUMN trigger_stack text;
 
--- Product attribut extrafields
-CREATE TABLE llx_product_attribute_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          -- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_product_attribute_extrafields ADD INDEX idx_product_attribute_extrafields (fk_object);
-
--- Product attribut value extrafields
-CREATE TABLE llx_product_attribute_value_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          -- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_product_attribute_value_extrafields ADD INDEX idx_product_attribute_value_extrafields (fk_object);
-
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY fk_user_creat integer NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN agenda_id integer;
@@ -239,3 +217,38 @@ INNER JOIN llx_categorie AS c
   AND c.type = 8
 SET bl.fk_categ = c.rowid
 WHERE c.rowid IS NOT NULL;
+
+-- Accounting - Add personalized multi-report
+create table llx_c_accounting_report
+(
+  rowid 				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity 				integer NOT NULL DEFAULT 1,
+  code 					varchar(16) NOT NULL,
+  label 				varchar(255) NOT NULL,
+  fk_country 			integer DEFAULT NULL,
+  active 				integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_report ADD UNIQUE INDEX uk_c_accounting_report (code,entity);
+
+INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report personalized', 1);
+
+ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
+
+ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
+
+create table llx_accounting_category_account
+(
+  rowid           			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_category	integer,
+  fk_accounting_account		bigint
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_account_fk_accounting_category (fk_accounting_category);
+ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_category FOREIGN KEY (fk_accounting_category) REFERENCES llx_c_accounting_category (rowid);
+
+ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_account_fk_accounting_account (fk_accounting_account);
+ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_account FOREIGN KEY (fk_accounting_account) REFERENCES llx_accounting_account (rowid);
+
+ALTER TABLE llx_accounting_category_account ADD UNIQUE INDEX uk_accounting_category_account(fk_accounting_category, fk_accounting_account);

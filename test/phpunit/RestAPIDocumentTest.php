@@ -24,22 +24,9 @@
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php.
  */
-global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-//require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
-	echo "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
-}
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
-$conf->global->MAIN_UMASK = '0666';
+require_once __DIR__."/AbstractRestAPITest.php";
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 /**
  * Class for PHPUnit tests.
@@ -48,63 +35,10 @@ $conf->global->MAIN_UMASK = '0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIDocumentTest extends CommonClassTest
+class RestAPIDocumentTest extends AbstractRestAPITest
 {
 	protected $api_url;
 	protected $api_key;
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('api')) {
-			print __METHOD__." module api must be enabled.\n";
-			die(1);
-		}
-
-		echo __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests.
-	 *
-	 * @return void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
-
-		$login = 'admin';
-		$password = 'admin';
-		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
-		// Call the API login method to save api_key for this test class.
-		// At first call, if token is not defined a random value is generated and returned.
-		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-		print __METHOD__." result = ".var_export($result, true)."\n";
-		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
-		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
-
-		$this->assertNotNull($object, "Parsing of json result must not be null");
-		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
-		$this->assertEquals('200', $object['success']['code']);
-
-		$this->api_key = $object['success']['token'];
-
-		echo __METHOD__." api_key: $this->api_key \n";
-	}
 
 	/**
 	 * testPushDocument.
