@@ -58,13 +58,12 @@ class AccountancySystem extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int pcg version
+	 * @var string 		Accountancy system code
 	 */
 	public $pcg_version;
 
 	/**
-	 * @var string ref
-	 * @deprecated
+	 * @var string 		Ref of accountancy system. Duplicate property with ->pcg_version.
 	 * @see $pcg_version
 	 */
 	public $ref;
