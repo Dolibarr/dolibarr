@@ -7,6 +7,7 @@
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,10 @@ function product_prepare_head($object)
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translations");
+		$nbTranslations = !empty($object->multilangs) ? count($object->multilangs) : 0;
+		if ($nbTranslations > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTranslations.'</span>';
+		}
 		$head[$h][2] = 'translation';
 		$h++;
 	}
