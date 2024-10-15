@@ -2912,7 +2912,7 @@ function top_menu_importfile()
 	if (!empty($conf->use_javascript_ajax)) {
 		$html .= '<!-- div for upload file link -->
     <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="u" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' u)"><i class="fa fa-upload"></i></a>
+        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
     </div>';
 	}
 
