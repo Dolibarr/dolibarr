@@ -6144,12 +6144,12 @@ class Product extends CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_object($result);
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
-					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
+					$this->stock_warehouse[$row->fk_entrepot]->real = price2num($row->reel, 'MS');
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
 					if ((!preg_match('/nobatch/', $option)) && $this->hasbatch()) {
 						$this->stock_warehouse[$row->fk_entrepot]->detail_batch = Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
 					}
-					$this->stock_reel += $row->reel;
+					$this->stock_reel += price2num($row->reel, 'MS');
 					$i++;
 				}
 			}
