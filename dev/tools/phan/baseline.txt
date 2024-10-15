@@ -301,7 +301,7 @@ return [
         'htdocs/core/class/notify.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/openid.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/reddithandler.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType'],
-        'htdocs/core/class/smtps.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchDimFetch'],
+        'htdocs/core/class/smtps.class.php' => ['PhanTypeConversionFromArray'],
         'htdocs/core/class/socialnetworkmanager.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/class/stats.class.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchDimFetch'],
         'htdocs/core/class/timespent.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
