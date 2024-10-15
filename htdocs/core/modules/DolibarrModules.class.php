@@ -9,6 +9,7 @@
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,6 +119,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
+
+	/**
+	 * @var array Module overwrite translations
+	 */
+	public $overwrite_translation = array();
 
 	/**
 	 * @var array Module cron jobs entries
@@ -552,6 +558,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Insert constant defined by modules (into llx_const)
 		if (!$err && !preg_match('/newboxdefonly/', $options)) {
 			$err += $this->insert_const(); // Test on newboxdefonly to avoid to erase value during upgrade
+		}
+
+		// Insert overwrite trans defined by modules (into llx_overwrite_trans)
+		if (!$err && !preg_match('/newboxdefonly/', $options)) {
+			$err += $this->insert_overwrite_translation(); // Test on newboxdefonly to avoid to erase value during upgrade
 		}
 
 		// Insert boxes def (into llx_boxes_def) and boxes setup (into llx_boxes)
@@ -1927,6 +1938,69 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$this->error = $this->db->lasterror();
 					$err++;
 				}
+			}
+		}
+
+		return $err;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Adds overwrite translations
+	 *
+	 * @return int Error count (0 if OK)
+	 */
+	public function insert_overwrite_translation()
+	{
+		// phpcs:enable
+		global $conf;
+
+		$err = 0;
+
+		if (empty($this->overwrite_translation)) {
+			return 0;
+		}
+
+		dol_syslog(get_class($this)."::insert_overwrite_translation", LOG_DEBUG);
+
+		foreach ($this->overwrite_translation as $key => $value) {
+			$arkey		= explode(':', $key);
+			$lang		= $arkey[0];
+			$transkey	= $arkey[1];
+			$transvalue	= $value;
+			$entity		= (!empty($arkey[3]) && $arkey[3] != 'current') ? 0 : $conf->entity;
+
+			// valid
+			if (empty($lang) || empty($transkey) || empty($transvalue)) {
+				continue;
+			}
+
+			$sql = "SELECT count(*) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
+			$sql .= " WHERE ".$this->db->decrypt('transkey')." = '".$this->db->escape($transkey)."'";
+			$sql .= " AND entity = ".((int) $entity);
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				$row = $this->db->fetch_row($result);
+
+				if ($row[0] == 0) {   // If not found
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans (entity,lang,transkey,transvalue)";
+					$sql .= " VALUES (";
+					$sql .= $entity;
+					$sql .= ",'".$this->db->escape($lang)."'";
+					$sql .= ",'".$this->db->escape($transkey)."'";
+					$sql .= ",'".$this->db->escape($transvalue)."'";
+					$sql .= ")";
+
+					if (!$this->db->query($sql)) {
+						$err++;
+					}
+				} else {
+					dol_syslog(get_class($this)."::insert_overwrite_translation overwrite trans '".$transkey."' already exists", LOG_DEBUG);
+				}
+			} else {
+				$err++;
 			}
 		}
 
