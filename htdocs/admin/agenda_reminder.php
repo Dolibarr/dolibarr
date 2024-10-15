@@ -179,17 +179,17 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
 if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	if (!isHTTPS()) {
+	/*if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
-	}
+	}*/
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	print '</td></tr>'."\n";
 } else {
-	if (!isHTTPS()) {
+	/*if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
-	}
+	}*/
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	print '</td></tr>'."\n";
 
