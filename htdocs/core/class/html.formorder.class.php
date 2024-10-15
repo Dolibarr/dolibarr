@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,12 @@ class FormOrder extends Form
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
-	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @param	string	$htmlname	Name of HTML select element
 	 *  @param	string	$morecss	More CSS
 	 *  @param	int		$multi		Use a multiselect
 	 *  @return	void
 	 */
-	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status', $morecss = '', $multi = 1)
+	public function selectSupplierOrderStatus($selected = '', $short = 0, $htmlname = 'order_status', $morecss = '', $multi = 1)
 	{
 		$options = array();
 
@@ -74,13 +75,13 @@ class FormOrder extends Form
 		if (!empty($selectedarray[6])) {	// special case for status '6,7'
 			unset($selectedarray[6]);
 			unset($selectedarray[7]);
-			$selectedarray['6,7']='6,7';
+			$selectedarray['6,7'] = '6,7';
 		}
 
 		if ($multi) {
-			print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss, 0, 0);
+			print Form::multiselectarray($htmlname, $options, $selectedarray, 0, 0, $morecss, 0, 0);
 		} else {
-			print Form::selectarray($hmlname, $options, $selectedarray, 0, 0, 0, '', 0, 0, 0, '', $morecss);
+			print Form::selectarray($htmlname, $options, $selectedarray, 0, 0, 0, '', 0, 0, 0, '', $morecss);  // $selectedarray is ok for $id param @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 		}
 	}
 
@@ -89,10 +90,10 @@ class FormOrder extends Form
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
-	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @param	string	$htmlname	Name of HTML select element
 	 *  @return	void
 	 */
-	public function selectOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	public function selectOrderStatus($selected = '', $short = 0, $htmlname = 'order_status')
 	{
 		$options = array();
 
@@ -117,7 +118,7 @@ class FormOrder extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, '', 0, 150);
+		print Form::multiselectarray($htmlname, $options, $selectedarray, 0, 0, '', 0, 150);
 	}
 
 	/**
