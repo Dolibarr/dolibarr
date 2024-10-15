@@ -497,9 +497,9 @@ if (!$error && $massaction == 'confirm_presend') {
 						if (is_array($contactarr) && count($contactarr)) {
 							$contactarr = array_values(
 								array_reduce(
-									$contactarr, function($carry, $item) {
-									return isset($carry[$item['code']]) ? $carry : $carry + [$item['code'] => $item];
-								}, []
+									$contactarr, function ($carry, $item) {
+										return isset($carry[$item['code']]) ? $carry : $carry + [$item['code'] => $item];
+									}, []
 								)
 							);
 

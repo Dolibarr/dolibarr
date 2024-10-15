@@ -343,9 +343,9 @@ if ($action == 'presend') {
 
 		$contactarr = array_values(
 			array_reduce(
-				$contactarr, function($carry, $item) {
-				return isset($carry[$item['code']]) ? $carry : $carry + [$item['code'] => $item];
-			}, []
+				$contactarr, function ($carry, $item) {
+					return isset($carry[$item['code']]) ? $carry : $carry + [$item['code'] => $item];
+				}, []
 			)
 		);
 
