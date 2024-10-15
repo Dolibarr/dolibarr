@@ -97,7 +97,7 @@ $arrayofcss = array();
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-upload page-card');
 //top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($title, '', 'user');
+print load_fiche_titre('', '', '', 0, '', 0, '<h2>'.$title.'</h2>');
 
 
 // Instantiate hooks of thirdparty module
@@ -158,7 +158,7 @@ print '<div id="blockupload" class="center">'."\n";
 //print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
 print $uploadform;
 
-print '<input type="file" id="fileInput" class="hideobject" accept=".pdf">';
+print '<input type="file" id="fileInput" class="hideobject" accept=".pdf, image/*">';
 
 print "<script>
 $(document).ready(function() {
