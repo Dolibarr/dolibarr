@@ -233,6 +233,11 @@ ALTER TABLE llx_c_accounting_report ADD UNIQUE INDEX uk_c_accounting_report (cod
 
 INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report personalized', 1);
 
+
+ALTER TABLE llx_accounting_system ADD COLUMN date_creation datetime;
+ALTER TABLE llx_accounting_system ADD COLUMN fk_user_author integer;
+
+
 ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
 
 ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
