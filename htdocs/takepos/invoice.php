@@ -1506,14 +1506,17 @@ $( document ).ready(function() {
 	$s = $langs->trans("Customer");
 	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
 		$s = $soc->name;
-		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
-			$contactids = $invoice->getIdContact('external', 'BILLING');
-			$contactid = $contactids[0];
-			if ($contactid > 0) {
-				$contact = new Contact($db);
-				$contact->fetch($contactid);
-				$s .= " - " . $contact->getFullName($langs);
-			}
+	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
+		print '$("#idcustomer").val("");';
+	}
+
+	if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
+		$contactids = $invoice->getIdContact('external', 'BILLING');
+		$contactid = $contactids[0];
+		if ($contactid > 0) {
+			$contact = new Contact($db);
+			$contact->fetch($contactid);
+			$s .= " - " . $contact->getFullName($langs);
 		}
 	}
 	?>
