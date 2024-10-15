@@ -3741,6 +3741,9 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (" . getEntity('product') . ")";
+		if (empty($alsoproductwithnosupplierprice) && !empty($conf->global->PRODUCT_DONOTSHOW_PRODUCTWITHNOSUPPLIERPRICE)) {
+			$sql .= " AND pfp.rowid IS NOT NULL";
+		}
 		if ($statut != -1) {
 			$sql .= " AND p.tobuy = " . ((int) $statut);
 		}
