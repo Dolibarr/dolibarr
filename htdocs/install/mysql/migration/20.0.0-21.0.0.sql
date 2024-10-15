@@ -83,6 +83,7 @@ ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AF
 
 ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER total_ttc;
 
+ALTER TABLE llx_notify_def ADD COLUMN entity integer DEFAULT 1;
 
 -- A dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;

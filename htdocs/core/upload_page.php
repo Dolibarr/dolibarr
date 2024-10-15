@@ -97,7 +97,7 @@ $arrayofcss = array();
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-upload page-card');
 //top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($title, '', 'user');
+print load_fiche_titre('', '', '', 0, '', 0, '<h2>'.$title.'</h2>');
 
 
 // Instantiate hooks of thirdparty module
