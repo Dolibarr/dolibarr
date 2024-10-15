@@ -268,7 +268,7 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 	if (!isModEnabled('cron')) {
 		print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 	} else {
-		if(GETPOSTISSET('AGENDA_DEFAULT_REMINDER_EVENT_TYPES')) {
+		if (GETPOSTISSET('AGENDA_DEFAULT_REMINDER_EVENT_TYPES')) {
 			$selected = GETPOST('AGENDA_DEFAULT_REMINDER_EVENT_TYPES');
 		} else {
 			$selected = json_decode(getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', ''));
