@@ -1720,7 +1720,7 @@ if ($action == 'create') {
 						$("#addreminder").prop("checked", true);
 
 						// Set period with default reminder period
-						$("#offsetvalue").val('.$reminderDefaultOffset.');
+						$("[name=\"offsetvalue\"]").val("' . $reminderDefaultOffset . '");
 						$("#select_offsetunittype_duration").select2("destroy");
 						$("#select_offsetunittype_duration").val("'.$reminderDefaultUnit.'");
 						$("#select_offsetunittype_duration").select2();
