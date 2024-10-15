@@ -339,9 +339,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$tasktime			Array of times object
+	 *	@param	array{rowid:int,task_date:int,task_duration:int,note:string,fk_user:int,name:string,firstname:string,fullcivname:string,amountht:float,amountttc:float,thm:int} 	$tasktime			Array of times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *	@return	array{tasktime_rowid:int,tasktime_task_date:string,tasktime_task_duration_sec:int,tasktime_task_duration:string,tasktime_note:string,tasktime_fk_user:int,tasktime_user_name:string,tasktime_user_first:string,tasktime_fullcivname:string,tasktime_amountht:float,tasktime_amountttc:float,tasktime_thm:int}		Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
@@ -366,9 +366,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$file				file array
+	 *	@param  array{name:string,date:string,size:int}	$file		file array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array{tasksfile_name:string,tasksfile_date:string,tasksfile_size:int}		Return a substitution array
 	 */
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
@@ -674,7 +674,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$socid = $object->fk_soc;
 					}
 
-					$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
+					$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $socid, 0);
 
 
 					foreach ($tasksarray as $task) {
@@ -715,6 +715,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$soc = new Societe($this->db);
 									$soc->fetch($contact['socid']);
 									$contact['socname'] = $soc->name;
+								} else {
+									dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_ERR);
+									continue;
 								}
 								$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
 
@@ -749,18 +752,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$row = array();
 							$listlinestasktime = $listlines->__get('taskstimes');
 							if (empty($num)) {
-								$row['rowid'] = '';
-								$row['task_date'] = '';
-								$row['task_duration'] = '';
-								$row['$tasktime'] = '';
+								$row['rowid'] = 0;
+								$row['task_date'] = 0;
+								$row['task_duration'] = 0;
+								//$row['$tasktime'] = '';
 								$row['note'] = '';
-								$row['fk_user'] = '';
+								$row['fk_user'] = 0;
 								$row['name'] = '';
 								$row['firstname'] = '';
 								$row['fullcivname'] = '';
-								$row['amountht'] = '';
-								$row['amountttc'] = '';
-								$row['thm'] = '';
+								$row['amountht'] = 0;
+								$row['amountttc'] = 0;
+								$row['thm'] = 0;
 								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
 								foreach ($tmparray as $key => $val) {
 									try {

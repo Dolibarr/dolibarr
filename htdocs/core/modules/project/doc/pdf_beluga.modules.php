@@ -89,11 +89,29 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	private $orientation;
 
+	/**
+	 * @var float
+	 */
 	public $posxref;
+	/**
+	 * @var int
+	 */
 	public $posxdate;
+	/**
+	 * @var int
+	 */
 	public $posxsociety;
+	/**
+	 * @var int
+	 */
 	public $posxamountht;
+	/**
+	 * @var int
+	 */
 	public $posxamountttc;
+	/**
+	 * @var int
+	 */
 	public $posxstatut;
 
 
@@ -248,7 +266,7 @@ class pdf_beluga extends ModelePDFProjects
 				// Complete object by loading several other information
 				$task = new Task($this->db);
 				$tasksarray = array();
-				$tasksarray = $task->getTasksArray(0, 0, $object->id);
+				$tasksarray = $task->getTasksArray(null, null, $object->id);
 
 				// Special case when used with object = specimen, we may return all lines
 				if (!$object->id > 0) {
@@ -424,6 +442,8 @@ class pdf_beluga extends ModelePDFProjects
 				if (!empty($hookmanager->resArray)) {
 					$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 				}
+
+				$pageposafter = 0;
 
 				foreach ($listofreferent as $key => $value) {
 					$title = $value['title'];
