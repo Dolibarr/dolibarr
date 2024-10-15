@@ -51,8 +51,11 @@ if ($action == "create" || $action == "add") {
 
 $object = new FactureFournisseurRec($db);
 // Load object
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref, '', '', (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
+if (($id > 0 || $title) && $action != 'create' && $action != 'add') {
+	$ret = $object->fetch($id, $title);
+	if (! $ret) {
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
 }
 
 $permissionnote = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_setnotes.inc.php
