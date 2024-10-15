@@ -1,6 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
--- Copyright (C) 2011-2016 Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+-- Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,18 +13,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <https://www.gnu.org/licenses/>.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table of chart of accounts
 -- ============================================================================
 
-create table llx_accounting_system
-(
-  rowid             integer         AUTO_INCREMENT PRIMARY KEY,
-  fk_country		integer,
-  pcg_version       varchar(32)     NOT NULL,
-  label             varchar(128)    NOT NULL,
-  active            smallint        DEFAULT 0,
-  date_creation     datetime,
-  fk_user_author    integer
-)ENGINE=innodb;
+CREATE TABLE llx_product_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=InnoDB;
