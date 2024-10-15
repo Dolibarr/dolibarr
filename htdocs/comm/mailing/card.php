@@ -791,7 +791,7 @@ if ($action == 'create') {	// aaa
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head(array(), '', '', -3);
+	print dol_get_fiche_head(array(), '', '', -4, '', 0, '', '');
 
 	print '<table class="border centpercent">';
 
@@ -852,13 +852,15 @@ if ($action == 'create') {	// aaa
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'emailing';
 	$formmail->withaiprompt = 'html';
+
+	print '<tr class="fieldsforemail"><td></td><td class="tdtop"></td></tr>';
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
 	$out = '';
-	$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
+	$showlinktolayout = ($formmail->withfckeditor ? $formmail->withlayout : '');
 	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
@@ -872,6 +874,7 @@ if ($action == 'create') {	// aaa
 
 	print '</td></tr>';
 	print '</table>';
+
 
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
@@ -1245,7 +1248,7 @@ if ($action == 'create') {	// aaa
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
-				$formmail->withlayout = 0;
+				$formmail->withlayout = '';
 				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
