@@ -341,8 +341,17 @@ if ($action == 'presend') {
 		$contactstatic = new Contact($db);
 		$tmpcompany = new Societe($db);
 
+		$contactarr = array_values(
+			array_reduce(
+				$contactarr, function($carry, $item) {
+				return isset($carry[$item['code']]) ? $carry : $carry + [$item['code'] => $item];
+			}, []
+			)
+		);
+
 		foreach ($contactarr as $contact) {
 			$contactstatic->fetch($contact['id']);
+
 			// Complete substitution array
 			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 			$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;

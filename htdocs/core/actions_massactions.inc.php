@@ -35,6 +35,7 @@
 // $toselect may be defined
 // $diroutputmassaction may be defined
 
+dol_include_once('contact/class/contact.class.php');
 
 // Protection
 if (empty($objectclass) || empty($uploaddir)) {
@@ -488,17 +489,29 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
-					$contactarr = $objecttmp->liste_contact(-1, 'external', 0, '', 1);
+					if (is_object($objecttmp) && !is_null($objecttmp)) {
+						if (method_exists($objecttmp, 'liste_contact')) {
+							$contactarr = $objecttmp->liste_contact(-1, 'external', 0, '', 1);
+						}
 
-					if (is_array($contactarr) && count($contactarr) > 0) {
-						$contactstatic = new Contact($db);
-						foreach ($contactarr as $contact) {
-							$contactstatic->fetch($contact['id']);
+						if (is_array($contactarr) && count($contactarr)) {
+							$contactarr = array_values(
+								array_reduce(
+									$contactarr, function($carry, $item) {
+									return isset($carry[$item['code']]) ? $carry : $carry + [$item['code'] => $item];
+								}, []
+								)
+							);
 
-							$substitutionarray['__CONTACT_NAME_' . $contact['code'] . '__'] = $contactstatic->getFullName($langs, 1);
-							$substitutionarray['__CONTACT_LASTNAME_' . $contact['code'] . '__'] = $contactstatic->lastname;
-							$substitutionarray['__CONTACT_FIRSTNAME_' . $contact['code'] . '__'] = $contactstatic->firstname;
-							$substitutionarray['__CONTACT_TITLE_' . $contact['code'] . '__'] = $contactstatic->getCivilityLabel();
+							foreach ($contactarr as $contact) {
+								$contactstatic = new Contact($db);
+								$contactstatic->fetch($contact['id']);
+
+								$substitutionarray['__CONTACT_NAME_' . $contact['code'] . '__'] = $contactstatic->getFullName($langs, 1);
+								$substitutionarray['__CONTACT_LASTNAME_' . $contact['code'] . '__'] = $contactstatic->lastname;
+								$substitutionarray['__CONTACT_FIRSTNAME_' . $contact['code'] . '__'] = $contactstatic->firstname;
+								$substitutionarray['__CONTACT_TITLE_' . $contact['code'] . '__'] = $contactstatic->getCivilityLabel();
+							}
 						}
 					}
 
