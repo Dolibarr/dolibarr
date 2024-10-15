@@ -924,7 +924,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} else {
 									$this->errors[$error]['type'] = 'CLASSERROR';
-									if (is_object($classinstance)) {
+									if (is_object($classinstance)) {  // @phpstan-ignore-line
 										$this->errors[$error]['lib'] = implode(
 											"\n",
 											array_merge([$classinstance->error], $classinstance->errors)
