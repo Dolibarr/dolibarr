@@ -273,9 +273,9 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var ?array{string,array{label:string,description:string,note?:string}} multilangs
+	 * @var ?array<string,array{label:string,description:string,note?:string}>	Array for multilangs
 	 */
-	public $multilangs;
+	public $multilangs = array();
 
 	/**
 	 * @var int imgWidth
@@ -1008,7 +1008,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sortorder	Sort order
 	 * @param	int		$limit		Limit for list
 	 * @param	int		$page		Page number
-	 * @return  int<-1,0>|array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array{string,array{label:string,description:string,note?:string}}}> Array of categories, 0 if no cat, -1 on error
+	 * @return  int<-1,0>|array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}> Array of categories, 0 if no cat, -1 on error
 	 */
 	public function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
