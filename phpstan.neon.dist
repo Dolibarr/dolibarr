@@ -118,7 +118,9 @@ parameters:
 		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot|societe_prepare_head) expects Societe#'
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
 		- '#colorHexToHsl expects float\|false, true#'
+		- '#Call to function array_key_exists.. with .error. .* will always evaluate to false.#'
 		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
+		- '#(?:make_substitutions expects array<string, string>,) string given\.#'
 
 	internalErrorsCountLimit: 50
 	cache:

@@ -3412,7 +3412,7 @@ if (!GETPOST('hide_websitemenu')) {
 						$formquestion[] = array('type' => 'checkbox', 'tdclass' => 'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss' => 'margintoponly');
 					}
 
-					$value = $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
+					$value = $formadmin->select_language($preselectedlanguage, 'newlang', 0, array(), $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
 					$formquestion[] = array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $value);
 
 					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
@@ -3872,9 +3872,9 @@ if ($action == 'editcss') {
 	} else {
 		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
 	}
-	if (!trim($manifestjsoncontent)) {
-		//$manifestjsoncontent.="";
-	}
+	//if (!trim($manifestjsoncontent)) {
+	//$manifestjsoncontent.="";
+	//}
 
 	if (!GETPOSTISSET('WEBSITE_README')) {
 		$readmecontent = @file_get_contents($filereadme);
@@ -3883,9 +3883,9 @@ if ($action == 'editcss') {
 	} else {
 		$readmecontent = GETPOST('WEBSITE_README', 'restricthtmlallowunvalid');
 	}
-	if (!trim($readmecontent)) {
-		//$readmecontent.="";
-	}
+	//if (!trim($readmecontent)) {
+	//$readmecontent.="";
+	//}
 
 	if (!GETPOSTISSET('WEBSITE_LICENSE')) {
 		$licensecontent = @file_get_contents($filelicense);
@@ -3894,9 +3894,9 @@ if ($action == 'editcss') {
 	} else {
 		$licensecontent = GETPOST('WEBSITE_LICENSE', 'restricthtmlallowunvalid');
 	}
-	if (!trim($licensecontent)) {
-		//$readmecontent.="";
-	}
+	//if (!trim($licensecontent)) {
+	//$readmecontent.="";
+	//}
 
 	print dol_get_fiche_head();
 
@@ -3928,7 +3928,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
 	print img_picto('', 'language', 'class="picotfixedwidth"');
-	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
+	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, array(), 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td>';
 	print '</tr>';
 
@@ -4139,7 +4139,7 @@ if ($action == 'createsite') {
 	print '</td><td>';
 	$shortlangcode = preg_replace('/[_-].*$/', '', trim($langs->defaultlang));
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : $shortlangcode), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
+	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : $shortlangcode), 'WEBSITE_LANG', 0, array(), 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -4304,7 +4304,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		//print $langs->trans('InternalURLOfPage');
 		//print '</td><td>';
 		print ' &nbsp; - &nbsp; ';
-		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode($pageid);
+		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode((string) $pageid);
 		//if ($objectpage->grabbed_from) print ' - <span class="opacitymedium">'.$langs->trans('InitiallyGrabbedFrom').' '.$objectpage->grabbed_from.'</span>';
 		print '</td></tr>';
 
@@ -4515,7 +4515,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	if (empty($object->lang) && empty($object->otherlang)) {
 		$onlykeys = null; // We keep full list of languages
 	}
-	print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys, 1);
+	print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, array(), '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys, 1);
 	$htmltext = $langs->trans("AvailableLanguagesAreDefinedIntoWebsiteProperties");
 	print $form->textwithpicto('', $htmltext);
 	print '</td></tr>';
@@ -4607,7 +4607,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
 		print img_picto('', 'category', 'class="pictofixedwidth"');
-		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'minwidth200 widthcentpercentminusxx');
+		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), 0, 0, 'minwidth200 widthcentpercentminusxx');
 
 		print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add'), '/categories/index.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
 
@@ -4997,7 +4997,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print $langs->trans("Language");
 	print '</div>';
 	print '<div class="tagtd">';
-	print img_picto('', 'language', 'class="paddingrightonly"').' '.$formadmin->select_language(GETPOSTISSET('optionlanguage') ? GETPOST('optionlanguage') : '', 'optionlanguage', 0, null, '1', 0, 0, 'minwidth125 maxwidth400 widthcentpercentminusx', 2, 0, 0, null, 1);
+	print img_picto('', 'language', 'class="paddingrightonly"').' '.$formadmin->select_language(GETPOSTISSET('optionlanguage') ? GETPOST('optionlanguage') : '', 'optionlanguage', 0, array(), '1', 0, 0, 'minwidth125 maxwidth400 widthcentpercentminusx', 2, 0, 0, array(), 1);
 	print '</div>';
 	print '</div>';
 
@@ -5272,6 +5272,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 					print '</tr>';
 				} else {
+					// $answerrecord is not list of WebsitePage
+					'@phan-var-force array{type:string} $answerrecord';
 					$param = '?mode=replacesite';
 					$param .= '&websiteid='.$website->id;
 					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');

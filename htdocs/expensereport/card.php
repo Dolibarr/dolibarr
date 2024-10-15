@@ -1730,7 +1730,7 @@ if ($action == 'create') {
 			} elseif ($reshook > 0) {
 				$formconfirm = $hookmanager->resPrint;
 			}
-			
+
 			// Print form confirm
 			print $formconfirm;
 
