@@ -18,7 +18,7 @@
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
- * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1319,7 +1319,7 @@ class Societe extends CommonObject
 			$vallabel = $this->$keymin;
 
 			if ($i > 0) {
-				if ($this->isACompany()) {
+				if ($mysoc != null && $this->isACompany()) {
 					// Check for mandatory prof id (but only if country is same than ours)
 					if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id) {
 						$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
