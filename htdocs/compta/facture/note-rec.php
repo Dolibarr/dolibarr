@@ -52,7 +52,7 @@ if ($action == "create" || $action == "add") {
 $object = new FactureRec($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref, '', '', (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
+	$object->fetch($id, $ref);
 }
 
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
