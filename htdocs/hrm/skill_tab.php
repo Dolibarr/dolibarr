@@ -31,20 +31,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
-require_once DOL_DOCUMENT_ROOT .'/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/skillrank.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_skill.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('hrm', 'other'));
+$langs->loadLangs(array('hrm', 'companies', 'other'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -490,7 +489,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder centpercent" width="100%">';
+		print '<table id="tablelines" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans('Label').'</th>';
 		print '<th>'.$langs->trans('Description').'</th>';
@@ -527,7 +526,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 
 				print '<tr>';
-				print '<td>';
+				print '<td class="nowraponall">';
 				print $evaltmp->getNomUrl(1);
 				print '</td><td class="linecolfk_skill">';
 				print $job->getNomUrl(1);

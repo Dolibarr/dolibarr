@@ -225,12 +225,6 @@ class pdf_octopus extends ModelePDFFactures
 		$this->watermark = '';
 		$this->franchise = !$mysoc->tva_assuj; // not used ?
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
-		}
-
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1; // used for notes and other stuff
 
@@ -250,6 +244,17 @@ class pdf_octopus extends ModelePDFFactures
 			$this->TDataSituation = $this->getDataSituation($object);
 		} else {
 			dol_syslog("object is empty, do not call getDataSituation...");
+		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
