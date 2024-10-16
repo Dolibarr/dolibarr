@@ -58,6 +58,8 @@ $leftmenuwidth = 240;
 @phan-var-force string $colortexttitlenotab2
 @phan-var-force string $colortopbordertitle1
 @phan-var-force int<0,1> $disableimages
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_hide_topmenu
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
 @phan-var-force string $fontsize
