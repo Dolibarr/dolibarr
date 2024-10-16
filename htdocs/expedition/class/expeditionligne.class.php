@@ -92,6 +92,11 @@ class ExpeditionLigne extends CommonObjectLine
 	public $origin_line_id;
 
 	/**
+	 * @var int Id of parent line for children of virtual product
+	 */
+	public $fk_parent;
+
+	/**
 	 * @var string		Type of object the fk_element refers to. Example: 'order'.
 	 */
 	public $element_type;
@@ -136,6 +141,12 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var stdClass|ExpeditionLineBatch[]
 	 */
 	public $detail_batch;
+
+	/**
+	 * Virtual products : array of total of quantities group product id and warehouse id
+	 * @var array
+	 */
+	public $detail_children;
 
 	/** detail of warehouses and qty
 	 * We can use this to know warehouse when there is no lot.
@@ -352,7 +363,11 @@ class ExpeditionLigne extends CommonObjectLine
 		$error = 0;
 
 		// Check parameters
-		if (empty($this->fk_expedition) || empty($this->fk_elementdet) || !is_numeric($this->qty)) {
+		// Check parameters
+		if (empty($this->fk_expedition)
+			|| empty($this->fk_product) // product id is mandatory
+			|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
+			|| !is_numeric($this->qty)) {
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
@@ -374,13 +389,17 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql .= "fk_expedition";
 		$sql .= ", fk_entrepot";
 		$sql .= ", fk_elementdet";
+		$sql .= ", fk_parent";
+		$sql .= ", fk_product";
 		$sql .= ", element_type";
 		$sql .= ", qty";
 		$sql .= ", rang";
 		$sql .= ") VALUES (";
 		$sql .= $this->fk_expedition;
 		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql .= ", ".((int) $this->fk_elementdet);
+		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : $this->fk_elementdet);
+		$sql .= ", ".(empty($this->fk_parent) ? 'NULL' : $this->fk_parent);
+		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : $this->fk_product);
 		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
 		$sql .= ", ".price2num($this->qty, 'MS');
 		$sql .= ", ".((int) $ranktouse);
@@ -409,7 +428,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 			if ($error) {
 				foreach ($this->errors as $errmsg) {
-					dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+					dol_syslog(__METHOD__.' '.$errmsg, LOG_ERR);
 					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 				}
 			}
@@ -427,6 +446,69 @@ class ExpeditionLigne extends CommonObjectLine
 	}
 
 	/**
+	 * Find all children
+	 *
+	 * @param	int		$line_id	Line id
+	 * @param	array	$list		List of sub-lines for a virtual product line
+	 * @param	int		$mode		[=0] array of lines ids, 1 array of line object for dispatcher
+	 * @return	int 	Return integer <0 if KO else >0 if OK
+	 */
+	public function findAllChild($line_id, &$list = array(), $mode = 0)
+	{
+		if ($line_id > 0) {
+			// find all child
+			$sql  = "SELECT ed.rowid as child_line_id";
+			if ($mode == 1) {
+				$sql .= ", ed.fk_product";
+				$sql .= ", ed.fk_parent";
+				$sql .= ", " . $this->db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty') . " as qty";
+				$sql .= ", " . $this->db->ifsql('eb.rowid IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse') . " as fk_warehouse";
+				$sql .= ", eb.batch, eb.eatby, eb.sellby";
+			}
+			$sql .= " FROM " . $this->db->prefix() . $this->table_element . " as ed";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "expeditiondet_batch as eb ON eb.fk_expeditiondet = " . ((int) $line_id);
+			$sql .= " WHERE ed.fk_parent = " . ((int) $line_id);
+			$sql .= $this->db->order('ed.fk_product,ed.rowid', 'ASC,ASC');
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$child_line_id = (int) $obj->child_line_id;
+					if (!isset($list[$line_id])) {
+						$list[$line_id] = array();
+					}
+
+					if ($mode == 0) {
+						$list[$line_id][] = $child_line_id;
+					} elseif ($mode == 1) {
+						$line_obj = new stdClass();
+						$line_obj->rowid = $child_line_id;
+						$line_obj->fk_product = $obj->fk_product;
+						$line_obj->fk_parent = $obj->fk_parent;
+						$line_obj->qty = $obj->qty;
+						$line_obj->fk_warehouse = $obj->fk_warehouse;
+						$line_obj->batch = $obj->batch;
+						$line_obj->eatby = $obj->eatby;
+						$line_obj->sellby = $obj->sellby;
+						$line_obj->iskit = $obj->iskit;
+						$line_obj->incdec = $obj->incdec;
+						$list[$line_id][] = $line_obj;
+					}
+
+					$this->findAllChild($child_line_id, $list, $mode);
+				}
+				$this->db->free($resql);
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			}
+		}
+
+		return 1;
+	}
+
+	/**
 	 * 	Delete shipment line.
 	 *
 	 *	@param		User	$user			User that modify
@@ -439,41 +521,81 @@ class ExpeditionLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		// delete batch expedition line
-		if (isModEnabled('productbatch')) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
-			$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
+		// virtual products : delete all children and batch
+		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !($this->fk_parent > 0)) {
+			// find all children
+			$result = $this->findAllChild($this->id, $line_id_list);
+			if ($result) {
+				$child_line_id_list = array_reverse($line_id_list, true);
+				foreach ($child_line_id_list as $child_line_id_arr) {
+					foreach ($child_line_id_arr as $child_line_id) {
+						// delete batch expedition line
+						if (isModEnabled('productbatch')) {
+							$sql = "DELETE FROM " . $this->db->prefix() . "expeditiondet_batch";
+							$sql .= " WHERE fk_expeditiondet = " . ((int) $child_line_id);
+							if (!$this->db->query($sql)) {
+								$error++;
+								$this->errors[] = $this->db->lasterror() . " - sql=$sql";
+							}
+						}
 
-			if (!$this->db->query($sql)) {
-				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+						$sql = "DELETE FROM " . $this->db->prefix() . "expeditiondet";
+						$sql .= " WHERE rowid = " . ((int) $child_line_id);
+						if (!$this->db->query($sql)) {
+							$error++;
+							$this->errors[] = $this->db->lasterror() . " - sql=$sql";
+						}
+
+						if ($error) {
+							break;
+						}
+					}
+					if ($error) {
+						break;
+					}
+				}
+			} else {
 				$error++;
 			}
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		if (!$error) {
+			// delete batch expedition line
+			if (isModEnabled('productbatch')) {
+				$sql = "DELETE FROM ".$this->db->prefix()."expeditiondet_batch";
+				$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
 
-		if (!$error && $this->db->query($sql)) {
-			// Remove extrafields
-			if (!$error) {
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$this->errors[] = $this->error;
+				if (!$this->db->query($sql)) {
+					$this->errors[] = $this->db->lasterror()." - sql=$sql";
 					$error++;
 				}
 			}
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINESHIPPING_DELETE', $user);
-				if ($result < 0) {
-					$this->errors[] = $this->error;
-					$error++;
+
+			$sql = "DELETE FROM ".$this->db->prefix()."expeditiondet";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			if (!$error && $this->db->query($sql)) {
+				// Remove extrafields
+				if (!$error) {
+					$result = $this->deleteExtraFields();
+					if ($result < 0) {
+						$this->errors[] = $this->error;
+						$error++;
+					}
 				}
-				// End call triggers
+				if (!$error && !$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('LINESHIPPING_DELETE', $user);
+					if ($result < 0) {
+						$this->errors[] = $this->error;
+						$error++;
+					}
+					// End call triggers
+				}
+			} else {
+				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				$error++;
 			}
-		} else {
-			$this->errors[] = $this->db->lasterror()." - sql=$sql";
-			$error++;
 		}
 
 		if (!$error) {
@@ -603,7 +725,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->batch = $lot->batch;
 						$shipmentLot->eatby = $lot->eatby;
 						$shipmentLot->sellby = $lot->sellby;
-						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
+						$shipmentLot->fk_warehouse = $this->detail_batch->entrepot_id;
 						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {
