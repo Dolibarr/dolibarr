@@ -5495,7 +5495,9 @@ class Product extends CommonObject
 		$res = $this->db->query($sql);
 		if ($res) {
 			$prods = array();
-			if ($this->db->num_rows($sql) > 0) $parents[] = $id;
+			if ($this->db->num_rows($res) > 0) {
+				$parents[] = $id;
+			}
 
 			while ($rec = $this->db->fetch_array($res)) {
 				if (in_array($rec['id'], $parents)) {

@@ -785,7 +785,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$sql .= ", eb.batch, eb.eatby, eb.sellby";
 						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_origin_line = cd.rowid";
+						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
 						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
 						$sql .= " AND ed.fk_expedition =".(int) $object->id;
 						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
@@ -973,10 +973,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 										print '<td>';
 										if (!empty($objd->batch_list) && count($objd->batch_list) > 1) {
-											print Form::selectarray('lot_number'.$suffix, $objd->batch_list, '', 0, 0, 0, '', 0, 0, '', '', 'minwidth300 csslotnumber'.$suffix);
+											print Form::selectarray('lot_number'.$suffix, $objd->batch_list, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth300 csslotnumber'.$suffix);
 
-											$out_js_line .= 'var isSellByDisabled = '.dol_escape_js($is_sell_by_disabled).';';
-											$out_js_line .= 'var isEatByDisabled = '.dol_escape_js($is_eat_by_disabled).';';
+											$out_js_line .= 'var isSellByDisabled = '.dol_escape_js((string) $is_sell_by_disabled).';';
+											$out_js_line .= 'var isEatByDisabled = '.dol_escape_js((string) $is_eat_by_disabled).';';
 											$out_js_line .= 'jQuery("#lot_number'.$suffix.'").change(function(event) {';
 											$out_js_line .= '	var batch = jQuery(this).val();';
 											$out_js_line .= '	jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$objd->fk_product.'&batch="+batch, function(data) {';

@@ -1477,6 +1477,7 @@ class Expedition extends CommonObject
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_association as pai ON pai.fk_product_pere = edp.fk_product AND pai.fk_product_fils = ed.fk_product";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " GROUP BY ed.fk_product, ed.qty, ed.fk_entrepot, ed.rowid, pai.incdec";
+			$sql .= $this->db->order("ed.rowid", "DESC");
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2614,11 +2615,11 @@ class Expedition extends CommonObject
 		$sql .= ", edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 		$sql .= ", e.ref";
 		$sql .= " FROM " . $this->db->prefix() . "expeditiondet as ed";
-		$sql .= " LEFT JOIN " . $this->db->prefix() . "commandedet as cd ON cd.rowid = ed.fk_origin_line";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "commandedet as cd ON cd.rowid = ed.fk_elementdet";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 		$sql .= " INNER JOIN " . $this->db->prefix() . "expedition as e ON ed.fk_expedition = e.rowid";
 		$sql .= " WHERE ed.fk_expedition = " . ((int) $this->id);
-		$sql .= " AND cd.rowid = ed.fk_elementdet";
+		//$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 		dol_syslog(get_class($this) . "::valid select details", LOG_DEBUG);
 		$resql = $this->db->query($sql);

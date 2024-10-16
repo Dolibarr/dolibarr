@@ -2374,9 +2374,10 @@ if ($action == 'create') {
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$product_id = $lines[$i]->fk_product;
-					if (empty($conf->cache['product'][$product_id])) {
+					if (!isset($conf->cache['product'][$product_id])) {
 						$prod = new Product($db);
 						$prod->fetch($product_id);
+						$conf->cache['product'][$product_id] = $prod;
 					} else {
 						$prod = $conf->cache['product'][$product_id];
 					}
@@ -2579,9 +2580,10 @@ if ($action == 'create') {
 						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					} elseif ($lines[$i]->entrepot_id > 0) {
 						$warehouse_id = $lines[$i]->entrepot_id;
-						if (empty($conf->cache['warehouse'][$warehouse_id])) {
+						if (!isset($conf->cache['warehouse'][$warehouse_id])) {
 							$warehouse = new Entrepot($db);
 							$warehouse->fetch($warehouse_id);
+							$conf->cache['warehouse'][$warehouse_id] = $warehouse;
 						} else {
 							$warehouse = $conf->cache['warehouse'][$warehouse_id];
 						}
@@ -2591,9 +2593,10 @@ if ($action == 'create') {
 						foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
 							$warehouse_id = $detail_entrepot->entrepot_id;
 							if ($warehouse_id > 0) {
-								if (empty($conf->cache['warehouse'][$warehouse_id])) {
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
 									$warehouse = new Entrepot($db);
 									$warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $warehouse;
 								} else {
 									$warehouse = $conf->cache['warehouse'][$warehouse_id];
 								}
@@ -2607,18 +2610,20 @@ if ($action == 'create') {
 							foreach ($child_stock_list as $warehouse_id => $total_qty) {
 								// get product from cache
 								$child_product_label = '';
-								if (empty($conf->cache['product'][$child_product_id])) {
+								if (!isset($conf->cache['product'][$child_product_id])) {
 									$child_product = new Product($db);
 									$child_product->fetch($child_product_id);
+									$conf->cache['product'][$child_product_id] = $child_product;
 								} else {
 									$child_product = $conf->cache['product'][$child_product_id];
 								}
 								$child_product_label = $child_product->ref . ' ' . $child_product->label;
 
 								// get warehouse from cache
-								if (empty($conf->cache['warehouse'][$warehouse_id])) {
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
 									$child_warehouse = new Entrepot($db);
 									$child_warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $child_warehouse;
 								} else {
 									$child_warehouse = $conf->cache['warehouse'][$warehouse_id];
 								}
@@ -2690,9 +2695,10 @@ if ($action == 'create') {
 				$edit_url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id;
 				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 					$product_id = $lines[$i]->fk_product;
-					if (empty($conf->cache['product'][$product_id])) {
+					if (!isset($conf->cache['product'][$product_id])) {
 						$product = new Product($db);
 						$product->fetch($product_id);
+						$conf->cache['product'][$product_id] = $product;
 					} else {
 						$product = $conf->cache['product'][$product_id];
 					}
