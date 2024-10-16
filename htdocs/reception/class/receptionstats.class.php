@@ -167,7 +167,7 @@ class ReceptionStats extends Stats
 	 * Return the orders amount average by month for a year
 	 *
 	 * @param	int		$year	year for stats
-	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> Array of average each month				array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> Array of average each month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -189,7 +189,7 @@ class ReceptionStats extends Stats
 	/**
 	 *  Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total_diff:float,avg_diff:float,avg_weighted:float}>    Array with nb, total amount, average for each year
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{

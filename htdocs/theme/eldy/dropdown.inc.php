@@ -123,9 +123,6 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	padding-right: 5px;
-}
 div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
@@ -204,7 +201,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 #topmenu-global-search-dropdown .dropdown-menu{
-	width: 300px;
+	width: 310px;
 	max-width: 100%;
 }
 
@@ -270,7 +267,7 @@ a.top-menu-dropdown-link {
 	white-space: normal;
 }
 #topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
-#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
@@ -292,7 +289,11 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-global-search-dropdown,
+#topmenu-quickadd-dropdown,
+#topmenu-bookmark-dropdown,
+#topmenu-uploadfile-dropdown,
+#topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -452,9 +453,7 @@ a.dropdown-item {
 }
 
 .global-search-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	font-size: 1.1em;
 }
 
 .global-search-item:before {
@@ -482,8 +481,6 @@ a.dropdown-item {
 
 .quickadd-item {
 	font-size: 1.1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
 }
 
 .quickadd-item:before {

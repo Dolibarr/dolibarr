@@ -22,4 +22,4 @@ CREATE TABLE llx_product_price_extrafields (
 	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_object           integer NOT NULL,
 	import_key          varchar(14) -- import key
-) ENGINE=innodb;
+) ENGINE=InnoDB;

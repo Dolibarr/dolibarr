@@ -98,6 +98,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -114,7 +115,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
+		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 
@@ -189,9 +190,9 @@ class pdf_espadon extends ModelePdfExpedition
 
 				$realpath = '';
 
+				$arephoto = false;
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {
-						// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
 						} else {
@@ -202,11 +203,12 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					$realpath = $dir.$filename;
+					$arephoto = true;
 					$this->atleastonephoto = true;
 					break;
 				}
 
-				if ($realpath) {
+				if ($realpath && $arephoto) {
 					$realpatharray[$i] = $realpath;
 				}
 			}
@@ -328,7 +330,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 
-				// Public note and Tracking code
+				// Displays notes. Here we are still on code executed only for the first page.
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
 				// Extrafields in note
@@ -581,6 +583,10 @@ class pdf_espadon extends ModelePdfExpedition
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 					$heightforsignature = 0;
+
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
+					}
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -983,9 +989,14 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $mysoc;
 
-		$langs->load("orders");
+		$ltrdirection = 'L';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
+
+		$outputlangs->load("orders");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1024,7 +1035,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 		} else {
 			$text = $this->emetteur->name;
-			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
@@ -1142,7 +1153,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx, $posy - 5);
-				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, $ltrdirection);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
 				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'F');
@@ -1161,7 +1172,7 @@ class pdf_espadon extends ModelePdfExpedition
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, $ltrdirection);
 
 
 			// If SHIPPING contact defined, we use it
@@ -1199,21 +1210,23 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
-				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, 'L');
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, $ltrdirection);
 				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -1282,6 +1295,24 @@ class pdf_espadon extends ModelePdfExpedition
 		 */
 
 		$rank = 0; // do not use negative rank
+		$this->cols['position'] = array(
+			'rank' => $rank,
+			'width' => 10,
+			'status' => getDolGlobalInt('PDF_ESPADON_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
+			'title' => array(
+				'textkey' => '#', // use lang key is useful in somme case with module
+				'align' => 'C',
+				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+				// 'label' => ' ', // the final label
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+			'content' => array(
+				'align' => 'C',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+		);
+
+		$rank += 10; // do not use negative rank
 		$this->cols['desc'] = array(
 			'rank' => $rank,
 			'width' => false, // only for desc
@@ -1291,14 +1322,15 @@ class pdf_espadon extends ModelePdfExpedition
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
-				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'content' => array(
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
+		// Image of product
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,

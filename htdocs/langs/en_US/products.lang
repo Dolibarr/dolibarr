@@ -349,6 +349,10 @@ QtyRecalculatedWithPackaging=The quantity of the line were recalculated accordin
 
 #Attributes
 Attributes=Attributes
+ProductAttributeExtrafields=Variant attributes extrafields
+ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
+ProductAttributeValueExtrafields=Variant attributes values extrafields
+ProductAttributeValueExtrafieldsSetup=Setup of Variant attributes values extrafields
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products
 ProductAttributeName=Variant attribute %s

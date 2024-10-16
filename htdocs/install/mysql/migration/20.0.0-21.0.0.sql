@@ -83,6 +83,7 @@ ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AF
 
 ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER total_ttc;
 
+ALTER TABLE llx_notify_def ADD COLUMN entity integer DEFAULT 1;
 
 -- A dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
@@ -132,6 +133,8 @@ ALTER TABLE llx_societe ADD COLUMN ip varchar(250);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN ip varchar(250);
 ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
 
+ALTER TABLE llx_webhook_target ADD COLUMN trigger_stack text;
+
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY fk_user_creat integer NULL;
 
 ALTER TABLE llx_ecm_files ADD COLUMN agenda_id integer;
@@ -148,6 +151,11 @@ ALTER TABLE llx_societe MODIFY COLUMN code_compta varchar(32);
 ALTER TABLE llx_societe MODIFY COLUMN code_compta_fournisseur varchar(32);
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_customer varchar(32);
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_supplier varchar(32);
+
+
+ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 
@@ -210,3 +218,61 @@ INNER JOIN llx_categorie AS c
   AND c.type = 8
 SET bl.fk_categ = c.rowid
 WHERE c.rowid IS NOT NULL;
+
+-- Accounting - Add personalized multi-report
+create table llx_c_accounting_report
+(
+  rowid 				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity 				integer NOT NULL DEFAULT 1,
+  code 					varchar(16) NOT NULL,
+  label 				varchar(255) NOT NULL,
+  fk_country 			integer DEFAULT NULL,
+  active 				integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_report ADD UNIQUE INDEX uk_c_accounting_report (code,entity);
+
+INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report personalized', 1);
+
+
+ALTER TABLE llx_accounting_system ADD COLUMN date_creation datetime;
+ALTER TABLE llx_accounting_system ADD COLUMN fk_user_author integer;
+
+
+ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
+
+ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
+
+create table llx_accounting_category_account
+(
+  rowid           			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_category	integer,
+  fk_accounting_account		bigint
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_account_fk_accounting_category (fk_accounting_category);
+ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_category FOREIGN KEY (fk_accounting_category) REFERENCES llx_c_accounting_category (rowid);
+
+ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_account_fk_accounting_account (fk_accounting_account);
+ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_account FOREIGN KEY (fk_accounting_account) REFERENCES llx_accounting_account (rowid);
+
+ALTER TABLE llx_accounting_category_account ADD UNIQUE INDEX uk_accounting_category_account(fk_accounting_category, fk_accounting_account);
+
+CREATE TABLE llx_product_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_product_price_extrafields ADD UNIQUE INDEX uk_product_price_extrafields (fk_object);
+
+CREATE TABLE llx_product_customer_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);

@@ -219,6 +219,9 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$thirdpartystatic->code_compta_client = $obj->code_compta_client;
 				//$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
+				$totalallpayments = $tmpinvoice->getSommePaiement(0);
+				$totalallpayments += $tmpinvoice->getSumCreditNotesUsed(0);
+				$totalallpayments += $tmpinvoice->getSumDepositsUsed(0);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
@@ -251,7 +254,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 
-				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $totalallpayments).'</td>';
 
 				print '</tr>';
 

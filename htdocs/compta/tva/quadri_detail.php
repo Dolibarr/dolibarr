@@ -52,6 +52,17 @@ $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') 
 $vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'alphanohtml') : -1;
 
 include DOL_DOCUMENT_ROOT . '/compta/tva/initdatesforvat.inc.php';
+// Variables provided by include:
+'
+@phan-var-force int $date_start
+@phan-var-force int $date_end
+@phan-var-force string $date_start_month
+@phan-var-force string $date_start_year
+@phan-var-force string $date_start_day
+@phan-var-force string $date_end_month
+@phan-var-force string $date_end_year
+@phan-var-force string $date_end_day
+';
 
 $min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) {

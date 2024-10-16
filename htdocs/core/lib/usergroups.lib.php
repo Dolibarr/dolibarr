@@ -112,8 +112,12 @@ function user_prepare_head(User $object)
 	if ($user->socid == 0 && isModEnabled('notification')) {
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+		// Make a join with c_action_trigger to exclude orphelin of notify_def and be consistent with page /usr/notify_def
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."c_action_trigger as a";
 		$sql .= " WHERE fk_user = ".((int) $object->id);
+		$sql .= " AND a.rowid = n.fk_action AND n.fk_user = ".((int) $object->id);
+		$sql .= " AND entity IN (".getEntity('notify_def').')';
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -609,7 +613,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("UseBorderOnTable").'</td>';
 		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
 		if ($edit) {
-			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1);
+			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1, 2, 0, 1);
 			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
 		} else {
 			print yn(getDolGlobalString('THEME_ELDY_USEBORDERONTABLE'));

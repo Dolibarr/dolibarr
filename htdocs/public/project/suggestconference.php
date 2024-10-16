@@ -67,7 +67,7 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$eventtype = GETPOST("eventtype");
+$eventtype = GETPOSTINT("eventtype");
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");

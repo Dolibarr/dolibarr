@@ -52,6 +52,9 @@ class box_propales extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('propal', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedProposals';
 	}
 
 	/**
@@ -171,12 +174,6 @@ class box_propales extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedProposals"),
-					);
-				}
 
 				$this->db->free($result);
 			} else {

@@ -56,6 +56,8 @@ ExportAccountancy=Export accountancy
 WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
+AccountingAccountByDefault=Accounting account by default
+AccountingAccountByDefaultShort=Account by default
 
 MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
