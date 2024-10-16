@@ -5224,7 +5224,7 @@ abstract class CommonObject
 		if (method_exists($this, 'loadExpeditions')) {
 			$this->loadExpeditions();
 		}
-		
+
 		$parameters = array('num' => $num, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $this->table_element_line);
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
@@ -5358,10 +5358,9 @@ abstract class CommonObject
 			$qty_shipped = 0;
 			if (isset($this->expeditions[$line->id])) {
 				$qty_shipped = $this->expeditions[$line->id];
-				
 			}
 			$disableedit = $qty_shipped >= $line->qty;
-			
+
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
 				$res = 0;
