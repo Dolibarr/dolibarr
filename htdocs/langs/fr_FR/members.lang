@@ -237,6 +237,7 @@ CreateDolibarrThirdPartyDesc=Un tiers est l'entité juridique qui sera utilisée
 MemberFirstname=Prénom du membre
 MemberLastname=Nom de famille du membre
 MemberCodeDesc=Code membre, unique pour tous les membres
+MaxLevelTagToShow=Montrer %s sous-niveaux de catégories
 MemberSubscriptionStartFirstDayOf=Forcer la date proposée d'une adhésion à correspondre au premier jour d'une
 MemberSubscriptionStartAfter=Délai minimum avant l'entrée en vigueur de la date de début d'une première cotisation d'adhésion (hors renouvellements)
 NoCorrection=Aucune correction

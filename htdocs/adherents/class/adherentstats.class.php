@@ -275,7 +275,7 @@ class AdherentStats extends Stats
 		$startYear = $endYear - $numberYears;
 		$MembersCountArray = [];
 
-		$sql = "SELECT c.rowid as fk_categorie, c.label as label";
+		$sql = "SELECT c.rowid as fk_categorie, c.label as label, c.fk_parent as fk_parent";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT, "'members_draft'", 'NULL').") as members_draft";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1')", "'members_pending'", 'NULL').") as members_pending";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0)", "'members_uptodate'", 'NULL').") as members_uptodate";
@@ -292,9 +292,8 @@ class AdherentStats extends Stats
 		if ($numberYears) {
 			$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
 		}
-		$sql .= " AND c.fk_parent = 0";
 		$sql .= " GROUP BY c.rowid, c.label";
-		$sql .= " ORDER BY label ASC";
+		$sql .= " ORDER BY fk_parent ASC, label ASC";
 
 		dol_syslog("box_members_by_tag::select nb of members per tag", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -303,6 +302,8 @@ class AdherentStats extends Stats
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$totalstatus = array(
+				'label' => 'Total',
+				'fk_parent' => 0,
 				'members_draft' => 0,
 				'members_pending' => 0,
 				'members_uptodate' => 0,
@@ -314,6 +315,7 @@ class AdherentStats extends Stats
 				$objp = $this->db->fetch_object($result);
 				$MembersCountArray[$objp->fk_categorie] = array(
 					'label' => $objp->label,
+					'fk_parent' => (int) $objp->fk_parent,
 					'members_draft' => (int) $objp->members_draft,
 					'members_pending' => (int) $objp->members_pending,
 					'members_uptodate' => (int) $objp->members_uptodate,
@@ -325,17 +327,79 @@ class AdherentStats extends Stats
 				foreach ($MembersCountArray[$objp->fk_categorie] as $key => $nb) {
 					if ($key != 'label') {
 						$totalrow += $nb;
-						$totalstatus[$key] += $nb;
+						// total row sum only root tag cause all sublevel are already included in root level
+						if ($MembersCountArray[$objp->fk_categorie]['fk_parent'] == 0) {
+							$totalstatus[$key] += $nb;
+						}
 					}
 				}
 				$MembersCountArray[$objp->fk_categorie]['total_adhtag'] = $totalrow;
 				$i++;
 			}
 			$this->db->free($result);
+			$MembersCountArray = $this->buildTree($MembersCountArray, 0);
 			$MembersCountArray['total'] = $totalstatus;
 			$MembersCountArray['total']['all'] = array_sum($totalstatus);
+			$MembersCountArray['arraydepth'] = $this->arrayDepth($MembersCountArray);
 		}
 
 		return $MembersCountArray;
+	}
+
+	/**
+	 *	Recursive function returning a multidimensional array representing
+	 *  a parent-child tree with the addition of a "depth" property at each level
+	 *
+	 * @param		array	$elements 		Array of elements in wich build a tree
+	 * @param		int		$fk_parent		First parent branch to build the tree (0 is the trunk for tags)
+	 * @param		int		$limit_depth    Maximum depth, beyond which elements are deleted from the returned tree
+	 * @return		array 					Multidimensional array representing a tree with a "depth" property
+	 */
+	public function buildTree(array $elements, int $fk_parent = 0, int $limit_depth = -1)
+	{
+		$branch = array();
+		$depth = $limit_depth > 0 ? $limit_depth : -($limit_depth + 1);
+
+		// test against infinite loop
+		if ($depth > 1000) {
+			return $branch;
+		}
+		foreach ($elements as $key=>$element) {
+			if (is_array($element)) {
+				$element['depth'] = $depth;
+			}
+			if (isset($element['fk_parent']) && $element['fk_parent'] == $fk_parent) {
+				$children = ($limit_depth != 0) ? $this->buildTree($elements, $key, $limit_depth-1) : array();
+				if ($children) {
+					$element['children'] = $children;
+				}
+				$branch[] = $element;
+			}
+		}
+		return $branch;
+	}
+
+	/**
+	 *	Recursive function returning the deepest level of a multidimentionnal array
+	 *
+	 * @param		array	$array 		Array of elements in wich build a tree
+	 * @param		int		$depth 		Array of elements in wich build a tree
+	 * @return		int 	Maximum tree depth
+	 */
+	public function arrayDepth(array $array, $depth = 0)
+	{
+		// test against infinite loop
+		$depth = $depth + 1;
+		if ($depth > 1000) {
+			return $depth;
+		}
+		$max_depth = 0;
+		foreach ($array as $value) {
+			if (is_array($value)) {
+				$depth = array_key_exists('label', $value) ? $this->arrayDepth($value, $depth) + 1 : $this->arrayDepth($value, $depth);
+				$max_depth = $depth > $max_depth ? $depth : $max_depth;
+			}
+		}
+		return $max_depth;
 	}
 }

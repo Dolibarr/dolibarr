@@ -65,13 +65,84 @@ class box_members_by_tags extends ModeleBoxes
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
+	 *  @param	array	$sumMembers		Array of statistics of Member to use
+	 *	@param	array	$staticmember	Member object to use method of the class
+	 *	@param  array	$line	  		Array with properties of box lines
+	 *  @return	int		the next no of line of the box
+	 */
+	private function addRows($sumMembers, $staticmember, $line)
+	{
+		$now = dol_now();
+		foreach ($sumMembers as $key => $data) {
+			$adhtag = new Categorie($this->db);
+			$adhtag->id = $key;
+
+			if ($key=='total') {
+				break;
+			}
+			$adhtag->label = !empty($data['label']) ? $data['label'] : "";
+			$styledisplay = !empty($data['depth']) ? "none" : "";
+
+			$this->info_box_contents[$line][] = array(
+				'tr'=>'style="display:'.$styledisplay.';"',
+				'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" depth="'.$data['depth'].'"',
+				'text' => (isset($data['depth']) && $data['depth'] > 0 ? str_repeat("&nbsp;&nbsp;&nbsp;", $data['depth']) . "&#8627;" : "").'<a href="'.DOL_MAIN_URL_ROOT.'/adherents/list.php?search_categ='.$adhtag->id.'&sortfield=d.datefin,t.subscription&sortorder=desc,desc&backtopage='.urlencode($_SERVER['PHP_SELF']).'">'.dol_trunc(($adhtag->ref ? $adhtag->ref : $adhtag->label), dol_size(32)).'</a>',
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['members_draft']) && $data['members_draft'] > 0 ? $data['members_draft'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_DRAFT, 1, 0, 3),
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['members_pending']) && $data['members_pending'] > 0 ? $data['members_pending'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['members_uptodate']) && $data['members_uptodate'] > 0 ? $data['members_uptodate'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, $now + 86400, 3),
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['members_expired']) && $data['members_expired'] > 0 ? $data['members_expired'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now - 86400, 3),
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['members_excluded']) && $data['members_excluded'] > 0 ? $data['members_excluded'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_EXCLUDED, 1, $now, 3),
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['members_resiliated']) && $data['members_resiliated'] > 0 ? $data['members_resiliated'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
+				'asis' => 1,
+			);
+			$this->info_box_contents[$line][] = array(
+				'td' => 'class="right"',
+				'text' => (isset($data['total_adhtag']) && $data['total_adhtag'] > 0 ? $data['total_adhtag'] : ''),
+				'asis' => 1,
+			);
+			$line++;
+
+			if (!empty($data['children']) && $line < 1000) {
+				$line=$this->addRows($data['children'], $staticmember, $line);
+			}
+		}
+		return $line;
+	}
+
+	/**
+	 *  Load data into info_box_contents array to show array later.
+	 *
 	 *  @param	int		$max        Maximum number of records to load
 	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
 		global $user, $langs;
-		$langs->load("boxes");
+		$langs->load("boxes", "members");
 
 		$this->max = $max;
 
@@ -93,9 +164,33 @@ class box_members_by_tags extends ModeleBoxes
 			$sumMembers = $stats->countMembersByTagAndStatus($numberyears);
 			if ($sumMembers) {
 				$line = 0;
+
+				// select max tag level inside widget
+				$onchange = "var final = 0;
+				var tbody = document.querySelector('#maxdepth').parentNode.parentNode.parentNode;
+				var howManyCols = tbody.rows[1].cells.length;
+				var howManyRows = tbody.rows.length;
+				var totalRow = tbody.rows[tbody.rows.length - 1];
+				var select = document.querySelector('#maxdepth');
+				var max_depth = select.value;
+				
+				for (var i = 1; i < (howManyRows - 1); i++) {
+				  if (max_depth === '' || (typeof(tbody.rows[i].cells[0].getAttribute('depth')) !== 'undefined' && tbody.rows[i].cells[0].getAttribute('depth') <= max_depth)) {
+					tbody.rows[i].style.display='';
+				  } else {
+					tbody.rows[i].style.display='none';
+				  }
+				}";
+				$selectdepth = '<select name="maxdepth" id="maxdepth" onchange="'.$onchange.'">';
+				foreach (range(0, $sumMembers['arraydepth']-1) as $k => $v) {
+					$selectdepth .= '<option value="'.$v.'">'.$langs->trans('MaxLevelTagToShow', $v). '</option>';
+				}
+				$selectdepth .= '</select>';
+
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class=""',
-					'text' => '',
+					'td' => 'class="right tdoverflowmax100" width="10%" title=""',
+					'text' => $selectdepth,
+					'asis' => 1
 				);
 				// Members Status To Valid
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_DRAFT, 0, 0, 1);
@@ -139,6 +234,8 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				// add rows with recursive function to browse the entire tree
+				$line = $this->addRows($sumMembers, $staticmember, $line);
 				$AdherentTag = array();
 				foreach ($sumMembers as $key => $data) {
 					if ($key == 'total') {
@@ -195,7 +292,7 @@ class box_members_by_tags extends ModeleBoxes
 				if (count($sumMembers) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center" colspan="6"',
-						'text' => $langs->trans("NoRecordedMembersByType")
+						'text' => $langs->trans("NoRecordedMembers")
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
