@@ -2778,21 +2778,6 @@ while ($i < $imaxinloop) {
 							}
 						}
 					}
-
-					// Call Hook modifyTextInfo
-					$parameters = array('textinfo' => $text_info);
-					$reshook = $hookmanager->executeHooks('modifyTextInfo', $parameters, $object, $action);
-					if ($reshook == 1) {
-						// for add information
-						$text_info .= $hookmanager->resPrint;
-					} elseif ($reshook == 0) {
-						// for replace information
-						$text_info = $hookmanager->resPrint;
-					} elseif ($reshook == -1) {
-						// for errors
-						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					}
-
 					if ($notshippable == 0) {
 						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;

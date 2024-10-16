@@ -220,7 +220,7 @@ $check_access = dol_check_secure_access_document($modulepart, $original_file, $e
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
+//var_dump($modulepart.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed

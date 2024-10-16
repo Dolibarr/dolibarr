@@ -911,7 +911,7 @@ class FormFile
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
-					$out .= '<td class="nowraponall right">'.dol_print_size($size, 1, 1).'</td>';
+					$out .= '<td class="nowraponall right" title="'.dolPrintHTML($size.' '.$langs->trans("Bytes")).'">'.dol_print_size($size, 1, 1).'</td>';
 
 					// Show file date
 					$date = (!empty($file['date']) ? $file['date'] : dol_filemtime($filedir."/".$file["name"]));
