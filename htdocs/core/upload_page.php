@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -134,7 +135,7 @@ $uploadform .= '</div>';
 
 
 // Execute hook printSearchForm
-$parameters = array('uploadform'=>$uploadform);
+$parameters = array('uploadform' => $uploadform);
 $reshook = $hookmanager->executeHooks('printUploadForm', $parameters); // Note that $action and $object may have been modified by some hooks
 if (empty($reshook)) {
 	$uploadform .= $hookmanager->resPrint;
