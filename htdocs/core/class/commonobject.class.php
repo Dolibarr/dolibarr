@@ -6582,6 +6582,7 @@ abstract class CommonObject
 				}
 			}
 
+			$attrs = $extrafields->attributes[$this->table_element];
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey      = substr($key, 8); // Remove 'options_' prefix
 				$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
@@ -6793,7 +6794,10 @@ abstract class CommonObject
 					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					} else {
-						$sql .= ",null";
+						$default = $attrs['default'][$attributeKey];
+						if ($default === null) $sql .= ',null';
+						elseif (is_numeric($default)) $sql .= ",$default";
+						else $sql .= ",'".$this->db->escape($default)."'";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
