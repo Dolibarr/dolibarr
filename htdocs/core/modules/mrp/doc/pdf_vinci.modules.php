@@ -483,9 +483,9 @@ class pdf_vinci extends ModelePDFMo
 
 					if ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction(); //description
-						$des = $prod -> description;
-						$descr = $des;//implode("<br>", $des);
-
+						/** $des = $prod -> description; it's far more logical to have the product's label instead of product's description
+						$descr = $des;//implode("<br>", $des); **/
+						$descr = $prod->label;
 						$this->printStdColumnContent($pdf, $curY, 'desc', $descr);
 
 						$pageposafter = $pdf->getPage();
