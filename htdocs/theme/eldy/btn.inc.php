@@ -230,7 +230,7 @@ TITLE BUTTON
 	text-decoration: none;
 	position: relative;
 	/* margin: 0 0 0 8px; */
-	min-width: 72px;
+	min-width: 60px;
 	text-align: center;
 	color: var(--btncolortext);
 	border: none;
