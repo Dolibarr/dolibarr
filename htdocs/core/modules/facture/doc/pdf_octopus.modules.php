@@ -1082,7 +1082,7 @@ class pdf_octopus extends ModelePDFFactures
 						}
 					}
 
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						$tabtop = $this->tab_top;
 						$tabhauteur = $this->page_hauteur - $tabtop - $this->heightforfooter;
 						if ($pagenb != $pageposbeforeprintlines) {
