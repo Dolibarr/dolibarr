@@ -54,6 +54,9 @@ if (!getDolGlobalString('PAYMENT_ADDON')) {
 if ($action == 'updateMask') {
 	$maskconstpayment = GETPOST('maskconstpayment', 'aZ09');
 	$maskpayment = GETPOST('maskpayment', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstpayment && preg_match('/_MASK$/', $maskconstpayment)) {
 		$res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
 	}
@@ -100,7 +103,7 @@ if ($action == 'setparams') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
+llxHeader('', $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura', '', 0, 0, '', '', '', 'mod-admin page-payment');
 
 $form = new Form($db);
 
@@ -220,7 +223,7 @@ foreach ($dirmodels as $reldir) {
 
 							if (getDolGlobalString('PAYMENT_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
+									dol_htmloutput_mesg($module->error, array(), 'error', 1);
 								}
 							}
 

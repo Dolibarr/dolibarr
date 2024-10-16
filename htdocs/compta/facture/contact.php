@@ -56,9 +56,10 @@ $object = new Facture($db);
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref, '', '', (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
 
 $result = restrictedArea($user, 'facture', $object->id);
-$hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
 
 $usercancreate = $user->hasRight("facture", "creer");
 

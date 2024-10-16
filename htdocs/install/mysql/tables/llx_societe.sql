@@ -31,15 +31,19 @@ create table llx_societe
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
 
-  statut                   tinyint        DEFAULT 0,            		-- statut
+  statut                   tinyint        DEFAULT 0,            		-- statut (deprecated)
   parent                   integer,
 
-  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
+  status            	   tinyint 		  DEFAULT 1,			        -- active or not ( 1 -- active, 0 -- closed or not open)
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code fournisseur
-  code_compta              varchar(24),                         		-- customer accountancy auxiliary account
-  code_compta_fournisseur  varchar(24),                         		-- supplier accountancy auxiliary account
+
+  accountancy_code_customer_general	varchar(32) DEFAULT NULL,			-- customer accountancy general account
+  code_compta              			varchar(32),                        -- customer accountancy auxiliary account
+  accountancy_code_supplier_general varchar(32) DEFAULT NULL,			-- supplier accountancy general account
+  code_compta_fournisseur  			varchar(32),                        -- supplier accountancy auxiliary account
+
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
@@ -128,6 +132,8 @@ create table llx_societe
 
   fk_multicurrency		   integer,
   multicurrency_code	   varchar(3),
+
+  ip                     varchar(250),                              --ip used to create record (for public submission page)
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

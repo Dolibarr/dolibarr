@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Tiedonhallintajärjestelmä
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Hallinnoi Knowledge Management (KM) tai Help-desk-tietokantaa
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Tiedonhallintajärjestelmän asennus
 KnowledgeManagementSetupPage = Tiedonhallintajärjestelmän asetussivu
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Tietoja tiedonhallinnasta
 KnowledgeManagementAboutPage = Tiedonhallinta sivusta
-
 KnowledgeManagementArea = Tietämyksen hallinta
 MenuKnowledgeRecord = Tietopohja
 MenuKnowledgeRecordShort = Tietopohja
@@ -46,8 +33,7 @@ KnowledgeRecord = Artikkeli
 KnowledgeRecordExtraFields = Artikkelin lisäkentät
 GroupOfTicket=ryhmä lipuista
 YouCanLinkArticleToATicketCategory=Voit linkittää artikkelin lippuun ryhmä (joten artikkeli on korostettu kaikissa lipuissa tässä ryhmä)
-SuggestedForTicketsInGroup=Ehdotettu lipun luomisessa
-
+SuggestedForTicketsInGroup=Ehdotettu tiketin luonnissa
 SetObsolete=Aseta vanhentuneeksi
 ConfirmCloseKM=Vahvistatko tämän artikkelin sulkemisen vanhentuneeksi?
 ConfirmReopenKM=Haluatko palauttaa tämän artikkelin tilaan "Validated"?

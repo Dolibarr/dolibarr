@@ -102,7 +102,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('donationlist'));
 
 // Security check
@@ -407,7 +407,7 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 
 // Filter: Amount
 if (!empty($arrayfields['pd.amount']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="6" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
 }
@@ -443,6 +443,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.rowid']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pd.rowid']['label'], $_SERVER["PHP_SELF"], "pd.rowid", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -471,7 +472,7 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['pd.amount']['label'], $_SERVER["PHP_SELF"], "pd.amount", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['pd.amount']['label'], $_SERVER["PHP_SELF"], "pd.amount", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 
@@ -613,7 +614,7 @@ while ($i < $imaxinloop) {
 
 	// Amount
 	if (!empty($arrayfields['pd.amount']['checked'])) {
-		print '<td ><span class="amount">' . price($obj->amount) . '</span></td>';
+		print '<td class="right"><span class="amount">' . price($obj->amount) . '</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'amount';

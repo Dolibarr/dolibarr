@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2023		Charlene BENKE		<charlene@patas-monkey.com>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2023	Charlene BENKE				<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +61,10 @@ $result = restrictedArea($user, 'contrat', $id);
 /*
  *	View
  */
+$title = $langs->trans("Contract") . ' - ' . $langs->trans("Tickets");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader("", $langs->trans("Tickets"), "Contrat");
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_ticket');
 
 $form = new Form($db);
 $userstatic = new User($db);

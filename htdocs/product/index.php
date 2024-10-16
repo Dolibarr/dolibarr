@@ -47,7 +47,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -104,7 +104,7 @@ if ((GETPOSTISSET("type") && GETPOST("type") == '1') || !isModEnabled("product")
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
+llxHeader("", $langs->trans("ProductsAndServices"), $helpurl, '', 0, 0, '', '', '', 'mod-product page-index');
 
 print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product');
 
@@ -239,7 +239,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 $graphcat = '';
-if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS') && $user->hasRight('categorie', 'read')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$graphcat .= '<br>';
 	$graphcat .= '<div class="div-table-responsive-no-min">';
@@ -317,6 +317,13 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
 	}*/
+	if (!$user->hasRight("produit", "lire")) {
+		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_PRODUCT);
+	}
+	if (!$user->hasRight("service", "lire")) {
+		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_SERVICE);
+	}
+
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
@@ -457,8 +464,9 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	}
 }
 
+// Latest modified warehouses
 $latestwarehouse = '';
-if (isModEnabled('stock')) {
+if (isModEnabled('stock') && $user->hasRight('stock', 'read')) {
 	$sql = "SELECT e.rowid, e.ref as label, e.lieu, e.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 	$sql .= " WHERE e.statut in (".Entrepot::STATUS_CLOSED.",".Entrepot::STATUS_OPEN_ALL.")";
@@ -523,13 +531,14 @@ if (isModEnabled('stock')) {
 	}
 }
 
-
+// Latest movements
 $latestmovement = '';
-if (isModEnabled('product')) {
-	// Latest movements
-	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
+if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
+	include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+	$sql = "SELECT p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
-	$sql .= " m.rowid as mid, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
+	$sql .= " m.rowid as mid, m.label as mlabel, m.inventorycode as mcode, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
 	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 	$sql .= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
@@ -551,13 +560,12 @@ if (isModEnabled('product')) {
 		$latestmovement .= '<div class="div-table-responsive-no-min">';
 		$latestmovement .= '<table class="noborder centpercent">';
 		$latestmovement .= '<tr class="liste_titre">';
-		$latestmovement .= '<th>'.$langs->trans("LatestStockMovements", min($num, $max));
+		$latestmovement .= '<th colspan="3">'.$langs->trans("LatestStockMovements", min($num, $max));
 		$latestmovement .= '<a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">';
 		$latestmovement .= '<span class="badge marginleftonlyshort">...</span>';
 		//$latestmovement .= img_picto($langs->trans("FullList"), 'movement');
 		$latestmovement .= '</a>';
 		$latestmovement .= '</th>';
-		$latestmovement .= '<th></th>';
 		if (isModEnabled('productbatch')) {
 			$latestmovement .= '<th></th>';
 		}
@@ -567,13 +575,21 @@ if (isModEnabled('product')) {
 		$latestmovement .= "</tr>\n";
 
 		$tmplotstatic = new Productlot($db);
+		$tmpstockmovement = new MouvementStock($db);
 
 		$i = 0;
 		while ($i < min($num, $max)) {
 			$objp = $db->fetch_object($resql);
 
-			$producttmp->id = $objp->rowid;
-			$producttmp->ref = $objp->produit;
+			$tmpstockmovement->id = $objp->mid;
+			$tmpstockmovement->date = $db->jdate($objp->datem);
+			$tmpstockmovement->label = $objp->mlabel;
+			$tmpstockmovement->inventorycode = $objp->mcode;
+			$tmpstockmovement->qty = $objp->qty;
+
+			$producttmp->id = $objp->product_id;
+			$producttmp->ref = $objp->product_ref;
+			$producttmp->label = $objp->product_label;
 			$producttmp->status_batch = $objp->tobatch;
 			$producttmp->status_sell = $objp->tosell;
 			$producttmp->status_buy = $objp->tobuy;
@@ -589,7 +605,13 @@ if (isModEnabled('product')) {
 			$tmplotstatic->eatby = $objp->eatby;
 
 			$latestmovement .= '<tr class="oddeven">';
-			$latestmovement .= '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+			$latestmovement .= '<td class="nowraponall">';
+			$latestmovement .= $tmpstockmovement->getNomUrl(1);
+			//$latestmovement .= img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour');
+			$latestmovement .= '</td>';
+			$latestmovement .= '<td class="nowraponall">';
+			$latestmovement .= dol_print_date($tmpstockmovement->date, 'dayhour', 'tzuserrel');
+			$latestmovement .= "</td>\n";
 			$latestmovement .= '<td class="tdoverflowmax150">';
 			$latestmovement .= $producttmp->getNomUrl(1);
 			$latestmovement .= "</td>\n";
@@ -628,7 +650,7 @@ if (isModEnabled('product')) {
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}
-			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			$latestmovement .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$latestmovement .= "</table>";
@@ -701,7 +723,7 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";

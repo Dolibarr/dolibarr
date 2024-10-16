@@ -64,7 +64,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $operationid = GETPOSTINT('operationid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output.'/temp/massgeneration/'.$user->id;
@@ -92,7 +92,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -274,7 +274,7 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 
-llxHeader('', 'EmailCollector', $help_url);
+llxHeader('', 'EmailCollector', $help_url, '', 0, 0, '', '', '', 'mod-admin page-emailcollector_card');
 
 // Part to create
 if ($action == 'create') {
@@ -390,12 +390,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$targetdir = ($object->target_directory ? $object->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 	$connection = null;
-	$connectstringserver = '';
+	$connectstringserver = $object->getConnectStringIMAP();	// Note: $object->host has been loaded by the fetch
 	$connectstringsource = '';
 	$connectstringtarget = '';
 
-	// Note: $object->host has been loaded by the fetch
-	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
@@ -418,7 +416,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-				$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+				if (!empty($supportedoauth2array)) {
+					$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+					$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+					$OAUTH_SERVICENAME = $nameofservice;
+				} else {
+					$OAUTH_SERVICENAME = 'Unknown';
+				}
+
+				$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
@@ -426,7 +432,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+				$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -441,15 +447,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
-							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
+							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLCALLBACK')
 						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 
-						// We have to save the token because Google give it only once
+						// We need to save the token because Google provides it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
 
 						//var_dump($tokenobj);
@@ -459,6 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							throw new Exception("Failed to refresh access token: ".$e->getMessage());
 						}
 
+						// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
@@ -602,6 +610,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
+
+	// Clean info (in view mode only)
+	if ($object->acces_type == 0) {
+		// If authent is using LOGIN and not OAUTHTOKEN, we don't need to show the OAUTH token
+		unset($object->fields['oauth_service']);
+	}
+	if ($object->acces_type == 1) {
+		// If authent is using OAUTHTOKEN, we don't need to show the password
+		unset($object->fields['password']);
+	}
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswithonsecondcolumn';
@@ -760,7 +778,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add operation
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth300', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth250', 1);
 	print '</td><td>';
 	print '<textarea class="centpercent" name="operationparam" rows="3"></textarea>';
 	print '</td>';

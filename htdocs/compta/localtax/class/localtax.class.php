@@ -545,7 +545,7 @@ class Localtax extends CommonObject
 						$ok = 0;
 					}
 
-					// Mise a jour liens
+					// Update the links
 					$result = $acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/localtax/card.php?id=', "(VATPayment)", "payment_vat");
 					if ($result < 0) {
 						$this->error = $acc->error;
@@ -598,7 +598,7 @@ class Localtax extends CommonObject
 	 *	Returns clickable name
 	 *
 	 *	@param		int		$withpicto		0=Link, 1=Picto into link, 2=Picto
-	 *	@param		string	$option			Sur quoi pointe le lien
+	 *	@param		string	$option			What the link points to
 	 *	@return		string					Chaine avec URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '')
@@ -653,11 +653,11 @@ class Localtax extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

@@ -3,7 +3,7 @@
 # See README.md to know how to create a Dolibarr env with docker
 
 usermod -u "${HOST_USER_ID}" www-data
-groupmod -g "${HOST_USER_ID}" www-data
+groupmod -g "${HOST_GROUP_ID}" www-data
 
 chgrp -hR www-data /var/www/html
 chmod g+rwx /var/www/html/conf
@@ -20,5 +20,7 @@ cat <<EOF > "${PHP_INI_DIR}/conf.d/dolibarr-php.ini"
 date.timezone = ${PHP_INI_DATE_TIMEZONE:-UTC}
 memory_limit = ${PHP_INI_MEMORY_LIMIT:-256M}
 EOF
+
+cp /var/www/html/install/install.forced.docker.php /var/www/html/install/install.forced.php
 
 exec apache2-foreground

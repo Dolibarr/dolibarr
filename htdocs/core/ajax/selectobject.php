@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,10 +135,14 @@ if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// The
 */
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
+$searchkey = (($id && GETPOST((string) $id, 'alpha')) ? GETPOST((string) $id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 
 // Add a security test to avoid to get content of all tables
-restrictedArea($user, $objecttmp->element, $id);
+if (!empty($objecttmp->module)) {
+	restrictedArea($user, $objecttmp->module, $id, $objecttmp->table_element, $objecttmp->element);
+} else {
+	restrictedArea($user, $objecttmp->element, $id);
+}
 
 
 /*

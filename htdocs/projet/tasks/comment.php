@@ -2,6 +2,8 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +49,7 @@ $withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOSTINT('planned_workloadhour') != '' || GETPOSTINT('planned_workloadmin') != '') ? (GETPOSTINT('planned_workloadhour') > 0 ? GETPOSTINT('planned_workloadhour') * 3600 : 0) + (GETPOSTINT('planned_workloadmin') > 0 ? GETPOSTINT('planned_workloadmin') * 60 : 0) : '');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projecttaskcommentcard', 'globalcard'));
 
 $object = new Task($db);
@@ -62,7 +64,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch('', $project_ref) > 0) {
+	if ($projectstatic->fetch(0, $project_ref) > 0) {
 		$objectsarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($objectsarray) > 0) {
 			$id = $objectsarray[0]->id;
@@ -83,12 +85,18 @@ $socid = 0;
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("CommentPage"));
+llxHeader('', $langs->trans("CommentPage"), '', '', 0, 0, '', '', '', 'mod-project project-tasks page-task_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -215,7 +223,7 @@ if ($id > 0 || !empty($ref)) {
 				if (strcmp($projectstatic->opp_amount, '')) {
 					print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 					if (strcmp($projectstatic->opp_percent, '')) {
-						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 					}
 				}
 				print '</td></tr>';
@@ -328,7 +336,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Other attributes
 		$cols = 3;
-		$parameters = array('socid'=>$socid);
+		$parameters = array('socid' => $socid);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';

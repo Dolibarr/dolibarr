@@ -57,7 +57,7 @@ if ($action == 'setvalue') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-bookmarks page-admin_bookmark');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BookmarkSetup"), $linkback, 'title_setup');

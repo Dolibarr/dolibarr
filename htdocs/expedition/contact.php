@@ -69,8 +69,8 @@ if ($id > 0 || !empty($ref)) {
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'expedition', $object->id, '');
 $hookmanager->initHooks(array('shipmentcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 /*
  * Actions
@@ -126,7 +126,7 @@ if (empty($reshook)) {
 
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Order'), $help_url);
+llxHeader('', $langs->trans('Order'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

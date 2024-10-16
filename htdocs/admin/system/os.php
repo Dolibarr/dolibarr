@@ -35,12 +35,12 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_os');
 
 print load_fiche_titre($langs->trans("InfoOS"), '', 'title_setup');
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 print "\n";
 
 // Recovers the OS in the PHP sense

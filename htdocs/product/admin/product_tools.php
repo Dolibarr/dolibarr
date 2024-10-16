@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,10 +199,10 @@ if ($action == 'convert') {
 		if ($vat_src_code_old) {
 			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		} else {
-			" AND default_vat_code = IS NULL";
+			$sql .= " AND default_vat_code = IS NULL";
 		}
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
-		//print $sql;
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -299,7 +300,7 @@ $form = new Form($db);
 
 $title = $langs->trans('ProductVatMassChange');
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product_tools');
 
 print load_fiche_titre($title, '', 'title_setup');
 

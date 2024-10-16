@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - cashdesk
-MainPrinterToUseMore=empty means the browser printer system
+NoVAT=Pas de TPS pour cette vente
+TicketVatGrouped=Grouper la TPS par taux sur les tickets / reçus

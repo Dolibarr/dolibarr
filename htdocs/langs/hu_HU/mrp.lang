@@ -15,6 +15,10 @@ ListOfBOMs=Anyagjegyzékek - BOM
 ListOfManufacturingOrders=Gyártási rendelések
 NewBOM=Új anyagjegyzék
 ProductBOMHelp=Az anyagjegyzékkel létrehozandó (vagy szétszedendő) termék.<br>Megjegyzés: A 'Nature of product' = 'Nyersanyag' tulajdonságú termékek nem jelennek meg ebben a listában.
+CloneDefBomProduct=A termék gyártásához használandó alapértelmezett anyagjegyzék klónozása
+CloneOtherBomsProduct=Klónozza az összes anyagjegyzéket, amely a termék gyártásához használható
+BOMofRef=%s anyagjegyzéke
+ErrorProductCloneBom=Hiba: Nem sikerült az anyagjegyzék klónozása
 BOMsNumberingModules=BOM számozási sablonok
 BOMsModelModule=BOM dokumentumsablonok
 MOsNumberingModules=MO számozási sablonok
@@ -100,6 +104,7 @@ WorkstationSetup = Munkaállomások beállítása
 WorkstationSetupPage = Munkaállomások beállítási oldala
 WorkstationList=Munkaállomáslista
 WorkstationCreate=Új munkaállomás hozzáadása
+NewWorkstation=Új munkaállomás
 ConfirmEnableWorkstation=Biztosan engedélyezi a(z) <b>%s</b> munkaállomást?
 EnableAWorkstation=Munkaállomás engedélyezése
 ConfirmDisableWorkstation=Biztosan letiltja a(z) <b>%s</b> munkaállomást?
@@ -130,10 +135,8 @@ Manufacturing=Gyártás
 Disassemble=Szerelje szét
 ProducedBy=Által termelt
 QtyTot=Mennyiség összesen
-
+MOIsClosed=A megrendelés gyártás lezárult
 QtyCantBeSplit= A mennyiség nem osztható fel
 NoRemainQtyToDispatch=Nincs hátra osztható mennyiség
-
 THMOperatorEstimatedHelp=Az üzemeltető becsült költsége óránként. Ezt a munkaállomást használó anyagjegyzék költségének becslésére használják.
 THMMachineEstimatedHelp=A gép becsült költsége óránként. Ezt a munkaállomást használó anyagjegyzék költségének becslésére használják.
-

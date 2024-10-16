@@ -1,6 +1,7 @@
 <?php
 /**
  * Copyright (C) 2015 Marcos García	<marcosgdf@gmail.com
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,8 @@ if ($action == 'update') {
 	$var_min_percent = GETPOST('var_min_percent', 'array');
 	$fk_level = GETPOST('fk_level', 'array');
 
-	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+	$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+	for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 		$check = isset($var_min_percent[$i]);
 
 		if ($i != 1) {
@@ -71,7 +73,7 @@ if ($action == 'update') {
 			$check1 = true;
 			$check2 = $i_var_min_percent;
 		} else {
-			$check1 = $i_fk_level >= 1 && $i_fk_level <= $conf->global->PRODUIT_MULTIPRICES_LIMIT;
+			$check1 = $i_fk_level >= 1 && $i_fk_level <= $produit_multiprices_limit;
 			$check2 = $i_var_percent && ($i_var_min_percent || (string) $i_var_min_percent === '0');
 		}
 
@@ -127,7 +129,7 @@ if (!isModEnabled("product")) {
 	$tab = $langs->trans('Products');
 }
 
-llxHeader('', $langs->trans('MultipriceRules'));
+llxHeader('', $langs->trans('MultipriceRules'), '', '', 0, 0, '', '', '', 'mod-product page-admin_price_rules');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
@@ -145,7 +147,8 @@ print '<span class="opacitymedium">'.$langs->trans("MultiPriceRuleDesc").'</span
 // Array that contains the number of prices available
 $price_options = array();
 
-for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 	$price_options[$i] = $langs->trans('SellingPrice').' '.$i;
 }
 ?>
@@ -158,21 +161,21 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 		<tr>
 			<td class="fieldrequired" style="text-align: center"><?php echo $langs->trans('SellingPrice') ?> 1</td>
 			<td></td>
-			<td style="text-align: center"><input type="text"  style="text-align: right" name="var_min_percent[1]" size="5" value="<?php echo price(isset($rules[1]) ? $rules[1]->var_min_percent : 0, 2) ?>"> <?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' 1') ?></td>
+			<td style="text-align: center"><input type="text"  style="text-align: right" name="var_min_percent[1]" size="5" value="<?php echo price(isset($rules[1]) ? $rules[1]->var_min_percent : 0, 1) ?>"> <?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' 1') ?></td>
 		</tr>
-		<?php for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) : ?>
+		<?php for ($i = 2; $i <= $produit_multiprices_limit; $i++) : ?>
 			<tr>
 				<td class="fieldrequired" style="text-align: center"><?php
 					echo $langs->trans('SellingPrice').' '.$i;
-					// Label of price
-					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-				if (!empty($conf->global->$keyforlabel)) {
+				// Label of price
+				$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+				if (getDolGlobalString($keyforlabel)) {
 					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				?>
 					</td>
 				<td style="text-align: center">
-					<input type="text" style="text-align: right" name="var_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_percent : 0, 2) ?>">
+					<input type="text" style="text-align: right" name="var_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_percent : 0, 1) ?>">
 					<?php
 					$return = array();
 					for ($j = 1; $j < $i; $j++) {
@@ -184,7 +187,7 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					?>
 				</td>
 				<td style="text-align: center">
-					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 2) ?>">
+					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 1) ?>">
 					<?php echo $langs->trans('PercentDiscountOver', $langs->transnoentitiesnoconv('SellingPrice').' '.$i) ?>
 				</td>
 			</tr>

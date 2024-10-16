@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Chiptalar
 Module56000Desc=Chiqarish yoki so'rovlarni boshqarish uchun chiptalar tizimi
-
 Permission56001=Chiptalarni ko'ring
 Permission56002=Chiptalarni o'zgartirish
 Permission56003=Chiptalarni o'chirish
 Permission56004=Chiptalarni boshqarish
 Permission56005=Uchinchi tomonlarning chiptalarini ko'ring (tashqi foydalanuvchilar uchun samarali emas, har doim ular bog'liq bo'lgan uchinchi tomon bilan cheklaning)
 Permission56006=Chiptalarni eksport qilish
-
 Tickets=Chiptalar
 TicketDictType=Chipta - turlari
 TicketDictCategory=Chipta - Guruhlar
 TicketDictSeverity=Chipta - jiddiyliklar
 TicketDictResolution=Chipta - Qaror
-
 TicketTypeShortCOM=Tijorat savoli
 TicketTypeShortHELP=Funktsional yordam so'rash
 TicketTypeShortISSUE=Muammo yoki xato
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Muammo
 TicketTypeShortREQUEST=O'zgartirish yoki takomillashtirish bo'yicha so'rov
 TicketTypeShortPROJET=Loyiha
 TicketTypeShortOTHER=Boshqalar
-
 TicketSeverityShortLOW=Kam
 TicketSeverityShortNORMAL=Oddiy
 TicketSeverityShortHIGH=Yuqori
 TicketSeverityShortBLOCKING=Muhim, blokirovka qilish
-
 TicketCategoryShortOTHER=Boshqa
-
 ErrorBadEmailAddress='%s' maydoni noto'g'ri
 MenuTicketMyAssign=Mening chiptalarim
 MenuTicketMyAssignNonClosed=Mening ochiq chiptalarim
 MenuListNonClosed=Ochiq chiptalar
-
 TypeContact_ticket_internal_CONTRIBUTOR=Xissador
 TypeContact_ticket_internal_SUPPORTTEC=Tayinlangan foydalanuvchi
 TypeContact_ticket_external_SUPPORTCLI=Mijozlar bilan aloqa / hodisalarni kuzatish
 TypeContact_ticket_external_CONTRIBUTOR=Tashqi yordamchi
-
 OriginEmail=Muxbirning elektron pochtasi
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Elektron pochta orqali chiptani yuboring
-
 ExportDataset_ticket_1=Chiptalar
-
 # Status
 Read=O'qing
 Assigned=Tayinlangan
 NeedMoreInformation=Muxbirlarning fikri kutilmoqda
 NeedMoreInformationShort=Fikr-mulohaza kutilmoqda
-TicketAnswered=Answered
 Waiting=Kutish
 SolvedClosed=Yechilgan
 Deleted=O'chirildi
-
 # Dict
-Type=Turi
 Severity=Jiddiylik
 TicketGroupIsPublic=Guruh hammaga ochiq
 TicketGroupIsPublicDesc=Agar chiptalar guruhi ommaviy bo'lsa, u umumiy interfeysdan chipta yaratishda shaklda ko'rinadi
-
 # Email templates
 MailToSendTicketMessage=Chipta xabaridan elektron pochta xabarini yuborish
-
-#
 # Admin page
-#
 TicketSetup=Chipta modulini sozlash
 TicketSettings=Sozlamalar
 TicketPublicAccess=Identifikatsiyani talab qilmaydigan umumiy interfeys quyidagi urlda mavjud
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Chipta yaratishda grafik koddan (CAPTCHA) foydalaning
 TicketUseCaptchaCodeHelp=Yangi chipta yaratishda CAPTCHA tekshiruvini qo'shadi.
 TicketsAllowClassificationModificationIfClosed=Yopiq chiptalar tasnifini o'zgartirishga ruxsat bering
 TicketsAllowClassificationModificationIfClosedHelp=Chiptalar yopiq bo'lsa ham tasnifni (turi, chipta guruhi, jiddiyligi) o'zgartirishga ruxsat bering.
-
-#
 # Index & list page
-#
 TicketsIndex=Chiptalar maydoni
 TicketList=Chiptalar ro'yxati
 TicketAssignedToMeInfos=Ushbu sahifada joriy foydalanuvchi tomonidan yaratilgan yoki unga tayinlangan chiptalar ro'yxati ko'rsatilgan
@@ -175,10 +152,7 @@ ShowAsConversation=Suhbat ro'yxati sifatida ko'rsatish
 MessageListViewType=Jadval ro'yxati sifatida ko'rsatish
 ConfirmMassTicketClosingSendEmail=Chiptalarni yopish paytida avtomatik ravishda elektron pochta xabarlarini yuboring
 ConfirmMassTicketClosingSendEmailQuestion=Ushbu chiptalarni yopish paytida uchinchi tomonlarga xabar berishni xohlaysizmi?
-
-#
 # Ticket card
-#
 Ticket=Chipta
 TicketCard=Chipta kartasi
 CreateTicket=Chipta yarating
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Bu chiptadagi oxirgi javobdan beri juda koʻ
 TicketNoContractFoundToLink=Ushbu chiptaga avtomatik ravishda bog'langan shartnoma topilmadi. Iltimos, shartnomani qo'lda bog'lang.
 TicketManyContractsLinked=Ko'pgina shartnomalar ushbu chiptaga avtomatik ravishda bog'langan. Qaysi birini tanlash kerakligini tekshirishga ishonch hosil qiling.
 TicketRefAlreadyUsed=[%s] havolasi allaqachon ishlatilgan, yangi havolangiz: [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=%s o'qigan %s chiptasi
 NoLogForThisTicket=Ushbu chipta uchun jurnal yo'q
 TicketLogAssignedTo=%s ga tayinlangan %s chiptasi
 TicketLogPropertyChanged=%s chiptasi o'zgartirildi: %s dan %s gacha tasnif
 TicketLogClosedBy=%s chiptasi %s tomonidan yopilgan
 TicketLogReopen=%s chiptasi qayta ochiladi
-
-#
 # Public pages
-#
 TicketSystem=Chipta tizimi
 ShowListTicketWithTrackId=Track ID-dan chiptalar ro'yxatini ko'rsatish
 ShowTicketWithTrackId=Track ID-dan chiptani ko'rsatish
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Bu sizning hisobingizda yangi chipta yaratilganligini
 TicketNewEmailBodyInfosTicket=Chiptani kuzatish uchun ma'lumot
 TicketNewEmailBodyInfosTrackId=Chiptalarni kuzatish raqami: %s
 TicketNewEmailBodyInfosTrackUrl=Quyidagi havolani bosish orqali chiptaning borishi bilan tanishishingiz mumkin
-TicketNewEmailBodyInfosTrackUrlCustomer=Siz quyidagi havolani bosish orqali ma'lum bir interfeysda chipta borishini ko'rishingiz mumkin
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Quyidagi havolani bosish orqali ushbu chipta tarixi bilan tanishishingiz mumkin
 TicketEmailPleaseDoNotReplyToThisEmail=Iltimos, ushbu elektron pochtaga to'g'ridan-to'g'ri javob bermang! Interfeysga javob berish uchun havoladan foydalaning.
 TicketPublicInfoCreateTicket=Ushbu shakl sizning boshqaruv tizimimizda qo'llab-quvvatlash chiptasini yozib olishga imkon beradi.
 TicketPublicPleaseBeAccuratelyDescribe=Iltimos, so'rovingizni aniq tasvirlab bering. Sizning so'rovingizni to'g'ri aniqlashimiz uchun imkon qadar ko'proq ma'lumotni taqdim eting.
 TicketPublicMsgViewLogIn=Iltimos, chiptani kuzatish guvohnomasini kiriting
-TicketTrackId=Ommaviy kuzatuv identifikatori
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Kuzatuv identifikatoringizdan biri
 ErrorTicketNotFound=%s kuzatuv identifikatori bo'lgan chipta topilmadi!
 Subject=Mavzu
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Oyiga chiptalar soni
 NbOfTickets=Chiptalar soni
 ExternalContributors=Tashqi hissa qo'shuvchilar
 AddContributor=Tashqi hissa qo'shing
-
 # notifications
 TicketCloseEmailSubjectCustomer=Chipta yopildi
 TicketCloseEmailBodyCustomer=Bu %s chiptasi hozirgina yopilganligi haqida sizni xabardor qilish uchun avtomatik xabar.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Bildirishnoma oluvchi
 TicketNotificationLogMessage=Xabar jurnali
 TicketNotificationEmailBodyInfosTrackUrlinternal=Interfeysda chiptani ko'rish
 TicketNotificationNumberEmailSent=Bildirish xati yuborildi: %s
-
 ActionsOnTicket=Chiptadagi tadbirlar
-
-#
 # Boxes
-#
 BoxLastTicket=Oxirgi yaratilgan chiptalar
 BoxLastTicketDescription=Oxirgi %s chiptalari yaratildi
 BoxLastTicketContent=

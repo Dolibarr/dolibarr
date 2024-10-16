@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Verzending migreren voor opslag van verkooporders
 MigrationShippingDelivery=Waardeer de opslag van verzending op
 MigrationShippingDelivery2=Waardeer de opslag van verzending op 2
 MigrationFinished=Migratie voltooid
-LastStepDesc=<strong>Laatste stap</strong> : definieer hier de login en het wachtwoord dat u wilt gebruiken om verbinding te maken met Dolibarr. <b>Verlies dit niet, omdat dit het hoofdaccount is om alle andere / extra gebruikersaccounts te beheren.</b>
+LastStepDesc=<strong>Laatste stap</strong>: definieer hier de login en het wachtwoord dat u wilt gebruiken om verbinding te maken met Dolibarr. <b>Verlies dit niet, want dit is het hoofdaccount dat alle andere/aanvullende gebruikersaccounts beheert.</b>
 ActivateModule=Activeer module %s
 ShowEditTechnicalParameters=Klik hier om geavanceerde parameters te zien of te wijzigen. (expert instellingen)
 WarningUpgrade=Waarschuwing: heb je eerst een databaseback-up uitgevoerd? Dit wordt sterk aanbevolen. Verlies van gegevens (vanwege bijvoorbeeld bugs in MySQL versie 5.5.40 / 41/42/43) kan mogelijk zijn tijdens dit proces, dus het is essentieel om een volledige dump van uw database te nemen voordat u een migratie start. Klik op OK om het migratieproces te starten ...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Je hebt de Dolibarr-installatiewizard van een Linux-pakket 
 KeepDefaultValuesMamp=U hebt de Dolibarr-installatiewizard van DoliMamp gebruikt, dus de hier voorgestelde waarden zijn al geoptimaliseerd. Wijzig ze alleen als u weet wat u doet.
 KeepDefaultValuesProxmox=U hebt de Dolibarr-installatiewizard van een Proxmox virtueel apparaat gebruikt, dus de hier voorgestelde waarden zijn al geoptimaliseerd. Wijzig ze alleen als u weet wat u doet.
 UpgradeExternalModule=Voer het speciale upgradeproces van de externe module uit
-SetAtLeastOneOptionAsUrlParameter=Stel ten minste één optie in als parameter in de URL. Bijvoorbeeld: '... repair.php? Standard = confirmed'
+SetAtLeastOneOptionAsUrlParameter=Stel minimaal één optie in als parameter in URL met de waarde 'test' of 'confirmed'. Bijvoorbeeld: '...repair.php?standaard=bevestigd'
 NothingToDelete=Niets om op te ruimen / verwijderen
 NothingToDo=Niets te doen
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=De applicatie probeerde zelf te upgraden, maar d
 YouTryUpgradeDisabledByMissingFileUnLock=De applicatie heeft geprobeerd zichzelf te upgraden, maar het upgradeproces is momenteel niet toegestaan. <br>
 ClickHereToGoToApp=Klik hier om naar uw toepassing te gaan
 ClickOnLinkOrRemoveManualy=Even geduld als er een upgrade wordt uitgevoerd. Is dit klaar, klik dan op de volgende link. Als u altijd dezelfde pagina ziet, moet u het bestand install.lock in de documentenmap verwijderen / hernoemen.
-ClickOnLinkOrCreateUnlockFileManualy=Als er een upgrade bezig is, even geduld... Zo niet, dan moet u een bestandsupgrade maken. Ontgrendel de Dolibarr-documentenmap.
+ClickOnLinkOrCreateUnlockFileManualy=Als er een upgrade bezig is, wacht dan even... Als dit niet het geval is, moet u het bestand install.lock verwijderen (of een bestand upgrade.unlock maken voor upgrade) in de Dolibarr-documentenmap.
 Loaded=Geladen
 FunctionTest=Functietest
 NodoUpgradeAfterDB=Geen actie gevraagd door externe modules na upgrade van database

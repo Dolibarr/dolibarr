@@ -34,7 +34,6 @@ InterventionValidatedInDolibarr=Einsatz %s freigegeben
 InterventionModifiedInDolibarr=Einsatz %s geändert
 InterventionClassifiedBilledInDolibarr=Einsatz %s auf "verrechnet" gesetzt
 InterventionClassifiedUnbilledInDolibarr=Einsatz %s auf "nicht verrechnet" gesetzt.
-InterventionSentByEMail=Eingriff %sper E-Mail versandt
 InterventionDeletedInDolibarr=Einsatz %s gelöscht
 InterventionsArea=Arbeitseinsätze
 DraftFichinter=Einsatzentwürfe

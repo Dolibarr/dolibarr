@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -126,7 +127,7 @@ if (isset($_GET["m"]) && isset($_GET["y"])) {
 
 // If parameters provided, we show calendar
 if ($qualified) {
-	displayBox(GETPOSTINT("sd"), GETPOSTINT("m"), GETPOSTINT("y"));
+	displayBox(GETPOST("sd", 'alpha'), GETPOSTINT("m"), GETPOSTINT("y"));
 } else {
 	dol_print_error(null, 'ErrorBadParameters');
 }
@@ -142,17 +143,18 @@ print '</body></html>'."\n";
  */
 function xyzToUnixTimestamp($mysqldate)
 {
-	$year = substr($mysqldate, 0, 4);
-	$month = substr($mysqldate, 4, 2);
-	$day = substr($mysqldate, 6, 2);
+	$year = (int) substr($mysqldate, 0, 4);
+	$month = (int) substr($mysqldate, 4, 2);
+	$day = (int) substr($mysqldate, 6, 2);
 	$unixtimestamp = dol_mktime(12, 0, 0, $month, $day, $year);
+
 	return $unixtimestamp;
 }
 
 /**
  * Show box
  *
- * @param	string	$selectedDate	Date YYYMMDD
+ * @param	string	$selectedDate	Date YYYYMMDD
  * @param	int		$month			Month
  * @param 	int		$year			Year
  * @return	void

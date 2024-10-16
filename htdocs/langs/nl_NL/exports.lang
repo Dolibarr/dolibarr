@@ -46,10 +46,16 @@ LineLabel=Label van regel
 LineDescription=Regelomschrijving
 LineUnitPrice=Prijs per eenheid van de regel
 LineVATRate=BTW-tarief van de regel
+LineLT1Rate=belasting 2 tarieven voor regels
+LineLT2Rate=belasting 3 tarief voor regel
+LineLT1Type=belasting 2 typen voor regels
+LineLT2Type=belasting 3 typen voor regels
 LineQty=Hoeveelheid voor de regel
 LineTotalHT=Bedrag excl. belasting voor lijn
 LineTotalTTC=Bedrag inclusief de belasting voor de regel
 LineTotalVAT=BTW Bedrag voor de regel
+LineTotalLT1=Aantal belasting 2 voor regel
+LineTotalLT2=Aantal belasting 3 voor regel
 TypeOfLineServiceOrProduct=Type van de regel (0=product, 1=dienst)
 FileWithDataToImport=Bestand met te importeren gegevens
 FileToImport=Te importeren bronbestand
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=Kies de bestandsindeling die u als importbestandsinde
 ChooseFileToImport=Upload het bestand en klik vervolgens op het pictogram %s om het bestand te selecteren als bronimportbestand ...
 SourceFileFormat=Bestandsformaat van het bronbestand
 FieldsInSourceFile=Velden in het bronbestand
-FieldsInTargetDatabase=Doelvelden in Dolibarr databank (vet=verplicht)
+FieldsInTargetDatabase=Doelvelden in de Dolibarr-database
 NoFields=Geen velden
 MoveField=Verplaats veld kolomnummer %s
 ExampleOfImportFile=Voorbeeld van importeerbestand

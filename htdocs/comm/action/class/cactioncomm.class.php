@@ -310,10 +310,10 @@ class CActionComm
 							if ($typecalendar == 'module') {
 								$module = preg_replace('/^[^@]+@/', '', $obj->module);
 								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
+								if (!isset($TModule['id'][-1 * $idforallfornewmodule])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
-								$TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
+								$TModule['id'][-1 * $idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
 								$TModule['code']['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
 						}
@@ -356,7 +356,6 @@ class CActionComm
 				$TType = array_merge($TType, $TModule[$idorcode]);
 			}
 			$this->liste_array = $TType;
-
 
 			return $this->liste_array;
 		} else {

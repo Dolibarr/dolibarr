@@ -342,7 +342,7 @@ class StockMovements extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	private function _validate($data)
+	private function _validate($data) // @phpstan-ignore-line
 	{
 		$stockmovement = array();
 		foreach (self::$FIELDS as $field) {

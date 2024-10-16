@@ -49,6 +49,10 @@ class Productbatch extends CommonObject
 	public $fk_product_stock;
 
 	public $batch = '';
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $warehouseid;
 

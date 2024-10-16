@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Ärenden
 Module56000Desc=Ärendehanteringssystem för hantering frågor och reklamationer
-
 Permission56001=Se ärenden
 Permission56002=Ändra ärenden
 Permission56003=Radera ärenden
 Permission56004=Hantera ärenden
 Permission56005=Se ärenden till alla tredje parter (inte effektiva för externa användare, alltid begränsad till tredje part som de är beroende av)
 Permission56006=Exportera ärenden
-
 Tickets=Ärenden
 TicketDictType=Ärende - Typer
 TicketDictCategory=Biljett - Grupper
 TicketDictSeverity=Ticket - Severiteter
 TicketDictResolution=Ärende - upplösning
-
 TicketTypeShortCOM=Kommersiell fråga
 TicketTypeShortHELP=Begäran om funktionell hjälp
 TicketTypeShortISSUE=Problem eller fel
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Ändrings- eller förbättringsbegäran
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Andra
-
 TicketSeverityShortLOW=Låg
 TicketSeverityShortNORMAL=Vanligt
 TicketSeverityShortHIGH=Hög
 TicketSeverityShortBLOCKING=Kritisk, blockerande
-
 TicketCategoryShortOTHER=Andra
-
 ErrorBadEmailAddress=Fältet '%s' felaktigt
 MenuTicketMyAssign=Mina ärenden
 MenuTicketMyAssignNonClosed=Mina öppna ärenden
 MenuListNonClosed=Öppna ärenden
-
 TypeContact_ticket_internal_CONTRIBUTOR=Bidragsgivare
 TypeContact_ticket_internal_SUPPORTTEC=Tilldelad användare
 TypeContact_ticket_external_SUPPORTCLI=Kundkontakt / incidentspårning
 TypeContact_ticket_external_CONTRIBUTOR=Extern bidragsyter
-
 OriginEmail=Reporter E-post
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Skicka ärrendemeddelande via e-post
-
 ExportDataset_ticket_1=Ärenden
-
 # Status
 Read=Läsa
 Assigned=Tilldelad
 NeedMoreInformation=Väntar på feedback från reporter
 NeedMoreInformationShort=Väntar på feedback
-TicketAnswered=Besvarade
 Waiting=Väntar
 SolvedClosed=Löst
 Deleted=Raderade
-
 # Dict
-Type=Typ
 Severity=Allvarlighet
 TicketGroupIsPublic=Gruppen är offentlig
 TicketGroupIsPublicDesc=Om en ärrendegrupp är offentlig visas den i formuläret när du skapar en ärende från det offentliga gränssnittet
-
 # Email templates
 MailToSendTicketMessage=Att skicka e-post från ärrendemeddelande
-
-#
 # Admin page
-#
 TicketSetup=Inställning av ärrendemodul
 TicketSettings=Inställningar
 TicketPublicAccess=Ett offentligt gränssnitt som kräver ingen identifiering finns på följande webbadress
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Använd grafisk kod (CAPTCHA) när du skapar ett ärende
 TicketUseCaptchaCodeHelp=Lägger till CAPTCHA-verifiering när du skapar en nytt ärende
 TicketsAllowClassificationModificationIfClosed=Tillåt att ändra klassificeringen av stängda biljetter
 TicketsAllowClassificationModificationIfClosedHelp=Tillåt att ändra klassificering (typ, biljettgrupp, svårighetsgrad) även om biljetterna är stängda.
-
-#
 # Index & list page
-#
 TicketsIndex=Ärendeområde
 TicketList=Lista över ärenden
 TicketAssignedToMeInfos=Denna sidvisningsärrendelista skapad av eller tilldelad den nuvarande användaren
@@ -175,10 +152,7 @@ ShowAsConversation=Visa som konversationslista
 MessageListViewType=Visa som tabellista
 ConfirmMassTicketClosingSendEmail=Skicka e-post automatiskt när du stänger ärende
 ConfirmMassTicketClosingSendEmailQuestion=Vill du meddela tredje part när du stänger dessa ärenden?
-
-#
 # Ticket card
-#
 Ticket=Ärende
 TicketCard=Ärendekort
 CreateTicket=Skapa ärende
@@ -220,8 +194,8 @@ ConfirmAbandonTicket=Vänligen bekräfta att du vill sätta ärendet som "Överg
 ConfirmDeleteTicket=Vänligen bekräfta att du tar bort ärende
 TicketDeletedSuccess=Ärende raderas med framgång
 TicketMarkedAsClosed=Ärende markerad som stängd
-TicketDurationAuto=Beräknad varaktighet
-TicketDurationAutoInfos=Varaktighet beräknas automatiskt från interventionsrelaterad
+TicketDurationAuto=Duration of interventions
+TicketDurationAutoInfos=Duration calculated automatically from related interventions
 TicketUpdated=Ärende uppdaterad
 SendMessageByEmail=Skicka meddelande via e-post
 TicketNewMessage=Nytt meddelande
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Det har gått för lång tid sedan senaste s
 TicketNoContractFoundToLink=Inget kontrakt hittades som automatiskt är kopplat till detta ärende. Vänligen länka ett kontrakt manuellt.
 TicketManyContractsLinked=Många kontrakt har automatiskt kopplats till detta ärende. Se till att verifiera vilken som ska väljas.
 TicketRefAlreadyUsed=Referensen [%s] används redan, din nya referens är [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Ärende %s läs av %s
 NoLogForThisTicket=Ingen logg på denna ärende ännu
 TicketLogAssignedTo=Ärende %s tilldelad %s
 TicketLogPropertyChanged=Ärende %s modifierad: märkt från %s till %s
 TicketLogClosedBy=Ärende %s stängt av %s
 TicketLogReopen=Ärende %s öppnas igen
-
-#
 # Public pages
-#
 TicketSystem=Ärendesystem
 ShowListTicketWithTrackId=Visa biljellista från spår-ID
 ShowTicketWithTrackId=Visa ärende från spår ID
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Det här är ett automatiskt e-postmeddelande för at
 TicketNewEmailBodyInfosTicket=Information för övervakning av ärendet
 TicketNewEmailBodyInfosTrackId=Ärendespårningsnummer: %s
 TicketNewEmailBodyInfosTrackUrl=Du kan se förloppet för ärendet genom att klicka på följande länk
-TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se framstegen på ärendet i det specifika gränssnittet genom att klicka på följande länk
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Du kan se historiken för detta ärende genom att klicka på följande länk
 TicketEmailPleaseDoNotReplyToThisEmail=Vänligen svara inte direkt på det här meddelandet! Använd länken för att svara på gränssnittet.
 TicketPublicInfoCreateTicket=I det här formuläret kan du spela in en supportärrende i vårt styrsystem.
 TicketPublicPleaseBeAccuratelyDescribe=Vänligen beskriv din förfrågan korrekt. Ge så mycket information som möjligt för att vi ska kunna identifiera din begäran korrekt.
 TicketPublicMsgViewLogIn=Vänligen ange ärrendespårnings-ID
-TicketTrackId=Public Tracking ID
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Ett av ditt spårnings-ID
 ErrorTicketNotFound=Ärende med spårnings ID %s ej hittat!
 Subject=Ämne
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Antal ärenden per månad
 NbOfTickets=Antal ärenden
 ExternalContributors=Externa bidragsgivare
 AddContributor=Lägg till extern bidragsgivare
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ärendet stängt
 TicketCloseEmailBodyCustomer=Detta är ett automatiskt meddelande för att meddela dig att ärendet %s just har stängts.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Meddelande mottagare
 TicketNotificationLogMessage=Logmeddelande
 TicketNotificationEmailBodyInfosTrackUrlinternal=Visa ärende till gränssnitt
 TicketNotificationNumberEmailSent=Meddelande email skickat: %s
-
 ActionsOnTicket=Händelser på ärende
-
-#
 # Boxes
-#
 BoxLastTicket=Senast skapade ärenden
 BoxLastTicketDescription=Senaste %s skapade ärenden
 BoxLastTicketContent=
@@ -367,3 +330,4 @@ BoxNewTicketVSClose=Antal ärenden kontra stängda ärenden (idag)
 TicketCreatedToday=Ärende skapad idag
 TicketClosedToday=Ärendeen stängd idag
 KMFoundForTicketGroup=Vi hittade ämnen och FAQ som kan svara din fråga, vänligen kontrollera dem innan du skapar ärendet.
+SetTitle=Set title

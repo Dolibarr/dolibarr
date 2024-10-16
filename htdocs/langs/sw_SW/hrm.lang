@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Barua pepe ili kuzuia huduma ya nje ya HRM
 Establishments=Taasisi
@@ -24,7 +23,7 @@ SkillsManagement=Usimamizi wa ujuzi
 HRM_MAXRANK=Idadi ya juu zaidi ya viwango vya kuorodhesha ujuzi
 HRM_DEFAULT_SKILL_DESCRIPTION=Maelezo chaguomsingi ya viwango wakati ujuzi unaundwa
 deplacement=Shift
-DateEval=Tarehe ya tathmini
+DateEval=Competency assessment date
 JobCard=Kadi ya kazi
 NewJobProfile=New Job Profile
 JobProfile=Wasifu wa kazi
@@ -41,12 +40,12 @@ Skill=Skill
 Skills=Ujuzi
 SkillCard=Kadi ya ujuzi
 EmployeeSkillsUpdated=Ujuzi wa mfanyakazi umesasishwa (angalia kichupo cha "Ujuzi" cha kadi ya mfanyakazi)
-Eval=Tathmini
-Evals=Tathmini
-NewEval=Tathmini mpya
-ValidateEvaluation=Thibitisha tathmini
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Kadi ya tathmini
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Cheo kinachohitajika kwa wasifu wa kazi
 RequiredRankShort=Required rank
 PositionsWithThisProfile=Positions with this job profiles
@@ -90,8 +89,9 @@ SaveAddSkill = Ujuzi umeongezwa
 SaveLevelSkill = Kiwango cha ujuzi kimehifadhiwa
 DeleteSkill = Ustadi umeondolewa
 SkillsExtraFields=Complementary attributes (Skills)
-JobsExtraFields=Complementary attributes (Job profile)
-EvaluationsExtraFields=Complementary attributes (Evaluations)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Haja ya safari za biashara
 NoDescription=Hakuna maelezo
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

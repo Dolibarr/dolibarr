@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,13 +229,13 @@ if ($memmaxorig != '') {
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
 	if ($reg[2]) {
 		if (strtoupper($reg[2]) == 'G') {
-			$memmax = $reg[1] * 1024 * 1024 * 1024;
+			$memmax = (int) $reg[1] * 1024 * 1024 * 1024;
 		}
 		if (strtoupper($reg[2]) == 'M') {
-			$memmax = $reg[1] * 1024 * 1024;
+			$memmax = (int) $reg[1] * 1024 * 1024;
 		}
 		if (strtoupper($reg[2]) == 'K') {
-			$memmax = $reg[1] * 1024;
+			$memmax = (int) $reg[1] * 1024;
 		}
 	}
 	if ($memmax >= $memrequired || $memmax == -1) {

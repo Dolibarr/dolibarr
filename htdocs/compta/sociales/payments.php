@@ -8,6 +8,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ if (isModEnabled('accounting')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
 // Load translation files required by the page
@@ -172,12 +173,9 @@ if ($year > 0) {
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
-if (preg_match('/^cs\./', $sortfield)
-	|| preg_match('/^c\./', $sortfield)
-	|| preg_match('/^pc\./', $sortfield)
-	|| preg_match('/^pct\./', $sortfield)
-	|| preg_match('/^u\./', $sortfield)
-	|| preg_match('/^ba\./', $sortfield)) {
+if ($sortfield !== null
+	&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)
+) {
 	$sql .= $db->order($sortfield, $sortorder);
 }
 
@@ -368,8 +366,8 @@ while ($i < min($num, $limit)) {
 
 	print '</tr>';
 
-	$total = $total + $obj->total;
-	$totalpaid = $totalpaid + $obj->totalpaid;
+	$total += $obj->total;
+	$totalpaid += $obj->totalpaid;
 	$i++;
 }
 

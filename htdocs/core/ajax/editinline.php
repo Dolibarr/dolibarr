@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 $action = GETPOST('action', 'alpha');
 $website_ref = GETPOST('website_ref');
 $page_id = GETPOST('page_id');
-$content = GETPOST('content', 'none');
+$content = GETPOST('content', 'restricthtml');
 $element_id = GETPOST('element_id');
 $element_type = GETPOST('element_type');
 

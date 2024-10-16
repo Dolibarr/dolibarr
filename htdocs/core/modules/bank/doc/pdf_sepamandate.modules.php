@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France		 <frederic.france@free.fr>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +41,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -88,7 +90,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 
@@ -116,14 +118,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *  Function to create pdf of company bank account sepa mandate
 	 *
-	 *	@param	Account				$object				CompanyBankAccount bank account to generate document for
-	 *	@param	Translate			$outputlangs	    Lang output object
-	 *  @param	string				$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param	int					$hidedetails		Do not show line details (not used for this template)
-	 *  @param	int					$hidedesc			Do not show desc (not used for this template)
-	 *  @param	int					$hideref			Do not show ref (not used for this template)
-	 *  @param  null|array  		$moreparams         More parameters
-	 *	@return	int         				    		1 if OK, <=0 if KO
+	 *	@param	Account					$object				CompanyBankAccount bank account to generate document for
+	 *	@param	Translate				$outputlangs		Lang output object
+	 *  @param	string					$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>				$hidedetails		Do not show line details
+	 *	@param	int<0,1>				$hidedesc			Do not show desc
+	 *	@param	int<0,1>				$hideref			Do not show ref
+	 *  @param  ?array<string,string>	$moreparams			More parameters
+	 *	@return	int<-1,1>									1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -237,9 +239,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 3, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 3, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2, $this->corner_radius, '1234', 'D');
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -384,7 +386,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$txt = $outputlangs->transnoentitiesnoconv("SEPAFrstOrRecur").' * : ';
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
-				$pdf->Rect(80, $posY, 5, 5);
+				$pdf->RoundedRect(80, $posY, 5, 5, $this->corner_radius, '1234', 'D');
 				$pdf->SetXY(80, $posY);
 				if ($object->frstrecur == 'RCUR') {
 					$pdf->MultiCell(5, 3, 'X', 0, 'L');
@@ -393,7 +395,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$txt = $langs->transnoentitiesnoconv("ModeRECUR").'  '.$langs->transnoentitiesnoconv("or");
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$posY += 6;
-				$pdf->Rect(80, $posY, 5, 5);
+				$pdf->RoundedRect(80, $posY, 5, 5, $this->corner_radius, '1234', 'D');
 				$pdf->SetXY(80, $posY);
 				if ($object->frstrecur == 'FRST') {
 					$pdf->MultiCell(5, 3, 'X', 0, 'L');
@@ -437,7 +439,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				 */
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -479,8 +481,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int 		$tab_top		Top position of table
+	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array

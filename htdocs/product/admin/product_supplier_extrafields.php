@@ -62,7 +62,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  */
 
 $title = $langs->trans('ProductServiceSetup');
-$textobject = $langs->trans("ProductsAndServices");
+$textobject = $langs->transnoentitiesnoconv("ProductsAndServices");
 if (!isModEnabled("product")) {
 	$title = $langs->trans('ServiceSetup');
 	$textobject = $langs->trans('Services');
@@ -73,7 +73,7 @@ if (!isModEnabled("product")) {
 
 //$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-admin_product_supplier_extrafields');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

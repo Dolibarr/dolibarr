@@ -66,7 +66,7 @@ $textobject = $langs->transnoentitiesnoconv("Partnership");
 $help_url = '';
 $title = $langs->trans("PartnershipSetup");
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-admin-extrafields');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

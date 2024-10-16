@@ -77,20 +77,18 @@ AvailabilityTypeAV_1W=1 semaine
 AvailabilityTypeAV_2W=2 semaines
 AvailabilityTypeAV_3W=3 semaines
 AvailabilityTypeAV_1M=1 mois
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Commercial suivi proposition
 TypeContact_propal_external_BILLING=Contact client facturation proposition
 TypeContact_propal_external_CUSTOMER=Contact client suivi proposition
 TypeContact_propal_external_SHIPPING=Contact client pour la livraison
-
 # Document models
 CantBeNoSign=ne peut être mis à Non signé
 CaseFollowedBy=Affaire suivie par
 ConfirmMassNoSignature=Confirmation du passage en Non signé
 ConfirmMassNoSignatureQuestion=Êtes-vous sûr de vouloir définir comme Non signés les enregistrements sélectionnés ?
 ConfirmMassSignature=Confirmation de signature en masse
-ConfirmMassSignatureQuestion=Etes vous sûr de vouloir signer les enregistrements sélectionnés ?
+ConfirmMassSignatureQuestion=Êtes-vous sûr de vouloir signer les enregistrements sélectionnés ?
 ConfirmMassValidation=Confirmation de validation en masse
 ConfirmMassValidationQuestion=Etes vous sûrs de vouloir valider les enregistrements sélectionnés ?
 ConfirmRefusePropal=Êtes-vous sûr de vouloir refuser cette proposition ?
@@ -118,9 +116,9 @@ RefusePropal=Refuser la proposition
 Sign=Signer
 SignContract=Signer le contrat
 SignFichinter=Signer l'intervention
-SignSociete_rib=Mandat de signature
+SignSociete_rib=Signer mandat
 SignPropal=Accepter la proposition
-Signed=Signée
+Signed=signé
 SignedOnly=Signé seulement
 ExpeditionSigned=Envoi signé
 SignExpedition=Signer l'envoi

@@ -32,7 +32,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -118,10 +118,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	}
 
 	/**
-	 * 	Return next free value
+	 *  Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|0      			Next value if OK, 0 if KO
+	 *  @param  ExpenseReport	$object     Object we need next value for
+	 *  @return string|int<-1,0>   			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -170,7 +170,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.((int) $ref_number_int).' WHERE rowid = '.((int) $object->id);
 			$resqlbis = $db->query($sqlbis);
 			if (!$resqlbis) {
-				dol_print_error($resqlbis);
+				dol_print_error($db, $resqlbis);
 				exit;
 			}
 

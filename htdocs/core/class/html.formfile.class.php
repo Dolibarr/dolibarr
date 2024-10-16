@@ -7,8 +7,8 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,9 @@
  */
 class FormFile
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -43,8 +46,14 @@ class FormFile
 	 */
 	public $error;
 
+	/**
+	 * @var int
+	 */
 	public $numoffiles;
-	public $infofiles; // Used to return information by function getDocumentsLink
+	/**
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Used to return information by function getDocumentsLink
+	 */
+	public $infofiles;
 
 
 	/**
@@ -65,23 +74,23 @@ class FormFile
 	 *
 	 *  @param  string		$url			Url
 	 *  @param  string		$title			Title zone (Title or '' or 'none')
-	 *  @param  int			$addcancel		1=Add 'Cancel' button
+	 *  @param  int<0,1>	$addcancel		1=Add 'Cancel' button
 	 *	@param	int			$sectionid		If upload must be done inside a particular ECM section (is sectionid defined, sectiondir must not be)
 	 * 	@param	int			$perm			Value of permission to allow upload
 	 *  @param  int			$size          	Length of input file area. Deprecated.
-	 *  @param	Object		$object			Object to use (when attachment is done on an element)
+	 *  @param	?CommonObject	$object		Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
-	 *  @param  integer     $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
+	 *  @param  int<0,1>    $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
 	 *                                      Deprecated 2 should never be used and if 1 is used, option should not be enabled.
 	 *  @param	string		$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
-	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
+	 *  @param	int<0,1>	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
-	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and <input hidden> to use in existing form area, 2=Disable the tag <form> only
-	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
-	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
-	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
+	 *  @param  int<0,2>    $usewithoutform 0=Default, 1=Disable <form> and <input hidden> to use in existing form area, 2=Disable the tag <form> only
+	 *  @param	int<0,1>	$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
+	 *  @param	int<0,1>	$disablemulti	0=Default, 1=Disable multiple file upload
+	 *  @param	int<0,1>	$nooutput		0=Output result with print, 1=Return result
 	 * 	@return	int|string					Return integer <0 if KO, >0 if OK, or string if $noouput=1
 	 */
 	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = null, $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
@@ -123,7 +132,7 @@ class FormFile
 				$title = $langs->trans("AttachANewFile");
 			}
 			if ($title != 'none') {
-				$out .= load_fiche_titre($title, null, null);
+				$out .= load_fiche_titre($title, '', '');
 			}
 
 			if (empty($usewithoutform)) {		// Try to avoid this and set instead the form by the caller.
@@ -222,7 +231,7 @@ class FormFile
 				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
-				$out .= load_fiche_titre($title, null, null);
+				$out .= load_fiche_titre($title, '', '');
 
 				if (empty($usewithoutform)) {
 					$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
@@ -398,7 +407,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled)) ? true : false;
+			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled));
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -1114,8 +1123,8 @@ class FormFile
 
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
-				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
 					$this->infofiles['extensions'][$ext]++;
@@ -1135,7 +1144,7 @@ class FormFile
 				// Download
 				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
 				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-						$tmpout .= 'target="_blank" ';
+					$tmpout .= 'target="_blank" ';
 				}
 				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);
@@ -1175,12 +1184,11 @@ class FormFile
 	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
 	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
 	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int			$useinecm			Change output for use in ecm module:
-	 * 												0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
+	 * 	@param	 int			$useinecm			Change output to add more information:
+	 * 												0, 4, 5, 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 												1: Add link to edit ECM entry
 	 * 												2: Add rename and crop link
-	 *                                  		    4: Add a preview column
-	 *                                  		    5: Add link to edit ECM entry and Add a preview column
+	 *                                  		    5: Add link to edit ECM entry and add a preview column
 	 * 	@param	 string			$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
 	 *  @param   int			$maxlength          Maximum length of file name shown.
 	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
@@ -1287,7 +1295,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') {
+			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (empty($url)) {
@@ -1357,6 +1365,12 @@ class FormFile
 			$i = 0;
 			$nboflines = 0;
 			$lastrowid = 0;
+			$parametersByDefault = array(
+				'modulepart' => $modulepart,
+				'relativepath' => $relativepath,
+				'permtoedit' => $permtoeditline,
+				'permonobject' => $permonobject,
+			);
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
 				if ($file['name'] != '.' && $file['name'] != '..' && !preg_match('/\.meta$/i', $file['name'])) {
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
@@ -1364,8 +1378,13 @@ class FormFile
 					}
 					//var_dump($filearray[$key]);
 
-					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+					// get specific parameters from file attributes if set or get default ones
+					$modulepart = ($file['modulepart'] ?? $parametersByDefault['modulepart']);
+					$relativepath = ($file['relativepath'] ?? $parametersByDefault['relativepath']);
+					$permtoeditline = ($file['permtoedit'] ?? $parametersByDefault['permtoedit']);
+					$permonobject = ($file['permonobject'] ?? $parametersByDefault['permonobject']);
 
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
 					if (empty($relativepath) || empty($modulepart)) {
 						$filepath = $file['level1name'].'/'.$file['name'];
 					} else {
@@ -1388,7 +1407,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwith200 tdoverflowmax500">';
+					print '<td class="minwidth200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1455,7 +1474,7 @@ class FormFile
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0) {
 							if ($useinecm == 5 || $useinecm == 6) {
-								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
+								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this for better performance.
 							} else {
 								$smallfile = getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
 							}
@@ -1470,7 +1489,7 @@ class FormFile
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
-								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
@@ -1482,10 +1501,12 @@ class FormFile
 								//print ' style="max-height: '.$maxheightmini.'px"';
 								print ' style="max-height: 24px"';
 							}
-							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile);
+							if (!empty($filearray[$key]['date'])) {	// We know the date of file, we can use it as cache key so URL will be in browser cache as long as file date is not modified.
+								print '&cache='.urlencode((string) $filearray[$key]['date']);
+							}
+							print '" title="">';
 							print '</a>';
-						} else {
-							print '&nbsp;';
 						}
 						print '</td>';
 					}
@@ -1536,7 +1557,7 @@ class FormFile
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 
-						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6) {	// 6=Media file manager
+						if (empty($useinecm) || $useinecm == 2 || $useinecm == 3 || $useinecm == 6) {	// 6=Media file manager
 							$newmodulepart = $modulepart;
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
@@ -1598,7 +1619,7 @@ class FormFile
 							if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 3 && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1922,7 +1943,7 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch('', $ref))) {
+							if (!($result = $object_instance->fetch(0, $ref))) {
 								//fetchOneLike looks for objects with wildcards in its reference.
 								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
@@ -2235,7 +2256,7 @@ class FormFile
 				$out .= '</a>';
 			} else {
 				if ($ruleforpicto < 0) {
-					$out .= img_picto('', 'generic', '', false, 0, 0, '', 'paddingright pictofixedwidth');
+					$out .= img_picto('', 'generic', '', 0, 0, 0, '', 'paddingright pictofixedwidth');
 				}
 			}
 		}

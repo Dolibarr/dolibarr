@@ -37,7 +37,7 @@ require_once '../lib/bookcal.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "agenda"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bookcalsetup', 'globalsetup'));
 
 // Access control
@@ -163,7 +163,7 @@ $form = new Form($db);
 $help_url = '';
 $page_name = "BookCalSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-admin_setup');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';

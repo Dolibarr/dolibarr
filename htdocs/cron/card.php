@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -250,7 +250,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 }
 
 
-
 /*
  * View
  */
@@ -334,7 +333,7 @@ if (($action == "create") || ($action == "edit")) {
 	if ($action == "edit") {
 		print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 	} else {
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head([]);
 	}
 
 	print '<table class="border centpercent">';
@@ -560,9 +559,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print "</form>\n";
 } else {
-	/*
-	 * view card
-	 */
+	// view card
 	$now = dol_now();
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');

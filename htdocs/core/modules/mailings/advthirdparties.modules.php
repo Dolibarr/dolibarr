@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -56,9 +57,9 @@ class mailing_advthirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @param	array	$socid  		Array of id soc to add
+	 *    @param	int[]	$socid  		Array of id soc to add
 	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
-	 *    @param	array	$contactid 		Array of contact id to add
+	 *    @param	int[]	$contactid 		Array of contact id to add
 	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
@@ -150,7 +151,7 @@ class mailing_advthirdparties extends MailingTargets
 							if (!array_key_exists($obj->email, $cibles)) {
 								$cibles[$obj->email] = array(
 									'email' => $obj->email,
-									'fk_contact' =>$obj->id,
+									'fk_contact' => $obj->id,
 									'lastname' => $obj->lastname,
 									'firstname' => $obj->firstname,
 									'other' => '',
@@ -184,7 +185,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
@@ -289,7 +290,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  Can include an URL link on each record provided by selector shown on target page.
 	 *
 	 *  @param	int		$id		ID
-	 *  @param	string		$type	type
+	 *  @param	string	$type	type
 	 *  @return string      	Url link
 	 */
 	public function url($id, $type)

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractStatusNotRunning=Fora de vigência
-ContractStatusClosed=Encerrado
 ServiceStatusInitial=Fora de vigência
 ServiceStatusRunning=Em vigência
 ServiceStatusNotLate=Em vigência, não vencido

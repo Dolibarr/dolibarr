@@ -505,7 +505,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		print '</tr>';
 	}
 
-	if (count($x_coll) == 0) {   // Show a total ine if nothing shown
+	if (count($x_coll) == 0) {   // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td>&nbsp;</td>';
 		print '<td class="right">'.$langs->trans("Total").':</td>';

@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-mail om externe HRM service te verhinderen.
 Establishments=Vestigingen
@@ -24,7 +23,7 @@ SkillsManagement=Vaardighedenbeheer
 HRM_MAXRANK=Maximaal aantal niveaus om een vaardigheid te rangschikken
 HRM_DEFAULT_SKILL_DESCRIPTION=Standaardbeschrijving van rangen wanneer vaardigheid is gemaakt
 deplacement=dienst\n
-DateEval=Evaluatie datum
+DateEval=Datum competentiebeoordeling
 JobCard=Werk kaart
 NewJobProfile=Nieuw functieprofiel
 JobProfile=Functieprofiel
@@ -41,12 +40,12 @@ Skill=Vaardigheid
 Skills=Vaardigheden
 SkillCard=Vaardigheidskaart
 EmployeeSkillsUpdated=Vaardigheden van werknemers zijn bijgewerkt (zie tabblad "Vaardigheden" van werknemerskaart)
-Eval=Evaluatie
-Evals=Evaluaties
-NewEval=Nieuwe evaluatie
-ValidateEvaluation=Evaluatie valideren
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Evaluatiekaart
+Eval=Competentiebeoordeling
+Evals=Competentiebeoordelingen
+NewEval=Nieuwe competentiebeoordeling
+ValidateEvaluation=Valideer competentiebeoordeling
+ConfirmValidateEvaluation=Weet u zeker dat u deze competentiebeoordeling wilt valideren met de referentie <b>%s</b></b> span>?
+EvaluationCard=Competentiebeoordeling
 RequiredRank=Vereiste rang voor het functieprofiel
 RequiredRankShort=Vereiste rang
 PositionsWithThisProfile=Functies met dit functieprofiel
@@ -90,8 +89,9 @@ SaveAddSkill = Vaardigheid(en) toegevoegd
 SaveLevelSkill = Vaardigheidsniveau opgeslagen
 DeleteSkill = Vaardigheid verwijderd
 SkillsExtraFields=Complementaire kenmerken (vaardigheden)
-JobsExtraFields=Aanvullende kenmerken (Functieprofiel)
-EvaluationsExtraFields=Complementaire attributen (Evaluaties)
+JobsExtraFields=Aanvullende kenmerken (Functieprofielen)
+EvaluationsExtraFields=Aanvullende attributen (competentiebeoordelingen)
 NeedBusinessTravels=Zakenreizen nodig
 NoDescription=Geen beschrijving
 TheJobProfileHasNoSkillsDefinedFixBefore=In het geëvalueerde functieprofiel van deze medewerker zijn geen vaardigheden gedefinieerd. Voeg vaardigheid(en) toe, verwijder de evaluatie en start deze opnieuw.
+PDFStandardHrmEvaluation=Standaardsjabloon om een PDF-document te genereren voor een competentiebeoordeling

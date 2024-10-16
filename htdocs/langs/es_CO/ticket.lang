@@ -117,7 +117,6 @@ TicketNewEmailBodyInfosTicket=Información para el seguimiento del ticket
 TicketEmailPleaseDoNotReplyToThisEmail=¡Por favor no responda directamente a este correo! Utilice el enlace para responder a la interfaz.
 TicketPublicInfoCreateTicket=Este formulario le permite registrar un ticket de soporte en nuestro sistema de gestión.
 TicketPublicMsgViewLogIn=Ingrese el ID de seguimiento del boleto
-TicketTrackId=ID de seguimiento público
 OneOfTicketTrackId=Uno de sus ID de seguimiento
 ErrorTicketNotFound=¡Ticket con ID de seguimiento %s no encontrado!
 Subject=Tema

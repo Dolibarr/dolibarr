@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,10 @@ $langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+if (empty($action)) {
+	$action = 'edit';
+}
 
 $arrayofparameters = array();
 $arrayofparameters['ThirdParty'] = array(
@@ -85,6 +89,9 @@ if (!$user->admin) {
 /*
  * Actions
  */
+
+$nbdone = 0;
+
 foreach ($arrayofparameters as $title => $tab) {
 	foreach ($tab as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
@@ -103,11 +110,19 @@ foreach ($arrayofparameters as $title => $tab) {
 			if ($result < 0) {
 				$error++;
 				break;
+			} else {
+				$nbdone++;
 			}
 		}
 	}
 }
 
+if ($nbdone) {
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+}
+if ($action == 'update') {
+	$action = 'edit';
+}
 
 
 /*
@@ -127,7 +142,9 @@ $head = datapolicyAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', '', -1, '');
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span><br><br>';
+print '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span><br>';
+// print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP'));
+print '<br>';
 
 
 if ($action == 'edit') {
@@ -136,45 +153,44 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	//print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $title => $tab) {
 		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
 		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
-			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
+			print $langs->trans($key);
 			print '</td><td>';
-			print '<select name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'">';
+			print '<select name="'.$key.'" id="'.$key.'" class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'">';
 			foreach ($valTab as $key1 => $val1) {
 				print '<option value="'.$key1.'" '.(getDolGlobalString($key) == $key1 ? 'selected="selected"' : '').'>';
 				print $val1;
 				print '</option>';
 			}
 			print '</select>';
+			print ajax_combobox($key);
 			print '</td></tr>';
 		}
 	}
 
 	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	//print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $title => $tab) {
 		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
 		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
-			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
-			print '</td><td>'.(getDolGlobalString($key) == '' ? $langs->trans('None') : $valTab[getDolGlobalString($key)]).'</td></tr>';
+			print $langs->trans($key);
+			print '</td><td>'.(getDolGlobalString($key) == '' ? '<span class="opacitymedium">'.$valTab[''].'</span>' : $valTab[getDolGlobalString($key)]).'</td></tr>';
 		}
 	}
 

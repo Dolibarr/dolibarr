@@ -1,6 +1,8 @@
 <?php
-/* Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (c) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$graphwidth = DolGraph::getDefaultGraphSizeForStats('width', 700);
+$graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
@@ -76,19 +78,23 @@ if ($mode == 'memberbyregion') {
 	$title = $langs->trans("MembersStatisticsByRegion");
 }
 
-llxHeader('', $title, '', '', 0, 0, $arrayjs);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, $arrayjs, '', '', 'mod-member page-stats_geo');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
 //dol_mkdir($dir);
+$data = array();
+$tab = null;
 
 if ($mode) {
 	// Define sql
+	$sql = null;
 	if ($mode == 'memberbycountry') {
 		$label = $langs->trans("Country");
 		$tab = 'statscountry';
 
-		$data = array();
 		$sql = "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
@@ -156,7 +162,12 @@ if ($mode) {
 
 	// Define $data array
 	dol_syslog("Count member", LOG_DEBUG);
-	$resql = $db->query($sql);
+	if ($sql != null) {
+		$resql = $db->query($sql);
+	} else {
+		$resql = false;
+		dol_syslog(__FILE__.":No SQL, invalid mode '$mode'", LOG_ERR);
+	}
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -310,7 +321,6 @@ if ($mode) {
 	print '</tr>';
 
 	foreach ($data as $val) {
-		$year = isset($val['year']) ? $val['year'] : '';
 		print '<tr class="oddeven">';
 		print '<td>'.$val['label'].'</td>';
 		if (isset($label2)) {

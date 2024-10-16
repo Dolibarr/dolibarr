@@ -99,6 +99,15 @@ if (GETPOST('dol_use_jmobile')) {
 	$url .= (preg_match('/\?/', $url) ? '&' : '?').'dol_use_jmobile=1';
 }
 
+// Logout openid_connect sessions using OIDC logout URL if defined
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && !empty($_SESSION['OPENID_CONNECT']) && getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL")) {
+	// We need the full URL
+	if (strpos($url, '/') === 0) {
+		$url = DOL_MAIN_URL_ROOT . $url;
+	}
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&returnTo=' . urlencode($url);
+}
+
 // Destroy session
 dol_syslog("End of session ".session_id());
 if (session_status() === PHP_SESSION_ACTIVE) {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +28,20 @@
  */
 class CdavLib
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
+	/**
+	 * @var User
+	 */
 	private $user;
 
-	private $langs;
+	/**
+	 * @var Translate
+	 */
+	private $langs; // @phpstan-ignore-line
 
 	/**
 	 * Constructor

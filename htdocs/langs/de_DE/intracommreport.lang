@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm-Report
+IntraCommReports=Intracomm-Berichte
+
 Module68000Name = Intracomm-Report
 Module68000Desc = Berichtsverwaltung innergemeinschaftlicher Handel (französisches DEB/DES-Format)
 IntracommReportSetup = Einstellungen Modul Intracomm-Report
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Funktion des Beteiligten
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Höhe des Imports
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Höhe des Versands
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Servicekategorie Porti
-
 INTRACOMMREPORT_NUM_DECLARATION=Erklärungsnummer
-
 # Menu
 MenuIntracommReport=Bericht innergemeinschaftlicher Handel
 MenuIntracommReportNew=Neue Erklärung
 MenuIntracommReportList=Liste
-
 # View
 NewDeclaration=Neue Erklärung
 Declaration=Erklärung
@@ -25,16 +25,14 @@ AnalysisPeriod=Analysezeitraum
 TypeOfDeclaration=Art der Erklärung
 DEB=Warenaustauscherklärung
 DES=Leistungsaustauscherklärung
-
 # Export page
 IntracommReportTitle=XML-Datei der Zollerklärung vorbereiten (ProDouane-Format)
-
 # List
 IntracommReportList=Liste der generierten Erkärungen
 IntracommReportNumber=Numero der Erklärung
 IntracommReportPeriod=Analysezeitraum
 IntracommReportTypeDeclaration=Art der Erklärung
 IntracommReportDownload=XML-Datei herunterladen
-
 # Invoice
 IntracommReportTransportMode=Versandweg
+DeleteIntraCommReport=IntraComm-Bericht löschen

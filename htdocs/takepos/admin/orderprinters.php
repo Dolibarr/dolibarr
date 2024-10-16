@@ -129,7 +129,7 @@ $arrayofjs = array(
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_orderprinters');
 
 
 print load_fiche_titre($langs->trans("OrderPrinters"));

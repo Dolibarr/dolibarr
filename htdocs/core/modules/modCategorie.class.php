@@ -182,7 +182,11 @@ class modCategorie extends DolibarrModules
 		$this->export_label[$r] = 'CatProdList';
 		$this->export_icon[$r] = $this->picto;
 		$this->export_enabled[$r] = 'isModEnabled("product") || isModEnabled("service")';
-		$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "export"));
+		if (isModEnabled('product')) {
+			$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "export"));
+		} elseif (isModEnabled('service')) {
+			$this->export_permission[$r] = array(array("categorie", "lire"), array("service", "export"));
+		}
 		$this->export_fields_array[$r] = array('cat.rowid' => "CategId", 'cat.label' => "Label", 'cat.description' => "Description", 'cat.fk_parent' => "ParentCategoryID", 'pcat.label' => "ParentCategoryLabel", 'cat.color' => "Color", 'cat.date_creation' => "DateCreation", 'cat.tms' => "DateLastModification", 'p.rowid' => 'ProductId', 'p.ref' => 'Ref', 'p.label' => 'Label');
 		$this->export_TypeFields_array[$r] = array('cat.rowid' => 'Numeric', 'cat.label' => "Text", 'cat.description' => "Text", 'cat.fk_parent' => 'Numeric', 'pcat.label' => 'Text', 'p.rowid' => 'Numeric', 'p.ref' => 'Text', 'p.label' => 'Text');
 		$this->export_entities_array[$r] = array('p.rowid' => 'product', 'p.ref' => 'product', 'p.label' => 'product'); // We define here only fields that use another picto

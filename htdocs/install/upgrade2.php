@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,6 +234,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		}
 		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
+		$versiontoarray = array();
+		$versionranarray = array();
+
 		if (!$error) {
 			if (count($listofentities) > 1) {
 				print '<tr><td colspan="4">*** '.$langs->trans("Entity").' '.$entity.'</td></tr>'."\n";
@@ -353,9 +357,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Script for 3.0
 			$afterversionarray = explode('.', '2.9.9');
 			$beforeversionarray = explode('.', '3.0.9');
-			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				// No particular code
-			}
+			//if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			// No particular code
+			//}
 
 			// Script for 3.1
 			$afterversionarray = explode('.', '3.0.9');
@@ -397,9 +401,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Scripts for 3.9
 			$afterversionarray = explode('.', '3.7.9');
 			$beforeversionarray = explode('.', '3.8.9');
-			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				// No particular code
-			}
+			//if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			// No particular code
+			//}
 
 			// Scripts for 4.0
 			$afterversionarray = explode('.', '3.9.9');
@@ -457,9 +461,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Scripts for 9.0
 			$afterversionarray = explode('.', '8.0.9');
 			$beforeversionarray = explode('.', '9.0.9');
-			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				//migrate_user_photospath();
-			}
+			//if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			//migrate_user_photospath();
+			//}
 
 			// Scripts for 11.0
 			$afterversionarray = explode('.', '10.0.9');
@@ -533,6 +537,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
 				'MAIN_MODULE_FICHEINTER' => 'newboxdefonly',
 				'MAIN_MODULE_HOLIDAY' => 'newboxdefonly',
+				'MAIN_MODULE_LOAN' => 'newboxdefonly',
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
 				'MAIN_MODULE_OPENSURVEY' => 'newboxdefonly',
@@ -644,7 +649,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		// Copy directory medias
 		$srcroot = DOL_DOCUMENT_ROOT.'/install/medias';
 		$destroot = DOL_DATA_ROOT.'/medias';
-		dolCopyDir($srcroot, $destroot, 0, 0);
+		dolCopyDir($srcroot, $destroot, '0', 0);
 
 
 		// Actions for all versions (no database change but delete some files and directories)
@@ -744,7 +749,7 @@ if ($ret) {
 
 
 /**
- * Reporte liens vers une facture de paiements sur table de jointure (lien n-n paiements factures)
+ * Records payment links for an invoice in a join table (link n<-->n for payments<-->invoices)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -766,11 +771,12 @@ function migrate_paiements($db, $langs, $conf)
 		$sql .= " WHERE p.fk_facture > 0";
 
 		$resql = $db->query($sql);
+		$row = array();
+		$num = 0;
 
 		dolibarr_install_syslog("upgrade2::migrate_paiements");
 		if ($resql) {
 			$i = 0;
-			$row = array();
 			$num = $db->num_rows($resql);
 
 			while ($i < $num) {
@@ -786,8 +792,8 @@ function migrate_paiements($db, $langs, $conf)
 
 		if ($num) {
 			print $langs->trans('MigrationPaymentsNumberToUpdate', $num)."<br>\n";
+			$res = 0;
 			if ($db->begin()) {
-				$res = 0;
 				$num = count($row);
 				for ($i = 0; $i < $num; $i++) {
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
@@ -803,7 +809,7 @@ function migrate_paiements($db, $langs, $conf)
 				}
 			}
 
-			if ($res == (2 * count($row))) {
+			if (is_array($row) && $res == (2 * count($row))) {
 				$db->commit();
 				print $langs->trans('MigrationSuccessfullUpdate')."<br>";
 			} else {
@@ -821,8 +827,8 @@ function migrate_paiements($db, $langs, $conf)
 }
 
 /**
- * Corrige paiement orphelins (liens paumes suite a bugs)
- * Pour verifier s'il reste des orphelins:
+ * Repair orphan payments (lost relations due to bugs)
+ * Query to check if there are still orphans:
  * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
  *
  * @param	DoliDB		$db		Database handler
@@ -886,7 +892,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+				// Look for invoices without payment relations with the same amount and same comppany
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
@@ -931,8 +937,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 }
 
 /**
- * Corrige paiement orphelins (liens paumes suite a bugs)
- * Pour verifier s'il reste des orphelins:
+ * Repair orphan payments (lost relations due to bugs)
+ * Query to check if there are still orphans:
  * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
  *
  * @param	DoliDB		$db		Database handler
@@ -997,7 +1003,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+				// Look for invoices without payment relations with the same amount and same comppany
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
@@ -2473,7 +2479,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
 
 /**
  * Migration du champ fk_remise_except dans llx_facturedet doit correspondre a
- * lien dans llx_societe_remise_except vers llx_facturedet
+ * Link in `llx_societe_remise_except` to `llx_facturedet`
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2892,10 +2898,10 @@ function migrate_element_time($db, $langs, $conf)
 
 				if ($obj->element_duration > 0) {
 					// convert to second
-					// only for int time and float time ex: 1,75 for 1h45
+					// only for int time and float time ex: 1.75 for 1h45
 					list($hour, $min) = explode('.', $obj->element_duration);
-					$hour = $hour * 60 * 60;
-					$min = ($min / 100) * 60 * 60;
+					$hour = (int) $hour * 60 * 60;
+					$min = (int) ((float) ('.'.$min)) * 3600;
 					$newtime = $hour + $min;
 
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."element_time SET";
@@ -4134,7 +4140,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
 		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete) || preg_match('/\*/', $filetodelete)) {
 			//print "Process file ".$filetodelete."\n";
-			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
+			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, 0);
 			if (!$result) {
 				$langs->load("errors");
 				print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile", DOL_DOCUMENT_ROOT.$filetodelete);
@@ -4197,9 +4203,9 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>', $reloadmode)
- * @param   int         $force          1=Reload module even if not already loaded
- * @return	int					Return integer <0 if KO, >0 if OK
+ * @param	array<string,'noboxes'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
+ * @param   int<0,1>	$force          1=Reload module even if not already loaded
+ * @return	int							Return integer <0 if KO, >0 if OK
  */
 function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
@@ -4227,22 +4233,24 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
 		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
+		'MAIN_MODULE_DON' => array('class' => 'modDon'),
 		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
 		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheinter'),
 		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
-		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_EXPEDITION' => array('class' => 'modExpedition'),
 		'MAIN_MODULE_EXPENSEREPORT' => array('class' => 'modExpenseReport'),
-		'MAIN_MODULE_DON' => array('class' => 'modDon'),
-		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove' => 1),
-		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove' => 1),
+		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove' => 1),
+		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
+		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
+		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
 		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
 		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove' => 1),
 		'MAIN_MODULE_TAKEPOS' => array('class' => 'modTakePos', 'remove' => 1),
+		'MAIN_MODULE_VARIANTS' => array('class' => 'modVariants', 'remove' => 1),
 		'MAIN_MODULE_EMAILCOLLECTOR' => array('class' => 'modEmailCollector', 'remove' => 1),
 	);
 
@@ -4288,6 +4296,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				if ($res) {
 					$classname = 'mod'.$moduletoreloadshort;
 					$mod = new $classname($db);
+					'@phan-var-force DolibarrModules $mod';
 
 					//$mod->remove('noboxes');
 					$mod->delete_menus(); // We must delete to be sure it is inserted with new values
@@ -4299,6 +4308,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					if ($res) {
 						$classname = 'mod'.$moduletoreloadshort;
 						$mod = new $classname($db);
+						'@phan-var-force DolibarrModules $mod';
 						$mod->init($reloadmode);
 					} else {
 						dolibarr_install_syslog('Failed to include '.strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php', LOG_ERR);
@@ -4359,7 +4369,7 @@ function migrate_reload_menu($db, $langs, $conf)
 		$dir = DOL_DOCUMENT_ROOT."/core/menus/";
 		$file = 'init_menu_'.$key.'.sql';
 		if (file_exists($dir.$file)) {
-			$result = run_sql($dir.$file, 1, '', 1, $key);
+			$result = run_sql($dir.$file, 1, 0, 1, $key);
 		}
 
 		print '</td></tr>';
@@ -4433,7 +4443,7 @@ function migrate_user_photospath()
 
 											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
 											print '.';
-											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, '0', 0);
 											//var_dump('aaa');exit;
 										}
 									}
@@ -4443,7 +4453,7 @@ function migrate_user_photospath()
 								if (!dol_is_file($destin.'/'.$file)) {
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
-									dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
 									//var_dump('eee');exit;
 								}
 							}
@@ -4526,7 +4536,7 @@ function migrate_user_photospath2()
 
 											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
 											print '.';
-											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, '0', 0);
 										}
 									}
 									// dol_delete_dir($origin.'/'.$file);
@@ -4535,7 +4545,7 @@ function migrate_user_photospath2()
 								if (!dol_is_file($destin.'/'.$file)) {
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
-									dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
 								}
 							}
 						}

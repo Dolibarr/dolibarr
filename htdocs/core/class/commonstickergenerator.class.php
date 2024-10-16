@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,15 +86,15 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_Y_Space = 0;
 	// NX Nombre d'etiquettes sur la largeur de la page
 	protected $_X_Number = 0;
-	// NY Nombre d'etiquettes sur la hauteur de la page
+	// NY Number of labels on the height of a page
 	protected $_Y_Number = 0;
-	// Largeur de chaque etiquette
+	// width of label
 	protected $_Width = 0;
-	// Hauteur de chaque etiquette
+	// Height of label
 	protected $_Height = 0;
-	// Hauteur des caracteres
+	// Height of characters
 	protected $_Char_Size = 10;
-	// Hauteur par default d'une ligne
+	// Height by default of a line
 	protected $_Line_Height = 10;
 	// Type of metric.. Will help to calculate good values
 	protected $_Metric = 'mm';
@@ -145,11 +146,11 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Methode qui permet de modifier la taille des caracteres
-	 * Cela modiera aussi l'espace entre chaque ligne
+	 * Method to modify the size of characters
+	 * This will also modify the space between lines
 	 *
-	 * @param    TCPDF        $pdf   PDF reference
-	 * @param    int        $pt    point
+	 * @param    TCPDF      $pdf   PDF reference
+	 * @param    int        $pt    Point
 	 * @return   void
 	 */
 	public function Set_Char_Size(&$pdf, $pt)
@@ -296,7 +297,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTip:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
+	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

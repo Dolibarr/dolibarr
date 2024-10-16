@@ -112,10 +112,25 @@ class Notify
 	 */
 	public $errors = array();
 
+	/**
+	 * @var string
+	 */
 	public $author;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $date;
+	/**
+	 * @var int
+	 */
 	public $duree;
+	/**
+	 * @var string
+	 */
 	public $note;
 
 	/**
@@ -136,6 +151,7 @@ class Notify
 		'PROPAL_CLOSE_SIGNED',
 		'PROPAL_CLOSE_REFUSED',
 		'FICHINTER_VALIDATE',
+		'FICHINTER_MODIFY',
 		'FICHINTER_CLOSE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_CANCEL',
@@ -143,12 +159,14 @@ class Notify
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_SUBMIT',
 		'ORDER_SUPPLIER_REFUSE',
+		'SHIPPING_MODIFY',
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
-		'ACTION_CREATE'
+		'ACTION_CREATE',
+		'CONTRACT_MODIFY'
 	);
 
 	/**
@@ -245,10 +263,10 @@ class Notify
 	/**
 	 *  Delete a notification from database
 	 *
-	 *	@param		User|null	$user		User deleting
+	 *	@param		?User		$user		User deleting
 	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete($user = null)
 	{
 		$error = 0;
 
@@ -278,11 +296,11 @@ class Notify
 	/**
 	 * Create notification information record.
 	 *
-	 * @param   User|null   $user		User
-	 * @param   int    		$notrigger  1=Disable triggers
+	 * @param   ?User		$user		User
+	 * @param   int<0,1>	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company notification information)
 	 */
-	public function create(User $user = null, $notrigger = 0)
+	public function create($user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -380,11 +398,11 @@ class Notify
 	/**
 	 *	Update record in database
 	 *
-	 *	@param	User|null	$user	     Object user
-	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@param	?User		$user	     Object user
+	 *  @param  int<0,1>  	$notrigger   1=Disable triggers
 	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = -1)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $langs;
 
@@ -461,9 +479,10 @@ class Notify
 		// Subscription per contact
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
-				$sql = "SELECT a.code, c.email, c.rowid";
+				$sql = "SELECT a.code, c.email, c.rowid, c.statut as status";
 				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
 				$sql .= " ".$this->db->prefix()."socpeople as c,";
+
 				$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 				$sql .= " ".$this->db->prefix()."societe as s";
 				$sql .= " WHERE n.fk_contact = c.rowid";
@@ -483,7 +502,8 @@ class Notify
 					$i = 0;
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						if ($obj) {
+						// we want to notify only if contact is enable
+						if ($obj && $obj->status ==  1) {
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
@@ -597,12 +617,12 @@ class Notify
 	 *  Check if notification are active for couple action/company.
 	 * 	If yes, send mail and save trace into llx_notify.
 	 *
-	 * 	@param	string	$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-	 * 	@param	Object	$object				Object the notification deals on
-	 *	@param 	array	$filename_list		List of files to attach (full path of filename on file system)
-	 *	@param 	array	$mimetype_list		List of MIME type of attached files
-	 *	@param 	array	$mimefilename_list	List of attached file name in message
-	 *	@return	int							Return integer <0 if KO, or number of changes if OK
+	 * 	@param	string			$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+	 * 	@param	CommonObject	$object				Object the notification deals on
+	 *	@param 	string[]		$filename_list		List of files to attach (full path of filename on file system)
+	 *	@param 	string[]		$mimetype_list		List of MIME type of attached files
+	 *	@param 	string[]		$mimefilename_list	List of attached file name in message
+	 *	@return	int									Return integer <0 if KO, or number of changes if OK
 	 */
 	public function send($notifcode, $object, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{
@@ -809,6 +829,13 @@ class Notify
 								$object_type = 'ficheinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
+							case 'FICHINTER_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->ficheinter->dir_output;
+								$object_type = 'ficheinter';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
+								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
@@ -858,6 +885,13 @@ class Notify
 								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
+							case 'SHIPPING_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
+								$object_type = 'shipping';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
+								break;
 							case 'SHIPPING_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
@@ -893,6 +927,13 @@ class Notify
 								$dir_output = $conf->agenda->dir_output;
 								$object_type = 'action';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
+								break;
+							case 'CONTRACT_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->contract->multidir_output;
+								$object_type = 'contract';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 								break;
 							default:
 								$object_type = $object->element;
@@ -1103,6 +1144,13 @@ class Notify
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 						break;
+					case 'FICHINTER_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->ficheinter->dir_output;
+						$object_type = 'ficheinter';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
+						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
@@ -1149,6 +1197,13 @@ class Notify
 						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($langs));
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
+					case 'SHIPPING_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
+						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
@@ -1184,6 +1239,13 @@ class Notify
 						$dir_output = $conf->agenda->dir_output;
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
+						break;
+					case 'CONTRACT_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->contract->multidir_output;
+						$object_type = 'contrat';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
 						$object_type = $object->element;

@@ -1,10 +1,12 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2013-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +101,7 @@ $search_valideur     = GETPOST('search_valideur', 'intcomma');
 $search_status       = GETPOST('search_status', 'intcomma');
 $search_type         = GETPOST('search_type', 'intcomma');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('holidaylist')); // Note that conf->hooks_modules contains array
@@ -222,8 +224,6 @@ if (empty($reshook)) {
 }
 
 
-
-
 /*
  * View
  */
@@ -239,9 +239,9 @@ $holidaystatic = new Holiday($db);
 $result = $object->updateBalance();
 
 $title = $langs->trans('CPTitreMenu');
-$help_url = '';
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-holiday page-list');
 
 $max_year = 5;
 $min_year = 10;
@@ -252,7 +252,7 @@ $user_id = $user->id;
 if ($id > 0) {
 	// Charge utilisateur edite
 	$fuser->fetch($id, '', '', 1);
-	$fuser->getrights();
+	$fuser->loadRights();
 	$user_id = $fuser->id;
 
 	$search_employee = $user_id;
@@ -575,9 +575,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -634,7 +631,7 @@ if (!empty($arrayfields['cp.fk_validator']['checked'])) {
 	if ($user->hasRight('holiday', 'readall')) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		$validator = new UserGroup($db);
-		$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+		$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 		$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 		$valideurarray = array();
 		foreach ($valideurobjects as $val) {
@@ -819,7 +816,7 @@ $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $lang
 // If we ask a dedicated card and not allow to see it, we force on user.
 if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) {
 	$langs->load("errors");
-	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	print '<tr class="oddeven opacitymedium"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;
 } elseif ($num > 0 && !empty($mysoc->country_id)) {
 	// Lines

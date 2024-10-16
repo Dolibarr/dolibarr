@@ -135,12 +135,12 @@ class FormWebsite
 				$lasttypecontainer = '';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if (in_array($obj->typecontainer, array('library', 'service'))) {
+					/*if (in_array($obj->typecontainer, array('library', 'service'))) {
 						if (!getDolGlobalString('WEBSITE_ADD_PAGE_TYPE_PHPLIB')) {
 							$i++;
 							continue;
 						}
-					}
+					}*/
 					if ($obj->typecontainer != $lasttypecontainer) {
 						$out .= '<option value="0" disabled>--- ';
 						$transcodecontainer = ucfirst($obj->typecontainer);
@@ -369,7 +369,7 @@ class FormWebsite
 
 		// We disable some not ready templates
 		unset($arrayofsamples['dynamiccontent']);
-		unset($arrayofsamples['news']);
+		//unset($arrayofsamples['news']);
 
 		$templates = $arrayofsamples;
 
@@ -403,12 +403,16 @@ class FormWebsite
 						var contentHtml = $(this).data("content");
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);
-						jQuery("#'.$htmlContent.'preview").val(contentHtml);
+						//jQuery("#'.$htmlContent.'preview").val(contentHtml);
 
-						var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
+						var editorInstance = CKEDITOR.instances.'.$htmlContent.';
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
+						//var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
+						//if (editorInstance) {
+						//	editorInstance.setData(contentHtml);
+						//}
 					});
 				});
 		</script>';

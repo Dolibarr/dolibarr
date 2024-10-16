@@ -171,7 +171,7 @@ if ($action == 'updatepattern') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Passwords"), $wikihelp);
+llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -192,7 +192,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-// Charge tableau des modules generation
+// Load array with all password generation modules
 $dir = "../core/modules/security/generate";
 clearstatcache();
 $handle = opendir($dir);
@@ -200,6 +200,7 @@ $i = 1;
 $arrayhandler = array();
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
+		$reg = array();
 		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
 			// Charging the numbering class
 			$classname = $reg[1];

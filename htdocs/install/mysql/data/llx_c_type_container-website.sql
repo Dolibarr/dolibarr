@@ -36,3 +36,5 @@ insert into llx_c_type_container (code,label,module,active) values ('blogpost', 
 insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
 
+INSERT INTO llx_c_type_container(code, label, active, module, position, typecontainer) VALUES ('service', 'Service (ajax or api)', 1, 'system', 300, 'library');
+INSERT INTO llx_c_type_container(code, label, active, module, position, typecontainer) VALUES ('library', 'Library (functions)', 1, 'system', 400, 'library');

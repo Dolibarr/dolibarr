@@ -23,7 +23,8 @@ BoxLastMembersSubscriptions=تازہ ترین ممبر سبسکرپشنز
 BoxFicheInter=تازہ ترین مداخلت
 BoxCurrentAccounts=کھاتوں کا بیلنس کھولیں۔
 BoxTitleMemberNextBirthdays=اس مہینے کی سالگرہ (ممبران)
-BoxTitleMembersByType=قسم کے لحاظ سے اراکین
+BoxTitleMembersByType=قسم اور حیثیت کے لحاظ سے اراکین
+BoxTitleMembersByTags=ٹیگ اور حیثیت کے لحاظ سے اراکین
 BoxTitleMembersSubscriptionsByYear=اراکین کی رکنیتیں سال کے لحاظ سے
 BoxTitleLastRssInfos=%s سے تازہ ترین %s خبریں
 BoxTitleLastProducts=مصنوعات/خدمات: آخری %s میں ترمیم کی گئی۔
@@ -44,8 +45,11 @@ BoxTitleSupplierOrdersAwaitingReception=سپلائر کے آرڈرز استقب�
 BoxTitleLastModifiedContacts=رابطے/پتے: آخری %s میں ترمیم کی گئی۔
 BoxMyLastBookmarks=بک مارکس: تازہ ترین %s
 BoxOldestExpiredServices=سب سے پرانی فعال میعاد ختم ہونے والی خدمات
+BoxOldestActions=کرنے کے لیے سب سے پرانے واقعات
 BoxLastExpiredServices=فعال میعاد ختم ہونے والی خدمات کے ساتھ تازہ ترین %s قدیم ترین رابطے
 BoxTitleLastActionsToDo=کرنے کے لیے تازہ ترین %s کارروائیاں
+BoxTitleOldestActionsToDo=سب سے پرانے %s ایونٹس کرنے ہیں، مکمل نہیں ہوئے
+BoxTitleFutureActions=اگلے %s آنے والے ایونٹس
 BoxTitleLastContracts=تازہ ترین %s معاہدے جن میں ترمیم کی گئی تھی۔
 BoxTitleLastModifiedDonations=تازہ ترین %s عطیات جن میں ترمیم کی گئی تھی۔
 BoxTitleLastModifiedExpenses=تازہ ترین %s اخراجات کی رپورٹس جن میں ترمیم کی گئی تھی۔
@@ -108,13 +112,35 @@ BoxTitleSuspenseAccount=غیر مختص لائنوں کی تعداد
 NumberOfLinesInSuspenseAccount=سسپنس اکاؤنٹ میں لائن کی تعداد
 SuspenseAccountNotDefined=سسپنس اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
 BoxLastCustomerShipments=آخری کسٹمر کی ترسیل
-BoxTitleLastCustomerShipments=تازہ ترین %s کسٹمر کی ترسیل
+BoxTitleLastCustomerShipments=Latest %s modified customer shipments
+BoxTitleLastLeaveRequests=تازہ ترین %s ترمیم شدہ چھٹی کی درخواستیں
 NoRecordedShipments=کوئی ریکارڈ شدہ کسٹمر شپمنٹ نہیں۔
-BoxCustomersOutstandingBillReached=واجب الادا گاہک کی حد تک پہنچ گئی۔
+BoxCustomersOutstandingBillReached=بقایا حد کے ساتھ صارفین پہنچ گئے۔
 # Pages
 UsersHome=گھریلو صارفین اور گروپس
 MembersHome=ہوم ممبرشپ
 ThirdpartiesHome=ہوم تھرڈ پارٹیز
+productindex=گھریلو مصنوعات اور خدمات
+mrpindex=ہوم ایم آر پی
+commercialindex=گھریلو کمرشل
+projectsindex=ہوم پروجیکٹس
+invoiceindex=گھر کی رسیدیں
+hrmindex=گھر کی رسیدیں
 TicketsHome=ہوم ٹکٹس
+stockindex=گھریلو اسٹاک
+sendingindex=ہوم شپنگز
+receptionindex=گھر کی وصولیاں
+activityindex=گھریلو سرگرمی
+proposalindex=گھر کی تجویز
+ordersindex=گھر کی فروخت کے احکامات
+orderssuppliersindex=گھر کی خریداری کے آرڈر
+contractindex=گھر کے معاہدے
+interventionindex=گھریلو مداخلت
+suppliersproposalsindex=گھریلو سپلائرز کی تجاویز
+donationindex=گھر کے عطیات
+specialexpensesindex=گھر کے خصوصی اخراجات
+expensereportindex=گھر کے اخراجات کی رپورٹ
+mailingindex=ہوم میلنگ
+opensurveyindex=ہوم اوپن سروے
 AccountancyHome=ہوم اکاؤنٹنسی
 ValidatedProjects=تصدیق شدہ منصوبے

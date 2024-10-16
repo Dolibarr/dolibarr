@@ -48,6 +48,7 @@ return static function (RectorConfig $rectorConfig): void {
 		__DIR__ . '/../../../scripts/',
 		__DIR__ . '/../../../test/phpunit/',
 	]);
+
 	$rectorConfig->skip([
 		'**/includes/**',
 		'**/custom/**',
@@ -55,6 +56,7 @@ return static function (RectorConfig $rectorConfig): void {
 		'**/rector/**',		// Disable this line to test the "test.php" file.
 		__DIR__ . '/../../../htdocs/custom/',
 		__DIR__ . '/../../../htdocs/install/doctemplates/*'
+		//'test.php',
 	]);
 	$rectorConfig->parallel(240);
 
@@ -70,9 +72,9 @@ return static function (RectorConfig $rectorConfig): void {
 
 	//$rectorConfig->rule(ReplaceEachAssignmentWithKeyCurrentRector::class);
 
+
 	$rectorConfig->rule(Rector\CodeQuality\Rector\FuncCall\FloatvalToTypeCastRector::class);
 	$rectorConfig->rule(Rector\CodeQuality\Rector\FuncCall\BoolvalToTypeCastRector::class);
-	$rectorConfig->rule(Rector\CodeQuality\Rector\NotEqual\CommonNotEqualRector::class);
 	//Not yet ready: $rectorconfig->rule(Rector\CodeQuality\Rector\If_\CompleteMissingIfElseBracketRector::class);
 	$rectorConfig->rule(Rector\CodeQuality\Rector\For_\ForRepeatedCountToOwnVariableRector::class);
 
@@ -82,11 +84,16 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
 	//$rectorConfig->rule(Dolibarr\Rector\Renaming\UsePositiveExit::class);
 
+
+	// This fix <> into != but it breaks other rules, so added at end.
+	$rectorConfig->rule(Rector\CodeQuality\Rector\NotEqual\CommonNotEqualRector::class);
+
+
 	// Add all predefined rules to migrate to up to php 71.
 	// Warning this break tab spacing of arrays on several lines
 	/*$rectorConfig->sets([
-		LevelSetList::UP_TO_PHP_70
-	]);*/
+	 LevelSetList::UP_TO_PHP_70
+	 ]);*/
 	// Add predefined rules for a given version only
 	//$rectorConfig->import(SetList::PHP_70);
 	//$rectorConfig->import(SetList::PHP_71);

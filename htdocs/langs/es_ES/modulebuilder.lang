@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=El permiso se ha agregado con éxito
 MenuDeletedSuccessfuly=El menú ha sido eliminado con éxito
 MenuAddedSuccessfuly=El menú se ha agregado con éxito
 MenuUpdatedSuccessfuly=El menú ha sido actualizado con éxito
+AddAPIsForThisObject=Agregar API para este objeto
 ApiObjectDeleted=La API para el objeto %s se eliminó con éxito
 CRUDRead=Leido
 CRUDCreateWrite=Crear o Actualizar

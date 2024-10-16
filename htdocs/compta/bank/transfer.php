@@ -50,7 +50,7 @@ if (!$user->hasRight('banque', 'transfer')) {
 	accessforbidden();
 }
 
-$MAXLINES = 10;
+$MAXLINESFORTRANSFERT = 20;
 
 $error = 0;
 
@@ -78,7 +78,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$tabnum = array();
 	$maxtab = 1;
 
-	while ($i < $MAXLINES) {
+	while ($i < $MAXLINESFORTRANSFERT) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOSTINT($i.'_month'), GETPOSTINT($i.'_day'), GETPOSTINT($i.'_year'));
 		$label[$i] = GETPOST($i.'_label', 'alpha');
 		$amount[$i] = price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2);
@@ -98,7 +98,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$db->begin();
 
 	$n = 1;
-	while ($n < $MAXLINES) {
+	while ($n < $MAXLINESFORTRANSFERT) {
 		if ($tabnum[$n] === 1) {
 			if ($accountfrom[$n] < 0) {
 				$error++;
@@ -189,10 +189,11 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				if (!($result > 0)) {
 					$error++;
 				}
+
 				if (!$error) {
 					$mesg = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
-					$mesg = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
-					$mesg = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
+					$mesg = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesg);
+					$mesg = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesg);
 					setEventMessages($mesg, null, 'mesgs');
 				} else {
 					$error++;
@@ -299,7 +300,7 @@ print '<th class="right">'.$langs->trans("Amount").'</th>';
 print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
-for ($i = 1 ; $i < $MAXLINES; $i++) {
+for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 	$label = '';
 	$amount = '';
 	$amountto = '';

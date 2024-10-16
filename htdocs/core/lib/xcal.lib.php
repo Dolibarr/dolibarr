@@ -397,6 +397,18 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$tmpevent['desc'] = $event->description;
 					if (!empty($event->image)) {
 						$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
+					} else {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+						$tmpimage = getImageFromHtmlContent($event->content);
+						if ($tmpimage) {
+							if (strpos($tmpimage, '/') === 0) {				// If $tmpimage is an absolute path
+								$tmpevent['image'] = $GLOBALS['website']->virtualhost.$tmpimage;
+							} elseif (stripos($tmpimage, 'http') === 0) {	// If $tmpimage is a full URI
+								$tmpevent['image'] = $tmpimage;
+							} else {
+								$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$tmpimage;
+							} // TODO If $tmpimage is "data:..."
+						}
 					}
 					$tmpevent['content'] = $event->content;
 
@@ -415,7 +427,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$image = $event["image"];
 				} else {
 					$reg = array();
-					// IF we found a link like <img alt="..." class="..." src="..."
+					// If we found a link into content like <img alt="..." class="..." src="..."
 					if (!empty($event["content"]) && preg_match('/<img\s*(?:alt="[^"]*"\s*)?(?:class="[^"]*"\s*)?src="([^"]+)"/m', $event["content"], $reg)) {
 						if (!empty($reg[0])) {
 							$image = $reg[1];
