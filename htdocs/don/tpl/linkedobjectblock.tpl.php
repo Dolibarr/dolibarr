@@ -52,7 +52,7 @@ print '</td>';
 print '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
 print '</tr>';
 
-if (count($linkedObjectBlock) > 1) {
+if (count($linkedObjectBlock) > 1 || getDolGlobalInt('LINKED_OBJECTS_HAVE_ALWAYS_SUBTOTAL')) {
 	?>
 	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
