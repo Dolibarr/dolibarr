@@ -17,7 +17,7 @@ ModuleRecruitmentName = Recrutement
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Gestion et suivi des campagnes de recrutement
 # Admin page
-RecruitmentSetup = Paramétrages du recrutement
+RecruitmentSetup = Configuration du module Recrutement
 RecruitmentSetupPage = Entrez ici la configuration des principales options du module de recrutement
 RecruitmentArea=Espace recrutement
 PublicInterfaceRecruitmentDesc=Les pages publiques des postes ouverts sont des URL publiques pour afficher et répondre aux postes ouverts. Il existe un lien différent pour chaque offre d'emploi, visible sur chaque fiche de poste.

@@ -12,7 +12,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Generic
-ModulePartnershipName=Gestion des partenariats
+ModulePartnershipName=Gestion des Partenariats
 PartnershipDescription=Module de gestion des partenariats
 PartnershipDescriptionLong= Module de gestion des partenariats
 Partnership=Partenariat
@@ -25,7 +25,7 @@ NewPartnership=Nouveau partenariat
 NewPartnershipbyWeb=Votre demande de partenariat a été ajoutée avec succès. Nous pourrions vous contacter bientôt...
 ListOfPartnerships=Listes des partenariats
 # Admin page
-PartnershipSetup=Page de configuration du module Partenariat
+PartnershipSetup=Configuration du module Gestion des Partenariats
 PartnershipAbout=À propos de Partenariat
 PartnershipAboutPage=Page d'informations du module Partenariat
 partnershipforthirdpartyormember=Le statut Partenaire doit être défini sur un 'tiers' ou un 'adhérent'

@@ -18,14 +18,14 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Gestion d'une base de connaissance
+ModuleKnowledgeManagementName = Gestion d'une Base de Connaissances
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Gérer une base de connaissance ou d'assistance (KM)
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Configuration du système de gestion des connaissances
+KnowledgeManagementSetup = Configuration du module Gestion d'une Base de Connaissances
 KnowledgeManagementSetupPage = Paramétrages du module de base de connaissance
 
 

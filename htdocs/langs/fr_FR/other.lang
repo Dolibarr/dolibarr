@@ -296,7 +296,7 @@ LibraryVersion=Version bibliothèque
 ExportableDatas=Données exportables
 NoExportableData=Pas de données exportables (pas de module avec données exportables chargé, ou manque de permissions)
 ##### External sites #####
-WebsiteSetup=Configuration du module Sites webs
+WebsiteSetup=Configuration du module Sites Web
 WEBSITE_PAGEURL=URL de la page
 WEBSITE_TITLE=Titre
 WEBSITE_DESCRIPTION=Description

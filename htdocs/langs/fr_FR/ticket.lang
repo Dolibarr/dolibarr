@@ -13,7 +13,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Generic
-Module56000Name=Gestionnaire de tickets
+Module56000Name=Gestionnaire de Tickets
 Module56000Desc=Gestionnaire de tickets ou de gestion de demandes internes/clients/fournisseurs
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
@@ -66,7 +66,7 @@ TicketGroupIsPublicDesc=Si un groupe de tickets est public, il sera visible dans
 # Email templates
 MailToSendTicketMessage=Pour envoyer un e-mail depuis un ticket
 # Admin page
-TicketSetup=Configuration du module de ticket
+TicketSetup=Configuration du module Gestionnaire de Tickets
 TicketSettings=Paramètres
 TicketPublicAccess=Une interface publique ne nécessitant aucune identification est disponible à l'url suivante
 TicketSetupDictionaries=Les types de ticket, sévérité et codes analytiques sont paramétrables à partir des dictionnaires
