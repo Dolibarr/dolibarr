@@ -6879,10 +6879,18 @@ class Form
 				$return .= '<select class="flat minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
 			}
 
+			$fourn = boolval(0);
+			$assujtva = boolval(1);
+			if(!$societe_vendeuse->tva_assuj && $societe_vendeuse->fournisseur){
+				$fourn = 1;
+				$assujtva = 0;
+			}
+
 			$selectedfound = false;
 			foreach ($arrayofvatrates as $rate) {
 				// Keep only 0 if seller is not subject to VAT
-				if ($disabled && $rate['txtva'] != 0) {
+				if (!$assujtva && $fourn) {
+					$return .= '<option value="0">0%</option>';
 					continue;
 				}
 

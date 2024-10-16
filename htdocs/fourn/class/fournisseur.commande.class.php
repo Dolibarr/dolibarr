@@ -1641,7 +1641,7 @@ class CommandeFournisseur extends CommonOrder
 
 					//$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
-					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+					// This includes test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
 						$line->desc,
 						$line->subprice,
