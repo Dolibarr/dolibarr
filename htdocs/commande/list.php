@@ -2573,7 +2573,7 @@ if ($resql) {
 					if ($reshook == 1) {
 						// for add information
 						$text_info .= $hookmanager->resPrint;
-					} elseif ($reshook == 0) {
+					} elseif ($reshook == 2) {
 						// for replace information
 						$text_info = $hookmanager->resPrint;
 					} elseif ($reshook == -1) {
