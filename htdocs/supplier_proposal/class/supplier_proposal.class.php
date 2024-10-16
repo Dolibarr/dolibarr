@@ -788,7 +788,7 @@ class SupplierProposal extends CommonObject
 				$pu = $pu_ttc;
 			}
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new SupplierProposalLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();

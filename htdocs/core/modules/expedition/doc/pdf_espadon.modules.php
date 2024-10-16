@@ -113,6 +113,11 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (empty($this->emetteur->country_code)) {
@@ -752,7 +757,7 @@ class pdf_espadon extends ModelePdfExpedition
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -989,9 +994,14 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $mysoc;
 
-		$langs->load("orders");
+		$ltrdirection = 'L';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
+
+		$outputlangs->load("orders");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1030,7 +1040,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 		} else {
 			$text = $this->emetteur->name;
-			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
@@ -1148,7 +1158,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx, $posy - 5);
-				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, $ltrdirection);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
 				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'F');
@@ -1167,7 +1177,7 @@ class pdf_espadon extends ModelePdfExpedition
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, $ltrdirection);
 
 
 			// If SHIPPING contact defined, we use it
@@ -1205,21 +1215,23 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
-				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, 'L');
+				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, $ltrdirection);
 				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -1305,7 +1317,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 		);
 
-		$rank = 5; // do not use negative rank
+		$rank += 10; // do not use negative rank
 		$this->cols['desc'] = array(
 			'rank' => $rank,
 			'width' => false, // only for desc
