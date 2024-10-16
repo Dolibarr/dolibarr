@@ -86,6 +86,8 @@ $tabrclocaltax1 = array();
 $tabrclocaltax2 = array();
 $tabpay = array();
 
+$cptcli = 'NotDefined';
+$cptfour = 'NotDefined';
 
 /*
  * Actions
@@ -133,10 +135,14 @@ $sql .= " p.default_vat_code AS product_buy_default_vat_code, p.tva_tx as produc
 $sql .= " co.code as country_code, co.label as country_label,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.fk_pays,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_supplier_general,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
+	$sql .= " s.accountancy_code_customer_general,";
 	$sql .= " s.code_compta as code_compta,";
+	$sql .= " s.accountancy_code_supplier_general,";
 	$sql .= " s.code_compta_fournisseur,";
 }
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -221,6 +227,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
+		$accountancy_code_supplier_general = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $cptfour;
 		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
 
 		$compta_prod = $obj->compte;
@@ -339,6 +346,7 @@ if ($result) {
 				'id' => $obj->socid,
 				'name' => $obj->name,
 				'code_fournisseur' => $obj->code_fournisseur,
+				'accountancy_code_supplier_general' => $accountancy_code_supplier_general,
 				'code_compta_fournisseur' => $compta_soc
 			);
 
@@ -427,6 +435,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->accountancy_code_supplier_general = $tabcompany[$key]['accountancy_code_supplier_general'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
@@ -479,7 +488,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 
-				$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+				$bookkeeping->numero_compte = $tabcompany[$key]['accountancy_code_supplier_general'];
 				$bookkeeping->label_compte = $accountingaccountsupplier->label;
 
 				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref_supplier, $langs->trans("SubledgerAccount"));
@@ -546,7 +555,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 					if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
 						if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT')) {
-							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 						} else {
 							$bookkeeping->subledger_account = '';
@@ -803,6 +812,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_supplier_general'] : $cptfour;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
@@ -839,7 +849,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$val["refsologest"].'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')).'"'.$sep;
+			print '"'.length_accountg($companystatic->accountancy_code_supplier_general).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.$langs->trans("Thirdparty").'"'.$sep;
 			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $val["refsuppliersologest"], $langs->trans("Thirdparty"))).'"'.$sep;
@@ -1057,6 +1067,7 @@ if (empty($action) || $action == 'view') {
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_supplier_general'] : $cptfour;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
@@ -1131,7 +1142,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'));
+			$accountoshow = length_accountg(!empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_supplier_general'] : $cptfour);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
 			} else {
@@ -1182,7 +1193,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>";
 			if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
 				if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT')) {
-					print length_accounta($tabcompany[$key]['code_compta']);
+					print length_accounta($tabcompany[$key]['code_compta_fournisseur']);
 				}
 			} elseif (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';

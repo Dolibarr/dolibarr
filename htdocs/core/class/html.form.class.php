@@ -1752,7 +1752,7 @@ class Form
 	 */
 	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '')
 	{
-		global $conf, $langs, $hookmanager, $action;
+		global $conf, $user, $langs, $hookmanager, $action;
 
 		$langs->load('companies');
 
@@ -1812,6 +1812,7 @@ class Form
 			$sql .= " LEFT OUTER JOIN  " . $this->db->prefix() . "societe as s ON s.rowid=sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (" . getEntity('contact') . ")";
+		$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = " . ((int) $socid);
 		}
@@ -9941,13 +9942,13 @@ class Form
 			$addgendertxt = ' ';
 			switch ($object->gender) {
 				case 'man':
-					$addgendertxt .= '<i class="fas fa-mars"></i>';
+					$addgendertxt .= '<i class="fas fa-mars valignmiddle"></i>';
 					break;
 				case 'woman':
-					$addgendertxt .= '<i class="fas fa-venus"></i>';
+					$addgendertxt .= '<i class="fas fa-venus valignmiddle"></i>';
 					break;
 				case 'other':
-					$addgendertxt .= '<i class="fas fa-transgender"></i>';
+					$addgendertxt .= '<i class="fas fa-transgender valignmiddle"></i>';
 					break;
 			}
 		}
@@ -10086,7 +10087,7 @@ class Form
 				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities($object->societe) . ')' : '');
 			}
 		} elseif (in_array($object->element, array('contact', 'user'))) {
-			$ret .= dol_htmlentities($object->getFullName($langs)) . $addgendertxt;
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities($object->getFullName($langs)).'</span>'.$addgendertxt;
 		} elseif ($object->element == 'usergroup') {
 			$ret .= dol_htmlentities($object->name);
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
@@ -10105,7 +10106,7 @@ class Form
 				$ret .= ' ';
 			}
 
-			$ret .= $morehtmlref;
+			$ret .= '<!-- morehtmlref -->'.$morehtmlref;
 		}
 
 		$ret .= '</div>';

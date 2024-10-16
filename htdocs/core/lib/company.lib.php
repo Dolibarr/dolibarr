@@ -38,7 +38,7 @@
  * Return array of tabs to used on pages for third parties cards.
  *
  * @param 	Societe	$object		Object company shown
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_prepare_head(Societe $object)
 {
@@ -477,7 +477,7 @@ function societe_prepare_head(Societe $object)
  * Return array of tabs to used on page
  *
  * @param	Object	$object		Object for tabs
- * @return	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_prepare_head2($object)
 {
@@ -503,7 +503,7 @@ function societe_prepare_head2($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_admin_prepare_head()
 {
@@ -1668,7 +1668,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 					print img_delete();
 					print '</a>';
 				}

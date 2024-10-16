@@ -2491,11 +2491,11 @@ div.vmenu, td.vmenu {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '44' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '38' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu)) {
-		print 'margin-bottom: 12px;'."\n";
-	} ?>
-	<?php if (!empty($dol_hide_leftmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;'."\n";
+	} ?>
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
+		print 'margin-bottom: 12px;'."\n";
 	} ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
@@ -3912,7 +3912,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 14px 13px;
+	padding: 12px 14px 10px;
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
@@ -5342,11 +5342,14 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+table.table-fiche-title tr.toptitle {
+	height: 60px;
+}
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	/* padding-top: 5px;
+	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5369,9 +5372,11 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
+/*
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
+*/
 table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 	line-height: normal;
 }

@@ -158,6 +158,14 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 * @var string[]  Example  array("accounting")
 	 */
 	public $depends;
+	/**
+	 * @var  string  urltoaddentry
+	 */
+	public $urltoaddentry;
+	/**
+	 * @var  string  msg when no records exist
+	 */
+	public $msgNoRecords = 'NoRecordFound';
 
 
 
@@ -428,6 +436,17 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 						$out .= "</tr>\n";
 					}
+				}
+			} else {
+				if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
+					$out .= '<tr><td colspan="2" class="center"><span class="opacitymedium">'.$langs->trans($this->msgNoRecords).' </span>';
+
+					// Check if $urltoaddentry is defined for the widget
+					if (!empty($this->urltoaddentry)) {
+						$out .= '<a href="'.$this->urltoaddentry.'">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
+					}
+
+					$out .= '</td></tr>';
 				}
 			}
 
