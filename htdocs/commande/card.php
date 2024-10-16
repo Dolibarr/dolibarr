@@ -1331,6 +1331,15 @@ if (empty($reshook)) {
 			$action = 'editline';
 		}
 
+		$object->loadExpeditions();
+		if (isset($object->expeditions[GETPOST('lineid', 'int')])) {
+			if ($qty < $object->expeditions[GETPOST('lineid', 'int')]) {
+				setEventMessages($langs->trans('ErrorQtyOrderedLessQtyShipped'), null, 'errors');
+				$error++;
+				$action = 'editline';
+			}
+		}
+
 		if (!$error) {
 			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
@@ -3015,7 +3024,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 				}
 				// Edit
-				if ($object->statut == Commande::STATUS_VALIDATED && $usercancreate) {
+				if (($object->statut == Commande::STATUS_VALIDATED || ($object->statut == Commande::STATUS_SHIPMENTONPROCESS && getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS'))) && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 
