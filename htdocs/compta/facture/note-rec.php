@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills'));
@@ -164,7 +166,43 @@ if ($id > 0 ) {
 
 
 	$cssclass = "titlefield";
+
+	// Help of substitution key
+	$dateexample = dol_now();
+	if (!empty($object->frequency) && !empty($object->date_when)) {
+		$dateexample = $object->date_when;
+	}
+
+	$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
+
+	$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%m') . ')';
+	$substitutionarray['__INVOICE_MONTH__'] = $langs->trans("MonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($dateexample, '%m') . ')';
+	$substitutionarray['__INVOICE_NEXT_MONTH__'] = $langs->trans("NextMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%m') . ')';
+	$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = $langs->trans("TextPreviousMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%B') . ')';
+	$substitutionarray['__INVOICE_MONTH_TEXT__'] = $langs->trans("TextMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($dateexample, '%B') . ')';
+	$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = $langs->trans("TextNextMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B') . ')';
+	$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("PreviousYearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'), '%Y') . ')';
+	$substitutionarray['__INVOICE_YEAR__'] = $langs->trans("YearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($dateexample, '%Y') . ')';
+	$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'), '%Y') . ')';
+	// Only on template invoices
+	$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(($object->date_when ? $object->date_when : dol_now()), 'dayhour') . ')';
+	$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree(($object->date_when ? $object->date_when : dol_now()), $object->frequency, $object->unit_frequency), 'dayhour') . ')';
+	$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $object->nb_gen_done;
+	$substitutionarray['__INVOICE_COUNTER_MAX__'] = $object->nb_gen_max;
+
+	$htmltext = '<i>' . $langs->trans("FollowingConstantsWillBeSubstituted") . ':<br>';
+	foreach ($substitutionarray as $key => $val) {
+		$htmltext .= $key . ' = ' . $langs->trans($val) . '<br>';
+	}
+	$htmltext .= '</i>';
+
+	$textNotePub = $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic', 2);
+	$textNotePrive = $form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print dol_get_fiche_end();
 }
+
+// End of page
+llxFooter();
+$db->close();
