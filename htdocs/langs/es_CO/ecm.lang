@@ -6,7 +6,6 @@ ECMCreationDate=Fecha de creación
 ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
 ECMArea=Área DMS / ECM
 ECMAreaDesc=El área DMS / ECM (Document Management System / Electronic Content Management) permite guardar, compartir y buscar rápidamente todo tipo de documentos en Dolibarr.
-ECMAreaDesc3=* Los directorios de medios son archivos en el subdirectorio <b>/medias</b> del directorio de documentos, que todos pueden leer sin necesidad de iniciar sesión y sin necesidad de compartir el archivo explícitamente. Se utiliza para almacenar archivos de imagen del módulo de E-mail o sitio web.
 ECMSectionWasRemoved=El directorio <b> %s </b> ha sido eliminado.
 ECMSectionWasCreated=Se ha creado el directorio <b> %s </b>.
 ECMNoDirectoryYet=No se creó ningún directorio

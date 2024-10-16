@@ -17,9 +17,9 @@
  */
 
 /**
- * \file scripts/website/regenerate-pages.php
+ * \file 	scripts/website/regenerate-pages.php
  * \ingroup scripts
- * \brief Regenerate all pages of a web site
+ * \brief 	Regenerate all pages of a web site on disk. Note: this can also be done from the website module.
  */
 
 if (!defined('NOSESSION')) {
@@ -54,6 +54,7 @@ if (empty($argv[2]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 }
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
@@ -80,8 +81,6 @@ if ($result <= 0) {
 }
 
 $websitepagestatic = new WebsitePage($db);
-
-$db->begin();
 
 $listofpages = $websitepagestatic->fetchAll($website->id, '', '', $max);
 

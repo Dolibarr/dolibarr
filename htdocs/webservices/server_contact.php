@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +145,7 @@ $elementtype = 'socpeople';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -287,10 +289,10 @@ function getContact($authentication, $id, $ref_ext)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$contact = new Contact($db);
-		$result = $contact->fetch($id, 0, $ref_ext);
+		$result = $contact->fetch($id, null, $ref_ext);
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
@@ -654,7 +656,7 @@ function updateContact($authentication, $contact)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Contact($db);
-		$result = $object->fetch($contact['id'], 0, $contact['ref_ext']);
+		$result = $object->fetch($contact['id'], null, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -670,7 +672,7 @@ function updateContact($authentication, $contact)
 
 			$object->country_id = $contact['country_id'];
 			if ($contact['country_code']) {
-				$object->country_id = getCountry($contact['country_code'], 3);
+				$object->country_id = getCountry($contact['country_code'], '3');
 			}
 			$object->province_id = $contact['province_id'];
 
@@ -706,6 +708,7 @@ function updateContact($authentication, $contact)
 				$error++;
 			}
 		}
+		'@phan-var-force array{id:string} $contact';
 
 		if ((!$error) && ($objectfound)) {
 			$db->commit();

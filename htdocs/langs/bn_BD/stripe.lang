@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=একটি চুক্তি ল�
 ToOfferALinkForOnlinePaymentOnFreeAmount=একটি %s যেকোন পরিমাণের অনলাইন পেমেন্ট পেজ অফার করার জন্য URL কোনো বিদ্যমান বস্তু ছাড়াই
 ToOfferALinkForOnlinePaymentOnMemberSubscription=সদস্য সদস্যতার জন্য একটি %s অনলাইন পেমেন্ট পৃষ্ঠা অফার করার URL
 ToOfferALinkForOnlinePaymentOnDonation=অনুদানের অর্থ প্রদানের জন্য একটি %s অনলাইন পেমেন্ট পৃষ্ঠা অফার করার URL
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=স্বয়ংক্রিয়ভাবে পেমেন্ট তৈরি করার জন্য url <b>%s</b> দিয়ে আপনার স্ট্রাইপ সেটআপ করুন স্ট্রাইপ দ্বারা যাচাই করা হয়েছে।
 AccountParameter=অ্যাকাউন্ট প্যারামিটার
 UsageParameter=ব্যবহারের পরামিতি
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=স্ট্রাইপ টার্মিনালের জ
 RequestDirectDebitWithStripe=স্ট্রাইপ দিয়ে সরাসরি ডেবিট অনুরোধ করুন
 RequesCreditTransferWithStripe=স্ট্রাইপ দিয়ে ক্রেডিট ট্রান্সফারের অনুরোধ করুন
 STRIPE_SEPA_DIRECT_DEBIT=স্ট্রাইপের মাধ্যমে সরাসরি ডেবিট পেমেন্ট সক্ষম করুন
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=স্ট্রাইপ কানেক্ট মোড
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

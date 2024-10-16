@@ -28,7 +28,7 @@
  *       \brief      File to manage Expense Reports
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
@@ -109,20 +109,44 @@ class ExpenseReport extends CommonObject
 	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $fk_statut;
 
+	/**
+	 * @var int ID
+	 */
 	public $fk_c_paiement;
+
+	/**
+	 * @var int ID
+	 */
 	public $modepaymentid;
 
+	/**
+	 * @var int
+	 */
 	public $paid;
+
 	// Paiement
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_paid_infos;
 
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_author_infos;
+
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_validator_infos;
 
+	/**
+	 * @var string
+	 */
 	public $rule_warning_message;
 
 	// ACTIONS
@@ -211,7 +235,7 @@ class ExpenseReport extends CommonObject
 	public $fk_user_valid;
 
 	/**
-	 * @var int ID
+	 * @var string Firstname Lastname
 	 */
 	public $user_valid_infos;
 
@@ -226,18 +250,16 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_user_approve;
 
+	/**
+	 * @var float|int
+	 * @deprecated See $total_localtax1
+	 */
 	public $localtax1;	// for backward compatibility (real field should be total_localtax1 defined into CommonObject)
+	/**
+	 * @var float|int
+	 * @deprecated See $total_localtax2
+	 */
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
-
-	/**
-	 * @var array
-	 */
-	public $labelStatus = array();
-
-	/**
-	 * @var array
-	 */
-	public $labelStatusShort = array();
 
 	/**
 	 * Draft status
@@ -656,8 +678,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT d.rowid, d.entity, d.ref, d.note_public, d.note_private,"; // DEFAULT
 		$sql .= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; // ACTIONS
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
@@ -885,6 +905,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
+
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -920,7 +942,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$now = dol_now();
 
@@ -983,10 +1005,10 @@ class ExpenseReport extends CommonObject
 	 * @param   User    $user           User
 	 * @return  int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_line_by_project($projectid, $user = '')
+	public function fetch_line_by_project($projectid, $user)
 	{
 		// phpcs:enable
-		global $conf, $db, $langs;
+		global $langs;
 
 		$langs->load('trips');
 
@@ -1018,8 +1040,8 @@ class ExpenseReport extends CommonObject
 					$objp->fk_c_expensereport_status = $obj->status;
 					$objp->rowid = $obj->rowid;
 
-					$total_HT = $total_HT + $objp->total_ht;
-					$total_TTC = $total_TTC + $objp->total_ttc;
+					$total_HT += $objp->total_ht;
+					$total_TTC += $objp->total_ttc;
 					$author = new User($this->db);
 					$author->fetch($objp->fk_user_author);
 
@@ -1086,8 +1108,6 @@ class ExpenseReport extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->lines = array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
@@ -1175,11 +1195,11 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param   User|null   $user       User that delete
-	 * @param 	int 		$notrigger  0=launch triggers after, 1=disable triggers
+	 * @param   ?User		$user       User that delete
+	 * @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return  int         	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1713,15 +1733,16 @@ class ExpenseReport extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/expensereport/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefExpenseReport $obj';
 			$numref = $obj->getNextValue($this);
 
 			if ($numref != "") {
@@ -1740,16 +1761,15 @@ class ExpenseReport extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs;
 
-		$langs->load('expensereport');
+		$langs->load('trips');
 
 		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
@@ -1779,20 +1799,20 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)
-	 *	@param		int		$max						Max length of shown ref
-	 *	@param		int		$short						1=Return just URL
-	 *	@param		string	$moretitle					Add more text to title tooltip
-	 *	@param		int		$notooltip					1=Disable tooltip
-	 *  @param  	int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int<0,2>	$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param  	string		$option                		Where points the link ('', 'document', ..)
+	 *	@param		int			$max						Max length of shown ref
+	 *	@param		int<0,1>	$short						1=Return just URL
+	 *	@param		string		$moretitle					Add more text to title tooltip
+	 *	@param		int<0,1>	$notooltip					1=Disable tooltip
+	 *  @param  	int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -1881,9 +1901,9 @@ class ExpenseReport extends CommonObject
 	public function update_totaux_add($ligne_total_ht, $ligne_total_tva)
 	{
 		// phpcs:enable
-		$this->total_ht = $this->total_ht + $ligne_total_ht;
-		$this->total_tva = $this->total_tva + $ligne_total_tva;
-		$this->total_ttc = $this->total_ht + $this->total_tva;
+		$this->total_ht += (float) $ligne_total_ht;
+		$this->total_tva += (float) $ligne_total_tva;
+		$this->total_ttc += $this->total_tva;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " total_ht = ".$this->total_ht;
@@ -1906,7 +1926,7 @@ class ExpenseReport extends CommonObject
 	 * @param    float       $qty                      Qty
 	 * @param    double      $up                       Unit price (price with tax)
 	 * @param    int         $fk_c_type_fees           Type payment
-	 * @param    string      $vatrate                  Vat rate (Can be '10' or '10 (ABC)')
+	 * @param    int<-1,0>|string	$vatrate                  Vat rate (Can be '10' or '10 (ABC)')
 	 * @param    string      $date                     Date
 	 * @param    string      $comments                 Description
 	 * @param    int         $fk_project               Project id
@@ -1917,7 +1937,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -1941,7 +1961,7 @@ class ExpenseReport extends CommonObject
 				$fk_project = 0;
 			}
 
-			$qty = price2num($qty);
+			$qty = (float) price2num($qty);
 			if (!preg_match('/\s*\((.*)\)/', $vatrate)) {
 				$vatrate = price2num($vatrate); // $txtva can have format '5.0 (XXX)' or '5'
 			}
@@ -1966,7 +1986,7 @@ class ExpenseReport extends CommonObject
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $up, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+			$tmp = calcul_price_total($qty, $up, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
 
@@ -2029,7 +2049,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function checkRules($type = 0, $seller = '')
 	{
-		global $user, $conf, $db, $langs, $mysoc;
+		global $conf, $db, $langs, $mysoc;
 
 		$langs->load('trips');
 
@@ -2105,7 +2125,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function applyOffset($type = 0, $seller = '')
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 			return false;
@@ -2226,19 +2246,17 @@ class ExpenseReport extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $vatrate, $reg)) {
 				$vat_src_code = $reg[1];
-				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+				$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
-			//var_dump($vatrate);var_dump($localtaxes_type);var_dump($tmp);exit;
+			$tmp = calcul_price_total($qty, $value_unit, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 			// calcul total of line
-			//$total_ttc  = price2num($qty*$value_unit, 'MT');
+			// $total_ttc  = price2num($qty*$value_unit, 'MT');
 
-			$tx_tva = $vatrate / 100;
-			$tx_tva = $tx_tva + 1;
+			$tx_tva = 1 + (float) $vatrate / 100;
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;
@@ -2327,10 +2345,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * deleteline
 	 *
-	 * @param   int     $rowid      	Row id
-	 * @param   User    $fuser      	User
-	 * @param   int     $notrigger      1=No trigger
-	 * @return  int                 	Return integer <0 if KO, >0 if OK
+	 * @param   int			$rowid      	Row id
+	 * @param   User|string	$fuser      	User
+	 * @param   int<0,1>	$notrigger      1=No trigger
+	 * @return  int<-1,1>                 	Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
@@ -2426,7 +2444,7 @@ class ExpenseReport extends CommonObject
 	 * Return list of people with permission to validate expense reports.
 	 * Search for permission "approve expense report"
 	 *
-	 * @return  array|int       Array of user ids, <0 if KO
+	 * @return  int[]|int<-1,-1>	Array of user ids, <0 if KO
 	 */
 	public function fetch_users_approver_expensereport()
 	{
@@ -2465,16 +2483,14 @@ class ExpenseReport extends CommonObject
 	 *
 	 *  @param      string      $modele         Force le mnodele a utiliser ('' to not force)
 	 *  @param      Translate   $outputlangs    object lang a utiliser pour traduction
-	 *  @param      int         $hidedetails    Hide details of lines
-	 *  @param      int         $hidedesc       Hide description
-	 *  @param      int         $hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param  	?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int                         0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf;
-
 		$outputlangs->load("trips");
 
 		if (!dol_strlen($modele)) {
@@ -2497,8 +2513,8 @@ class ExpenseReport extends CommonObject
 	/**
 	 * List of types
 	 *
-	 * @param   int     $active     Active or not
-	 * @return  array
+	 * @param   int<0,1>	$active     Active or not
+	 * @return  array<string,string>
 	 */
 	public function listOfTypes($active = 1)
 	{
@@ -2530,7 +2546,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 
@@ -2741,9 +2757,9 @@ class ExpenseReport extends CommonObject
 
 		$currentUser = new User($db);
 		$currentUser->fetch($this->fk_user);
-		$currentUser->getrights('expensereport');
+		$currentUser->loadRights('expensereport');
 		//Clean
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 
 		$sql  = " SELECT r.range_ik, t.ikoffset, t.coef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
@@ -2773,7 +2789,7 @@ class ExpenseReport extends CommonObject
 					$cumulYearQty = $obj->cumul;
 				}
 
-				$qty = $cumulYearQty + $qty;
+				$qty += (float) $cumulYearQty;
 			}
 
 			$num = $this->db->num_rows($result);
@@ -2784,10 +2800,11 @@ class ExpenseReport extends CommonObject
 
 					$ranges[$i] = $obj;
 				}
-
+				'@phan-var-force Object[] $ranges';
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i + 1]->range_ik) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->ikoffset;
@@ -2813,11 +2830,11 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with optional picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2835,7 +2852,7 @@ class ExpenseReport extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (array_key_exists('userauthor', $arraydata)) {
+		if (array_key_exists('userauthor', $arraydata) && $arraydata['userauthor'] instanceof User) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['userauthor']->getNomUrl(-1).'</span>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
@@ -2851,416 +2868,4 @@ class ExpenseReport extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
-}
-
-
-/**
- * Class of expense report details lines
- */
-class ExpenseReportLine extends CommonObjectLine
-{
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'expensereport_det';
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var int ID
-	 */
-	public $rowid;
-
-	public $comments;
-	public $qty;
-	public $value_unit;
-	public $date;
-
-	/**
-	 * @var int|string
-	 */
-	public $dates;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_c_type_fees;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_c_exp_tax_cat;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_projet;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_expensereport;
-
-	public $type_fees_code;
-	public $type_fees_libelle;
-	public $type_fees_accountancy_code;
-
-	public $projet_ref;
-	public $projet_title;
-	public $rang;
-
-	public $vatrate;
-	public $vat_src_code;
-	public $tva_tx;
-	public $localtax1_tx;
-	public $localtax2_tx;
-	public $localtax1_type;
-	public $localtax2_type;
-
-	public $total_ht;
-	public $total_tva;
-	public $total_ttc;
-	public $total_localtax1;
-	public $total_localtax2;
-
-	// Multicurrency
-	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var string multicurrency code
-	 */
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
-	/**
-	 * @var int ID into llx_ecm_files table to link line to attached file
-	 */
-	public $fk_ecm_files;
-
-	public $rule_warning_message;
-
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB    $db     Handlet database
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
-
-	/**
-	 * Fetch record for expense report detailed line
-	 *
-	 * @param   int     $rowid      Id of object to load
-	 * @return  int                 Return integer <0 if KO, >0 if OK
-	 */
-	public function fetch($rowid)
-	{
-		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet as fk_project, fde.date,';
-		$sql .= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc, fde.fk_ecm_files,';
-		$sql .= ' fde.localtax1_tx, fde.localtax2_tx, fde.localtax1_type, fde.localtax2_type, fde.total_localtax1, fde.total_localtax2, fde.rule_warning_message,';
-		$sql .= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
-		$sql .= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id'; // Sometimes type of expense report has been removed, so we use a left join here.
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
-		$sql .= ' WHERE fde.rowid = '.((int) $rowid);
-
-		$result = $this->db->query($sql);
-
-		if ($result) {
-			$objp = $this->db->fetch_object($result);
-
-			$this->rowid = $objp->rowid;
-			$this->id = $objp->rowid;
-			$this->ref = $objp->ref;
-			$this->fk_expensereport = $objp->fk_expensereport;
-			$this->comments = $objp->comments;
-			$this->qty = $objp->qty;
-			$this->date = $objp->date;
-			$this->dates = $this->db->jdate($objp->date);
-			$this->value_unit = $objp->value_unit;
-			$this->fk_c_type_fees = $objp->fk_c_type_fees;
-			$this->fk_c_exp_tax_cat = $objp->fk_c_exp_tax_cat;
-			$this->fk_projet = $objp->fk_project; // deprecated
-			$this->fk_project = $objp->fk_project;
-			$this->type_fees_code = $objp->type_fees_code;
-			$this->type_fees_libelle = $objp->type_fees_libelle;
-			$this->projet_ref = $objp->projet_ref;
-			$this->projet_title = $objp->projet_title;
-
-			$this->vatrate = $objp->vatrate;
-			$this->vat_src_code = $objp->vat_src_code;
-			$this->localtax1_tx = $objp->localtax1_tx;
-			$this->localtax2_tx = $objp->localtax2_tx;
-			$this->localtax1_type = $objp->localtax1_type;
-			$this->localtax2_type = $objp->localtax2_type;
-
-			$this->total_ht = $objp->total_ht;
-			$this->total_tva = $objp->total_tva;
-			$this->total_ttc = $objp->total_ttc;
-			$this->total_localtax1 = $objp->total_localtax1;
-			$this->total_localtax2 = $objp->total_localtax2;
-
-			$this->fk_ecm_files = $objp->fk_ecm_files;
-
-			$this->rule_warning_message = $objp->rule_warning_message;
-
-			$this->db->free($result);
-
-			return $this->id;
-		} else {
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 * Insert a line of expense report
-	 *
-	 * @param   int     $notrigger      1=No trigger
-	 * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
-	 * @return  int                     Return integer <0 if KO, >0 if OK
-	 */
-	public function insert($notrigger = 0, $fromaddline = false)
-	{
-		global $user, $conf;
-
-		$error = 0;
-
-		dol_syslog("ExpenseReportLine::Insert", LOG_DEBUG);
-
-		// Clean parameters
-		$this->comments = trim($this->comments);
-		if (empty($this->value_unit)) {
-			$this->value_unit = 0;
-		}
-		$this->qty = price2num($this->qty);
-		$this->vatrate = price2num($this->vatrate);
-		if (empty($this->fk_c_exp_tax_cat)) {
-			$this->fk_c_exp_tax_cat = 0;
-		}
-
-		$this->db->begin();
-
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
-		$sql .= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-		$sql .= ' tva_tx, vat_src_code,';
-		$sql .= ' localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' comments, qty, value_unit,';
-		$sql .= ' total_ht, total_tva, total_ttc,';
-		$sql .= ' total_localtax1, total_localtax2,';
-		$sql .= ' date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
-		$sql .= " VALUES (".$this->db->escape($this->fk_expensereport).",";
-		$sql .= " ".((int) $this->fk_c_type_fees).",";
-		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
-		$sql .= " ".((float) $this->vatrate).",";
-		$sql .= " '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."',";
-		$sql .= " ".((float) price2num($this->localtax1_tx)).",";
-		$sql .= " ".((float) price2num($this->localtax2_tx)).",";
-		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
-		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " '".$this->db->escape($this->comments)."',";
-		$sql .= " ".((float) $this->qty).",";
-		$sql .= " ".((float) $this->value_unit).",";
-		$sql .= " ".((float) price2num($this->total_ht)).",";
-		$sql .= " ".((float) price2num($this->total_tva)).",";
-		$sql .= " ".((float) price2num($this->total_ttc)).",";
-		$sql .= " ".((float) price2num($this->total_localtax1)).",";
-		$sql .= " ".((float) price2num($this->total_localtax2)).",";
-		$sql .= " '".$this->db->idate($this->date)."',";
-		$sql .= " ".(empty($this->rule_warning_message) ? 'null' : "'".$this->db->escape($this->rule_warning_message)."'").",";
-		$sql .= " ".((int) $this->fk_c_exp_tax_cat).",";
-		$sql .= " ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
-		$sql .= ")";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
-
-
-			if (!$error && !$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('EXPENSE_REPORT_DET_CREATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-
-			if (!$fromaddline) {
-				$tmpparent = new ExpenseReport($this->db);
-				$tmpparent->fetch($this->fk_expensereport);
-				$result = $tmpparent->update_price(1);
-				if ($result < 0) {
-					$error++;
-					$this->error = $tmpparent->error;
-					$this->errors = $tmpparent->errors;
-				}
-			}
-		} else {
-			$error++;
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return $this->id;
-		} else {
-			$this->error = $this->db->lasterror();
-			dol_syslog("ExpenseReportLine::insert Error ".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -2;
-		}
-	}
-
-	/**
-	 * Function to get total amount in expense reports for a same rule
-	 *
-	 * @param  ExpenseReportRule $rule		object rule to check
-	 * @param  int				 $fk_user	user author id
-	 * @param  string			 $mode		day|EX_DAY / month|EX_MON / year|EX_YEA to get amount
-	 * @return float                        Amount
-	 */
-	public function getExpAmount(ExpenseReportRule $rule, $fk_user, $mode = 'day')
-	{
-		$amount = 0;
-
-		$sql = 'SELECT SUM(d.total_ttc) as total_amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det d';
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport e ON (d.fk_expensereport = e.rowid)';
-		$sql .= ' WHERE e.fk_user_author = '.((int) $fk_user);
-		if (!empty($this->id)) {
-			$sql .= ' AND d.rowid <> '.((int) $this->id);
-		}
-		$sql .= ' AND d.fk_c_type_fees = '.((int) $rule->fk_c_type_fees);
-		if ($mode == 'day' || $mode == 'EX_DAY') {
-			$sql .= " AND d.date = '".dol_print_date($this->date, '%Y-%m-%d')."'";
-		} elseif ($mode == 'mon' || $mode == 'EX_MON') {
-			$sql .= " AND DATE_FORMAT(d.date, '%Y-%m') = '".dol_print_date($this->date, '%Y-%m')."'"; // @todo DATE_FORMAT is forbidden
-		} elseif ($mode == 'year' || $mode == 'EX_YEA') {
-			$sql .= " AND DATE_FORMAT(d.date, '%Y') = '".dol_print_date($this->date, '%Y')."'"; 	// @todo DATE_FORMAT is forbidden
-		}
-
-		dol_syslog('ExpenseReportLine::getExpAmount');
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num > 0) {
-				$obj = $this->db->fetch_object($resql);
-				$amount = (float) $obj->total_amount;
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		return $amount + $this->total_ttc;
-	}
-
-	/**
-	 * Update line
-	 *
-	 * @param   User    $user      User
-	 * @return  int                Return integer <0 if KO, >0 if OK
-	 */
-	public function update(User $user)
-	{
-		global $langs, $conf;
-
-		$error = 0;
-
-		// Clean parameters
-		$this->comments = trim($this->comments);
-		$this->vatrate = price2num($this->vatrate);
-		$this->value_unit = price2num($this->value_unit);
-		if (empty($this->fk_c_exp_tax_cat)) {
-			$this->fk_c_exp_tax_cat = 0;
-		}
-
-		$this->db->begin();
-
-		// Update line in database
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
-		$sql .= " comments='".$this->db->escape($this->comments)."'";
-		$sql .= ", value_unit = ".((float) $this->value_unit);
-		$sql .= ", qty=".((float) $this->qty);
-		$sql .= ", date='".$this->db->idate($this->date)."'";
-		$sql .= ", total_ht=".((float) price2num($this->total_ht, 'MT'));
-		$sql .= ", total_tva=".((float) price2num($this->total_tva, 'MT'));
-		$sql .= ", total_ttc=".((float) price2num($this->total_ttc, 'MT'));
-		$sql .= ", total_localtax1=".((float) price2num($this->total_localtax1, 'MT'));
-		$sql .= ", total_localtax2=".((float) price2num($this->total_localtax2, 'MT'));
-		$sql .= ", tva_tx=".((float) $this->vatrate);
-		$sql .= ", vat_src_code='".$this->db->escape($this->vat_src_code)."'";
-		$sql .= ", localtax1_tx=".((float) $this->localtax1_tx);
-		$sql .= ", localtax2_tx=".((float) $this->localtax2_tx);
-		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
-		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-		$sql .= ", rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
-		$sql .= ", fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-		$sql .= ", fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
-		if ($this->fk_c_type_fees) {
-			$sql .= ", fk_c_type_fees = ".((int) $this->fk_c_type_fees);
-		} else {
-			$sql .= ", fk_c_type_fees=null";
-		}
-		if ($this->fk_project > 0) {
-			$sql .= ", fk_projet=".((int) $this->fk_project);
-		} else {
-			$sql .= ", fk_projet=null";
-		}
-		$sql .= " WHERE rowid = ".((int) ($this->rowid ? $this->rowid : $this->id));
-
-		dol_syslog("ExpenseReportLine::update");
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$tmpparent = new ExpenseReport($this->db);
-			$result = $tmpparent->fetch($this->fk_expensereport);
-			if ($result > 0) {
-				$result = $tmpparent->update_price(1);
-				if ($result < 0) {
-					$error++;
-					$this->error = $tmpparent->error;
-					$this->errors = $tmpparent->errors;
-				}
-			} else {
-				$error++;
-				$this->error = $tmpparent->error;
-				$this->errors = $tmpparent->errors;
-			}
-		} else {
-			$error++;
-			dol_print_error($this->db);
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->error = $this->db->lasterror();
-			dol_syslog("ExpenseReportLine::update Error ".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -2;
-		}
-	}
-
-	// ajouter ici comput_ ...
 }

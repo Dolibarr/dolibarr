@@ -47,6 +47,7 @@ DateContract=Date contrat
 DateServiceActivate=Date activation du service
 ListOfServices=Liste des services
 ListOfInactiveServices=Liste des services inactifs
+ListOfNotExpiredServices=Liste des services actifs non expirés
 ListOfExpiredServices=Liste des services actifs expirés
 ListOfClosedServices=Liste des services fermés
 ListOfRunningServices=Liste des services actifs

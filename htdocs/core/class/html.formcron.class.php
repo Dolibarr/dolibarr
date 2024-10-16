@@ -63,19 +63,14 @@ class FormCron extends Form
 		// phpcs:enable
 		global $langs;
 
-		$langs->load('cron@cron');
+		$langs->load('cron');
+
 		$out = '';
 		if (!empty($readonly)) {
 			if ($selected == 'command') {
-				$out = $langs->trans('CronType_command');
-				$out .= '<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
-				$out .= '<OPTION value="command" selected>'.$langs->trans('CronType_command').'</OPTION>';
-				$out .= '</SELECT>';
+				$out = img_picto('', 'terminal', 'class="pictofixedwidth marginrightonly"').'<span class="">'.$langs->trans('CronType_command').'</span>';
 			} elseif ($selected == 'method') {
-				$out = $langs->trans('CronType_method');
-				$out .= '<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
-				$out .= '<OPTION value="method" selected>'.$langs->trans('CronType_method').'</OPTION>';
-				$out .= '</SELECT>';
+				$out = img_picto('', 'code', 'class="pictofixedwidth marginrightonly"').'<span class="">'.$langs->trans('CronType_method').'</span>';
 			}
 		} else {
 			$out = '<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';

@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Configuración do módulo PayBox
-PayBoxDesc=Este módulo ofrece páxinas para permitir o pago en <a href="http://www.paybox.com" target="_blank">PayBox</a> por parte dos clientes. Pode usarse para un pago gratuíto ou para un pago dun obxecto Dolibarr en particular (factura, pedido, ...)
-FollowingUrlAreAvailableToMakePayments=As seguintes URL están dispoñibles para ofrecer unha páxina a un cliente na que facer un pago en obxectos Dolibarr
-PaymentForm=Forma de pagamento
-WelcomeOnPaymentPage=A nosa benvida ao servizo de pagamento en liña
-ThisScreenAllowsYouToPay=Esta pantalla permítelle facer un pagamento en liña a %s.
-ThisIsInformationOnPayment=Esta é información sobre o pagamento a facer
-ToComplete=Completar
-YourEMail=Correo electrónico para recibir a confirmación do pagamento
-Creditor=Acredor
-PaymentCode=Código do pagamento
+PayBoxDesc=Este módulo ofrece páxinas para permitir o pagamento en <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> PayPal</a>. Pódese utilizar para un pagamento gratuito ou para un pagamento dun obxecto Dolibarr (factura, pedidmento, ...) 
 PayBoxDoPayment=Pagamento con Paybox
 YouWillBeRedirectedOnPayBox=Será redirixido á páxina segura de PayBox para introducir a información da súa tarxeta de crédito
-Continue=Seguinte
 SetupPayBoxToHavePaymentCreatedAutomatically=Configure a súa caixa de pagamento coa url <b>%s</b> para que o pagamento se cree automaticamente cando o valide PayBox.
 YourPaymentHasBeenRecorded=Esta páxina confirma que se rexistrou o seu pagamento. Grazas.
 YourPaymentHasNotBeenRecorded=O seu pagamento NON se rexistrou e cancelouse a transacción. Grazas.
-AccountParameter=Parámetros da conta
-UsageParameter=Parámetros de uso
-InformationToFindParameters=Axuda a atopar a información da súa conta %s
 PAYBOX_CGI_URL_V2=URL do módulo CGI de PayBox para pagamento
-CSSUrlForPaymentForm=URL da folla de estilo CSS para o formulario de pagamento
 NewPayboxPaymentReceived=Novo pagamento de PayBox recibido
 NewPayboxPaymentFailed=Novo intento de pagamento de PayBox pero fallou
 PAYBOX_PAYONLINE_SENDEMAIL=Nnotificación por correo electrónico despois do intento de pagamento (éxito ou fallo)

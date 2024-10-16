@@ -40,6 +40,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
@@ -142,9 +143,9 @@ if ($result >= 0) {
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
 			$group->fetch('', $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
-			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')];
+			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] ?? null;
 			$group->nom = $group->name; // For backward compatibility
-			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')];
+			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] ?? null;
 			$group->entity = $conf->entity;
 
 			// print_r($ldapgroup);

@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,7 @@ class DiscountAbsolute extends CommonObject
 {
 	/**
 	 * @var int 	Thirdparty ID
-	 * @deprecated
+	 * @deprecated  Use socid instead.
 	 */
 	public $fk_soc;
 	/**
@@ -41,6 +43,9 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $discount_type; // 0 => customer discount, 1 => supplier discount
 
 	public $total_ht;
@@ -131,7 +136,7 @@ class DiscountAbsolute extends CommonObject
 	 *  @param      int		$rowid       					id discount to load
 	 *  @param      int		$fk_facture_source				fk_facture_source
 	 *  @param		int		$fk_invoice_supplier_source		fk_invoice_supplier_source
-	 *	@return		int										Return integer <0 if KO, =0 if not found, >0 if OK
+	 *	@return		int<-1,1>								Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
 	{
@@ -171,6 +176,7 @@ class DiscountAbsolute extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->fk_soc = $obj->fk_soc;
+				$this->socid = $obj->fk_soc;
 				$this->discount_type = $obj->discount_type;
 
 				$this->total_ht = $obj->amount_ht;
@@ -223,11 +229,11 @@ class DiscountAbsolute extends CommonObject
 	 *      Create a discount into database
 	 *
 	 *      @param      User	$user       User that create
-	 *      @return     int         		Return integer <0 if KO, >0 if OK
+	 *      @return     int<-1,1>      		Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean parameters
 		$this->amount_ht = price2num($this->amount_ht);
@@ -275,7 +281,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
 		$sql .= " fk_facture_source, fk_invoice_supplier_source";
 		$sql .= ")";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->fk_soc).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
@@ -297,8 +303,8 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 *  Delete object in database. If fk_facture_source is defined, we delete all family with same fk_facture_source. If not, only with id is removed
 	 *
-	 *  @param      User    $user       Object of user asking to delete
-	 *  @return     int                 Return integer <0 if KO, >0 if OK
+	 *  @param	User	$user		Object of user asking to delete
+	 *  @return	int<-2,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -367,6 +373,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " AND fk_invoice_supplier IS NULL)"; // Not used as credit note and not used as deposit
 
 		dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
+
 		require_once DOL_DOCUMENT_ROOT. '/core/class/commoninvoice.class.php';
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -422,11 +429,14 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
 	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *  @param      int		$notrigger		0 = launch triggers after, 1 = disable triggers
+	 *	@return		int<-3,1>				Return integer <0 if KO, >0 if OK
 	 */
-	public function link_to_invoice($rowidline, $rowidinvoice)
+	public function link_to_invoice($rowidline, $rowidinvoice, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
+
 		// Check parameters
 		if (!$rowidline && !$rowidinvoice) {
 			$this->error = 'ErrorBadParameters';
@@ -465,6 +475,14 @@ class DiscountAbsolute extends CommonObject
 				$this->fk_facture_line = $rowidline;
 				$this->fk_facture = $rowidinvoice;
 			}
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
+				if ($result < 0) {
+					return -2;
+				}
+				// End call triggers
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->error();
@@ -478,11 +496,14 @@ class DiscountAbsolute extends CommonObject
 	 *	Link the discount to a particular invoice line or a particular invoice.
 	 *	Do not call this if discount is linked to a reconcialiated invoice
 	 *
-	 *	@return		int							Return integer <0 if KO, >0 if OK
+	 *  @param      int		$notrigger		0 = launch triggers after, 1 = disable triggers
+	 *	@return		int<-3,1>					Return integer <0 if KO, >0 if OK
 	 */
-	public function unlink_invoice()
+	public function unlink_invoice($notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
+
 		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			$sql .= " SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
@@ -494,6 +515,14 @@ class DiscountAbsolute extends CommonObject
 		dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
+				if ($result < 0) {
+					return -2;
+				}
+				// End call triggers
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->error();
@@ -505,13 +534,13 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
 	 *
-	 *	@param		Societe		$company		Object third party for filter
-	 *	@param		User		$user			Filtre sur un user auteur des remises
+	 *	@param		?Societe	$company		Object third party for filter
+	 *	@param		?User		$user			Filtre sur un user auteur des remises
 	 * 	@param		string		$filter			Filter other. Warning: Do not use a user input value here.
-	 * 	@param		int			$maxvalue		Filter on max value for discount
-	 *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
-	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
-	 * 	@return		int						Return integer <0 if KO, amount otherwise
+	 * 	@param		int|float	$maxvalue		Filter on max value for discount
+	 *  @param      int<0,1>	$discount_type  0 => customer discount, 1 => supplier discount
+	 *  @param      int<0,1>	$multicurrency  Return multicurrency_amount instead of amount
+	 * 	@return		int<-1,-1>|float			Return integer <0 if KO, amount otherwise
 	 */
 	public function getAvailableDiscounts($company = null, $user = null, $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
 	{
@@ -564,8 +593,8 @@ class DiscountAbsolute extends CommonObject
 	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS or FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
 	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
-	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return		int				     			Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 *  @param 		int<-1,1>	    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
+	 *	@return		int<-1,-1>|float     			Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($invoice, $multicurrency = 0)
 	{
@@ -605,7 +634,7 @@ class DiscountAbsolute extends CommonObject
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
-	 *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
+	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return     int					        		Return integer <0 if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
@@ -645,7 +674,7 @@ class DiscountAbsolute extends CommonObject
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 *	@param		CommonInvoice	  $invoice	    	Object invoice
-	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
+	 *	@param		int<-1,1>	      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return		int					        		Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
@@ -683,9 +712,9 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 *  Return clickable ref of object (with picto or not)
 	 *
-	 *  @param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
-	 *  @param		string	$option			Where to link to ('invoice' or 'discount')
-	 *  @return		string					String with URL
+	 *  @param	int<0,1>	$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
+	 *  @param	string		$option			Where to link to ('invoice' or 'discount')
+	 *  @return	string						String with URL
 	 */
 	public function getNomUrl($withpicto, $option = 'invoice')
 	{
@@ -709,7 +738,7 @@ class DiscountAbsolute extends CommonObject
 		}
 		if ($option == 'discount') {
 			$label = $langs->trans("Discount");
-			$link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend = '</a>';
 			$ref = $langs->trans("Discount");
 			$picto = 'generic';
@@ -732,11 +761,10 @@ class DiscountAbsolute extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	int
+	 *  @return	int<0,1>
 	 */
 	public function initAsSpecimen()
 	{
-		$this->fk_soc         = 1;
 		$this->socid          = 1;
 		$this->amount_ht      = 10;
 		$this->amount_tva     = 1.96;

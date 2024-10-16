@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file    admin/setup.php
+ * \file    htdocs/webportal/admin/setup.php
  * \ingroup webportal
  * \brief   WebPortal setup page.
  */
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalthemesetup', 'globalsetup'));
 
 // Parameters
@@ -70,19 +71,19 @@ $item->defaultFieldValue = $webPortalTheme->primaryColorHex;
 
 // Logo URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_LOGO_URL');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 $item = $formSetup->newItem('WEBPORTAL_MENU_LOGO_URL');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
 
 // Background URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_BACKGROUND');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
 $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND_IS_DARK')->setAsYesNo();

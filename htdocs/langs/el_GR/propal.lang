@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 εβδομάδα
 AvailabilityTypeAV_2W=2 εβδομάδες
 AvailabilityTypeAV_3W=3 εβδομάδες
 AvailabilityTypeAV_1M=1 μήνας
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Εκπρόσωπος επικοινωνίας μετά την προσφορά
 TypeContact_propal_external_BILLING=Επαφή λογιστηρίου πελάτη
 TypeContact_propal_external_CUSTOMER=Επαφή επικοινωνίας πελάτη μετά την προσφορά
 TypeContact_propal_external_SHIPPING=Επαφή επικοινωνίας πελάτη για παράδοση
-
 # Document models
 CantBeNoSign=δεν μπορεί να οριστεί ως μη υπογεγραμμένη
 CaseFollowedBy=Περίπτωση που ακολουθείται από
@@ -122,3 +120,5 @@ SignSociete_rib=Υπογραφή εντολής
 SignPropal=Αποδοχή προσφοράς
 Signed=υπογεγραμμένη
 SignedOnly=Μόνο υπογεγραμμένη
+ExpeditionSigned=Η αποστολή υπογράφηκε
+SignExpedition=Υπογραφή αποστολής

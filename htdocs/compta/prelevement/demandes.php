@@ -105,6 +105,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
+$form = new Form($db);
+
 if ($type != 'bank-transfer') {
 	if (!$status) {
 		$title = $langs->trans("RequestStandingOrderToTreat");
@@ -354,6 +356,11 @@ while ($i < min($num, $limit)) {
 
 	print '</tr>';
 	$i++;
+}
+
+// If no record found
+if ($num == 0) {
+	print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 print "</table>";

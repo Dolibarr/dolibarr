@@ -37,7 +37,7 @@ $langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$type = GETPOSTINT("type");
+$type = GETPOST('type', 'intcomma');
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : '';
 
 // Security check
@@ -81,7 +81,7 @@ if ($type == '0') {
 $title = $langs->trans("Statistics");
 
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-popuprop');
 
 print load_fiche_titre($title, '', 'product');
 
@@ -126,7 +126,7 @@ $h++;
 print dol_get_fiche_head($head, 'popularity', '', -1);
 
 
-// Array of liens to show
+// Array of lines to show
 $infoprod = array();
 
 

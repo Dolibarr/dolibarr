@@ -3,9 +3,10 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
- * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2019	    Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@
  * Prepare array with list of tabs
  *
  * @param   Account	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bank_prepare_head(Account $object)
 {
@@ -69,7 +70,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
+	if ($object->type != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -127,8 +128,8 @@ function bank_prepare_head(Account $object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   ?CommonObject	$object						Object related to tabs
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bank_admin_prepare_head($object)
 {
@@ -188,9 +189,9 @@ function bank_admin_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param   Object	$num		val to account statement
- * @return  array				Array of tabs to shoc
+ * @param   CommonObject					$object		Object related to tabs
+ * @param   string							$num		val to account statement
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function account_statement_prepare_head($object, $num)
 {
@@ -230,7 +231,7 @@ function account_statement_prepare_head($object, $num)
  * Prepare array with list of tabs
  *
  * @param   CommonObject	$object		Object related to tabs
- * @return  array						Array of tabs to shoc
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function various_payment_prepare_head($object)
 {
@@ -280,7 +281,7 @@ function various_payment_prepare_head($object)
  *      @param	?string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
  *      @return boolean                 True if information are valid, false otherwise
  */
-function checkSwiftForAccount(Account $account = null, $swift = null)
+function checkSwiftForAccount($account = null, $swift = null)
 {
 	if ($account == null && $swift == null) {
 		return false;
@@ -301,7 +302,7 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
  *      @param	?string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
  *      @return boolean                 	True if information are valid, false otherwise
  */
-function checkIbanForAccount(Account $account = null, $ibantocheck = null)
+function checkIbanForAccount($account = null, $ibantocheck = null)
 {
 	if ($account == null && $ibantocheck == null) {
 		return false;
@@ -447,7 +448,7 @@ function checkES($IentOfi, $InumCta)
 	$sum = 0;
 
 	for ($i = 2; $i < 10; $i++) {
-		$sum += $values[$i] * substr($IentOfi, $i - 2, 1);
+		$sum += $values[$i] * (int) substr($IentOfi, $i - 2, 1);
 	}
 
 	$key = 11 - $sum % 11;

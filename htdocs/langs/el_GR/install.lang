@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Χρησιμοποιήσατε τον οδηγό ρύθμι
 KeepDefaultValuesMamp=Χρησιμοποιήσατε τον οδηγό ρύθμισης Dolibarr από το DoliMamp, έτσι οι τιμές που προτείνονται εδώ είναι ήδη βελτιστοποιημένες. Αλλάξτε τα μόνο αν ξέρετε τι κάνετε.
 KeepDefaultValuesProxmox=Χρησιμοποιήσατε τον οδηγό ρύθμισης Dolibarr από μια εικονική συσκευή Proxmox, έτσι οι τιμές που προτείνονται εδώ έχουν ήδη βελτιστοποιηθεί. Αλλάξτε τα μόνο αν ξέρετε τι κάνετε.
 UpgradeExternalModule=Εκτελέστε ειδική διαδικασία αναβάθμισης εξωτερικής ενότητας
-SetAtLeastOneOptionAsUrlParameter=Ορίστε τουλάχιστον μία επιλογή ως παράμετρο στο URL. Για παράδειγμα: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Ορίστε τουλάχιστον μία επιλογή ως παράμετρο στη διεύθυνση URL με τιμή "test" ή "confirmed". Για παράδειγμα: '...repair.php?standard=confirmed'
 NothingToDelete=Τίποτα για καθαρισμό / διαγραφή
 NothingToDo=Καμία ενέργεια
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Η εφαρμογή προσπάθησε να α
 YouTryUpgradeDisabledByMissingFileUnLock=Η εφαρμογή προσπάθησε να αυτοαναβαθμιστεί, αλλά προς το παρόν δεν επιτρέπεται η διαδικασία αναβάθμισης. <br>
 ClickHereToGoToApp=Κάντε κλικ εδώ για να μεταβείτε στην εφαρμογή σας
 ClickOnLinkOrRemoveManualy=Εάν μια αναβάθμιση βρίσκεται σε εξέλιξη, παρακαλώ περιμένετε. Εάν όχι, κάντε κλικ στον παρακάτω σύνδεσμο. Εάν βλέπετε πάντα την ίδια σελίδα, πρέπει να αφαιρέσετε/μετονομάσετε το αρχείο install.lock στον κατάλογο εγγράφων.
-ClickOnLinkOrCreateUnlockFileManualy=Εάν μια αναβάθμιση βρίσκεται σε εξέλιξη, περιμένετε... Εάν όχι, πρέπει να δημιουργήσετε ένα αρχείο upgrade.unlock στον κατάλογο Documents του  Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=Εάν μια αναβάθμιση βρίσκεται σε εξέλιξη, παρακαλώ περιμένετε... Εάν όχι, πρέπει να καταργήσετε το αρχείο install.lock (ή να δημιουργήσετε το αρχείο upgrade.unlock για αναβάθμιση) στον κατάλογο documents του Dolibarr.
 Loaded=Φορτωμένο
 FunctionTest=Δοκιμή λειτουργίας
 NodoUpgradeAfterDB=Δεν απαιτείται κάποια ενέργεια από εξωτερικές ενότητες μετά την αναβάθμιση της βάσης δεδομένων

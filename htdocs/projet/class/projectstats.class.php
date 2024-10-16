@@ -1,6 +1,7 @@
 <?php
 /* Lead
  * Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +135,7 @@ class ProjectStats extends Stats
 	/**
 	 * Return count, and sum of products
 	 *
-	 * @return array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
@@ -236,7 +237,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -261,7 +262,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array with amount by month
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -289,7 +290,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array|int				Array of values or <0 if error
+	 * @return 	array|int<-1,-1>		Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -304,7 +305,6 @@ class ProjectStats extends Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -328,6 +328,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array $data';  // Phan can not interpret json_decode
 		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {
@@ -373,7 +374,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param  int $year               Year to scan
 	 * @param  int $wonlostfilter      Add a filter on status won/lost
-	 * @return array                   Array with amount by month
+	 * @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getWeightedAmountByMonth($year, $wonlostfilter = 1)
 	{
@@ -414,7 +415,6 @@ class ProjectStats extends Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -438,6 +438,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) { // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array $data';  // Phan can not interpret json_decode
 		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {
@@ -481,7 +482,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array with amount by month
+	 * @return 	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with amount by month
 	 */
 	public function getTransformRateByMonth($year, $format = 0)
 	{
@@ -530,7 +531,7 @@ class ProjectStats extends Stats
 	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
-	 * @return 	array
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	protected function getAverageByMonth($year)
 	{

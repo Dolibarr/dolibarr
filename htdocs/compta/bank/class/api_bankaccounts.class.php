@@ -1,6 +1,8 @@
 <?php
 /*
  * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +162,7 @@ class BankAccounts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$account->context['caller'] = $request_data['caller'];
+				$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -170,7 +172,7 @@ class BankAccounts extends DolibarrApi
 		$account->date_solde = time();
 		// courant and type are the same thing but the one used when
 		// creating an account is courant
-		$account->courant = $account->type;
+		$account->courant = $account->type; // deprecated
 
 		if ($account->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
@@ -250,7 +252,7 @@ class BankAccounts extends DolibarrApi
 		$typefrom = 'PRE';
 		$typeto = 'VIR';
 
-		if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
+		if ($accountto->type == Account::TYPE_CASH || $accountfrom->type == Account::TYPE_CASH) {
 			// This is transfer of change
 			$typefrom = 'LIQ';
 			$typeto = 'LIQ';
@@ -265,7 +267,7 @@ class BankAccounts extends DolibarrApi
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * price2num($amount), '', '', $user, $cheque_number);
+			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * (float) price2num($amount), '', '', $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;
@@ -342,7 +344,7 @@ class BankAccounts extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$account->context['caller'] = $request_data['caller'];
+				$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -374,7 +376,7 @@ class BankAccounts extends DolibarrApi
 		}
 
 		if ($account->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(401, 'error when deleting account');
+			throw new RestException(500, 'error when deleting account');
 		}
 
 		return array(
@@ -627,7 +629,7 @@ class BankAccounts extends DolibarrApi
 	public function updateLine($id, $line_id, $label)
 	{
 		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -663,7 +665,7 @@ class BankAccounts extends DolibarrApi
 	public function deleteLine($id, $line_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -679,7 +681,7 @@ class BankAccounts extends DolibarrApi
 		}
 
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(401, 'error when deleting account line');
+			throw new RestException(500, 'error when deleting account line');
 		}
 
 		return array(

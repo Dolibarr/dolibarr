@@ -5,6 +5,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -46,7 +47,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 	/**
 	 * @var string Nom du modele
-	 * @deprecated
+	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */
 	public $nom = 'arctic';
@@ -83,6 +84,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -105,7 +107,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -121,13 +123,13 @@ class mod_arctic extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Fichinter	$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	Societe|string		$objsoc     Object thirdparty
+	 *  @param  Fichinter|string	$object		Object we need next value for
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc = '', $object = '')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -138,8 +140,11 @@ class mod_arctic extends ModeleNumRefFicheinter
 			$this->error = 'NotConfigured';
 			return 0;
 		}
-
-		$numFinal = get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $object->datec);
+		$datec = '';
+		if (!empty($object->datec)) {
+			$datec = $object->datec;
+		}
+		$numFinal = get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $datec);
 
 		return  $numFinal;
 	}
@@ -148,9 +153,9 @@ class mod_arctic extends ModeleNumRefFicheinter
 	/**
 	 *  Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param	Fichinter	$objforref	Object for number to search
-	 *  @return string|0      			Next free value, 0 if KO
+	 *  @param	Societe			$objsoc     Object third party
+	 *  @param	Fichinter		$objforref	Object for number to search
+	 *  @return string|int      			Next free value, 0 if KO
 	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,7 @@ if ($action == 'setconst' && $user->admin) {
 	$error = 0;
 	$db->begin();
 	foreach ($_POST['setupdriver'] as $setupconst) {
+		'@phan-var-force array<string,string> $setupconst';
 		//print '<pre>'.print_r($setupconst, true).'</pre>';
 		$result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
 		if (!($result > 0)) {
@@ -151,7 +153,7 @@ if ($mode == 'setup' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 
 		$i = 0;
 		$submit_enabled = 0;
@@ -162,6 +164,15 @@ if ($mode == 'setup' && $user->admin) {
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
 					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.getDolGlobalString($key['varname']).'"';
+					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
+					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
+					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
+					print '</tr>'."\n";
+					break;
+				case "checkbox":
+					print '<tr class="oddeven">';
+					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="1" '.((getDolGlobalInt($key['varname'])) ? 'checked' : '');
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
 					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
@@ -278,7 +289,7 @@ if ($mode == 'config' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 		//print '<pre>'.print_r($printer, true).'</pre>';
 
 		print '<tr class="oddeven">';
@@ -324,9 +335,11 @@ if ($mode == 'test' && $user->admin) {
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
-		$langs->load($driver);
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		'@phan-var-force PrintingDriver $printer';
+		$langs->load($driver);
+		$langs->load('printing');
+
 		//print '<pre>'.print_r($printer, true).'</pre>';
 		if (count($printer->getlistAvailablePrinters())) {
 			if ($printer->listAvailablePrinters() == 0) {

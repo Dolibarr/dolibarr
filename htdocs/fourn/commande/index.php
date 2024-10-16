@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
  * Copyright (C) 2019		Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
  *    \file	      htdocs/fourn/commande/index.php
- *    \ingroup    commande fournisseur
+ *    \ingroup    order fournisseur
  *    \brief      Home page of supplier's orders area
  */
 
@@ -36,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
 
+$hookmanager = new HookManager($db);
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('orderssuppliersindex'));
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $orderid = GETPOST('orderid');
@@ -43,12 +50,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
-
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('orderssuppliersindex'));
-
 
 
 /*
@@ -255,7 +256,7 @@ if ($resql) {
 
 		$userstatic = new User($db);
 		$userstatic->id = $obj->rowid;
-		$userstatic->getrights('fournisseur');
+		$userstatic->loadRights('fournisseur');
 
 		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
 			print '<tr class="oddeven">';
@@ -263,7 +264,7 @@ if ($resql) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->email;
-			$userstatic->statut = $obj->statut;
+			$userstatic->status = $obj->statut;
 			print $userstatic->getNomUrl(1);
 			print '</td>';
 			print "</tr>\n";
@@ -284,7 +285,6 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Last modified orders
 */
-$max = 5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -309,7 +309,11 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).' ';
+	print '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC">';
+	print '<span class="badge">...</span>';
+	print '</a>';
+	print '</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num) {

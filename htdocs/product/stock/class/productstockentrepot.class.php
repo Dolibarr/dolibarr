@@ -22,9 +22,8 @@
 
 /**
  * \file    htdocs/product/stock/class/productstockentrepot.class.php
- * \ingroup ProductEntrepot
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \ingroup ProductStockEntrepot
+ * \brief   Table used to store limit of stock of product per warehouse
  */
 
 // Put here all includes required by your class file
@@ -32,10 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class ProductStockEntrepot
- *
- * Put here description of your class
  *
  * @see CommonObject
  */
@@ -356,7 +354,7 @@ class ProductStockEntrepot extends CommonObject
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
 		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
 		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';
@@ -508,13 +506,9 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
-		global $langs, $conf, $db;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
-
+		global $langs;
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("MyModule").'</u>';
 		$label .= '<div width="100%">';
@@ -532,6 +526,7 @@ class ProductStockEntrepot extends CommonObject
 			}
 		}
 		$result .= $link.$this->ref.$linkend;
+
 		return $result;
 	}
 

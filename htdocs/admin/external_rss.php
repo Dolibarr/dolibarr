@@ -7,6 +7,8 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 // Load translation files required by the page
 $langs->load("admin");
 
+$lastexternalrss = 0;
+$action = GETPOST('action', 'aZ09');
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$lastexternalrss = 0;
-$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -93,7 +95,7 @@ if ($action == 'add' || GETPOST("modify")) {
 		} else {
 			// Ajoute boite box_external_rss dans definition des boites
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOSTINT("norss").' ('.GETPOSTINT($external_rss_title)).")')";
+			$sql .= " VALUES ('box_external_rss.php', '".$db->escape(GETPOSTINT("norss")." (".GETPOST($external_rss_title)).")')";
 			if (!$db->query($sql)) {
 				dol_print_error($db);
 				$error++;
@@ -101,7 +103,8 @@ if ($action == 'add' || GETPOST("modify")) {
 			//print $sql;exit;
 		}
 
-		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOSTINT($external_rss_title), 'chaine', 0, '', $conf->entity);
+		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOST($external_rss_title), 'chaine', 0, '', $conf->entity);
+		$result2 = 0;
 		if ($result1) {
 			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss");
 			$urltosave = GETPOST($external_rss_urlrss, 'alpha');
@@ -162,6 +165,7 @@ if (GETPOST("delete")) {
 
 
 		$result1 = dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), $conf->entity);
+		$result2 = 0;
 		if ($result1) {
 			$result2 = dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss"), $conf->entity);
 		}
@@ -183,7 +187,7 @@ if (GETPOST("delete")) {
  */
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ExternalRSSSetup"));
+llxHeader('', $langs->trans("ExternalRSSSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-external_rss');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
@@ -210,7 +214,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss + 1).'" value=""></td>';
-print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
+print '<td>https://news.google.com/news?ned=us&topic=h&output=rss<br>https://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
 
@@ -223,7 +227,9 @@ print '<input type="hidden" name="norss" value="'.($lastexternalrss + 1).'">';
 print '</form>';
 
 print '<br><br>';
-print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span> - <a href="'.DOL_MAIN_URL_ROOT.'/admin/boxes.php">'.$langs->trans('JumpToBoxes').'</a>';
+print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span>';
+print ' - ';
+print '<a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.$langs->trans('JumpToBoxes').'</a>';
 print '<br><br>';
 
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
@@ -280,8 +286,8 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
-		if ($result > 0 && empty($rss->error)) {
-			print '<span class="ok">'.$langs->trans("Online").'</div>';
+		if ($result > 0 && empty($rssparser->error)) {
+			print '<span class="ok">'.img_picto($langs->trans("Online"), 'tick', 'class="pictofixedwidth"').$langs->trans("Online").'</div>';
 		} else {
 			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
@@ -294,7 +300,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Logo
-		if ($result > 0 && empty($rss->error)) {
+		if ($result > 0 && empty($rssparser->error)) {
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
@@ -317,10 +323,14 @@ if ($resql) {
 		}
 
 		// Active
-		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
+		$active = _isInBoxList((int) $idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
-		print '<td>'.yn($active).'</td>';
+		print '<td>'.yn($active);
+		print ' &nbsp; - &nbsp; <a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
+		print $langs->trans("JumpToBoxes");
+		print '</a>';
+		print '</td>';
 		print '</tr>'."\n";
 
 		print '</table>'."\n";
@@ -340,14 +350,14 @@ $db->close();
 /**
  * Check if the given RSS feed if inside the list of boxes/widgets
  *
- * @param	int		$idrss		The id of the RSS feed
- * @param	array	$boxlist	A list with boxes/widgets
- * @return	bool				true if the rss feed is inside the box/widget list, otherwise false
+ * @param	int				$idrss		The id of the RSS feed
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
+ * @return	bool						true if the rss feed is inside the box/widget list, otherwise false
  */
 function _isInBoxList($idrss, array $boxlist)
 {
 	foreach ($boxlist as $box) {
-		if ($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false) {
+		if ($box->boxcode === "lastrssinfos" && strpos($box->note, (string) $idrss) !== false) {
 			return true;
 		}
 	}

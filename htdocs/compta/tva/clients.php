@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +123,7 @@ $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToMod
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $date_start_year;
-$q=0;
+$q = 0;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -254,32 +255,32 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->code_compta_fournisseur = $x_coll[$my_coll_thirdpartyid]['company_supplier_accounting_code'][$id];
 
 			$x_both[$my_coll_thirdpartyid]['coll']['detail'][] = array(
-				'id'        =>$x_coll[$my_coll_thirdpartyid]['facid'][$id],
-				'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
+				'id'        => $x_coll[$my_coll_thirdpartyid]['facid'][$id],
+				'descr'     => $x_coll[$my_coll_thirdpartyid]['descr'][$id],
 
-				'pid'       =>$x_coll[$my_coll_thirdpartyid]['pid'][$id],
-				'pref'      =>isset($x_coll[$my_coll_thirdpartyid]['pref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['pref'][$id] : '',
-				'ptype'     =>$x_coll[$my_coll_thirdpartyid]['ptype'][$id],
-				'pstatus'   =>isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',
-				'pstatusbuy'=>isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',
+				'pid'       => $x_coll[$my_coll_thirdpartyid]['pid'][$id],
+				'pref'      => isset($x_coll[$my_coll_thirdpartyid]['pref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['pref'][$id] : '',
+				'ptype'     => $x_coll[$my_coll_thirdpartyid]['ptype'][$id],
+				'pstatus'   => isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',
+				'pstatusbuy' => isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',
 
-				'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
-				'payment_ref'=>isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['payment_ref'][$id] : '',
-				'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
-				'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
-				'dtotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
-				'dtype'     =>$x_coll[$my_coll_thirdpartyid]['dtype'][$id],
-				'drate'     =>$x_coll[$my_coll_thirdpartyid]['drate'][$id],
-				'datef'     =>$x_coll[$my_coll_thirdpartyid]['datef'][$id],
-				'datep'     =>$x_coll[$my_coll_thirdpartyid]['datep'][$id],
+				'payment_id' => $x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
+				'payment_ref' => isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['payment_ref'][$id] : '',
+				'payment_amount' => $x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
+				'ftotal_ttc' => $x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
+				'dtotal_ttc' => $x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
+				'dtype'     => $x_coll[$my_coll_thirdpartyid]['dtype'][$id],
+				'drate'     => $x_coll[$my_coll_thirdpartyid]['drate'][$id],
+				'datef'     => $x_coll[$my_coll_thirdpartyid]['datef'][$id],
+				'datep'     => $x_coll[$my_coll_thirdpartyid]['datep'][$id],
 
-				'company_link'=>$company_static->getNomUrl(1, '', 20),
+				'company_link' => $company_static->getNomUrl(1, '', 20),
 
-				'ddate_start'=>$x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
-				'ddate_end'  =>$x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
-				'totalht'   =>$x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
-				'vat'       =>$x_coll[$my_coll_thirdpartyid]['vat_list'][$id],
-				'link'      =>$invoice_customer->getNomUrl(1, '', 12)
+				'ddate_start' => $x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
+				'ddate_end'  => $x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
+				'totalht'   => $x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
+				'vat'       => $x_coll[$my_coll_thirdpartyid]['vat_list'][$id],
+				'link'      => $invoice_customer->getNomUrl(1, '', 12)
 			);
 		}
 	}
@@ -302,27 +303,27 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$expensereport->type = $x_paye[$my_paye_thirdpartyid]['type'][$id];
 
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
-					'id'				=>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
-					'descr'				=>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+					'id'				=> $x_paye[$my_paye_thirdpartyid]['facid'][$id],
+					'descr'				=> $x_paye[$my_paye_thirdpartyid]['descr'][$id],
 
-					'pid'				=>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
-					'pref'				=>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
-					'ptype'				=>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-					'pstatus'           =>$x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
-					'pstatusbuy'        =>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+					'pid'				=> $x_paye[$my_paye_thirdpartyid]['pid'][$id],
+					'pref'				=> $x_paye[$my_paye_thirdpartyid]['pref'][$id],
+					'ptype'				=> $x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+					'pstatus'           => $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy'        => $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
-					'payment_id'		=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
-					'payment_ref'		=>$x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
-					'payment_amount'	=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
-					'ftotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
-					'dtotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
-					'dtype'				=>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
-					'drate'             =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
-					'ddate_start'		=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
-					'ddate_end'			=>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
-					'totalht'			=>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
-					'vat'				=>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
-					'link'				=>$expensereport->getNomUrl(1)
+					'payment_id'		=> $x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+					'payment_ref'		=> $x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
+					'payment_amount'	=> $x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+					'ftotal_ttc'		=> price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+					'dtotal_ttc'		=> price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+					'dtype'				=> $x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+					'drate'             => $x_paye[$my_coll_thirdpartyid]['drate'][$id],
+					'ddate_start'		=> $x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+					'ddate_end'			=> $x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+					'totalht'			=> price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+					'vat'				=> $x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+					'link'				=> $expensereport->getNomUrl(1)
 				);
 			} else {
 				$invoice_supplier->id = $x_paye[$my_paye_thirdpartyid]['facid'][$id];
@@ -344,32 +345,32 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$company_static->code_compta_fournisseur = $x_paye[$my_paye_thirdpartyid]['company_supplier_accounting_code'][$id];
 
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
-					'id'        =>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
-					'descr'     =>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+					'id'        => $x_paye[$my_paye_thirdpartyid]['facid'][$id],
+					'descr'     => $x_paye[$my_paye_thirdpartyid]['descr'][$id],
 
-					'pid'       =>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
-					'pref'      =>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
-					'ptype'     =>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-					'pstatus'   =>$x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
-					'pstatusbuy'=>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+					'pid'       => $x_paye[$my_paye_thirdpartyid]['pid'][$id],
+					'pref'      => $x_paye[$my_paye_thirdpartyid]['pref'][$id],
+					'ptype'     => $x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+					'pstatus'   => $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy' => $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
-					'payment_id'=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
-					'payment_ref'=>$x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
-					'payment_amount'=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
-					'ftotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
-					'dtotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
-					'dtype'     =>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
-					'drate'     =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
-					'datef'     =>$x_paye[$my_paye_thirdpartyid]['datef'][$id],
-					'datep'     =>$x_paye[$my_paye_thirdpartyid]['datep'][$id],
+					'payment_id' => $x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+					'payment_ref' => $x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
+					'payment_amount' => $x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+					'ftotal_ttc' => price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+					'dtotal_ttc' => price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+					'dtype'     => $x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+					'drate'     => $x_paye[$my_coll_thirdpartyid]['drate'][$id],
+					'datef'     => $x_paye[$my_paye_thirdpartyid]['datef'][$id],
+					'datep'     => $x_paye[$my_paye_thirdpartyid]['datep'][$id],
 
-					'company_link'=>$company_static->getNomUrl(1, '', 20),
+					'company_link' => $company_static->getNomUrl(1, '', 20),
 
-					'ddate_start'=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
-					'ddate_end'  =>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
-					'totalht'   =>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
-					'vat'       =>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
-					'link'      =>$invoice_supplier->getNomUrl(1, '', 12)
+					'ddate_start' => $x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+					'ddate_end'  => $x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+					'totalht'   => price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+					'vat'       => $x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+					'link'      => $invoice_supplier->getNomUrl(1, '', 12)
 				);
 			}
 		}
@@ -412,7 +413,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["type"] = 'vat';
 
 	$object = array(&$x_coll, &$x_paye, &$x_both);
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -699,7 +700,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc'])) {
 							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
+							$ratiolineinvoice = ((float) $fields['dtotal_ttc'] / (float) $fields['ftotal_ttc']);
 							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
 						print '</span></td>';
@@ -720,7 +721,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+								$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 							}
 							print '<span class="amount">'.price(price2num($fields['payment_amount'], 'MT')).'</span>';
 							if (isset($fields['payment_amount'])) {
@@ -732,7 +733,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// VAT paid
 					print '<td class="nowrap right"><span class="amount">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</span></td>';
 

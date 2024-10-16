@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cashdesk
 CashDeskMenu=Punto de venta
-CashDesk=Punto de venta
 CashDeskBankCash=Cuenta bancaria (en efectivo)
 CashDeskBankCB=Cuenta bancaria (tarjeta)
 CashDeskBankCheque=Cuenta bancaria (cheque)
@@ -15,7 +14,6 @@ NoArticle=Sin artículo
 TotalTicket=Ticket total
 NoVAT=No hay IVA para esta venta
 Change=Exceso recibido
-ShowCompany=Mostrar empresa
 ShowStock=Mostrar almacén
 DeleteArticle=Haga clic para eliminar este artículo
 FilterRefOrLabelOrBC=Buscar (Ref/Etiqueta)

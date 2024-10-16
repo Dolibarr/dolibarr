@@ -103,7 +103,7 @@ $form = new Form($db);
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
 
-llxHeader('', $texte, $helpurl, '');
+llxHeader('', $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_replenishorders');
 
 print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 

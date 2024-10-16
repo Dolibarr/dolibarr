@@ -10,6 +10,7 @@ ActionAC_REL=Stuur factuur per e-mail (herinnering)
 ActionAC_COM=Verzend verkooporder per mail
 ActionAC_SUP_ORD=Verzend bestelling per mail
 ActionAC_SUP_INV=Stuur leveranciersfactuur per mail
+ActionAC_AUTO=Automatisch ingevoerde acties
 ActionAC_OTH_AUTOShort=Ander
 ToOfferALinkForOnlineSignature=Link voor online handtekening
 WelcomeOnOnlineSignaturePageProposal=Welkom op deze pagina om commerciële voorstellen van %s te accepteren

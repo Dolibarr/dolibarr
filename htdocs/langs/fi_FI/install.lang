@@ -7,7 +7,7 @@ ConfFileCouldBeCreated=Asetustiedosto <b>%s</b> voitaisiin luoda.
 ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
 ConfFileIsWritable=Configuration <b>file %s</b> on kirjoitettavissa.
 ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
-ConfFileReload=Ladataan parametreja uudelleen määrityksestä tiedosto.
+ConfFileReload=Ladataan parametreja konfiguraatiotiedostosta.
 NoReadableConfFileSoStartInstall=Määritystä tiedosto <b>conf/conf.php</b> ei ole olemassa. ei ole luettavissa. Suoritamme asennusprosessin ja yritämme alustaa sen.
 PHPSupportPOSTGETOk=Tämä PHP tukee muuttujat POST ja GET.
 PHPSupportPOSTGETKo=On mahdollista, että PHP-asetuksesi ei tue muuttujia POST ja/tai GET. Tarkista parametri <b>variables_order</b> tiedostosta php.ini.
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Käytit Dolibarrin ohjattua asennustoimintoa Linux-paketist
 KeepDefaultValuesMamp=Käytit DoliMampin ohjattua Dolibarrin asennustoimintoa, joten tässä ehdotetut arvot on jo optimoitu. Muuta niitä vain, jos tiedät mitä olet tekemässä.
 KeepDefaultValuesProxmox=Käytit Dolibarrin ohjattua asennustoimintoa Proxmox-virtuaalilaitteistosta, joten tässä ehdotetut arvot on jo optimoitu. Muuta niitä vain, jos tiedät mitä olet tekemässä.
 UpgradeExternalModule=Suorita ulkoisen moduulin oma päivitysprosessi
-SetAtLeastOneOptionAsUrlParameter=Aseta vähintään yksi vaihtoehto parametriksi URL-osoitteessa. Esimerkki: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Ei mitään puhdistettavaa/poistettavaa
 NothingToDo=Ei mitään tehtävää
 #########
@@ -191,7 +191,7 @@ MigrationProjectUserResp=Tietojen siirtäminen alalla fk_user_resp ja llx_projet
 MigrationProjectTaskTime=Päivitä aika sekunneissa
 MigrationActioncommElement=Päivitä tiedot toimista
 MigrationPaymentMode=maksu-tyypin tietojen siirto
-MigrationCategorieAssociation=Kategorioiden siirto
+MigrationCategorieAssociation=Kategorioiden siirto 
 MigrationEvents=Tapahtumien siirto tapahtuman omistajan lisäämiseksi tehtävätaulukkoon
 MigrationEventsContact=Tapahtumien siirto tapahtuman yhteyshenkilön lisäämiseksi tehtävätaulukkoon
 MigrationRemiseEntity=Päivitä entiteetin Kenttä arvo llx_societe_remise
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Sovellus yritti päivittää itse, mutta asennus
 YouTryUpgradeDisabledByMissingFileUnLock=Sovellus yritti päivittää itse, mutta päivitysprosessi ei ole tällä hetkellä sallittu.<br>
 ClickHereToGoToApp=Napsauta tästä siirtyäksesi hakemukseesi
 ClickOnLinkOrRemoveManualy=Jos päivitys on käynnissä, odota. Jos ei, napsauta seuraavaa linkkiä. Jos näet aina tämän saman sivun, sinun on poistettava tai nimettävä uudelleen tiedosto install.lock asiakirjahakemistosta.
-ClickOnLinkOrCreateUnlockFileManualy=Jos päivitys on käynnissä, odota... Jos ei, sinun on poistettava tiedosto install.lock tai luo a tiedosto upgrade.unlock Dolibarrin asiakirjahakemistoon.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Ladattu
 FunctionTest=Toimivuustesti
 NodoUpgradeAfterDB=Ulkoiset moduulit eivät ole pyytäneet toimenpiteitä tietokanta-päivityksen jälkeen

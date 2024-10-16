@@ -39,7 +39,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  */
 function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("functions_openid::check_user_password_openid usertotest=".$usertotest);
 
@@ -62,11 +62,11 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			return false;
 		}
 		return false;
-	} elseif ($_GET['openid_mode'] == 'id_res') {
+	} elseif (GETPOST('openid_mode') == 'id_res') {
 		// Perform HTTP Request to OpenID server to validate key
 		$openid = new SimpleOpenID();
 		$openid->SetIdentity(GETPOST('openid_identity'));
-		$openid_validation_result = $openid->ValidateWithServer();
+		$openid_validation_result = $openid->validateWithServer();
 		if ($openid_validation_result === true) {
 			// OK HERE KEY IS VALID
 
@@ -93,7 +93,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			//echo "INVALID AUTHORIZATION";
 			return false;
 		}
-	} elseif ($_GET['openid_mode'] == 'cancel') {
+	} elseif (GETPOST('openid_mode') == 'cancel') {
 		// User Canceled your Request
 		//echo "USER CANCELED REQUEST";
 		return false;

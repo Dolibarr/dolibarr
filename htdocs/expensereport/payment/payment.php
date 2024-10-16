@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,12 +46,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$permissiontoadd = $user->hasRight('expensereport', 'creer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -85,14 +87,14 @@ if ($action == 'add_payment') {
 
 	if (!$error) {
 		$paymentid = 0;
-		$total = 0;
+		// $total = 0;
 
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				if (GETPOST($key)) {
-					$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
-					$total += price2num(GETPOST($key));
+					$amounts[$expensereport->fk_user_author] = (float) price2num(GETPOST($key));
+					// $total += price2num(GETPOST($key));
 				}
 			}
 		}
@@ -109,8 +111,9 @@ if ($action == 'add_payment') {
 			$payment = new PaymentExpenseReport($db);
 			$payment->fk_expensereport = $expensereport->id;
 			$payment->datep       	 = $datepaid;
-			$payment->amounts		 = $amounts; // Tableau de montant
-			$payment->total          = $total;
+			$payment->amounts		 = $amounts; // array of amounts
+			// total is calculated in class
+			// $payment->total          = $total;
 			$payment->fk_typepayment = GETPOSTINT("fk_typepayment");
 			$payment->num_payment    = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public    = GETPOST("note_public", 'restricthtml');
@@ -195,7 +198,7 @@ if ($action == 'create' || empty($action)) {
 	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head(null, '0', '', -1);
+	print dol_get_fiche_head([], '0', '', -1);
 
 	$linkback = '';
 	// $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';

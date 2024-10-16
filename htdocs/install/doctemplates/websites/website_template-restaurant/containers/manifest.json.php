@@ -10,4 +10,4 @@ header('Content-type: application/manifest+json');
 
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");
-// END PHP ?>
+// END PHP

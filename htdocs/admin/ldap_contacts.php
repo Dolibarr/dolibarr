@@ -125,7 +125,7 @@ if ($action == 'setvalue' && $user->admin) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_contacts');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
@@ -293,7 +293,7 @@ show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'test') {
+	if ($action == 'test') {
 		// Create object
 		$object = new Contact($db);
 		$object->initAsSpecimen();

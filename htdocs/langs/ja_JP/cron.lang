@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = スケジュールされたジョブを読込む
 Permission23102 = スケジュールされたジョブの作成/更新
 Permission23103 = スケジュールされたジョブを削除する
@@ -30,7 +29,8 @@ CronExecute=今すぐ起動
 CronConfirmExecute=これらのスケジュールされたジョブを今すぐ実行してもよいか？
 CronInfo=スケジュールされたジョブモジュールを使用すると、ジョブをスケジュールして自動的に実行できる。ジョブは手動で開始することもできる。
 CronTask=ジョブ
-CronNone=なし
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=以前ではない
 CronDtEnd=以後ではない
 CronDtNextLaunch=次の実行
@@ -49,8 +49,8 @@ CronEach=すべて
 JobFinished=ジョブが起動され、終了した
 Scheduled=予定
 #Page card
-CronAdd= ジョブを追加する
-CronEvery=それぞれジョブを実行する
+CronAdd=ジョブを追加する
+CronEvery=Run job every
 CronObject=作成するインスタンス/オブジェクト
 CronArgs=パラメータ
 CronSaveSucess=保存成功

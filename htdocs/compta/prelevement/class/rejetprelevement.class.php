@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,20 +48,20 @@ class RejetPrelevement
 	public $date_rejet;
 
 	/**
-	 * @var array	Reason of error
+	 * @var string	Reason of error
 	 */
 	public $motif;
 	/**
-	 * @var array	Label status of invoicing
+	 * @var string	Label status of invoicing
 	 */
 	public $invoicing;
 
 	/**
-	 * @var array	Labels of reason
+	 * @var string[]	Labels of reason
 	 */
 	public $motifs;
 	/**
-	 * @var array	Labels of invoicing status
+	 * @var string[]	Labels of invoicing status
 	 */
 	public $labelsofinvoicing;
 
@@ -82,7 +83,7 @@ class RejetPrelevement
 		$this->motifs = array();
 		$this->labelsofinvoicing = array();
 
-		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
+		$this->motifs[0] = "";
 		$this->motifs[1] = $langs->trans("StatusMotif1");
 		$this->motifs[2] = $langs->trans("StatusMotif2");
 		$this->motifs[3] = $langs->trans("StatusMotif3");
@@ -178,9 +179,6 @@ class RejetPrelevement
 			// Make a negative payment
 			// Amount must be an array (id of invoice -> amount)
 			$pai->amounts = array();
-
-			//var_dump($this->type);exit;
-
 			$pai->amounts[$facs[$i][0]] = price2num($amountrejected * -1);		// The payment must be negative because it is a refund
 
 			$pai->datepaye = $date_rejet;

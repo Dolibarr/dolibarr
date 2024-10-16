@@ -25,7 +25,10 @@ the project: `pre-commit-config.yaml`.
 
 1. Install pre-commit tool.\
    If you do not have python installed, install [python](https://www.python.org) first.\
+   `sudo apt install python3`
+   
    If you do not have [`pip`](https://pypi.org/project/pip), install that as well.\\
+    `sudo apt install pip`
 
    Then you can install pre-commit tool: 
    `python3 -m pip install pre-commit`
@@ -85,10 +88,10 @@ export SKIP=no-commit-to-branch   # In your .bashrc or session.
 There is much more you can do with pre-commit, check out its
 [documentation](https://pre-commit.com).
 
-Now your commit is less likely to fail in the Continuous Intagration (CI) run
+Now your commit is less likely to fail in the Continuous Integration (CI) run
 on github.\
 CI also runs pre-commit to help maintain code quality.
 
 Note:
 Code for precommits are saved into:
-.cache/pre-commit/repoyXXXXX/py_env-python3/lib/pythonX.Y/site-packages/pre_commit_hooks/no_commit_to_branch.py
+.cache/pre-commit/repo*/py_env-python3/lib/python*/site-packages/pre_commit_hooks/no_commit_to_branch.py

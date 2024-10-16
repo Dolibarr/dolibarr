@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
-		$production_mode = (!getDolGlobalString('API_PRODUCTION_MODE') ? false : true);
+		$production_mode = getDolGlobalBool('API_PRODUCTION_MODE');
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -73,27 +74,54 @@ class DolibarrApi
 	/**
 	 * Check and convert a string depending on its type/name.
 	 *
-	 * Display a short message an return a http code 200
-	 *
 	 * @param	string			$field		Field name
-	 * @param	string|array	$value		Value to check/clean
+	 * @param	string|string[]	$value		Value to check/clean
 	 * @param	Object			$object		Object
-	 * @return 	string|array				Value cleaned
+	 * @return 	string|array<string,mixed>	Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
 		if (!is_array($value)) {
-			// TODO Use type detected in $object->fields if $object known and we can
+			// Sanitize the value using its type declared into ->fields of $object
+			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
+				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
+					return sanitizeVal($value, 'int');
+				}
+				if ($object->fields[$field]['type'] == 'html') {
+					return sanitizeVal($value, 'restricthtml');
+				}
+				if ($object->fields[$field]['type'] == 'select') {
+					// Check values are in the list of possible 'options'
+					// TODO
+				}
+				if ($object->fields[$field]['type'] == 'sellist' || $object->fields[$field]['type'] == 'checkbox') {
+					// TODO
+				}
+				if ($object->fields[$field]['type'] == 'boolean' || $object->fields[$field]['type'] == 'radio') {
+					// TODO
+				}
+				if ($object->fields[$field]['type'] == 'email') {
+					return sanitizeVal($value, 'email');
+				}
+				if ($object->fields[$field]['type'] == 'password') {
+					return sanitizeVal($value, 'none');
+				}
+				// Others will use 'alphanohtml'
+			}
+
 			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 				return sanitizeVal($value, 'restricthtml');
 			} else {
 				return sanitizeVal($value, 'alphanohtml');
 			}
-		} else {
-			// TODO Recall _checkValForAPI for each element of array
+		} else {	// Example when $field = 'extrafields' and $value = content of $object->array_options
+			$newarrayvalue = array();
+			foreach ($value as $tmpkey => $tmpvalue) {
+				$newarrayvalue[$tmpkey] = $this->_checkValForAPI($tmpkey, $tmpvalue, $object);
+			}
 
-			return $value;
+			return $newarrayvalue;
 		}
 	}
 
@@ -107,25 +135,54 @@ class DolibarrApi
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{
+		// phpcs:enable
 		// If properties is empty, we return all properties
 		if (empty($properties)) {
 			return $object;
 		}
-		// Else we filter properties
+
+		// Copy of exploded array for efficiency
+		$arr_properties = explode(',', $properties);
+		$magic_properties = array();
+		$real_properties = get_object_vars($object);
+
+		// Unsetting real properties may unset magic properties.
+		// We keep a copy of the requested magic properties
+		foreach ($arr_properties as $key) {
+			if (!array_key_exists($key, $real_properties)) {
+				// Not a real property,
+				// check if $key is a magic property (we want to keep '$obj->$key')
+				if (property_exists($object, $key) && isset($object->$key)) {
+					$magic_properties[$key] = $object->$key;
+				}
+			}
+		}
+
+		// Filter real properties (may indirectly unset magic properties)
 		foreach (get_object_vars($object) as $key => $value) {
-			if (!in_array($key, explode(',', $properties))) {
+			if (!in_array($key, $arr_properties)) {
 				unset($object->$key);
 			}
 		}
+
+		// Restore the magic properties
+		foreach ($magic_properties as $key => $value) {
+			$object->$key = $value;
+		}
+
 		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive object data
+	 * @phpstan-template T of Object
 	 *
 	 * @param   Object  $object		Object to clean
 	 * @return	Object				Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -180,11 +237,16 @@ class DolibarrApi
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);
+		unset($object->oldref);
 		unset($object->alreadypaid);
 		unset($object->openid);
-
-		//unset($object->labelStatus);
-		//unset($object->labelStatusShort);
+		unset($object->fk_bank);
+		unset($object->showphoto_on_popup);
+		unset($object->nb);
+		unset($object->nbphoto);
+		unset($object->output);
+		unset($object->tpl);
+		//unset($object->libelle);
 
 		unset($object->stats_propale);
 		unset($object->stats_commande);
@@ -194,14 +256,6 @@ class DolibarrApi
 		unset($object->stats_reception);
 		unset($object->stats_mrptoconsume);
 		unset($object->stats_mrptoproduce);
-
-		unset($object->element);
-		unset($object->element_for_permission);
-		unset($object->fk_element);
-		unset($object->table_element);
-		unset($object->table_element_line);
-		unset($object->class_element_line);
-		unset($object->picto);
 
 		unset($object->fieldsforcombobox);
 		unset($object->regeximgext);
@@ -215,17 +269,34 @@ class DolibarrApi
 		unset($object->country);
 		unset($object->state);
 		unset($object->state_code);
+		unset($object->fk_departement);
 		unset($object->departement);
 		unset($object->departement_code);
 
 		unset($object->libelle_statut);
 		unset($object->libelle_paiement);
+		unset($object->labelStatus);
+		unset($object->labelStatusShort);
+
+		unset($object->actionmsg);
+		unset($object->actionmsg2);
 
 		unset($object->prefix_comm);
 
-		if (!isset($object->table_element) || $object->table_element != 'ticket') {
+		if (!isset($object->table_element) || ! in_array($object->table_element, array('expensereport_det', 'ticket'))) {
 			unset($object->comments);
 		}
+
+		unset($object->origin_object);
+		unset($object->origin);
+		unset($object->element);
+		unset($object->element_for_permission);
+		unset($object->fk_element);
+		unset($object->table_element);
+		unset($object->table_element_line);
+		unset($object->class_element_line);
+		unset($object->picto);
+		unset($object->linked_objects);
 
 		// Remove the $oldcopy property because it is not supported by the JSON
 		// encoder. The following error is generated when trying to serialize
@@ -340,7 +411,7 @@ class DolibarrApi
 	 * Function to forge a SQL criteria from a Generic filter string.
 	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
-	 * @param  array    $matches    Array of found string by regex search.
+	 * @param  string[]	$matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
 	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"

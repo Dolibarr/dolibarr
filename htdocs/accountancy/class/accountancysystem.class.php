@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2023      Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2024      Alexandre Janniaux    <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,8 +171,13 @@ class AccountancySystem
 		$now = dol_now();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
-		$sql .= " (date_creation, fk_user_author, numero, label)";
-		$sql .= " VALUES ('".$this->db->idate($now)."',".((int) $user->id).",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
+		$sql .= " (date_creation, fk_user_author, label, pcg_version, active)";
+		$sql .= " VALUES ('"
+			. $this->db->idate($now)                    ."',"
+			. ((int) $user->id)                         .",'"
+			. $this->db->escape($this->label)           ."','"
+			. $this->db->escape($this->pcg_version)     ."',"
+			. ((int) $this->active)                      .")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);

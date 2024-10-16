@@ -201,7 +201,7 @@ MenuMembersStats=Statistik
 LastMemberDate=Spätestes Mitgliedschaftsdatum
 LatestSubscriptionDate=Datum der letzten Beitragszahlung
 MemberNature=Art des Mitglieds
-MembersNature=Mitgliedsart
+MembersNature=Art der Mitglieder
 Public=%s kann meine Mitgliedschaft im <a target="_blank" href="%s">öffentlichen Register</a> veröffentlichen
 MembershipPublic=Öffentliche Mitgliedschaft
 NewMemberbyWeb=Neues Mitglied hinzugefügt, wartet auf Genehmigung.
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s Mitgliedschaft(en) erstellt
 XSubsriptionErrors=%s Mitgliedschaft(en) waren fehlerhaft.
 CreateSubscription=Beitrag erstellen
 WarningNoComplementaryActionDone=Keine ergänzende Aufzeichnungs-Aktion wird mit dieser Massenaktion ausgeführt.
+NewMembership=Neue Mitgliedschaft

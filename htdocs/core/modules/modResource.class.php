@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      MDW                 <mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
+
 /**
  * Description and activation class for module Resource
  */
@@ -40,7 +41,7 @@ class modResource extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $langs, $conf;	// $langs may be used by the tpl files.
 
 		$this->db = $db;
 
@@ -147,7 +148,7 @@ class modResource extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		$this->rights[$r][0] = 63001;
 		$this->rights[$r][1] = 'Read resources';
@@ -241,8 +242,8 @@ class modResource extends DolibarrModules
 		$this->export_permission[$r] = array(array("resource", "read"));
 
 		$this->export_fields_array[$r] = array('r.rowid' => 'IdResource', 'r.ref' => 'ResourceFormLabel_ref', 'c.rowid' => 'ResourceTypeID', 'c.code' => 'ResourceTypeCode', 'c.label' => 'ResourceTypeLabel', 'r.description' => 'ResourceFormLabel_description', 'r.note_private' => "NotePrivate", 'r.note_public' => "NotePublic", 'r.asset_number' => 'AssetNumber', 'r.datec' => "DateCreation", 'r.tms' => "DateLastModification");
-		$this->export_TypeFields_array[$r] = array('r.rowid' => 'List:resource:ref', 'r.ref' => 'Text', 'r.asset_number' => 'Text', 'r.description' => 'Text', 'c.code' => 'Text', 'c.label' => 'List:c_type_resource:label', 'r.datec' => 'Date', 'r.tms' => 'Date', 'r.note_private' => 'Text', 'r.note_public' => 'Text');
-		$this->export_entities_array[$r] = array('r.rowid' => 'resource', 'r.ref' => 'resource', 'c.code' => 'resource', 'c.label' => 'resource', 'r.description' => 'resource', 'r.note_private' => "resource", 'r.resource' => "resource", 'r.asset_number' => 'resource', 'r.datec' => "resource", 'r.tms' => "resource");
+		$this->export_TypeFields_array[$r] = array('r.rowid' => 'List:resource:ref', 'r.ref' => 'Text', 'r.asset_number' => 'Text', 'r.description' => 'Text', 'c.rowid' => 'List:c_type_resource:label', 'c.code' => 'Text', 'c.label' => 'Text', 'r.datec' => 'Date', 'r.tms' => 'Date', 'r.note_private' => 'Text', 'r.note_public' => 'Text');
+		$this->export_entities_array[$r] = array('r.rowid' => 'resource', 'r.ref' => 'resource', 'c.rowid' => 'resource', 'c.code' => 'resource', 'c.label' => 'resource', 'r.description' => 'resource', 'r.note_private' => "resource", 'r.resource' => "resource", 'r.asset_number' => 'resource', 'r.datec' => "resource", 'r.tms' => "resource");
 
 		$keyforselect = 'resource';
 		$keyforelement = 'resource';

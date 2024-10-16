@@ -96,7 +96,6 @@ Transactions=Actas
 BankTransactionLine=Entrada bancaria
 AllAccounts=Todas las cuentas bancarias y de efectivo
 FutureTransaction=Transacción futura. No se puede reconciliar.
-EventualyAddCategory=Eventualmente, especifique una categoría en la cual clasificar los registros
 ToConciliate=¿Para reconciliar?
 ThenCheckLinesAndConciliate=Luego, verifique las líneas presentes en el extracto bancario y haga clic
 AllRIB=Todos BAN

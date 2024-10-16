@@ -18,7 +18,7 @@
 
 /**
  *      \file       compta/facture/class/paymentterm.class.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  */
 

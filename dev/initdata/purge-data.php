@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -225,7 +226,6 @@ if (!empty($argv[4])) {
 	$user=new User($db);
 }
 
-//var_dump($user->db->database_name);
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'An admin user with login "admin" must exists to use this script.'."\n";

@@ -51,7 +51,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return collected data
 	 *
-	 *  @return    array   Array
+	 *  @return    array   Array of collected data
 	 */
 	public function collect()
 	{

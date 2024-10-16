@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2016       Charlie Benke       <charlie@patas-monkey.com>
--- Copyright (C) 2016       Frederic France     <frederic.france@free.fr>
+-- Copyright (C) 2016       Frédéric France     <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,4 +23,3 @@ ALTER TABLE llx_categorie_account ADD INDEX idx_categorie_account_fk_account (fk
 
 ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_fk_account FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
-

@@ -32,6 +32,7 @@ PRINTIPP_HOST=Serverni chop etish
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Kirish
 PRINTIPP_PASSWORD=Parol
+PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=Standart printer aniqlanmagan
 DefaultPrinter=Standart printer
 Printer=Printer
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Google Cloud Print drayverini chop etish uchun konfig
 PrintingDriverDescprintipp=Drayv kuboglarini bosib chiqarish uchun konfiguratsiya o'zgaruvchilari.
 PrintTestDescprintgcp=Google Cloud Print uchun printerlar ro'yxati.
 PrintTestDescprintipp=Kuboklar uchun printerlar ro'yxati.
+Testbbbb

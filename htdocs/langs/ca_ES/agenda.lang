@@ -21,7 +21,6 @@ MenuDoneMyActions=Els meus esdeveniments acabats
 ListOfEvents=Llista d'esdeveniments (calendari predeterminat)
 ActionsAskedBy=Esdeveniments registrats per
 ActionsToDoBy=Esdeveniments assignats a
-ActionsDoneBy=Esdeveniments fets per
 ActionAssignedTo=Esdeveniment assignat a
 ViewCal=Vista mensual
 ViewDay=Vista diària
@@ -135,12 +134,14 @@ AgendaModelModule=Plantilles de documents per esdeveniments
 DateActionStart=Data inicial
 DateActionEnd=Data finalització
 AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
-AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accions creades per l'usuari <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció d'accions que no pertanyen a l'usuari <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> per restringir la sortida a les accions propietat d'un usuari <b>%s</b> (utilitza </b>) logina=!%s</b> per a esdeveniments que no són propietat de l'usuari).
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__</b> per a restringir la sortida a accions vinculades al projecte <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent= <b>notactiontype=systemauto</b> per a excloure els esdeveniments automàtics.
+AgendaUrlOptionsType=<b>actiontype=%s</b> per obtenir esdeveniments automàtics o manuals
+AgendaUrlOptionsCode=<b>actioncode=%s</b> per obtenir només esdeveniments amb un codi determinat
 AgendaUrlOptionsIncludeHolidays= <b>includeholidays=1</b> per a incloure esdeveniments de vacances.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> per limitar els esdeveniments de l'últim %s dies (el valor predeterminat és %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> per limitar als darrers 50 esdeveniments (el valor per defecte i el màxim és %s ).
 AgendaShowBirthdayEvents=Aniversaris de contactes
 AgendaHideBirthdayEvents=Amaga els aniversaris dels contactes
 Busy=Ocupat
@@ -201,4 +202,6 @@ AppointmentDuration = Durada de la cita: %s
 BookingSuccessfullyBooked=La teva reserva s'ha desat
 BookingReservationHourAfter=Confirmem la reserva de la nostra reunió a la data %s
 BookcalBookingTitle=Cita en línia
-Transparency = Transparency
+Transparency = Transparència
+ReadMore = Llegeix més
+ReadLess = Llegeix menys

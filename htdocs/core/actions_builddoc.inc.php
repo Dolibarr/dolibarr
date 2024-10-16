@@ -36,7 +36,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 // Build doc
 if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
-		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Model")), null, 'errors');
 	} else {
 		// Reload to get all modified line records and be ready for hooks
 		$ret = $object->fetch($id);

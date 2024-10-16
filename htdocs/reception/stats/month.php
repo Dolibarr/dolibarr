@@ -18,7 +18,7 @@
 
 /**
  *    \file       htdocs/reception/stats/month.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      Page des stats receptions par mois
  */
 
@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'reception', 0, '');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-reception page-stats_month');
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');

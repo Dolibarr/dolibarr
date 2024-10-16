@@ -21,7 +21,7 @@
 
 /**
  *       \file       htdocs/fourn/commande/contact.php
- *       \ingroup    commande
+ *       \ingroup    order
  *       \brief      Onglet de gestion des contacts de commande
  */
 
@@ -46,8 +46,8 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 $hookmanager->initHooks(array('ordersuppliercardcontact', 'ordersuppliercontactcard', 'globalcard'));
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 

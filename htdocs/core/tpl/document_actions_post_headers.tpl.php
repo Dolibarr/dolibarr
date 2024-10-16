@@ -32,7 +32,7 @@
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -60,8 +60,11 @@ $disablemove = 1;
 if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
 	$disablemove = 0;
 }
-
-
+$parameters = array();
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);
+if ($reshook) {
+	$disablemove = $hookmanager->resArray['disablemove'];
+}
 
 /*
  * Confirm form to delete a file
@@ -93,6 +96,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 			'facture',
 			'commande',
 			'propal',
+			'payment',
 			'supplier_proposal',
 			'ficheinter',
 			'contract',
@@ -133,6 +137,8 @@ $formfile->form_attach_new_file(
 	1,
 	$savingdocmask
 );
+
+//var_dump($modulepart);var_dump($upload_dir);
 
 // List of document
 $formfile->list_of_documents(

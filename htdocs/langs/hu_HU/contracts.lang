@@ -47,6 +47,7 @@ DateContract=Szerződés dátuma
 DateServiceActivate=Szolgáltatás aktiválásának dátuma
 ListOfServices=Szolgáltatások listája
 ListOfInactiveServices=Nem aktív szolágltatások listája
+ListOfNotExpiredServices=A le nem járt aktív szolgáltatások listája
 ListOfExpiredServices=Lejárt, de még aktív szolgáltatások listája
 ListOfClosedServices=Lezárt szolgáltatások listája
 ListOfRunningServices=Futó szolgáltatások listája

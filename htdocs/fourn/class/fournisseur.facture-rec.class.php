@@ -1,13 +1,14 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2011	Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2012       Cedric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2017-2024  Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/class/fournisseur.facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File for class to manage invoice templates
  */
 
@@ -85,6 +86,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $socid;
 
 	/**
+	 * @var int
 	 * @deprecated
 	 */
 	public $fk_soc;
@@ -136,24 +138,32 @@ class FactureFournisseurRec extends CommonInvoice
 	public $unit_frequency;
 	public $date_when;
 	public $date_last_gen;
-	public $nb_gen_done;
-	public $nb_gen_max;
-	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
-	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
-	public $model_pdf;
+	/**
+	 * @var int nb generation done
+	 */
+	public $nb_gen_done;
+
+	/**
+	 * @var int nb generation max
+	 */
+	public $nb_gen_max;
+
+	/**
+	 * @var int<0,1> auto validate 0 to create in draft, 1 to create and validate the new invoice
+	 */
+	public $auto_validate; //
+	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
 	/**
 	 * Invoice lines
-	 * @var FactureFournisseurLigneRec[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 
 
 	/* Override fields in CommonObject
 	public $entity;
-	public $date_creation;
-	public $date_modification;
 	public $total_ht;
 	public $total_tva;
 	public $total_ttc;
@@ -190,13 +200,13 @@ class FactureFournisseurRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'titre' => array('type' => 'varchar(100)', 'label' => 'Titre', 'enabled' => 1, 'showoncombobox' => 1, 'visible' => -1, 'position' => 15),
 		'ref_supplier' => array('type' => 'varchar(180)', 'label' => 'RefSupplier', 'enabled' => 1, 'showoncombobox' => 1, 'visible' => -1, 'position' => 20),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25, 'index' => 1),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 30),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 35),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 40),
@@ -239,7 +249,6 @@ class FactureFournisseurRec extends CommonInvoice
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'isameasure' => 1),
 		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
 		'generate_pdf' => array('type' => 'integer', 'label' => 'Generate pdf', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -300,6 +309,7 @@ class FactureFournisseurRec extends CommonInvoice
 		if ($result > 0) {
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_rec (';
 			$sql .= 'titre';
+			$sql .= ", subtype";
 			$sql .= ', ref_supplier';
 			$sql .= ', entity';
 			$sql .= ', fk_soc';
@@ -330,6 +340,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
 			$sql .= "'".$this->db->escape($this->title)."'";
+			$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -373,14 +384,14 @@ class FactureFournisseurRec extends CommonInvoice
 				$num = count($facfourn_src->lines);
 				for ($i = 0; $i < $num; $i++) {
 					$tva_tx = $facfourn_src->lines[$i]->tva_tx;
-					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 						$tva_tx .= ' ('.$facfourn_src->lines[$i]->vat_src_code.')';
 					}
 
 					$result_insert = $this->addline(
 						$facfourn_src->lines[$i]->fk_product,
 						$facfourn_src->lines[$i]->ref_supplier,
-						$facfourn_src->lines[$i]->label,
+						$facfourn_src->lines[$i]->product_label,
 						$facfourn_src->lines[$i]->desc ? $facfourn_src->lines[$i]->desc : $facfourn_src->lines[$i]->description,
 						$facfourn_src->lines[$i]->pu_ht,
 						$facfourn_src->lines[$i]->pu_ttc,
@@ -498,6 +509,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if (!empty($this->socid) && $this->socid > 0) {
@@ -578,7 +590,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.rowid, f.titre as title, f.ref_supplier, f.entity, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.titre as title, f.subtype, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
 		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
@@ -614,6 +626,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->title;
 				$this->title                    = $obj->title;
+				$this->subtype				          = $obj->subtype;
 				$this->ref                      = $obj->title;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -910,9 +923,9 @@ class FactureFournisseurRec extends CommonInvoice
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
 			}
 
 			// Clean parameters
@@ -1107,7 +1120,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$pu_ttc         = price2num($pu_ttc);
 			$pu_ht_devise = price2num($pu_ht_devise);
 
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 
@@ -1338,6 +1351,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
+					$new_fac_fourn->subtype = $facturerec->subtype;
 					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
@@ -1422,7 +1436,7 @@ class FactureFournisseurRec extends CommonInvoice
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto       			Add picto into link
 	 * @param  string	$option          			Where point the link
@@ -1575,7 +1589,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1594,7 +1608,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1613,7 +1627,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1635,7 +1649,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1990,7 +2004,7 @@ class FactureFournisseurRec extends CommonInvoice
  *	Class to manage supplier invoice lines of templates.
  *  Saved into database table llx_facture_fourn_det_rec
  */
-class FactureFournisseurLigneRec extends CommonObjectLine
+class FactureFournisseurLigneRec extends CommonInvoiceLine
 {
 	/**
 	 * @var string ID to identify managed object
@@ -2013,6 +2027,10 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $description;
 	public $pu_ht;
 	public $pu_ttc;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $remise_percent;
 	public $fk_remise_except;
@@ -2027,6 +2045,10 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $date_start;
 	public $date_end;
 	public $info_bits;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 	public $rang;
 

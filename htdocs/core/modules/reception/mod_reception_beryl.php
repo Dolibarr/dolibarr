@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 class mod_reception_beryl extends ModelNumRefReception
 {
 	public $version = 'dolibarr';
+	/**
+	 * @var string
+	 */
 	public $prefix = 'RCP';
 	public $error = '';
+	/**
+	 * @var string
+	 */
 	public $nom = 'Beryl';
 
 
@@ -98,9 +105,9 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Reception	$reception	Reception object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@param	Societe		$objsoc		Third party object
+	 *	@param	?Reception	$reception	Reception object
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
@@ -131,7 +138,7 @@ class mod_reception_beryl extends ModelNumRefReception
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_reception_beryl::getNextValue return ".$this->prefix.$yymm."-".$num);

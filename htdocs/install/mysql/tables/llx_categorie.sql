@@ -1,8 +1,8 @@
 -- ============================================================================
 -- Copyright (C) 2005		Brice Davoleau		<e1davole@iu-vannes.fr>
 -- Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
--- Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>		
--- Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+-- Copyright (C) 2017-2024  Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,27 +22,19 @@
 create table llx_categorie
 (
 	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
-	entity          integer DEFAULT 1 NOT NULL,			-- multi company id
+	entity          integer DEFAULT 1 NOT NULL,			-- Multi company id
 	fk_parent		integer DEFAULT 0 NOT NULL,
-	label 		    varchar(180) NOT NULL,				-- category ref/name
-	ref_ext			varchar(255),						-- reference into an external system (not used by dolibarr)
-	type	        integer DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
+	label 		    varchar(180) NOT NULL,				-- Category ref/name
+	ref_ext			varchar(255),						-- Reference into an external system (not used by dolibarr)
+	type	        integer DEFAULT 1 NOT NULL,			-- Category type (0=product, 1=supplier, 2=customer, 3=member, ...). See array $MAP_ID into categorie.class.php for possible values.
 	description 	text,								-- description of the category
-    color           varchar(8),                         -- color
-	position        integer DEFAULT 0,                  -- position
-	fk_soc          integer DEFAULT NULL,				-- not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
-	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not
-    date_creation	datetime,							-- date creation 
-    tms     		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,							-- last modification date
-    fk_user_creat	integer,							-- user making creation
-    fk_user_modif	integer,							-- user making last change
+    color           varchar(8),                         -- Color
+	position        integer DEFAULT 0,                  -- Position
+	fk_soc          integer DEFAULT NULL,				-- Not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
+	visible         tinyint DEFAULT 1 NOT NULL,			-- Determine if the products are visible or not
+    date_creation	datetime,							-- Creation date
+    tms     		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,	-- Last modification date
+    fk_user_creat	integer,							-- User id making creation
+    fk_user_modif	integer,							-- User id making last change
     import_key      varchar(14)							-- Import key
 )ENGINE=innodb;
-
--- 
--- List of codes for the field type
---
--- 0 : product
--- 1 : supplier
--- 2 : customer
---

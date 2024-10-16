@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Les planlagt jobb
 Permission23102 = Opprett/endre planlagt jobb
 Permission23103 = Slett planlagt jobb
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Kommandolinje for å sjekke og starte kvalifiserte cron-job
 CronExplainHowToRunUnix=I Unix-miljøer bør du bruke følgende crontab-oppføring for å kjøre kommandolinje hvert 5. minutt
 CronExplainHowToRunWin=I Microsoft Windows-miljø kan du bruke Planlagt oppgaveverktøy til å kjøre kommandolinjen hvert 5. minutt
 CronMethodDoesNotExists=Klasse %s inneholder ingen metode %s
-CronMethodNotAllowed=Metode %s av klasse %s er i svartelisten over forbudte metoder
+CronMethodNotAllowed=Metode %s av klassen %s er i blokkeringslisten over forbudte metoder
 CronJobDefDesc=Cronjobbprofiler er definert i modulbeskrivelsesfilen. Når modulen er aktivert, er de lastet og tilgjengelig slik at du kan administrere jobbene fra administrasjonsmenyen %s.
 CronJobProfiles=Liste over forhåndsdefinerte cronjobbprofiler
 # Menu
@@ -30,7 +29,8 @@ CronExecute=Start nå
 CronConfirmExecute=Er du sikker på at du vil kjøre disse planlagte jobbene nå?
 CronInfo=Planlagt jobb -modul gjør det mulig å planlegge jobber for å utføre dem automatisk. Jobber kan også startes manuelt.
 CronTask=Jobb
-CronNone=Ingen
+CronNone=Neste kjøring av planlagt oppgave
+CronNotYetRan=Aldri utført
 CronDtStart=Ikke før
 CronDtEnd=Ikke etter
 CronDtNextLaunch=Neste kjøring
@@ -49,7 +49,7 @@ CronEach=Alle
 JobFinished=Jobb startet og fullført
 Scheduled=Planlagt
 #Page card
-CronAdd= Legg til jobber
+CronAdd=Legg til jobber
 CronEvery=Kjør jobb hver
 CronObject=Objekt å opprette
 CronArgs=Parametre
@@ -67,7 +67,7 @@ CronModuleHelp=Navn på Dolibarr-modulkatalog (også arbeid med ekstern Dolibarr
 CronClassFileHelp=Den relative banen og filnavnet som skal lastes (banen er i forhold til webserverens rotkatalog). <BR> For eksempel for å kalle hentmetoden for Dolibarr Produkt-objekt htdocs/product/class/ <u> product.class.php </u>, er verdien for klassen filnavn <br><i> produkt/klasse/product.class.php</i>
 CronObjectHelp=Objektnavnet som skal lastes inn. <BR> For eksempel for å kalle hentmetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, er verdien for klassefilenavnet <br> <i> Produkt </i>
 CronMethodHelp=Objektmetoden å kjøre. <BR> For eksempel å kalle hentmetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, er verdien for metoden <br> <i> hent </i>
-CronArgsHelp=Metoden argumenter. <BR> For eksempel for å kalle hentemetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, kan verdien for paramters være<br> <i> 0, ProductRef </i>
+CronArgsHelp=Metodens argumenter. <BR> For eksempel å kalle hentemetoden til Dolibarr vare objekt /htdocs/product/class/product.class.php, verdien for parametere kan være<br> <i>0, ProductRef</i>
 CronCommandHelp=System kommandolinje som skal kjøres
 CronCreateJob=Opprett ny planlagt jobb
 CronFrom=Fra
@@ -91,6 +91,7 @@ WarningCronDelayed=NB, for ytelsesformål, uansett neste utførelsesdato for akt
 DATAPOLICYJob=Datarenser og anonymiserer
 JobXMustBeEnabled=Jobb %s må være aktivert
 EmailIfError=Epost for advarsel om feil
+JobNotFound=Jobben %s ikke funnet i listen over jobber (prøv å deaktivere/aktivere modulen)
 ErrorInBatch=Feil ved kjøring av jobben %s
 
 # Cron Boxes

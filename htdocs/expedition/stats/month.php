@@ -18,7 +18,7 @@
 
 /**
  *    \file       htdocs/expedition/stats/month.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      Page des stats expeditions par mois
  */
 
@@ -41,7 +41,7 @@ restrictedArea($user, 'expedition');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-stats_month');
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');

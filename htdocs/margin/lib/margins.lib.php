@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016	   Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 /**
  *  Define head array for tabs of marges tools setup pages
  *
- *  @return			Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function marges_admin_prepare_head()
 {
@@ -54,7 +55,7 @@ function marges_admin_prepare_head()
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function marges_prepare_head()
 {
@@ -142,9 +143,9 @@ function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localt
 
 	// calcul marge
 	if ($pu_ht_remise < 0) {
-		$marge = -1 * (abs($pu_ht_remise) - $pa_ht_ret);
+		$marge = -1 * (abs((float) $pu_ht_remise) - $pa_ht_ret);
 	} else {
-		$marge = $pu_ht_remise - $pa_ht_ret;
+		$marge = (float) $pu_ht_remise - $pa_ht_ret;
 	}
 
 	// calcul taux marge
@@ -153,7 +154,7 @@ function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localt
 	}
 	// calcul taux marque
 	if ($pu_ht_remise != 0) {
-		$marque_tx_ret = (100 * $marge) / $pu_ht_remise;
+		$marque_tx_ret = (100 * $marge) / (float) $pu_ht_remise;
 	}
 
 	return array($pa_ht_ret, $marge_tx_ret, $marque_tx_ret);

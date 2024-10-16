@@ -130,7 +130,7 @@ function GetLegendSkills()
 }
 
 /**
- * @param  object $obj Object needed to be represented
+ * @param  Object $obj Object needed to be represented
  * @return string
  */
 function getRankOrderResults($obj)
@@ -165,8 +165,8 @@ function getRankOrderResults($obj)
 /**
  * Grouped rows with same ref in array
  *
- * @param   object[]  $objects   all rows retrieve from sql query
- * @return	array<object>|int 			Object by groiup, -1 if error (empty or bad argument)
+ * @param   Object[]		$objects	All rows retrieved from sql query
+ * @return	array<string|int,Object|Object[]>|int<-1,-1>	Object by group, -1 if error (empty or bad argument)
  */
 function getGroupedEval($objects)
 {

@@ -200,8 +200,8 @@ MembersStatisticsDesc=Odaberite statistiku koju želite vidjeti...
 MenuMembersStats=Statistika
 LastMemberDate=Najnoviji datum članstva
 LatestSubscriptionDate=Zadnji datum doprinosa
-MemberNature=Priroda član
-MembersNature=Priroda članovi
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s može objaviti moje članstvo u <a target="_blank" href="%s">javnom registru</a>
 MembershipPublic=Javno članstvo
 NewMemberbyWeb=Novi član je dodan. Čeka odobrenje
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Izradi pretplatu
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

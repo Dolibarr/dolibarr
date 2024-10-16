@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 class Members extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'morphy',
@@ -81,7 +81,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id) && $id > 0) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -108,13 +108,62 @@ class Members extends DolibarrApi
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty);
+		$result = $member->fetch(0, '', $thirdparty);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($member);
+	}
+
+	/**
+	 * Get properties of a member object by linked thirdparty account
+	 *
+	 * @param string $site Site key
+	 * @param string $key_account Key of account
+	 *
+	 * @return array|mixed
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 *
+	 * @url GET thirdparty/accounts/{site}/{key_account}
+	 */
+	public function getByThirdpartyAccounts($site, $key_account)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
+		$sql .= " AND entity IN (".getEntity('adherent').")";
+
+		$result = $this->db->query($sql);
+
+		if ($result && $this->db->num_rows($result) == 1) {
+			$obj = $this->db->fetch_object($result);
+			$thirdparty = new Societe($this->db);
+			$result = $thirdparty->fetch($obj->fk_soc);
+
+			if ($result <= 0) {
+				throw new RestException(404, 'thirdparty not found');
+			}
+
+			$member = new Adherent($this->db);
+			$result = $member->fetch(0, '', $thirdparty->id);
+			if (!$result) {
+				throw new RestException(404, 'member not found');
+			}
+		} else {
+				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -141,19 +190,19 @@ class Members extends DolibarrApi
 		}
 
 		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $email);
 		if (!$result) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
+		$result = $member->fetch(0, '', $thirdparty->id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -180,19 +229,19 @@ class Members extends DolibarrApi
 		}
 
 		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', $barcode);
+		$result = $thirdparty->fetch(0, '', '', $barcode);
 		if (!$result) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
+		$result = $member->fetch(0, '', $thirdparty->id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -203,23 +252,26 @@ class Members extends DolibarrApi
 	 *
 	 * Get a list of members
 	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Limit for list
-	 * @param int       $page       Page number
-	 * @param string    $typeid     ID of the type of member
-	 * @param int		$category   Use this param to filter list by category
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
-	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                Array of member objects
+	 * @param string    $sortfield  		Sort field
+	 * @param string    $sortorder  		Sort order
+	 * @param int       $limit      		Limit for list
+	 * @param int       $page       		Page number
+	 * @param string    $typeid     		ID of the type of member
+	 * @param int		$category   		Use this param to filter list by category
+	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma.
+	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array    					Array of member objects
+	 * @phan-return array<array<string,null|int|float|string>>
+	 * @phpstan-return array<array<string,null|int|float|string>>
 	 *
 	 * @throws	RestException	400		Error on SQL filters
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -250,6 +302,9 @@ class Members extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -277,13 +332,30 @@ class Members extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve member list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
 	 * Create member object
 	 *
-	 * @param array $request_data   Request data
+	 * @param array<string,string> $request_data   Request data
 	 * @return int  ID of member
 	 *
 	 * @throws	RestException	403		Access denied
@@ -301,11 +373,11 @@ class Members extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$member->context['caller'] = $request_data['caller'];
+				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$member->$field = $value;
+			$member->$field = $this->_checkValForAPI($field, $value, $member);
 		}
 		if ($member->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating member', array_merge(array($member->error), $member->errors));
@@ -318,6 +390,8 @@ class Members extends DolibarrApi
 	 *
 	 * @param 	int   		$id             ID of member to update
 	 * @param 	array 		$request_data   Datas
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	403		Access denied
@@ -337,7 +411,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -346,10 +420,15 @@ class Members extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$member->context['caller'] = $request_data['caller'];
+				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$member->array_options[$index] = $val;
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
@@ -370,7 +449,7 @@ class Members extends DolibarrApi
 					}
 				}
 			} else {
-				$member->$field = $value;
+				$member->$field = $this->_checkValForAPI($field, $value, $member);
 			}
 		}
 
@@ -388,6 +467,8 @@ class Members extends DolibarrApi
 	 *
 	 * @param int $id   member ID
 	 * @return array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
@@ -405,7 +486,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 
@@ -425,8 +506,9 @@ class Members extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data   Data to validate
-	 * @return array				Return array with validated mandatory fields and their value
+	 * @param array<string,null|int|float|string>	$data   Data to validate
+	 * @return array<string,null|int|float|string>			Return array with validated mandatory fields and their value
+	 * @phan-return array<string,?int|?float|?string>			Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */
@@ -476,7 +558,6 @@ class Members extends DolibarrApi
 		}
 
 		if ($object instanceof AdherentType) {
-			unset($object->array_options);
 			unset($object->linkedObjectsIds);
 			unset($object->context);
 			unset($object->canvas);
@@ -528,6 +609,8 @@ class Members extends DolibarrApi
 	 *
 	 * @param int $id ID of member
 	 * @return array Array of subscription objects
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 *
 	 * @url GET {id}/subscriptions
 	 *
@@ -646,7 +729,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($membertype);
@@ -657,13 +740,16 @@ class Members extends DolibarrApi
 	 *
 	 * Get a list of members types
 	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Limit for list
-	 * @param int       $page       Page number
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                Array of member type objects
+	 * @param string    $sortfield  		Sort field
+	 * @param string    $sortorder  		Sort order
+	 * @param int       $limit      		Limit for list
+	 * @param int       $page       		Page number
+	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array                		Array of member type objects
+	 * @phan-return array<array<string,null|int|float|string>>
+	 * @phpstan-return array<array<string,null|int|float|string>>
 	 *
 	 * @url GET /types/
 	 *
@@ -671,7 +757,7 @@ class Members extends DolibarrApi
 	 * @throws	RestException	404		No Member Type found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -691,6 +777,9 @@ class Members extends DolibarrApi
 				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -719,6 +808,23 @@ class Members extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve member type list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -726,6 +832,8 @@ class Members extends DolibarrApi
 	 * Create member type object
 	 *
 	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
 	 * @return int  ID of member type
 	 *
 	 * @url POST /types/
@@ -745,11 +853,11 @@ class Members extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$membertype->context['caller'] = $request_data['caller'];
+				$membertype->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating member type', array_merge(array($membertype->error), $membertype->errors));
@@ -762,6 +870,8 @@ class Members extends DolibarrApi
 	 *
 	 * @param 	int   		$id             ID of member type to update
 	 * @param 	array 		$request_data   Datas
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @url PUT /types/{id}
@@ -783,7 +893,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -792,13 +902,18 @@ class Members extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$membertype->context['caller'] = $request_data['caller'];
+				$membertype->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$membertype->array_options[$index] = $val;
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 
 		// If there is no error, update() returns the number of affected rows
@@ -815,8 +930,10 @@ class Members extends DolibarrApi
 	 *
 	 * @param int $id   member type ID
 	 * @return array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
-	 * @url GET /types/{id}
+	 * @url DELETE /types/{id}
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
@@ -829,12 +946,12 @@ class Members extends DolibarrApi
 		}
 		$membertype = new AdherentType($this->db);
 		$result = $membertype->fetch($id);
-		if (!$result) {
+		if ($result < 1) {
 			throw new RestException(404, 'member type not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$res = $membertype->delete(DolibarrApiAccess::$user);
@@ -853,8 +970,8 @@ class Members extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data   Data to validate
-	 * @return array
+	 * @param ?array<string,null|int|float|string>	$data   Data to validate
+	 * @return array<string,null|int|float|string>
 	 *
 	 * @throws RestException
 	 */

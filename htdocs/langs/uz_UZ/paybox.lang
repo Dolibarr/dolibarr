@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox modulini sozlash
 PayBoxDesc=Ushbu modul mijozlar tomonidan <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> to‘loviga ruxsat beruvchi sahifalarni taklif qiladi. Bu bepul to'lov uchun yoki ma'lum bir Dolibarr ob'ekti bo'yicha to'lov uchun ishlatilishi mumkin (hisob-faktura, buyurtma, ...)
-FollowingUrlAreAvailableToMakePayments=Dolibarr ob'ektlarida to'lovni amalga oshirish uchun xaridorga sahifani taqdim etish uchun quyidagi URL manzillar mavjud
-PaymentForm=To'lov shakli
-WelcomeOnPaymentPage=Onlayn to'lov xizmatimizga xush kelibsiz
-ThisScreenAllowsYouToPay=Ushbu ekran sizga %s raqamiga onlayn to'lovni amalga oshirishga imkon beradi.
-ThisIsInformationOnPayment=Bu to'lash to'g'risida ma'lumot
-ToComplete=Tugatish uchun
-YourEMail=To'lovni tasdiqlash uchun elektron pochta xabarini yuboring
-Creditor=Kreditor
-PaymentCode=To'lov kodi
 PayBoxDoPayment=Paybox bilan to'lash
 YouWillBeRedirectedOnPayBox=Siz kredit karta ma'lumotlarini kiritish uchun xavfsiz Paybox sahifasida yo'naltirilasiz
-Continue=Keyingi
 SetupPayBoxToHavePaymentCreatedAutomatically=Paybox tomonidan tasdiqlanganida to'lov avtomatik ravishda yaratilishi uchun Paybox-ni url <b> %s </b> bilan sozlang.
 YourPaymentHasBeenRecorded=Ushbu sahifa sizning to'lovingiz yozilganligini tasdiqlaydi. Rahmat.
 YourPaymentHasNotBeenRecorded=Sizning to'lovingiz qayd etilmagan va tranzaksiya bekor qilingan. Rahmat.
-AccountParameter=Hisob parametrlari
-UsageParameter=Foydalanish parametrlari
-InformationToFindParameters=%s hisob qaydnomangiz ma'lumotlarini topishga yordam bering
 PAYBOX_CGI_URL_V2=To'lov uchun Paybox CGI modulining url
-CSSUrlForPaymentForm=To'lov shakli uchun CSS uslublar varag'i url
 NewPayboxPaymentReceived=Yangi Paybox to'lovi qabul qilindi
 NewPayboxPaymentFailed=Paybox-ning yangi to'lovi amalga oshirildi, ammo muvaffaqiyatsiz tugadi
 PAYBOX_PAYONLINE_SENDEMAIL=To'lov amalga oshirilgandan so'ng elektron pochta xabarnomasi (muvaffaqiyatli yoki muvaffaqiyatsiz)

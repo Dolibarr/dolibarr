@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('receptionindex'));
 
 $langs->loadLangs(array("orders", "receptions"));
@@ -55,7 +55,7 @@ $orderstatic = new CommandeFournisseur($db);
 $companystatic = new Societe($db);
 
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('', $langs->trans("Reception"), $helpurl);
+llxHeader('', $langs->trans("Reception"), $helpurl, '', 0, 0, '', '', '', 'mod-reception page-dashboard');
 
 print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 

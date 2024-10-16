@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Саҳифаи ҳозираро ба хатчӯбҳо илова кунед
-Bookmark=Bookmark
-Bookmarks=Замимаҳо
-ListOfBookmarks=Рӯйхати хатчӯбҳо
-EditBookmarks=Рӯйхат/таҳрири хатчӯбҳо
-NewBookmark=Замимаи нав
-ShowBookmark=Нишон додани хатчӯб
-OpenANewWindow=Ҷадвали нав кушоед
-ReplaceWindow=Тугмаи ҷориро иваз кунед
-BookmarkTargetNewWindowShort=Ҷадвали нав
-BookmarkTargetReplaceWindowShort=Ҷадвали ҷорӣ
-BookmarkTitle=Номи хатчӯб
-UrlOrLink=URL
-BehaviourOnClick=Рафтори ҳангоми интихоби URL -и хатчӯб
-CreateBookmark=Эҷоди хатчӯб
-SetHereATitleForLink=Номи хатчӯбро таъин кунед
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Интихоб кунед, ки оё саҳифаи пайвандшуда бояд дар ҷадвали ҷорӣ ё ҷадвали нав кушода шавад
-BookmarksManagement=Идоракунии хатчӯбҳо
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Саҳифаи ҳозираро ба хатчӯбҳо илова кунед
+BehaviourOnClick = Рафтор ҳангоми интихоб кардани URL-и хатчӯб
+Bookmark = Bookmark
+Bookmarks = Замимаҳо
+BookmarkTargetNewWindowShort = Ҷадвали нав
+BookmarkTargetReplaceWindowShort = Ҷадвали ҷорӣ
+BookmarkTitle = Номи хатчӯб
+BookmarksManagement = Идоракунии хатчӯбҳо
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Интихоб кунед, ки оё саҳифаи пайвандшуда бояд дар ҷадвали ҷорӣ ё ҷадвали нав кушода шавад
+CreateBookmark = Эҷоди хатчӯб
+EditBookmarks = Рӯйхат/таҳрири хатчӯбҳо
+ListOfBookmarks = Рӯйхати хатчӯбҳо
+NewBookmark = Замимаи нав
+NoBookmarkFound = Ягон хатчӯб ёфт нашуд
+NoBookmarks = Ягон хатчӯб муайян карда нашудааст
+OpenANewWindow = Ҷадвали нав кушоед
+ReplaceWindow = Тугмаи ҷориро иваз кунед
+SetHereATitleForLink = Номи хатчӯбро таъин кунед
+ShowBookmark = Нишон додани хатчӯб
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Истиноди беруна/мутлақ (https://externalurl.com) ё пайванди дохилӣ/нисбӣ (/mypage.php) истифода баред. Шумо инчунин метавонед телефони монанди тел:0123456 истифода баред.

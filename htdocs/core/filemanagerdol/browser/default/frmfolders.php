@@ -184,6 +184,8 @@ function OpenFolder( folderPath )
 
 function LoadFolders( folderPath )
 {
+	console.log("LoadFolders folderPath="+folderPath);
+
 	// Clear the folders list.
 	oListManager.Clear();
 

@@ -14,7 +14,6 @@ AmountToWithdraw=Cantidad a retirar
 ResponsibleUser=Usuario responsable
 WithdrawalsSetup=Configuración de pago por débito directo
 WithdrawStatistics=Estadísticas de pago por débito directo
-Rejects=Rechazos
 LastWithdrawalReceipt=Últimos recibos de débito directo %s
 MakeWithdrawRequest=Realizar una solicitud de pago por débito directo
 WithdrawRequestsDone=%s solicitudes de pago por débito directo registradas

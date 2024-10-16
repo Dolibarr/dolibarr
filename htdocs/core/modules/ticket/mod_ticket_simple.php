@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012   Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010        Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -118,9 +119,9 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc    	Object third party
-	 *  @param  Ticket 	$ticket 	Object ticket
-	 *  @return string|-1           Value if OK, -1 if KO
+	 *  @param	Societe	$objsoc		Object third party
+	 *  @param	Ticket	$ticket 	Object ticket
+	 *  @return	string|int<-1,0>	Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{
@@ -156,7 +157,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 			$num = $max + 1;
 		} else {
 			// If counter > 9999, we do not format on 4 chars, we take number as it is
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_ticket_simple::getNextValue return ".$this->prefix.$yymm."-".$num);

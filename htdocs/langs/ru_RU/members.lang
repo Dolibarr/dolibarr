@@ -200,8 +200,8 @@ MembersStatisticsDesc=Выберите статистику вы хотите п
 MenuMembersStats=Статистика
 LastMemberDate=Дата последнего членства
 LatestSubscriptionDate=Дата последнего взноса
-MemberNature=Природа члена
-MembersNature=Природа участников
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s может опубликовать мое членство в <a target="_blank" href="%s"> публичном реестре </a>
 MembershipPublic=Общественное членство
 NewMemberbyWeb=Новый участник добавил. В ожидании утверждения
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Создать подписку
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

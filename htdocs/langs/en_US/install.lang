@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=You used the Dolibarr setup wizard from a Linux package (Ub
 KeepDefaultValuesMamp=You used the Dolibarr setup wizard from DoliMamp, so the values proposed here are already optimized. Change them only if you know what you are doing.
 KeepDefaultValuesProxmox=You used the Dolibarr setup wizard from a Proxmox virtual appliance, so the values proposed here are already optimized. Change them only if you know what you are doing.
 UpgradeExternalModule=Run dedicated upgrade process of external module
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
 NothingToDo=Nothing to do
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the i
 YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=Click here to go to your application
 ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock or create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Loaded
 FunctionTest=Function test
 NodoUpgradeAfterDB=No action requested by external modules after upgrade of database

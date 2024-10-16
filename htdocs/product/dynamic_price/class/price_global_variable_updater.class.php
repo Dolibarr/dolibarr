@@ -3,6 +3,7 @@
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -373,7 +374,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  List all price global variables
 	 *
-	 *  @return	array|int				Array of price global variable updaters
+	 *  @return	PriceGlobalVariableUpdater[]|int<-1,-1>		Array of price global variable updaters
 	 */
 	public function listUpdaters()
 	{
@@ -410,7 +411,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  List all updaters which need to be processed
 	 *
-	 *  @return	array|int				Array of price global variable updaters
+	 *  @return	PriceGlobalVariableUpdater[]|int<-1,-1>		Array of price global variable updaters
 	 */
 	public function listPendingUpdaters()
 	{
@@ -456,7 +457,7 @@ class PriceGlobalVariableUpdater
 		$langs->load("errors");
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = null;
+		$this->error = '';
 		$this->checkParameters();
 
 		//Try to load the target global variable and abort if fails

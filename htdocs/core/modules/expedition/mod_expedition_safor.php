@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -120,7 +121,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Expedition	$shipment	Shipment object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@return string|int<-1,0> 		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
 	{
@@ -151,7 +152,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);

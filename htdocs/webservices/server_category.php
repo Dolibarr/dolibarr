@@ -202,7 +202,7 @@ $server->register(
 /**
  * Get category infos and children
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,entity?:int}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @return	mixed
  */
@@ -231,9 +231,9 @@ function getCategory($authentication, $id)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		$nbmax = 10;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$nbmax = 10;
 		if ($fuser->hasRight('categorie', 'lire')) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);

@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekrytering
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Hantera och följ rekryteringar för utannonserade tjänster
-
-#
 # Admin page
-#
 RecruitmentSetup = Inställningar för rekrytering
 RecruitmentSetupPage = Ange huvudalternativ för rekryteringsmodulen
 RecruitmentArea=Rekryteringsområde
 PublicInterfaceRecruitmentDesc=Publika sidor med tjänster är offentliga webbadresser för att visa upp lediga tjänster. Det finns en annan länk för varje ledig position som finns i varje tjänst.
 EnablePublicRecruitmentPages=Aktivera publika sidor med lediga tjänster
 
-#
-# About page
-#
-RecruitmentAbout = Om rekryteringen
-RecruitmentAboutPage = Rekryteringens om-sida
 NbOfEmployeesExpected=Förväntat antal anställda
 JobLabel=Etikett för tjänsten
 WorkPlace=Arbetsplats
@@ -47,7 +34,6 @@ PositionToBeFilled=Befattning
 PositionsToBeFilled=Befattningar
 ListOfPositionsToBeFilled=Lista över befattningar
 NewPositionToBeFilled=Nya befattningar
-
 JobOfferToBeFilled=Befattning att tillsätta
 ThisIsInformationOnJobPosition=Information om den befattning som ska tillsättas
 ContactForRecruitment=Kontakt för rekrytering
@@ -77,4 +63,4 @@ WeAreRecruiting=Vi rekryterar! Detta är en lista över lediga tjänster som ska
 NoPositionOpen=Inga lediga tjänster för tillfället
 ConfirmClose=Bekräfta avbokningen
 ConfirmCloseAsk=Är du säker på att du vill avbryta denna rekryteringskandidatur
-recruitment=Rekrytering
+Recruitment=Rekrytering

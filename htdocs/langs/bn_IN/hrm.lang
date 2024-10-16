@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=এইচআরএম বাহ্যিক পরিষেবা প্রতিরোধ করতে ইমেল
 Establishments=প্রতিষ্ঠান
@@ -24,7 +23,7 @@ SkillsManagement=দক্ষতা ব্যবস্থাপনা
 HRM_MAXRANK=একটি দক্ষতা র‌্যাঙ্ক করার জন্য সর্বোচ্চ সংখ্যক স্তর
 HRM_DEFAULT_SKILL_DESCRIPTION=দক্ষতা তৈরি করা হলে র‌্যাঙ্কের ডিফল্ট বিবরণ
 deplacement=শিফট
-DateEval=মূল্যায়ন তারিখ
+DateEval=Competency assessment date
 JobCard=জব কার্ড
 NewJobProfile=নতুন চাকরির প্রোফাইল
 JobProfile=চাকরি বৃত্তান্ত
@@ -41,12 +40,12 @@ Skill=দক্ষতা
 Skills=দক্ষতা
 SkillCard=স্কিল কার্ড
 EmployeeSkillsUpdated=কর্মচারীর দক্ষতা আপডেট করা হয়েছে (কর্মচারী কার্ডের "দক্ষতা" ট্যাব দেখুন)
-Eval=মূল্যায়ন
-Evals=মূল্যায়ন
-NewEval=নতুন মূল্যায়ন
-ValidateEvaluation=মূল্যায়ন যাচাই করুন
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=মূল্যায়ন কার্ড
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=কাজের প্রোফাইলের জন্য প্রয়োজনীয় র‌্যাঙ্ক
 RequiredRankShort=প্রয়োজনীয় পদমর্যাদা
 PositionsWithThisProfile=এই কাজের প্রোফাইলের সাথে অবস্থান
@@ -90,8 +89,9 @@ SaveAddSkill = দক্ষতা(গুলি) যোগ করা হয়ে
 SaveLevelSkill = দক্ষতা(গুলি) স্তর সংরক্ষিত
 DeleteSkill = দক্ষতা সরানো হয়েছে
 SkillsExtraFields=পরিপূরক বৈশিষ্ট্য (দক্ষতা)
-JobsExtraFields=পরিপূরক বৈশিষ্ট্য (চাকরির প্রোফাইল)
-EvaluationsExtraFields=পরিপূরক বৈশিষ্ট্য (মূল্যায়ন)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=ব্যবসায়িক ভ্রমণ প্রয়োজন
 NoDescription=বর্ণনা নাই
 TheJobProfileHasNoSkillsDefinedFixBefore=এই কর্মচারীর মূল্যায়নকৃত কাজের প্রোফাইলে কোন দক্ষতা সংজ্ঞায়িত করা নেই। দক্ষতা(গুলি) যোগ করুন, তারপর মুছে ফেলুন এবং মূল্যায়ন পুনরায় আরম্ভ করুন.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

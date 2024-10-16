@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *  \ingroup    hrm
  *  \brief      File of class to manage Evaluation numbering rules standard
  */
-dol_include_once('/core/modules/hrm/modules_evaluation.php');
+require_once DOL_DOCUMENT_ROOT . '/core/modules/hrm/modules_evaluation.php';
 
 
 /**
@@ -33,7 +34,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -118,8 +119,8 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Evaluation	$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @param  Evaluation		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -156,7 +157,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_evaluation_standard::getNextValue return ".$this->prefix.$yymm."-".$num);

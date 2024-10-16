@@ -9,11 +9,12 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT."/expedition/class/expeditionligne.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -45,14 +46,18 @@ if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 
 /**
  *	Class to manage shipments
+ * @property	int				$signed_status
+ * @static		array<int>		$SIGNED_STATUSES
  */
 class Expedition extends CommonObject
 {
 	use CommonIncoterm;
+	use CommonSignedObject;
 
 	/**
 	 * @var string ID to identify managed object
@@ -75,24 +80,13 @@ class Expedition extends CommonObject
 	public $table_element_line = "expeditiondet";
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'dolly';
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -106,6 +100,9 @@ class Expedition extends CommonObject
 	 */
 	public $fk_user_author;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
 
 	/**
@@ -134,6 +131,9 @@ class Expedition extends CommonObject
 	 * @var string Tracking url
 	 */
 	public $tracking_url;
+	/**
+	 * @var int<0,1>
+	 */
 	public $billed;
 
 	/**
@@ -141,68 +141,115 @@ class Expedition extends CommonObject
 	 */
 	public $model_pdf;
 
+	/**
+	 * @var int|string
+	 */
 	public $trueWeight;
+	/**
+	 * @var int
+	 */
 	public $weight_units;
+	/**
+	 * @var int|string
+	 */
 	public $trueWidth;
+	/**
+	 * @var string
+	 */
 	public $width_units;
+	/**
+	 * @var int|string
+	 */
 	public $trueHeight;
+	/**
+	 * @var string
+	 */
 	public $height_units;
+	/**
+	 * @var int|string
+	 */
 	public $trueDepth;
+	/**
+	 * @var string
+	 */
 	public $depth_units;
-	// A denormalized value
+	/**
+	 * @var string A denormalized value
+	 */
 	public $trueSize;
 
+	/**
+	 * @var int
+	 */
 	public $livraison_id;
 
 	/**
-	 * @var double
+	 * @var float
 	 */
 	public $multicurrency_subprice;
 
+	/**
+	 * @var int|string
+	 */
 	public $size_units;
 
+	/**
+	 * @var int|string
+	 */
 	public $sizeH;
 
+	/**
+	 * @var int|string
+	 */
 	public $sizeS;
 
+	/**
+	 * @var int|string
+	 */
 	public $sizeW;
 
+	/**
+	 * @var int|string
+	 */
 	public $weight;
 
 	/**
-	 * @var integer|string Date delivery planned
+	 * @var int|string Date delivery planned
 	 */
 	public $date_delivery;
 
 	/**
-	 * @deprecated
+	 * @var int|string
+	 * @deprecated Use $dateshipping
 	 * @see $date_shipping
 	 */
 	public $date;
 
 	/**
-	 * @deprecated
+	 * @var int|string
+	 * @deprecated Use $dateshipping
 	 * @see $date_shipping
 	 */
 	public $date_expedition;
 
 	/**
 	 * Effective delivery date
-	 * @var integer|string
+	 * @var int|string
 	 */
 	public $date_shipping;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_valid
+	 * @var int|string date_valid
 	 */
 	public $date_valid;
 
+	/**
+	 * @var string[]
+	 */
 	public $meths;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $listmeths; // List of carriers
 
 	/**
@@ -230,9 +277,21 @@ class Expedition extends CommonObject
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_code;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_tx;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
 
 	/**
@@ -242,11 +301,17 @@ class Expedition extends CommonObject
 
 	/**
 	 * Validated status
+	 * -> parcel is ready to be sent
+	 * prev status : draft
+	 * next status : closed or shipment_in_progress
 	 */
 	const STATUS_VALIDATED = 1;
 
 	/**
 	 * Closed status
+	 * -> parcel was received by customer / end of process
+	 * prev status : validated or shipment_in_progress
+	 *
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -255,6 +320,14 @@ class Expedition extends CommonObject
 	 */
 	const STATUS_CANCELED = -1;
 
+	/**
+	 * Expedition in progress
+	 * -> package exit the warehouse and is now
+	 *    in the truck or into the hand of the deliverer
+	 * prev status : validated
+	 * next status : closed
+	 */
+	const STATUS_SHIPMENT_IN_PROGRESS = 3;
 
 	/**
 	 *	Constructor
@@ -266,6 +339,9 @@ class Expedition extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		// List of long language codes for status
 		$this->labelStatus = array();
@@ -306,7 +382,7 @@ class Expedition extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/expedition/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -315,7 +391,7 @@ class Expedition extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModelNumRefExpedition $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -351,6 +427,9 @@ class Expedition extends CommonObject
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
+		if (empty($this->date_shipping) && !empty($this->date_expedition)) {
+			$this->date_shipping = $this->date_expedition;
+		}
 
 		$this->user = $user;
 
@@ -380,6 +459,7 @@ class Expedition extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ", model_pdf";
 		$sql .= ", fk_incoterms, location_incoterms";
+		$sql .= ", signed_status";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".((int) $conf->entity);
@@ -387,7 +467,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".((int) $user->id);
-		$sql .= ", ".($this->date_expedition > 0 ? "'".$this->db->idate($this->date_expedition)."'" : "null");
+		$sql .= ", ".($this->date_shipping > 0 ? "'".$this->db->idate($this->date_shipping)."'" : "null");
 		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
@@ -405,6 +485,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ", ".($this->signed_status);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -621,9 +702,9 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$origin_line_id		Id of source line
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param 	int		$rang				Rang
-	 * @param	array	$array_options		extrafields array
+	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @param 	int		$parent_line_id		Id of parent line for virtual products
 	 * @param 	int		$product_id			Id of product (child of virtual product)
 	 * @return	int							Return integer <0 if KO, line_id if OK
@@ -636,7 +717,8 @@ class Expedition extends CommonObject
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
-		$expeditionline->fk_origin_line = $origin_line_id;
+		$expeditionline->fk_elementdet = $origin_line_id;
+		$expeditionline->element_type = $this->origin;
 		$expeditionline->fk_parent = $parent_line_id;
 		$expeditionline->fk_product = $product_id;
 		$expeditionline->qty = $qty;
@@ -645,7 +727,7 @@ class Expedition extends CommonObject
 
 		if (!($expeditionline->fk_product > 0)) {
 			$order_line = new OrderLine($this->db);
-			$order_line->fetch($expeditionline->fk_origin_line);
+			$order_line->fetch($expeditionline->fk_elementdet);
 			$expeditionline->fk_product = $order_line->fk_product;
 		}
 
@@ -660,8 +742,8 @@ class Expedition extends CommonObject
 	/**
 	 * Create the detail of the expedition line. Create 1 record into expeditiondet for each warehouse and n record for each lot in this warehouse into expeditiondet_batch.
 	 *
-	 * @param 	object		$line_ext			Object with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
-	 * @param	array		$array_options		extrafields array
+	 * @param 	ExpeditionLigne		$line_ext			Object with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
+	 * @param	array<string,mixed>		$array_options		extrafields array
 	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line_batch($line_ext, $array_options = [])
@@ -723,16 +805,17 @@ class Expedition extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.signed_status, e.fk_projet as fk_project, e.billed";
 		$sql .= ", e.date_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
 		$sql .= ", e.note_private, e.note_public";
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
+		$sql .= ', e.signed_status';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', s.libelle as shipping_method';
-		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
+		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -762,6 +845,7 @@ class Expedition extends CommonObject
 				$this->ref_ext		    = $obj->ref_ext;
 				$this->status               = $obj->fk_statut;
 				$this->statut               = $this->status; // Deprecated
+				$this->signed_status		= $obj->signed_status;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -775,11 +859,12 @@ class Expedition extends CommonObject
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
+				$this->origin               = ($obj->origin_type ? $obj->origin_type : 'commande'); // For compatibility
+				$this->origin_type          = ($obj->origin_type ? $obj->origin_type : 'commande');
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project = $obj->fk_project;
-
+				$this->signed_status        = $obj->signed_status;
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
 
@@ -981,6 +1066,7 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$this->ref = $numref;
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -1033,8 +1119,8 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
-	 * @param 	int		$qty				Quantity
-	 * @param	array	$array_options		extrafields array
+	 * @param 	float	$qty				Quantity
+	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @param 	int		$fk_product			Id of product
 	 * @param 	int		$fk_parent			Id of parent line
 	 * @return	int							Return integer <0 if KO, >0 if OK
@@ -1048,7 +1134,8 @@ class Expedition extends CommonObject
 
 		$line->entrepot_id = $entrepot_id;
 		$line->origin_line_id = $id;
-		$line->fk_origin_line = $id;
+		$line->fk_elementdet = $id;
+		$line->element_type = 'order';
 		$line->fk_parent = $fk_parent;
 		$line->fk_product = $fk_product;
 		$line->qty = $qty;
@@ -1121,10 +1208,10 @@ class Expedition extends CommonObject
 	/**
 	 * Add a shipment line with batch record
 	 *
-	 * @param 	array		$dbatch				Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
-	 * @param	array		$array_options		extrafields array
-	 * @param	Object		$origin_line		Origin line (only from OrderLine at this moment)
-	 * @return	int								Return integer <0 if KO, >0 if OK
+	 * @param 	array{detail:array<array{id_batch:int,q:int|float}>,qty:int|float,ix_l:int}	$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
+	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @param	Object					$origin_line		Origin line (only from OrderLine at this moment)
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addline_batch($dbatch, $array_options = [], $origin_line = null)
 	{
@@ -1132,6 +1219,7 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$num = count($this->lines);
+		$linebatch = null;
 		if ($dbatch['qty'] > 0 || ($dbatch['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 			$line = new ExpeditionLigne($this->db);
 			$tab = array();
@@ -1170,9 +1258,11 @@ class Expedition extends CommonObject
 					//var_dump($linebatch);
 				}
 			}
-			$line->entrepot_id = $linebatch->entrepot_id;
+			if (is_object($linebatch)) {
+				$line->entrepot_id = $linebatch->entrepot_id;
+			}
 			$line->origin_line_id = $dbatch['ix_l']; // deprecated
-			$line->fk_origin_line = $dbatch['ix_l'];
+			$line->fk_elementdet = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch = $tab;
 			if (!($line->rang > 0)) {
@@ -1197,9 +1287,9 @@ class Expedition extends CommonObject
 	/**
 	 *  Update database
 	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 			       	Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user        	User that modifies the record
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int 			  	     	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -1223,7 +1313,8 @@ class Expedition extends CommonObject
 		if (isset($this->fk_user_author)) {
 			$this->fk_user_author = (int) $this->fk_user_author;
 		}
-		if (isset($this->fk_user_valid)) {
+		if (isset($this->fk_user_valid)) { // @phan-ignore-current-line PhanUndeclaredProperty
+			// If set, then accept @phan-ignore-next-line PhanUndeclaredProperty
 			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->fk_delivery_address)) {
@@ -1251,10 +1342,10 @@ class Expedition extends CommonObject
 			$this->size_units = trim($this->size_units);
 		}
 		if (isset($this->weight_units)) {
-			$this->weight_units = trim($this->weight_units);
+			$this->weight_units = (int) $this->weight_units;
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = trim($this->trueWeight);
+			$this->weight = trim((string) $this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -1367,8 +1458,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		$can_update_stock = isModEnabled('stock') &&
-			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-				($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock));
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock)));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -1481,13 +1572,14 @@ class Expedition extends CommonObject
 				if ($this->db->query($sql)) {
 					if (!empty($this->origin) && $this->origin_id > 0) {
 						$this->fetch_origin();
-						$origin = $this->origin;
-						if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+						$origin_object = $this->origin_object;
+						'@phan-var-force Facture|Commande $origin_object';
+						if ($origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-							$this->$origin->loadExpeditions();
+							$origin_object->loadExpeditions();
 							//var_dump($this->$origin->expeditions);exit;
-							if (count($this->$origin->expeditions) <= 0) {
-								$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+							if (count($origin_object->expeditions) <= 0) {
+								$origin_object->setStatut(Commande::STATUS_VALIDATED);
 							}
 						}
 					}
@@ -1576,8 +1668,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		$can_update_stock = isModEnabled('stock') &&
-		(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-			($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock));
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -1692,13 +1784,14 @@ class Expedition extends CommonObject
 				if ($this->db->query($sql)) {
 					if (!empty($this->origin) && $this->origin_id > 0) {
 						$this->fetch_origin();
-						$origin = $this->origin;
-						if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+						$origin_object = $this->origin_object;
+						'@phan-var-force Facture|Commande $origin_object';
+						if ($origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-							$this->$origin->loadExpeditions();
+							$origin_object->loadExpeditions();
 							//var_dump($this->$origin->expeditions);exit;
-							if (count($this->$origin->expeditions) <= 0) {
-								$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+							if (count($origin_object->expeditions) <= 0) {
+								$origin_object->setStatut(Commande::STATUS_VALIDATED);
 							}
 						}
 					}
@@ -1758,7 +1851,7 @@ class Expedition extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $mysoc;
 
 		$this->lines = array();
 
@@ -1767,16 +1860,17 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
+		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
-		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
+		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end";
+		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-		$sql .= " AND ed.fk_origin_line = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_origin_line";		// We need after a break on fk_origin_line but when there is no break on fk_origin_line, cd.rang is same so we can add it as first order criteria.
+		$sql .= " AND ed.fk_elementdet = cd.rowid";
+		$sql .= " ORDER BY cd.rang, ed.fk_elementdet";		// We need after a break on fk_elementdet but when there is no break on fk_elementdet, cd.rang is same so we can add it as first order criteria.
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1804,7 +1898,7 @@ class Expedition extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 
-				if ($originline > 0 && $originline == $obj->fk_origin_line) {
+				if ($originline > 0 && $originline == $obj->fk_elementdet) {
 					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
@@ -1820,13 +1914,17 @@ class Expedition extends CommonObject
 				$detail_entrepot->line_id     = $obj->line_id;
 				$line->details_entrepot[]     = $detail_entrepot;
 
-				$line->line_id          = $obj->line_id;
+				$line->line_id          = $obj->line_id; // TODO deprecated
 				$line->rowid            = $obj->line_id; // TODO deprecated
 				$line->id               = $obj->line_id;
 
-				$line->fk_origin = 'orderline';
-				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line; // TODO deprecated
+				$line->fk_origin = 'orderline';	// TODO deprecated, we already have element_type that can be use to guess type of line
+
+				$line->fk_element 		= $obj->fk_element;
+				$line->origin_id 		= $obj->fk_element;
+				$line->fk_elementdet 	= $obj->fk_elementdet;
+				$line->origin_line_id 	= $obj->fk_elementdet;
+				$line->element_type 	= $obj->element_type;
 
 				$line->fk_expedition    = $this->id; // id of parent
 
@@ -1841,6 +1939,7 @@ class Expedition extends CommonObject
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
+				$line->fk_fournprice = $obj->fk_fournprice;
 				$line->label = $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
@@ -1882,6 +1981,7 @@ class Expedition extends CommonObject
 				$line->info_bits = $obj->info_bits;
 				$line->price = $obj->price;
 				$line->subprice = $obj->subprice;
+				$line->fk_remise_except = $obj->fk_remise_except;
 				$line->remise_percent = $obj->remise_percent;
 
 				$this->total_ht += $tabprice[0];
@@ -1889,6 +1989,9 @@ class Expedition extends CommonObject
 				$this->total_ttc += $tabprice[2];
 				$this->total_localtax1 += $tabprice[9];
 				$this->total_localtax2 += $tabprice[10];
+
+				$line->date_start       = $this->db->jdate($obj->date_start);
+				$line->date_end         = $this->db->jdate($obj->date_end);
 
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
@@ -1902,7 +2005,7 @@ class Expedition extends CommonObject
 				$this->multicurrency_total_tva 	+= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	+= $obj->multicurrency_total_ttc;
 
-				if ($originline != $obj->fk_origin_line) {
+				if ($originline != $obj->fk_elementdet) {
 					$line->detail_batch = array();
 				}
 
@@ -1911,7 +2014,7 @@ class Expedition extends CommonObject
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {
-						if ($originline != $obj->fk_origin_line) {
+						if ($originline != $obj->fk_elementdet) {
 							$line->detail_batch = $newdetailbatch;
 						} else {
 							$line->detail_batch = array_merge($line->detail_batch, $newdetailbatch);
@@ -1950,7 +2053,7 @@ class Expedition extends CommonObject
 
 				$line->fetch_optionals();
 
-				if ($originline != $obj->fk_origin_line) {
+				if ($originline != $obj->fk_elementdet) {
 					$this->lines[$lineindex] = $line;
 					$lineindex++;
 				} else {
@@ -1962,7 +2065,7 @@ class Expedition extends CommonObject
 				}
 
 				$i++;
-				$originline = $obj->fk_origin_line;
+				$originline = $obj->fk_elementdet;
 			}
 			$this->db->free($resql);
 			return 1;
@@ -2009,10 +2112,9 @@ class Expedition extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -2041,7 +2143,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto      			Add picto into link
 	 *	@param      string		$option         			Where the link point to
@@ -2161,15 +2263,19 @@ class Expedition extends CommonObject
 			$statusType = 'status9';
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		$signed_label = ' (' . $this->getLibSignedStatus() . ')';
+		$status_label = $this->signed_status ? $labelStatus . $signed_label : $labelStatus;
+		$status_label_short = $this->signed_status ? $labelStatusShort . $signed_label : $labelStatusShort;
+
+		return dolGetStatus($status_label, $status_label_short, '', $statusType, $mode);
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2392,20 +2498,20 @@ class Expedition extends CommonObject
 
 		if (!empty($tracking) && !empty($value)) {
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
+			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">%s</a>', $url, ($value ? $value : 'url'));
 		} else {
 			$this->tracking_url = $value;
 		}
 	}
 
 	/**
-	 *	Classify the shipping as closed (this record also the stock movement)
+	 *	Classify the shipping as closed (this records also the stock movement)
 	 *
 	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
 	public function setClosed()
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -2416,7 +2522,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);
@@ -2512,6 +2618,7 @@ class Expedition extends CommonObject
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 		$sql .= " INNER JOIN " . $this->db->prefix() . "expedition as e ON ed.fk_expedition = e.rowid";
 		$sql .= " WHERE ed.fk_expedition = " . ((int) $this->id);
+		$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 		dol_syslog(get_class($this) . "::valid select details", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2635,7 +2742,7 @@ class Expedition extends CommonObject
 	 */
 	public function reOpen()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2654,6 +2761,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			// If stock increment is done on closing
@@ -2671,7 +2779,7 @@ class Expedition extends CommonObject
 				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_origin_line";
+				$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2741,6 +2849,7 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_CLOSED;
+			$this->status = self::STATUS_CLOSED;
 			$this->billed = $oldbilled;
 			$this->db->rollback();
 			return -1;
@@ -2755,13 +2864,11 @@ class Expedition extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>	$moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf;
-
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
@@ -2796,681 +2903,5 @@ class Expedition extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
-	}
-}
-
-
-/**
- * Class to manage lines of shipment
- */
-class ExpeditionLigne extends CommonObjectLine
-{
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'expeditiondet';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'expeditiondet';
-
-
-	/**
-	 * Id of the line. Duplicate of $id.
-	 *
-	 * @var int
-	 * @deprecated
-	 */
-	public $line_id;	// deprecated
-
-	/**
-	 * @deprecated
-	 * @see $fk_origin_line
-	 */
-	public $origin_line_id;
-
-	/**
-	 * @var int Id of parent line for children of virtual product
-	 */
-	public $fk_parent;
-
-	/**
-	 * Code of object line that is origin of the shipment line.
-	 *
-	 * @var string
-	 */
-	public $fk_origin;			// Example: 'orderline'
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_origin_line;
-
-	/**
-	 * @var int Id of shipment
-	 */
-	public $fk_expedition;
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var float qty asked From llx_expeditiondet
-	 */
-	public $qty;
-
-	/**
-	 * @var float qty shipped
-	 */
-	public $qty_shipped;
-
-	/**
-	 * @var int Id of product
-	 */
-	public $fk_product;
-
-	// detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
-	// We can use this to know warehouse planned to be used for each lot.
-	public $detail_batch;
-
-	// virtual products  : array of total of quantities group product id and warehouse id
-	public $detail_children;
-
-	// detail of warehouses and qty
-	// We can use this to know warehouse when there is no lot.
-	public $details_entrepot;
-
-
-	/**
-	 * @var int Id of warehouse
-	 */
-	public $entrepot_id;
-
-
-	/**
-	 * @var float qty asked From llx_commandedet or llx_propaldet
-	 */
-	public $qty_asked;
-
-	/**
-	 * @deprecated
-	 * @see $product_ref
-	 */
-	public $ref;
-
-	/**
-	 * @var string product ref
-	 */
-	public $product_ref;
-
-	/**
-	 * @deprecated
-	 * @see $product_label
-	 */
-	public $libelle;
-
-	/**
-	 * @var string product label
-	 */
-	public $product_label;
-
-	/**
-	 * @var string product description
-	 * @deprecated
-	 * @see $product_desc
-	 */
-	public $desc;
-
-	/**
-	 * @var string product description
-	 */
-	public $product_desc;
-
-	/**
-	 * Type of the product. 0 for product, 1 for service
-	 * @var int
-	 */
-	public $product_type = 0;
-
-	/**
-	* @var int rang of line
-	*/
-	public $rang;
-
-	/**
-	* @var float weight
-	*/
-	public $weight;
-	public $weight_units;
-
-	/**
-	* @var float length
-	*/
-	public $length;
-	public $length_units;
-
-	/**
-	* @var float width
-	*/
-	public $width;
-	public $width_units;
-
-	/**
-	* @var float height
-	*/
-	public $height;
-	public $height_units;
-
-	/**
-	* @var float surface
-	*/
-	public $surface;
-	public $surface_units;
-
-	/**
-	* @var float volume
-	*/
-	public $volume;
-	public $volume_units;
-
-	// Invoicing
-	public $remise_percent;
-	public $tva_tx;
-
-	/**
-	 * @var float total without tax
-	 */
-	public $total_ht;
-
-	/**
-	 * @var float total with tax
-	 */
-	public $total_ttc;
-
-	/**
-	 * @var float total vat
-	 */
-	public $total_tva;
-
-	/**
-	 * @var float total localtax 1
-	 */
-	public $total_localtax1;
-
-	/**
-	 * @var float total localtax 2
-	 */
-	public $total_localtax2;
-
-
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
-
-	/**
-	 *  Load line expedition
-	 *
-	 *  @param  int		$rowid          Id line order
-	 *  @return	int						Return integer <0 if KO, >0 if OK
-	 */
-	public function fetch($rowid)
-	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_origin_line, ed.qty, ed.rang';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
-		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$objp = $this->db->fetch_object($result);
-			$this->id = $objp->rowid;
-			$this->fk_expedition = $objp->fk_expedition;
-			$this->entrepot_id = $objp->fk_entrepot;
-			$this->fk_origin_line = $objp->fk_origin_line;
-			$this->qty = $objp->qty;
-			$this->rang = $objp->rang;
-
-			$this->db->free($result);
-
-			return 1;
-		} else {
-			$this->errors[] = $this->db->lasterror();
-			$this->error = $this->db->lasterror();
-			return -1;
-		}
-	}
-
-	/**
-	 *	Insert line into database
-	 *
-	 *	@param      User	$user			User that modify
-	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return     int						Return integer <0 if KO, line id >0 if OK
-	 */
-	public function insert($user, $notrigger = 0)
-	{
-		$error = 0;
-
-		// Check parameters
-		if (empty($this->fk_expedition)
-			|| empty($this->fk_product) // product id is mandatory
-			|| (empty($this->fk_origin_line) && empty($this->fk_parent)) // at least origin line id of parent line id is set
-			|| !is_numeric($this->qty)) {
-			$this->error = 'ErrorMandatoryParametersNotProvided';
-			return -1;
-		}
-
-		$this->db->begin();
-
-		if (empty($this->rang)) {
-			$this->rang = 0;
-		}
-
-		// Rank to use
-		$ranktouse = $this->rang;
-		if ($ranktouse == -1) {
-			$rangmax = $this->line_max($this->fk_expedition);
-			$ranktouse = $rangmax + 1;
-		}
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
-		$sql .= "fk_expedition";
-		$sql .= ", fk_entrepot";
-		$sql .= ", fk_origin_line";
-		$sql .= ", fk_parent";
-		$sql .= ", fk_product";
-		$sql .= ", qty";
-		$sql .= ", rang";
-		$sql .= ") VALUES (";
-		$sql .= $this->fk_expedition;
-		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql .= ", ".(empty($this->fk_origin_line) ? 'NULL' : $this->fk_origin_line);
-		$sql .= ", ".(empty($this->fk_parent) ? 'NULL' : $this->fk_parent);
-		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : $this->fk_product);
-		$sql .= ", ".price2num($this->qty, 'MS');
-		$sql .= ", ".((int) $ranktouse);
-		$sql .= ")";
-
-		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
-
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINESHIPPING_INSERT', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if ($error) {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(__METHOD__.' '.$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-				}
-			}
-		} else {
-			$error++;
-		}
-
-		if ($error) {
-			$this->db->rollback();
-			return -1;
-		} else {
-			$this->db->commit();
-			return $this->id;
-		}
-	}
-
-	/**
-	 * Find all children
-	 *
-	 * @param	int		$line_id	Line id
-	 * @param	array	$list		List of sub-lines for a virtual product line
-	 * @param	int		$mode		[=0] array of lines ids, 1 array of line object for dispatcher
-	 * @return	int 	Return integer <0 if KO else >0 if OK
-	 */
-	public function findAllChild($line_id, &$list = array(), $mode = 0)
-	{
-		if ($line_id > 0) {
-			// find all child
-			$sql  = "SELECT ed.rowid as child_line_id";
-			if ($mode == 1) {
-				$sql .= ", ed.fk_product";
-				$sql .= ", ed.fk_parent";
-				$sql .= ", " . $this->db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty') . " as qty";
-				$sql .= ", " . $this->db->ifsql('eb.rowid IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse') . " as fk_warehouse";
-				$sql .= ", eb.batch, eb.eatby, eb.sellby";
-			}
-			$sql .= " FROM " . $this->db->prefix() . $this->table_element . " as ed";
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "expeditiondet_batch as eb ON eb.fk_expeditiondet = " . ((int) $line_id);
-			$sql .= " WHERE ed.fk_parent = " . ((int) $line_id);
-			$sql .= $this->db->order('ed.fk_product,ed.rowid', 'ASC,ASC');
-
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$child_line_id = (int) $obj->child_line_id;
-					if (!isset($list[$line_id])) {
-						$list[$line_id] = array();
-					}
-
-					if ($mode == 0) {
-						$list[$line_id][] = $child_line_id;
-					} elseif ($mode == 1) {
-						$line_obj = new stdClass();
-						$line_obj->rowid = $child_line_id;
-						$line_obj->fk_product = $obj->fk_product;
-						$line_obj->fk_parent = $obj->fk_parent;
-						$line_obj->qty = $obj->qty;
-						$line_obj->fk_warehouse = $obj->fk_warehouse;
-						$line_obj->batch = $obj->batch;
-						$line_obj->eatby = $obj->eatby;
-						$line_obj->sellby = $obj->sellby;
-						$line_obj->iskit = $obj->iskit;
-						$line_obj->incdec = $obj->incdec;
-						$list[$line_id][] = $line_obj;
-					}
-
-					$this->findAllChild($child_line_id, $list, $mode);
-				}
-				$this->db->free($resql);
-			} else {
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
-				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-			}
-		}
-
-		return 1;
-	}
-
-	/**
-	 * 	Delete shipment line.
-	 *
-	 *	@param		User	$user			User that modify
-	 *	@param		int		$notrigger		0=launch triggers after, 1=disable triggers
-	 * 	@return		int		Return integer < 0 if KO, > 0 if OK
-	 */
-	public function delete($user = null, $notrigger = 0)
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		// virtual products : delete all children and batch
-		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !($this->fk_parent > 0)) {
-			// find all children
-			$line_id_list = array();
-			$result = $this->findAllChild($this->id, $line_id_list);
-			if ($result) {
-				$child_line_id_list = array_reverse($line_id_list, true);
-				foreach ($child_line_id_list as $child_line_id_arr) {
-					foreach ($child_line_id_arr as $child_line_id) {
-						// delete batch expedition line
-						if (isModEnabled('productbatch')) {
-							$sql = "DELETE FROM " . $this->db->prefix() . "expeditiondet_batch";
-							$sql .= " WHERE fk_expeditiondet = " . ((int) $child_line_id);
-							if (!$this->db->query($sql)) {
-								$error++;
-								$this->errors[] = $this->db->lasterror() . " - sql=$sql";
-							}
-						}
-
-						$sql = "DELETE FROM " . $this->db->prefix() . "expeditiondet";
-						$sql .= " WHERE rowid = " . ((int) $child_line_id);
-						if (!$this->db->query($sql)) {
-							$error++;
-							$this->errors[] = $this->db->lasterror() . " - sql=$sql";
-						}
-
-						if ($error) {
-							break;
-						}
-					}
-					if ($error) {
-						break;
-					}
-				}
-			} else {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			// delete batch expedition line
-			if (isModEnabled('productbatch')) {
-				$sql = "DELETE FROM " . $this->db->prefix() . "expeditiondet_batch";
-				$sql .= " WHERE fk_expeditiondet = " . ((int) $this->id);
-
-				if (!$this->db->query($sql)) {
-					$this->errors[] = $this->db->lasterror() . " - sql=$sql";
-					$error++;
-				}
-			}
-
-			$sql = "DELETE FROM " . $this->db->prefix() . "expeditiondet";
-			$sql .= " WHERE rowid = " . ((int) $this->id);
-
-			if (!$error && $this->db->query($sql)) {
-				// Remove extrafields
-				if (!$error) {
-					$result = $this->deleteExtraFields();
-					if ($result < 0) {
-						$this->errors[] = $this->error;
-						$error++;
-					}
-				}
-				if (!$error && !$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('LINESHIPPING_DELETE', $user);
-					if ($result < 0) {
-						$this->errors[] = $this->error;
-						$error++;
-					}
-					// End call triggers
-				}
-			} else {
-				$this->errors[] = $this->db->lasterror() . " - sql=$sql";
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		}
-	}
-
-	/**
-	 *  Update a line in database
-	 *
-	 *	@param		User	$user			User that modify
-	 *	@param		int		$notrigger		1 = disable triggers
-	 *  @return		int					Return integer < 0 if KO, > 0 if OK
-	 */
-	public function update($user = null, $notrigger = 0)
-	{
-		$error = 0;
-
-		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
-
-		$this->db->begin();
-
-		// Clean parameters
-		if (empty($this->qty)) {
-			$this->qty = 0;
-		}
-		$qty = price2num($this->qty);
-		$remainingQty = 0;
-		$batch = null;
-		$batch_id = null;
-		$expedition_batch_id = null;
-		if (is_array($this->detail_batch)) { 	// array of ExpeditionLineBatch
-			if (count($this->detail_batch) > 1) {
-				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
-				$this->errors[] = 'ErrorBadParameters';
-				$error++;
-			} else {
-				$batch = $this->detail_batch[0]->batch;
-				$batch_id = $this->detail_batch[0]->fk_origin_stock;
-				$expedition_batch_id = $this->detail_batch[0]->id;
-				if ($this->entrepot_id != $this->detail_batch[0]->entrepot_id) {
-					dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
-					$this->errors[] = 'ErrorBadParameters';
-					$error++;
-				}
-				$qty = price2num($this->detail_batch[0]->qty);
-			}
-		} elseif (!empty($this->detail_batch)) {
-			$batch = $this->detail_batch->batch;
-			$batch_id = $this->detail_batch->fk_origin_stock;
-			$expedition_batch_id = $this->detail_batch->id;
-			if ($this->entrepot_id != $this->detail_batch->entrepot_id) {
-				dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
-				$this->errors[] = 'ErrorBadParameters';
-				$error++;
-			}
-			$qty = price2num($this->detail_batch->qty);
-		}
-
-		// check parameters
-		if (!isset($this->id) || !isset($this->entrepot_id)) {
-			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
-			$this->errors[] = 'ErrorMandatoryParametersNotProvided';
-			$error++;
-			return -1;
-		}
-
-		// update lot
-
-		if (!empty($batch) && isModEnabled('productbatch')) {
-			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");
-
-			if (empty($batch_id) || empty($this->fk_product)) {
-				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
-				$this->errors[] = 'ErrorMandatoryParametersNotProvided';
-				$error++;
-			}
-
-			// fetch remaining lot qty
-			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
-
-			if (!$error && ($lotArray = $shipmentlinebatch->fetchAll($this->id)) < 0) {
-				$this->errors[] = $this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
-				$error++;
-			} else {
-				// calculate new total line qty
-				foreach ($lotArray as $lot) {
-					if ($expedition_batch_id != $lot->id) {
-						$remainingQty += $lot->qty;
-					}
-				}
-				$qty += $remainingQty;
-
-				//fetch lot details
-
-				// fetch from product_lot
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-				$lot = new Productlot($this->db);
-				if ($lot->fetch(0, $this->fk_product, $batch) < 0) {
-					$this->errors[] = $lot->errors;
-					$error++;
-				}
-				if (!$error && !empty($expedition_batch_id)) {
-					// delete lot expedition line
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
-					$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
-					$sql .= " AND rowid = ".((int) $expedition_batch_id);
-
-					if (!$this->db->query($sql)) {
-						$this->errors[] = $this->db->lasterror()." - sql=$sql";
-						$error++;
-					}
-				}
-				if (!$error && $this->detail_batch->qty > 0) {
-					// create lot expedition line
-					if (isset($lot->id)) {
-						$shipmentLot = new ExpeditionLineBatch($this->db);
-						$shipmentLot->batch = $lot->batch;
-						$shipmentLot->eatby = $lot->eatby;
-						$shipmentLot->sellby = $lot->sellby;
-						$shipmentLot->fk_warehouse = $this->detail_batch->entrepot_id;
-						$shipmentLot->qty = $this->detail_batch->qty;
-						$shipmentLot->fk_origin_stock = $batch_id;
-						if ($shipmentLot->create($this->id) < 0) {
-							$this->errors = $shipmentLot->errors;
-							$error++;
-						}
-					}
-				}
-			}
-		}
-		if (!$error) {
-			// update line
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql .= " fk_entrepot = ".($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
-			$sql .= " , qty = ".((float) price2num($qty, 'MS'));
-			$sql .= " WHERE rowid = ".((int) $this->id);
-
-			if (!$this->db->query($sql)) {
-				$this->errors[] = $this->db->lasterror()." - sql=$sql";
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$this->errors[] = $this->error;
-					$error++;
-				}
-			}
-		}
-
-		if (!$error && !$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('LINESHIPPING_MODIFY', $user);
-			if ($result < 0) {
-				$this->errors[] = $this->error;
-				$error++;
-			}
-			// End call triggers
-		}
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		}
 	}
 }

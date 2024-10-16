@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=כרטיסים
 Module56000Desc=מערכת כרטיסים לניהול הנפקה או בקשה
-
 Permission56001=ראה כרטיסים
 Permission56002=שנה כרטיסים
 Permission56003=מחק כרטיסים
 Permission56004=ניהול כרטיסים
 Permission56005=ראה כרטיסים של כל הצדדים השלישיים (לא יעיל עבור משתמשים חיצוניים, תמיד תהיה מוגבל לצד השלישי שהם תלויים בו)
 Permission56006=ייצוא כרטיסים
-
 Tickets=כרטיסים
 TicketDictType=כרטיס - סוגים
 TicketDictCategory=כרטיס - קבוצות
 TicketDictSeverity=כרטיס - חומרה
 TicketDictResolution=כרטיס - רזולוציה
-
 TicketTypeShortCOM=שאלה מסחרית
 TicketTypeShortHELP=בקשה לעזרה תפקודית
 TicketTypeShortISSUE=בעיה או באג
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=בְּעָיָה
 TicketTypeShortREQUEST=בקשת שינוי או שיפור
 TicketTypeShortPROJET=פּרוֹיֶקט
 TicketTypeShortOTHER=אחר
-
 TicketSeverityShortLOW=נָמוּך
 TicketSeverityShortNORMAL=נוֹרמָלִי
 TicketSeverityShortHIGH=גָבוֹהַ
 TicketSeverityShortBLOCKING=קריטי, חוסם
-
 TicketCategoryShortOTHER=אחר
-
 ErrorBadEmailAddress=שדה '%s' שגוי
 MenuTicketMyAssign=הכרטיסים שלי
 MenuTicketMyAssignNonClosed=הכרטיסים הפתוחים שלי
 MenuListNonClosed=פתחו כרטיסים
-
 TypeContact_ticket_internal_CONTRIBUTOR=תוֹרֵם
 TypeContact_ticket_internal_SUPPORTTEC=משתמש שהוקצה
 TypeContact_ticket_external_SUPPORTCLI=פנייה ללקוח / מעקב אחר אירועים
 TypeContact_ticket_external_CONTRIBUTOR=תורם חיצוני
-
 OriginEmail=דוא"ל לכתב
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=שלח הודעת כרטיס במייל
-
 ExportDataset_ticket_1=כרטיסים
-
 # Status
 Read=לקרוא
 Assigned=שהוקצה
 NeedMoreInformation=מחכה למשוב הכתב
 NeedMoreInformationShort=מחכה למשוב
-TicketAnswered=Answered
 Waiting=הַמתָנָה
 SolvedClosed=נפתר
 Deleted=נמחק
-
 # Dict
-Type=סוּג
 Severity=חוּמרָה
 TicketGroupIsPublic=הקבוצה היא ציבורית
 TicketGroupIsPublicDesc=אם קבוצת כרטיסים היא ציבורית, היא תהיה גלויה בטופס בעת יצירת כרטיס מהממשק הציבורי
-
 # Email templates
 MailToSendTicketMessage=לשליחת אימייל מהודעת כרטיס
-
-#
 # Admin page
-#
 TicketSetup=הגדרת מודול כרטיסים
 TicketSettings=הגדרות
 TicketPublicAccess=ממשק ציבורי שאינו דורש זיהוי זמין בכתובת האתר הבאה
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=השתמש בקוד גרפי (CAPTCHA) בעת יצירת כ
 TicketUseCaptchaCodeHelp=מוסיף אימות CAPTCHA בעת יצירת כרטיס חדש.
 TicketsAllowClassificationModificationIfClosed=אפשר לשנות סיווג של כרטיסים סגורים
 TicketsAllowClassificationModificationIfClosedHelp=אפשר לשנות סיווג (סוג, קבוצת כרטיסים, חומרה) גם אם הכרטיסים סגורים.
-
-#
 # Index & list page
-#
 TicketsIndex=אזור הכרטיסים
 TicketList=רשימת כרטיסים
 TicketAssignedToMeInfos=דף זה מציג את רשימת הכרטיסים שנוצרה על ידי המשתמש הנוכחי או הוקצתה לו
@@ -175,10 +152,7 @@ ShowAsConversation=הצג כרשימת שיחות
 MessageListViewType=הצג כרשימת טבלה
 ConfirmMassTicketClosingSendEmail=שלח באופן אוטומטי מיילים בעת סגירת כרטיסים
 ConfirmMassTicketClosingSendEmailQuestion=האם ברצונך להודיע לצד שלישי בעת סגירת כרטיסים אלה?
-
-#
 # Ticket card
-#
 Ticket=כַּרְטִיס
 TicketCard=כרטיס כרטיס
 CreateTicket=צור כרטיס
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=יותר מדי זמן חלף מאז התש�
 TicketNoContractFoundToLink=לא נמצא חוזה מקושר אוטומטית לכרטיס זה. אנא קשר חוזה באופן ידני.
 TicketManyContractsLinked=חוזים רבים נקשרו אוטומטית לכרטיס זה. הקפד לוודא מה יש לבחור.
 TicketRefAlreadyUsed=ההפניה [%s] כבר בשימוש, ההפניה החדשה שלך היא [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=הכרטיס %s נקרא על ידי %s
 NoLogForThisTicket=אין עדיין יומן עבור כרטיס זה
 TicketLogAssignedTo=הכרטיס %s הוקצה ל-%s
 TicketLogPropertyChanged=כרטיס %s שונה: סיווג מ-%s ל-%s
 TicketLogClosedBy=הכרטיס %s נסגר על ידי %s
 TicketLogReopen=הכרטיס %s ייפתח מחדש
-
-#
 # Public pages
-#
 TicketSystem=מערכת כרטיסים
 ShowListTicketWithTrackId=הצג רשימת כרטיסים מזיהוי מסלול
 ShowTicketWithTrackId=הצגת כרטיס ממזהה מסלול
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=זהו הודעת דוא"ל אוטומטית לאשר
 TicketNewEmailBodyInfosTicket=מידע למעקב אחר הכרטיס
 TicketNewEmailBodyInfosTrackId=מספר מעקב אחר כרטיס: %s
 TicketNewEmailBodyInfosTrackUrl=תוכל לצפות בהתקדמות הכרטיס על ידי לחיצה על הקישור הבא
-TicketNewEmailBodyInfosTrackUrlCustomer=ניתן לצפות בהתקדמות הכרטיס בממשק הספציפי על ידי לחיצה על הקישור הבא
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=אתה יכול לעיין בהיסטוריה של כרטיס זה על ידי לחיצה על הקישור הבא
 TicketEmailPleaseDoNotReplyToThisEmail=נא לא להשיב ישירות למייל זה! השתמש בקישור כדי להשיב לממשק.
 TicketPublicInfoCreateTicket=טופס זה מאפשר לך לרשום כרטיס תמיכה במערכת הניהול שלנו.
 TicketPublicPleaseBeAccuratelyDescribe=אנא תאר במדויק את בקשתך. ספק את מירב המידע האפשרי כדי לאפשר לנו לזהות נכון את בקשתך.
 TicketPublicMsgViewLogIn=נא להזין מזהה מעקב אחר כרטיסים
-TicketTrackId=מזהה מעקב ציבורי
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=אחד מזהה המעקב שלך
 ErrorTicketNotFound=כרטיס עם מזהה מעקב %s לא נמצא!
 Subject=נושא
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=מספר כרטיסים בחודש
 NbOfTickets=מספר כרטיסים
 ExternalContributors=תורמים חיצוניים
 AddContributor=הוסף תורם חיצוני
-
 # notifications
 TicketCloseEmailSubjectCustomer=הכרטיס סגור
 TicketCloseEmailBodyCustomer=זוהי הודעה אוטומטית להודיע לך שהכרטיס %s נסגר זה עתה.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=מקבל הודעה
 TicketNotificationLogMessage=הודעת יומן
 TicketNotificationEmailBodyInfosTrackUrlinternal=הצג את הכרטיס לתוך הממשק
 TicketNotificationNumberEmailSent=דוא"ל הודעה נשלח: %s
-
 ActionsOnTicket=אירועים בכרטיס
-
-#
 # Boxes
-#
 BoxLastTicket=כרטיסים אחרונים שנוצרו
 BoxLastTicketDescription=הכרטיסים האחרונים שנוצרו על ידי %s
 BoxLastTicketContent=

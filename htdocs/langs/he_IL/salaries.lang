@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=חשבון (מתרשים החשבונות) משמש כברירת מחדל עבור צדדים שלישיים "משתמשים".
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=החשבון הייעודי המוגדר בכרטיס המשתמש ישמש לחשבונאות משנה בלבד. זה ישמש עבור General Ledger וכערך ברירת המחדל של חשבונאות משנה אם לא הוגדר חשבון משתמש ייעודי לחשבון משתמש.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=חשבון הנהלת חשבונות כברירת מחדל לתשלומי שכר
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=כברירת מחדל, השאר ריקה את האפשרות "צור אוטומטית תשלום כולל" בעת יצירת משכורת
 Salary=שכר

@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,14 +102,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Change customer bank information to withdraw
-	/*
-	if ($action == 'modify') {
-		for ($i = 1; $i < 9; $i++) {
-			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
-		}
-	}
-	*/
 	if ($action == 'create' && $permissiontocreate) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 		//var_dump($default_account);var_dump(getDolGlobalString($default_account));var_dump($id_bankaccount);exit;
@@ -241,6 +234,7 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title);
 
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 $head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
 if ($type) {
 	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
@@ -251,11 +245,11 @@ if ($type) {
 
 
 if ($sourcetype != 'salary') {
-	$nb = $bprev->nbOfInvoiceToPay($type);
-	$pricetowithdraw = $bprev->SommeAPrelever($type);
+	$nb = $bprev->nbOfInvoiceToPay($type);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	$pricetowithdraw = $bprev->SommeAPrelever($type);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 } else {
-	$nb = $bprev->nbOfInvoiceToPay($type, 'salary');
-	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');
+	$nb = $bprev->nbOfInvoiceToPay($type, 'salary');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 }
 if ($nb < 0) {
 	dol_print_error($db, $bprev->error);
@@ -272,7 +266,7 @@ if ($sourcetype == 'salary') {
 
 print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
 print '<td class="nowraponall">';
-print dol_escape_htmltag($nb);
+print dol_escape_htmltag((string) $nb);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
@@ -299,7 +293,7 @@ if ($nb) {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print '<span class="hideonsmartphone">'.$title.'</span>';
-		print img_picto('', 'bank_account');
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
@@ -334,14 +328,14 @@ if ($nb) {
 				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
 			print '<input type="hidden" name="format" value="ALL">'."\n";
-			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'">'."\n";
+			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'">'."\n";
 		}
 	} else {
 		if ($mysoc->isInEEC()) {
@@ -349,18 +343,18 @@ if ($nb) {
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
 			}
-			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+			print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 
 			if ($type != 'bank-transfer') {
 				$title = $langs->trans("CreateForSepaRCUR");
-				print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+				print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 			}
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
-			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#">'.$title."</a>\n";
+			print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#">'.$title."</a>\n";
 		}
 	}
 } else {
@@ -370,7 +364,7 @@ if ($nb) {
 		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
 		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 	}
-	print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
+	print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
 	print $title;
 	print "</a>\n";
 }
@@ -458,6 +452,9 @@ if ($resql) {
 	$i = 0;
 
 	$param = '';
+	if ($type) {
+		$param .= '&type=' . urlencode((string) $type);
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
@@ -554,11 +551,14 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-				$bac->fetch(0, $obj->socid);
+				$bac->fetch(0, '', $obj->socid);
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
-				$invoicestatic->ref_supplier = $obj->ref_supplier;
+				if ($type == 'bank-transfer') {
+					$invoicestatic->ref_supplier = $obj->ref_supplier;
+				}
+				$salary = null;
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch(0, '', $obj->uid);
@@ -583,7 +583,7 @@ if ($resql) {
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
-			if ($sourcetype != 'salary') {
+			if ($sourcetype != 'salary' || $salary === null) {
 				print $invoicestatic->getNomUrl(1, 'withdraw');
 			} else {
 				print $salary->getNomUrl(1, 'withdraw');
