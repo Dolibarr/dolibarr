@@ -273,7 +273,7 @@ print '
 				jQuery(\'.clipboardCPShowOnHover\').hover(
 					function() {
 						console.log("We hover a value with a copy paste feature");
-						$(this).children(".clipboardCPButton, .clipboardCPText").show();
+						$(this).children(".clipboardCPButton, .clipboardCPText").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 					},
 					function() {
 						console.log("We hover out the value with a copy paste feature");
@@ -306,7 +306,7 @@ print '
 							succeed = document.execCommand(\'copy\');
 
 							console.log("We set the style display back to inline-block");
-							jqobj.css("display", "inline-block");
+							jqobj.css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 					    } catch(e) {
 					        succeed = false;
 					    }
@@ -315,16 +315,18 @@ print '
 						window.getSelection().removeAllRanges();
 					}
 
-					/* Show message */
-					/* TODO Show message into a top left corner or center of screen */
+					/* Show result - message */
+					var lastparent = $(this).parent();				/* .parent is clipboardCP */
 					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {
-						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+						$(this).parent().children(".clipboardCPButton").hide();
+						$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
+						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
 						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
 					}
-					setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+					setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 				});
 	});'."\n";
 
