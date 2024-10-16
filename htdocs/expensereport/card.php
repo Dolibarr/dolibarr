@@ -219,6 +219,13 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
+	//Action confirm reopen
+	if ($action == 'confirm_reopen' && !GETPOST('cancel', 'alpha')) {
+		$object->fk_statut = 2;
+		$object->update($user);
+		header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
+	}
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 		if (1 == 0 && !GETPOST('clone_content', 'alpha') && !GETPOST('clone_receivers', 'alpha')) {
@@ -1545,6 +1552,10 @@ if ($action == 'create') {
 
 	print '</form>';
 } elseif ($id > 0 || $ref) {
+	if ($action == 'reopen') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenTrip', $object->ref), 'confirm_reopen', '', 0, 1);
+		print $formconfirm;
+	}
 	$result = $object->fetch($id, $ref);
 
 	if ($result > 0) {
@@ -2783,6 +2794,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
+			if ($user->id == $object->fk_user_valid) {
+				//Reopen
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ReOpen').'</a></div>';
+			}
+
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
