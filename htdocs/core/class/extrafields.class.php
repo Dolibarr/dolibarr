@@ -1456,7 +1456,7 @@ class ExtraFields
 						}
 						// can use MODE request (list or view)
 						if (strpos($InfoFieldList[4], '$MODE$') !== false) {
-							$InfoFieldList[4] = str_replace('$MODE$', $mode, $InfoFieldList[4]);
+							$InfoFieldList[4] = str_replace('$MODE$', (string) $mode, $InfoFieldList[4]);
 						}
 
 						// current object id can be use into filter
@@ -1478,7 +1478,7 @@ class ExtraFields
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
-print $sqlwhere;
+
 					// Add Usf filter on second line
 					/*
 					 if ($Usf) {
