@@ -2197,11 +2197,6 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	// Other attributes
-	$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
 	print "</table>";
 
 	print '</div>';
