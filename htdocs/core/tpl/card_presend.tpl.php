@@ -3,6 +3,7 @@
  * Copyright (C) 2022	    Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
+ * Copyright (C) 2023       Lenin Rivas         	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -54,12 +55,25 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
+
+	if (!isset($file)) {
+		$file = null;
+	}
+	if (!isset($files)) {
+		$files = array();
+	}
+
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
 		//Get also the main_lastdoc field of $object. If not found, try to guess with following code
 		if (!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
-			$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
+			//$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
+			if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES)) {
+				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			} else {
+				$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
+			}
 		} else {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			// Special case
@@ -70,7 +84,15 @@ if ($action == 'presend') {
 			}
 		}
 
-		$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+		//$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+		if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($fileparams) > 0) {
+			$countfileparams = count($fileparams);
+			for ($i = 0; $i < $countfileparams; $i++) {
+				$files[$i] = isset($fileparams[$i]['fullname']) ? $fileparams[$i]['fullname'] : null;
+			}
+		} else {
+			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+		}
 	}
 
 	// Define output language
@@ -408,8 +430,18 @@ if ($action == 'presend') {
 	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-	$formmail->param['fileinit'] = array($file);
-	$formmail->param['object_entity'] = $object->entity;
+
+	//$formmail->param['fileinit'] = array($file);
+	if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($files) > 0) {
+		$countfiles = count($files);
+		for ($i = 0; $i < $countfiles; $i++) {
+			$formmail->param['fileinit'] = $files;
+			$formmail->param['object_entity'] = $object->entity;
+		}
+	} else {
+		$formmail->param['fileinit'] = array($file);
+		$formmail->param['object_entity'] = $object->entity;
+	}
 
 	// Show form
 	print $formmail->get_form();
