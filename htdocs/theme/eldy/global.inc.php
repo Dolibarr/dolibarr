@@ -2569,7 +2569,7 @@ div.firstcolumn > table.noborder, div.secondcolumn > table.noborder, div.firstco
 @media only screen and (max-width: 1024px)
 {
 	div.fiche {
-		margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '6' : '20')); ?>px;
+		margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (!empty($dol_hide_leftmenu) ? '6' : '20')); ?>px;
 		margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 6); ?>px;
 	}
 	div.fichecenter {
