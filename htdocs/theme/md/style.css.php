@@ -2449,7 +2449,7 @@ td.showDragHandle {
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
-	padding-top: 28px;
+	padding-top: 12px;
 <?php } ?>
 }
 .bodyforlist #id-right {
@@ -2631,7 +2631,7 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;';
 	} ?>
 	margin-bottom: 15px;
@@ -2783,7 +2783,6 @@ td.nobordernopadding.widthpictotitle.col-picto {
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
-	margin-bottom: 4px;
 }
 .pictoobjectwidth {
 	width: 14px;
@@ -3929,7 +3928,7 @@ div.tabs {
 	height:100%;
 }
 div.tabsElem {
-	margin-top: 6px;
+	margin-top: 12px;
 }		/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
 	font-weight: normal !important;
@@ -3975,59 +3974,7 @@ div.tabBar table.tableforservicepart2:last-child {
 .tableforservicepart1 .tdhrthin {
 	height: unset;
 }
-/* Payment Screen : Pointer cursor in the autofill image */
-.AutoFillAmount {
-	cursor:pointer;
-}
 
-/* ============================================================================== */
-/* Buttons for actions                                                            */
-/* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-}
-div.tabsAction {
-	margin: 20px 0em 20px 0em;
-	padding: 0em 0em;
-	text-align: right;
-}
-div.tabsActionNoBottom {
-	margin-bottom: 0px;
-}
-div.tabsAction > a {
-	margin-bottom: 16px !important;
-}
-
-div.popuptabset {
-	padding: 6px;
-	background: #fff;
-	border: 1px solid #888;
-}
-div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-a.tabTitle {
-	color:rgba(0,0,0,.5);
-	margin-<?php print $right; ?>: 10px;
-	text-shadow:1px 1px 1px #ffffff;
-	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
-	padding: 4px 6px 2px 6px;
-	margin: 0px 6px;
-	text-decoration: none;
-	white-space: nowrap;
-}
-.tabTitleText {
-	display: none;
-}
-.imgTabTitle {
-	max-height: 14px;
-}
 div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
@@ -4037,7 +3984,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 13px 12px;
+	padding: 10px 13px 10px;
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
@@ -4093,6 +4040,63 @@ span.tabspan {
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
 	border-top: 1px solid #D8D8D8;
 }
+
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
+}
+
+
+/* ============================================================================== */
+/* Buttons for actions                                                            */
+/* ============================================================================== */
+
+div.divButAction {
+	margin-bottom: 1.4em;
+}
+div.tabsAction {
+	margin: 20px 0em 20px 0em;
+	padding: 0em 0em;
+	text-align: right;
+}
+div.tabsActionNoBottom {
+	margin-bottom: 0px;
+}
+div.tabsAction > a {
+	margin-bottom: 16px !important;
+}
+
+div.popuptabset {
+	padding: 6px;
+	background: #fff;
+	border: 1px solid #888;
+}
+div.popuptab {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+a.tabTitle {
+	color:rgba(0,0,0,.5);
+	margin-<?php print $right; ?>: 10px;
+	text-shadow:1px 1px 1px #ffffff;
+	font-family: <?php print $fontlist ?>;
+	font-weight: normal;
+	padding: 4px 6px 2px 6px;
+	margin: 0px 6px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.tabTitleText {
+	display: none;
+}
+.imgTabTitle {
+	max-height: 14px;
+}
+
+
 
 /* ============================================================================== */
 /* Buttons for actions                                                            */
@@ -5344,11 +5348,14 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+table.table-fiche-title tr.toptitle {
+	height: 60px;
+}
 div.titre {
 	font-size: 14px;
 	text-decoration: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	/*padding-top: 5px;
+	padding-bottom: 5px;*/
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
@@ -5372,10 +5379,11 @@ table.notopnoleftnoright.table-fiche-title {
 	margin-bottom: 8px;
 }
 
-
+/*
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
+*/
 table.table-fiche-title .col-title div.titre span {
 	line-height: normal;
 }

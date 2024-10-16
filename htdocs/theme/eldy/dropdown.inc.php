@@ -105,7 +105,7 @@ button.dropdown-item.global-search-item {
 	min-width: 160px;
 	margin: 2px 0 0;
 	font-size: 14px;
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	list-style: none;
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
