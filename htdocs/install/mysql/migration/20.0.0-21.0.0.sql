@@ -83,6 +83,7 @@ ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AF
 
 ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER total_ttc;
 
+ALTER TABLE llx_notify_def ADD COLUMN entity integer DEFAULT 1;
 
 -- A dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
@@ -233,6 +234,11 @@ ALTER TABLE llx_c_accounting_report ADD UNIQUE INDEX uk_c_accounting_report (cod
 
 INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report personalized', 1);
 
+
+ALTER TABLE llx_accounting_system ADD COLUMN date_creation datetime;
+ALTER TABLE llx_accounting_system ADD COLUMN fk_user_author integer;
+
+
 ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
 
 ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
@@ -252,3 +258,21 @@ ALTER TABLE llx_accounting_category_account ADD INDEX idx_accounting_category_ac
 ALTER TABLE llx_accounting_category_account ADD CONSTRAINT fk_accounting_category_account_fk_accounting_account FOREIGN KEY (fk_accounting_account) REFERENCES llx_accounting_account (rowid);
 
 ALTER TABLE llx_accounting_category_account ADD UNIQUE INDEX uk_accounting_category_account(fk_accounting_category, fk_accounting_account);
+
+CREATE TABLE llx_product_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_product_price_extrafields ADD UNIQUE INDEX uk_product_price_extrafields (fk_object);
+
+CREATE TABLE llx_product_customer_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);

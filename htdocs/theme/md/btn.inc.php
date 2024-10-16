@@ -317,13 +317,16 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	text-decoration: none;
 	position: relative;
 	margin: 0 0 0 10px;
-	min-width: 80px;
 	text-align: center;
 	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: #fbfbfb; */
+}
+/* *:not(.paginationafterarrows) > .btnTitle, *:not(.paginationafterarrows) > a.btnTitle { */
+.btnTitle, a.btnTitle {
+	min-width: 60px;
 }
 
 a.btnTitle.btnTitleSelected {
