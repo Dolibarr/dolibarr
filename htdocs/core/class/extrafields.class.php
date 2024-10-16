@@ -1074,9 +1074,10 @@ class ExtraFields
 	 * @param  int           $objectid       		Current object id
 	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         $mode                  1=Used for search filters
+	 * @param  ?CommonObject $object                Common object dolibarr
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0, $object = null)
 	{
 		global $conf, $langs, $form;
 
@@ -1433,6 +1434,18 @@ class ExtraFields
 
 					// Add filter from 4th field
 					if (!empty($InfoFieldList[4])) {
+						if (is_object($object)) {
+							$tags = [];
+							preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);
+							foreach ($tags[0] as $keytag => $valuetag) {
+								$property = strtolower($tags[1][$keytag]);
+								if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+									$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+								} else {
+									$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+								}
+							}
+						}
 						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 							$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
