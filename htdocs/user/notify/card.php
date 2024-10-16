@@ -90,10 +90,10 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 }
 
+$error = 0;
+
 // Add a notification
 if ($action == 'add' && $permissiontoadd) {
-	$error = 0;
-
 	if ($actionid <= 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
 		$error++;
@@ -149,6 +149,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-notify_card');
 
 
@@ -205,7 +206,7 @@ if ($result > 0) {
 	print "\n";
 
 	// Help
-	print '<span class="opacitymedium">';
+	print '<span class="opacitymedium hideonsmartphone">';
 	print '<br>'.$langs->trans("NotificationsDesc");
 	print '<br>'.$langs->trans("NotificationsDescUser").' - '.$langs->trans("YouAreHere");
 	if (isModEnabled('societe')) {
@@ -267,7 +268,7 @@ if ($result > 0) {
 	print_liste_field_titre("Event", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '');
-	print '</tr>';
+	print "</tr>\n";
 
 
 	if ($action == 'create') {
@@ -300,13 +301,13 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
-			print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add small" value="'.$langs->trans("Add").'">';
 			print '&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
 			print '</tr>';
 		} else {
-			print '<tr class="oddeven"><td colspan="4">';
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
 			print $langs->trans("YouMustAssignUserMailFirst");
 			print '</td></tr>';
 		}
@@ -334,7 +335,7 @@ if ($result > 0) {
 						print ' &lt;'.$obj->email.'&gt;';
 					} else {
 						$langs->load("errors");
-						print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
+						print ' &nbsp; '.img_warning().' <span class="warning">'.$langs->trans("ErrorBadEMail", $obj->email).'</span>';
 					}
 				}
 				print '</td>';
