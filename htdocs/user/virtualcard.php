@@ -134,7 +134,9 @@ print '<div class="fichecenter">';
 print '<br>';
 
 $param = '&id='.((int) $object->id);
-$param .= '&dol_openinpopup=1';
+if (GETPOSTISSET('dol_openinpopup')) {
+	$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+}
 
 $enabledisablehtml = $langs->trans("EnablePublicVirtualCard").' ';
 if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
