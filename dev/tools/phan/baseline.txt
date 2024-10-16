@@ -15,7 +15,7 @@ return [
     // PhanTypeMismatchArgumentProbablyReal : 410+ occurrences
     // PhanUndeclaredGlobalVariable : 380+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 310+ occurrences
-    // PhanPluginUnknownArrayMethodParamType : 270+ occurrences
+    // PhanPluginUnknownArrayMethodParamType : 260+ occurrences
     // PhanPossiblyUndeclaredVariable : 200+ occurrences
     // PhanTypeMismatchProperty : 170+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 95+ occurrences
@@ -26,18 +26,17 @@ return [
     // PhanRedefineFunction : 50+ occurrences
     // PhanPluginEmptyStatementIf : 45+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
-    // PhanTypeInvalidDimOffset : 40+ occurrences
+    // PhanTypeInvalidDimOffset : 35+ occurrences
     // PhanTypeMismatchDimFetch : 30+ occurrences
     // PhanTypeSuspiciousNonTraversableForeach : 30+ occurrences
     // PhanPluginUnknownObjectMethodCall : 15+ occurrences
-    // PhanTypeArraySuspiciousNull : 15+ occurrences
     // PhanTypeComparisonFromArray : 15+ occurrences
-    // PhanTypeInvalidLeftOperandOfNumericOp : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanUndeclaredMethod : 15+ occurrences
     // PhanEmptyForeach : 10+ occurrences
     // PhanPluginConstantVariableNull : 10+ occurrences
     // PhanPossiblyNullTypeMismatchProperty : 10+ occurrences
+    // PhanTypeArraySuspiciousNull : 10+ occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
     // PhanPluginBothLiteralsBinaryOp : 8 occurrences
     // PhanPluginSuspiciousParamPosition : 8 occurrences
@@ -169,9 +168,8 @@ return [
         'htdocs/compta/localtax/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/compta/localtax/class/localtax.class.php' => ['PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/compta/localtax/clients.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/localtax/index.php' => ['PhanRedefineFunction', 'PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeInvalidLeftOperandOfNumericOp'],
+        'htdocs/compta/localtax/index.php' => ['PhanRedefineFunction'],
         'htdocs/compta/localtax/list.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/localtax/quadri_detail.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeInvalidLeftOperandOfNumericOp'],
         'htdocs/compta/paiement.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchDimFetch'],
         'htdocs/compta/paiement/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/compta/paiement/cheque/card.php' => ['PhanUndeclaredGlobalVariable'],
@@ -209,10 +207,10 @@ return [
         'htdocs/compta/tva/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/compta/tva/class/tva.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/compta/tva/clients.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanTypeMismatchDimFetchNullable', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/tva/index.php' => ['PhanRedefineFunction', 'PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/compta/tva/clients.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchDimFetchNullable', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/compta/tva/index.php' => ['PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
         'htdocs/compta/tva/payments.php' => ['PhanTypeMismatchArgumentNullableInternal'],
-        'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanTypeMismatchProperty'],
+        'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchProperty'],
         'htdocs/contact/canvas/actions_contactcard_common.class.php' => ['PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchProperty', 'PhanTypeSuspiciousNonTraversableForeach'],
         'htdocs/contact/card.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
         'htdocs/contact/class/contact.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownPropertyType'],
@@ -397,7 +395,7 @@ return [
         'htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/printsheet/modules_labels.php' => ['PhanParamTooMany'],
         'htdocs/core/modules/product/doc/pdf_standard.modules.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredVariable'],
-        'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/doc/pdf_baleine.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/doc/pdf_timespent.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredProperty'],

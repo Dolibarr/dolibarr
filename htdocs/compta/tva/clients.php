@@ -546,7 +546,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// Total collected
 					print '<td class="nowrap right"><span class="amount">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</span></td>';
 

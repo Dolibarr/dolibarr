@@ -436,7 +436,7 @@ if ($refresh === true) {
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_coll_total_ht += $temp_ht;
 				$subtot_coll_vat += $temp_vat;
