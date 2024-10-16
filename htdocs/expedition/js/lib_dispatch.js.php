@@ -128,8 +128,10 @@ function addDispatchLine(index, type, mode) {
 			});
 		}, 0);
 
-		//create new select2 to avoid duplicate id of cloned one
+		// create new select2 to avoid duplicate id of cloned one for warehouse
 		$row.find("select[name='"+'entrepot'+lineId+'_'+nbrTrs+'_'+index+"']").select2();
+		// create new select2 to avoid duplicate id of cloned one for lot / serial number
+		$row.find("select[name='"+'lot_number'+lineId+'_'+nbrTrs+'_'+index+"']").select2();
 		// TODO find solution to copy selected option to new select
 		// TODO find solution to keep new tr's after page refresh
 		//clear value
@@ -139,9 +141,13 @@ function addDispatchLine(index, type, mode) {
 		//insert new row before last row
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last").after($row);
 
-		//remove cloned select2 with duplicate id.
+		// remove cloned select2 with duplicate id for warehouse
 		$("#s2id_entrepot"+lineId+"_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
 		$(".csswarehouse"+lineId+"_"+nbrTrs+"_"+index + ":first-child").parent("span.selection").parent(".select2").detach();
+
+		// remove cloned select2 with duplicate id for lot / serial number
+		$("#s2id_lot_number"+lineId+"_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
+		$(".csslotnumber"+lineId+"_"+nbrTrs+"_"+index + ":first-child").parent("span.selection").parent(".select2").detach();
 
 		/*  Suffix of lines are:  _ trs.length _ index  */
 		$("#qty"+lineId+"_"+nbrTrs+"_"+index).focus();

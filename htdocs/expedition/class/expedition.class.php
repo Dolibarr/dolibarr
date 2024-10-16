@@ -1598,6 +1598,7 @@ class Expedition extends CommonObject
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_association as pai ON pai.fk_product_pere = edp.fk_product AND pai.fk_product_fils = ed.fk_product";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " GROUP BY ed.fk_product, ed.qty, ed.fk_entrepot, ed.rowid, pai.incdec";
+			$sql .= $this->db->order("ed.rowid", "DESC");
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3216,6 +3217,7 @@ class ExpeditionLigne extends CommonObjectLine
 		// virtual products : delete all children and batch
 		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !($this->fk_parent > 0)) {
 			// find all children
+			$line_id_list = array();
 			$result = $this->findAllChild($this->id, $line_id_list);
 			if ($result) {
 				$child_line_id_list = array_reverse($line_id_list, true);

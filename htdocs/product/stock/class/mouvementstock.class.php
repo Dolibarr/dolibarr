@@ -760,44 +760,35 @@ class MouvementStock extends CommonObject
 		global $langs;
 
 		$error = 0;
-		$pids = array();
-		$pqtys = array();
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql .= " FROM ".$this->db->prefix()."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
 		$sql .= " AND incdec = 1";
 
-		dol_syslog(get_class($this)."::_createSubProduct for parent product ".$idProduct, LOG_DEBUG);
+		dol_syslog(__METHOD__.' for parent product '.$idProduct, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$i = 0;
+			// Create movement for each sub-product
 			while ($obj = $this->db->fetch_object($resql)) {
-				$pids[$i] = $obj->fk_product_fils;
-				$pqtys[$i] = $obj->qty;
-				$i++;
-			}
-			$this->db->free($resql);
-		} else {
-			$error = -2;
-		}
-
-		// Create movement for each subproduct
-		foreach ($pids as $key => $value) {
-			if (!$error) {
 				$tmpmove = dol_clone($this, 1);
-
-				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
+				$result = $tmpmove->_create($user, $obj->fk_product_fils, $entrepot_id, ($qty * $obj->qty), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
 				if ($result < 0) {
 					$this->error = $tmpmove->error;
 					$this->errors = array_merge($this->errors, $tmpmove->errors);
 					if ($result == -2) {
-						$this->errors[] = $langs->trans("ErrorNoteAlsoThatSubProductCantBeFollowedByLot");
+						$this->errors[] = $langs->trans('ErrorNoteAlsoThatSubProductCantBeFollowedByLot');
 					}
 					$error = $result;
+					dol_syslog(__METHOD__ . ' Error : ' . $this->errorsToString(), LOG_ERR);
+					break;
 				}
 				unset($tmpmove);
 			}
+
+			$this->db->free($resql);
+		} else {
+			$error = -2;
 		}
 
 		return $error;
