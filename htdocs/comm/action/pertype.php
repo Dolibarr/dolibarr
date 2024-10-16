@@ -295,7 +295,7 @@ if ($filter) {
 	$param .= "&search_filter=".urlencode($filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -832,7 +832,7 @@ while ($obj = $db->fetch_object($resql)) {
 }
 
 // Loop on each user to show calendar
-$todayarray = dol_getdate($now, 'fast');
+$todayarray = dol_getdate($now, true);
 $sav = $tmpday;
 $showheader = true;
 $var = false;

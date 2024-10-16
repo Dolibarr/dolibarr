@@ -59,6 +59,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask') {
 	$maskconstsupplier_proposal = GETPOST('maskconstsupplier_proposal', 'aZ09');
 	$masksupplier_proposal = GETPOST('masksupplier_proposal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstsupplier_proposal && preg_match('/_MASK$/', $maskconstsupplier_proposal)) {
 		$res = dolibarr_set_const($db, $maskconstsupplier_proposal, $masksupplier_proposal, 'chaine', 0, '', $conf->entity);
 	}

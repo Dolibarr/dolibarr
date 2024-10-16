@@ -384,6 +384,7 @@ DolibarrLogin=Είσοδος Dolibarr
 NoDolibarrAccess=Χωρίς πρόσβαση στο Dolibarr
 ExportDataset_company_1=Πελάτες/Προμηθευτές (εταιρείες / ιδρύματα / φυσικά πρόσωπα) και οι ιδιότητές τους
 ExportDataset_company_2=Επαφές και οι ιδιότητες τους
+ExportDataset_company_3=Τραπεζικοί λογαριασμοί Πελατών/Προμηθευτών
 ImportDataset_company_1=Πελάτες/Προμηθευτές και οι ιδιότητές τους
 ImportDataset_company_2=Πρόσθετες επαφές/διευθύνσεις και χαρακτηριστικά Πελατών/Προμηθευτών
 ImportDataset_company_3=Τραπεζικοί λογαριασμοί Πελατών/Προμηθευτών

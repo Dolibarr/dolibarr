@@ -134,7 +134,7 @@ $h = 0;
 $head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$id;
 $head[$h][1] = $langs->trans("VATPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
@@ -143,7 +143,7 @@ $h++;
 */
 
 
-print dol_get_fiche_head($head, (string) $hselected, $langs->trans("VATPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("VATPayment"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment

@@ -78,6 +78,7 @@ if (GETPOST('button_removefilter_x', 'alpha')) {
 	$search_email = '';
 }
 $array_query = array();
+'@phan-var-force array<string,int|string|string[]> $array_query';
 $object = new Mailing($db);
 $advTarget = new AdvanceTargetingMailing($db);
 
@@ -465,6 +466,10 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->status == 0 && $user->hasRight('mailing', 'creer')) {
+		// @phan-assert FormAdvTargetEmailing $formadvtargetemaling
+		// @phan-assert AdvanceTargetingMailing $advTarget
+
+		// @phan-assert array<string,int|string|string[] $array_query'
 		include DOL_DOCUMENT_ROOT.'/core/tpl/advtarget.tpl.php';
 	}
 }

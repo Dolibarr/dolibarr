@@ -45,6 +45,7 @@ NoError=Ingen fejl
 Error=Fejl
 Errors=Fejl
 ErrorFieldRequired=Feltet '%s' er påkrævet
+CustomMandatoryFieldRule=Tilpasset regel for "obligatorisk felt".
 ErrorFieldFormat=Feltet '%s' har en forkert værdi
 ErrorFileDoesNotExists=Filen %s eksisterer ikke
 ErrorFailedToOpenFile=Kan ikke åbne filen %s

@@ -45,6 +45,7 @@ NoError=Κανένα Σφάλμα
 Error=Σφάλμα
 Errors=Σφάλματα
 ErrorFieldRequired=Το πεδίο '%s' απαιτείται
+CustomMandatoryFieldRule=Προσαρμοσμένος κανόνας "Υποχρεωτικού πεδίου"
 ErrorFieldFormat=Τπ πεδίο '%s' δεν έχει σωστή τιμή
 ErrorFileDoesNotExists=Το αρχείο %s δεν υπάρχει
 ErrorFailedToOpenFile=Αποτυχία ανοίγματος αρχείου %s

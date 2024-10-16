@@ -200,6 +200,9 @@ function dolDecrypt($chain, $key = '')
 	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+		// Do not enable this log, except during debug
+		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
+
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
@@ -238,6 +241,10 @@ function dol_hash($chain, $type = '0', $nosalt = 0)
 {
 	// No need to add salt for password_hash
 	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+		if (strpos($chain, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error instead of fatal error.
+			return 'Invalid string to encrypt. Contains a null character.';
+		}
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 

@@ -74,11 +74,11 @@ $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Info");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 
-print dol_get_fiche_head($head, (string) $hselected, $langs->trans("LineRecord"), -1, 'accountline');
+print dol_get_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'accountline');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

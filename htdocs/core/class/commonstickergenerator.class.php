@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -296,7 +297,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTip:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
+	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

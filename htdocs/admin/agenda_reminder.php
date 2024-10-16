@@ -82,6 +82,8 @@ if ($action == 'set') {
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
@@ -169,25 +171,29 @@ print '</tr>'."\n";
 
 // AGENDA REMINDER BROWSER
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_BROWSER').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('AGENDA_REMINDER_BROWSERHelp').'</span>';
+print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
 if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	if (!isHTTPS()) {
+	/*if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
-	}
+	}*/
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	print '</td></tr>'."\n";
 } else {
-	if (!isHTTPS()) {
+	/*if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
-	}
+	}*/
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	print '</td></tr>'."\n";
 
+	/* This feature need to use the old method AGENDA_NOTIFICATION_METHOD =  'jsnotification' that is broken on a lot of browser setup
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
@@ -200,6 +206,7 @@ if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	}
 
 	print '</td></tr>'."\n";
+	*/
 }
 
 $job = new Cronjob($db);
@@ -207,7 +214,8 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
 if (isModEnabled('cron')) {
 	if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		if ($job->id > 0) {

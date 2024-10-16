@@ -409,7 +409,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($object->country_id > 0) {
 		$img = picto_from_langcode($object->country_code);
 		print $img ? $img.' ' : '';
-		print getCountry($object->getCountryCode(), 0, $db);
+		print getCountry($object->getCountryCode(), '', $db);
 	}
 	print '</td>';
 	print '</tr>';

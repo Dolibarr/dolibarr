@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,11 +304,11 @@ if ($result > 0) {
 
 			print '<tr class="oddeven nohover">';
 			print '<td class="nowraponall">';
-			print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright');
+			print img_picto('', 'contact', '', 0, 0, 0, '', 'paddingright');
 			print $form->selectarray("contactid", $newlistofemails, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 			print '</td>';
 			print '<td class="nowraponall">';
-			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright');
+			print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright');
 			print $form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 			print '</td>';
 			print '<td>';
@@ -351,7 +352,7 @@ if ($result > 0) {
 
 				$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($label).'">';
-				print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
+				print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$label;
 				print '</td>';
 				print '<td>';
 				if ($obj->type == 'email') {

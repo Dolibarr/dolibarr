@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr потребител
 NoDolibarrAccess=Няма достъп до Dolibarr
 ExportDataset_company_1=Контрагенти (фирми / фондации / физически лица) и техните характеристики
 ExportDataset_company_2=Контакти и техните характеристики
+ExportDataset_company_3=Банкови сметки на контрагенти
 ImportDataset_company_1=Контрагенти и техните характеристики
 ImportDataset_company_2=Допълнителни контакти / адреси и атрибути към контрагента
 ImportDataset_company_3=Банкови сметки на контрагенти

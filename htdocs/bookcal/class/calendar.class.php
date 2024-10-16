@@ -283,9 +283,11 @@ class Calendar extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -667,10 +669,9 @@ class Calendar extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -972,7 +973,8 @@ class Calendar extends CommonObject
 			return $result;
 		} else {
 			$this->lines = $result;
-			return $this->lines;
+			// @phpstan-ignore-next-line
+			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
 		}
 	}
 

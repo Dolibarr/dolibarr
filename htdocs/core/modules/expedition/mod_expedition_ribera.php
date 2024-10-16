@@ -138,7 +138,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 			return 0;
 		}
 
-		$date = $shipment->date_expedition;
+		$date = $shipment->date_shipping;
 
 		$numFinal = get_next_value($db, $mask, 'expedition', 'ref', '', $objsoc, $date);
 

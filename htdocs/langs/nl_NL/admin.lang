@@ -475,7 +475,6 @@ ExtrafieldParamHelpselect=Lijst met waarden moeten regels zijn met opmaaksleutel
 ExtrafieldParamHelpcheckbox=Lijst met waarden moeten regels zijn met opmaaksleutel, waarde (waar sleutel niet '0' kan zijn) <br><br> bijvoorbeeld: <br> 1, waarde1 <br> 2, value2 <br> 3, waarde3 <br> ...
 ExtrafieldParamHelpradio=Lijst met waarden moeten regels zijn met opmaaksleutel, waarde (waar sleutel niet '0' kan zijn) <br><br> bijvoorbeeld: <br> 1, waarde1 <br> 2, value2 <br> 3, waarde3 <br> ...
 ExtrafieldParamHelpsellist=Lijst met waarden komt uit een tabel<br>Syntaxis: tabelnaam:labelveld:id_veld::filtersql<br>Voorbeeld: c_typent:libelle:id::filtersql<br><br>- id_veld is noodzakelijkerwijs een primaire int-sleutel<br>- filtersql is een voorwaarde. Het moet de USF-syntaxis gebruiken. Voorbeeld: (active:=:1) om alleen de actieve waarde weer te geven<br>U kunt ook $ID$ gebruiken in het filter, wat de huidige id is van het huidige object<br>Als u wilt filteren op extravelden, gebruikt u de syntaxis extra.fieldcode=... (waarbij fieldcode de code is van het extraveld)<br><br>In Bestelling om de lijst afhankelijk te maken van een andere aanvullende kenmerklijst:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In Bestelling om de lijst afhankelijk te maken van een andere lijst:<br>c_typent:libelle:id:<i>ouder_lijst_code</i>|ouder_kolom:filter
-ExtrafieldParamHelpchkbxlst=Lijst met waarden komt uit een tabel<br>Syntaxis: tabelnaam:labelveld:id_veld::filtersql<br>Voorbeeld: c_typent:libelle:id::filtersql<br><br>filter kan een eenvoudige test zijn (bijv. active=1 om alleen de actieve waarde weer te geven)<br>U kunt ook $ID$ gebruiken in filter, wat de huidige id is van het huidige object<br>Om een SELECT in een filter uit te voeren, gebruikt u $SEL$<br>als u wilt filteren op extravelden, gebruikt u de syntaxis extra.fieldcode=... (waarbij veldcode de code van het extraveld is)<br><br>In Bestelling om de lijst afhankelijk te maken van een andere aanvullende kenmerklijst:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In Bestelling om de lijst afhankelijk te maken van een andere lijst:<br>c_typent:libelle:id:<i>parent_list_code</i>|ouderkolom:filter
 ExtrafieldParamHelplink=Parameters moeten Objectnaam: Classpath<br> Syntax: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Blijf leeg voor een eenvoudig scheidingsteken <br> Stel dit in op 1 voor een samenvouwend scheidingsteken (standaard geopend voor nieuwe sessie, dan wordt de status behouden voor elke gebruikerssessie) <br> Stel dit in op 2 voor een samenvouwend scheidingsteken (standaard samengevouwen voor nieuwe sessie, dan wordt de status behouden voor elke gebruikerssessie)
 LibraryToBuildPDF=Gebruikte library voor generen PDF
@@ -514,15 +513,17 @@ ModuleCompanyCodeCustomerDigitaria=%s gevolgd door de ingekorte klantnaam door h
 ModuleCompanyCodeSupplierDigitaria=%s gevolgd door de ingekorte leveranciersnaam met het aantal tekens: %s voor de boekhoudcode van de leverancier.
 Use3StepsApproval=Bestellingen moeten standaard worden gemaakt en goedgekeurd door 2 verschillende gebruikers (één stap / gebruiker om te maken en één stap / gebruiker goed te keuren. Merk op dat als gebruiker zowel toestemming heeft om te maken en goed te keuren, één stap / gebruiker volstaat) . U kunt met deze optie vragen om een ​​derde stap / gebruikersgoedkeuring in te voeren, als het bedrag hoger is dan een speciale waarde (dus 3 stappen zijn nodig: 1 = validatie, 2 = eerste keer goedkeuren en 3 = tweede keer goedkeuren als het bedrag voldoende is). <br> Stel deze optie in op leeg als één goedkeuring (2 stappen) voldoende is, stel deze in op een zeer lage waarde (0,1) als een tweede goedkeuring (3 stappen) altijd vereist is.
 UseDoubleApproval=Gebruik een goedkeuring in 3 stappen als het bedrag (zonder belasting) hoger is dan ...
-WarningPHPMail=WAARSCHUWING: De configuratie voor het verzenden van e-mails vanuit de applicatie maakt gebruik van de standaard generieke configuratie. Voor deze keuze is geen technische kennis vereist om de installatie te voltooien.<br>Het is echter vaak beter om uitgaande e-mails in te stellen om de e-mailserver van uw e-mailserviceprovider te gebruiken in plaats van de standaardinstellingen voor verschillende redenen:
+WarningPHPMail=OPMERKING: De instelling om e-mails te verzenden vanuit de toepassing maakt gebruik van de standaard generieke instelling (genaamd "%s"). Voor deze keuze is geen technische kennis of specifieke instelling vereist.<br>Het is echter vaak beter om uitgaande e-mails in te stellen op de andere methode (genaamd "%s") om de e-mailserver van uw e-mailprovider te gebruiken in plaats van de standaardinstelling om verschillende redenen:
 WarningPHPMailA=- Het gebruik van de server van de e-mailserviceprovider verhoogt de betrouwbaarheid van uw e-mail, waardoor de bezorgbaarheid toeneemt zonder dat deze als SPAM wordt gemarkeerd
-WarningPHPMailB=- Sommige e-mailproviders (zoals Yahoo) staan niet toe dat u een e-mail verzendt vanaf een andere server dan hun eigen server. Uw huidige installatie gebruikt de server van de applicatie om e-mail te verzenden en niet de server van uw e-mailprovider, dus sommige ontvangers (degene die compatibel zijn met het beperkende DMARC-protocol) zullen uw e-mailprovider vragen of zij uw e-mail kunnen accepteren en sommige e-mailproviders (zoals Yahoo) reageert mogelijk "nee" omdat de server niet van hen is, dus enkele van uw verzonden e-mails worden mogelijk niet geaccepteerd voor bezorging (let ook op de verzendquota van uw e-mailprovider).
+WarningPHPMailB=- Als het domein van uw e-mail (het deel mymaildomain.com in myname@mymaildomain.com) wordt beschermd door een SPF + een DMARC-record, kan uw e-mail worden gemarkeerd als SPAM omdat uw DMARC-regel die is gedefinieerd in de DNS-zone van het domein van de afzender (mymaildomain.com) het verzenden als een generieke afzender niet toestaat. In een dergelijk geval moet u de DMARC voor het domein uitschakelen (of instellen op p=none zoals gedaan door @gmail.com) of, beter, als u de technische kennis hebt, de andere methode gebruiken om e-mails te verzenden met behulp van de SMTP-server van uw eigen e-mailprovider.
 WarningPHPMailC=- Het gebruik van de SMTP-server van uw eigen e-mailserviceprovider om e-mails te verzenden is ook interessant, dus alle e-mails die vanuit de toepassing worden verzonden, worden ook opgeslagen in uw "Verzonden" -map van uw mailbox.
 WarningPHPMailD=Het is daarom aan te raden om de verzendmethode van e-mails te wijzigen in de waarde "SMTP".
 WarningPHPMailDbis=Als u echt de standaard "PHP"-methode voor het verzenden van e-mails wilt behouden, negeert u deze waarschuwing of verwijdert u deze door %shier te klikken%s.
 WarningPHPMail2=Als uw e-mail SMTP-provider de e-mailclient moet beperken tot bepaalde IP-adressen (zeer zeldzaam), is dit het IP-adres van de mail user agent (MUA) voor uw ERP CRM-toepassing: <strong>%s</strong>.
-WarningPHPMailSPF=Als de domeinnaam in je e-mailadres van de afzender beschermd is door een SPF record (vraag je domeinnaam registrar), dan moet je de volgende IP's toevoegen in het SPF record van de DNS van je domein: <strong> %s </strong> .
-ActualMailSPFRecordFound=Werkelijk SPF-record gevonden (voor e-mail %s): %s
+WarningPHPMailSPF=Als de domeinnaam in uw afzender-e-mailadres wordt beschermd door een SPF-record (vraag dit na bij uw domeinnaamregistrar), moet u de volgende IP's of vermeldingen toevoegen aan het SPF-record van de DNS van uw domein: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=Als de domeinnaam in uw verzend-e-mailadres wordt beschermd door een DMARC-record dat anders is dan p=none (vraag dit na bij uw domeinnaamregistrar), moet u uw DMARC-record verwijderen of instellen op p=none (zoals do@gmail.com) of een andere verzendmethode gebruiken.
+SPFAndDMARCInformation=SPF- en DMARC-DNS-record voor hoofd-e-mailadressen
+ActualMailDNSRecordFound=Werkelijke %s-record gevonden (voor e-mail %s): %s
 ClickToShowDescription=Klik voor omschrijving
 DependsOn=Deze module heeft de module(s) nodig
 RequiredBy=Deze module is vereist bij module(s)
@@ -867,7 +868,7 @@ Permission255=Wachtwoord andere gebruikers wijzigen
 Permission256=Andere gebruikers verwijderen of uitschakelen
 Permission262=Verleng de toegang tot alle derde partijen EN hun objecten (niet alleen derde partijen waarvoor de gebruiker als verkoopvertegenwoordiger is gekoppeld).
 Permission262b=Niet effectief voor externe gebruikers (altijd beperkt tot zichzelf voor voorstellen, bestellingen, Facturen, contracten, etc.).
-Permission262c=Niet effectief voor projecten (alleen regels over projectrechten, zichtbaarheid en toewijzingszaken).
+Permission262c=Niet effectief voor projecten (alleen regels over projectmachtigingen, zichtbaarheid en toewijzing van gebruikers zijn van belang).
 Permission263=Verleng de toegang tot alle derden ZONDER hun objecten (niet alleen derden waarvoor de gebruiker een verkoopvertegenwoordiger is). <br> Niet effectief voor externe gebruikers (altijd beperkt tot zichzelf voor voorstellen, bestellingen, facturen, contracten, enz.). <br> Niet effectief voor projecten (alleen regels voor projectmachtigingen, zichtbaarheid en toewijzingskwesties).
 Permission271=Lees CA
 Permission272=Facturen inzien
@@ -944,7 +945,7 @@ Permission776=Betalen onkostennota's
 Permission777=Lees alle onkostennota's (zelfs die van ondergeschikten niet van gebruiker)
 Permission778=Aanmaken/wijzigen onkostendeclaraties van iedereen
 Permission779=Export onkostennota's
-Permission1001=Bekijk voorraden
+Permission1001=Lees Warenhuizen en aandelen
 Permission1002=Toevoegen/wijzigen van een magazijn
 Permission1003=Verwijder magazijnen
 Permission1004=Bekijk voorraad-verplaatsingen
@@ -2145,7 +2146,7 @@ COMPANY_DIGITARIA_CLEAN_REGEX=Regex-filter om waarde op te schonen (COMPANY_DIGI
 DuplicateForbidden=Dupliceren verboden
 RemoveSpecialWords=Reinig bepaalde woorden bij het genereren van subaccounts voor klanten of leveranciers
 RemoveSpecialWordsHelp=Geef de woorden op die moeten worden opgeschoond voordat de klant- of leveranciersrekening wordt berekend. Gebruik een ";" tussen elk woord
-GDPRContact=Functionaris voor gegevensbescherming (DPO, gegevensprivacy of GDPR-contact)
+GDPRContact=Data Protection Officer (DPO, Data Privacy or GDPR contact, ...)
 GDPRContactDesc=Als u persoonsgegevens opslaat in uw Informatiesysteem, kunt u hier de contactpersoon noemen die verantwoordelijk is voor de Algemene Verordening Gegevensbescherming
 HelpOnTooltip=Help-tekst om op knopinfo weer te geven
 HelpOnTooltipDesc=Plaats hier tekst of een vertaalsleutel zodat de tekst in een knopinfo kan worden weergegeven wanneer dit veld in een formulier wordt weergegeven
@@ -2218,7 +2219,7 @@ CreateCandidature=Maak een sollicitatie
 FormatZip=Zip
 MainMenuCode=Menu toegangscode (hoofdmenu)
 ECMAutoTree=Toon automatische ECM-structuur
-OperationParamDesc=Definieer de regels die moeten worden gebruikt om waarden te extraheren of in te stellen.<br>Voorbeeld voor bewerkingen die een naam moeten extraheren uit het e-mailonderwerp:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Voorbeeld voor bewerkingen die objecten maken:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Definieer de regels die moeten worden gebruikt om bepaalde gegevens te extraheren of stel waarden in die moeten worden gebruikt voor de bewerking.<br><br>Voorbeeld om een tekenreeks uit de koptekst, het onderwerp of de hoofdtekst van een e-mail te extraheren naar een tijdelijke variabele:<br>tmp_var1=EXTRACT:HEADER:Mijn regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:Mijn refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:Mijn regex ([^\n]*)<br><br>Voorbeelden om de eigenschappen van een object in te stellen dat moet worden gemaakt:<br>objproperty1=SET:een hard gecodeerde waarde<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:een waarde (waarde wordt alleen ingesteld als de eigenschap nog niet is gedefinieerd)<br>objproperty4=EXTRACT:HEADER:X-Mijnheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Mijn bedrijf naam is\\s([^\\s]*)<br><br>Gebruik een nieuwe regel om meerdere eigenschappen te extraheren of in te stellen.
 OpeningHours=Openingstijden
 OpeningHoursDesc=Voer hier de reguliere openingstijden van uw bedrijf in.
 ResourceSetup=Configuratie van bronmodule
@@ -2264,7 +2265,7 @@ LargerThan=Groter dan
 IfTrackingIDFoundEventWillBeLinked=Houd er rekening mee dat als een tracking-ID van een object in een e-mail wordt gevonden, of als de e-mail een antwoord is op een e-mail die al is verzameld en aan een object is gekoppeld, de gemaakte gebeurtenis automatisch wordt gekoppeld aan het bekende gerelateerde object.
 WithGMailYouCanCreateADedicatedPassword=Als u met een Gmail-account de validatie in twee stappen heeft ingeschakeld, wordt het aanbevolen om een speciaal tweede wachtwoord voor de applicatie te maken in plaats van uw eigen accountwachtwoord van https://myaccount.google.com/ te gebruiken.
 EmailCollectorTargetDir=Het kan wenselijk zijn om de e-mail naar een andere Label/map te verplaatsen nadat deze met succes is verwerkt. Stel hier gewoon de naam van de map in om deze functie te gebruiken (gebruik GEEN speciale tekens in de naam). Houd er rekening mee dat u ook een lees-/schrijfaanmeldingsaccount moet gebruiken.
-EmailCollectorLoadThirdPartyHelp=U kunt deze actie gebruiken om de e-mailinhoud te gebruiken om een bestaande derde partij in uw database te vinden en te laden (er wordt gezocht op de gedefinieerde eigenschap onder 'id', 'name', 'name_alias', 'email'). De gevonden (of aangemaakte) derde partij zal worden gebruikt voor de volgende acties waarvoor deze nodig is.<br>Als u bijvoorbeeld een derde partij wilt maken met een naam geëxtraheerd uit een string ' Naam: te vinden naam' aanwezig in de hoofdtekst, gebruik de e-mail van de afzender als e-mail, u kunt het parameterveld als volgt instellen:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Naam:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=Met deze actie kunt u de e-mailinhoud gebruiken om een bestaande derde partij in uw database te vinden en te laden (er wordt gezocht op de gedefinieerde eigenschap 'id','name','name_alias','email'). De gevonden (of gemaakte) derde partij wordt gebruikt voor de volgende acties waarvoor deze nodig is.<br>Als u bijvoorbeeld een derde partij wilt maken met een naam die is geëxtraheerd uit een tekenreeks 'Naam: te vinden naam' in de hoofdtekst, gebruikt u het e-mailadres van de afzender als e-mail. U kunt het parameterveld als volgt instellen:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Waarschuwing: veel e-mailservers (zoals Gmail) zoeken op volledige woorden wanneer ze zoeken op een tekenreeks en zullen geen resultaat retourneren als de tekenreeks slechts gedeeltelijk in een woord wordt gevonden. Ook om deze reden wordt het gebruik van speciale tekens in een zoekcriterium genegeerd als ze geen deel uitmaken van bestaande woorden.<br> Om een zoekopdracht uit te sluiten op een woord (retourneer een e-mail als het woord niet wordt gevonden), kunt u de ! teken voor het woord (werkt mogelijk niet op sommige mailservers).
 EndPointFor=Eindpunt voor %s: %s
 DeleteEmailCollector=E-mailverzamelaar verwijderen
@@ -2288,7 +2289,7 @@ THIRDPARTY_ALIAS=Naam van derden: alias van derden
 ALIAS_THIRDPARTY=Alias van derden: naam van derden
 PDFIn2Languages=Toon labels in de PDF in 2 verschillende talen (deze functie werkt mogelijk niet voor sommige talen)
 PDF_USE_ALSO_LANGUAGE_CODE=Als u wilt dat sommige teksten in uw PDF worden gedupliceerd in 2 verschillende talen in dezelfde gegenereerde PDF, moet u hier deze tweede taal instellen, zodat de gegenereerde PDF 2 verschillende talen op dezelfde pagina bevat, degene die is gekozen bij het genereren van PDF en deze ( slechts enkele PDF-sjablonen ondersteunen dit). Voor 1 taal per pdf leeg houden.
-PDF_USE_A=Genereer PDF-documenten met het formaat PDF/A in plaats van het standaardformaat PDF
+PDF_USE_A=PDF documents format
 FafaIconSocialNetworksDesc=Voer hier de code van een FontAwesome-pictogram in. Als je niet weet wat FontAwesome is, kun je het generieke waarde fa-adresboek gebruiken.
 RssNote=Opmerking: elke RSS-feeddefinitie biedt een widget die u moet inschakelen om deze beschikbaar te hebben in het dashboard
 JumpToBoxes=Ga naar Setup -> Widgets
@@ -2553,3 +2554,8 @@ MenuDict=Woordenboek
 AddMoreParams=Voeg meer parameters toe voor de verbinding (cookies, tokens, ...)<br> Voorbeeld: token : waarde token
 ParamName=Naam van parameter
 ParamValue=Waarde van parameter
+ConfirmDeleteParamOfSocialNetwork=Are you sure you want to delete this parameter ?
+HelpMariaDBToGetPossibleValues=U kunt een lijst met mogelijke waarden verkrijgen door de volgende SQL-opdracht uit te voeren: %s
+Captcha=Captcha
+CaptchaDesc=If you want to protect your login page with a Captcha, you can choose which one to use here
+DolibarrStandardCaptcha=A native captcha generated by Dolibarr

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,6 +174,7 @@ if (getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE')) {
 
 $results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
+$params = array();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -186,6 +188,7 @@ if (is_array($results)) {
 
 		foreach ($results as $job) {
 			$object = $job;
+			$arrayofpostulatebutton = array();
 
 			print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
@@ -259,10 +262,10 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 			}
 			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 			}
 
 			print '<br>';
@@ -273,6 +276,17 @@ if (is_array($results)) {
 			print $text;
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
+			$arrayofpostulatebutton[] = array(
+				'url' => '/public/recruitment/view.php?ref='.$object->ref,
+				'label' => $langs->trans('ApplyJobCandidature'),
+				'lang' => 'recruitment',
+				'perm' => true,
+				'enabled' => true,
+			);
+
+			print '<div class="center">';
+			print dolGetButtonAction('', $langs->trans("ApplyJobCandidature"), 'default', $arrayofpostulatebutton, 'applicate_'.$object->ref, true, $params);
+			print '</div>';
 			print '</div>'."\n";
 			print "\n";
 

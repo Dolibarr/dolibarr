@@ -3,6 +3,7 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
 
 // Following var must be set:
 // $action
+// $massaction
 // $arrayofselected = array of id selected
 // $objecttmp = new MyObject($db);
 // $topicmail="SendSupplierProposalRef";
@@ -55,9 +57,10 @@ if ($massaction == 'preclonetasks') {
 	foreach (GETPOST('toselect') as $tmpselected) {
 		$selected .= '&selected[]=' . $tmpselected;
 	}
-
 	$formquestion = array(
-		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects('', 'projectid', '', '', '', '', '', '', '', 1, 1)),
+		// TODO If list of project is long and project is not on a thirdparty, the combo may be very long.
+		// Solution: Allow only sameproject for cloning tasks ?
+		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects($object->id, 'projectid', '', 0, 1, '', 0, array(), $object->socid, '1', 1, '', null, 1)),
 	);
 	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
 }
@@ -211,7 +214,7 @@ if ($massaction == 'presend') {
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	print dol_get_fiche_head(null, '', '');
+	print dol_get_fiche_head([], '', '');
 
 	// Create mail form
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

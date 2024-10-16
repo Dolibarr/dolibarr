@@ -349,6 +349,10 @@ QtyRecalculatedWithPackaging=The quantity of the line were recalculated accordin
 
 #Attributes
 Attributes=Attributes
+ProductAttributeExtrafields=Variant attributes extrafields
+ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
+ProductAttributeValueExtrafields=Variant attributes values extrafields
+ProductAttributeValueExtrafieldsSetup=Setup of Variant attributes values extrafields
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products
 ProductAttributeName=Variant attribute %s
@@ -437,3 +441,4 @@ AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtu
 ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>The quantities currently set in the inventory will be reset.
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
 PriceLabel=Price label
+PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)

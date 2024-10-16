@@ -93,4 +93,3 @@ DefaultOutgoingEmailSetup=Mesma configuração que a configuração global de en
 Answered=Respondidos
 IsAnAnswer=Resposta de um e-mail inicial
 DefaultStatusEmptyMandatory=Vazio mas obrigatório
-XEmailsDoneYActionsDone=%s e-mails pré-qualificados, %s e-mails processados ​​com sucesso (para %s registro/ações realizadas)

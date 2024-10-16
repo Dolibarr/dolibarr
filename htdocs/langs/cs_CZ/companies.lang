@@ -384,6 +384,7 @@ DolibarrLogin=Přihlášení do Dolibarru
 NoDolibarrAccess=Žádný přístup k Dolibarr
 ExportDataset_company_1=Subjekty (společnosti / nadace / fyzické osoby) a jejich vlastnosti
 ExportDataset_company_2=Kontakty a jejich vlastnosti
+ExportDataset_company_3=Bankovní účty subjektů
 ImportDataset_company_1=Subjekty a jejich vlastnosti
 ImportDataset_company_2=Dodatečné kontakty / adresy a atributy subjektů
 ImportDataset_company_3=Bankovní účty subjektů

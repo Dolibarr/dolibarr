@@ -10,6 +10,7 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -953,25 +954,65 @@ if ($resql) {
 
 	// Form to reconcile
 	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+		// Show last bank statements
+		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
+		$listoflastreceipts = '';
+		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
+		$sql .= $db->order("num_releve", "DESC");
+		$sql .= $db->plimit($nbmax + 1);
+
+		$last_receipts = array();
+		$last_releve = '';
+		$last_ok = 0;
+
+		$resqlr = $db->query($sql);
+		if ($resqlr) {
+			$i = 0;
+			$numr = $db->num_rows($resqlr);
+			while (($i < $numr) && ($i < $nbmax)) {
+				$objr = $db->fetch_object($resqlr);
+				if ($objr) {
+					$last_receipts[] = $objr->num_releve;
+					if (!$last_ok) {
+						$last_releve = $objr->num_releve;
+						$last_ok = 1;
+					}
+				}
+				$i++;
+			}
+		}
+
 		print '<!-- form with reconciliation input -->'."\n";
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 		if (getDolGlobalInt('NW_RECEIPTNUMBERFORMAT')) {
 			print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-			print '<input class="flat width175" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ? GETPOST('num_releve') : '').'">';
+			print '<input class="flat width100 center" id="num_releve" list="num_releve_list" name="num_releve" type="text" value="'.(GETPOST('num_releve') ? GETPOST('num_releve') : '').'">';
 		} else {
 			$texttoshow = $langs->trans("InputReceiptNumber").': ';
 			$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
 			$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
 			$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
 			$placeholder = $yyyy.$mm;
-			$placeholder .= ' '.$langs->trans("or").' ';
-			$placeholder .= $yyyy.$mm.$dd;
+			$placeholder2 = $yyyy.$mm;
+			$placeholder2 .= ' '.$langs->trans("or").' ';
+			$placeholder2 .= $yyyy.$mm.$dd;
 			if (!$placeholder) {
 				$texttoshow .= $langs->trans("InputReceiptNumberBis");
 			}
 			print $texttoshow;
-			print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOSTINT('num_releve') ? GETPOSTINT('num_releve') : '').'">'; // The only default value is value we just entered
+			print '<input class="flat width100 center" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.': '.$placeholder2).'" id="num_releve" list="num_releve_list" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOSTINT('num_releve') ? GETPOSTINT('num_releve') : '').'">'; // The only default value is value we just entered
 		}
+
+		// Output last values into combo list.
+		if (!empty($last_receipts)) {
+			print '<datalist id="num_releve_list">';
+			foreach ($last_receipts as $num_releve) {
+				print '<option value="'.$num_releve.'"></option>';	// TODO We can add some info into option
+			}
+			print '</datalist>';
+		}
+
 		print '</div>';
 		if (is_array($options) && count($options)) {
 			print $langs->trans("EventualyAddCategory").': ';
@@ -985,42 +1026,21 @@ if ($resql) {
 		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
-		// Show last bank statements
-		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
-		$listoflastreceipts = '';
-		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
-		$sql .= $db->order("num_releve", "DESC");
-		$sql .= $db->plimit($nbmax + 1);
-
 		print '<br>';
 		print $langs->trans("LastAccountStatements").' : ';
-		$resqlr = $db->query($sql);
-		if ($resqlr) {
-			$numr = $db->num_rows($resqlr);
-			$i = 0;
-			$last_ok = 0;
-			while (($i < $numr) && ($i < $nbmax)) {
-				$objr = $db->fetch_object($resqlr);
-				if (!$last_ok) {
-					$last_releve = $objr->num_releve;
-					$last_ok = 1;
-				}
-				$i++;
-				$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">';
-				$newentreyinlist .= img_picto($objr->num_releve, 'generic', 'class="paddingright"');
-				$newentreyinlist .= dol_escape_htmltag($objr->num_releve).'</a> &nbsp; ';
-				$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
-			}
-			if ($numr >= $nbmax) {
-				$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
-			}
-			print $listoflastreceipts;
-			if ($numr <= 0) {
-				print '<b>'.$langs->trans("None").'</b>';
-			}
-		} else {
-			dol_print_error($db);
+
+		foreach ($last_receipts as $num_releve) {
+			$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
+			$newentreyinlist .= img_picto($num_releve, 'generic', 'class="paddingright"');
+			$newentreyinlist .= dol_escape_htmltag($num_releve).'</a> &nbsp; ';
+			$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
+		}
+		if ($numr >= $nbmax) {
+			$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
+		}
+		print $listoflastreceipts;
+		if ($numr <= 0) {
+			print '<b>'.$langs->trans("None").'</b>';
 		}
 
 		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
@@ -1185,6 +1205,7 @@ if ($resql) {
 	}
 	// Numero statement
 	if (!empty($arrayfields['b.num_releve']['checked'])) {
+		// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'"></td>';
 	}
 	// Conciliated
@@ -1272,6 +1293,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['b.num_releve']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, '', $sortfield, $sortorder, "center ");
 		$totalarray['nbfield']++;
 	}
@@ -1875,8 +1897,8 @@ if ($resql) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'object'=>$object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);    // Note that $action and $objecttmpect may have been modified by hook
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);    // Note that $action and $objecttmpect may have been modified by hook
 		print $hookmanager->resPrint;
 
 		// Action edit/delete and select
@@ -1947,9 +1969,9 @@ if ($resql) {
 				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
-				if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+				/*if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 					print '<input class="button smallpaddingimp" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-				}
+				}*/
 				print '</td>';
 			} else {
 				print '<td></td>';

@@ -54,6 +54,24 @@ if (!isModEnabled('socialnetworks')) {
 	accessforbidden('Module Social Networks is not enabled');
 }
 
+// List of oauth services
+$oauthservices = array();
+
+foreach ($conf->global as $key => $val) {
+	if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
+		$key = preg_replace('/^OAUTH_/', '', $key);
+		$key = preg_replace('/_ID$/', '', $key);
+		if (preg_match('/^.*-/', $key)) {
+			$name = preg_replace('/^.*-/', '', $key);
+		} else {
+			$name = $langs->trans("NoName");
+		}
+		$provider = preg_replace('/-.*$/', '', $key);
+		$provider = ucfirst(strtolower($provider));
+
+		$oauthservices[$key] = $name." (".$provider.")";
+	}
+}
 
 /*
  * Actions
@@ -68,6 +86,9 @@ if ($action == 'add') {
 
 	$socialNetworkName = GETPOST('socialnetwork_name', 'alpha');
 	$socialNetworkUrl = GETPOST('socialnetwork_url', 'alpha');
+	if (GETPOSTISSET("OAUTH_SERVICE_SOCIAL_NETWORK")) {
+		dolibarr_set_const($db, "OAUTH_SERVICE_SOCIAL_NETWORK", GETPOST("OAUTH_SERVICE_SOCIAL_NETWORK", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	}
 
 	// other params if exist
 	$paramNames = GETPOST('param_name', 'array');
@@ -185,7 +206,7 @@ if ($action == 'updatesocialnetwork') {
 		}
 	}
 
-	 // Add new key, value if changed
+	// Add new key, value if changed
 	foreach ($mergedParams as $newKey => $newValue) {
 		if (!isset($socialNetworkData[$newKey]) || $socialNetworkData[$newKey] !== $newValue) {
 			$socialNetworkData[$newKey] = $newValue;
@@ -206,6 +227,27 @@ if ($action == 'updatesocialnetwork') {
 		setEventMessages($langs->trans("ErrorInputRequired"), null, 'errors');
 		header("Location: ".$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.$id);
 		exit;
+	}
+}
+
+if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
+	$paramKey = GETPOST('paramkey', 'alpha');
+	$key = GETPOST('key', 'alpha');
+	$name = GETPOST('name');
+	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf);
+	$socialNetworkData = json_decode($result, true);
+
+	unset($socialNetworkData[$paramKey]);
+	$newData = json_encode($socialNetworkData);
+
+	$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$name, $newData, 'chaine', 0, '', $conf->entity);
+	if ($result) {
+		$db->commit();
+		header("Location: ".$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($key));
+		exit;
+	} else {
+		$db->rollback();
+		dol_print_error($db);
 	}
 }
 
@@ -251,8 +293,66 @@ print '<td>'.$langs->trans('SocialNetworkUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url"></td>';
 print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
 print '</tr>';
+$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING';
 
-print '<tr class="oddeven"><td>';
+print '<script>
+$(document).ready(function() {
+    function toggleOAuthServiceDisplay() {
+        if ($("#radio_oauth").is(":checked")) {
+            $("#oauth_service_div").show();
+        } else {
+            $("#oauth_service_div").hide();
+        }
+    }
+
+    toggleOAuthServiceDisplay();
+
+    $("input[name=\"'.$vartosmtpstype.'\"]").change(function() {
+        toggleOAuthServiceDisplay();
+    });
+});
+</script>';
+
+// Methods oauth
+print '<tr><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
+print '<td>';
+print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'>';
+print '<label for="radio_oauth">'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
+if (!isModEnabled('oauth')) {
+	print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword=oauth">'.$langs->trans("EnableModuleX", "OAuth").'</a>';
+} else {
+	print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/oauth.php">'.$langs->trans("SetupModuleX", " OAuth").'</a>';
+}
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven" id="oauth_service_div"  style="display: none;">';
+print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td>';
+print '<td>';
+
+$oauthservicesStringKeys = [];
+foreach ($oauthservices as $key => $value) {
+	$key = (string) $key;
+	$oauthservicesStringKeys[$key] = $value;
+}
+
+/** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
+if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+} else {
+	$selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
+	$text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
+	if (empty($text)) {
+		$text = $langs->trans("Undefined");
+	}
+	$htmltext = $langs->trans("ContactSuperAdminForChange");
+	print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
+	print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
+}
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven" id="add_param_row"><td>';
 print $form->textwithpicto($langs->trans("Others"), $langs->trans("AddMoreParams"));
 print '</td><td><button type="button" id="addParamButton">'.img_picto($langs->trans("AddMoreParams"), 'add', 'pictofixedwidth').'</button></td>';
 print '<td>Token : ****<br>Cookie : ****</td>';
@@ -273,14 +373,38 @@ print '</div>';
 print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
 print '<script type="text/javascript">
-	document.getElementById("addParamButton").addEventListener("click", function() {
-		var container = document.getElementById("additionalParams");
-		var index = container.children.length;
-		var div = document.createElement("div");
-		div.className = "pair-group";
-		div.innerHTML = "<input type=\'text\' class=\'flat minwidth300\' name=\'param_name[]\' placeholder=\''.$langs->trans("ParamName").'\' class=\'flat\' /> <input type=\'text\' class=\'flat minwidth300\' name=\'param_value[]\' placeholder=\''.$langs->trans("ParamValue").'\' class=\'flat\' />";
-		container.appendChild(div);
-	});
+    $(document).ready(function() {
+        function toggleOAuthServiceDisplay() {
+            if ($("#radio_oauth").is(":checked")) {
+                $("#oauth_service_div").show();  // Afficher le sélecteur OAuth
+            } else {
+                $("#oauth_service_div").hide();  // Cacher le sélecteur OAuth
+            }
+        }
+
+        function toggleAddParamRow() {
+            if ($("#radio_oauth").is(":checked")) {
+                $("#add_param_row").hide();  // Cacher toute la ligne
+            } else {
+                $("#add_param_row").show();  // Afficher toute la ligne
+            }
+        }
+
+        toggleOAuthServiceDisplay();
+        toggleAddParamRow();
+
+        $("input[name=\"'.$vartosmtpstype.'\"]").change(function() {
+            toggleOAuthServiceDisplay();
+            toggleAddParamRow();
+        });
+
+        $("#addParamButton").click(function() {
+            var container = $("#additionalParams");
+            var index = container.children().length;
+            var newParam = $("<div class=\'pair-group\'><input type=\'text\' class=\'flat minwidth300\' name=\'param_name[]\' placeholder=\''.$langs->trans("ParamName").'\' class=\'flat\' /> <input type=\'text\' class=\'flat minwidth300\' name=\'param_value[]\' placeholder=\''.$langs->trans("ParamValue").'\' class=\'flat\' /></div>");
+            container.append(newParam);
+        });
+    });
 </script>';
 print '</form>';
 
@@ -297,6 +421,22 @@ if ($action == 'deletesocialnetwork') {
 		$langs->trans('Delete'),
 		$langs->trans('ConfirmDeleteSocialNetwork', GETPOST('key', 'alpha')),
 		'confirm_delete',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
+}
+// delete params of social network
+if ($action == 'editsocialnetwork' && GETPOST('paramkey', 'alpha')) {
+	$paramKey = GETPOST('paramkey', 'alpha');
+	$name = GETPOST('name', 'alpha');
+
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')).'&paramkey='.urlencode($paramKey).'&name='.urlencode($name),
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteParamOfSocialNetwork', $paramKey),
+		'editsocialnetwork',
 		'',
 		0,
 		1
@@ -344,7 +484,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre">';
-		print "<td>".$langs->trans("SocialNetworks")." ".($i+1)."</td>";
+		print "<td>".$langs->trans("SocialNetworks")." ".($i + 1)."</td>";
 		print '<td class="right">';
 		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_edit().'</a>';
 		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_delete().'</a>';
@@ -400,6 +540,8 @@ if ($resql) {
 					} else {
 						print '<td><input type="text" class="flat minwidth300" name="paramsVal[]" value="'.dol_escape_htmltag($val).'" />';
 					}
+					print '<button type="button" class="delete-param-btn" data-paramkey="'.htmlspecialchars($k).'">'.img_delete().'</button>';
+
 					print '</td>';
 					print '</tr>'."\n";
 				}
@@ -409,6 +551,17 @@ if ($resql) {
 			print '<td><input type="hidden" name="action" value="updatesocialnetwork" /></td>';
 			print '<td><input class="button " type="submit" name="update" value="'.$langs->trans('Modify').'" /></td>';
 			print '</tr>'."\n";
+
+			print '<script>
+					$(document).ready(function() {
+						$(\'.delete-param-btn\').on(\'click\', function() {
+							var paramKey = $(this).data(\'paramkey\');
+							var socialNetworkId = \''.htmlspecialchars($socialNetworkId).'\';
+							var socialNetworkName = \''.htmlspecialchars($socialNetworkTitle).'\';
+							window.location.href = \''.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&paramkey=\' + encodeURIComponent(paramKey) + \'&key=\' + encodeURIComponent(socialNetworkId) + \'&name=\' + encodeURIComponent(socialNetworkName);
+						});
+					});
+					</script>';
 		}
 
 		print '</table>'."\n";
@@ -429,8 +582,8 @@ $db->close();
 /**
  * Check if the given fediverse feed if inside the list of boxes/widgets
  *
- * @param	int		$id		The id of the socialnetwork
- * @param array<int, stdClass> $boxlist A list with boxes/widgets (array of stdClass objects).
+ * @param	int				$id			The id of the socialnetwork
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
  * @return	bool					True if the socialnetwork is inside the box/widget list, otherwise false
  */
 function _isInBoxListFediverse(int $id, array $boxlist)

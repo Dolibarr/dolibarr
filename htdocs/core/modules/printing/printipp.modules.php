@@ -285,11 +285,11 @@ class printing_printipp extends PrintingDriver
 	/**
 	 *  List jobs print
 	 *
-	 *  @param   string      $module     module
+	 *  @param   ?string      $module     module
 	 *
 	 *  @return  int                     0 if OK, >0 if KO
 	 */
-	public function listJobs($module)
+	public function listJobs($module = null)
 	{
 		global $conf;
 		$error = 0;
@@ -304,7 +304,7 @@ class printing_printipp extends PrintingDriver
 			$ipp->setAuthentication($this->user, $this->password);
 		}
 		// select printer uri for module order, propal,...
-		$sql = "SELECT rowid,printer_uri,printer_name FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape($module)."'";
+		$sql = "SELECT rowid,printer_uri,printer_name FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape((string) $module)."'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

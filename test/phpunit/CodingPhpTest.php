@@ -137,6 +137,17 @@ class CodingPhpTest extends CommonClassTest
 
 		$this->verifyIsModuleEnabledOk($filecontent, $report_filepath);
 
+		// Check we do not use the syntax conf->global->enabled->...
+		$ok = true;
+		$matches = array();
+		preg_match_all('/->global->(.*)->enabled/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			$ok = false;
+			break;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found a ->global->...->enabled instead of isModEnabled("...") in file '.$file['relativename']);
+
 		if (preg_match('/\.class\.php/', $file['relativename'])
 			|| preg_match('/boxes\/box_/', $file['relativename'])
 			|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
@@ -654,7 +665,7 @@ class CodingPhpTest extends CommonClassTest
 			$ok = true;
 			$matches = array();
 
-			// Get to part of string to use for analysis
+			// Get the part of string to use for analysis
 			$reg = array();
 			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
 				$filecontentaction = $reg[1];
@@ -662,7 +673,8 @@ class CodingPhpTest extends CommonClassTest
 				$filecontentaction = $filecontent;
 			}
 
-			preg_match_all('/if\s*\(\s*\$action\s*==\s*[\'"][a-z]+[\'"].*/', $filecontentaction, $matches, PREG_SET_ORDER);
+			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-_]+[\'"].*$/si', $filecontentaction, $matches, PREG_SET_ORDER);
+
 			foreach ($matches as $key => $val) {
 				if (!preg_match('/\$user->hasR/', $val[0])
 					&& !preg_match('/\$permission/', $val[0])

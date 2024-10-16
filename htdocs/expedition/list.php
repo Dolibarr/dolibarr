@@ -9,6 +9,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,6 +97,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_status = GETPOST('search_status', 'intcomma');
+$search_signed_status = GETPOST('search_signed_status', 'alpha');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
@@ -139,11 +141,12 @@ $arrayfields = array(
 	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'e.signed_status' => array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
-	'e.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
-	'e.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position' => 135),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position' => 140),
 );
 
 // Extra fields
@@ -206,6 +209,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$search_status = '';
+	$search_signed_status = '';
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
@@ -233,7 +237,7 @@ if (empty($reshook)) {
 		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
-		$lastid= 0;
+		$lastid = 0;
 		$lastref = '';
 
 		$db->begin();
@@ -344,7 +348,7 @@ if (empty($reshook)) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day'):''));
+							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
 						}
 
 						if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
@@ -442,8 +446,9 @@ if (empty($reshook)) {
 							);
 							if ($result > 0) {
 								$lineid = $result;
-								if (!empty($createbills_onebythird)) //increment rang to keep sending
+								if (!empty($createbills_onebythird)) { //increment rang to keep sending
 									$TFactThirdNbLines[$expd->socid]++;
+								}
 							} else {
 								$lineid = 0;
 								$error++;
@@ -553,7 +558,7 @@ if (empty($reshook)) {
 			if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 				$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 			}
-			if ($search_datedelivery_start)	{
+			if ($search_datedelivery_start) {
 				$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
 			}
 			if ($search_datedelivery_end) {
@@ -573,6 +578,9 @@ if (empty($reshook)) {
 			}
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
+			}
+			if ($search_signed_status != '' && $search_signed_status >= 0) {
+				$param .= '&search_signed_status='.urlencode($search_signed_status);
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -650,7 +658,7 @@ $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.signed_status, e.billed, e.tracking_number, e.fk_shipping_method,";
 if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " l.date_delivery as date_reception,";
@@ -713,6 +721,9 @@ if ($socid) {
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
+}
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$sql .= ' AND e.signed_status = '.urlencode($search_signed_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
@@ -978,6 +989,9 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
+}
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$param .= '&search_signed_status='.urlencode($search_signed_status);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -1288,6 +1302,13 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print $form->selectarray('search_status', array('0' => $langs->trans('StatusSendingDraftShort'), '1' => $langs->trans('StatusSendingValidatedShort'), '2' => $langs->trans('StatusSendingProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
+// Signed status
+if (!empty($arrayfields['e.signed_status']['checked'])) {
+	print '<td class="liste_titre center">';
+	$list_signed_status = $object->getSignedStatusLocalisedArray();
+	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
+	print '</td>';
+}
 // Status billed
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
@@ -1315,6 +1336,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1393,6 +1415,10 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 }
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['e.fk_statut']['label'], $_SERVER["PHP_SELF"], "e.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.signed_status']['checked'])) {
+	print_liste_field_titre($arrayfields['e.signed_status']['label'], $_SERVER["PHP_SELF"], "e.signed_status", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.billed']['checked'])) {
@@ -1547,11 +1573,11 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if (empty($object->trueWeight)) {
 				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
-				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1654,6 +1680,13 @@ while ($i < $imaxinloop) {
 		// Status
 		if (!empty($arrayfields['e.fk_statut']['checked'])) {
 			print '<td class="right nowrap">'.$object->getLibStatut(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Signed Status
+		if (!empty($arrayfields['e.signed_status']['checked'])) {
+			print '<td class="center">'.$object->getLibSignedStatus(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

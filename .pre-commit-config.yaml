@@ -1,5 +1,5 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
+exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -63,6 +63,12 @@ repos:
     rev: v8.16.1
     hooks:
       - id: gitleaks
+
+  # Check github actions
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.3
+    hooks:
+      - id: actionlint
 
   # Beautify shell scripts
   - repo: https://github.com/lovesegfault/beautysh.git
@@ -210,7 +216,7 @@ repos:
           - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
         exclude_types: [image]
-        exclude: (?x)^(.phan/stubs/.*)$
+        exclude: (?x)^(.phan/stubs/.*|phpstan\.neon.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
         # Only for translations with specialised exceptions

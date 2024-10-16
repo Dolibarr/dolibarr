@@ -80,14 +80,14 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 
 
 /**
- *  Class mere des modeles de numerotation des references de projects
+ *  Class parent for numbering modules of tasks
  */
 abstract class ModeleNumRefProjects extends CommonNumRefGenerator
 {
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe		$objsoc		Object third party
+	 *  @param   ?Societe		$objsoc		Object third party
 	 *  @param   Project		$project	Object project
 	 *  @return  string|int<-1,0>			Value if OK, 0 if KO
 	 */

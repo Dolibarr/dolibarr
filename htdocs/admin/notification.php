@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
 
 // Security check
 if (!$user->admin) {
@@ -295,6 +295,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$elementLabel = $langs->trans('Shipping');
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementLabel = $langs->trans('ExpenseReport');
+	} elseif ($notifiedevent['elementtype'] == 'contrat') {
+		$elementLabel = $langs->trans('Contract');
 	}
 
 	if ($notifiedevent['elementtype'] == 'propal') {
@@ -315,6 +317,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'invoice_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
+	} elseif ($notifiedevent['elementtype'] == 'contrat') {
+		$model = 'contract_send';
 	}
 
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
@@ -435,11 +439,14 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');
+	} elseif ($notifiedevent['elementtype'] == 'contrat') {
+		$elementPicto = 'contract';
+		$elementLabel = $langs->trans('Contract');
 	} elseif ($notifiedevent['elementtype'] == 'agenda') {
 		$elementPicto = 'action';
 	}
 
-	$labelfortrigger = 'AmountHT';
+		$labelfortrigger = 'AmountHT';
 	$codehasnotrigger = 0;
 	if (preg_match('/^(ACTION|HOLIDAY)/', $notifiedevent['code'])) {
 		$codehasnotrigger++;

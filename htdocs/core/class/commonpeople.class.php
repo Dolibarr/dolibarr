@@ -27,7 +27,7 @@
  *      Support class for third parties, contacts, members, users or resources
  *
  *
- * Properties expected in the class the trait is attached to.
+ * Properties expected in the host class receiving this trait.
  *
  * @property int 	$id
  * @property int 	$contact_id
@@ -110,6 +110,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
+			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
 			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 
@@ -314,6 +315,19 @@ trait CommonPeople
 	 */
 	public function setUpperOrLowerCase()
 	{
+		if (getDolGlobalString('MAIN_TE_PRIVATE_FIRST_AND_LASTNAME_TO_UPPER')) {
+			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+			if (empty($this->typent_code) || $this->typent_code != "TE_PRIVATE") {
+				$this->name = dol_ucwords(dol_strtolower($this->name));
+			}
+			if (!empty($this->firstname)) {
+				$this->lastname = dol_strtoupper($this->lastname);
+			}
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
+			}
+		}
 		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));

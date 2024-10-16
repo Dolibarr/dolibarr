@@ -384,6 +384,7 @@ DolibarrLogin=تسجيل الدخول الى دوليبار
 NoDolibarrAccess=لا يوجد وصول دوليبار
 ExportDataset_company_1=الأطراف الثالثة (الشركات / المؤسسات / الأشخاص الطبيعيون) وممتلكاتهم
 ExportDataset_company_2=جهات الاتصال وخصائصها
+ExportDataset_company_3=حسابات بنكية لأطراف ثالثة
 ImportDataset_company_1=الأطراف الثالثة وممتلكاتهم
 ImportDataset_company_2=جهات اتصال | عناوين وسمات إضافية للأطراف الثالثة
 ImportDataset_company_3=حسابات بنكية لأطراف ثالثة

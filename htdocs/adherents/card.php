@@ -72,6 +72,8 @@ if (isModEnabled('mailmanspip')) {
 	$langs->load('mailmanspip');
 
 	$mailmanspip = new MailmanSpip($db);
+} else {
+	$mailmanspip = null;
 }
 
 $object = new Adherent($db);
@@ -114,6 +116,7 @@ if ($id > 0 || !empty($ref)) {
 
 // Define variables to determine what the current user can do on the members
 $canaddmember = $user->hasRight('adherent', 'creer');
+$caneditfieldmember = false;
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
 	$caneditfieldmember = $user->hasRight('adherent', 'creer');
@@ -533,6 +536,7 @@ if (empty($reshook)) {
 			} else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
 				$result = $db->query($sql);
+				$num = 0;
 				if ($result) {
 					$num = $db->num_rows($result);
 				}
@@ -848,18 +852,20 @@ if (empty($reshook)) {
 	}
 
 	// SPIP Management
-	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {
-		if (!count($object->errors)) {
-			if (!$mailmanspip->del_to_spip($object)) {
-				setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+	if (is_object($mailmanspip)) {
+		if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {
+			if (!count($object->errors)) {
+				if (!$mailmanspip->del_to_spip($object)) {
+					setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+				}
 			}
 		}
-	}
 
-	if ($user->hasRight('adherent', 'creer') && $action == 'confirm_add_spip' && $confirm == 'yes') {
-		if (!count($object->errors)) {
-			if (!$mailmanspip->add_to_spip($object)) {
-				setEventMessages($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+		if ($user->hasRight('adherent', 'creer') && $action == 'confirm_add_spip' && $confirm == 'yes') {
+			if (!count($object->errors)) {
+				if (!$mailmanspip->add_to_spip($object)) {
+					setEventMessages($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+				}
 			}
 		}
 	}
@@ -980,7 +986,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 		}
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head(array());
 
 		print '<table class="border centpercent">';
 		print '<tbody>';
@@ -1201,10 +1207,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$obj = $db->fetch_object($resql);
 			} else {
 				dol_print_error($db);
+				$obj = null;
 			}
-			$object->country_id = $obj->rowid;
-			$object->country_code = $obj->code;
-			$object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			if (is_object($obj)) {
+				$object->country_id = $obj->rowid;
+				$object->country_code = $obj->code;
+				$object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			}
 		}
 
 		$head = member_prepare_head($object);
@@ -1397,7 +1406,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, array(), 1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -1920,7 +1929,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editlogin') {
-			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
 		} else {
 			if ($object->user_id) {
 				$linkeduser = new User($db);

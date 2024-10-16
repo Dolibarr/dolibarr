@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s followed by the truncated customer name by
 ModuleCompanyCodeSupplierDigitaria=%s followed by the truncated supplier name by the number of characters: %s for the supplier accounting code.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Some Email Service Providers (like Yahoo) do not allow you to send an email from another server than their own server. Your current setup uses the server of the application to send email and not the server of your email provider, so some recipients (the one compatible with the restrictive DMARC protocol), will ask your email provider if they can accept your email and some email providers (like Yahoo) may respond "no" because the server is not theirs, so few of your sent Emails may not be accepted for delivery (be careful also of your email provider's sending quota).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Using the SMTP server of your own Email Service Provider to send emails is also interesting so all emails sent from application will also be saved into your "Sent" directory of your mailbox.
 WarningPHPMailD=It is therefore recommended to change the sending method of e-mails to the value "SMTP".
 WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=If your email SMTP provider need to restrict email client to some IP addresses (very rare), this is the IP address of the mail user agent (MUA) for your ERP CRM application: <strong>%s</strong>.
-WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs in the SPF record of the DNS of your domain: <strong>%s</strong>.
-ActualMailSPFRecordFound=Actual SPF record found (for email %s) : %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Click to show description
 DependsOn=This module needs the module(s)
 RequiredBy=This module is required by module(s)
@@ -867,7 +869,7 @@ Permission255=Modify other users password
 Permission256=Delete or disable other users
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Extend access to all third parties WITHOUT their objects (not only third parties for which the user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).<br>Not effective for projects (only rules on project permissions, visibility and assignment matters).
 Permission271=Read CA
 Permission272=Read invoices
@@ -944,7 +946,7 @@ Permission776=Pay expense reports
 Permission777=Read all expense reports (even those of user not subordinates)
 Permission778=Create/modify expense reports of everybody
 Permission779=Export expense reports
-Permission1001=Read stocks
+Permission1001=Read warehouses and stocks
 Permission1002=Create/modify warehouses
 Permission1003=Delete warehouses
 Permission1004=Read stock movements
@@ -2218,7 +2220,7 @@ CreateCandidature=Create job application
 FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
-OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Opening hours
 OpeningHoursDesc=Enter here the regular opening hours of your company.
 ResourceSetup=Configuration of Resource module
@@ -2264,7 +2266,7 @@ LargerThan=Larger than
 IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email already collected and linked to an object, the created event will be automatically linked to the known related object.
 WithGMailYouCanCreateADedicatedPassword=With a GMail account, if you enabled the 2 steps validation, it is recommended to create a dedicated second password for the application instead of using your own account password from https://myaccount.google.com/.
 EmailCollectorTargetDir=It may be a desired behavior to move the email into another tag/directory when it was processed successfully. Just set name of directory here to use this feature (Do NOT use special characters in name). Note that you must also use a read/write login account.
-EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Warning: a lot of email servers (like Gmail) are doing full word searches when searching on a string and will not return a result if the string is only found partially into a word. For this reason too, use special characters into a search criteria will be ignored are they are not part of existing words.<br>To make an exclude search on a word (return email if word is not found), you can use the ! character before the word (may not work on some mail servers).
 EndPointFor=End point for %s : %s
 DeleteEmailCollector=Delete email collector

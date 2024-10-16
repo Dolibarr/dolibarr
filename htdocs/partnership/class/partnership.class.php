@@ -54,7 +54,13 @@ class Partnership extends CommonObject
 	 */
 	public $picto = 'partnership';
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_label;
 
 
@@ -119,26 +125,89 @@ class Partnership extends CommonObject
 		'ip' => array('type' => 'ip', 'label' => 'IPOfApplicant', 'enabled' => 1, 'position' => 74, 'notnull' => 0, 'visible' => -2,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 2, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'Approved', '3' => 'Refused', '9' => 'Terminated'),),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $entity;
+	/**
+	 * @var int
+	 */
 	public $fk_type;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
+	/**
+	 * @var int|string
+	 */
 	public $date_partnership_start;
+	/**
+	 * @var int|string
+	 */
 	public $date_partnership_end;
+	/**
+	 * @var string
+	 */
 	public $url_to_check;
+	/**
+	 * @var int|float
+	 */
 	public $count_last_url_check_error;
+	/**
+	 * @var int|string
+	 */
 	public $last_check_backlink;
+	/**
+	 * @var string
+	 */
 	public $reason_decline_or_cancel;
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var int
+	 */
 	public $fk_member;
+	/**
+	 * @var string
+	 */
 	public $ip;
+	/**
+	 * @var int
+	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
@@ -422,9 +491,9 @@ class Partnership extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int         		$limit        	Limit
 	 * @param  int         		$offset       	Offset page
-	 * @param  string|array     $filter       	Filter USF.
-	 * @param  string      		$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 		int <0 if KO, array of pages if OK
+	 * @param  string|array<string,mixed>	$filter       	Filter USF.
+	 * @param  'AND'|'OR'  		$filtermode   	Filter mode (AND or OR)
+	 * @return self[]|int                 		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -924,10 +993,9 @@ class Partnership extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1178,7 +1246,7 @@ class Partnership extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return PartnershipLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1193,7 +1261,8 @@ class Partnership extends CommonObject
 			return $result;
 		} else {
 			$this->lines = $result;
-			return $this->lines;
+			// @phpstan-ignore-next-line
+			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
 		}
 	}
 
@@ -1233,6 +1302,7 @@ class Partnership extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefPartnership $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1257,10 +1327,10 @@ class Partnership extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

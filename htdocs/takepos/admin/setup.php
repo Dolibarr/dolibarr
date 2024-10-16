@@ -214,7 +214,7 @@ foreach ($dirmodels as $reldir) {
 						$invoice = new Facture($db);
 						$invoice->date = $now;
 						$invoice->module_source = 'takepos';
-						$invoice->pos_source = 1;
+						$invoice->pos_source = '1';
 
 						// Info
 						$htmltooltip = '';

@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr bejelentkezés
 NoDolibarrAccess=Nem Dolibarr hozzáférés
 ExportDataset_company_1=Harmadik felek (cégek/alapítványok/fizikai személyek) és tulajdonságaik
 ExportDataset_company_2=Kapcsolattartók és tulajdonságaik
+ExportDataset_company_3=Harmadik fél bankszámlái
 ImportDataset_company_1=Harmadik felek és tulajdonságaik
 ImportDataset_company_2=Harmadik féltől származó további kapcsolatok/címek és attribútumok
 ImportDataset_company_3=Harmadik fél bankszámlái

@@ -140,7 +140,7 @@ if ($action == 'initbarcodethirdparties' && $user->hasRight('societe', 'lire')) 
 						$thirdpartystatic->id = $obj->rowid;
 						$nextvalue = $modBarCodeThirdparty->getNextValue($thirdpartystatic, '');
 
-						$result = $thirdpartystatic->setValueFrom('barcode', $nextvalue, '', '', 'text', '', $user, 'THIRDPARTY_MODIFY');
+						$result = $thirdpartystatic->setValueFrom('barcode', $nextvalue, '', null, 'text', '', $user, 'THIRDPARTY_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) {
@@ -249,7 +249,7 @@ if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
 						$nextvalue = $modBarCodeProduct->getNextValue($productstatic, '');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result = $productstatic->setValueFrom('barcode', $nextvalue, '', '', 'text', '', $user, 'PRODUCT_MODIFY');
+						$result = $productstatic->setValueFrom('barcode', $nextvalue, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) {
@@ -342,6 +342,7 @@ if (isModEnabled('societe')) {
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties"))."\n";
 
 	$disabledthirdparty = $disabledthirdparty1 = 0;
+	$titleno = '';
 
 	if (is_object($modBarCodeThirdparty)) {
 		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
@@ -420,6 +421,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 
 	$disabledproduct = $disabledproduct1 = 0;
 
+	$titleno = '';
 	if (is_object($modBarCodeProduct)) {
 		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
 		$objproduct = new Product($db);

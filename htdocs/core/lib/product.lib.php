@@ -6,6 +6,8 @@
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +34,7 @@
  * Prepare array with list of tabs
  *
  * @param   Product	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
 {
@@ -73,7 +75,7 @@ function product_prepare_head($object)
 	// if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	if ((isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'read') || $user->hasRight('supplier_invoice', 'read'))
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
-		) {
+	) {
 		if ($usercancreadprice) {
 			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
@@ -93,6 +95,10 @@ function product_prepare_head($object)
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translations");
+		$nbTranslations = !empty($object->multilangs) ? count($object->multilangs) : 0;
+		if ($nbTranslations > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTranslations.'</span>';
+		}
 		$head[$h][2] = 'translation';
 		$h++;
 	}
@@ -192,6 +198,7 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
@@ -238,7 +245,7 @@ function product_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   ProductLot	$object		Object related to tabs
- * @return  array		     		Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function productlot_prepare_head($object)
 {
@@ -314,10 +321,10 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object information.
-*
-*  @return	array   	        head array with tabs
-*/
+ *  Return array head with list of tabs to view object information.
+ *
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
 function product_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
@@ -377,7 +384,7 @@ function product_admin_prepare_head()
 /**
  * Return array head with list of tabs to view object information.
  *
- * @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_lot_admin_prepare_head()
 {
@@ -453,7 +460,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_propale['nb'];
 		print '</td><td class="right">';
-		print $product->stats_propale['qty'];
+		print price($product->stats_propale['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -472,7 +479,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['nb'];
 		print '</td><td class="right">';
-		print $product->stats_proposal_supplier['qty'];
+		print price($product->stats_proposal_supplier['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -491,7 +498,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_commande['nb'];
 		print '</td><td class="right">';
-		print $product->stats_commande['qty'];
+		print price($product->stats_commande['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -510,7 +517,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['nb'];
 		print '</td><td class="right">';
-		print $product->stats_commande_fournisseur['qty'];
+		print price($product->stats_commande_fournisseur['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -529,7 +536,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_facture['nb'];
 		print '</td><td class="right">';
-		print $product->stats_facture['qty'];
+		print price($product->stats_facture['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -567,7 +574,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['nb'];
 		print '</td><td class="right">';
-		print $product->stats_facture_fournisseur['qty'];
+		print price($product->stats_facture_fournisseur['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -627,7 +634,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_contrat['nb'];
 		print '</td><td class="right">';
-		print $product->stats_contrat['qty'];
+		print price($product->stats_contrat['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -694,7 +701,7 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -814,7 +821,7 @@ function show_stats_for_batch($batch, $socid)
 		print '</tr>';
 	}
 
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

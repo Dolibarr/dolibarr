@@ -31,7 +31,9 @@ print "<!-- BEGIN PHP TEMPLATE LINKEDOBJECTBOCK-->\n";
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force CommonObject[] $linkedObjectBlock';
 
 $total = 0;
 $ilink = 0;

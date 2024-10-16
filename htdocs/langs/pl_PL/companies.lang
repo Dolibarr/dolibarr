@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr login
 NoDolibarrAccess=Brak dostępu do Dolibarr
 ExportDataset_company_1=Kontrahenci (firmy/fundacje/osoby fizyczne) i ich własności
 ExportDataset_company_2=Kontakty i ich właściwości
+ExportDataset_company_3=Rachunki bankowe kontrahentów
 ImportDataset_company_1=Kontrahenci i ich właściwości
 ImportDataset_company_2=Dodatkowe kontakty/adresy i atrybuty kontrahentów
 ImportDataset_company_3=Rachunki bankowe kontrahentów

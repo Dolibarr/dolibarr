@@ -50,7 +50,12 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * @var string Box label (in configuration page)
 	 */
-	public $boxlabel;
+	public $boxlabel = 'MyWidget';
+
+	/**
+	 * @var string Box language file if it needs a specific language file.
+	 */
+	public $lang = 'mymodule@mymodule';
 
 	/**
 	 * @var string[] Module dependencies
@@ -71,13 +76,9 @@ class mymodulewidget1 extends ModeleBoxes
 	 */
 	public function __construct(DoliDB $db, $param = '')
 	{
-		global $user, $conf, $langs;
-		// Translations
-		$langs->loadLangs(array("boxes", "mymodule@mymodule"));
+		global $user;
 
 		parent::__construct($db, $param);
-
-		$this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
 
 		$this->param = $param;
 
@@ -120,7 +121,7 @@ class mymodulewidget1 extends ModeleBoxes
 			// Limit and truncate with "…" the displayed text length, 0 = disabled
 			'limit' => 0,
 			// Adds translated " (Graph)" to a hidden form value's input (?)
-			'graph' => false
+			'graph' => 0
 		);
 
 		// Populate the contents at runtime
@@ -149,9 +150,9 @@ class mymodulewidget1 extends ModeleBoxes
 					// Truncates 'text' element to the specified character length, 0 = disabled
 					'maxlength' => 0,
 					// Prevents HTML cleaning (and truncation)
-					'asis' => false,
+					'asis' => 0,
 					// Same for 'text2'
-					'asis2' => true
+					'asis2' => 0
 				),
 				1 => array( // Another column
 					// No TR for n≠0
@@ -182,13 +183,18 @@ class mymodulewidget1 extends ModeleBoxes
 		);
 	}
 
+
+
+
+
+
 	/**
-	 * Method to show box. Called by Dolibarr each time it needs to display the box.
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
-	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
-	 * @param	int<0,1>	$nooutput	When 1, do not print, return string
-	 * @return	string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

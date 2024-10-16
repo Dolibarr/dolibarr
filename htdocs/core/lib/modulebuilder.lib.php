@@ -65,10 +65,17 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			return -2;
 		}
-		if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration)/', $addfieldentry['type'])
+		if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration|stars)/', $addfieldentry['type'])
 			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|mail|url|ip|password)$/', $addfieldentry['type'])) {
 			setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
 			return -2;
+		}
+		// Check for type stars(NumberOfStars), NumberOfStars must be an integer between 1 and 10
+		if (preg_match('/^stars\((.+)\)$/', $addfieldentry['type'], $matches)) {
+			if (!ctype_digit($matches[1]) || $matches[1] < 1 || $matches[1] > 10) {
+				setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
+				return -2;
+			}
 		}
 	}
 
@@ -343,6 +350,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'integer';
 			} elseif ($type == 'mail') {
 				$type = 'varchar(128)';
+			} elseif (strpos($type, 'stars(') === 0) {
+				$type = 'integer';
 			} elseif ($type == 'phone') {
 				$type = 'varchar(20)';
 			} elseif ($type == 'ip') {

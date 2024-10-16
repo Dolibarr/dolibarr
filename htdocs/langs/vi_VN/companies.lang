@@ -384,6 +384,7 @@ DolibarrLogin=Đăng nhập Dolibarr
 NoDolibarrAccess=Không truy cập Dolibarr
 ExportDataset_company_1=Bên thứ ba (công ty / tổ chức / người) và tính chất của họ
 ExportDataset_company_2=Liên lạc và tính chất của họ
+ExportDataset_company_3=Tài khoản ngân hàng của bên thứ ba
 ImportDataset_company_1=Bên thứ ba và tính chất của họ
 ImportDataset_company_2=Các liên lạc/ địa chỉ và thuộc tính bổ sung của bên thứ ba
 ImportDataset_company_3=Tài khoản ngân hàng của bên thứ ba

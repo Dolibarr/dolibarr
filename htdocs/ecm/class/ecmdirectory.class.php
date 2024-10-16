@@ -708,7 +708,7 @@ class EcmDirectory extends CommonObject
 			$this->buildPathFromId($key, 0);
 		}
 
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0);
 		$this->full_arbo_loaded = 1;
 
 		return $this->cats;

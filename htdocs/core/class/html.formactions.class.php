@@ -365,9 +365,10 @@ class FormActions
 	 *  @param  int		        $multiselect    1=Allow multiselect of action type
 	 *  @param  int             $nooutput       1=No output
 	 *  @param	string			$morecss		More css to add to SELECT component.
+	 *  @param	int<0,1>|string	$showempty		0 or 1 or 'Placeholder string'
 	 * 	@return	string
 	 */
-	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
+	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300', $showempty = 0)
 	{
 		// phpcs:enable
 		global $langs, $user, $form;
@@ -382,10 +383,12 @@ class FormActions
 
 		// Suggest a list with manual events or all auto events
 		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot, '', 0);		// If we use param 'all' instead of 'code', there is no group by include in answer but the key 'type' of answer array contains the key for the group by.
+		/* Removed. The empty line must now be managed with param showempty
 		if (empty($multiselect)) {
 			// Add empty line at start only if no multiselect
 			array_unshift($arraylist, '&nbsp;');
 		}
+		*/
 		//asort($arraylist);
 
 		if ($selected == 'manual') {
@@ -415,9 +418,9 @@ class FormActions
 			if (!is_array($selected) && !empty($selected)) {
 				$selected = explode(',', $selected);
 			}
-			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0, '', '', (is_numeric($showempty) ? '' : $showempty));
 		} else {
-			$out .= $form->selectarray($htmlname, $newarraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+			$out .= $form->selectarray($htmlname, $newarraylist, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

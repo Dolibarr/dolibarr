@@ -276,7 +276,7 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	int 	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
-	 *  @param	array	$array_options			Array options
+	 *  @param	array<string,?mixed>	$array_options	Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = [])
@@ -420,6 +420,7 @@ class Delivery extends CommonObject
 
 					// Retrieving the new reference
 					$objMod = new $modName($this->db);
+					'@phan-var-force ModeleNumRefDeliveryOrder $objMod';
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
@@ -546,7 +547,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	User	$user           User who creates
 	 *	@param  int		$sending_id		Id of the expedition that serves as a model
-	 *	@return	integer					Return integer <=0 if KO, >0 if OK
+	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
@@ -596,9 +597,9 @@ class Delivery extends CommonObject
 	/**
 	 * Update a livraison line (only extrafields)
 	 *
-	 * @param 	int		$id					Id of line (livraison line)
-	 * @param	array	$array_options		extrafields array
-	 * @return	int							Return integer <0 if KO, >0 if OK
+	 * @param 	int					$id					Id of line (livraison line)
+	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function update_line($id, $array_options = [])
 	{
@@ -631,7 +632,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	int		$origin_id				Origin id
 	 *	@param	float	$qty					Qty
-	 *  @param	array	$array_options			Array options
+	 *  @param	array<string,mixed>	$array_options		Array options
 	 *	@return	void
 	 */
 	public function addline($origin_id, $qty, $array_options = [])
@@ -750,9 +751,9 @@ class Delivery extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1015,15 +1016,15 @@ class Delivery extends CommonObject
 	}
 
 	/**
-	 *  Renvoie la quantite de produit restante a livrer pour une commande
+	 *  Get data list of Products remaining to be delivered for an order (with qty)
 	 *
-	 *  @return     array|int		Product remaining to be delivered or <0 if KO
+	 *	@return array<int,array{qty:float|int,ref:string,label:string}>|int<min,-1>	Product remaining to be delivered or <0 if KO
 	 *  TODO use new function
 	 */
 	public function getRemainingDelivered()
 	{
 		// Get the linked object
-		$this->fetchObjectLinked('', '', $this->id, $this->element);
+		$this->fetchObjectLinked(null, '', $this->id, $this->element);
 		//var_dump($this->linkedObjectsIds);
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
@@ -1208,11 +1209,13 @@ class DeliveryLine extends CommonObjectLine
 	/**
 	 * @deprecated
 	 * @see $product_ref
+	 * @var string
 	 */
 	public $ref;
 	/**
 	 * @deprecated
 	 * @see product_label;
+	 * @var string
 	 */
 	public $libelle;
 
@@ -1228,19 +1231,43 @@ class DeliveryLine extends CommonObjectLine
 	public $qty_asked;
 
 	/**
-	 * @var float Quantity shiiped
+	 * @var float Quantity shipped
 	 */
 	public $qty_shipped;
 
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var string
+	 */
 	public $product_desc;
+	/**
+	 * @var int
+	 */
 	public $product_type;
+	/**
+	 * @var string
+	 */
 	public $product_ref;
+	/**
+	 * @var string
+	 */
 	public $product_label;
 
+	/**
+	 * @var int|float|string
+	 */
 	public $price;
 
+	/**
+	 * @var int
+	 */
 	public $fk_origin_line;
+	/**
+	 * @var int
+	 */
 	public $origin_id;
 
 	/**

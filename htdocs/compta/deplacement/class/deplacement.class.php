@@ -95,6 +95,9 @@ class Deplacement extends CommonObject
 	 * @var int Status 0=draft, 1=validated, 2=Refunded
 	 */
 	public $statut;
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 

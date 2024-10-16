@@ -92,13 +92,32 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize a technical objects
+// Initialize a technical object
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+
+// Definition of array of fields for columns
+$tableprefix = 't';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -108,7 +127,7 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
  *	Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_lastname = "";
 	$search_login = "";
@@ -168,7 +187,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($num) {
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $object->label), null, 'errors');
 		}
 	}
 
@@ -258,7 +277,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
-	//print dol_get_fiche_head('');
+	//print dol_get_fiche_head([]);
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -420,16 +439,18 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$i++;
 		}
 
+		// Show total line
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 		// If no record found
 		if ($num == 0) {
-			/*$colspan = 1;
+			$colspan = 1;
 			foreach ($arrayfields as $key => $val) {
-				if (!empty($val['checked'])) {
+				//if (!empty($val['checked'])) {
 					$colspan++;
-				}
-			}*/
-			$colspan = 9;
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+				//}
+			}
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 
 		print "</table>";
@@ -443,8 +464,6 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 // Creation
 if ($action == 'create') {
-	$object = new AdherentType($db);
-
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -452,7 +471,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<table class="border centpercent">';
 	print '<tbody>';

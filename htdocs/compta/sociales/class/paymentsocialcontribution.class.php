@@ -291,7 +291,6 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_charge,";
@@ -301,7 +300,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= " t.amount,";
 		$sql .= " t.fk_typepaiement,";
 		$sql .= " t.num_paiement as num_payment,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -330,7 +329,7 @@ class PaymentSocialContribution extends CommonObject
 				$this->fk_typepaiement = $obj->fk_typepaiement;
 				$this->num_payment = $obj->num_payment;
 				$this->num_paiement = $obj->num_payment;
-				$this->note_private = $obj->note;
+				$this->note_private = $obj->note_private;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -399,7 +398,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
 		$sql .= " fk_charge=".(isset($this->fk_charge) ? ((int) $this->fk_charge) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? price2num($this->amount) : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";

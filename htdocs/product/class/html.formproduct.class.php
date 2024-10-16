@@ -235,7 +235,10 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
-	 *
+	 * Set Hidden conf MAIN_WAREHOUSE_LIST_DISPLAY_MODE at 0 || 1 || 2 to unlock display
+	 *   0 : Default behavior, display parents of warehouse
+	 *   1 : Display only current warehouse label only
+	 *   2 : Display last parent warehouse label
 	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
 	 * @param	string	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	string					full label with all parents, separated by ' >> '
@@ -247,11 +250,14 @@ class FormProduct
 			$final_label = $tab['label'];
 		}
 
-		if (empty($tab['parent_id'])) {
+		if (empty($tab['parent_id']) || getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 1) {
 			return $final_label;
 		} else {
 			if (!empty($this->cache_warehouses[$tab['parent_id']])) {
-				$final_label = $this->cache_warehouses[$tab['parent_id']]['label'].' >> '.$final_label;
+				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 2 && empty($this->cache_warehouses[$tab['parent_id']]['parent_id']))) {
+					$final_label = $this->cache_warehouses[$tab['parent_id']]['label'] . ' >> ' . $final_label;
+				}
+
 				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
 			}
 		}
@@ -793,7 +799,7 @@ class FormProduct
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
-		global $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot", LOG_DEBUG);
 
@@ -843,7 +849,8 @@ class FormProduct
 					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">(' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
+						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
 					}
 				}
 			}

@@ -128,6 +128,7 @@ $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
 	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -189,12 +190,12 @@ print '</tr>';
 
 $oldyear = 0;
 foreach ($data as $val) {
-	$year = $val['year'];
+	$year = (int) $val['year'];
 	while ($oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center">';
-		//print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
+		//print '<a href="month.php?year='.$oldyear.'&mode='.$mode.'">';
 		print $oldyear;
 		//print '</a>';
 		print '</td>';

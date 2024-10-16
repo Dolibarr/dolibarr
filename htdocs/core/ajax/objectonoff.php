@@ -56,6 +56,7 @@ $object = fetchObjectByElement($id, $element);
 if (!is_object($object)) {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
+'@phan-var-force CommonObject $object';
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
@@ -88,6 +89,13 @@ if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $obj
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
@@ -96,7 +104,7 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering new values
-if (($action == 'set') && !empty($id)) {
+if (($action == 'set') && !empty($id)) {	// Test on permission already done in header according to object and field.
 	$triggerkey = strtoupper(($module != $element ? $module.'_' : '').$element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {

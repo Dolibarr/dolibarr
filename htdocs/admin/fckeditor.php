@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019		Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,7 +231,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print getDolGlobalString('FCKEDITOR_TEST');
 		print '</div>';
 	}
-	print $form->buttonsSaveCancel("Save", '', null, 0, 'reposition');
+	print $form->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 

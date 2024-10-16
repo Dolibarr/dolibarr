@@ -163,4 +163,19 @@ class PrintingDriver
 		$this->errors[] = $msg;
 		return 1;
 	}
+
+	/**
+	 *  List jobs print
+	 *
+	 *  @param   ?string      $module     module
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listJobs($module = null)
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
 }

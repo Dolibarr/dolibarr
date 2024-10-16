@@ -97,6 +97,9 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int date remind
+	 */
 	public $dateremind;
 
 	/**
@@ -140,6 +143,7 @@ class ActionCommReminder extends CommonObject
 	public $fk_email_template;
 	// END MODULEBUILDER PROPERTIES
 
+
 	/**
 	 * Constructor
 	 *
@@ -147,8 +151,6 @@ class ActionCommReminder extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 0;

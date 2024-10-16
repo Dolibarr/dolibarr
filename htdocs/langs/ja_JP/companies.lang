@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarrログイン
 NoDolibarrAccess=Dolibarrへのアクセスなし
 ExportDataset_company_1=取引先（法人・財団・個人）とそのプロパティ
 ExportDataset_company_2=連絡先とそのプロパティ
+ExportDataset_company_3=取引先銀行口座
 ImportDataset_company_1=取引先とそのプロパティ
 ImportDataset_company_2=取引先sの追加的な連絡先s/住所sと諸属性
 ImportDataset_company_3=取引先銀行口座

@@ -1,5 +1,5 @@
 IntraCommReport=域内報告書
-IntraCommReports=Intracomm reports
+IntraCommReports=イントラコムレポート
 
 Module68000Name = 域内報告書
 Module68000Desc = 域内報告書管理(フランス語のDEB / DES形式のサポート)
@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=宣言の種類
 IntracommReportDownload=XMLファイルをダウンロードする
 # Invoice
 IntracommReportTransportMode=輸送モード
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=削除 イントラコムレポート

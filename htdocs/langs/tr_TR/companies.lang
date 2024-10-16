@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr kullanıcı adı
 NoDolibarrAccess=Dolibarr erişimi yok
 ExportDataset_company_1=Üçüncü Partiler (şirketler/dernekler/şahıslar) ve özellikleri
 ExportDataset_company_2=Kişiler ve özellikleri
+ExportDataset_company_3=Üçüncü Partilerin Banka hesapları
 ImportDataset_company_1=Üçüncü Partiler ve özellikleri
 ImportDataset_company_2=Üçücü parti ilave kişileri/adresleri ve nitelikleri
 ImportDataset_company_3=Üçüncü Partilerin Banka hesapları

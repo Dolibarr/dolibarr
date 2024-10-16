@@ -384,6 +384,7 @@ DolibarrLogin=登陆Dolibarr
 NoDolibarrAccess=没有Dolibarr访问
 ExportDataset_company_1=合作方（公司/基金会/自然人）及其属性特征
 ExportDataset_company_2=联系人及其属性特征
+ExportDataset_company_3=合作方银行账户
 ImportDataset_company_1=合作方及其属性特征
 ImportDataset_company_2=合作方附加联系人/地址和属性
 ImportDataset_company_3=合作方银行账户

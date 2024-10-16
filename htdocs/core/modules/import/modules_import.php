@@ -98,32 +98,32 @@ class ModeleImports
 
 	// Array of all drivers
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $driverlabel = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $driverdesc = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $driverversion = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $drivererror = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $liblabel = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $libversion = array();
 
@@ -133,7 +133,7 @@ class ModeleImports
 	public $charset;
 
 	/**
-	 * @var string picto
+	 * @var array<string,string>|string picto
 	 */
 	public $picto;
 
@@ -158,7 +158,7 @@ class ModeleImports
 	public $thirdpartyobject;
 
 	/**
-	 * @var	array	Element mapping from table name
+	 * @var	array<string,string>	Element mapping from table name
 	 */
 	public static $mapTableToElement = MODULE_MAPPING;
 
@@ -256,8 +256,8 @@ class ModeleImports
 	 *  Load into memory list of available import format
 	 *
 	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  int		$maxfilenamelength  Max length of value to show
+	 *  @return	array<int,string>			List of templates
 	 */
 	public function listOfAvailableImportFormat($db, $maxfilenamelength = 0)
 	{
@@ -279,17 +279,18 @@ class ModeleImports
 
 					require_once	$file;
 					$module = new $classname($db, '');
+					'@phan-var-force ModeleImports $module';
 
 					// Picto
 					$this->picto[$module->id] = $module->picto;
 					// Driver properties
-					$this->driverlabel[$module->id] = $module->getDriverLabel('');
-					$this->driverdesc[$module->id] = $module->getDriverDesc('');
-					$this->driverversion[$module->id] = $module->getDriverVersion('');
+					$this->driverlabel[$module->id] = $module->getDriverLabel();
+					$this->driverdesc[$module->id] = $module->getDriverDesc();
+					$this->driverversion[$module->id] = $module->getDriverVersion();
 					$this->drivererror[$module->id] = $module->error ? $module->error : '';
 					// If use an external lib
-					$this->liblabel[$module->id] = ($module->error ? '<span class="error">'.$module->error.'</span>' : $module->getLibLabel(''));
-					$this->libversion[$module->id] = $module->getLibVersion('');
+					$this->liblabel[$module->id] = ($module->error ? '<span class="error">'.$module->error.'</span>' : $module->getLibLabel());
+					$this->libversion[$module->id] = $module->getLibVersion();
 				}
 			}
 		}
@@ -473,7 +474,7 @@ class ModeleImports
 	 * Insert a record into database
 	 *
 	 *	@param	array<string,array{val:mixed,type:int<-1,1>}>|boolean	$arrayrecord                    Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 *	@param	array<string,string>	$array_match_file_to_database   Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
+	 *	@param	array<int|string,string>	$array_match_file_to_database   Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
 	 *	@param	Object		$objimport                      Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 *	@param	int	$maxfields					Max number of fields to use
 	 *	@param	string		$importid			Import key

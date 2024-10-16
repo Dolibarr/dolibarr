@@ -16,6 +16,7 @@
  * Copyright (C) 2024		Noé Cendrier				<noe.cendrier@altairis.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,8 @@ $mode        = GETPOST('mode', 'alpha');
 
 if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 	$userschilds = $user->getAllChildIds();
+} else {
+	$userschilds = array();
 }
 
 // Search Parameters
@@ -125,6 +128,17 @@ $search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'intcomma');
 $search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'intcomma');
 $search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'intcomma');
 $search_fk_input_reason = GETPOST('search_fk_input_reason', 'intcomma');
+
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '-2';
+}
+$search_orderday = '';
+$search_ordermonth = '';
+$search_orderyear = '';
+$search_deliveryday = '';
+$search_deliverymonth = '';
+$search_deliveryyear = '';
 
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
@@ -243,6 +257,12 @@ if ($user->socid) {
 }
 
 $permissiontoreadallthirdparty = $user->hasRight('societe', 'client', 'voir');
+$permissiontoread = false;
+$permissiontovalidate = false;
+$permissiontoclose = false;
+$permissiontocancel = false;
+$permissiontosendbymail = false;
+$objectclass = null;
 
 
 $result = restrictedArea($user, 'commande', $id, '');
@@ -316,6 +336,7 @@ if (empty($reshook)) {
 		$search_fk_shipping_method = '';
 		$search_fk_mode_reglement = '';
 		$search_fk_input_reason = '';
+		$search_option = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -440,6 +461,7 @@ if (empty($reshook)) {
 
 					$fk_parent_line = 0;
 					$num = count($lines);
+					$array_options = array();
 
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
@@ -653,6 +675,9 @@ if (empty($reshook)) {
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
+			if ($search_option) {
+				$param .= "&search_option=".urlencode($search_option);
+			}
 			if ($search_orderday) {
 				$param .= '&search_orderday='.urlencode($search_orderday);
 			}
@@ -722,7 +747,7 @@ if (empty($reshook)) {
 		}
 	}
 }
-if ($action == 'validate' && $permissiontoadd) {
+if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 	if (GETPOST('confirm') == 'yes') {
 		$objecttmp = new $objectclass($db);
 		$db->begin();
@@ -758,7 +783,7 @@ if ($action == 'validate' && $permissiontoadd) {
 		}
 	}
 }
-if ($action == 'shipped' && $permissiontoadd) {
+if ($action == 'shipped' && $permissiontoadd && $objectclass !== null) {
 	if (GETPOST('confirm') == 'yes') {
 		$objecttmp = new $objectclass($db);
 		$db->begin();
@@ -791,7 +816,7 @@ if ($action == 'shipped' && $permissiontoadd) {
 }
 
 // Closed records
-if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+if (!$error && $massaction === 'setbilled' && $permissiontoclose && $objectclass !== null) {
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
@@ -950,7 +975,9 @@ if ($search_status != '') {
 		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
 	}
 }
-
+if ($search_option == 'late') {
+	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->commande->client->warning_delay)."'";
+}
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
 }
@@ -1240,6 +1267,9 @@ if ($socid > 0) {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
+}
 if ($search_datecloture_start) {
 	$param .= '&search_datecloture_startday='.dol_print_date($search_datecloture_start, '%d').'&search_datecloture_startmonth='.dol_print_date($search_datecloture_start, '%m').'&search_datecloture_startyear='.dol_print_date($search_datecloture_start, '%Y');
 }
@@ -1405,7 +1435,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', ($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', (int) (($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd));
 
 // Lines of title fields
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1520,7 +1550,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, array(), 1);
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
@@ -1541,6 +1571,7 @@ if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_
 	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -1910,6 +1941,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -2280,7 +2312,7 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax125" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
 			print dolPrintLabel($obj->alias);
 			print '</td>';
 			if (!$i) {
@@ -2311,7 +2343,7 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->town).'">';
 			print dolPrintLabel($obj->town);
 			print '</td>';
 			if (!$i) {
@@ -2321,7 +2353,7 @@ while ($i < $imaxinloop) {
 
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->zip).'">';
 			print dolPrintLabel($obj->zip);
 			print '</td>';
 			if (!$i) {
@@ -2331,7 +2363,7 @@ while ($i < $imaxinloop) {
 
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dolPrintLabel($obj->state_name)."</td>\n";
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->state_name).'">'.dolPrintLabel($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2354,7 +2386,7 @@ while ($i < $imaxinloop) {
 			if (empty($typenArray)) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print $typenArray[$obj->typent_code]??'';
+			print $typenArray[$obj->typent_code] ?? '';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2418,7 +2450,7 @@ while ($i < $imaxinloop) {
 		// Channel
 		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 			print '<td>';
-			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
+			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', 0);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2693,6 +2725,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && isModEnabled('stock')) {
+				$text_icon = '';
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
 					$generic_commande->getLinesArray(); 	// Load array ->lines
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
@@ -2740,6 +2773,7 @@ while ($i < $imaxinloop) {
 											$generic_product->load_stats_commande(0, '1,2');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
 										} else {
+											// @phan-suppress-next-line PhanTypeInvalidDimOffset
 											$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
 										}
 										$stock_order = $generic_product->stats_commande['qty'];
@@ -2749,6 +2783,7 @@ while ($i < $imaxinloop) {
 											$generic_product->load_stats_commande_fournisseur(0, '3');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
 										} else {
+											// @phan-suppress-next-line PhanTypeInvalidDimOffset
 											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
 										}
 										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
@@ -2773,11 +2808,26 @@ while ($i < $imaxinloop) {
 							}
 						}
 					}
+
+					// Call Hook modifyTextInfo
+					$parameters = array('textinfo' => $text_info);
+					$reshook = $hookmanager->executeHooks('modifyTextInfo', $parameters, $object, $action);
+					if ($reshook == 1) {
+						// for add information
+						$text_info .= $hookmanager->resPrint;
+					} elseif ($reshook == 0) {
+						// for replace information
+						$text_info = $hookmanager->resPrint;
+					} elseif ($reshook == -1) {
+						// for errors
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+
 					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}

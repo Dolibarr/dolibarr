@@ -114,12 +114,33 @@ class IntracommReport extends CommonObject
 		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => 1, 'position' => 50, 'notnull' => 0, "visible" => -1,),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => 1, 'position' => 55, 'notnull' => 1, "visible" => -1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $type_declaration;
+	/**
+	 * @var string
+	 */
 	public $periods;
+	/**
+	 * @var string
+	 */
 	public $mode;
+	/**
+	 * @var string
+	 */
 	public $content_xml;
+	/**
+	 * @var string
+	 */
 	public $type_export;
 	public $datec;
 	public $tms;

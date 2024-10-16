@@ -436,9 +436,11 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  List jobs print
 	 *
+	 *  @param   ?string      $module     module
+	 *
 	 *  @return  int                     0 if OK, >0 if KO
 	 */
-	public function listJobs()
+	public function listJobs($module = null)
 	{
 		global $conf, $langs;
 

@@ -96,6 +96,10 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 
 	if ($type == 'proposal') {
 		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
 
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
@@ -136,6 +140,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}*/
 	} elseif ($type == 'contract') {
 		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=contract&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'contract_ref';
@@ -151,6 +160,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	} elseif ($type == 'fichinter') {
 		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'fichinter_ref';
@@ -166,6 +180,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	} else {	// For example $type = 'societe_rib'
 		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter '.dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= $type.'_ref';

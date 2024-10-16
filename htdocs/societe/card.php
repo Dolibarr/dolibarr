@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -66,6 +66,10 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('eventorganization')) {
 	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 }
+
+$u = '';
+$p = '';
+$myafm = '';
 
 if ($mysoc->country_code == 'GR') {
 	$u = getDolGlobalString('AADE_WEBSERVICE_USER');
@@ -172,6 +176,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'ro
  */
 
 $parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
+$current_logo = '';
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -357,17 +362,17 @@ if (empty($reshook)) {
 			$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
-			$object->capital				= GETPOST('capital', 'alphanohtml');
+			$object->capital				= GETPOSTFLOAT('capital');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
-			$object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
+			$object->tva_assuj				= GETPOSTINT('assujtva_value');
 			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
-			$object->status = GETPOST('status', 'alpha');
+			$object->status = GETPOSTINT('status');
 
 			// Local Taxes
-			$object->localtax1_assuj		= GETPOST('localtax1assuj_value', 'alpha');
-			$object->localtax2_assuj		= GETPOST('localtax2assuj_value', 'alpha');
+			$object->localtax1_assuj		= GETPOSTINT('localtax1assuj_value');
+			$object->localtax2_assuj		= GETPOSTINT('localtax2assuj_value');
 
 			$object->localtax1_value		= GETPOST('lt1', 'alpha');
 			$object->localtax2_value		= GETPOST('lt2', 'alpha');
@@ -385,6 +390,34 @@ if (empty($reshook)) {
 
 			$object->client					= $prospectcustomer;
 			$object->fournisseur			= (GETPOSTINT('supplier') > 0 ? 1 : 0);
+
+			if ($action == 'add') {
+				// for prospect, customer or supplier
+				if ($object->client > 0 || $object->fournisseur > 0) {
+					$form = new Form($db);
+					$form->load_cache_types_paiements();
+
+					$paymentTermId = GETPOSTINT('cond_reglement_id');
+					$paymentTypeId = GETPOSTINT('mode_reglement_id');
+					if ($object->client > 0) {
+						$object->cond_reglement_id = $paymentTermId;
+
+						$filterPaymentTypeIdArr = array(0, 2, 3); // allow payment type for customer (filter is "CRDT" in "Form::select_types_paiements()" method)
+						if (!empty($form->cache_types_paiements[$paymentTypeId]) && isset($form->cache_types_paiements[$paymentTypeId]['type']) && in_array($form->cache_types_paiements[$paymentTypeId]['type'], $filterPaymentTypeIdArr)) {
+							$object->mode_reglement_id = $paymentTypeId;
+						}
+					}
+
+					if ($object->fournisseur > 0) {
+						$object->cond_reglement_supplier_id	= $paymentTermId;
+
+						$filterPaymentTypeIdArr = array(1, 2, 3); // allow payment type for supplier (filter is "DBIT" in "Form::select_types_paiements()" method)
+						if (!empty($form->cache_types_paiements[$paymentTypeId]) && isset($form->cache_types_paiements[$paymentTypeId]['type']) && in_array($form->cache_types_paiements[$paymentTypeId]['type'], $filterPaymentTypeIdArr)) {
+							$object->mode_reglement_supplier_id = $paymentTypeId;
+						}
+					}
+				}
+			}
 
 			$object->commercial_id			= GETPOSTINT('commercial_id');
 			$object->default_lang			= GETPOST('default_lang');
@@ -839,6 +872,53 @@ if (empty($reshook)) {
 		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
 	}
 
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+	//clone company essential info
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+		if ($object->id > 0) {
+			$error = 0;
+
+			$clone = dol_clone($object, 1);
+
+			if (!empty(GETPOST('clone_name'))) {
+				$clone->id = 0;
+				$clone->name = GETPOST('clone_name', 'alphanohtml');
+				$clone->status = 1;
+				$clone->fournisseur = 0;
+				$clone->client = 0;
+
+				$db->begin();
+
+				$clone->context['createfromclone'] = 'createfromclone';
+				$id = $clone->create($user);
+				if ($id > 0) {
+					$clone->id = $id;
+				} else {
+					setEventMessages($clone->error, $clone->errors, 'errors');
+					$error++;
+				}
+
+				unset($clone->context['createfromclone']);
+
+				if ($error) {
+					$db->rollback();
+				} else {
+					$db->commit();
+					$db->close();
+					header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+					exit;
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
+			}
+		} else {
+			dol_print_error($db, $object->error, $object->errors);
+		}
+		$action = 'clone';
+	}
+
 	$id = $socid;
 	$object->fetch($socid);
 
@@ -954,6 +1034,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 		}
 		$modCodeClient = new $module($db);
+		'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 		// Load object modCodeFournisseur
 		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
@@ -967,6 +1048,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 		}
 		$modCodeFournisseur = new $module($db);
+		'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
 
 		// Define if customer/prospect or supplier status is set or not
 		if (GETPOST("type", 'aZ') != 'f') {
@@ -977,8 +1059,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		// Prospect / Customer
 		if (GETPOST("type", 'aZ') == 'c') {
-			if (getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
-				$object->client = getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT');
+			if (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
+				$object->client = getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT');
 			} else {
 				$object->client = 3;
 			}
@@ -1029,7 +1111,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->fax				= GETPOST('fax', 'alpha');
 		$object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 		$object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-		$object->capital			= GETPOST('capital', 'alphanohtml');
+		$object->capital			= GETPOSTFLOAT('capital');
+		$paymentTermId = GETPOSTINT('cond_reglement_id'); // can be set by default values on create page and not already in get or post variables
+		if (empty($paymentTermId) && !GETPOSTISSET('cond_reglement_id')) {
+			$paymentTermId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
+		}
+		$object->cond_reglement_id	= $paymentTermId;
+		$paymentTypeId = GETPOSTINT('mode_reglement_id'); // can be set by default values on create page and not already in get or post variables
+		if (empty($paymentTypeId) && !GETPOSTISSET('mode_reglement_id')) {
+			$paymentTypeId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
+		}
+		$object->mode_reglement_id 	= $paymentTypeId;
 		$object->barcode			= GETPOST('barcode', 'alphanohtml');
 		$object->idprof1			= GETPOST('idprof1', 'alphanohtml');
 		$object->idprof2			= GETPOST('idprof2', 'alphanohtml');
@@ -1049,8 +1141,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->localtax1_assuj	= GETPOSTINT('localtax1assuj_value');
 		$object->localtax2_assuj	= GETPOSTINT('localtax2assuj_value');
 
-		$object->localtax1_value	= GETPOSTINT('lt1');
-		$object->localtax2_value	= GETPOSTINT('lt2');
+		$object->localtax1_value	= GETPOST('lt1', 'alpha');
+		$object->localtax2_value	= GETPOST('lt2', 'alpha');
 
 		$object->tva_intra = GETPOST('tva_intra', 'alphanohtml');
 
@@ -1106,7 +1198,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country_code = $tmparray['code'];
 			$object->country = $tmparray['label'];
 		}
-		$object->forme_juridique_code = GETPOST('forme_juridique_code');
+		$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
 
 		// We set multicurrency_code if enabled
 		if (isModEnabled("multicurrency")) {
@@ -1221,6 +1313,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
                     $("#selectcountry_id").change(function() {
+						console.log("selectcountry_id change");
                        	document.formsoc.action.value="create";
                        	document.formsoc.submit();
                     });
@@ -1230,7 +1323,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
+		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignores autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1408,9 +1501,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 			}
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
-			print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 
-			print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
+			}
+
+			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+			}
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
@@ -1423,24 +1521,38 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<script>
 				function refreshNatureCss() {
 					jQuery(".spannature").each(function( index ) {
-						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
-						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
-							if (index+1 == 1) {
-								jQuery("#spannature"+(index+1)).addClass("prospect-back").removeClass("nonature-back");
+						id = $(this).attr("id").split("spannature")[1];
+						console.log(jQuery("#spannature"+(id)+" .checkforselect").is(":checked"));
+						if (jQuery("#spannature"+(id)+" .checkforselect").is(":checked")) {
+							if (id == 1) {
+								jQuery("#spannature"+(id)).addClass("prospect-back").removeClass("nonature-back");
 							}
-							if (index+1 == 2) {
-								jQuery("#spannature"+(index+1)).addClass("customer-back").removeClass("nonature-back");
+							if (id == 2) {
+								jQuery("#spannature"+(id)).addClass("customer-back").removeClass("nonature-back");
 							}
-							if (index+1 == 3) {
-								jQuery("#spannature"+(index+1)).addClass("vendor-back").removeClass("nonature-back");
+							if (id == 3) {
+								jQuery("#spannature"+(id)).addClass("vendor-back").removeClass("nonature-back");
 							}
 						} else {
-							jQuery("#spannature"+(index+1)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+							jQuery("#spannature"+(id)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
 						}
 					});
 				}
+
+				function manageprospectcustomer(element) {
+					console.log("We uncheck unwanted values on a nature");
+					id = $(element).attr("id").split("spannature")[1];
+					if ( id == 1){
+						$("#spannature2 .checkforselect").prop("checked", false);
+					}
+					if ( id == 2){
+						$("#spannature1 .checkforselect").prop("checked", false);
+					}
+				}
+
 				jQuery(".spannature").click(function(){
 					console.log("We click on a nature");
+					'.(getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') ? 'manageprospectcustomer($(this));' : '').'
 					refreshNatureCss();
 				});
 				refreshNatureCss();
@@ -1600,7 +1712,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 ? 1 : 0), 1);
 				print '</td>';
 			}
 			print '</tr>';
@@ -1764,16 +1876,36 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
 			if (isModEnabled("multicurrency")) {
-				print '<span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+				print '<span class="hideonsmartphone">';
+				//print $langs->trans("Currency".$object->multicurrency_code);
+				print $langs->getCurrencySymbol($object->multicurrency_code);
+				print '</span></td></tr>';
 			} else {
-				print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+				print '<span class="hideonsmartphone">';
+				print $langs->getCurrencySymbol($conf->currency);
+				//print $langs->trans("Currency".$conf->currency);
+				print '</span></td></tr>';
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, array(), 1, 0, 0, 'maxwidth200onsmartphone');
 				print '</td>';
 				print '</tr>';
 			}
+
+			// Payment terms of the settlement
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('PaymentConditions', 'cond_reglement_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->getSelectConditionsPaiements($object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', $object->deposit_percent);
+			print '</td></tr>';
+
+			// Payment mode
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('PaymentMode', 'mode_reglement_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->select_types_paiements($object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 1, 0, 1);
+			print '</td></tr>';
 
 			// Incoterms
 			if (isModEnabled('incoterm')) {
@@ -1791,13 +1923,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Customer
 				print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', 'parent', 64, 0, 3);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 
 				if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 					print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, '', 'parent', 64, 0, 3);
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
 				}
 
@@ -1805,7 +1937,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 					print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', 'parent', 64, 0, 3);
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
 				}
 			}
@@ -1830,7 +1962,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<td>'.$langs->trans('ParentCompany').'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				print img_picto('', 'company', 'class="paddingrightonly"');
-				print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+				print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 				print '</td></tr>';
 			}
 
@@ -1864,14 +1996,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
 					$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
-					print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
+					print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, array(), 1, 1, '');
 					print '</td></tr>';
 
 					// Accountancy_code_buy
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 					print '<td>';
 					$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
-					print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
+					print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, array(), 1, 1, '');
 					print '</td></tr>';
 				} else { // For external software
 					// Accountancy_code_sell
@@ -1891,7 +2023,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("AddThirdParty", 'Cancel', null, 0, '', $dol_openinpopup);
+		print $form->buttonsSaveCancel('AddThirdParty', 'Cancel', array(), 0, '', $dol_openinpopup);
 
 		print '</form>'."\n";
 	} elseif ($action == 'edit') {
@@ -1916,9 +2048,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 			}
 			$modCodeClient = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 			// We check if the prefix tag is used
 			if ($modCodeClient->code_auto) {
 				$prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
+			} else {
+				$prefixCustomerIsUsed = false;
 			}
 			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
@@ -1932,9 +2067,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 			}
 			$modCodeFournisseur = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
 			// We check if the prefix tag is used
 			if ($modCodeFournisseur->code_auto) {
 				$prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
+			} else {
+				$prefixSupplierIsUsed = false;
 			}
 
 			$object->oldcopy = clone $object;
@@ -1970,7 +2108,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 				$object->no_email				= GETPOSTINT("no_email");
 				$object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-				$object->capital				= GETPOST('capital', 'alphanohtml');
+				$object->capital				= GETPOSTFLOAT('capital');
 				$object->idprof1				= GETPOST('idprof1', 'alphanohtml');
 				$object->idprof2				= GETPOST('idprof2', 'alphanohtml');
 				$object->idprof3				= GETPOST('idprof3', 'alphanohtml');
@@ -2018,8 +2156,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				//Local Taxes
-				$object->localtax1_assuj		= GETPOST('localtax1assuj_value');
-				$object->localtax2_assuj		= GETPOST('localtax2assuj_value');
+				$object->localtax1_assuj		= GETPOSTINT('localtax1assuj_value');
+				$object->localtax2_assuj		= GETPOSTINT('localtax2assuj_value');
 
 				$object->localtax1_value		= GETPOST('lt1');
 				$object->localtax2_value		= GETPOST('lt2');
@@ -2119,6 +2257,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
        			$("#selectcountry_id").change(function() {
+					console.log("selectcountry_id change");
        				document.formsoc.action.value="edit";
       				document.formsoc.submit();
         			});
@@ -2201,10 +2340,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
 				print '<tr class="marginbottomlarge height50"><td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
-				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 
-				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+				if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
+					print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
+				}
 
+				if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
+					print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+				}
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 					// Supplier
@@ -2217,24 +2360,38 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<script>
 						function refreshNatureCss() {
 							jQuery(".spannature").each(function( index ) {
-								console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
-								if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
-									if (index+1 == 1) {
-										jQuery("#spannature"+(index+1)).addClass("prospect-back").removeClass("nonature-back");
+								id = $(this).attr("id").split("spannature")[1];
+								console.log(jQuery("#spannature"+(id)+" .checkforselect").is(":checked"));
+								if (jQuery("#spannature"+(id)+" .checkforselect").is(":checked")) {
+									if (id == 1) {
+										jQuery("#spannature"+(id)).addClass("prospect-back").removeClass("nonature-back");
 									}
-									if (index+1 == 2) {
-										jQuery("#spannature"+(index+1)).addClass("customer-back").removeClass("nonature-back");
+									if (id == 2) {
+										jQuery("#spannature"+(id)).addClass("customer-back").removeClass("nonature-back");
 									}
-									if (index+1 == 3) {
-										jQuery("#spannature"+(index+1)).addClass("vendor-back").removeClass("nonature-back");
+									if (id == 3) {
+										jQuery("#spannature"+(id)).addClass("vendor-back").removeClass("nonature-back");
 									}
 								} else {
-									jQuery("#spannature"+(index+1)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+									jQuery("#spannature"+(id)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
 								}
-							});
+							})
 						}
+
+						function manageprospectcustomer(element) {
+							console.log("We uncheck unwanted values on a nature");
+							id = $(element).attr("id").split("spannature")[1];
+							if ( id == 1){
+								$("#spannature2 .checkforselect").prop("checked", false);
+							}
+							if ( id == 2){
+								$("#spannature1 .checkforselect").prop("checked", false);
+							}
+						}
+
 						jQuery(".spannature").click(function(){
 							console.log("We click on a nature");
+							'.(getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') ? 'manageprospectcustomer($(this));' : '').'
 							refreshNatureCss();
 						});
 						refreshNatureCss();
@@ -2253,6 +2410,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$s = $modCodeClient->getToolTip($langs, $object, 0);
 				print $form->textwithpicto('', $s, 1);
 				print '</td></tr></table>';
+				print '</td>';
+
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
 
 				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 
@@ -2276,7 +2438,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 					print '<td colspan="3">';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+					print '<input type="text" class="minwidth100 maxwidth200 widthcentpercentminusx" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 					print '</td></tr>';
 				}
 
@@ -2311,7 +2473,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Country
 				print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
 				print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
+				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth200 maxwidth400 widthcentpercentminusx');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -2326,7 +2488,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id', 'minwidth200 maxwidth400 widthcentpercentminusx');
 					print '</td></tr>';
 				}
 
@@ -2427,7 +2589,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 					$i++;
 				}
-				if ($NBCOLS > 0 && $j % 2 == 1) {
+				if ($NBCOLS > 0 && ($j % 2) == 1) {
 					print '<td colspan="2"></td></tr>';
 				}
 
@@ -2547,7 +2709,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Capital
 				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 				print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-				print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
+				print $object->capital != '' && $object->capital != 0 ? dol_escape_htmltag(price($object->capital)) : '';
 				if (isModEnabled("multicurrency")) {
 					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
 				} else {
@@ -2557,7 +2719,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Default language
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-					print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, null, '1', 0, 0, 'maxwidth300 widthcentpercentminusx');
+					print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, array(), '1', 0, 0, 'maxwidth300 widthcentpercentminusx');
 					print '</td>';
 					print '</tr>';
 				}
@@ -2622,16 +2784,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<td>'.$langs->trans('ParentCompany').'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+					print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 					print '</td></tr>';
-				}
-
-				// Webservices url/key
-				if (isModEnabled('webservicesclient')) {
-					print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_url" id="webservices_url" value="'.$object->webservices_url.'"></td>';
-					print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_key" id="webservices_key" value="'.$object->webservices_key.'"></td></tr>';
 				}
 
 				// Logo
@@ -2684,19 +2838,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					if (isModEnabled('accounting')) {
 						// Accountancy_code_sell
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
-						print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
+						print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, array(), 1, 1);
 						print '</td></tr>';
 
 						// Accountancy_code_buy
 						print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 						print '<td>';
-						print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
+						print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, array(), 1, 1);
 						print '</td></tr>';
 					} else { // For external software
 						// Accountancy_code_sell
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 						print '</td></tr>';
 
@@ -2742,11 +2896,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					'name' => 'soc_origin',
 					'label' => $langs->trans('MergeOriginThirdparty'),
 					'type' => 'other',
-					'value' => $form->select_company('', 'soc_origin', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200', '', '', 1, null, false, array($object->id))
+					'value' => $form->select_company('', 'soc_origin', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200', '', '', 1, array(), false, array($object->id))
 				)
 			);
 
 			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
+		}
+
+		// Clone confirmation
+		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
+		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
+			// Define confirmation messages
+			$formquestionclone = array(
+			'text' => $langs->trans("ConfirmClone"),
+			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewSocNameForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->nom : $tmpcode, 'morecss' => 'width250'),
+			);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneThirdparties', $object->name), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 		}
 
 		// Call Hook formConfirm
@@ -3030,7 +3195,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				if ($object->prospect || $object->client || getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT')) {
-					print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("CustomersCategoriesShort").'</td>';
 					print '<td>';
 					print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 					print "</td></tr>";
@@ -3038,7 +3203,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Supplier
 				if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-					print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("SuppliersCategoriesShort").'</td>';
 					print '<td>';
 					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 					print "</td></tr>";
@@ -3047,7 +3212,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 
 			// Third-Party Type
-			print '<tr><td>';
+			print '<tr><td class="titlefieldmiddle">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
 			if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
@@ -3064,7 +3229,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Legal
-			print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -3146,7 +3311,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_sell)) {
 						$accountingaccount = new AccountingAccount($db);
-						$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+						$accountingaccount->fetch(0, $object->accountancy_code_sell, 1);
 
 						print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 					}
@@ -3162,7 +3327,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_buy)) {
 						$accountingaccount2 = new AccountingAccount($db);
-						$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);
+						$accountingaccount2->fetch(0, $object->accountancy_code_buy, 1);
 
 						print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
 					}
@@ -3186,7 +3351,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</tr></table>';
 				print '</td><td>';
 				$html_name = ($action == 'editparentcompany') ? 'parent_id' : 'none';
-				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, $html_name, '', 1, 0, 0, null, 0, array($object->id));
+				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, $html_name, '', 1, 0, 0, array(), 0, array($object->id));
 				print '</td></tr>';
 			}
 
@@ -3199,7 +3364,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
 				$adh = new Adherent($db);
-				$result = $adh->fetch('', '', $object->id);
+				$result = $adh->fetch(0, '', $object->id);
 				if ($result > 0) {
 					$adh->ref = $adh->getFullName($langs);
 					print $adh->getNomUrl(-1);
@@ -3224,12 +3389,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 			print '</td></tr>';
 			*/
-
-			// Webservices url/key
-			if (isModEnabled('webservicesclient')) {
-				print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td></tr>';
-				print '<tr><td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
-			}
 
 			print '</table>';
 			print '</div>';
@@ -3270,9 +3429,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
+				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+					$cloneSocietetUrl = '';
+					$cloneButtonId = 'action-clone';
+				} else {
+					$cloneSocietetUrl = '';
+					$cloneButtonId = '';
+				}
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);
-					$result = $adh->fetch('', '', $object->id);
+					$result = $adh->fetch(0, '', $object->id);
 					if ($result == 0 && ($object->client == 1 || $object->client == 3) && getDolGlobalString('MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS')) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>'."\n";
 					}

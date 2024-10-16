@@ -331,7 +331,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtobcc .= (getDolGlobalString($autocopy) ? (($sendtobcc ? ", " : "") . getDolGlobalString($autocopy)) : '');
 			}
 
-			$deliveryreceipt = GETPOST('deliveryreceipt');
+			$deliveryreceipt = GETPOSTINT('deliveryreceipt') ? 1 : 0;
 
 			if ($action == 'send' || $action == 'relance') {
 				$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
