@@ -992,7 +992,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 					}
 
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
 						if ($pagenb == $pageposafter) {
 							$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
