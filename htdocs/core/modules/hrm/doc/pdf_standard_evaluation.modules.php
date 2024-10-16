@@ -111,9 +111,6 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 		$this->option_logo = 1; // Display logo
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 
-		// Get source company
-		$this->emetteur = $mysoc;
-
 		// Define position of columns
 		$this->posxnotes = $this->marge_gauche + 1;
 
@@ -128,6 +125,14 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$this->posxrequiredrank -= 20;
 			$this->posxresult -= 20;
 		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
