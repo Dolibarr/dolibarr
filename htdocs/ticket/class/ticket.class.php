@@ -105,7 +105,7 @@ class Ticket extends CommonObject
 	public $fk_user_assign;
 
 	/**
-	 * var string Ticket subject
+	 * @var string Ticket subject
 	 */
 	public $subject;
 
@@ -212,17 +212,17 @@ class Ticket extends CommonObject
 	public $date_close;
 
 	/**
-	 * @var array cache_types_tickets
+	 * @var array<int,array{code:string,label:string,use_default:int,pos:int}> cache_types_tickets
 	 */
 	public $cache_types_tickets;
 
 	/**
-	 * @var array tickets categories
+	 * @var array<int,array{code:string,use_default:înt,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}> tickets categories
 	 */
 	public $cache_category_tickets;
 
 	/**
-	 * @var array cache msgs ticket
+	 * @var array<int,array{private:0|1|'0'|'1',fk_user_author:int,fk_contact_author?:int,message:string}> cache msgs ticket
 	 */
 	public $cache_msgs_ticket;
 
@@ -252,7 +252,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var Ticket[] array of Tickets
+	 * @var Ticket[] Array of Tickets
 	 */
 	public $lines;
 
@@ -1813,12 +1813,12 @@ class Ticket extends CommonObject
 	 * Add message into database
 	 *
 	 * @param	User		$user				User that creates
-	 * @param	int			$notrigger			0=launch triggers after, 1=disable triggers
-	 * @param	array		$filename_list		List of files to attach (full path of filename on file system)
-	 * @param	array		$mimetype_list		List of MIME type of attached files
-	 * @param	array		$mimefilename_list	List of attached file name in message
+	 * @param	int<0,1>	$notrigger			0=launch triggers after, 1=disable triggers
+	 * @param	string[]	$filename_list		List of files to attach (full path of filename on file system)
+	 * @param	string[]	$mimetype_list		List of MIME type of attached files
+	 * @param	string[]	$mimefilename_list	List of attached file name in message
 	 * @param	boolean		$send_email			Whether the message is sent by email
-	 * @param	int			$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
+	 * @param	int<0,1>	$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
 	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
@@ -2070,11 +2070,11 @@ class Ticket extends CommonObject
 	/**
 	 *     Search and fetch thirparties by email
 	 *
-	 *     @param  string 		$email   		Email
-	 *     @param  int    		$type    		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
-	 *     @param  array  		$filters 		Array of couple field name/value to filter the companies with the same name
-	 *     @param  string 		$clause  		Clause for filters
-	 *     @return array|int    		   		Array of thirdparties object
+	 *     @param  string 		$email   	Email
+	 *     @param  int<0,3>		$type    	Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
+	 *     @param  array<string,mixed>	$filters 	Array of couple field name/value to filter the companies with the same name
+	 *     @param  string 		$clause  	Clause for filters
+	 *     @return Societe[]|int<-1,-1>		Array of thirdparties object
 	 */
 	public function searchSocidByEmail($email, $type = 0, $filters = array(), $clause = 'AND')
 	{
@@ -2138,7 +2138,7 @@ class Ticket extends CommonObject
 	 *     @param  string 		$email 		Email
 	 *     @param  int  		$socid 		Limit to a thirdparty
 	 *     @param  string 		$case  		Respect case
-	 *     @return array|int        		Array of contacts object
+	 *     @return Contact[]|int        		Array of contacts object
 	 */
 	public function searchContactByEmail($email, $socid = 0, $case = '')
 	{
@@ -2253,7 +2253,7 @@ class Ticket extends CommonObject
 	/**
 	 *  Return id des contacts interne de suivi
 	 *
-	 *  @return array       Liste des id contacts suivi ticket
+	 *  @return null|int[]       Liste des id contacts suivi ticket
 	 */
 	public function getIdTicketInternalContact()
 	{
@@ -2274,7 +2274,7 @@ class Ticket extends CommonObject
 	/**
 	 *  Return id des contacts clients pour le suivi ticket
 	 *
-	 *  @return array       Liste des id contacts suivi ticket
+	 *  @return null|int[]       Liste des id contacts suivi ticket
 	 */
 	public function getIdTicketCustomerContact()
 	{
@@ -2285,7 +2285,7 @@ class Ticket extends CommonObject
 	 * Retrieve information about external contacts
 	 *
 	 *  @param    int     $status     Status of user or company
-	 *  @return array                 Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
+	 *	@return   array<int|array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string}>|int<-1,-1>      Array with data : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
 	 */
 	public function getInfosTicketExternalContact($status = -1)
 	{
@@ -2295,7 +2295,7 @@ class Ticket extends CommonObject
 	/**
 	 *  Return id des contacts clients des intervenants
 	 *
-	 *  @return array       Liste des id contacts intervenants
+	 *  @return null|int[]       Liste des id contacts intervenants
 	 */
 	public function getIdTicketInternalInvolvedContact()
 	{
@@ -2305,7 +2305,7 @@ class Ticket extends CommonObject
 	/**
 	 *  Return id des contacts clients des intervenants
 	 *
-	 *  @return array       Liste des id contacts intervenants
+	 *  @return null|int[]       Liste des id contacts intervenants
 	 */
 	public function getIdTicketCustomerInvolvedContact()
 	{
@@ -2315,7 +2315,7 @@ class Ticket extends CommonObject
 	/**
 	 * Return id of all contacts for ticket
 	 *
-	 * @return	array		Array of contacts for tickets
+	 * @return	int[]		Array of contacts for tickets
 	 */
 	public function getTicketAllContacts()
 	{
@@ -2333,7 +2333,7 @@ class Ticket extends CommonObject
 	/**
 	 * Return id of all contacts for ticket
 	 *
-	 * @return	array		Array of contacts
+	 * @return	int[]		Array of contacts
 	 */
 	public function getTicketAllCustomerContacts()
 	{
@@ -2480,6 +2480,7 @@ class Ticket extends CommonObject
 		// Search template files
 		$file = '';
 		$classname = '';
+		$reldir = '';
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
@@ -2543,7 +2544,7 @@ class Ticket extends CommonObject
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
 	 * @param	string		$forcetrackid	Force trackid used for $keytoavoidconflict into get_attached_files()
-	 * @return	array|int					Array with final path/name/mime of files.
+	 * @return	array{listofpaths:string[],listofnames:string[],listofmimes:string[]}|int<-1,-1>	Array with final path/name/mime of files.
 	 */
 	public function copyFilesForTicket($forcetrackid = null)
 	{
@@ -2682,7 +2683,7 @@ class Ticket extends CommonObject
 
 		$object = new Ticket($this->db);
 
-		$ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
+		$ret = $object->fetch(0, '', GETPOST('track_id', 'alpha'));
 
 		$object->socid = $object->fk_soc;
 		$object->fetch_thirdparty();
@@ -2751,6 +2752,8 @@ class Ticket extends CommonObject
 							} else {
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
+						} else {
+							$assigned_user = null;
 						}
 
 						// Build array to display recipient list
@@ -2761,7 +2764,7 @@ class Ticket extends CommonObject
 							}
 
 							// We check if the email address is not the assignee's address to prevent notification from being sent twice
-							if (!empty($info_sendto['email']) && $assigned_user->email != $info_sendto['email']) {
+							if (!empty($info_sendto['email']) && ($assigned_user === null || $assigned_user->email != $info_sendto['email'])) {
 								$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 							}
 						}
@@ -2816,7 +2819,7 @@ class Ticket extends CommonObject
 							$message .= '<br><br>';
 							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>';
 
-							$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
 						}
 					}
 				} else {
@@ -2888,7 +2891,7 @@ class Ticket extends CommonObject
 
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
 							}
 						}
 
@@ -2990,7 +2993,7 @@ class Ticket extends CommonObject
 
 								// Don't try to send email when no recipient
 								if (!empty($sendto)) {
-									$result = $this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
 									if ($result) {
 										// update last_msg_sent date (for last message sent to external users)
 										$this->date_last_msg_sent = dol_now();
@@ -3029,13 +3032,13 @@ class Ticket extends CommonObject
 	/**
 	 * Send ticket by email to linked contacts
 	 *
-	 * @param string $subject          	  Email subject
-	 * @param string $message          	  Email message
-	 * @param int    $send_internal_cc 	  Receive a copy on internal email (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')
-	 * @param array  $array_receiver   	  Array of receiver. Example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
-	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
-	 * @param array	 $mimetype_list       List of MIME type of attached files
-	 * @param array	 $mimefilename_list   List of attached file name in message
+	 * @param string	$subject          	  Email subject
+	 * @param string	$message          	  Email message
+	 * @param int<0,1>	$send_internal_cc 	  Receive a copy on internal email (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')
+	 * @param array<string>	$array_receiver   	  Array of receiver. Example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+	 * @param string[]	$filename_list       List of files to attach (full path of filename on file system)
+	 * @param string[]	$mimetype_list       List of MIME type of attached files
+	 * @param string[]	$mimefilename_list   List of attached file name in message
 	 * @return boolean     					True if mail sent to at least one receiver, false otherwise
 	 */
 	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
@@ -3302,13 +3305,13 @@ class Ticket extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param	int<0,1>	$hidedetails    Hide details of lines
+	 *  @param	int<0,1>	$hidedesc       Hide description
+	 *  @param	int<0,1>	$hideref        Hide ref
+	 *  @param	?array<string,mixed>  $moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
