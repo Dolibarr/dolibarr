@@ -221,7 +221,7 @@ class pdf_baleine extends ModelePDFProjects
 
 				// Complete object by loading several other information
 				$task = new Task($this->db);
-				$tasksarray = $task->getTasksArray(0, 0, $object->id);
+				$tasksarray = $task->getTasksArray(null, null, $object->id);
 
 				if (!$object->id > 0) {  // Special case when used with object = specimen, we may return all lines
 					$tasksarray = array_slice($tasksarray, 0, min(5, count($tasksarray)));
