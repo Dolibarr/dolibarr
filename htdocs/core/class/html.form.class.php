@@ -2569,7 +2569,7 @@ class Form
 			$out .= '<li>';
 			$resourcestatic->fetch($value['id']);
 			$out .= $resourcestatic->getNomUrl(-1);
-			if ($nbassignetoresource > 1 && $action != 'view') {
+			if ($nbassignetoresource >= 1 && $action != 'view') {
 				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $resourcestatic->id . '" class="removedassigned reposition" id="removedassignedresource_' . $resourcestatic->id . '" name="removedassignedresource_' . $resourcestatic->id . '">';
 			}
 			// Show my availability
@@ -9942,13 +9942,13 @@ class Form
 			$addgendertxt = ' ';
 			switch ($object->gender) {
 				case 'man':
-					$addgendertxt .= '<i class="fas fa-mars"></i>';
+					$addgendertxt .= '<i class="fas fa-mars valignmiddle"></i>';
 					break;
 				case 'woman':
-					$addgendertxt .= '<i class="fas fa-venus"></i>';
+					$addgendertxt .= '<i class="fas fa-venus valignmiddle"></i>';
 					break;
 				case 'other':
-					$addgendertxt .= '<i class="fas fa-transgender"></i>';
+					$addgendertxt .= '<i class="fas fa-transgender valignmiddle"></i>';
 					break;
 			}
 		}
@@ -10087,7 +10087,7 @@ class Form
 				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities($object->societe) . ')' : '');
 			}
 		} elseif (in_array($object->element, array('contact', 'user'))) {
-			$ret .= dol_htmlentities($object->getFullName($langs)) . $addgendertxt;
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities($object->getFullName($langs)).'</span>'.$addgendertxt;
 		} elseif ($object->element == 'usergroup') {
 			$ret .= dol_htmlentities($object->name);
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
@@ -10106,7 +10106,7 @@ class Form
 				$ret .= ' ';
 			}
 
-			$ret .= $morehtmlref;
+			$ret .= '<!-- morehtmlref -->'.$morehtmlref;
 		}
 
 		$ret .= '</div>';
@@ -11136,9 +11136,10 @@ class Form
 	 * @param	string		$modelType		Model type
 	 * @param	int<0,1>	$default		1=Show also Default mail template
 	 * @param	int<0,1>	$addjscombo		Add js combobox
+	 * @param   string      $selected       Selected model mail
 	 * @return	string						HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = '')
 	{
 		global $langs, $user;
 
@@ -11163,6 +11164,9 @@ class Form
 
 		foreach ($TModels as $id_model => $label_model) {
 			$retstring .= '<option value="' . $id_model . '"';
+			if (!empty($selected) && $selected == $id_model) {
+				$retstring .= "selected";
+			}
 			$retstring .= ">" . $label_model . "</option>";
 		}
 

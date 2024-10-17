@@ -89,16 +89,20 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 
-		// Retrieves transmitter
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
-
 		// Define column position
 		$this->line_height = 5;
 		$this->line_per_page = 40;
 		$this->tab_height = 200; //$this->line_height * $this->line_per_page;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+		// Retrieves issuer
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

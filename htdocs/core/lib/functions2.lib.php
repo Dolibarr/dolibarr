@@ -2405,7 +2405,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  This is the opposite function of colorArrayToHex.
  *  If entry is already an array, return it.
  *
- *  @param	string						$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @param	string|array{0:int,1:int,2:int}		$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array{0:int,1:int,2:int}|array{}	$colorifnotfound	Color code array to return if entry not defined
  *  @return	array{0:int,1:int,2:int}	RGB hex value (without # before). For example: FF00FF
  *  @see	colorArrayToHex(), colorHexToRgb()
@@ -2413,7 +2413,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
 {
 	if (is_array($stringcolor)) {
-		return $stringcolor; // If already into correct output format, we return as is
+		return $stringcolor; // If already in the correct output format, we return as is
 	}
 	$reg = array();
 	$tmp = preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
@@ -2831,7 +2831,7 @@ function price2fec($amount)
  * Check the syntax of some PHP code.
  *
  * @param 	string 			$code 	PHP code to check.
- * @return 	boolean|array 			If false, then check was successful, otherwise an array(message,line) of errors is returned.
+ * @return 	false|array{0:string,1:int}	If false, then check was successful, otherwise an array(message,line) of errors is returned.
  */
 function phpSyntaxError($code)
 {
