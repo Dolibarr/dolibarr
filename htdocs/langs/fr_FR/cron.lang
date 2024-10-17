@@ -5,7 +5,7 @@ Permission23102 = Créer/Modifier des tâches planifiées
 Permission23103 = Supprimer une tâche planifiée
 Permission23104 = Exécuter une tâche planifiée
 # Admin
-CronSetup=Page de configuration du module - Gestion des travaux programmés
+CronSetup=Configuration du module Travaux Planifiés
 URLToLaunchCronJobs=URL pour vérifier et lancer les travaux planifiés qualifiés depuis un navigateur
 OrToLaunchASpecificJob=Ou pour vérifier et lancer une tâche planifiée spécifique depuis un navigateur
 KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux programmés

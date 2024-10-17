@@ -320,7 +320,7 @@ CloseDialog = Fermer
 Autofill = Remplissage automatique
 OrPasteAnURL=ou Coller une URL
 # externalsite
-ExternalSiteSetup=Configuration du lien vers le site externe
+ExternalSiteSetup=Configuration du Module Site Externe
 ExternalSiteURL=URL du site externe du contenu iFrame HTML
 ExternalSiteModuleNotComplete=La configuration du module "Site externe" est incomplète.
 ExampleMyMenuEntry=Mon entrée de menu
