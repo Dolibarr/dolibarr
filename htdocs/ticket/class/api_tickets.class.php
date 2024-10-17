@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
@@ -361,7 +362,7 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
-		$result = $this->ticket->fetch('', '', $this->ticket->track_id);
+		$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
 		if (!$result) {
 			throw new RestException(404, 'Ticket not found');
 		}
