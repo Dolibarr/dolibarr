@@ -126,10 +126,10 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "bills", 'admin'));
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "sponge";
@@ -210,7 +210,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", 'admin'));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
