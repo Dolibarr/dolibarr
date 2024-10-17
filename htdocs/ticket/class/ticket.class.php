@@ -217,7 +217,7 @@ class Ticket extends CommonObject
 	public $cache_types_tickets;
 
 	/**
-	 * @var array<int,array{code:string,use_default:înt,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}> tickets categories
+	 * @var array<int,array{code:string,use_default:înt,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}>	Cache of Ticket categories
 	 */
 	public $cache_category_tickets;
 
@@ -482,7 +482,7 @@ class Ticket extends CommonObject
 	{
 		$test = new self($this->db);
 
-		if ($test->fetch('', $getRef) > 0) {
+		if ($test->fetch(0, $getRef) > 0) {
 			if (($action == 'add') || ($action == 'update' && $this->ref != $getRef)) {
 				return true;
 			}
@@ -1392,7 +1392,7 @@ class Ticket extends CommonObject
 	{
 		global $langs;
 
-		if ($publicgroup == -1 && !empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
+		if ($publicgroup == -1 && !empty($this->cache_category_tickets) && count($this->cache_category_tickets)) {
 			// Cache already loaded
 			return 0;
 		}
