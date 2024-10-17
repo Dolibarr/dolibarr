@@ -183,12 +183,19 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 
 
-
-$disabled = '';
+$disableStockCalculateOn = array();
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	$langs->load('products');
+	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+	$disableStockCalculateOn[] = 'BILL';
+	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SHIPMENT_CLOSE';
+}
 if (isModEnabled('productbatch')) {
 	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");
-	$disabled = ' disabled';
+	$disableStockCalculateOn[] = 'BILL';
+	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
 
 	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
 	$descmode = $langs->trans('DeStockOnShipmentOnClosing');
@@ -227,7 +234,7 @@ print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
 if (isModEnabled('invoice')) {
 	if ($conf->use_javascript_ajax) {
-		if ($disabled) {
+		if (in_array('BILL', $disableStockCalculateOn)) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
@@ -249,7 +256,7 @@ print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
 if (isModEnabled('order')) {
 	if ($conf->use_javascript_ajax) {
-		if ($disabled) {
+		if (in_array('VALIDATE_ORDER', $disableStockCalculateOn)) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
@@ -273,7 +280,11 @@ print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
 if (isModEnabled("shipping")) {
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		if (in_array('SHIPMENT', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT);
@@ -290,7 +301,11 @@ print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
 if (isModEnabled("shipping")) {
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		if (in_array('SHIPMENT_CLOSE', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'));
@@ -323,7 +338,7 @@ print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
-		if ($disabled) {
+		if (in_array('BILL', $disableStockCalculateOn)) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
@@ -345,7 +360,7 @@ print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
-		if ($disabled) {
+		if (in_array('VALIDATE_ORDER', $disableStockCalculateOn)) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
@@ -367,7 +382,11 @@ if (isModEnabled("reception")) {
 	print '<td class="right">';
 
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		if (in_array('RECEPTION', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION);
@@ -382,7 +401,11 @@ if (isModEnabled("reception")) {
 	print '<td class="right">';
 
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		if (in_array('RECEPTION_CLOSE', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE);
@@ -396,7 +419,11 @@ if (isModEnabled("reception")) {
 	print '<td class="right">';
 	if (isModEnabled("supplier_order")) {
 		if ($conf->use_javascript_ajax) {
-			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+			if (in_array('SUPPLIER_DISPATCH_ORDER', $disableStockCalculateOn)) {
+				print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			} else {
+				print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+			}
 		} else {
 			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);

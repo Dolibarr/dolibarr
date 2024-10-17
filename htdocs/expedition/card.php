@@ -428,7 +428,14 @@ if (empty($reshook)) {
 				} else {
 					// batch mode
 					if ($batch_line[$i]['qty'] > 0 || ($batch_line[$i]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
-						$ret = $object->addline_batch($batch_line[$i], $array_options[$i]);
+						$origin_line_id = (int) $batch_line[$i]['ix_l'];
+						$origin_line = new OrderLine($db);
+						$res = $origin_line->fetch($origin_line_id);
+						if ($res <= 0) {
+							$error++;
+							setEventMessages($origin_line->error, $origin_line->errors, 'errors');
+						}
+						$ret = $object->addline_batch($batch_line[$i], $array_options[$i], $origin_line);
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
@@ -2344,6 +2351,8 @@ if ($action == 'create') {
 	print '<tbody>';
 
 	// Loop on each product to send/sent
+	$conf->cache['product'] = array();
+	$conf->cache['warehouse'] = array();
 	for ($i = 0; $i < $num_prod; $i++) {
 		$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => $outputlangs);
 		$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
@@ -2364,8 +2373,14 @@ if ($action == 'create') {
 			if ($lines[$i]->fk_product > 0) {
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-					$prod = new Product($db);
-					$prod->fetch($lines[$i]->fk_product);
+					$product_id = $lines[$i]->fk_product;
+					if (!isset($conf->cache['product'][$product_id])) {
+						$prod = new Product($db);
+						$prod->fetch($product_id);
+						$conf->cache['product'][$product_id] = $prod;
+					} else {
+						$prod = $conf->cache['product'][$product_id];
+					}
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 				} else {
 					$label = (!empty($lines[$i]->label) ? $lines[$i]->label : $lines[$i]->product_label);
@@ -2564,19 +2579,59 @@ if ($action == 'create') {
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					} elseif ($lines[$i]->entrepot_id > 0) {
-						$entrepot = new Entrepot($db);
-						$entrepot->fetch($lines[$i]->entrepot_id);
-						print $entrepot->getNomUrl(1);
+						$warehouse_id = $lines[$i]->entrepot_id;
+						if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+							$warehouse = new Entrepot($db);
+							$warehouse->fetch($warehouse_id);
+							$conf->cache['warehouse'][$warehouse_id] = $warehouse;
+						} else {
+							$warehouse = $conf->cache['warehouse'][$warehouse_id];
+						}
+						print $warehouse->getNomUrl(1);
 					} elseif (count($lines[$i]->details_entrepot) > 1) {
 						$detail = '';
 						foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
-							if ($detail_entrepot->entrepot_id > 0) {
-								$entrepot = new Entrepot($db);
-								$entrepot->fetch($detail_entrepot->entrepot_id);
-								$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->label, $detail_entrepot->qty_shipped).'<br>';
+							$warehouse_id = $detail_entrepot->entrepot_id;
+							if ($warehouse_id > 0) {
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$warehouse = new Entrepot($db);
+									$warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $warehouse;
+								} else {
+									$warehouse = $conf->cache['warehouse'][$warehouse_id];
+								}
+								$detail .= $langs->trans("DetailWarehouseFormat", $warehouse->label, $detail_entrepot->qty_shipped).'<br>';
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
+					} elseif (count($lines[$i]->detail_children) > 1) {
+						$detail = '';
+						foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
+							foreach ($child_stock_list as $warehouse_id => $total_qty) {
+								// get product from cache
+								$child_product_label = '';
+								if (!isset($conf->cache['product'][$child_product_id])) {
+									$child_product = new Product($db);
+									$child_product->fetch($child_product_id);
+									$conf->cache['product'][$child_product_id] = $child_product;
+								} else {
+									$child_product = $conf->cache['product'][$child_product_id];
+								}
+								$child_product_label = $child_product->ref . ' ' . $child_product->label;
+
+								// get warehouse from cache
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$child_warehouse = new Entrepot($db);
+									$child_warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $child_warehouse;
+								} else {
+									$child_warehouse = $conf->cache['warehouse'][$warehouse_id];
+								}
+
+								$detail .= $langs->trans('DetailChildrenFormat', $child_product_label, $child_warehouse->label, $total_qty).'<br>';
+							}
+						}
+						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans('DetailWarehouseNumber'), $detail);
 					}
 					print '</td>';
 				}
@@ -2637,9 +2692,25 @@ if ($action == 'create') {
 				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 				print '</td>';
 			} elseif ($object->status == Expedition::STATUS_DRAFT) {
+				$edit_url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id;
+				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+					$product_id = $lines[$i]->fk_product;
+					if (!isset($conf->cache['product'][$product_id])) {
+						$product = new Product($db);
+						$product->fetch($product_id);
+						$conf->cache['product'][$product_id] = $product;
+					} else {
+						$product = $conf->cache['product'][$product_id];
+					}
+
+					if ($product->hasFatherOrChild(1)) {
+						$edit_url = dol_buildpath('/expedition/dispatch.php?id='.$object->id, 1);
+					}
+				}
+
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda reposition" href="'.$edit_url.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';

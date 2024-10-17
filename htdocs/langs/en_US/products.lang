@@ -442,3 +442,4 @@ ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
 PriceLabel=Price label
 PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)
+WhenProductVirtualOnOptionAreForced=When virtual products option is on, automatic stock decrease is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.

@@ -130,34 +130,35 @@ if ($action == 'updatelines' && $usercancreate) {
 	foreach ($_POST as $key => $value) {
 		// without batch module enabled
 		$reg = array();
-		if (preg_match('/^product_.*([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+		if (preg_match('/^(?:product|productbatch)([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 			$pos++;
-			if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+			if (preg_match('/^product([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 				$modebatch = "barcode";
-			} elseif (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) { // With batchmode enabled
+			} elseif (preg_match('/^productbatch([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) { // With batchmode enabled
 				$modebatch = "batch";
 			}
 
 			$numline = $pos;
+			$dispatch_line_suffix = $reg[1].'_'.$reg[2].'_'.$reg[3];
 			if ($modebatch == "barcode") {
-				$prod = "product_".$reg[1].'_'.$reg[2];
+				$prod = "product".$dispatch_line_suffix;
 			} else {
-				$prod = 'product_batch_'.$reg[1].'_'.$reg[2];
+				$prod = 'productbatch'.$dispatch_line_suffix;
 			}
-			$qty = "qty_".$reg[1].'_'.$reg[2];
-			$ent = "entrepot_".$reg[1].'_'.$reg[2];
-			$fk_commandedet = "fk_commandedet_".$reg[1].'_'.$reg[2];
-			$idline = GETPOST("idline_".$reg[1].'_'.$reg[2]);
+			$qty = "qty".$dispatch_line_suffix;
+			$ent = "entrepot".$dispatch_line_suffix;
+			$fk_commandedet = "fk_commandedet".$dispatch_line_suffix;
+			$idline = GETPOSTINT("idline".$dispatch_line_suffix);
 			$warehouse_id = GETPOSTINT($ent);
 			$prod_id = GETPOSTINT($prod);
-			//$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
+			//$pu = "pu".$dispatch_line_suffix; // This is unit price including discount
 			$lot = '';
 			$dDLUO = '';
 			$dDLC = '';
 			if ($modebatch == "batch") { //TODO: Make impossible to input non existing batch code
-				$lot = GETPOST('lot_number_'.$reg[1].'_'.$reg[2]);
-				$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'year'));
-				$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'year'));
+				$lot = GETPOST('lot_number'.$dispatch_line_suffix);
+				$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$dispatch_line_suffix.'month'), GETPOSTINT('dluo'.$dispatch_line_suffix.'day'), GETPOSTINT('dluo'.$dispatch_line_suffix.'year'));
+				$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$dispatch_line_suffix.'month'), GETPOSTINT('dlc'.$dispatch_line_suffix.'day'), GETPOSTINT('dlc'.$dispatch_line_suffix.'year'));
 			}
 
 			$newqty = GETPOSTFLOAT($qty, 'MS');
@@ -174,8 +175,8 @@ if ($action == 'updatelines' && $usercancreate) {
 					}
 					if (!$error && $modebatch == "batch") {
 						$sql = "SELECT pb.rowid ";
-						$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-						$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
+						$sql .= " FROM ".$db->prefix()."product_batch as pb";
+						$sql .= " JOIN ".$db->prefix()."product_stock as ps";
 						$sql .= " ON ps.rowid = pb.fk_product_stock";
 						$sql .= " WHERE pb.batch = '".$db->escape($lot)."'";
 						$sql .= " AND ps.fk_product = ".((int) $prod_id) ;
@@ -228,11 +229,11 @@ if ($action == 'updatelines' && $usercancreate) {
 
 							if (!$error && $modebatch == "batch") {
 								if ($newqty > 0) {
-									$suffixkeyfordate = preg_replace('/^product_batch/', '', $key);
-									$sellby = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffixkeyfordate.'month'), GETPOST('dlc'.$suffixkeyfordate.'day'), GETPOST('dlc'.$suffixkeyfordate.'year'), '');
-									$eatby = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffixkeyfordate.'month'), GETPOST('dluo'.$suffixkeyfordate.'day'), GETPOST('dluo'.$suffixkeyfordate.'year'));
+									$suffixkeyfordate = preg_replace('/^productbatch/', '', $key);
+									$sellby = dol_mktime(12, 0, 0, GETPOST('dlc'.$suffixkeyfordate.'month'), GETPOST('dlc'.$suffixkeyfordate.'day'), GETPOST('dlc'.$suffixkeyfordate.'year'), '');
+									$eatby = dol_mktime(12, 0, 0, GETPOST('dluo'.$suffixkeyfordate.'month'), GETPOST('dluo'.$suffixkeyfordate.'day'), GETPOST('dluo'.$suffixkeyfordate.'year'));
 
-									$sqlsearchdet = "SELECT rowid FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sqlsearchdet = "SELECT rowid FROM ".$db->prefix().$expeditionlinebatch->table_element;
 									$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
 									$sqlsearchdet .= " AND batch = '".$db->escape($lot)."'";
 									$resqlsearchdet = $db->query($sqlsearchdet);
@@ -244,20 +245,20 @@ if ($action == 'updatelines' && $usercancreate) {
 									}
 
 									if ($objsearchdet) {
-										$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
+										$sql = "UPDATE ".$db->prefix().$expeditionlinebatch->table_element." SET";
 										$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
 										$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
 										$sql .= " , qty = ".((float) $newqty);
 										$sql .= " , fk_warehouse = ".((int) $warehouse_id);
 										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
 									} else {
-										$sql = "INSERT INTO ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." (";
+										$sql = "INSERT INTO ".$db->prefix().$expeditionlinebatch->table_element." (";
 										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
 										$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
 										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
 									}
 								} else {
-									$sql = " DELETE FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sql = " DELETE FROM ".$db->prefix().$expeditionlinebatch->table_element;
 									$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
 									$sql .= " AND batch = '".$db->escape($lot)."'";
 								}
@@ -272,7 +273,11 @@ if ($action == 'updatelines' && $usercancreate) {
 					} else {
 						$expeditiondispatch->fk_expedition = $object->id;
 						$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
-						$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
+						$expeditiondispatch->fk_parent = GETPOSTINT('fk_parent'.$dispatch_line_suffix);
+						$expeditiondispatch->fk_product = $prod_id;
+						if (!($expeditiondispatch->fk_parent > 0)) {
+							$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
+						}
 						$expeditiondispatch->qty = $newqty;
 
 						if ($newqty > 0) {
@@ -283,8 +288,8 @@ if ($action == 'updatelines' && $usercancreate) {
 							}
 
 							if ($modebatch == "batch" && !$error) {
-								$expeditionlinebatch->sellby = $dDLUO;
-								$expeditionlinebatch->eatby = $dDLC;
+								$expeditionlinebatch->sellby = $dDLC; // DLC is sellByDate
+								$expeditionlinebatch->eatby = $dDLUO; // DLUO is eatByDate
 								$expeditionlinebatch->batch = $lot;
 								$expeditionlinebatch->qty = $newqty;
 								$expeditionlinebatch->fk_origin_stock = 0;
@@ -347,7 +352,7 @@ if ($action == 'updatelines' && $usercancreate) {
 		setEventMessages($error, $errors, 'errors');
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans("ReceptionUpdated"), null);
+		setEventMessages($langs->trans("ShipmentUpdated"), null);
 
 		header("Location: ".DOL_URL_ROOT.'/expedition/dispatch.php?id='.$object->id);
 		exit;
@@ -551,7 +556,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
 		$sql .= " GROUP BY ed.fk_elementdet";
 
@@ -586,8 +591,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 		}
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
+		$sql .= " FROM ".$db->prefix()."commandedet as l";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
 		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$sql .= " AND l.product_type = 0";
@@ -773,11 +778,14 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '</td>'; // Dispatch column
 						print '<td></td>'; // Warehouse column
 
-						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot,";
-						$sql .= " eb.batch, eb.eatby, eb.sellby, cd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
-						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_elementdet = cd.rowid";
+						$sql  = "SELECT ed.rowid";
+						$sql .= ", cd.fk_product";
+						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty')." as qty";
+						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse')." as fk_warehouse";
+						$sql .= ", eb.batch, eb.eatby, eb.sellby";
+						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
+						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
+						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
 						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
 						$sql .= " AND ed.fk_expedition =".(int) $object->id;
 						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
@@ -787,20 +795,310 @@ if ($object->id > 0 || !empty($object->ref)) {
 						if ($resultsql) {
 							$numd = $db->num_rows($resultsql);
 
-							while ($j < $numd) {
-								$suffix = "_".$j."_".$i;
-								$objd = $db->fetch_object($resultsql);
+							$is_mod_batch_enabled = isModEnabled('productbatch');
+							$is_sell_by_disabled = getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+							$is_eat_by_disabled = getDolGlobalInt('PRODUCT_DISABLE_EATBY');
+							while ($obj_exp = $db->fetch_object($resultsql)) {
+								$suffix = "_" . $j . "_" . $i;
 
-								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
-									$type = 'batch';
+								$expedition_line_child_list = array();
+								if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+									// virtual product : find all children
+									if ($tmpproduct->hasFatherOrChild(1) > 0) {
+										$line_id_list = array();
+
+										// load all child as object line
+										$expeditionLine = new ExpeditionLigne($db);
+										$result = $expeditionLine->findAllChild($obj_exp->rowid, $line_id_list, 1);
+										if ($result > 0) {
+											$child_level = 1;
+											foreach ($line_id_list as $line_id_arr) {
+												foreach ($line_id_arr as $line_obj) {
+													$child_product_id = (int) $line_obj->fk_product;
+													if (empty($conf->cache['product'][$child_product_id])) {
+														$child_product = new Product($db);
+														$child_product->fetch($child_product_id);
+														$conf->cache['product'][$child_product_id] = $child_product;
+													} else {
+														$child_product = $conf->cache['product'][$child_product_id];
+													}
+
+													// sub-product is a batch
+													$product_batch_first = null;
+													$line_obj->batch_list = array();
+													if ($is_mod_batch_enabled && $child_product->hasbatch()) {
+														// search if batch is not exist in shipment lines
+														$sql_line_batch_search  = "SELECT eb.rowid, eb.qty, eb.batch, eb.sellby, eb.eatby";
+														$sql_line_batch_search .= " FROM ".$db->prefix()."expeditiondet_batch as eb";
+														$sql_line_batch_search .= " WHERE eb.fk_expeditiondet = ".((int) $line_obj->rowid);
+														$res_line_batch_search = $db->query($sql_line_batch_search);
+														if ($res_line_batch_search) {
+															while ($obj_batch = $db->fetch_object($res_line_batch_search)) {
+																$obj_batch->eatby = dol_print_date($obj_batch->eatby, "day");
+																$obj_batch->sellby = dol_print_date($obj_batch->sellby, "day");
+
+																if ($product_batch_first === null) {
+																	$product_batch_first = $obj_batch;
+																}
+
+																$product_batch_label = $obj_batch->batch;
+																$line_obj->batch_list[$obj_batch->batch] = $product_batch_label;
+															}
+															$db->free($res_line_batch_search);
+														}
+
+														// no batch found for this sub-product so retrieve all batch numbers for this sub-product id and warehouse id
+														if (empty($line_obj->batch_list)) {
+															$product_batch_sort_field = 'pl.sellby,pl.eatby,pb.qty,pl.rowid'; // order by sell by (DLC), eat by (DLUO), qty and rowid
+															$product_batch_sort_order = 'ASC,ASC,ASC,ASC';
+															$product_batch = new Productbatch($db);
+															$product_batch_result = $product_batch->findAllForProduct($child_product_id, $line_obj->fk_warehouse, (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER') ? null : 0), $product_batch_sort_field, $product_batch_sort_order);
+															if (is_array($product_batch_result)) {
+																foreach ($product_batch_result as $batch_current) {
+																	$batch_current->eatby = dol_print_date($batch_current->eatby, "day");
+																	$batch_current->sellby = dol_print_date($batch_current->sellby, "day");
+
+																	if ($product_batch_first === null) {
+																		$product_batch_first = $batch_current;
+																	}
+
+																	$product_batch_label = $batch_current->batch;
+																	if (!empty($batch_current->sellby) || !empty($batch_current->eatby)) {
+																		$product_batch_label .= ' (';
+																		$product_batch_label_separate = '';
+																		if (!empty($batch_current->sellby)) {
+																			$product_batch_label .= $langs->trans('SellByDate').' : '.$batch_current->sellby;
+																			$product_batch_label_separate = ' ';
+																		}
+																		if (!empty($batch_current->eatby)) {
+																			$product_batch_label .= $product_batch_label_separate.$langs->trans('EatByDate').' : '.$batch_current->eatby;
+																		}
+																		$product_batch_label .= ')';
+																	}
+																	$line_obj->batch_list[$batch_current->batch] = $product_batch_label;
+																}
+															}
+														}
+													}
+													if (is_object($product_batch_first)) {
+														// get first lot / serial of this warehouse
+														$line_obj->batch = $product_batch_first->batch;
+														$line_obj->sellby = $product_batch_first->sellby;
+														$line_obj->eatby = $product_batch_first->eatby;
+													}
+
+													// determine if line is virtual product and stock is managed
+													$line_obj->iskit = 0;
+													$line_obj->incdec = 1;
+													$sql_child  = "SELECT ";
+													$sql_child .= " SUM(".$db->ifsql("pa.rowid IS NOT NULL", 1, 0).") as iskit";
+													$sql_child .= ", ".$db->ifsql("pai.incdec IS NULL", 1, "pai.incdec")." as incdec";
+													$sql_child .= " FROM ".$db->prefix()."expeditiondet as ed";
+													$sql_child .= " LEFT JOIN ".$db->prefix()."expeditiondet as edp ON edp.rowid = ".((int) $line_obj->fk_parent);
+													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pa ON pa.fk_product_pere = ".((int) $child_product_id);
+													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pai ON pai.fk_product_pere = edp.fk_product AND pai.fk_product_fils = ".((int) $child_product_id);
+													$sql_child .= " WHERE ed.rowid = ".((int) $line_obj->rowid);
+													$sql_child .= " GROUP BY pa.rowid, pai.incdec";
+													$resql_child = $db->query($sql_child);
+													if ($resql_child) {
+														if ($child_obj = $db->fetch_object($resql_child)) {
+															$line_obj->iskit = (int) $child_obj->iskit;
+															$line_obj->incdec = (int) $child_obj->incdec;
+														}
+														$db->free($resql_child);
+													}
+													$line_obj->html_label = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $child_level) . "&rarr;" . $child_product->getNomUrl(1);
+													$expedition_line_child_list[] = $line_obj;
+												}
+												$child_level++;
+											}
+										}
+									}
+								}
+								if (empty($expedition_line_child_list)) {
+									$obj_exp->batch_list = array(); // only used for virtual product with batch in sub-product
+									$obj_exp->iskit = 0; // is not virtual product
+									$obj_exp->incdec = 1; // manage stock
+									$expedition_line_child_list[] = $obj_exp;
+								}
+
+								$child_suffix = $suffix;
+								$out_js_line_list = array();
+								foreach ($expedition_line_child_list as $objd) {
+									$child_line_id = $objd->rowid;
+
+									$can_update_stock = empty($objd->iskit) && !empty($objd->incdec);
+									$suffix = $child_line_id.$child_suffix;
+
+									$out_js_line = '';
+
+									if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
+										$type = 'batch';
+
+										// Enable hooks to append additional columns
+										$parameters = array(
+											// allows hook to distinguish between the rows with information and the rows with dispatch form input
+											'is_information_row' => true,
+											'j' => $j,
+											'suffix' => $suffix,
+											'objd' => $objd,
+										);
+										$reshook = $hookmanager->executeHooks(
+											'printFieldListValue',
+											$parameters,
+											$object,
+											$action
+										);
+										if ($reshook < 0) {
+											setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+										}
+										print $hookmanager->resPrint;
+
+										print '</tr>';
+
+										print '<!-- line for batch ' . $numline . ' -->';
+										print '<tr class="oddeven autoresettr" name="' . $type . '-' . $suffix . '" data-remove="clear">';
+										print '<td>';
+										print '<input id="fk_commandedet' . $suffix . '" name="fk_commandedet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
+										print '<input id="idline' . $suffix . '" name="idline' . $suffix . '" type="hidden" value="' . $objd->rowid . '">';
+										print '<input id="fk_parent' . $suffix . '" name="fk_parent' . $suffix . '" type="hidden" value="' . $objd->fk_parent . '">';
+										print '<input name="productbatch' . $suffix . '" type="hidden" value="' . $objd->fk_product . '">';
+
+										print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+										print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
+										if (!empty($objd->html_label)) {
+											print $objd->html_label;
+										}
+										print '</td>';
+
+										print '<td>';
+										if (!empty($objd->batch_list) && count($objd->batch_list) > 1) {
+											print Form::selectarray('lot_number'.$suffix, $objd->batch_list, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth300 csslotnumber'.$suffix);
+
+											$out_js_line .= 'var isSellByDisabled = '.dol_escape_js((string) $is_sell_by_disabled).';';
+											$out_js_line .= 'var isEatByDisabled = '.dol_escape_js((string) $is_eat_by_disabled).';';
+											$out_js_line .= 'jQuery("#lot_number'.$suffix.'").change(function(event) {';
+											$out_js_line .= '	var batch = jQuery(this).val();';
+											$out_js_line .= '	jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$objd->fk_product.'&batch="+batch, function(data) {';
+											$out_js_line .= '		if (data.length > 0) {';
+											$out_js_line .= '			var productLot = data[0];';
+											$out_js_line .= '			if (isSellByDisabled == 0) {';
+											$out_js_line .= '				jQuery("#dlc'.$suffix.'").val(productLot.sellby);';
+											$out_js_line .= '				jQuery("#dlc'.$suffix.'").trigger("change");'; // also modify hidden input of date picker
+											$out_js_line .= '			}';
+											$out_js_line .= '			if (isEatByDisabled == 0) {';
+											$out_js_line .= '				jQuery("#dluo'.$suffix.'").val(productLot.eatby);';
+											$out_js_line .= '				jQuery("#dluo'.$suffix.'").trigger("change");'; // also modify hidden input of date picker
+											$out_js_line .= '			}';
+											$out_js_line .= '		}';
+											$out_js_line .= '	});';
+											$out_js_line .= '});';
+											$out_js_line_list[] = $out_js_line;
+
+											if (!empty($out_js_line_list)) {
+												$out_js = '<script type="text/javascript">';
+												$out_js .= 'jQuery(document).ready(function() {';
+												$out_js .= implode('', $out_js_line_list);
+												$out_js .= '});';
+												$out_js .= '</script>';
+												print $out_js;
+											}
+										} else {
+											print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
+										}
+										print '</td>';
+
+										if (!$is_sell_by_disabled) {
+											print '<td class="nowraponall">';
+											$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+											print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
+											print '</td>';
+										}
+										if (!$is_eat_by_disabled) {
+											print '<td class="nowraponall">';
+											$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+											print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
+											print '</td>';
+										}
+										print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
+									} else {
+										$type = 'dispatch';
+										$colspan = 6;
+										$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
+										$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
+
+										// Enable hooks to append additional columns
+										$parameters = array(
+											// allows hook to distinguish between the rows with information and the rows with dispatch form input
+											'is_information_row' => true,
+											'j' => $j,
+											'suffix' => $suffix,
+											'objd' => $objd,
+										);
+										$reshook = $hookmanager->executeHooks(
+											'printFieldListValue',
+											$parameters,
+											$object,
+											$action
+										);
+										if ($reshook < 0) {
+											setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+										}
+										print $hookmanager->resPrint;
+
+										print '</tr>';
+
+										print '<!-- line no batch '.$numline.' -->';
+										print '<tr class="oddeven autoresettr" name="'.$type.'-'.$suffix.'" data-remove="clear">';
+										print '<td colspan="'.$colspan.'">';
+										print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
+										print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
+										print '<input id="fk_parent'.$suffix.'" name="fk_parent'.$suffix.'" type="hidden" value="'.$objd->fk_parent.'">';
+										print '<input name="product'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
+										print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+										print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
+										if (!empty($objd->html_label)) {
+											print $objd->html_label;
+										}
+										print '</td>';
+									}
+									// Qty to dispatch
+									print '<td class="right nowraponall">';
+									$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty);
+									//var_dump($suggestedvalue);exit;
+									if ($can_update_stock) {
+										print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+										print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
+									} else {
+										print '<input type="hidden" id="qty'.$suffix.'" name="qty'.$suffix.'" value="">';
+									}
+									print '</td>';
+									print '<td>';
+									if ($can_update_stock) {
+										print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'-'.$child_line_id.'\')"');
+									}
+									print '</td>';
+
+									// Warehouse
+									print '<td class="right">';
+									if ($can_update_stock) {
+										if (count($listwarehouses) > 1) {
+											print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix) ? GETPOST("entrepot" . $suffix) : $objd->fk_warehouse, "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse' . $suffix);
+										} elseif (count($listwarehouses) == 1) {
+											print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix) ? GETPOST("entrepot" . $suffix) : $objd->fk_warehouse, "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse' . $suffix);
+										} else {
+											$langs->load("errors");
+											print $langs->trans("ErrorNoWarehouseDefined");
+										}
+									}
+									print "</td>\n";
 
 									// Enable hooks to append additional columns
 									$parameters = array(
-										// allows hook to distinguish between the rows with information and the rows with dispatch form input
-										'is_information_row' => true,
-										'j' => $j,
+										'is_information_row' => false, // this is a dispatch form row
+										'i' => $i,
 										'suffix' => $suffix,
-										'objd' => $objd,
+										'objp' => $objp,
 									);
 									$reshook = $hookmanager->executeHooks(
 										'printFieldListValue',
@@ -813,130 +1111,17 @@ if ($object->id > 0 || !empty($object->ref)) {
 									}
 									print $hookmanager->resPrint;
 
-									print '</tr>';
-
-									print '<!-- line for batch '.$numline.' -->';
-									print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'" data-remove="clear">';
-									print '<td>';
-									print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
-									print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
-									print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
-
-									print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
-
-									print '</td>';
-
-									print '<td>';
-									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
-									//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
-									print '</td>';
-									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-										print '<td class="nowraponall">';
-										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
-										print '</td>';
-									}
-									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-										print '<td class="nowraponall">';
-										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
-										print '</td>';
-									}
-									print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
-								} else {
-									$type = 'dispatch';
-									$colspan = 6;
-									$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
-									$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
-
-									// Enable hooks to append additional columns
-									$parameters = array(
-										// allows hook to distinguish between the rows with information and the rows with dispatch form input
-										'is_information_row' => true,
-										'j' => $j,
-										'suffix' => $suffix,
-										'objd' => $objd,
-									);
-									$reshook = $hookmanager->executeHooks(
-										'printFieldListValue',
-										$parameters,
-										$object,
-										$action
-									);
-									if ($reshook < 0) {
-										setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-									}
-									print $hookmanager->resPrint;
-
-									print '</tr>';
-
-									print '<!-- line no batch '.$numline.' -->';
-									print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'" data-remove="clear">';
-									print '<td colspan="'.$colspan.'">';
-									print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
-									print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
-									print '<input name="product'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
-									print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
-									print '</td>';
-								}
-								// Qty to dispatch
-								print '<td class="right nowraponall">';
-								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty);
-								//var_dump($suggestedvalue);exit;
-								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
-								print '</td>';
-								print '<td>';
-								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
-									$type = 'batch';
-									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
-								} else {
-									$type = 'dispatch';
-									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									print "</tr>\n";
 								}
 
-								print '</td>';
-
-								// Warehouse
-								print '<td class="right">';
-								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
-								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
-								} else {
-									$langs->load("errors");
-									print $langs->trans("ErrorNoWarehouseDefined");
-								}
-								print "</td>\n";
-
-								// Enable hooks to append additional columns
-								$parameters = array(
-									'is_information_row' => false, // this is a dispatch form row
-									'i' => $i,
-									'suffix' => $suffix,
-									'objp' => $objp,
-								);
-								$reshook = $hookmanager->executeHooks(
-									'printFieldListValue',
-									$parameters,
-									$object,
-									$action
-								);
-								if ($reshook < 0) {
-									setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-								}
-								print $hookmanager->resPrint;
-
-								print "</tr>\n";
 								$j++;
-
 								$numline++;
 							}
-							$suffix = "_".$j."_".$i;
+
+							//$suffix = "_".$j."_".$i;
 						}
 
+						/*
 						if ($j == 0) {
 							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
 								$type = 'batch';
@@ -967,7 +1152,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<td>';
 								print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="-1">';
-								print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+								print '<input name="productbatch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 
 								print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
@@ -1080,6 +1265,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 							print $hookmanager->resPrint;
 							print "</tr>\n";
 						}
+						*/
 					}
 				}
 				$i++;
@@ -1389,7 +1575,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			$("select[name=fk_default_warehouse]").change(function() {
 				console.log("warehouse is modified");
 				var fk_default_warehouse = $("option:selected", this).val();
-				$("select[name^=entrepot_]").val(fk_default_warehouse).change();
+				$("select[name^=entrepot]").val(fk_default_warehouse).change();
 			});
 
 			$("#autoreset").click(function() {
@@ -1400,7 +1586,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 					console.log("we process line "+id+" "+idtab);
 					if ($(this).data("remove") == "clear") {	/* data-remove=clear means that line qty must be cleared but line must not be removed */
 						console.log("We clear the object to expected value")
-						$("#qty_"+idtab[1]+"_"+idtab[2]).val("");
+						var idlinetab = idtab[0].split("-");
+						var idline = "";
+						if (idlinetab.length > 0) {
+							idline = idlinetab[1];
+						}
+						$("#qty"+idline+"_"+idtab[1]+"_"+idtab[2]).val("");
 						/*
 						qtyexpected = $("#qty_"+idtab[1]+"_"+idtab[2]).data("expected")
 						console.log(qtyexpected);
@@ -1428,9 +1619,9 @@ if ($object->id > 0 || !empty($object->ref)) {
 			$(".resetline").on("click", function(event) {
 				event.preventDefault();
 				id = $(this).attr("id");
-				id = id.split("reset_");
-				console.log("Reset trigger for id = qty_"+id[1]);
-				$("#qty_"+id[1]).val("");
+				id = id.split("reset");
+				console.log("Reset trigger for id = qty"+id[1]);
+				$("#qty"+id[1]).val("");
 			});
 		});
 	</script>';
