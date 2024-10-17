@@ -852,7 +852,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
-	if ($timestampStart < $timestampEnd)
+	if ($timestampStart <= $timestampEnd)
 	{
 		if ($lastday == 1)
 		{
