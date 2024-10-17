@@ -1973,7 +1973,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 									$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
 								}
 
-								$extravalue = GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key};
+								$extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key} ?? '');
 								print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
 							}
 						}
@@ -2653,7 +2653,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				// Extrafields
 				$extrafields->fetch_name_optionals_label("product_customer_price");
-				$extralabels = $extrafields->attributes["product_customer_price"]['label'];
+				$extralabels = $extrafields->attributes["product_customer_price"]['label'] ?? array();
 				if (!empty($extralabels)) {
 					$sql  = "SELECT";
 					$sql .= " fk_object";
