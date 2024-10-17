@@ -51,8 +51,8 @@ foreach ($object->fields as $key => $val) {
 		continue; // We don't want this field
 	}
 
-	if (in_array($key, array('ref', 'status'))) {
-		continue; // Ref and status are already in dol_banner
+	if (in_array($key, array('rowid', 'ref', 'status'))) {
+		continue; // rowid, ref and status are already in dol_banner
 	}
 
 	$value = $object->$key;

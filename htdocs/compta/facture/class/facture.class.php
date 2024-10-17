@@ -4248,7 +4248,7 @@ class Facture extends CommonInvoice
 			}
 			$price = price2num($price);
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new FactureLigne($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();

@@ -112,8 +112,12 @@ function user_prepare_head(User $object)
 	if ($user->socid == 0 && isModEnabled('notification')) {
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+		// Make a join with c_action_trigger to exclude orphelin of notify_def and be consistent with page /usr/notify_def
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."c_action_trigger as a";
 		$sql .= " WHERE fk_user = ".((int) $object->id);
+		$sql .= " AND a.rowid = n.fk_action AND n.fk_user = ".((int) $object->id);
+		$sql .= " AND entity IN (".getEntity('notify_def').')';
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
