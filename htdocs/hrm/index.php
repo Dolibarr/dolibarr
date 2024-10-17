@@ -166,7 +166,7 @@ if (isModEnabled('holiday')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
 		print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven nohover">';
 		print '<td>';
 
 		$out = '';

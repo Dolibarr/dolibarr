@@ -383,13 +383,6 @@ class FormActions
 
 		// Suggest a list with manual events or all auto events
 		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot, '', 0);		// If we use param 'all' instead of 'code', there is no group by include in answer but the key 'type' of answer array contains the key for the group by.
-		/* Removed. The empty line must now be managed with param showempty
-		if (empty($multiselect)) {
-			// Add empty line at start only if no multiselect
-			array_unshift($arraylist, '&nbsp;');
-		}
-		*/
-		//asort($arraylist);
 
 		if ($selected == 'manual') {
 			$selected = 'AC_OTH';
@@ -411,6 +404,7 @@ class FormActions
 			if (strpos($key, 'AC_ALL_') !== false && strpos($key, 'AC_ALL_AUTO') === false) {
 				$disabled = 'disabled';
 			}
+
 			$newarraylist[$key] = array('id' => $key, 'label' => $value, 'disabled' => $disabled);
 		}
 
