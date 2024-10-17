@@ -1166,7 +1166,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowraponall">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td width="18" class="nobordernopadding nowrap">'.$warning.'</td>';
-				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($propalstatic->element, $filename, $filedir).'</td>';
+				print '<td width="16" class="nobordernopadding center">'.$formfile->getDocumentsLink($propalstatic->element, $filename, $filedir).'</td>';
 				print '</tr>';
 				print '</table>';
 				print '</td>';

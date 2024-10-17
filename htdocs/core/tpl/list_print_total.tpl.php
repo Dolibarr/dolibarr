@@ -64,7 +64,8 @@ if (isset($totalarray['pos'])) {
 				while ($i < $totalarray['nbfield']) {
 					$i++;
 					if (!empty($totalarray['pos'][$i])) {
-						printTotalValCell($totalarray['type'][$i], $sumsarray[$totalarray['pos'][$i]]);
+						$fieldname = preg_replace('/[^a-z0-9]/', '', $totalarray['pos'][$i]);
+						printTotalValCell($totalarray['type'][$i], $sumsarray[$fieldname]);
 					} else {
 						if ($i == 1) {
 							print '<td>';
