@@ -597,6 +597,9 @@ class CMailFile
 				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
+			if ($msg === '.') {
+				$msg = "\n.\n";
+			}
 			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
 			$msg = preg_replace('/(\r|\n)\.(\r|\n)/ims', '\1..\2', $msg);
 
