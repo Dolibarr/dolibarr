@@ -168,6 +168,7 @@ if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banqu
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'new';
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'mesgs');
