@@ -1847,7 +1847,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			if ($object->status == ExpenseReport::STATUS_CANCELED || !empty($object->detail_refuse)) {
+			if ($object->status == ExpenseReport::STATUS_REFUSED || !empty($object->detail_refuse)) {
 				print '<tr>';
 				print '<td>'.$langs->trans("REFUSEUR").'</td>';
 				print '<td>';
@@ -2051,7 +2051,7 @@ if ($action == 'create') {
 			print '<div style="clear: both;"></div>';
 
 			$actiontouse = 'updateline';
-			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_CANCELED) && $action != 'editline') {
+			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline') {
 				$actiontouse = 'addline';
 			}
 
@@ -2099,7 +2099,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Ajout des boutons de modification/suppression
-				if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_CANCELED) && $user->hasRight('expensereport', 'creer')) {
+				if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->hasRight('expensereport', 'creer')) {
 					print '<td class="right"></td>';
 				}
 				print '</tr>';
