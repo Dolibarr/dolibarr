@@ -347,7 +347,7 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
 	if ($from_time === null) {
 		$from_time = $now;
 	}
-	$from_db_time = $db->idate($from_time);
+	$from_db_time = dol_print_date($from_time,"%Y-%m-%d");
 
 	$sql  = "SELECT date_start, date_end FROM ".$db->prefix()."accounting_fiscalyear";
 	$sql .= " WHERE date_start <= '".$db->escape($from_db_time)."' AND date_end >= '".$db->escape($from_db_time)."'";
