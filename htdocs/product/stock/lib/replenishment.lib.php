@@ -121,7 +121,7 @@ function ordered($product_id)
 	$sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
 	if (getDolGlobalString("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER")) {
 		$sql .= ' cf.fk_statut < 3';
-	} elseif getDolGlobalString("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER")) {
+	} elseif (getDolGlobalString("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER")) {
 		$sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN '.dispatchedOrders();
 	} else {
 		$sql .= ' cf.fk_statut < 5';
