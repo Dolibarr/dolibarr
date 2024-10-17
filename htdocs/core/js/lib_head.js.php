@@ -996,7 +996,7 @@ function document_preview(file, type, title)
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/webp"];
 	var showOriginalSizeButton = false;
 
-	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
+	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
