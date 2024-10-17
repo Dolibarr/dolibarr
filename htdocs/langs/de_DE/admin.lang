@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Schweizer QR-Rechnungscode auf Rechnungen anzeigen (mi
 INVOICE_ADD_SWISS_QR_CODEMore=Schweizer Standard für Rechnungen; Stellen Sie sicher, dass PLZ und Ort ausgefüllt sind und dass die Konten über gültige Schweizer/Liechtenstein-IBANs verfügen.
 INVOICE_ADD_EPC_QR_CODE=EPC-QR-Code auf Rechnungen anzeigen (mit einem festgelegten Bankkonto für Überweisungen)
 INVOICE_ADD_EPC_QR_CODEMore=Mit diesem Funktion können Sie einen EPC-QR-Code auf Ihrem Rechnungen hinzufügen oder diesen entfernen, der automatische SEPA-Überweisungen erleichtert. Durch Aktivieren dieser Option können Ihre Kunden Zahlungen ganz einfach durch Scannen des QR-Codes durchführen, wodurch manuelle Eingabefehler reduziert werden. Verwenden Sie dieses Funktion, wenn Sie Kunden in Ländern wie Österreich, Belgien, Finnland, Deutschland oder den Niederlanden haben, in denen dieses System unterstützt wird. Deaktivieren Sie es, wenn es für Ihren Geschäftsbetrieb oder Ihren Kundenstamm nicht erforderlich ist.
-INVOICE_ADD_EPC_QR_CODEPay=Diesen QR-Code scannen, um mit einem Smartphone zu bezahlen, das Zahlungen mit EPC-QR-Code unterstützt.
 INVOICE_SHOW_SHIPPING_ADDRESS=Lieferadresse anzeigen
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Obligatorische Angabe für manche Länder (Frankreich, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Rechnungskontakt auf Angebot anzeigen

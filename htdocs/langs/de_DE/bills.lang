@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Suche nach unbezahlten Lieferantenrechnu
 SendEmailsRemindersOnSupplierInvoiceDueDate=Eine Erinnerung per E-Mail für freigegebene und unbezahlte Lieferantenrechnungen senden
 PaymentMadeForSeveralInvoices=Zahlung erfolgt für mehrere Rechnungen
 SituationInvoiceProgressCurrent=Rechnungsfortschritt
+INVOICE_ADD_EPC_QR_CODEPay=Diesen QR-Code scannen, um mit einem Smartphone zu bezahlen, das Zahlungen mit EPC-QR-Code unterstützt.

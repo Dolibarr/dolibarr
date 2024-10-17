@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Cerca factures de proveïdors no pagades
 SendEmailsRemindersOnSupplierInvoiceDueDate=Envieu un recordatori per correu electrònic per a les factures de proveïdors validades i no pagades
 PaymentMadeForSeveralInvoices=Pagament realitzat per diverses factures
 SituationInvoiceProgressCurrent=Progrés de la factura
+INVOICE_ADD_EPC_QR_CODEPay=Escaneja aquest codi QR per pagar amb un telèfon intel·ligent que admeti el pagament amb el codi QR EPC.

@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Zoek onbetaalde Leverancier Facturen met
 SendEmailsRemindersOnSupplierInvoiceDueDate=Stuur een herinnering per e-mail voor gevalideerde en onbetaalde Leverancier Facturen
 PaymentMadeForSeveralInvoices=Betaling gedaan voor meerdere Facturen
 SituationInvoiceProgressCurrent=Factuur voortgang
+INVOICE_ADD_EPC_QR_CODEPay=Scan deze QR-code om te betalen met een smartphone die betaling met EPC QR-code ondersteunt.

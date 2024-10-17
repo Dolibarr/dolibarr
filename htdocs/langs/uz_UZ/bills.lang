@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Tasdiqlash sanasi bilan toʻlanmagan yet
 SendEmailsRemindersOnSupplierInvoiceDueDate=Tasdiqlangan va toʻlanmagan yetkazib beruvchi hisob-fakturalari uchun elektron pochta orqali eslatma yuboring
 PaymentMadeForSeveralInvoices=Bir nechta hisob-fakturalar uchun to'lov amalga oshirildi
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

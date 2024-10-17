@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Doğrulama tarihi = %s olan ödenmemiş 
 SendEmailsRemindersOnSupplierInvoiceDueDate=Doğrulanmış ve ödenmemiş tedarikçi faturaları için e-postayla hatırlatma gönder
 PaymentMadeForSeveralInvoices=Birden fazla fatura için ödeme yapıldı
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=EPC QR koduyla ödemeyi destekleyen bir akıllı telefonla ödeme yapmak için bu QR kodunu tarayın.

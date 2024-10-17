@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Rādīt Šveices QR-rēķina kodu uz rēķiniem (ar kr
 INVOICE_ADD_SWISS_QR_CODEMore=Šveices standarts rēķiniem; pārliecinieties, vai ir aizpildīts ZIP un City un vai kontiem ir derīgi Šveices/Lihtenšteinas IBAN.
 INVOICE_ADD_EPC_QR_CODE=Rādīt EPC QR kodu uz rēķiniem (ar bankas kontu, kas definēts kredīta pārvedumam)
 INVOICE_ADD_EPC_QR_CODEMore=Šī funkcija ļauj rēķiniem pievienot vai noņemt EPC QR kodu, kas atvieglo automātiskus SEPA kredīta pārvedumus. Iespējojot šo opciju, jūsu klienti var viegli veikt maksājumus, skenējot QR kodu, tādējādi samazinot manuālās ievades kļūdas. Izmantojiet šo funkciju, ja jums ir klienti tādās valstīs kā Austrija, Beļģija, Somija, Vācija un Nīderlande, kur šī sistēma tiek atbalstīta. Atspējojiet to, ja tas nav nepieciešams jūsu biznesa darbībai vai klientu bāzei.
-INVOICE_ADD_EPC_QR_CODEPay=Skenējiet šo QR kodu, lai norēķinātos ar viedtālruni, kas atbalsta maksājumu ar EPC QR kodu.
 INVOICE_SHOW_SHIPPING_ADDRESS=Rādīt piegādes adresi
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Obligāta norāde dažās valstīs (Francijā, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Rādīt norēķinu kontaktpersonu priekšlikumā

@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=検証日 = %s を持つ未払いのサ�
 SendEmailsRemindersOnSupplierInvoiceDueDate=検証済みかつ未払いのサプライヤー請求書について電子メールでリマインダーを送信する
 PaymentMadeForSeveralInvoices=複数の請求書に対する支払いが行われた
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=EPC QR コード による支払いをサポートするスマートフォンで支払うには、この QR コード をスキャンすること。

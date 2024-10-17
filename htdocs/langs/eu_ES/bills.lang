@@ -607,3 +607,4 @@ SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
 NoPaymentAvailable=No payment available for %s
 PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
 SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

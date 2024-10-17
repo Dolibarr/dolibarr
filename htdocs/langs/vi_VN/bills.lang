@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Tìm kiếm hóa đơn nhà cung cấp c
 SendEmailsRemindersOnSupplierInvoiceDueDate=Gửi lời nhắc qua email cho các hóa đơn nhà cung cấp đã được xác thực và chưa thanh toán
 PaymentMadeForSeveralInvoices=thanh toán được tạo cho nhiều hóa đơn
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

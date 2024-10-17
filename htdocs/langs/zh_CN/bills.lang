@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=搜索确认日期 = %s 的未付供应�
 SendEmailsRemindersOnSupplierInvoiceDueDate=为已确认并且未付款的供应商发票发送提醒电子邮件
 PaymentMadeForSeveralInvoices=多张发票的付款
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=扫描此二维码，使用支持EPC QR代码支付的智能手机付款。

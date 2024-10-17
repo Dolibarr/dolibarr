@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=A svájci QR-Bill kód megjelenítése a számlákon (
 INVOICE_ADD_SWISS_QR_CODEMore=Svájc számlákra vonatkozó szabványa; győződjön meg arról, hogy a ZIP és City ki van töltve, és hogy a számlák érvényes svájci/liechtensteini IBAN-okkal rendelkeznek.
 INVOICE_ADD_EPC_QR_CODE=Mutassa meg az EPC QR-kódot a számlákon (átutaláshoz meghatározott bankszámlával)
 INVOICE_ADD_EPC_QR_CODEMore=Ez a funkció lehetővé teszi, hogy EPC QR-kódot adjon hozzá vagy távolítson el számláiról, ami megkönnyíti az automatikus SEPA átutalást. Ennek az opciónak az engedélyezése megkönnyíti ügyfelei fizetését a QR-kód beolvasásával, csökkentve ezzel a kézi beviteli hibákat. Használja ezt a funkciót, ha olyan országokban vannak ügyfelei, mint Ausztria, Belgium, Finnország, Németország és Hollandia, ahol ez a rendszer támogatott. Tiltsa le, ha nem szükséges az üzleti tevékenységéhez vagy az ügyfélköréhez.
-INVOICE_ADD_EPC_QR_CODEPay=Olvassa be ezt a QR-kódot, ha olyan okostelefonnal szeretne fizetni, amely támogatja az EPC QR-kóddal történő fizetést.
 INVOICE_SHOW_SHIPPING_ADDRESS=Szállítási cím megjelenítése
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Egyes országokban kötelező feltüntetni (Franciaország, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Show billing contact on proposal
