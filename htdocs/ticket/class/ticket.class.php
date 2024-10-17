@@ -217,7 +217,7 @@ class Ticket extends CommonObject
 	public $cache_types_tickets;
 
 	/**
-	 * @var array<int,array{code:string,use_default:înt,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}>	Cache of Ticket categories
+	 * @var array<int,array{code:string,use_default:int,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}>	Cache of Ticket categories
 	 */
 	public $cache_category_tickets;
 
@@ -1385,8 +1385,8 @@ class Ticket extends CommonObject
 	/**
 	 *      Load into a cache array, the list of ticket categories (setup done into dictionary)
 	 *
-	 *      @param	int		$publicgroup	0=No public group, 1=Public group only, -1=All
-	 *      @return int             		Number of lines loaded, 0 if already loaded, <0 if KO
+	 *      @param	int<-1,1>	$publicgroup	0=No public group, 1=Public group only, -1=All
+	 *      @return int        		     		Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
@@ -1757,10 +1757,10 @@ class Ticket extends CommonObject
 	/**
 	 *    Set an assigned user to a ticket.
 	 *
-	 *    @param    User	$user				Object user
-	 *    @param    int 	$id_assign_user		ID of user assigned
-	 *    @param    int 	$notrigger        	Disable trigger
-	 *    @return   int							Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *    @param    User		$user				Object user
+	 *    @param    int 		$id_assign_user		ID of user assigned
+	 *    @param    int<0,1>	$notrigger        	Disable trigger
+	 *    @return   int								Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
@@ -1817,7 +1817,7 @@ class Ticket extends CommonObject
 	 * @param	string[]	$filename_list		List of files to attach (full path of filename on file system)
 	 * @param	string[]	$mimetype_list		List of MIME type of attached files
 	 * @param	string[]	$mimefilename_list	List of attached file name in message
-	 * @param	boolean		$send_email			Whether the message is sent by email
+	 * @param	bool		$send_email			Whether the message is sent by email
 	 * @param	int<0,1>	$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
 	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
