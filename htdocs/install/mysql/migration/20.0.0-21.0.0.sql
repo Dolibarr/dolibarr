@@ -160,6 +160,7 @@ ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP
 
 ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_extrafields ADD COLUMN module varchar(64);
 
 
 -- Copy categories from llx_category_bank into llx_categorie
