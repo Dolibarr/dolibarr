@@ -1108,6 +1108,9 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.lineheightsmall {
+	line-height: 1.2em;
+}
 .large {
 	font-size: 125%;
 }

@@ -894,6 +894,9 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.lineheightsmall {
+	line-height: 1.2em;
+}
 .large {
 	font-size: 125%;
 }
@@ -4255,7 +4258,7 @@ table.nointerlines tr:not(:last-child) td {
 
 /* Experimental code to manage rounding */
 <?php $borderradius = getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6); ?>
-table.noborder {
+table.noborder:not(.cal_month) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
 table.liste:not(.listwithfilterbefore) {
