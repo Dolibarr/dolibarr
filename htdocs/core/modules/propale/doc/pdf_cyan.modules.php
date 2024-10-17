@@ -609,6 +609,8 @@ class pdf_cyan extends ModelePDFPropales
 						}
 					}
 
+					// restore Page orientation for text
+					$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 					if ($this->getColumnStatus('desc')) {
 						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
