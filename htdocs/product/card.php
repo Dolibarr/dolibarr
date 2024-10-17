@@ -508,6 +508,12 @@ if (empty($reshook)) {
 			$action = "create";
 			$error++;
 		}
+		$stockable_product = (int) ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
+		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
+			$action = "create";
+			$error++;
+		}
 
 		if (!$error) {
 			$units = GETPOSTINT('units');
@@ -633,6 +639,8 @@ if (empty($reshook)) {
 			} else {
 				$object->fk_unit = null;
 			}
+
+			$object->stockable_product = $stockable_product;
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -813,6 +821,9 @@ if (empty($reshook)) {
 				} else {
 					$object->fk_default_bom = 0;
 				}
+
+				// managed_in_stock
+				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -2043,7 +2054,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								$(document).ready(function() {
 									console.log($("#statusBatchWarning"))
 									$("#status_batch").on("change", function() {
-										if ($("#status_batch")[0].value == 0){
+										if ($("#status_batch")[0].value == 0) {
 											$("#statusBatchMouvToGlobal").show()
 										} else {
 											$("#statusBatchMouvToGlobal").hide()
@@ -2057,7 +2068,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								$(document).ready(function() {
 									console.log($("#statusBatchWarning"))
 									$("#status_batch").on("change", function() {
-										if ($("#status_batch")[0].value == 2){
+										if ($("#status_batch")[0].value == 2) {
 											$("#statusBatchWarning").show()
 										} else {
 											$("#statusBatchWarning").hide()
@@ -2213,6 +2224,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
 					print '</td></tr>';
 					*/
+
+					if (isModEnabled('productbatch') && $object->hasbatch()) {
+						print '<td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td></tr>';
+					} else {
+						print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
+						$checked = $object->stockable_product == 1 ? "checked" : "";
+						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" '. $checked . ' /></td></tr>';
+					}
 				}
 
 				if ($object->isService() && isModEnabled('workstation')) {
@@ -2248,6 +2267,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</label>';
 
 					print '</td></tr>';
+
+					if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+						print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
+						$checked = $object->stockable_product == 1 ? "checked" : "";
+						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked . ' /></td></tr>';
+					}
 				} else {
 					if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 						// Nature
@@ -2729,6 +2754,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 					print(!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
 					print '</td>';
+				}
+
+				// View stockable_product
+				if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && isModEnabled('stock') && !$object->hasbatch()) {
+					print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
+					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
 				}
 
 				// Parent product.
