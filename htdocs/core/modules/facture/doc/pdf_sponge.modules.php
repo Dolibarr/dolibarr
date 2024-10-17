@@ -129,7 +129,7 @@ class pdf_sponge extends ModelePDFFactures
 		global $conf, $langs, $mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "bills", 'admin'));
 
 		$this->db = $db;
 		$this->name = "sponge";
@@ -210,7 +210,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", 'admin'));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
@@ -1444,9 +1444,9 @@ class pdf_sponge extends ModelePDFFactures
 						$EPCQrCodeString = $object->buildEPCQrCodeString();
 						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 25, 25, $styleQr, 'N');
 
-						$pdf->SetXY($qrPosX + 5, $posy);
+						$pdf->SetXY($qrPosX + 30, $posy + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
-						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
 						$posy = $pdf->GetY() + 2;
 					}
 				}
