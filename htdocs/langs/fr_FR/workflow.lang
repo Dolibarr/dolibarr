@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Configuration du module workflow
+WorkflowSetup=Configuration du module Workflow Inter-modules
 WorkflowDesc=Ce module est conçu pour modifier le comportement des actions automatiques dans l'application. Par défaut, le workflow est ouvert (vous pouvez faire les choses dans l'ordre que vous voulez). Vous pouvez toutefois activer des actions automatiques qui vous intéressent.
 ThereIsNoWorkflowToModify=Il n'y a pas de modifications de workflow disponibles avec les modules activés.
 # Autocreate
