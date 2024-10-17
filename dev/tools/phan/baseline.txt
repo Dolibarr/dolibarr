@@ -9,10 +9,10 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 780+ occurrences
+    // PhanUndeclaredProperty : 770+ occurrences
     // PhanPluginUnknownPropertyType : 710+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 600+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 410+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 400+ occurrences
     // PhanUndeclaredGlobalVariable : 380+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 300+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 250+ occurrences
@@ -47,7 +47,6 @@ return [
     // PhanInvalidFQSENInClasslike : 3 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanTypeConversionFromArray : 1 occurrence
-    // PhanUndeclaredTypeProperty : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
@@ -738,7 +737,6 @@ return [
         'htdocs/public/test/test_arrays.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/public/test/test_forms.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/public/ticket/create_ticket.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchDimFetchNullable', 'PhanTypeMismatchProperty'],
-        'htdocs/public/ticket/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/public/ticket/view.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/public/webportal/tpl/menu.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/webportal/webportal.main.inc.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction'],
@@ -829,13 +827,12 @@ return [
         'htdocs/theme/md/flags-sprite.inc.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/theme/md/info-box.inc.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/theme/md/progress.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/ticket/card.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
+        'htdocs/ticket/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/actions_ticket.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
-        'htdocs/ticket/class/api_tickets.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
+        'htdocs/ticket/class/api_tickets.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/ticket/class/cticketcategory.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/ticket/class/ticket.class.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty', 'PhanUndeclaredTypeProperty'],
+        'htdocs/ticket/class/ticket.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/ticketstats.class.php' => ['PhanPluginUnknownPropertyType'],
-        'htdocs/ticket/contact.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/ticket/index.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/ticket/list.php' => ['PhanTypeComparisonFromArray'],
         'htdocs/ticket/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
