@@ -144,6 +144,7 @@ if ($action == 'setref' && $user->hasRight('banque', 'cheque')) {
 if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banque', 'cheque')) {
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
+		$object->date_bordereau = dol_now();
 		$arrayofid = GETPOST('toRemise', 'array:int');
 
 		$result = $object->create($user, GETPOSTINT("accountid"), 0, $arrayofid);

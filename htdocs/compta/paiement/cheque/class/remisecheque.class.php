@@ -345,7 +345,7 @@ class RemiseCheque extends CommonObject
 	 */
 	public function validate($user)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->errno = 0;
 
