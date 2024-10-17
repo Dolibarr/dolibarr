@@ -472,7 +472,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="nowrap right">';
 					$temp_ht = $fields['totalht'];
 					if ($type == 1) {
-						$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+						$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					}
 					print price(price2num($temp_ht, 'MT'));
 					print '</td>';
