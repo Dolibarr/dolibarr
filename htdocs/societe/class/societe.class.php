@@ -2646,8 +2646,8 @@ class Societe extends CommonObject
 	 *
 	 *  @param	User		$user			Object user (not used)
 	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
-	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
-	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 *  @param	?string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 *  @param	?string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
 	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
@@ -3523,7 +3523,7 @@ class Societe extends CommonObject
 	 *  Assigns a customer code from the code control module.
 	 *  Return value is stored into this->code_client
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	?Societe	$objsoc		Object thirdparty
 	 *	@param	int			$type		Should be 0 to say customer
 	 *  @return void
 	 */
@@ -3557,7 +3557,7 @@ class Societe extends CommonObject
 	 *  Assigns a vendor code from the code control module.
 	 *  Return value is stored into this->code_fournisseur
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	?Societe	$objsoc		Object thirdparty
 	 *	@param	int			$type		Should be 1 to say supplier
 	 *  @return void
 	 */
