@@ -22,12 +22,18 @@
  *		\brief      File for CSS style sheet Eldy
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
+	die('Must be called by steelsheet');
 }
 
 $leftmenuwidth = 240;
 
+// Variables defined in style.css.php (includes this file).
 '
+@phan-var-force int<0,1> $dol_hide_topmenu
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force int<0,1> $dol_no_mouse_hover
+
 @phan-var-force string $badgeDanger
 @phan-var-force string $badgeWarning
 @phan-var-force string $borderwidth
@@ -58,6 +64,8 @@ $leftmenuwidth = 240;
 @phan-var-force string $colortexttitlenotab2
 @phan-var-force string $colortopbordertitle1
 @phan-var-force int<0,1> $disableimages
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_hide_topmenu
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
 @phan-var-force string $fontsize
@@ -314,7 +322,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-						<?php
+								<?php
 	}
 	?>
 }
@@ -3912,7 +3920,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 14px 13px;
+	padding: 12px 14px 10px;
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
@@ -4251,7 +4259,7 @@ div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 */
-div.tabBar table.border>tbody>tr:last-of-type>td {
+div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -5342,11 +5350,14 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+table.table-fiche-title tr.toptitle {
+	height: 60px;
+}
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	/* padding-top: 5px;
+	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5369,9 +5380,11 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
+/*
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
+*/
 table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 	line-height: normal;
 }
