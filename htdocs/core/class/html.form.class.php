@@ -2569,7 +2569,7 @@ class Form
 			$out .= '<li>';
 			$resourcestatic->fetch($value['id']);
 			$out .= $resourcestatic->getNomUrl(-1);
-			if ($nbassignetoresource > 1 && $action != 'view') {
+			if ($nbassignetoresource >= 1 && $action != 'view') {
 				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $resourcestatic->id . '" class="removedassigned reposition" id="removedassignedresource_' . $resourcestatic->id . '" name="removedassignedresource_' . $resourcestatic->id . '">';
 			}
 			// Show my availability

@@ -4259,7 +4259,7 @@ div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 */
-div.tabBar table.border>tbody>tr:last-of-type>td {
+div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
