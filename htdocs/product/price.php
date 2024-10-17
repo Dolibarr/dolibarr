@@ -2455,7 +2455,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 				$colspan++;
 			}
-			if (!empty($price_extralabels && is_array($price_extralabels))) {
+			if (!empty($price_extralabels) && is_array($price_extralabels)) {
 				$colspan += count($price_extralabels);
 			}
 
