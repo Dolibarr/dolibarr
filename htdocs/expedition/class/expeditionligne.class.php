@@ -143,8 +143,8 @@ class ExpeditionLigne extends CommonObjectLine
 	public $detail_batch;
 
 	/**
-	 * Virtual products : array of total of quantities group product id and warehouse id
-	 * @var array
+	 * Virtual products : array of total of quantities group product id and warehouse id ([id_product][id_warehouse] -> qty (int|float))
+	 * @var array<int, array<int, int|float>>
 	 */
 	public $detail_children;
 
@@ -448,9 +448,9 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 * Find all children
 	 *
-	 * @param	int		$line_id	Line id
-	 * @param	array	$list		List of sub-lines for a virtual product line
-	 * @param	int		$mode		[=0] array of lines ids, 1 array of line object for dispatcher
+	 * @param	int			$line_id	Line id
+	 * @param	stdClass[]	$list		List of sub-lines for a virtual product line (array of object with attributes : rowid, fk_product, fk_parent, qty, fk_warehouse, batch, eatby, sellby, iskit, incdec)
+	 * @param	int			$mode		[=0] array of lines ids, 1 array of line object for dispatcher
 	 * @return	int 	Return integer <0 if KO else >0 if OK
 	 */
 	public function findAllChild($line_id, &$list = array(), $mode = 0)

@@ -1833,8 +1833,6 @@ class Expedition extends CommonObject
 					return -3;
 				}
 			} else {
-				$this->error = $this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
 				return -2;
 			}
 		} else {
