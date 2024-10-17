@@ -3827,9 +3827,6 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbackbody);
 }
-table.noborder {
-	background: var(--colorbacktabcard1);
-}
 
 div.tabBar tr.titre td {
 	padding-top: 20px;
@@ -4206,7 +4203,9 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 
-
+table.noborder {
+	background: var(--colorbacktabcard1);
+}
 .fichehalfright table.noborder , .fichehalfleft table.noborder{
 	margin: 0px 0px 0px 0px;
 }
@@ -4226,9 +4225,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 	margin: 0px 0px 20px 0px;
 
-	border-radius: 2px;
-
-	/*width: calc(100% - 7px);
+	/*border-radius: 2px;
+	width: calc(100% - 7px);
 	border-collapse: separate !important;
 	border-spacing: 0px;
 	border-top-width: 0px;
@@ -4252,6 +4250,54 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tableliness
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
 	border-top: unset !important;
+}
+
+
+/* Experimental code to manage rounding */
+<?php $borderradius = getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6); ?>
+table.noborder {
+	border-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder tr.liste_titre:first-child td:first-child,
+table.noborder tr.liste_titre:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder tr.liste_titre:first-child td:last-child,
+table.noborder tr.liste_titre:first-child th:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder tr:last-child td:first-child,
+table.noborder tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder tr:last-child td:last-child,
+table.noborder tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table.liste tr.liste_titre_filter:first-child td:first-child,
+table.liste tr.liste_titre_filter:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:first-child,
+table.liste tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:last-child,
+table.liste tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
 
@@ -4452,9 +4498,6 @@ div.pagination li span.inactive:hover {
 	  -webkit-box-shadow: none !important;
 	  box-shadow: none !important;
 }
-/*div.pagination li.litext {
-	padding-top: 8px;
-}*/
 div.pagination li.litext a {
   border: none;
   padding-right: 10px;
@@ -4481,13 +4524,6 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-/*div.pagination li a:hover,
-div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
-div.pagination li a:focus,
-div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
-  -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-  box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -5351,9 +5387,16 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
-table.table-fiche-title tr.toptitle {
+/* height of top title */
+.fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
 	height: 60px;
 }
+/* height of other title */
+table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
+	height: 44px;
+}
+
+
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
@@ -5381,11 +5424,6 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-/*
-table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
-	line-height: 40px;
-}
-*/
 table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 	line-height: normal;
 }
