@@ -412,6 +412,7 @@ if ($action == 'presend') {
 	$formmail->param['object_entity'] = $object->entity;
 
 	// Show form
+	$formmail->findToDefaultDestination($object);
 	print $formmail->get_form();
 
 	print dol_get_fiche_end();
