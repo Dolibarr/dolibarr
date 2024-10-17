@@ -320,7 +320,7 @@ return [
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
 		// mymodule seen in cti, but not in git.
-		.'|htdocs/custom/mymodule/.*'  // @phpstan-ignore-line
+		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
@@ -331,7 +331,6 @@ return [
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
 		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
-		.'|custom/.*'  // Avoid analysing local modules from main project @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
 	// A list of plugin files to execute.
