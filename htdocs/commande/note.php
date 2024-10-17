@@ -137,7 +137,10 @@ if ($id > 0 || !empty($ref)) {
 
 
 	$cssclass = "titlefield";
-	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	$dirtpls = array('/core/tpl');
+	if ($conf->modules_parts['tpl']) {
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	}
 	foreach ($dirtpls as $reldir) {
 		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
 		if ($res) {
