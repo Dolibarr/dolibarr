@@ -119,9 +119,9 @@ function ordered($product_id)
 	$sql .= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cfd ';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
 	$sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
-	if (getDolGlobalString("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER")) {
+	if (getDolGlobalInt("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER")) {
 		$sql .= ' cf.fk_statut < 3';
-	} elseif (getDolGlobalString("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER")) {
+	} elseif (getDolGlobalInt("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER")) {
 		$sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN '.dispatchedOrders();
 	} else {
 		$sql .= ' cf.fk_statut < 5';
