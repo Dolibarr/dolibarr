@@ -777,7 +777,7 @@ abstract class CommonDocGenerator
 		// Fetch project information if there is a project assigned to this object
 		if ($object->element != "project" && !empty($object->fk_project) && $object->fk_project > 0) {
 			if (!is_object($object->project)) {
-				$object->fetch_projet();
+				$object->fetchProject();
 			}
 
 			$resarray[$array_key.'_project_ref'] = $object->project->ref;

@@ -2686,7 +2686,7 @@ class Ticket extends CommonObject
 
 		$object->socid = $object->fk_soc;
 		$object->fetch_thirdparty();
-		$object->fetch_project();
+		$object->fetchProject();
 
 		if ($ret < 0) {
 			$error++;
