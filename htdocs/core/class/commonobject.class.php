@@ -7836,7 +7836,7 @@ abstract class CommonObject
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
 					}
-					$sql .= ' LIMIT ' . getDolGlobalString('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
+					$sql .= ' LIMIT ' . getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
 					// print $sql;
 
 					dol_syslog(get_class($this) . '::showInputField type=sellist', LOG_DEBUG);
