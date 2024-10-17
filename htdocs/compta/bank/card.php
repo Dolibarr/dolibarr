@@ -658,7 +658,7 @@ if ($action == 'create') {
 
 	// Accountancy journal
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';
