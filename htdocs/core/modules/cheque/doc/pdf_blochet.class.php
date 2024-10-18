@@ -292,7 +292,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(10, 32);
-		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
+		$pdf->MultiCell(22, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 		pdf_bank($pdf, $outputlangs, 32, 32, $this->account, 1);
 
 		$pdf->SetFont('', '', $default_font_size);
