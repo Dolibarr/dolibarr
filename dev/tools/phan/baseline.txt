@@ -9,11 +9,11 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 770+ occurrences
-    // PhanPluginUnknownPropertyType : 660+ occurrences
+    // PhanUndeclaredProperty : 690+ occurrences
+    // PhanPluginUnknownPropertyType : 630+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 580+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 400+ occurrences
-    // PhanUndeclaredGlobalVariable : 380+ occurrences
+    // PhanUndeclaredGlobalVariable : 360+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 300+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 250+ occurrences
     // PhanPossiblyUndeclaredVariable : 200+ occurrences
@@ -119,7 +119,7 @@ return [
         'htdocs/commande/class/api_orders.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/customer.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
+        'htdocs/commande/list.php' => ['PhanTypeInvalidDimOffset', 'PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/commande/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/accounting-files.php' => ['PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
@@ -430,7 +430,6 @@ return [
         'htdocs/core/tpl/filemanager.tpl.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/formlayoutai.tpl.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/list_print_total.tpl.php' => ['PhanPluginUndeclaredVariableIsset'],
-        'htdocs/core/tpl/login.tpl.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/massactions_pre.tpl.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/notes.tpl.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/object_discounts.tpl.php' => ['PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
