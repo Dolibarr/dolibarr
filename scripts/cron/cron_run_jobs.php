@@ -272,6 +272,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(1);
 			}
+
+			$parameters = array('cronjob' => $cronjob, 'line' => $line);
+			$reshook    = $hookmanager->executeHooks('beforeRunCronJob', $parameters, $object);
+
 			// Execute job
 			$result = $cronjob->run_jobs($userlogin);
 			if ($result < 0) {
@@ -298,6 +302,9 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			}
 
 			echo "Job re-scheduled\n";
+
+			$parameters = array('cronjob' => $cronjob, 'line' => $line);
+			$reshook    = $hookmanager->executeHooks('afterRunCronJob', $parameters, $object);
 		} else {
 			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 
