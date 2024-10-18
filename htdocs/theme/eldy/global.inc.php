@@ -4258,7 +4258,7 @@ table.nointerlines tr:not(:last-child) td {
 
 /* Experimental code to manage rounding */
 <?php $borderradius = getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6); ?>
-table.noborder:not(.cal_month) {
+table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder.cal_month {
@@ -4273,20 +4273,20 @@ table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder tr.liste_titre:first-child td:first-child,
-table.noborder tr.liste_titre:first-child th:first-child {
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder tr.liste_titre:first-child td:last-child,
-table.noborder tr.liste_titre:first-child th:last-child {
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder tr:last-child td:first-child,
-table.noborder tr:last-child th:first-child {
+table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder tr:last-child td:last-child,
-table.noborder tr:last-child th:last-child {
+table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -4304,6 +4304,13 @@ table.liste tr:last-child th:first-child {
 }
 table.liste tr:last-child td:last-child,
 table.liste tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -4349,7 +4356,7 @@ tr.liste_titre_filter td.liste_titre {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-tr.liste_titre_create td {
+tr.liste_titre_create td:not(.linecoldescription) {
 	padding-right: 4px !important;
 	padding-left: 4px !important;
 }
@@ -4368,6 +4375,9 @@ table.liste tr, table.noborder tr, div.noborder form {
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
+}
+td.linecoldescription {
+	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
 table.tableforfield td, .tagtr.table-border-row .tagtd {
 	padding: 2px 4px 2px 10px;			/* t r b l */

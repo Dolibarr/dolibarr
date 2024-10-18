@@ -213,7 +213,7 @@ TITLE BUTTON
 
 .btnTitle, a.btnTitle {
 	display: inline-block;
-	padding: 4px 4px 4px 4px;
+	padding: 6px;
 	font-weight: 400;
 	/* line-height: 1; */
 	text-align: center;
