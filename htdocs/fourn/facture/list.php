@@ -962,6 +962,9 @@ if ($search_categ_sup > 0) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.$search_type_thirdparty;
 }
+if ($search_fk_fac_rec_source) {
+	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

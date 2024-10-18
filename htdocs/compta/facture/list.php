@@ -1208,6 +1208,9 @@ if ($search_categ_cus > 0) {
 if (!empty($search_fac_rec_source_title)) {
 	$param .= '&search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
 }
+if ($search_fk_fac_rec_source) {
+	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
