@@ -597,6 +597,7 @@ class pdf_cyan extends ModelePDFPropales
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$curY = $tab_top_newpage;
+							$showpricebeforepagebreak = 0;
 						}
 
 						$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
