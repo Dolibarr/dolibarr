@@ -218,9 +218,9 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 
 		$listhalfday = array(
 			'morning'=>$langs->trans("Morning"),
-			'morningshort'=>$langs->trans("MorningShort"),
+			'morningshort'=>$langs->trans("Morning"),
 			"afternoon"=>$langs->trans("Afternoon"),
-			"afternoonshort"=>$langs->trans("AfternoonShort")
+			"afternoonshort"=>$langs->trans("Afternoon")
 		);
 
 		$typeleaves = $holidaystatic->getTypes(1, -1);
