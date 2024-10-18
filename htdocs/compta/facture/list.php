@@ -148,6 +148,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
+$search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $search_option = GETPOST('search_option');
 if ($search_option == 'late') {
@@ -871,6 +872,9 @@ if ($search_option == 'late') {
 if (!empty($search_fac_rec_source_title)) {
 	$sql .= natural_search('facrec.titre', $search_fac_rec_source_title);
 }
+if ($search_fk_fac_rec_source) {
+	$sql .= ' AND f.fk_fac_rec_source = ' . (int) $search_fk_fac_rec_source;
+}
 // Search on user
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
@@ -1014,6 +1018,14 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+
+if ($search_fk_fac_rec_source) {
+	$object = new FactureRec($db);
+	$object->id = $search_fk_fac_rec_source;
+	$head = invoice_rec_prepare_head($object);
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+}
+
 
 $param = '&socid='.urlencode((string) ($socid));
 if (!empty($mode)) {
