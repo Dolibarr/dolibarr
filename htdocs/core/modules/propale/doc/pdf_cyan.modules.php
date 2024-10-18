@@ -650,7 +650,7 @@ class pdf_cyan extends ModelePDFPropales
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// Position
+					// # of line
 					if ($this->getColumnStatus('position')) {
 						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
 					}
