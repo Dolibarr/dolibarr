@@ -8,7 +8,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -532,7 +532,8 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td>';
-	print $form->selectDate('', 're', 0, 0, 0, 'formsoc');
+	$startdate = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT('reday'), GETPOSTINT("reyear"));
+	print $form->selectDate($startdate, 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -657,7 +658,7 @@ if ($action == 'create') {
 
 	// Accountancy journal
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';

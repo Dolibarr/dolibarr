@@ -127,7 +127,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -158,6 +158,11 @@ class pdf_sponge extends ModelePDFFactures
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -992,7 +997,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 					}
 
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
 						if ($pagenb == $pageposafter) {
 							$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
@@ -1444,9 +1449,9 @@ class pdf_sponge extends ModelePDFFactures
 						$EPCQrCodeString = $object->buildEPCQrCodeString();
 						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 25, 25, $styleQr, 'N');
 
-						$pdf->SetXY($qrPosX + 5, $posy);
+						$pdf->SetXY($qrPosX + 30, $posy + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
-						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
 						$posy = $pdf->GetY() + 2;
 					}
 
