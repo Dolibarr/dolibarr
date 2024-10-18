@@ -6288,14 +6288,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 	font-weight: bold;
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-	background: #007fff !important;
+	background: var(--colorbackhmenu1);
 	color: #ffffff !important;
+	border: 1px solid var(--colorbackhmenu1);
 }
-
+.ui-menu {
+	padding: 5px;
+/*
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	*/
+}
 .ui-menu .ui-menu-item a {
 	text-decoration:none;
 	display:block;
-	padding:.2em .4em;
+	padding:.5em .6em;
 	line-height:1.5;
 	font-weight: normal;
 	font-family:<?php echo $fontlist; ?>;
