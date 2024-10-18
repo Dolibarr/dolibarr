@@ -46,10 +46,12 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object
- @phan-var-force 0|1 $forceall
- @phan-var-force int $num
+'
+@phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+@phan-var-force 0|1 $forceall
+@phan-var-force int $num
 ';
 
 global $mysoc;
