@@ -1021,7 +1021,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 if ($search_fk_fac_rec_source) {
 	$object = new FactureRec($db);
-	$object->id = $search_fk_fac_rec_source;
+	$object->id = (int) $search_fk_fac_rec_source;
 	$head = invoice_rec_prepare_head($object);
 	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
 }

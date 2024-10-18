@@ -825,7 +825,7 @@ if ($search_fk_fac_rec_source) {
 	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 	$object = new FactureFournisseurRec($db);
-	$object->id = $search_fk_fac_rec_source;
+	$object->id = (int) $search_fk_fac_rec_source;
 	$head = supplier_invoice_rec_prepare_head($object);
 	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
 }
