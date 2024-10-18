@@ -1035,14 +1035,15 @@ abstract class CommonInvoice extends CommonObject
 	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
-	 *	@param      User	$fuser      				User asking the direct debit transfer
-	 *  @param		float	$amount						Amount we request direct debit for
-	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
-	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
-	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
-	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
+	 *	@param	User	$fuser      				User asking the direct debit transfer
+	 *  @param	float	$amount						Amount we request direct debit for
+	 *  @param	string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param	string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param	int	    $checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *  @param  int     $ribId						If defined, will use this ID to get the RIB. Otherwise, the default RIB will be taken.
+	 *  @return int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
+	public function demande_prelevement(User $fuser, float $amount = 0, string $type = 'direct-debit', string $sourcetype = 'facture', int $checkduplicateamongall = 0, int $ribId = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -1054,7 +1055,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, '', $this->socid);
+			$bac->fetch($ribId, '', $this->socid);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
@@ -1096,7 +1097,12 @@ abstract class CommonInvoice extends CommonObject
 						} else {
 							$sql .= 'fk_facture, ';
 						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
+						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity';
+						if (empty($bac->id)) {
+							$sql .= ')';
+						} else {
+							$sql .= ', fk_societe_rib)';
+						}
 						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
@@ -1108,6 +1114,9 @@ abstract class CommonInvoice extends CommonObject
 						$sql .= ", '".$this->db->escape($sourcetype)."'";
 						$sql .= ", 'ban'";
 						$sql .= ", ".((int) $conf->entity);
+						if (!empty($bac->id)) {
+							$sql .= ", '".$this->db->escape($bac->id)."'";
+						}
 						$sql .= ")";
 
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
