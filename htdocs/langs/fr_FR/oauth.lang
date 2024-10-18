@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Configuration OAuth
+ConfigOAuth=Configuration du module Gestion des Jetons OAuth2
 OAuthServices=Services OAuth
 ManualTokenGeneration=Génération manuelle du jeton
 TokenManager=Gestionnaire de jeton
