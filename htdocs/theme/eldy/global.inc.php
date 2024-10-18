@@ -22,12 +22,18 @@
  *		\brief      File for CSS style sheet Eldy
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
+	die('Must be called by steelsheet');
 }
 
 $leftmenuwidth = 240;
 
+// Variables defined in style.css.php (includes this file).
 '
+@phan-var-force int<0,1> $dol_hide_topmenu
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force int<0,1> $dol_no_mouse_hover
+
 @phan-var-force string $badgeDanger
 @phan-var-force string $badgeWarning
 @phan-var-force string $borderwidth
@@ -58,6 +64,8 @@ $leftmenuwidth = 240;
 @phan-var-force string $colortexttitlenotab2
 @phan-var-force string $colortopbordertitle1
 @phan-var-force int<0,1> $disableimages
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_hide_topmenu
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
 @phan-var-force string $fontsize
@@ -314,7 +322,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-						<?php
+								<?php
 	}
 	?>
 }
@@ -885,6 +893,9 @@ textarea.centpercent {
 }
 .small, small {
 	font-size: 85%;
+}
+.lineheightsmall {
+	line-height: 1.2em;
 }
 .large {
 	font-size: 125%;
@@ -2363,6 +2374,7 @@ div.blockvmenulogo
 	width: inherit;
 	height: inherit;
 	image-rendering: -webkit-optimize-contrast;
+	border-radius: 3px;
 }
 #mainmenutd_companylogo::after, #mainmenutd_menu::after {
 	content: unset !important;
@@ -2491,11 +2503,11 @@ div.vmenu, td.vmenu {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '44' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '38' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu)) {
-		print 'margin-bottom: 12px;'."\n";
-	} ?>
-	<?php if (!empty($dol_hide_leftmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;'."\n";
+	} ?>
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
+		print 'margin-bottom: 12px;'."\n";
 	} ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
@@ -3818,9 +3830,6 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbackbody);
 }
-table.noborder {
-	background: var(--colorbacktabcard1);
-}
 
 div.tabBar tr.titre td {
 	padding-top: 20px;
@@ -3912,7 +3921,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 14px 13px;
+	padding: 12px 14px 10px;
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
@@ -4197,7 +4206,9 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 
-
+table.noborder {
+	background: var(--colorbacktabcard1);
+}
 .fichehalfright table.noborder , .fichehalfleft table.noborder{
 	margin: 0px 0px 0px 0px;
 }
@@ -4217,9 +4228,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 	margin: 0px 0px 20px 0px;
 
-	border-radius: 2px;
-
-	/*width: calc(100% - 7px);
+	/*border-radius: 2px;
+	width: calc(100% - 7px);
 	border-collapse: separate !important;
 	border-spacing: 0px;
 	border-top-width: 0px;
@@ -4246,12 +4256,71 @@ table.nointerlines tr:not(:last-child) td {
 }
 
 
+/* Experimental code to manage rounding */
+<?php $borderradius = getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6); ?>
+table.noborder:not(.cal_month, .paymenttable) {
+	border-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder.cal_month {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table.liste tr.liste_titre_filter:first-child td:first-child,
+table.liste tr.liste_titre_filter:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:first-child,
+table.liste tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:last-child,
+table.liste tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+
 /*
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 */
-div.tabBar table.border>tbody>tr:last-of-type>td {
+div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -4287,7 +4356,7 @@ tr.liste_titre_filter td.liste_titre {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-tr.liste_titre_create td {
+tr.liste_titre_create td:not(.linecoldescription) {
 	padding-right: 4px !important;
 	padding-left: 4px !important;
 }
@@ -4306,6 +4375,9 @@ table.liste tr, table.noborder tr, div.noborder form {
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
+}
+td.linecoldescription {
+	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
 table.tableforfield td, .tagtr.table-border-row .tagtd {
 	padding: 2px 4px 2px 10px;			/* t r b l */
@@ -4443,9 +4515,6 @@ div.pagination li span.inactive:hover {
 	  -webkit-box-shadow: none !important;
 	  box-shadow: none !important;
 }
-/*div.pagination li.litext {
-	padding-top: 8px;
-}*/
 div.pagination li.litext a {
   border: none;
   padding-right: 10px;
@@ -4472,13 +4541,6 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-/*div.pagination li a:hover,
-div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
-div.pagination li a:focus,
-div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
-  -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-  box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -4822,6 +4884,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 }
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
@@ -4834,6 +4899,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 }
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
@@ -5063,13 +5131,13 @@ span.dashboardlineko {
 
 
 .fichecenter .tableforfield tr td, .tagtr.table-border-row {
-	background: var(--colorbacklineimpair2) !important;
+	background-color: var(--colorbacklineimpair2);
 }
-table.liste tr.oddeven:nth-of-type(odd) td{
-	background: var(--colorbacklineimpair2) !important;
+table.liste tr.oddeven:nth-of-type(odd) {
+	background-color: var(--colorbacklineimpair2);
 }
-table.liste tr.oddeven:nth-of-type(even) td{
-	background: var(--colorbacklinepair2) !important;
+table.liste tr.oddeven:nth-of-type(even) {
+	background-color: var(--colorbacklinepair2);
 }
 
 .boxtable {
@@ -5342,11 +5410,21 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+/* height of top title */
+.fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
+	height: 60px;
+}
+/* height of other title */
+table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
+	height: 44px;
+}
+
+
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	/* padding-top: 5px;
+	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5369,9 +5447,6 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
-	line-height: 40px;
-}
 table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 	line-height: normal;
 }
@@ -5904,14 +5979,19 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px !important; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
-.cal_impair        { ackground: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%); }
+.cal_impair        {
+	background: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+}
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
@@ -6218,14 +6298,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 	font-weight: bold;
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-	background: #007fff !important;
+	background: var(--colorbackhmenu1);
 	color: #ffffff !important;
+	border: 1px solid var(--colorbackhmenu1);
 }
-
+.ui-menu {
+	padding: 5px;
+/*
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	*/
+}
 .ui-menu .ui-menu-item a {
 	text-decoration:none;
 	display:block;
-	padding:.2em .4em;
+	padding:.5em .6em;
 	line-height:1.5;
 	font-weight: normal;
 	font-family:<?php echo $fontlist; ?>;
@@ -7950,6 +8037,9 @@ div.tabsElem a.tab {
   background: white;
   border-radius: 0.25em;
   padding: 1em;
+  background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
   background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
 }
 .cd-timeline-content:after {

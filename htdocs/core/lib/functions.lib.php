@@ -2760,7 +2760,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	}
 
 	if (!$notab || $notab == -1 || $notab == -2 || $notab == -3 || $notab == -4) {
-		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : ((($notab == -3 || $notab == -4) ? ' noborderbottom' : '').($notab == -3 ? ' tabBarWithBottom' : ''))));
+		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : ((($notab == -3 || $notab == -4) ? ' noborderbottom' : '').($notab == -4 ? '' : ' tabBarWithBottom'))));
 		$out .= '">'."\n";
 	}
 	if (!empty($dragdropfile)) {
@@ -6365,13 +6365,13 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 
 	$return .= "\n";
 	$return .= '<table '.($id ? 'id="'.$id.'" ' : '').'class="centpercent notopnoleftnoright table-fiche-title'.($morecssontable ? ' '.$morecssontable : '').'">'; // margin bottom must be same than into print_barre_list
-	$return .= '<tr class="titre">';
+	$return .= '<tr class="toptitle">';
 	if ($picto) {
 		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
-	$return .= $title;	// $title is already HTML sanitized content
+	$return .= '<span class="inline-block valignmiddle">'.$title.'</span>';	// $title is already HTML sanitized content
 	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
@@ -6439,7 +6439,8 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 	print "\n";
 	print "<!-- Begin print_barre_liste -->\n";
-	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss ? ' '.$morecss : '').'"><tr>'; // margin bottom must be same than into load_fiche_tire
+	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss ? ' '.$morecss : '').'">';
+	print '<tr class="toptitle">'; // margin bottom must be same than into load_fiche_tire
 
 	// Left
 
@@ -6450,7 +6451,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">';
 	print '<span class="inline-block valignmiddle print-barre-liste">'.$title.'</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
-	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
+	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
@@ -6583,8 +6584,9 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	if (empty($hidenavigation)) {
 		if ((int) $limit > 0 && (empty($selectlimitsuffix) || !is_numeric($selectlimitsuffix))) {
 			$pagesizechoices = '10:10,15:15,20:20,25:25,50:50,100:100,250:250,500:500,1000:1000';
-			$pagesizechoices .= ',5000:5000,10000:10000';
-			//$pagesizechoices .= ',20000:20000';				// Memory trouble on browsers
+			$pagesizechoices .= ',5000:5000';
+			//$pagesizechoices .= ',10000:10000';				// Memory trouble on most browsers
+			//$pagesizechoices .= ',20000:20000';				// Memory trouble on most browsers
 			//$pagesizechoices .= ',0:'.$langs->trans("All");	// Not yet supported
 			//$pagesizechoices .= ',2:2';
 			if (getDolGlobalString('MAIN_PAGESIZE_CHOICES')) {
@@ -6602,11 +6604,11 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit.':'.$limit;
 			if (!in_array($tmpkey, $tmpchoice)) {
-				$tmpchoice[] = $tmpkey;
+				$tmpchoice[$tmpkey] = $tmpkey;
 			}
 			$tmpkey = $conf->liste_limit.':'.$conf->liste_limit;
 			if (!in_array($tmpkey, $tmpchoice)) {
-				$tmpchoice[] = $tmpkey;
+				$tmpchoice[$tmpkey] = $tmpkey;
 			}
 			asort($tmpchoice, SORT_NUMERIC);
 			foreach ($tmpchoice as $val) {
@@ -13547,21 +13549,24 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
-	/*
-	global $conf;
-
-	if (!empty($conf->dol_no_mouse_hover)) {
-		$showonlyonhover = 0;
-	}*/
+	global $langs;
 
 	$tag = 'span'; 	// Using div (like any style of type 'block') does not work when using the js copy code.
+
+	$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'">';
 	if ($texttoshow === 'none') {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint"></span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
+		$result .= '<'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'>';
+		$result .= '<span class="clipboardCPValueToPrint"></span>';
 	} elseif ($texttoshow) {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
+		$result .= '<'.$tag.' class="clipboardCPValue hidewithsize">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'>';
+		$result .= '<span class="clipboardCPValueToPrint">'.dol_escape_htmltag($texttoshow, 1, 1).'</span>';
 	} else {
-		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText"></span></span>';
+		$result .= '<'.$tag.' class="clipboardCPValue">'.dol_escape_htmltag($valuetocopy, 1, 1).'</'.$tag.'>';
 	}
+	$result .= '<span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft pictomodule" title="'.dolPrintHTML($langs->trans("ClickToCopyToClipboard")).'"></span>';
+	$result .= img_picto('', 'tick', 'class="clipboardCPTick hidden paddingleft pictomodule"');
+	$result .= '<span class="clipboardCPText"></span>';
+	$result .= '</span>';
 
 	return $result;
 }

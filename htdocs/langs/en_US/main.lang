@@ -883,6 +883,7 @@ toward=toward
 Access=Access
 SelectAction=Select action
 SelectTargetUser=Select target user/employee
+ClickToCopyToClipboard=Click to copy to clipboard
 HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 OriginFileName=Original filename
