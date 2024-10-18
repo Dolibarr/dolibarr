@@ -997,7 +997,7 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		$posxval = 52;
-		if (getDolGlobalString('MAIN_PDF_DATE_TEXT')) {
+		if (getDolGlobalString('MAIN_PDF_DELIVERY_DATE_TEXT')) {
 			$displaydate = "daytext";
 		} else {
 			$displaydate = "day";
@@ -1078,8 +1078,8 @@ class pdf_cyan extends ModelePDFPropales
 		if (!getDolGlobalString('PROPOSAL_PDF_HIDE_PAYMENTMODE')) {
 			// Show payment mode
 			if ($object->mode_reglement_code
-				&& $object->mode_reglement_code != 'CHQ'
-				&& $object->mode_reglement_code != 'VIR') {
+			&& $object->mode_reglement_code != 'CHQ'
+			&& $object->mode_reglement_code != 'VIR') {
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$titre = $outputlangs->transnoentities("PaymentMode").':';
@@ -1131,7 +1131,7 @@ class pdf_cyan extends ModelePDFPropales
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
-					$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
+					$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : $object->fk_account);
 					if ($object->fk_bank > 0) {
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}
@@ -1359,7 +1359,12 @@ class pdf_cyan extends ModelePDFPropales
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
 							$totalvat .= ' ';
 
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
@@ -1402,8 +1407,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle, 0, $outputlangs), 0, 'R', 0);
 
 			/*
-			if ($object->close_code == 'discount_vat')
-			{
+			if ($object->close_code == 'discount_vat') {
 				$index++;
 				$pdf->SetFillColor(255,255,255);
 
