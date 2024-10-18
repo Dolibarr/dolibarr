@@ -315,7 +315,7 @@ function invoice_rec_prepare_head($object)
 /**
  * Return array head with list of tabs to view object information.
  *
- * @param   Facture     $object     Invoice object
+ * @param   FactureFournisseurRec     $object     Invoice object
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function supplier_invoice_rec_prepare_head($object)
