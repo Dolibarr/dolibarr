@@ -610,9 +610,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$afterPosData = $this->getMaxAfterColsLinePositionsData();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
+					$pdf->setPageOrientation('', 0, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
-					if ($afterPosData['page'] > $pageposbefore && empty($showpricebeforepagebreak)) {
+					if ($afterPosData['page'] > $pageposbefore && empty($showpricebeforepagebreak) || ($curY + 9) > ($this->page_hauteur - $heightforfooter)) {
 						$pdf->setPage($afterPosData['page']);
 						$curY = $tab_top_newpage;
 					}
