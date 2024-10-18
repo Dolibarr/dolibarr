@@ -585,6 +585,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$curY = $tab_top_newpage;
+							$showpricebeforepagebreak = 0;
 						}
 
 						// I remove the line commented below because it probably uselesss (or bug source) no need to change bottom margin because we have checked image fit
