@@ -1288,6 +1288,16 @@ class DoliDBMysqli extends DoliDB
 	}
 }
 
+
+// Protection if class mysqli doe not exists to avoid error
+if (!class_exists('mysqli'))
+{
+	class mysqli
+	{
+
+	}
+}
+
 /**
  * Class to make SSL connection
  */
