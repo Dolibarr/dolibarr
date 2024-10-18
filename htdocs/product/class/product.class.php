@@ -772,6 +772,12 @@ class Product extends CommonObject
 	 */
 	public $mandatory_period;
 
+	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var int
+	 */
+	public $stockable_product = 1;
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -825,6 +831,7 @@ class Product extends CommonObject
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		'mandatory_period' => array('type' => 'integer', 'label' => 'mandatoryperiod', 'enabled' => 1, 'visible' => -1,  'notnull' => 1, 'default' => '0', 'index' => 1,  'position' => 1000),
+		'stockable_product'	=>array('type' => 'integer', 'label' => 'stockable_product', 'enabled' => 1, 'visible' => 1, 'default' => 1, 'notnull' => 1, 'index' => 1, 'position' => 502),
 	);
 
 	/**
@@ -835,6 +842,13 @@ class Product extends CommonObject
 	 * Service
 	 */
 	const TYPE_SERVICE = 1;
+
+	/**
+	 * Stockable product
+	 */
+	const NOT_MANAGED_IN_STOCK = 0;
+	const DISABLED_STOCK = 0;
+	const ENABLED_STOCK = 1;
 
 	/**
 	 *  Constructor
@@ -940,6 +954,9 @@ class Product extends CommonObject
 		}
 		if (empty($this->status_buy)) {
 			$this->status_buy = 0;
+		}
+		if (empty($this->stockable_product)) {
+			$this->stockable_product = 0;
 		}
 
 		$price_ht = 0;
@@ -1070,6 +1087,7 @@ class Product extends CommonObject
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
 					$sql .= ", mandatory_period";
+					$sql .= ", stockable_product";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($this->date_creation)."'";
 					$sql .= ", ".(!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
@@ -1101,6 +1119,7 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
 					$sql .= ", '".$this->db->escape($this->mandatory_period)."'";
+					$sql .= ", ".((int) $this->stockable_product);
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -1382,6 +1401,10 @@ class Product extends CommonObject
 			$this->state_id = 0;
 		}
 
+		if (empty($this->stockable_product)) {
+			$this->stockable_product = 0;
+		}
+
 		// Barcode value
 		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
@@ -1541,7 +1564,9 @@ class Product extends CommonObject
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
-			$sql .= ", mandatory_period = ".($this->mandatory_period);
+			$sql .= ", mandatory_period = ".($this->mandatory_period );
+			$sql .= ", stockable_product = ".(int) $this->stockable_product;
+
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
 
@@ -2867,7 +2892,7 @@ class Product extends CommonObject
 			$sql .= " p.pmp,";
 		}
 		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
-		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
@@ -2911,7 +2936,7 @@ class Product extends CommonObject
 				$sql .= " p.pmp,";
 			}
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
-			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
+			$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf";
 			$sql .= " ,p.price_label";
 			if (!$separatedStock) {
 				$sql .= ", p.stock";
@@ -2983,12 +3008,12 @@ class Product extends CommonObject
 				$this->height = $obj->height;
 				$this->height_units = $obj->height_units;
 
-				$this->surface = $obj->surface;
-				$this->surface_units = $obj->surface_units;
-				$this->volume = $obj->volume;
-				$this->volume_units = $obj->volume_units;
-				$this->barcode = $obj->barcode;
-				$this->barcode_type = $obj->fk_barcode_type;
+				$this->surface							= $obj->surface;
+				$this->surface_units					= $obj->surface_units;
+				$this->volume							= $obj->volume;
+				$this->volume_units						= $obj->volume_units;
+				$this->barcode							= $obj->barcode;
+				$this->barcode_type						= $obj->fk_barcode_type;
 
 				$this->accountancy_code_buy = $obj->accountancy_code_buy;
 				$this->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
@@ -2997,17 +3022,18 @@ class Product extends CommonObject
 				$this->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
 				$this->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
 
-				$this->fk_default_warehouse = $obj->fk_default_warehouse;
-				$this->fk_default_workstation = $obj->fk_default_workstation;
-				$this->seuil_stock_alerte = $obj->seuil_stock_alerte;
-				$this->desiredstock = $obj->desiredstock;
-				$this->stock_reel = $obj->stock;
-				$this->pmp = $obj->pmp;
+				$this->fk_default_warehouse				= $obj->fk_default_warehouse;
+				$this->fk_default_workstation 			= $obj->fk_default_workstation;
+				$this->seuil_stock_alerte				= $obj->seuil_stock_alerte;
+				$this->desiredstock						= $obj->desiredstock;
+				$this->stock_reel						= $obj->stock;
+				$this->stockable_product				= $obj->stockable_product;
+				$this->pmp								= $obj->pmp;
 
-				$this->date_creation = $obj->datec;
-				$this->date_modification = $obj->tms;
-				$this->import_key = $obj->import_key;
-				$this->entity = $obj->entity;
+				$this->date_creation					= $obj->datec;
+				$this->date_modification				= $obj->tms;
+				$this->import_key						= $obj->import_key;
+				$this->entity							= $obj->entity;
 
 				$this->ref_ext = $obj->ref_ext;
 				$this->fk_price_expression = $obj->fk_price_expression;
