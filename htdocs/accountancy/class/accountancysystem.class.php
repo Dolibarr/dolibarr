@@ -28,7 +28,7 @@
 /**
  * Class to manage accountancy systems
  */
-class AccountancySystem
+class AccountancySystem extends CommonObject
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -58,17 +58,13 @@ class AccountancySystem
 	public $rowid;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_pcg_version;
-
-	/**
-	 * @var int pcg version
+	 * @var string 		Accountancy system code
 	 */
 	public $pcg_version;
 
 	/**
-	 * @var string ref
+	 * @var string 		Ref of accountancy system. Duplicate property with ->pcg_version.
+	 * @see $pcg_version
 	 */
 	public $ref;
 
@@ -78,29 +74,9 @@ class AccountancySystem
 	public $active;
 
 	/**
-	 * @var string pcg type
-	 */
-	public $pcg_type;
-
-	/**
-	 * @var string Accountancy System numero
-	 */
-	public $numero;
-
-	/**
 	 * @var string Accountancy System label
 	 */
 	public $label;
-
-	/**
-	 * @var string account number
-	 */
-	public $account_number;
-
-	/**
-	 * @var string account parent
-	 */
-	public $account_parent;
 
 	/**
 	 * Constructor
@@ -190,12 +166,12 @@ class AccountancySystem
 				$result = $this->rowid;
 			} else {
 				$result = - 2;
-				$this->error = "AccountancySystem::Create Error $result";
+				$this->error = "AccountancySystem::Create Error $result: " . $this->db->lasterror();
 				dol_syslog($this->error, LOG_ERR);
 			}
 		} else {
 			$result = - 1;
-			$this->error = "AccountancySystem::Create Error $result";
+			$this->error = "AccountancySystem::Create Error $result: " . $this->db->lasterror();
 			dol_syslog($this->error, LOG_ERR);
 		}
 
