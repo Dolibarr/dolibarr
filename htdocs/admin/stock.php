@@ -813,6 +813,19 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
+// warehouse_usage activation
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ActivateWarehouseUsage").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STOCK_USE_WAREHOUSE_USAGE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STOCK_USE_WAREHOUSE_USAGE", $arrval, $conf->global->STOCK_USE_WAREHOUSE_USAGE);
+}
+print "</td>\n";
+print "</tr>\n";
+
 /* Disabled. Would be better to be managed with a user cookie
 if (isModEnabled('productbatch')) {
 	print '<tr class="oddeven">';
