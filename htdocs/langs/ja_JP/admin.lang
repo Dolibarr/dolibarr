@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=請求書にスイス QR 請求書 コード を表示
 INVOICE_ADD_SWISS_QR_CODEMore=スイスの請求書標準。郵便番号と都市名が入力されていること、およびアカウントに有効なスイス/リヒテンシュタイン IBAN があることを確認すること。
 INVOICE_ADD_EPC_QR_CODE=請求書に EPC QR コード を表示しる (クレジット振替用に 銀行口座 が定義されている)
 INVOICE_ADD_EPC_QR_CODEMore=この機能を使用すると、請求書に EPC QR コード を追加または削除して、自動 SEPA クレジット振替を容易にすることができる。このオプションを有効にすると、クライアントは QR コード をスキャンして簡単に支払いを行うことができ、手動入力エラーが減りる。この機能は、このシステムがサポートされているオーストリア、ベルギー、フィンランド、ドイツ、オランダなどの国にクライアントがいる場合に使用しる。ビジネス運営やクライアントベースに必要ない場合は無効にすること。
-INVOICE_ADD_EPC_QR_CODEPay=EPC QR コード による支払いをサポートするスマートフォンで支払うには、この QR コード をスキャンすること。
 INVOICE_SHOW_SHIPPING_ADDRESS=配送先住所を表示
 INVOICE_SHOW_SHIPPING_ADDRESSMore=一部の国では表示が義務付けられていマスる (フランス, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=提案書に請求先連絡先を表示する
