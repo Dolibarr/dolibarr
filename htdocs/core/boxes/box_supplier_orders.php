@@ -49,6 +49,9 @@ class box_supplier_orders extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('fournisseur', 'commande', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/fourn/commande/card.php?action=create';
+		$this->msgNoRecords = 'NoSupplierOrder';
 	}
 
 	/**
@@ -158,13 +161,6 @@ class box_supplier_orders extends ModeleBoxes
 					);
 
 					$line++;
-				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</span>',
-					);
 				}
 
 				$this->db->free($result);

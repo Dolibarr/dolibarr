@@ -351,7 +351,7 @@ if (empty($reshook)) {
 
 	// Mark as Read
 	if ($action == "set_read" && $permissiontoadd) {
-		$object->fetch('', '', GETPOST("track_id", 'alpha'));
+		$object->fetch(0, '', GETPOST("track_id", 'alpha'));
 
 		if ($object->markAsRead($user) > 0) {
 			setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
@@ -366,7 +366,7 @@ if (empty($reshook)) {
 
 	// Assign to someone
 	if ($action == "assign_user" && GETPOST('btn_assign_user', 'alpha') && $permissiontoadd) {
-		$object->fetch('', '', GETPOST("track_id", 'alpha'));
+		$object->fetch(0, '', GETPOST("track_id", 'alpha'));
 		$useroriginassign = $object->fk_user_assign;
 		$usertoassign = GETPOSTINT('fk_user_assign');
 
@@ -580,7 +580,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == "set_message" && $user->hasRight('ticket', 'manage')) {
 		if (!GETPOST('cancel')) {
-			$object->fetch('', '', GETPOST('track_id', 'alpha'));
+			$object->fetch(0, '', GETPOST('track_id', 'alpha'));
 			//$oldvalue_message = $object->message;
 			$fieldtomodify = GETPOST('message_initial', 'restricthtml');
 
@@ -764,6 +764,7 @@ if ($action == 'create' || $action == 'presend') {
 			accessforbidden('', 0, 1);
 		}
 
+		$formconfirm = '';
 
 		// Confirmation close
 		if ($action == 'close') {
@@ -788,26 +789,38 @@ if ($action == 'create' || $action == 'presend') {
 				),
 			);
 
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1);
+			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1);
 		}
 		// Confirmation abandon
 		if ($action == 'abandon') {
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
+			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
 		}
 		// Confirmation delete
 		if ($action == 'delete') {
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("Delete"), $langs->trans("ConfirmDeleteTicket"), "confirm_delete_ticket", '', '', 1);
+			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("Delete"), $langs->trans("ConfirmDeleteTicket"), "confirm_delete_ticket", '', '', 1);
 		}
 		// Confirm reopen
 		if ($action == 'reopen') {
-			print $form->formconfirm($url_page_current.'?track_id='.$object->track_id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenTicket'), 'confirm_reopen', '', '', 1);
+			$formconfirm = $form->formconfirm($url_page_current.'?track_id='.$object->track_id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenTicket'), 'confirm_reopen', '', '', 1);
 		}
 		// Confirmation status change
 		if ($action == 'set_status') {
-			$new_status = GETPOST('new_status');
+			$new_status = GETPOSTINT('new_status');
 			//var_dump($url_page_current . "?track_id=" . $object->track_id);
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id."&new_status=".GETPOST('new_status'), $langs->trans("TicketChangeStatus"), $langs->trans("TicketConfirmChangeStatus", $langs->transnoentities($object->labelStatusShort[$new_status])), "confirm_set_status", '', '', 1);
+			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id."&new_status=".$new_status, $langs->trans("TicketChangeStatus"), $langs->trans("TicketConfirmChangeStatus", $langs->transnoentities($object->labelStatusShort[$new_status])), "confirm_set_status", '', '', 1);
 		}
+
+		// Call Hook formConfirm
+		$parameters = array('formConfirm' => $formconfirm);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
+		}
+
+		// Print form confirm
+		print $formconfirm;
 
 		// project info
 		if ($projectid > 0) {
@@ -1012,7 +1025,7 @@ if ($action == 'create' || $action == 'presend') {
 						$contratstatic = new Contrat($db);
 						$contratstatic->fetch($object->fk_contract);
 						//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-						$morehtmlref .= $contratstatic->getNomUrl(0, '', 1);
+						$morehtmlref .= $contratstatic->getNomUrl(0, 0, 1);
 					}
 				}
 			}
@@ -1034,7 +1047,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td class="titlefield">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
-				$object->ref = $object->id;
+				$object->ref = (string) $object->id;
 				print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'track_id');
 			} else {
 				print dolPrintLabel($object->track_id);
@@ -1152,6 +1165,7 @@ if ($action == 'create' || $action == 'presend') {
 			if ($num) {
 				foreach ($object->linkedObjects as $objecttype => $objects) {
 					if ($objecttype == "fichinter") {
+						'@phan-var-force Fichinter[] $objects';
 						foreach ($objects as $fichinter) {
 							$foundinter++;
 							/** @var Fichinter $fichinter */
@@ -1284,7 +1298,7 @@ if ($action == 'create' || $action == 'presend') {
 						$arrayselected[] = $cat->id;
 					}
 
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'maxwidth500 widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'maxwidth500 widthcentpercentminusx', 0, 0);
 					print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
 					print '</form>';
 					print "</td>";

@@ -136,10 +136,12 @@ $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";
+	$sql .= " spe.accountancy_code_supplier_general,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
 	$sql .= " s.accountancy_code_customer_general,";
 	$sql .= " s.code_compta as code_compta_client,";
+	$sql .= " s.accountancy_code_supplier_general,";
 	$sql .= " s.code_compta_fournisseur,";
 }
 $sql .= " p.rowid as pid, p.ref as pref, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
@@ -374,6 +376,23 @@ if ($result) {
 			'accountancy_code_customer_general' => $accountancy_code_customer_general,
 			'code_compta' => $compta_soc
 		);
+
+		// After the line is processed
+		$parameters = array(
+			'obj' => $obj,
+			'tabfac' => &$tabfac,
+			'tabht' => &$tabht,
+			'tabtva' => &$tabtva,
+			'def_tva' => &$def_tva,
+			'tabwarranty' => &$tabwarranty,
+			'tabrevenuestamp' => &$tabrevenuestamp,
+			'tabttc' => &$tabttc,
+			'tablocaltax1' => &$tablocaltax1,
+			'tablocaltax2' => &$tablocaltax2,
+			'tabcompany' => &$tabcompany,
+			'vatdata_cache' => &$vatdata_cache,
+		);
+		$reshook = $hookmanager->executeHooks('processingJournalData', $parameters); // Note that $action and $object may have been modified by hook
 
 		$i++;
 

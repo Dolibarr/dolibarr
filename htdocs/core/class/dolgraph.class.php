@@ -41,13 +41,30 @@
  */
 class DolGraph
 {
+	/**
+	 * @var string[]
+	 */
 	public $type = array(); // Array with type of each series. Example: array('bars', 'horizontalbars', 'lines', 'pies', 'piesemicircle', 'polar'...)
+	/**
+	 * @var string
+	 */
 	public $mode = 'side'; // Mode bars graph: side, depth
+	/**
+	 * @var string
+	 */
 	private $_library; // Graphic library to use (jflot, chart, artichow)
 
-	//! Array of data
+	/**
+	 * @var array<array{0:string,1:float,1:float}> Array of data
+	 */
 	public $data; // Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
+	/**
+	 * @var string
+	 */
 	public $title; // Title of graph
+	/**
+	 * @var string
+	 */
 	public $cssprefix = ''; // To add into css styles
 
 	/**
@@ -59,31 +76,88 @@ class DolGraph
 	 */
 	public $height = 200;
 
+	/**
+	 * @var int
+	 */
 	public $MaxValue = 0;
+	/**
+	 * @var int
+	 */
 	public $MinValue = 0;
+	/**
+	 * @var int
+	 */
 	public $SetShading = 0;
 
+	/**
+	 * @var float
+	 */
 	public $horizTickIncrement = -1;
+	/**
+	 * @var float
+	 */
 	public $SetNumXTicks = -1;
+	/**
+	 * @var float
+	 */
 	public $labelInterval = -1;
+	/**
+	 * @var string
+	 */
 	public $YLabel;
 
+	/**
+	 * @var bool
+	 */
 	public $hideXGrid = false;
+	/**
+	 * @var bool
+	 */
 	public $hideXValues = false;
+	/**
+	 * @var bool
+	 */
 	public $hideYGrid = false;
 
+	/**
+	 * @var string[]
+	 */
 	public $Legend = array();
+	/**
+	 * @var float
+	 */
 	public $LegendWidthMin = 0;
+	/**
+	 * @var int<0,1>
+	 */
 	public $showlegend = 1;
+	/**
+	 * @var int<0,1>
+	 */
 	public $showpointvalue = 1;
+	/**
+	 * @var int<0,1>
+	 */
 	public $showpercent = 0;
+	/**
+	 * @var float
+	 */
 	public $combine = 0; // 0.05 if you want to combine records < 5% into "other"
+	/**
+	 * @var object
+	 */
 	public $graph; // Object Graph (Artichow, Phplot...)
 	/**
-	 * @var boolean 					Mirrors graph values
+	 * @var bool			Mirrors graph values
 	 */
 	public $mirrorGraphValues = false;
+	/**
+	 * @var null|string[]
+	 */
 	public $tooltipsTitles = null;
+	/**
+	 * @var null|string[]
+	 */
 	public $tooltipsLabels = null;
 
 	/**
@@ -91,13 +165,34 @@ class DolGraph
 	 */
 	public $error = '';
 
+	/**
+	 * @var array<int<0,2>,int>|array<int<0,2>,array<int<0,2>,int>>
+	 */
 	public $bordercolor; // array(R,G,B)
+	/**
+	 * @var ?array<int<0,2>,int>
+	 */
 	public $bgcolor; // array(R,G,B)
+	/**
+	 * @var ?array<int<0,2>,int>
+	 */
 	public $bgcolorgrid = array(255, 255, 255); // array(R,G,B)
+	/**
+	 * @var array<int<0,2>,array<int<0,2>,int>>
+	 */
 	public $datacolor; // array(array(R,G,B),...)
+	/**
+	 * @var float
+	 */
 	public $borderwidth = 1;
+	/**
+	 * @var string
+	 */
 	public $borderskip = 'start';
 
+	/**
+	 * @var string
+	 */
 	private $stringtoshow; // To store string to output graph into HTML page
 
 
@@ -149,7 +244,7 @@ class DolGraph
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
 	 * @param 	float 		$xi		Xi
-	 * @return	boolean				True
+	 * @return	bool				True
 	 */
 	public function SetHorizTickIncrement($xi)
 	{
@@ -203,8 +298,8 @@ class DolGraph
 	/**
 	 * Hide X Values
 	 *
-	 * @param	boolean		$bool	XValues or not
-	 * @return	boolean				true
+	 * @param	bool		$bool	XValues or not
+	 * @return	bool				true
 	 */
 	public function setHideXValues($bool)
 	{
@@ -269,7 +364,7 @@ class DolGraph
 	/**
 	 * Set data
 	 *
-	 * @param 	array	$data		Data
+	 * @param 	array<array{0:string,1:float,2:float}>	$data		Data
 	 * @return	void
 	 * @see draw_jflot() for syntax of data array
 	 */
@@ -283,7 +378,7 @@ class DolGraph
 	/**
 	 * Set data color
 	 *
-	 * @param 	array	$datacolor		Data color array(array(R,G,B),array(R,G,B)...) or array('#......','#......'...)
+	 * @param 	array<int<0,2>,array<int<0,2>,int>|string>	$datacolor		Data color array(array(R,G,B),array(R,G,B)...) or array('#......','#......'...)
 	 * @return	void
 	 */
 	public function SetDataColor($datacolor)
@@ -295,7 +390,7 @@ class DolGraph
 	/**
 	 * Set border color
 	 *
-	 * @param 	array	$bordercolor		Border Color array(array(R,G,B),array(R,G,B)...) or array('#FFFFFF','#......'...)
+	 * @param 	array<int<0,2>,array<int<0,2>,int>|string>	$bordercolor	Color array(array(R,G,B),array(R,G,B)...) or array('#FFFFFF','#......'...)
 	 * @return	void
 	 */
 	public function setBorderColor($bordercolor)
@@ -455,7 +550,7 @@ class DolGraph
 	/**
 	 * Set shading
 	 *
-	 * @param 	string	$s				Shading
+	 * @param 	int		$s				Shading
 	 * @return	void
 	 */
 	public function SetShading($s)
@@ -468,7 +563,7 @@ class DolGraph
 	/**
 	 * Set shading
 	 *
-	 * @param 	string	$s				Shading
+	 * @param 	string	$s				Css prefix
 	 * @return	void
 	 */
 	public function SetCssPrefix($s)
@@ -585,7 +680,7 @@ class DolGraph
 	/**
 	 * Define background color of grid
 	 *
-	 * @param	array	$bg_colorgrid		array(R,G,B) ou 'onglet' ou 'default'
+	 * @param	'onglet'|'default'|array<int<0,2>,int>	$bg_colorgrid		array(R,G,B) ou 'onglet' ou 'default'
 	 * @return	void
 	 */
 	public function SetBgColorGrid($bg_colorgrid = array(255, 255, 255))
@@ -621,7 +716,7 @@ class DolGraph
 	/**
 	 * Get max value among all values of all series
 	 *
-	 * @return	int		Max value
+	 * @return	?float		Max value
 	 */
 	public function GetMaxValueInData()
 	{
@@ -651,7 +746,7 @@ class DolGraph
 	/**
 	 * Return min value of all values of all series
 	 *
-	 * @return	int		Min value of all data
+	 * @return	?float		Min value of all data
 	 */
 	public function GetMinValueInData()
 	{
@@ -1096,6 +1191,7 @@ class DolGraph
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
 		$series = array();
+		'@phan-var-force array<int,array{stacknum:int,legend:string,legendwithgroup:string}> $arrayofgroupslegend';
 		$arrayofgroupslegend = array();
 		//var_dump($this->data);
 
@@ -1110,12 +1206,12 @@ class DolGraph
 				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
 				$array_of_ykeys = array_keys($valarray);
 				$alabelexists = 1;
-				$tmpykey = explode('_', ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
+				$tmpykey = explode('_', (string) ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
 				if (isset($tmpykey[2]) && (!empty($tmpykey[2]) || $tmpykey[2] == '0')) {		// This is a 'Group by' array
 					$tmpvalue = (array_key_exists('y_' . $tmpykey[1] . '_' . $tmpykey[2], $valarray) ? $valarray['y_' . $tmpykey[1] . '_' . $tmpykey[2]] : $valarray[$i + 1]);
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
-						'stacknum' => $tmpykey[1],
+						'stacknum' => (int) $tmpykey[1],
 						'legend' => $this->Legend[$tmpykey[1]],
 						'legendwithgroup' => $this->Legend[$tmpykey[1]] . ' - ' . $tmpykey[2]
 					);
@@ -1251,12 +1347,18 @@ class DolGraph
 					if ($i > 0) {
 						$this->stringtoshow .= ', ' . "\n";
 					}
-					if (is_array($this->datacolor[$i])) {
+					if ($this->datacolor !== null) {
+						$datacolor_item = $this->datacolor[$i];
+					} else {
+						$datacolor_item = null;
+					}
+
+					if (is_array($datacolor_item) || $datacolor_item === null) {
 						$color = 'null'; // If datacolor is array(R, G, B)
 					} else {
-						$tmp = str_replace('#', '', $this->datacolor[$i]);
-						if (strpos($tmp, '-') !== false) {
-							$color = '#' . str_replace('-', '', $tmp); // If $val is '-123'
+						$tmpcolor = str_replace('#', '', $datacolor_item);
+						if (strpos($tmpcolor, '-') !== false) {
+							$color = '#' . str_replace('-', '', $tmpcolor); // If $val is '-123'
 						} else {
 							$color = 'null'; // If $val is '123' or '#123'
 						}
@@ -1430,6 +1532,7 @@ class DolGraph
 			$i = 0;
 			$iinstack = 0;
 			$oldstacknum = -1;
+			$color = '#000000';
 			while ($i < $nblot) {	// Loop on each series
 				$foundnegativecolor = 0;
 				$usecolorvariantforgroupby = 0;
@@ -1447,9 +1550,11 @@ class DolGraph
 				}
 
 				if ($usecolorvariantforgroupby) {
-					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
+					$idx = $arrayofgroupslegend[$i]['stacknum'];
+
+					$newcolor = $this->datacolor[$idx];
 					// If we change the stack
-					if ($oldstacknum == -1 || $arrayofgroupslegend[$i]['stacknum'] != $oldstacknum) {
+					if ($oldstacknum == -1 || $idx != $oldstacknum) {
 						$iinstack = 0;
 					}
 

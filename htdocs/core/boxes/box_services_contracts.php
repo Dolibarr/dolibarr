@@ -51,6 +51,9 @@ class box_services_contracts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoContractedProducts';
 	}
 
 	/**
@@ -199,12 +202,6 @@ class box_services_contracts extends ModeleBoxes
 					);
 
 					$i++;
-				}
-				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoContractedProducts").'</span>'
-					);
 				}
 
 				$this->db->free($result);
