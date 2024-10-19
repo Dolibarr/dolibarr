@@ -13303,7 +13303,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				return $objecttmp;	// returned an object without fetch
 			}
 		} else {
-			dol_syslog($element_prop['classname'].' doesn not exists in /'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
+			dol_syslog($element_prop['classname'].' doesn\'t exists in /'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 			return -1;
 		}
 	}
