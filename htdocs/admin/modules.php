@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Juanjo Menent			<jmenent@2byte.es>
@@ -861,11 +861,21 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
 			)
 		) {
-			$checkRes = $objMod->checkForUpdate();
+			$checkRes = $objMod->checkForUpdate();	// Check for update version
 			if ($checkRes > 0) {
 				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'mesgs');
 			} elseif ($checkRes < 0) {
 				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'warnings');
+			}
+		}
+
+		if ($objMod->isCoreOrExternalModule() == 'external' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
+			if (!is_numeric($checkRes) && $checkRes != '') {
+				$langs->load("errors");
+				var_dump($checkRes);
+				var_dump($langs->trans($checkRes));
+				setEventMessages($objMod->getName().' : '.$langs->trans($checkRes), null, 'errors');
 			}
 		}
 
