@@ -1302,10 +1302,9 @@ if ($mode == 'deploy') {
 
 			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
-			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance" checked="checked">';
-			print $langs->trans("CheckIfModuleIsNotBlackListed");
+			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance"'.(getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES') ? ' disabled="disabled"' : 'checked="checked"').'>';
+			print '<label for="checkforcompliance">'.$langs->trans("CheckIfModuleIsNotBlackListed").'</label>';
 			print '</span><br><br>';
-
 
 			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
