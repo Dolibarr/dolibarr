@@ -610,7 +610,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 					// # of line
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
 					}
 
 					// VAT Rate
