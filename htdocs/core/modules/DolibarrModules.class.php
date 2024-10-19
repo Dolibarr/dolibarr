@@ -2648,7 +2648,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (empty($conf->cache['noncompliantmodules'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-			$urlforblacklistmodules = 'www.dolibarr.org/_service_noncompliantmodules.php';
+			$urlforblacklistmodules = 'https://ping.dolibarr.org/modules-blacklist.txt';
 
 			$result = getURLContent($urlforblacklistmodules, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 			if (isset($result['content']) && $result['http_code'] == 200) {
@@ -2661,11 +2661,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$modulekey = strtolower($tmpfieldsofline[0]);
 					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
 					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
-					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[2]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[2]);
-					if (!empty($tmpfieldsofline[3])) {
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = $tmpfieldsofline[2];
+					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
+					if (!empty($tmpfieldsofline[4])) {
 						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');
 						$listofillegalurl = '';
-						foreach (explode(" ", $tmpfieldsofline[3]) as $illegalurl) {
+						foreach (explode(" ", $tmpfieldsofline[4]) as $illegalurl) {
 							$listofillegalurl .= ($listofillegalurl ? ' '.$langs->trans("or").' ' : '').'<b>'.preg_replace('/[^a-z0-9\.\-]/', '', $illegalurl).'</b>';
 						}
 						$message2 = str_replace('{s}', $listofillegalurl, $message2);
