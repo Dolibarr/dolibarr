@@ -1,0 +1,6 @@
+Technical ID,Ref.,First name,Last name,Company Name,Status,Email,Phone,Mobile,Fax,Address,Postcode,City,Country,State/Province,Source,Account,Contacts/Addresses,Project,Description,Note (public),Note (private),Creation date,Modification date,Created by,Updated by,Import id,
+1,LEAD2409-0001,Pratush,Raj,Company Name,1,pratush.raj@accellier.com,7903537260,,,Address,,,,,0,,,,,,,2024-09-19 15:10:48,2024-09-19 15:11:06,1,,,
+2,LEAD2409-0003,Pratush,Raj,Company Name,1,pratush.raj@accellier.com,7903537260,,,Address,,,7,684,0,147,202,760,,,,2024-09-20 16:27:01,2024-09-20 17:57:47,1,1,,
+3,LEAD2409-0002,Pratush,Raj,Company Name,1,pratush.raj@accellier.com,7903537260,,,Address,,,117,0,0,146,201,759,,,,2024-09-20 16:37:37,2024-09-24 16:27:25,1,1,,
+4,PROV4,New,Test,Var,0,p.raj@gmail.com,,,,,,,-1,0,1,,,,,,,2024-09-25 14:13:25,2024-09-25 14:13:25,1,1,,
+5,LEAD2409-0004,Test New,Com,Pratush Son's,1,pratushraj0@gmail.com,,,,,,,-1,0,0,148,203,761,,,,2024-09-25 19:55:30,2024-09-25 19:56:15,1,1,,
