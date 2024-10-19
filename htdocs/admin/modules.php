@@ -281,6 +281,30 @@ if ($action == 'install' && $allowonlineinstall) {
 		}
 	}
 
+	/*
+	if (!$error) {
+		if (GETPOST('checkforcompliance')) {
+			$dir = $dirins;
+			$file = $modulenameval;
+			// $installedmodule
+			try {
+				$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+				$modName = substr($file, 0, dol_strlen($file) - 10);
+				if ($modName) {
+					if (class_exists($modName)) {
+						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
+
+						//var_dump($objMod);
+					}
+				}
+			} catch(Exception $e) {
+				// Nothing done
+			}
+		}
+	}
+	*/
+
 	if (!$error) {
 		$searchParams = array(
 			'search_keyword' => $modulenameval,
@@ -887,7 +911,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
 			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
 			if (!is_numeric($checkRes) && $checkRes != '') {
 				$langs->load("errors");
