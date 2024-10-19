@@ -2748,6 +2748,7 @@ while ($i < $imaxinloop) {
 								$productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 							} else {
 								$generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
+								// @phan-suppress-next-line PhanTypeInvalidDimOffset
 								$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
 							}
 
