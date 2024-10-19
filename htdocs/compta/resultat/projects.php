@@ -694,7 +694,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
                 $column = 'e.date_valid';
             } else {
-                $sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_name, sum(pe.amount) as amount_ht, sum(pe.amount) as amount_ttc";
+                $sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_name, sum(DISTINCT pe.amount) as amount_ht, sum(DISTINCT pe.amount) as amount_ttc";
                 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
                 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
                 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
