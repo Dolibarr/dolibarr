@@ -215,32 +215,34 @@ if (isModEnabled('accounting')) {
 }
 $calcmode .= '</label>';
 
-
 report_header($name, '', $period, $periodlink, "", $builddate, $exportlink, array('modecompta'=>$modecompta, 'showaccountdetail'=>$showaccountdetail), $calcmode);
-
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
-}
 
 // Show report array
 $param = '&modecompta='.urlencode($modecompta).'&showaccountdetail='.urlencode($showaccountdetail);
+$search_date_url = '';
 if ($date_startday) {
 	$param .= '&date_startday='.$date_startday;
+    $search_date_url .= '&search_date_startday='.$date_startday;
 }
 if ($date_startmonth) {
 	$param .= '&date_startmonth='.$date_startmonth;
+    $search_date_url .= '&search_date_startmonth='.$date_startmonth;
 }
 if ($date_startyear) {
 	$param .= '&date_startyear='.$date_startyear;
+    $search_date_url .= '&search_date_startyear='.$date_startyear;
 }
 if ($date_endday) {
 	$param .= '&date_endday='.$date_endday;
+    $search_date_url .= '&search_date_endday='.$date_endday;
 }
 if ($date_endmonth) {
 	$param .= '&date_endmonth='.$date_endmonth;
+    $search_date_url .= '&search_date_endmonth='.$date_endmonth;
 }
 if ($date_endyear) {
 	$param .= '&date_endyear='.$date_endyear;
+    $search_date_url .= '&search_date_endyear='.$date_endyear;
 }
 
 print '<table class="liste noborder centpercent">';
@@ -318,22 +320,30 @@ if ($modecompta == 'BOOKKEEPING') {
         $i = 0;
         while ($i < $num) {
             $objp = $db->fetch_object($result);
-    
-            print '<tr class="oddeven">';
-            print '<td>&nbsp;</td>';
-            $project_name = empty($objp->project_name)? $langs->trans("None"): $objp->project_name;
-            print "<td>".$langs->trans("Project").' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$project_name."</td>\n";
-    
-            print '<td class="right">';
-            if ($modecompta == 'CREANCES-DETTES') {
-                print '<span class="amount">'.price($objp->amount_ht)."</span>";
+            echo '<tr class="oddeven">';
+            echo '<td>&nbsp;</td>';
+            echo "<td>".$langs->trans("Project")." ";
+            if(!empty($objp->project_name)) {
+                echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
             }
-            print "</td>\n";
-            print '<td class="right"><span class="amount">'.price($objp->amount_ttc)."</span></td>\n";
+            else {
+                echo $langs->trans("None");
+            }
+            $detailed_list_url = '?search_project_ref='.urlencode($search_project_ref);
+            $detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
+            $detailed_list_url .= $search_date_url;
+            echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
+            echo "</td>\n";
+            echo '<td class="right">';
+            if ($modecompta == 'CREANCES-DETTES') {
+                echo '<span class="amount">'.price($objp->amount_ht)."</span>";
+            }
+            echo "</td>\n";
+            echo '<td class="right"><span class="amount">'.price($objp->amount_ttc)."</span></td>\n";
     
             $total_ht += (isset($objp->amount_ht) ? $objp->amount_ht : 0);
             $total_ttc += $objp->amount_ttc;
-            print "</tr>\n";
+            echo "</tr>\n";
             $i++;
         }
         $db->free($result);
@@ -342,32 +352,32 @@ if ($modecompta == 'BOOKKEEPING') {
     }  
 
 	if ($total_ttc == 0) {
-		print '<tr class="oddeven">';
-		print '<td>&nbsp;</td>';
-		print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-		print '</tr>';
+		echo '<tr class="oddeven">';
+		echo '<td>&nbsp;</td>';
+		echo '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+		echo '</tr>';
 	}
 
 	$total_ht_income += $total_ht;
 	$total_ttc_income += $total_ttc;
 
-	print '<tr class="liste_total">';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td class="right">';
+	echo '<tr class="liste_total">';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td class="right">';
 	if ($modecompta == 'CREANCES-DETTES') {
-		print price($total_ht);
+		echo price($total_ht);
 	}
-	print '</td>';
-	print '<td class="right">'.price($total_ttc).'</td>';
-	print '</tr>';
+	echo '</td>';
+	echo '<td class="right">'.price($total_ttc).'</td>';
+	echo '</tr>';
 
 	/*
 	 * Donations
 	 */
 
      if (isModEnabled('don')) {
-        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
+        echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
     
         if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
             if ($modecompta == 'CREANCES-DETTES') {
@@ -418,24 +428,24 @@ if ($modecompta == 'BOOKKEEPING') {
                     $subtotal_ht += $obj->amount;
                     $subtotal_ttc += $obj->amount;
     
-                    print '<tr class="oddeven">';
-                    print '<td>&nbsp;</td>';
+                    echo '<tr class="oddeven">';
+                    echo '<td>&nbsp;</td>';
                     $project_name = empty($obj->project_name)? $langs->trans("None"): $obj->project_name;
-                    print "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".$obj->ref."\">".$project_name."</a></td>\n";
+                    echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".$obj->ref."\">".$project_name."</a></td>\n";
     
-                    print '<td class="right">';
+                    echo '<td class="right">';
                     if ($modecompta == 'CREANCES-DETTES') {
-                        print '<span class="amount">'.price($obj->amount).'</span>';
+                        echo '<span class="amount">'.price($obj->amount).'</span>';
                     }
-                    print '</td>';
-                    print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
-                    print '</tr>';
+                    echo '</td>';
+                    echo '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
+                    echo '</tr>';
                     $i++;
                 }
             } else {
-                print '<tr class="oddeven"><td>&nbsp;</td>';
-                print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-                print '</tr>';
+                echo '<tr class="oddeven"><td>&nbsp;</td>';
+                echo '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+                echo '</tr>';
             }
         } else {
             dol_print_error($db);
@@ -444,16 +454,16 @@ if ($modecompta == 'BOOKKEEPING') {
         $total_ht_income += $subtotal_ht;
         $total_ttc_income += $subtotal_ttc;
     
-        print '<tr class="liste_total">';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td class="right">';
+        echo '<tr class="liste_total">';
+        echo '<td></td>';
+        echo '<td></td>';
+        echo '<td class="right">';
         if ($modecompta == 'CREANCES-DETTES') {
-            print price($subtotal_ht);
+            echo price($subtotal_ht);
         }
-        print '</td>';
-        print '<td class="right">'.price($subtotal_ttc).'</td>';
-        print '</tr>';
+        echo '</td>';
+        echo '<td class="right">'.price($subtotal_ttc).'</td>';
+        echo '</tr>';
     }
     
 	/*
@@ -494,7 +504,7 @@ if ($modecompta == 'BOOKKEEPING') {
     $sql .= " GROUP BY project_name";
     $sql .= $db->order($sortfield, $sortorder);
     
-    print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
+    echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
     
     $subtotal_ht = 0;
     $subtotal_ttc = 0;
@@ -506,33 +516,43 @@ if ($modecompta == 'BOOKKEEPING') {
         if ($num > 0) {
             while ($i < $num) {
                 $objp = $db->fetch_object($result);
-    
-                $project_name = !empty($objp->project_name) ? $objp->project_name : $langs->trans("None");
-    
-                print '<tr class="oddeven">';
-                print '<td>&nbsp;</td>';
-                print "<td>".$langs->trans("Project").' <a href="'.DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid.'">'.$project_name.'</a></td>'."\n";
-    
-                print '<td class="right">';
-                if ($modecompta == 'CREANCES-DETTES') {
-                    print '<span class="amount">'.price(-$objp->amount_ht)."</span>";
+       
+                echo '<tr class="oddeven">';
+                echo '<td>&nbsp;</td>';
+
+                echo "<td>".$langs->trans("Project")." ";
+                if(!empty($objp->project_name)) {
+                    echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
                 }
-                print "</td>\n";
-                print '<td class="right"><span class="amount">'.price(-$objp->amount_ttc)."</span></td>\n";
+                else {
+                    echo $langs->trans("None");
+                }
+                $detailed_list_url = '?search_project='.urlencode($search_project_ref);
+                $detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
+                $detailed_list_url .= $search_date_url;
+                echo ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
+                echo "</td>\n";
+
+                echo '<td class="right">';
+                if ($modecompta == 'CREANCES-DETTES') {
+                    echo '<span class="amount">'.price(-$objp->amount_ht)."</span>";
+                }
+                echo "</td>\n";
+                echo '<td class="right"><span class="amount">'.price(-$objp->amount_ttc)."</span></td>\n";
     
                 $total_ht -= (isset($objp->amount_ht) ? $objp->amount_ht : 0);
                 $total_ttc -= $objp->amount_ttc;
                 $subtotal_ht += (isset($objp->amount_ht) ? $objp->amount_ht : 0);
                 $subtotal_ttc += $objp->amount_ttc;
     
-                print "</tr>\n";
+                echo "</tr>\n";
                 $i++;
             }
         } else {
-            print '<tr class="oddeven">';
-            print '<td>&nbsp;</td>';
-            print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-            print '</tr>';
+            echo '<tr class="oddeven">';
+            echo '<td>&nbsp;</td>';
+            echo '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+            echo '</tr>';
         }
     
         $db->free($result);
@@ -543,23 +563,23 @@ if ($modecompta == 'BOOKKEEPING') {
     $total_ht_outcome += $subtotal_ht;
     $total_ttc_outcome += $subtotal_ttc;
     
-    print '<tr class="liste_total">';
-    print '<td></td>';
-    print '<td></td>';
-    print '<td class="right">';
+    echo '<tr class="liste_total">';
+    echo '<td></td>';
+    echo '<td></td>';
+    echo '<td class="right">';
     if ($modecompta == 'CREANCES-DETTES') {
-        print price(-$subtotal_ht);
+        echo price(-$subtotal_ht);
     }
-    print '</td>';
-    print '<td class="right">'.price(-$subtotal_ttc).'</td>';
-    print '</tr>';
+    echo '</td>';
+    echo '<td class="right">'.price(-$subtotal_ttc).'</td>';
+    echo '</tr>';
     
     /*
     * Salaries
     */
 
     if (isModEnabled('salaries')) {
-        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
+        echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
         if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
             if ($modecompta == 'CREANCES-DETTES') {
@@ -620,22 +640,22 @@ if ($modecompta == 'BOOKKEEPING') {
                     $subtotal_ht += $obj->amount;
                     $subtotal_ttc += $obj->amount;
 
-                    print '<tr class="oddeven"><td>&nbsp;</td>';
-                    print "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($project_name)."\">".$project_name."</a></td>\n";
-                    print '<td class="right">';
+                    echo '<tr class="oddeven"><td>&nbsp;</td>';
+                    echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($project_name)."\">".$project_name."</a></td>\n";
+                    echo '<td class="right">';
                     if ($modecompta == 'CREANCES-DETTES') {
-                        print '<span class="amount">'.price(-$obj->amount).'</span>';
+                        echo '<span class="amount">'.price(-$obj->amount).'</span>';
                     }
-                    print '</td>';
-                    print '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
-                    print '</tr>';
+                    echo '</td>';
+                    echo '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
+                    echo '</tr>';
                     $i++;
                 }
             } else {
-                print '<tr class="oddeven">';
-                print '<td>&nbsp;</td>';
-                print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-                print '</tr>';
+                echo '<tr class="oddeven">';
+                echo '<td>&nbsp;</td>';
+                echo '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+                echo '</tr>';
             }
         } else {
             dol_print_error($db);
@@ -644,16 +664,16 @@ if ($modecompta == 'BOOKKEEPING') {
         $total_ht_outcome += $subtotal_ht;
         $total_ttc_outcome += $subtotal_ttc;
 
-        print '<tr class="liste_total">';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td class="right">';
+        echo '<tr class="liste_total">';
+        echo '<td></td>';
+        echo '<td></td>';
+        echo '<td class="right">';
         if ($modecompta == 'CREANCES-DETTES') {
-            print price(-$subtotal_ht);
+            echo price(-$subtotal_ht);
         }
-        print '</td>';
-        print '<td class="right">'.price(-$subtotal_ttc).'</td>';
-        print '</tr>';
+        echo '</td>';
+        echo '<td class="right">'.price(-$subtotal_ttc).'</td>';
+        echo '</tr>';
     }
 
 
@@ -665,7 +685,7 @@ if ($modecompta == 'BOOKKEEPING') {
         if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
             $langs->load('trips');
             if ($modecompta == 'CREANCES-DETTES') {
-                $sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.ref as project_name, sum(ed.total_ht) as amount_ht, sum(ed.total_ttc) as amount_ttc";
+                $sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_name, sum(ed.total_ht) as amount_ht, sum(ed.total_ttc) as amount_ttc";
                 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
                 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
                 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
@@ -674,7 +694,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
                 $column = 'e.date_valid';
             } else {
-                $sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.ref as project_name, sum(pe.amount) as amount_ht, sum(pe.amount) as amount_ttc";
+                $sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_name, sum(pe.amount) as amount_ht, sum(pe.amount) as amount_ttc";
                 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
                 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
                 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
@@ -697,7 +717,7 @@ if ($modecompta == 'BOOKKEEPING') {
             $sql .= $db->order($newsortfield, $sortorder);
         }
 
-        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
+        echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
 
         dol_syslog("by project, get expense report outcome");
         $result = $db->query($sql);
@@ -714,22 +734,34 @@ if ($modecompta == 'BOOKKEEPING') {
                     $subtotal_ht += $obj->amount_ht;
                     $subtotal_ttc += $obj->amount_ttc;
 
-                    print '<tr class="oddeven">';
-                    print '<td>&nbsp;</td>';
-                    print "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->rowid)."\">".$project_name."</a></td>\n";
-                    print '<td class="right">';
-                    if ($modecompta == 'CREANCES-DETTES') {
-                        print '<span class="amount">'.price(-$obj->amount_ht).'</span>';
+                    echo '<tr class="oddeven">';
+                    echo '<td>&nbsp;</td>';
+
+                    echo "<td>".$langs->trans("Project")." ";
+                    if(!empty($obj->project_name)) {
+                        echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->project_rowid.'">'.$obj->project_name.'</a>';
                     }
-                    print '</td>';
-                    print '<td class="right"><span class="amount">'.price(-$obj->amount_ttc).'</span></td>';
-                    print '</tr>';
+                    else {
+                        echo $langs->trans("None");
+                    }
+                    $detailed_list_url = '?id='.$obj->project_rowid;
+                    $detailed_list_url .= $search_date_url;
+                    echo ' (<a href="'.DOL_URL_ROOT.'/projet/element.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
+                    echo "</td>\n";
+
+                    echo '<td class="right">';
+                    if ($modecompta == 'CREANCES-DETTES') {
+                        echo '<span class="amount">'.price(-$obj->amount_ht).'</span>';
+                    }
+                    echo '</td>';
+                    echo '<td class="right"><span class="amount">'.price(-$obj->amount_ttc).'</span></td>';
+                    echo '</tr>';
                 }
             } else {
-                print '<tr class="oddeven">';
-                print '<td>&nbsp;</td>';
-                print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-                print '</tr>';
+                echo '<tr class="oddeven">';
+                echo '<td>&nbsp;</td>';
+                echo '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+                echo '</tr>';
             }
         } else {
             dol_print_error($db);
@@ -738,16 +770,16 @@ if ($modecompta == 'BOOKKEEPING') {
         $total_ht_outcome += $subtotal_ht;
         $total_ttc_outcome += $subtotal_ttc;
 
-        print '<tr class="liste_total">';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td class="right">';
+        echo '<tr class="liste_total">';
+        echo '<td></td>';
+        echo '<td></td>';
+        echo '<td class="right">';
         if ($modecompta == 'CREANCES-DETTES') {
-            print price(-$subtotal_ht);
+            echo price(-$subtotal_ht);
         }
-        print '</td>';
-        print '<td class="right">'.price(-$subtotal_ttc).'</td>';
-        print '</tr>';
+        echo '</td>';
+        echo '<td class="right">'.price(-$subtotal_ttc).'</td>';
+        echo '</tr>';
     }
 
 
@@ -762,7 +794,7 @@ if ($modecompta == 'BOOKKEEPING') {
         $subtotal_ht = 0;
         $subtotal_ttc = 0;
 
-        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VariousPayment").'</td></tr>';
+        echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VariousPayment").'</td></tr>';
 
         // Debit
         $sql = "SELECT p.rowid as rowid, p.ref as project_name, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
@@ -790,16 +822,16 @@ if ($modecompta == 'BOOKKEEPING') {
                         $total_ht_outcome += $obj->amount;
                         $total_ttc_outcome += $obj->amount;
                     }
-                    print '<tr class="oddeven">';
-                    print '<td>&nbsp;</td>';
-                    print "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
-                    print '<td class="right">';
+                    echo '<tr class="oddeven">';
+                    echo '<td>&nbsp;</td>';
+                    echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
+                    echo '<td class="right">';
                     if ($modecompta == 'CREANCES-DETTES') {
-                        print '<span class="amount">'.price(-$obj->amount).'</span>';
+                        echo '<span class="amount">'.price(-$obj->amount).'</span>';
                     }
-                    print '</td>';
-                    print '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
-                    print "</tr>\n";
+                    echo '</td>';
+                    echo '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
+                    echo "</tr>\n";
 
                     // Credit (payment received from customer for example)
                     if (isset($obj->amount)) {
@@ -809,36 +841,36 @@ if ($modecompta == 'BOOKKEEPING') {
                         $total_ht_income += $obj->amount;
                         $total_ttc_income += $obj->amount;
                     }
-                    print '<tr class="oddeven"><td>&nbsp;</td>';
-                    print "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
-                    print '<td class="right">';
+                    echo '<tr class="oddeven"><td>&nbsp;</td>';
+                    echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
+                    echo '<td class="right">';
                     if ($modecompta == 'CREANCES-DETTES') {
-                        print '<span class="amount">'.price($obj->amount).'</span>';
+                        echo '<span class="amount">'.price($obj->amount).'</span>';
                     }
-                    print '</td>';
-                    print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-                    print "</tr>\n";
+                    echo '</td>';
+                    echo '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+                    echo "</tr>\n";
                 }
             } else {
-                print '<tr class="oddeven">';
-                print '<td>&nbsp;</td>';
-                print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-                print '</tr>';
+                echo '<tr class="oddeven">';
+                echo '<td>&nbsp;</td>';
+                echo '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+                echo '</tr>';
             }
 
             // Total
             $total_ht += $subtotal_ht;
             $total_ttc += $subtotal_ttc;
-            print '<tr class="liste_total">';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td class="right">';
+            echo '<tr class="liste_total">';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '<td class="right">';
             if ($modecompta == 'CREANCES-DETTES') {
-                print price($subtotal_ht);
+                echo price($subtotal_ht);
             }
-            print '</td>';
-            print '<td class="right">'.price($subtotal_ttc).'</td>';
-            print '</tr>';
+            echo '</td>';
+            echo '<td class="right">'.price($subtotal_ttc).'</td>';
+            echo '</tr>';
         } else {
             dol_print_error($db);
         }
@@ -852,7 +884,7 @@ if ($modecompta == 'BOOKKEEPING') {
         $subtotal_ht = 0;
         $subtotal_ttc = 0;
 
-        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("PaymentLoan").'</td></tr>';
+        echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("PaymentLoan").'</td></tr>';
 
         $sql = 'SELECT pj.rowid as rowid, pj.ref as project_name, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) as amount FROM '.MAIN_DB_PREFIX.'payment_loan as p';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'loan AS l ON l.rowid = p.fk_loan';
@@ -872,13 +904,13 @@ if ($modecompta == 'BOOKKEEPING') {
             while ($obj = $db->fetch_object($result)) {
                 $project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
 
-                print '<tr class="oddeven"><td>&nbsp;</td>';
-                print "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
+                echo '<tr class="oddeven"><td>&nbsp;</td>';
+                echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
                 if ($modecompta == 'CREANCES-DETTES') {
-                    print '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
+                    echo '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
                 }
-                print '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
-                print "</tr>\n";
+                echo '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
+                echo "</tr>\n";
                 $subtotal_ht -= $obj->amount;
                 $subtotal_ttc -= $obj->amount;
             }
@@ -888,276 +920,20 @@ if ($modecompta == 'BOOKKEEPING') {
             $total_ht_income += $subtotal_ht;
             $total_ttc_income += $subtotal_ttc;
 
-            print '<tr class="liste_total">';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td class="right">';
+            echo '<tr class="liste_total">';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '<td class="right">';
             if ($modecompta == 'CREANCES-DETTES') {
-                print price($subtotal_ht);
+                echo price($subtotal_ht);
             }
-            print '</td>';
-            print '<td class="right">'.price($subtotal_ttc).'</td>';
-            print '</tr>';
+            echo '</td>';
+            echo '<td class="right">'.price($subtotal_ttc).'</td>';
+            echo '</tr>';
         } else {
             dol_print_error($db);
         }
     }
-
-    /*
-    * VAT
-    */
-
-    print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
-    $subtotal_ht = 0;
-    $subtotal_ttc = 0;
-    
-    if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')) {
-        if ($modecompta == 'CREANCES-DETTES') {
-            // VAT to pay
-            $amount = 0;
-            $sql = "SELECT pj.rowid, pj.ref as project_name, sum(f.total_tva) as amount";
-            $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet AS pj ON f.fk_projet = pj.rowid";
-            $sql .= " WHERE f.fk_statut IN (1,2)";
-            if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-                $sql .= " AND f.type IN (0,1,2,5)";
-            } else {
-                $sql .= " AND f.type IN (0,1,2,3,5)";
-            }
-            if (!empty($date_start) && !empty($date_end)) {
-                $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            }
-            $sql .= " AND f.entity IN (".getEntity('invoice').")";
-            $sql .= " GROUP BY project_name";
-            $sql .= " HAVING amount > 0.0";
-            $newsortfield = $sortfield;
-            if ($newsortfield == 's.nom, s.rowid') {
-                $newsortfield = 'project_name';
-            }
-            if ($newsortfield == 'amount_ht') {
-                $newsortfield = 'amount';
-            }
-            if ($newsortfield == 'amount_ttc') {
-                $newsortfield = 'amount';
-            }
-            $sql .= $db->order($newsortfield, $sortorder);
-    
-            dol_syslog("by project, get vat to pay", LOG_DEBUG);
-            $result = $db->query($sql);
-            if ($result) {
-                $num = $db->num_rows($result);
-                $i = 0;
-                if ($num) {
-                    while ($i < $num) {
-                        $obj = $db->fetch_object($result);
-                        $project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
-    
-                        $amount -= $obj->amount;
-                        $total_ttc -= $obj->amount;
-                        $subtotal_ttc -= $obj->amount;
-                        $i++;
-    
-                        print '<tr class="oddeven">';
-                        print '<td>&nbsp;</td>';
-                        print "<td>".$langs->trans("VATToPay")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->rowid)."\">".$project_name."</a></td>\n";
-                        print '<td class="right">&nbsp;</td>'."\n";
-                        print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-                        print "</tr>\n";
-                    }
-                }
-            } else {
-                dol_print_error($db);
-            }
-    
-            $total_ht_outcome -= 0;
-            $total_ttc_outcome -= $amount;
-    
-            // VAT to retrieve
-            $amount = 0;
-            $sql = "SELECT pj.rowid, pj.ref as project_name, sum(f.total_tva) as amount";
-            $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet AS pj ON f.fk_projet = pj.rowid";
-            $sql .= " WHERE f.fk_statut IN (1,2)";
-            if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-                $sql .= " AND f.type IN (0,1,2)";
-            } else {
-                $sql .= " AND f.type IN (0,1,2,3)";
-            }
-            if (!empty($date_start) && !empty($date_end)) {
-                $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            }
-            $sql .= " AND f.entity = ".$conf->entity;
-            $sql .= " GROUP BY project_name";
-            $sql .= " HAVING amount > 0.0";
-            $newsortfield = $sortfield;
-            if ($newsortfield == 's.nom, s.rowid') {
-                $newsortfield = 'project_name';
-            }
-            if ($newsortfield == 'amount_ht') {
-                $newsortfield = 'amount';
-            }
-            if ($newsortfield == 'amount_ttc') {
-                $newsortfield = 'amount';
-            }
-            $sql .= $db->order($newsortfield, $sortorder);
-    
-            dol_syslog("by project, get vat received back", LOG_DEBUG);
-            $result = $db->query($sql);
-            if ($result) {
-                $num = $db->num_rows($result);
-                $i = 0;
-                if ($num) {
-                    while ($i < $num) {
-                        $obj = $db->fetch_object($result);
-                        $project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
-    
-                        $amount += $obj->amount;
-                        $total_ttc += $obj->amount;
-                        $subtotal_ttc += $obj->amount;
-    
-                        $i++;
-    
-                        print '<tr class="oddeven">';
-                        print '<td>&nbsp;</td>';
-                        print "<td>".$langs->trans("VATToCollect")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->rowid)."\">".$project_name."</a></td>\n";
-                        print '<td class="right">&nbsp;</td>'."\n";
-                        print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-                        print "</tr>\n";
-                    }
-                }
-            } else {
-                dol_print_error($db);
-            }
-    
-            $total_ht_income += 0;
-            $total_ttc_income += $amount;
-        } else {
-            // VAT really already paid
-            $amount = 0;
-            $sql = "SELECT pj.ref as project_name, sum(t.amount) as amount";
-            $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet AS pj ON t.fk_projet = pj.rowid";
-            $sql .= " WHERE amount > 0";
-            if (!empty($date_start) && !empty($date_end)) {
-                $sql .= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
-            }
-            $sql .= " AND t.entity = ".$conf->entity;
-            $sql .= " GROUP BY project_name";
-            $newsortfield = $sortfield;
-            if ($newsortfield == 's.nom, s.rowid') {
-                $newsortfield = 'project_name';
-            }
-            if ($newsortfield == 'amount_ht') {
-                $newsortfield = 'amount';
-            }
-            if ($newsortfield == 'amount_ttc') {
-                $newsortfield = 'amount';
-            }
-            $sql .= $db->order($newsortfield, $sortorder);
-    
-            dol_syslog("by project, get vat really paid", LOG_DEBUG);
-            $result = $db->query($sql);
-            if ($result) {
-                $num = $db->num_rows($result);
-                $i = 0;
-                if ($num) {
-                    while ($i < $num) {
-                        $obj = $db->fetch_object($result);
-                        $project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
-    
-                        $amount -= $obj->amount;
-                        $total_ht -= $obj->amount;
-                        $total_ttc -= $obj->amount;
-                        $subtotal_ht -= $obj->amount;
-                        $subtotal_ttc -= $obj->amount;
-    
-                        $i++;
-    
-                        print '<tr class="oddeven">';
-                        print '<td>&nbsp;</td>';
-                        print "<td>".$langs->trans("VATPaid")." <a href=\"".DOL_URL_ROOT."/projet/list.php?search_project=".urlencode($project_name)."\">".$project_name."</a></td>\n";
-                        print '<td class="right"></td>'."\n";
-                        print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-                        print "</tr>\n";
-                    }
-                }
-                $db->free($result);
-            } else {
-                dol_print_error($db);
-            }
-    
-            $total_ht_outcome -= 0;
-            $total_ttc_outcome -= $amount;
-    
-            // VAT really received
-            $amount = 0;
-            $sql = "SELECT pj.ref as project_name, sum(t.amount) as amount";
-            $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet AS pj ON t.fk_projet = pj.rowid";
-            $sql .= " WHERE amount < 0";
-            if (!empty($date_start) && !empty($date_end)) {
-                $sql .= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
-            }
-            $sql .= " AND t.entity = ".$conf->entity;
-            $sql .= " GROUP BY project_name";
-            $newsortfield = $sortfield;
-            if ($newsortfield == 's.nom, s.rowid') {
-                $newsortfield = 'project_name';
-            }
-            if ($newsortfield == 'amount_ht') {
-                $newsortfield = 'amount';
-            }
-            if ($newsortfield == 'amount_ttc') {
-                $newsortfield = 'amount';
-            }
-            $sql .= $db->order($newsortfield, $sortorder);
-    
-            dol_syslog("by project, get vat really received back", LOG_DEBUG);
-            $result = $db->query($sql);
-            if ($result) {
-                $num = $db->num_rows($result);
-                $i = 0;
-                if ($num) {
-                    while ($i < $num) {
-                        $obj = $db->fetch_object($result);
-                        $project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
-    
-                        $amount += -$obj->amount;
-                        $total_ht += -$obj->amount;
-                        $total_ttc += -$obj->amount;
-                        $subtotal_ht += -$obj->amount;
-                        $subtotal_ttc += -$obj->amount;
-    
-                        $i++;
-    
-                        print '<tr class="oddeven">';
-                        print '<td>&nbsp;</td>';
-                        print "<td>".$langs->trans("VATCollected")." <a href=\"".DOL_URL_ROOT."/projet/list.php?search_project=".urlencode($project_name)."\">".$project_name."</a></td>\n";
-                        print '<td class="right"></td>'."\n";
-                        print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-                        print "</tr>\n";
-                    }
-                }
-                $db->free($result);
-            } else {
-                dol_print_error($db);
-            }
-    
-            $total_ht_income += 0;
-            $total_ttc_income += $amount;
-        }
-    }
-    
-    if ($mysoc->tva_assuj != '0') {	// Assujetti
-        print '<tr class="liste_total">';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td class="right">&nbsp;</td>';
-        print '<td class="right">'.price(price2num($subtotal_ttc, 'MT')).'</td>';
-        print '</tr>';
-    }
- 
-
 }
 
 $action = "balanceclient";
@@ -1168,42 +944,42 @@ $parameters["date_end"] = $date_end;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
 $reshook = $hookmanager->executeHooks('addBalanceLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-print $hookmanager->resPrint;
+echo $hookmanager->resPrint;
 
 
 
 // Total
-print '<tr>';
-print '<td colspan="'.($modecompta == 'BOOKKEEPING' ? 3 : 4).'">&nbsp;</td>';
-print '</tr>';
+echo '<tr>';
+echo '<td colspan="'.($modecompta == 'BOOKKEEPING' ? 3 : 4).'">&nbsp;</td>';
+echo '</tr>';
 
-print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Income").'</td>';
+echo '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Income").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<td class="liste_total right nowraponall">'.price(price2num($total_ht_income, 'MT')).'</td>';
+	echo '<td class="liste_total right nowraponall">'.price(price2num($total_ht_income, 'MT')).'</td>';
 } elseif ($modecompta == 'RECETTES-DEPENSES') {
-	print '<td></td>';
+	echo '<td></td>';
 }
-print '<td class="liste_total right nowraponall">'.price(price2num($total_ttc_income, 'MT')).'</td>';
-print '</tr>';
-print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
+echo '<td class="liste_total right nowraponall">'.price(price2num($total_ttc_income, 'MT')).'</td>';
+echo '</tr>';
+echo '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<td class="liste_total right nowraponall">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
+	echo '<td class="liste_total right nowraponall">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
 } elseif ($modecompta == 'RECETTES-DEPENSES') {
-	print '<td></td>';
+	echo '<td></td>';
 }
-print '<td class="liste_total right nowraponall">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
-print '</tr>';
-print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
+echo '<td class="liste_total right nowraponall">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
+echo '</tr>';
+echo '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<td class="liste_total right nowraponall">'.price(price2num($total_ht, 'MT')).'</td>';
+	echo '<td class="liste_total right nowraponall">'.price(price2num($total_ht, 'MT')).'</td>';
 } elseif ($modecompta == 'RECETTES-DEPENSES') {
-	print '<td></td>';
+	echo '<td></td>';
 }
-print '<td class="liste_total right nowraponall">'.price(price2num($total_ttc, 'MT')).'</td>';
-print '</tr>';
+echo '<td class="liste_total right nowraponall">'.price(price2num($total_ttc, 'MT')).'</td>';
+echo '</tr>';
 
-print "</table>";
-print '<br>';
+echo "</table>";
+echo '<br>';
 
 // End of page
 llxFooter();

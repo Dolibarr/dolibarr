@@ -396,6 +396,7 @@ CleanFixHistory=Remove accounting code from lines that not exists into charts of
 CleanHistory=Reset all bindings for selected year
 PredefinedGroups=Predefined groups
 ByProject=By project
+DetailedListLowercase=detailed list
 WithoutValidAccount=Without valid dedicated account
 WithValidAccount=With valid dedicated account
 ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
