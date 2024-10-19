@@ -973,6 +973,25 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Gesch√
 
 llxHeader('', $title, $help_url);
 
+print '<script>';
+print '$(document).ready(function() {';
+print '$("[id^=idprof]").on("paste", function(event) {';
+print 'event.preventDefault();';
+print 'var clipboardData = event.originalEvent.clipboardData || window.clipboardData;';
+print 'var pastedData = clipboardData.getData("Text");';
+print 'var sanitizedData = pastedData.replace(/\s+/g, "");';
+print 'var input = $(this);';
+print 'var currentValue = input.val();';
+print 'var newValue = currentValue + sanitizedData;';
+print 'var maxLength = input.attr("maxlength");';
+print 'if (maxLength && newValue.length > maxLength) {';
+print 'newValue = newValue.substring(0, maxLength);';
+print '}';
+print 'input.val(newValue);';
+print '});';
+print '});';
+print '</script>';
+
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $canvasdisplayaction = $action;
