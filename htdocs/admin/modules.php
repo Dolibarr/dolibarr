@@ -873,8 +873,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
 			if (!is_numeric($checkRes) && $checkRes != '') {
 				$langs->load("errors");
-				var_dump($checkRes);
-				var_dump($langs->trans($checkRes));
 				setEventMessages($objMod->getName().' : '.$langs->trans($checkRes), null, 'errors');
 			}
 		}
