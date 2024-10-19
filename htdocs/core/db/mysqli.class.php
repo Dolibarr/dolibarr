@@ -1290,11 +1290,13 @@ class DoliDBMysqli extends DoliDB
 
 
 // Protection if class mysqli doe not exists to avoid error
-if (!class_exists('mysqli'))
-{
+if (!class_exists('mysqli')) {
+	/**
+	 *	A dummy class to avoid error when class is not available
+	 */
 	class mysqli
 	{
-
+		// Empty content
 	}
 }
 
