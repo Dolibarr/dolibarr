@@ -377,6 +377,23 @@ if ($result) {
 			'code_compta' => $compta_soc
 		);
 
+		// After the line is processed
+		$parameters = array(
+			'obj' => $obj,
+			'tabfac' => &$tabfac,
+			'tabht' => &$tabht,
+			'tabtva' => &$tabtva,
+			'def_tva' => &$def_tva,
+			'tabwarranty' => &$tabwarranty,
+			'tabrevenuestamp' => &$tabrevenuestamp,
+			'tabttc' => &$tabttc,
+			'tablocaltax1' => &$tablocaltax1,
+			'tablocaltax2' => &$tablocaltax2,
+			'tabcompany' => &$tabcompany,
+			'vatdata_cache' => &$vatdata_cache,
+		);
+		$reshook = $hookmanager->executeHooks('processingJournalData', $parameters); // Note that $action and $object may have been modified by hook
+
 		$i++;
 
 		// Check for too many lines.
