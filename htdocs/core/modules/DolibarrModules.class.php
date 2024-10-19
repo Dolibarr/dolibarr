@@ -2713,7 +2713,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @param	string		$nametocheck		Name to check
 	 * @return 	int|string 						Return integer <0 if Error, 0 == not compliant, 'string' with message if module not compliant
 	 */
-	public function checkForCompliance($nametocheck)
+	public function checkForCompliance($nametocheck = '')
 	{
 		global $conf, $langs;
 
