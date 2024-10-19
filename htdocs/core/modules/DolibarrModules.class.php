@@ -2710,11 +2710,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * Check for module compliance with Dolibarr rules and law
 	 * If a module is reported by this function,it is surely a malware. Delete it as soon as possible.
 	 *
-	 * @return int|string 	Return integer <0 if Error, 0 == not compliant, 'string' with message if module not compliant
+	 * @param	string		$nametocheck		Name to check
+	 * @return 	int|string 						Return integer <0 if Error, 0 == not compliant, 'string' with message if module not compliant
 	 */
-	public function checkForCompliance()
+	public function checkForCompliance($nametocheck)
 	{
 		global $conf, $langs;
+
+		if (empty($nametocheck)) {
+			$nametocheck = $this->name;
+		}
 
 		// Get list of illegal modules name or ID
 		if (empty($conf->cache['noncompliantmodules'])) {
@@ -2749,7 +2754,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		if (!empty($conf->cache['noncompliantmodules'])) {
-			$modulekey = strtolower($this->name);
+			$modulekey = strtolower($nametocheck);
 			if (in_array($modulekey, array_keys($conf->cache['noncompliantmodules']))) {
 				$answer = trim($conf->cache['noncompliantmodules'][$modulekey]['message']);
 				if (!empty($conf->cache['noncompliantmodules'][$modulekey]['message2'])) {
