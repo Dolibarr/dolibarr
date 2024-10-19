@@ -49,9 +49,12 @@ if (empty($object) || !is_object($object)) {
 '
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
 @phan-var-force CommonObject $this
-@phan-var-force CommonObject $object
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force 0|1 $forceall
 @phan-var-force int $num
+@phan-var-force ?Product $product_static
+@phan-var-force string $text
+@phan-var-force string $description
 ';
 
 global $mysoc;
@@ -466,9 +469,14 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
-		if (!empty($product_static->accountancy_code_buy) ||
-			!empty($product_static->accountancy_code_buy_intra) ||
-			!empty($product_static->accountancy_code_buy_export)
+		if (
+			$product_static !== null
+			&&
+			(
+				!empty($product_static->accountancy_code_buy) ||
+				!empty($product_static->accountancy_code_buy_intra) ||
+				!empty($product_static->accountancy_code_buy_export)
+			)
 		) {
 			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$filters = array();

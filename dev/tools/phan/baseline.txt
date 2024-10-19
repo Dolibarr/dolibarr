@@ -9,11 +9,11 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 690+ occurrences
+    // PhanUndeclaredProperty : 680+ occurrences
     // PhanPluginUnknownPropertyType : 630+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 580+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 400+ occurrences
-    // PhanUndeclaredGlobalVariable : 360+ occurrences
+    // PhanUndeclaredGlobalVariable : 350+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 300+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 250+ occurrences
     // PhanPossiblyUndeclaredVariable : 200+ occurrences
@@ -42,9 +42,9 @@ return [
     // PhanPluginDuplicateExpressionBinaryOp : 7 occurrences
     // PhanParamTooMany : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
-    // PhanTypeExpectedObjectPropAccessButGotNull : 4 occurrences
     // PhanEmptyFQSENInClasslike : 3 occurrences
     // PhanInvalidFQSENInClasslike : 3 occurrences
+    // PhanTypeExpectedObjectPropAccessButGotNull : 3 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanTypeConversionFromArray : 1 occurrence
 
@@ -119,7 +119,7 @@ return [
         'htdocs/commande/class/api_orders.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/customer.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/commande/list.php' => ['PhanTypeInvalidDimOffset', 'PhanUndeclaredProperty'],
+        'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/commande/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/accounting-files.php' => ['PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
@@ -434,9 +434,8 @@ return [
         'htdocs/core/tpl/notes.tpl.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/object_discounts.tpl.php' => ['PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/objectline_create.tpl.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/core/tpl/objectline_edit.tpl.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/objectline_title.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanTypeExpectedObjectPropAccessButGotNull', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/onlinepaymentlinks.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/passwordforgotten.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],

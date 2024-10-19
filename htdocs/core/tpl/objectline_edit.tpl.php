@@ -40,8 +40,13 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
 '
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
+@phan-var-force ThirdParty $seller
+@phan-var-force ThirdParty $buyer
+@phan-var-force string $var
 ';
 
 $usemargins = 0;
@@ -210,6 +215,7 @@ $coldisplay++;
 
 	// VAT Rate
 	$coldisplay++;
+	$type_tva = null;
 	if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
 		$type_tva = 1;
 	} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
@@ -371,6 +377,8 @@ $coldisplay++;
 	<td colspan="<?php echo $coldisplay - (!getDolGlobalString('MAIN_VIEW_LINE_NUMBER') ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$prefillDates = false;
+	$date_start_prefill = 0;
+	$date_end_prefill = 0;
 	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines) && $i > 0) {
 		for ($j = $i - 1; $j >= 0; $j--) {
 			$lastline = $object->lines[$j];
