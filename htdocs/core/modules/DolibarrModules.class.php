@@ -2559,7 +2559,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
 					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[2]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[2]);
 					if (!empty($tmpfieldsofline[3])) {
-						$conf->cache['noncompliantmodules'][$modulekey]['message2'] = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", $tmpfieldsofline[3]);
+						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');
+						$listofillegalurl = '';
+						foreach (explode(" ", $tmpfieldsofline[3]) as $illegalurl) {
+							$listofillegalurl .= ($listofillegalurl ? ' '.$langs->trans("or").' ' : '').'<b>'.preg_replace('/[^a-z0-9\.\-]/', '', $illegalurl).'</b>';
+						}
+						$message2 = str_replace('{s}', $listofillegalurl, $message2);
+						$conf->cache['noncompliantmodules'][$modulekey]['message2'] = $message2;
 					}
 				}
 			}
