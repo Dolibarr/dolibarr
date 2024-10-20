@@ -355,25 +355,9 @@ class Hook extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			//$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	/*public function fetchLines()
-	{
-		$this->lines=array();
-
-		// Load lines with object MyObjectLine
-
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -385,7 +369,7 @@ class Hook extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return Hook[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
