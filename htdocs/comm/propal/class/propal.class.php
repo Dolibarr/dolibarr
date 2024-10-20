@@ -3718,7 +3718,7 @@ class Propal extends CommonObject
 			return ['optimize' => $langs->trans("Proposal")];
 		}
 		if ($user->hasRight('propal', 'lire')) {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
+			$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly').'<u>'.$langs->trans("Proposal").'</u>';
 			if (isset($this->status)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
