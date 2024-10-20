@@ -83,12 +83,12 @@ class Task extends CommonObjectLine
 	public $description;
 
 	/**
-	 * @var float|'' total of time spent on this task
+	 * @var int|'' total of time spent on this task (in seconds)
 	 */
 	public $duration_effective;
 
 	/**
-	 * @var float|'' planned workload
+	 * @var int|'' planned workload (in seconds)
 	 */
 	public $planned_workload;
 
