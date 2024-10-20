@@ -10,8 +10,8 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 640+ occurrences
-    // PhanPluginUnknownPropertyType : 630+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 580+ occurrences
+    // PhanPluginUnknownPropertyType : 570+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 400+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 300+ occurrences
@@ -33,10 +33,10 @@ return [
     // PhanUndeclaredMethod : 15+ occurrences
     // PhanEmptyForeach : 10+ occurrences
     // PhanPluginConstantVariableNull : 10+ occurrences
-    // PhanPossiblyNullTypeMismatchProperty : 10+ occurrences
     // PhanTypeArraySuspiciousNull : 10+ occurrences
     // PhanTypeComparisonFromArray : 10+ occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
+    // PhanPossiblyNullTypeMismatchProperty : 9 occurrences
     // PhanPluginBothLiteralsBinaryOp : 8 occurrences
     // PhanPluginSuspiciousParamPosition : 8 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 7 occurrences
@@ -491,7 +491,7 @@ return [
         'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanPossiblyUndeclaredVariable', 'PhanUndeclaredProperty'],
         'htdocs/emailcollector/class/emailcollectoraction.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/emailcollector/class/emailcollectorfilter.class.php' => ['PhanPluginUnknownPropertyType'],
-        'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanPluginUnknownPropertyType', 'PhanPossiblyNullTypeMismatchProperty', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/eventorganization/conferenceorbooth_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/eventorganization/conferenceorbooth_contact.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/eventorganization/conferenceorbooth_list.php' => ['PhanTypeMismatchArgumentProbablyReal'],
@@ -532,7 +532,6 @@ return [
         'htdocs/fourn/class/api_supplier_orders.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/class/fournisseur.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredProperty'],
-        'htdocs/fourn/class/fournisseur.facture-rec.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
         'htdocs/fourn/class/paiementfourn.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/commande/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/fourn/commande/contact.php' => ['PhanUndeclaredGlobalVariable'],
@@ -639,7 +638,6 @@ return [
         'htdocs/product/class/html.formproduct.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/product/class/product.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/product/class/productbatch.class.php' => ['PhanPluginEmptyStatementIf', 'PhanPluginUnknownPropertyType'],
-        'htdocs/product/class/productcustomerprice.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType'],
         'htdocs/product/class/productfournisseurprice.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/product/class/propalmergepdfproduct.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/product/document.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredGlobalVariable'],
