@@ -7,7 +7,8 @@
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,6 @@ class Notify
 	 * @var string context
 	 */
 	public $context;
-
 
 	/**
 	 * @var int		ID of event action that trigger the notification
@@ -448,12 +448,12 @@ class Notify
 	/**
 	 * Return number of notifications activated, for all or a given action code (and third party)
 	 *
-	 * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-	 * @param	int		$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
-	 * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
-	 * @param	int		$userid         Id of user or 0 for all users or -1 for no users
-	 * @param   array   $scope          Scope where to search
-	 * @return	array|int				Return integer <0 if KO, array of notifications to send if OK
+	 * @param	string			$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+	 * @param	int				$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
+	 * @param	CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
+	 * @param	int				$userid         Id of user or 0 for all users or -1 for no users
+	 * @param   array   		$scope          Scope where to search
+	 * @return	array|int						Return integer <0 if KO, array of notifications to send if OK
 	 */
 	public function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
 	{
@@ -609,7 +609,6 @@ class Notify
 			return -1;
 		}
 
-		//var_dump($resarray);
 		return $resarray;
 	}
 
@@ -722,7 +721,7 @@ class Notify
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$projtitle = '';
-			if (is_object($object->project) || $object->fetch_project() > 0) {
+			if (is_object($object->project) || $object->fetchProject() > 0) {
 				$projtitle = '('.$object->project->title.')';
 			}
 
