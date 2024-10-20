@@ -5,6 +5,7 @@
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ if (isModEnabled('holiday')) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager = new HookManager($db);
 
-$hookmanager->initHooks('hrmindex');
+$hookmanager->initHooks(array('hrmindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
@@ -122,15 +123,15 @@ print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This is useless due to the global search combo
 	if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$langs->load("holiday");
-		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
+		$listofsearchfields['search_holiday'] = array('text' => 'TitreRequestCP');
 	}
 	if (isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')) {
 		$langs->load("trips");
-		$listofsearchfields['search_deplacement'] = array('text'=>'ExpenseReport');
+		$listofsearchfields['search_deplacement'] = array('text' => 'ExpenseReport');
 	}
 	if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
 		$langs->load("trips");
-		$listofsearchfields['search_expensereport'] = array('text'=>'ExpenseReport');
+		$listofsearchfields['search_expensereport'] = array('text' => 'ExpenseReport');
 	}
 	if (count($listofsearchfields)) {
 		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -217,10 +218,10 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$userstatic = new User($db);
 
 		$listhalfday = array(
-			'morning'=>$langs->trans("Morning"),
-			'morningshort'=>$langs->trans("Morning"),
-			"afternoon"=>$langs->trans("Afternoon"),
-			"afternoonshort"=>$langs->trans("Afternoon")
+			'morning' => $langs->trans("Morning"),
+			'morningshort' => $langs->trans("Morning"),
+			"afternoon" => $langs->trans("Afternoon"),
+			"afternoonshort" => $langs->trans("Afternoon")
 		);
 
 		$typeleaves = $holidaystatic->getTypes(1, -1);
@@ -384,7 +385,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	$staticrecruitmentcandidature = new RecruitmentCandidature($db);
 	$staticrecruitmentjobposition = new RecruitmentJobPosition($db);
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status,";
-	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
+	$sql .= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
 	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {

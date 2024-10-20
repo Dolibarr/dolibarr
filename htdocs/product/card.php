@@ -513,7 +513,7 @@ if (empty($reshook)) {
 			$units = GETPOSTINT('units');
 
 			$object->entity				= $conf->entity;
-			$object->ref				= $ref;
+			$object->ref				= (string) $ref;
 			$object->label				= GETPOST('label', $label_security_check);
 			$object->price_base_type	= GETPOST('price_base_type', 'aZ09');
 			$object->mandatory_period	= !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
@@ -753,7 +753,7 @@ if (empty($reshook)) {
 				$object->oldcopy = dol_clone($object, 1);
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-					$object->ref                = $ref;
+					$object->ref                = (string) $ref;
 				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
@@ -772,7 +772,7 @@ if (empty($reshook)) {
 				$object->qc_frequency           = GETPOSTINT('qc_frequency');
 				$object->status                 = GETPOSTINT('statut');
 				$object->status_buy             = GETPOSTINT('statut_buy');
-				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->status_batch = GETPOSTINT('status_batch');
 				$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOSTINT('fk_default_warehouse');
@@ -1462,10 +1462,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('productbatch')) {
 				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
-				print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
+				print $form->selectarray('status_batch', $statutarray, GETPOSTINT('status_batch'));
 				print '</td></tr>';
 				// Product specific batch number management
-				$status_batch = GETPOST('status_batch');
+				$status_batch = GETPOSTINT('status_batch');
 				if ($status_batch !== '0') {
 					$langs->load("admin");
 					$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
@@ -2029,7 +2029,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 
-						print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch);
+						print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOSTINT('status_batch') : $object->status_batch);
 
 						print '<span id="statusBatchWarning" class="warning" style="display: none;">';
 						print img_warning().'&nbsp;'.$langs->trans("WarningConvertFromBatchToSerial").'</span>';
