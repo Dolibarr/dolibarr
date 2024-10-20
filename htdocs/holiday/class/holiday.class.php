@@ -1116,6 +1116,13 @@ class Holiday extends CommonObject
 		}
 
 		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('HOLIDAY_MODIFY', $user);

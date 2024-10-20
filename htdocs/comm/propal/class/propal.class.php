@@ -954,7 +954,7 @@ class Propal extends CommonObject
 				$price = (float) $pu - $remise;
 			}
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
 			$line->fetch($rowid);
 

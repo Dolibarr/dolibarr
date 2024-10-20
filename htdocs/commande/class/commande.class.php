@@ -3230,7 +3230,7 @@ class Commande extends CommonOrder
 				$price = ((float) $pu - $remise);
 			}
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();

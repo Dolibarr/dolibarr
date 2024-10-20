@@ -641,7 +641,7 @@ class ProductAttribute extends CommonObject
 
 		$this->db->begin();
 
-		//Fetch current line from the database and then clone the object and set it in $oldcopy property
+		// Fetch current line from the database and then clone the object and set it in $oldcopy property
 		$this->line = new ProductAttributeValue($this->db);
 
 		// Position to use
@@ -691,7 +691,7 @@ class ProductAttribute extends CommonObject
 
 		$this->db->begin();
 
-		//Fetch current line from the database and then clone the object and set it in $oldcopy property
+		// Fetch current line from the database and then clone the object and set it in $oldcopy property
 		$this->line = new ProductAttributeValue($this->db);
 		$result = $this->line->fetch($lineid);
 		if ($result > 0) {
@@ -732,7 +732,7 @@ class ProductAttribute extends CommonObject
 
 		$this->db->begin();
 
-		//Fetch current line from the database
+		// Fetch current line from the database
 		$this->line = new ProductAttributeValue($this->db);
 		$result = $this->line->fetch($lineid);
 		if ($result > 0) {

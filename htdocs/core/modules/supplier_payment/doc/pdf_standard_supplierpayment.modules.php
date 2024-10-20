@@ -138,6 +138,11 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {

@@ -1642,7 +1642,8 @@ if (!empty($arrayfields['staff.code']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['legalform.code']['checked'])) {
-	print_liste_field_titre($arrayfields['legalform.code']['label'], $_SERVER["PHP_SELF"], "legalform.code", "", $param, '', $sortfield, $sortorder);
+	// s.fk_forme_juridique as legalform_code
+	print_liste_field_titre($arrayfields['legalform.code']['label'], $_SERVER["PHP_SELF"], "legalform_code", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.price_level']['checked'])) {
@@ -1930,6 +1931,7 @@ while ($i < $imaxinloop) {
 					$userstatic->user_mobile = $val['user_mobile'];
 					$userstatic->job = $val['job'];
 					$userstatic->gender = $val['gender'];
+					$userstatic->statut = $val['statut'];
 					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
 					if ($j < $nbofsalesrepresentative) {

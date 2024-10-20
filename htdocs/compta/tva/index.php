@@ -285,6 +285,12 @@ if ($refresh === true) {
 		$x_both = array();
 		//now, from these two arrays, get another array with one rate per line
 		foreach (array_keys($x_coll) as $my_coll_rate) {
+			$x_both[$my_coll_rate] = array(
+				'coll' => array(),
+				'paye' => array(),
+				'detail' => array(),
+				'ptype' => array(),
+			);
 			$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 			$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 			$x_both[$my_coll_rate]['paye']['totalht'] = 0;
@@ -430,7 +436,7 @@ if ($refresh === true) {
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_coll_total_ht += $temp_ht;
 				$subtot_coll_vat += $temp_vat;

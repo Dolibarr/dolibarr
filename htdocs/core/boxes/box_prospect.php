@@ -60,6 +60,9 @@ class box_prospect extends ModeleBoxes
 		}
 
 		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/societe/card.php?action=create&type=p';
+		$this->msgNoRecords = 'NoRecordedProspects';
 	}
 
 	/**
@@ -151,13 +154,6 @@ class box_prospect extends ModeleBoxes
 					);
 
 					$line++;
-				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedProspects").'</span>'
-					);
 				}
 
 				$this->db->free($resql);

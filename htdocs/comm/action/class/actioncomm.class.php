@@ -2703,6 +2703,7 @@ class ActionComm extends CommonObject
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
+					if ($res > 0) $res = $this->fetch_thirdparty();
 					if ($res > 0) {
 						// PREPARE EMAIL
 						$errormesg = '';

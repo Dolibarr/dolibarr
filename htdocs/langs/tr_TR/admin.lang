@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Faturalarda İsviçre QR-Bill kodunu gösterin (kredi 
 INVOICE_ADD_SWISS_QR_CODEMore=İsviçre'nin faturalara ilişkin standardı; ZIP ve Şehir bilgilerinin doldurulduğundan ve hesapların geçerli İsviçre/Lihtenştayn IBAN'larına sahip olduğundan emin olun.
 INVOICE_ADD_EPC_QR_CODE=Faturalarda EPC QR kodunu gösterin (kredi transferi için tanımlanmış bir banka hesabıyla)
 INVOICE_ADD_EPC_QR_CODEMore=Bu özellik, faturalarınıza otomatik SEPA kredi transferlerini kolaylaştıran bir EPC QR Kodu eklemenizi veya kaldırmanızı sağlar. Bu seçeneğin etkinleştirilmesi, müşterilerinizin QR kodunu tarayarak kolayca ödeme yapmasına yardımcı olur ve manuel giriş hatalarını azaltır. Bu sistemin desteklendiği Avusturya, Belçika, Finlandiya, Almanya ve Hollanda gibi ülkelerde müşterileriniz varsa bu özelliği kullanın. Ticari faaliyetleriniz veya müşteri tabanınız için gerekli değilse bunu devre dışı bırakın.
-INVOICE_ADD_EPC_QR_CODEPay=EPC QR koduyla ödemeyi destekleyen bir akıllı telefonla ödeme yapmak için bu QR kodunu tarayın.
 INVOICE_SHOW_SHIPPING_ADDRESS=Teslimat adresini göster
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Bazı ülkelerde zorunlu gösterge (Fransa, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Teklifte fatura ilgilisini göster
