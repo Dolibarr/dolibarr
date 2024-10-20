@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016      Jean-François Ferry  <hello@librethic.io>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,15 @@ class TicketStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
-	public $userid;
 
-	public $from;
-	public $field;
-	public $where;
+	/**
+	 * @var int User ID
+	 */
+	public $userid;
 
 	/**
 	 * Constructor
@@ -106,7 +110,7 @@ class TicketStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -127,7 +131,7 @@ class TicketStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
