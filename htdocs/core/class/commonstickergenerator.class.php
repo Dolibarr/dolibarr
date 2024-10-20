@@ -253,7 +253,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * Convert units (in to mm, mm to in)
 	 * $src and $dest must be 'in' or 'mm'
 	 *
-	 * @param int       $value  value
+	 * @param float     $value  value
 	 * @param string    $src    from ('in' or 'mm')
 	 * @param string    $dest   to ('in' or 'mm')
 	 * @return float    value   value after conversion
