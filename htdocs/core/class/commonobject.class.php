@@ -5265,7 +5265,7 @@ abstract class CommonObject
 
 		$i = 0;
 
-		print "<!-- begin printObjectLines() --><tbody>\n";
+		print "<!-- begin printObjectLines() -->\n";
 		foreach ($this->lines as $line) {
 			//Line extrafield
 			$line->fetch_optionals();
@@ -5286,7 +5286,7 @@ abstract class CommonObject
 
 			$i++;
 		}
-		print "</tbody><!-- end printObjectLines() -->\n";
+		print "<!-- end printObjectLines() -->\n";
 	}
 
 	/**

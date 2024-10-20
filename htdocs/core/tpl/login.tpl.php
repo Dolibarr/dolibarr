@@ -40,6 +40,27 @@ if ($size > 10000) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+'
+@phan-var-force string $captcha_refresh
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_hide_topmenu
+@phan-var-force int<0,1> $dol_no_mouse_hover
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force int<0,1> $dol_use_jmobile
+@phan-var-force string $focus_element
+@phan-var-force string $helpcenterlink
+@phan-var-force string $login
+@phan-var-force string $main_authentication
+@phan-var-force string $main_home
+@phan-var-force string $password
+@phan-var-force string $session_name
+@phan-var-force string $titletruedolibarrversion
+@phan-var-force string $urllogo
+
+@phan-var-force int<0,1> $forgetpasslink
+@phan-var-force int<0,1> $helpcenterlink
+';
+
 
 header('Cache-Control: Public, must-revalidate');
 

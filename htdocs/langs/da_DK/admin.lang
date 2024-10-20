@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Vis den schweiziske QR-Bill-kode på fakturaer (med en
 INVOICE_ADD_SWISS_QR_CODEMore=Schweiz' standard for fakturaer; sørg for, at ZIP & City er udfyldt, og at konti har gyldige schweiziske/liechtensteinske IBAN.
 INVOICE_ADD_EPC_QR_CODE=Vis EPC QR-koden på fakturaer (med en bankkonto defineret til kreditoverførsel)
 INVOICE_ADD_EPC_QR_CODEMore=Denne funktion giver dig mulighed for at tilføje eller fjerne en EPC QR-kode på dine fakturaer, hvilket letter automatiske SEPA-kreditoverførsler. Aktivering af denne mulighed hjælper dine kunder med at foretage betalinger nemt ved at scanne QR-koden, hvilket reducerer manuelle indtastningsfejl. Brug denne funktion, hvis du har kunder i lande som Østrig, Belgien, Finland, Tyskland og Holland, hvor dette system understøttes. Deaktiver det, hvis det ikke er nødvendigt for din virksomhedsdrift eller kundebase.
-INVOICE_ADD_EPC_QR_CODEPay=Scan denne QR-kode for at betale med en smartphone, der understøtter betaling med EPC QR-kode.
 INVOICE_SHOW_SHIPPING_ADDRESS=Vis leveringsadresse
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Obligatorisk angivelse i nogle lande (Frankrig, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Vis faktureringskontakt på forslag
