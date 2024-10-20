@@ -532,7 +532,6 @@ return [
         'htdocs/fourn/class/api_supplier_orders.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/class/fournisseur.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredProperty'],
-        'htdocs/fourn/class/fournisseur.facture-rec.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
         'htdocs/fourn/class/paiementfourn.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/commande/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/fourn/commande/contact.php' => ['PhanUndeclaredGlobalVariable'],
