@@ -125,7 +125,7 @@ if ($resql) {
 			if (($obj->email != $oldemail || $obj->uid != $olduid) || $oldemail == 'none') {
 				// Break onto sales representative (new email or uid)
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
-					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
+					envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative);
 				} else {
 					if ($oldemail != 'none') {
 						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -173,7 +173,7 @@ if ($resql) {
 		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
+				envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative);
 			} else {
 				if ($oldemail != 'none') {
 					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
