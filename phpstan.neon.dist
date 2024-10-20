@@ -96,7 +96,6 @@ parameters:
 		- '# (envoi_mail|sendEmailTo) expects string, \(float\|int\) given.#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
-		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
