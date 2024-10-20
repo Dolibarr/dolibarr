@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Cerca fornitore fatture non retribuito c
 SendEmailsRemindersOnSupplierInvoiceDueDate=Invia promemoria tramite email per e non pagato fornitore fatture
 PaymentMadeForSeveralInvoices=pagamento realizzato per diversi fatture
 SituationInvoiceProgressCurrent=fattura progresso
+INVOICE_ADD_EPC_QR_CODEPay=Scansiona questo QR codice per pagare con uno smartphone che supporta pagamento con EPC QR codice.

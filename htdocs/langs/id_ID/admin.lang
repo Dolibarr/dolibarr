@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Tunjukkan kode QR-Bill swiss pada faktur (dengan reken
 INVOICE_ADD_SWISS_QR_CODEMore=Standar faktur Swiss; pastikan ZIP & Kota terisi dan akun tersebut memiliki IBAN Swiss/Liechtenstein yang valid.
 INVOICE_ADD_EPC_QR_CODE=Tunjukkan kode QR EPC pada faktur (dengan rekening bank yang ditentukan untuk transfer kredit)
 INVOICE_ADD_EPC_QR_CODEMore=Fitur ini memungkinkan Anda untuk menambah atau menghapus Kode QR EPC pada faktur Anda, yang memfasilitasi transfer kredit SEPA otomatis. Mengaktifkan opsi ini membantu klien Anda melakukan pembayaran dengan mudah dengan memindai kode QR, sehingga mengurangi kesalahan entri manual. Gunakan fitur ini jika Anda memiliki klien di negara seperti Austria, Belgia, Finlandia, Jerman, dan Belanda yang mendukung sistem ini. Nonaktifkan jika tidak diperlukan untuk operasi bisnis atau basis klien Anda.
-INVOICE_ADD_EPC_QR_CODEPay=Pindai kode QR ini untuk membayar dengan smartphone yang mendukung pembayaran dengan kode QR EPC.
 INVOICE_SHOW_SHIPPING_ADDRESS=Tampilkan alamat pengiriman
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Indikasi wajib di beberapa negara (Prancis, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Show billing contact on proposal
