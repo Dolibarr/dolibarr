@@ -104,7 +104,6 @@ parameters:
 		- '#::(_validateMyObject|select_company)\(\) expects array<string#'
 		- '# getCommonSubstitutionArray expects array#'
 		- '# ldap_search expects array\|LDAP#'
-		- '# ajax_combobox expects array#'
 		- '# FormWebPortal::selectForForms\(\) expects int, array#'
 		- '# Lettering::getBankLinesFromFkDocAndDocType\(\) expects array#'
 		- '# (Odf) constructor expects #'
