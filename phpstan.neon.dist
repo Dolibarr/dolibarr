@@ -115,7 +115,6 @@ parameters:
 		- '#(?:ldap_(?:(?:ad|bin)d|delete|err(?:no|or)|first_entry|get_(?:(?:attribut|entri)es|(?:optio|values_le)n)|mod_(?:add|del|replace)|rename|set_option|unbind)) expects LDAP\\Connection#'
 		- '#(?:MultiCurrencies::_cleanObjectDatasRate\(\)) expects MultiCurrency#'
 		- '# (?:pdf_(?:(?:eagle_proforma::drawTotalTable|muscadet::_tableau_tot)\(\))) expects Facture#'
-		- '# (?:salaries_prepare_head) expects Paiement#'
 		- '# (?:pg_(?:affected_rows|f(?:etch_(?:array|object|row)|ree_result)|num_rows)) expects PgSql\\Result#'
 		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot|societe_prepare_head) expects Societe#'
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
