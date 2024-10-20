@@ -13,7 +13,7 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 }
 // Show total line
 if (isset($totalarray['pos'])) {
-	print '<tfoot>';
+	//print '<tfoot>';
 	print '<tr class="liste_total">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
@@ -86,7 +86,7 @@ if (isset($totalarray['pos'])) {
 			}
 		}
 	}
-	print '</tfoot>';
+	//print '</tfoot>';
 }
 
 /** print a total cell value according to its type

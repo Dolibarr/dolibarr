@@ -59,10 +59,10 @@ class ActionsStripeconnect extends CommonHookActions
 	/**
 	 * formObjectOptions
 	 *
-	 * @param	array			$parameters		Parameters
-	 * @param	CommonObject	$object			Object
-	 * @param	string			$action			Action
-	 * @return int
+	 * @param	array<string,mixed>	$parameters		Parameters
+	 * @param	CommonObject		$object			Object
+	 * @param	string				$action			Action
+	 * @return	int
 	 */
 	public function formObjectOptions($parameters, &$object, &$action)
 	{
@@ -82,6 +82,7 @@ class ActionsStripeconnect extends CommonHookActions
 		}
 
 		if (is_object($object) && $object->element == 'societe') {
+			'@phan-var-force Societe $object';
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
@@ -99,6 +100,7 @@ class ActionsStripeconnect extends CommonHookActions
 			}
 			$this->resprints .= '</td></tr>';
 		} elseif ($object instanceof CommonObject && $object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
@@ -133,6 +135,7 @@ class ActionsStripeconnect extends CommonHookActions
 			}
 			$this->resprints .= '</td></tr>';
 		} elseif ($object instanceof CommonObject && $object->element == 'adherent_type') {
+			'@phan-var-force Adherent $object';
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('PlanStripe');
@@ -157,9 +160,9 @@ class ActionsStripeconnect extends CommonHookActions
 	/**
 	 * addMoreActionsButtons
 	 *
-	 * @param array	 	$parameters	Parameters
-	 * @param Object	$object		Object
-	 * @param string	$action		action
+	 * @param array<string,mixed> 	$parameters	Parameters
+	 * @param Object				$object		Object
+	 * @param string				$action		action
 	 * @return int					0
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action)

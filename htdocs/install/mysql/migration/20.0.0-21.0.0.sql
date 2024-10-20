@@ -45,6 +45,9 @@ ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
 
+ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+
+
 
 -- V21 migration
 
@@ -157,6 +160,7 @@ ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP
 
 ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_extrafields ADD COLUMN module varchar(64);
 
 
 -- Copy categories from llx_category_bank into llx_categorie

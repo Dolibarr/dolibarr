@@ -97,6 +97,7 @@ $config['suppress_issue_types'] = [
 
 		'PhanPluginUnknownArrayMethodParamType',	// this option costs more time to be supported than it solves time
 		'PhanPluginUnknownArrayMethodReturnType',	// this option costs more time to be supported than it solves time
+		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 ];
 
 return $config;

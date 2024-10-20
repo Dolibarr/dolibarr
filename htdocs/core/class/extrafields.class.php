@@ -963,7 +963,8 @@ class ExtraFields
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 *  @param  string		$attrname           The name of the attribute.
-	 *  @return array{}|array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int}		Array of attributes keys+label for all extra fields.  Note: count set as present to avoid static analysis notices
+	 *  @return array<string,string>					Array of attributes keys+label for all extra fields.
+	 * in addition $this->attributes will be completed with array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int} Note: count set as present to avoid static analysis notices
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
@@ -1953,16 +1954,17 @@ class ExtraFields
 	/**
 	 * Return HTML string to put an output field into a page
 	 *
-	 * @param   string	$key            		Key of attribute
-	 * @param   string	$value          		Value to show
-	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
-	 * @param 	Translate $outputlangs 			Output language
-	 * @return	string							Formatted value
+	 * @param   string		$key            		Key of attribute
+	 * @param   string		$value          		Value to show
+	 * @param	string		$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
+	 * @param	string		$extrafieldsobjectkey	Required (for example $object->table_element).
+	 * @param 	Translate 	$outputlangs 			Output
+	 * @param	object		$object					The parent object of field to show
+	 * @return	string								Formatted value
 	 */
-	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null)
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
 	{
-		global $conf, $langs, $object;
+		global $conf, $langs;
 
 		if (is_null($outputlangs) || !is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -2288,10 +2290,10 @@ class ExtraFields
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
-						$object = new $classname($this->db);
-						'@phan-var-force CommonObject $object';
-						$object->fetch($value);
-						$value = $object->getNomUrl(3);
+						$tmpobject = new $classname($this->db);
+						'@phan-var-force CommonObject $tmpobject';
+						$tmpobject->fetch($value);
+						$value = $tmpobject->getNomUrl(3);
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -2321,8 +2323,9 @@ class ExtraFields
 		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} elseif ($type == 'stars') {
-			$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$object->id.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-			$value .= '<div class="star-selection" id="'.$key.$object->id.'_selection">';
+			$objectid = (int) $object->id;
+			$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$value .= '<div class="star-selection" id="'.$key.$objectid.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
 				$value .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
@@ -2331,8 +2334,8 @@ class ExtraFields
 			$value .= '</div>';
 			$value .= '<script>
 				$(document).ready(function() {
-						let container = $("#'.$key.$object->id.'_selection");
-						let selectedStars = parseInt($("#'.$key.$object->id.'").val()) || 0;
+						let container = $("#'.$key.$objectid.'_selection");
+						let selectedStars = parseInt($("#'.$key.$objectid.'").val()) || 0;
 						container.find(".star").each(function() {
 							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 						});
@@ -2349,10 +2352,10 @@ class ExtraFields
 						});
 						container.find(".star").off("click").on("click", function() {
 							selectedStars = $(this).data("value");
-							if (selectedStars == 1 && $("#'.$key.$object->id.'").val() == 1) {
+							if (selectedStars == 1 && $("#'.$key.$objectid.'").val() == 1) {
 								selectedStars = 0;
 							}
-							container.find("#'.$key.$object->id.'").val(selectedStars);
+							container.find("#'.$key.$objectid.'").val(selectedStars);
 							container.find(".star").each(function() {
 								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 							});
@@ -2360,9 +2363,9 @@ class ExtraFields
 								url: "'.DOL_URL_ROOT.'/core/ajax/editextrafield.php",
 								method: "POST",
 								data: {
-									objectType: "'.$extrafieldsobjectkey.'",
-									objectId: "'.$object->id.'",
-									field: "'.$key.'",
+									objectType: \''.dol_escape_js($extrafieldsobjectkey).'\',
+									objectId: '.((int) $objectid).',
+									field: \''.dol_escape_js($key).'\',
 									value: selectedStars,
 									token: "'.newToken().'"
 								},

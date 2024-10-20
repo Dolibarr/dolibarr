@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Juanjo Menent			<jmenent@2byte.es>
@@ -56,7 +56,7 @@ if (GETPOSTISSET('mode')) {
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 	}
 } else {
-	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
+	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -229,13 +229,68 @@ if ($action == 'install' && $allowonlineinstall) {
 					}
 				}
 
-				if (!$error) {
-					// TODO Make more test
-				}
-
 				dol_syslog("Uncompress of module file is a success.");
 
-				// We check if this is a metapackage
+				// Load module into $objMod
+				/*
+				$modulesdir = array($modulenamedir.'/core/modules/');
+				foreach ($modulesdir as $dir) {
+					// Load modules attributes in arrays (name, numero, orders) from dir directory
+					//print $dir."\n<br>";
+					dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+					$handle = @opendir($dir);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							print $dir." ".$file."\n<br>";
+							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = substr($file, 0, dol_strlen($file) - 10);
+								if ($modName) {
+									try {
+										$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+										$modName = substr($file, 0, dol_strlen($file) - 10);
+										if ($modName) {
+											if (class_exists($modName)) {
+												$objMod = new $modName($db);
+												'@phan-var-force DolibarrModules $objMod';
+
+												//var_dump($objMod);
+											}
+										}
+									} catch(Exception $e) {
+										// Nothing done
+									}
+								}
+							}
+						}
+					}
+				}
+				*/
+
+				// Check if module is in the remote malware list
+				if (!$error) {
+					if (GETPOST('checkforcompliance') == 'on') {
+						try {
+							$res = include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+							$dolibarrmodule = new DolibarrModules($db);
+							$checkRes = $dolibarrmodule->checkForcompliance($modulename);
+
+							if (!is_numeric($checkRes) && $checkRes != '') {
+								$langs->load("errors");
+								setEventMessages($modulename.' : '.$langs->trans($checkRes), null, 'errors');
+							}
+
+							$error++;
+						} catch (Exception $e) {
+							// Nothing done
+						}
+					}
+				}
+
+				if (!$error) {
+					// TODO Make more test ???
+				}
+
+				// We check if this is a metapackage (and wecomplete with child packages)
 				$modulenamearrays = array();
 				if (dol_is_file($modulenamedir.'/metapackage.conf')) {
 					// This is a meta package
@@ -245,32 +300,34 @@ if ($action == 'install' && $allowonlineinstall) {
 				$modulenamearrays[$modulename] = $modulename;
 				//var_dump($modulenamearrays);exit;
 
-				// Lop on each package of the metapackage
-				foreach ($modulenamearrays as $modulenameval) {
-					if (strpos($modulenameval, '#') === 0) {
-						continue; // Discard comments
-					}
-					if (strpos($modulenameval, '//') === 0) {
-						continue; // Discard comments
-					}
-					if (!trim($modulenameval)) {
-						continue;
-					}
-
-					// Now we install the module
-					if (!$error) {
-						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
-						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
-						if (!dol_is_dir($submodulenamedir)) {
-							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+				// Lop on each packages (can have several if package is a metapackage)
+				if (! $error) {
+					foreach ($modulenamearrays as $modulenameval) {
+						if (strpos($modulenameval, '#') === 0) {
+							continue; // Discard comments
 						}
-						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
-						$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
-						if ($result <= 0) {
-							dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
-							$error++;
+						if (strpos($modulenameval, '//') === 0) {
+							continue; // Discard comments
+						}
+						if (!trim($modulenameval)) {
+							continue;
+						}
+
+						// Now we install the module
+						if (!$error) {
+							@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
+							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
+							if (!dol_is_dir($submodulenamedir)) {
+								$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+							}
+							dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
+							$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+							if ($result <= 0) {
+								dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
+								$error++;
+							}
 						}
 					}
 				}
@@ -294,8 +351,6 @@ if ($action == 'install' && $allowonlineinstall) {
 		$message = $langs->trans("SetupIsReadyForUse", $redirectUrl, $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
 
 		setEventMessages($message, null, 'warnings');
-		header('Location: ' . $redirectUrl);
-		exit;
 	}
 } elseif ($action == 'install' && !$allowonlineinstall) {
 	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
@@ -654,7 +709,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
@@ -884,6 +939,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'warnings');
 			} elseif ($checkRes < 0) {
 				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
+			}
+		}
+
+		if ($objMod->isCoreOrExternalModule() == 'external' && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
+			if (!is_numeric($checkRes) && $checkRes != '') {
+				$langs->load("errors");
+				setEventMessages($objMod->getName().' : '.$langs->trans($checkRes), null, 'errors');
 			}
 		}
 
@@ -1224,7 +1287,7 @@ if ($mode == 'marketplace') {
 }
 
 
-// Install external module
+// Form to install an external module
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
@@ -1271,13 +1334,13 @@ if ($mode == 'deploy') {
 		print '<br>';
 	}
 
-	print '<br>';
-
 	// $allowfromweb = -1 if installation or setup not correct, 0 if not allowed, 1 if allowed
 	if ($allowfromweb >= 0) {
 		if ($allowfromweb == 1) {
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
 		} else {
+			print '<br>';
+
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
 			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
@@ -1292,7 +1355,11 @@ if ($mode == 'deploy') {
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
 
-			print $langs->trans("YouCanSubmitFile").'<br><br>';
+			print $langs->trans("YouCanSubmitFile").'<br><br><br>';
+
+			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance"'.(getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES') ? ' disabled="disabled"' : 'checked="checked"').'>';
+			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp")).'</label>';
+			print '</span><br><br>';
 
 			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
@@ -1360,7 +1427,7 @@ if ($mode == 'deploy') {
 				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';
 			}
 
-			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
+			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall">';
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button small">';
 
