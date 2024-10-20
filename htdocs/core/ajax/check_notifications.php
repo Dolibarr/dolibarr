@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
- * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2023      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016	    Sergio Sanchis			<sergiosanchis@hotmail.com>
+ * Copyright (C) 2017	    Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
