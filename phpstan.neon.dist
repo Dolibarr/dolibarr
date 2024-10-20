@@ -123,7 +123,7 @@ parameters:
 		- '#Call to function array_key_exists.. with .error. .* will always evaluate to false.#'
 		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
 		- '#(?:make_substitutions expects array<string, string>,) string given\.#'
-		- '# (Controller|Website|Workstation|WorkstationResource|WorkstationUserGroup|Zapier|Hook)::.* has no value type specified in iterable type array\.#'
+		- '# (Workstation|WorkstationResource|WorkstationUserGroup|Zapier)::.* has no value type specified in iterable type array\.#'
 
 	internalErrorsCountLimit: 50
 	cache:
