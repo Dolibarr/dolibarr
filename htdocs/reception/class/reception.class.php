@@ -1063,7 +1063,7 @@ class Reception extends CommonObject
 						$this->error = $mouvS->error;
 						$this->errors = $mouvS->errors;
 					}
-                }
+				}
 			} else {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
