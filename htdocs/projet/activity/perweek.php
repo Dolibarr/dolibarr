@@ -694,9 +694,14 @@ for ($idw = 0; $idw < 7; $idw++) {
 		$cssonholiday .= 'onholidayafternoon ';
 	}
 
+	$year = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%Y');
+	$month = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%m');
+	$day = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%d');
+
 	print '<th width="6%" class="center bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+	print '<a href="'.DOL_URL_ROOT.'/projet/activity/perday.php?year='.$year.'&month='.$month.'&day='.$day.'">';
 	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
-	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
+	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</a></th>';
 }
 
 //print '<td></td>';
