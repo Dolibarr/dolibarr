@@ -1890,7 +1890,10 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	}
 }
 
-$parameters['toselect'] = (empty($toselect) ? array() : $toselect);
+if (empty($toselect)) {
+	$toselect=[];
+}
+$parameters['toselect'] = &$toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;
