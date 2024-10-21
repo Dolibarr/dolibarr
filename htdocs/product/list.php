@@ -647,7 +647,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
+	$sqlforcount = preg_replace('/^'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
