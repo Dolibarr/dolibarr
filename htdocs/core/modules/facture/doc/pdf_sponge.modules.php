@@ -769,7 +769,7 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->setPageOrientation('', 0, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
-					if ($afterPosData['page'] > $pageposbefore && empty($showpricebeforepagebreak) || ($curY + 9) > ($this->page_hauteur - $this->heightforfooter)) {
+					if ($afterPosData['page'] > $pageposbefore && (empty($showpricebeforepagebreak) || ($curY + 4) > ($this->page_hauteur - $this->heightforfooter))) {
 						$pdf->setPage($afterPosData['page']);
 						$curY = $this->tab_top_newpage;
 					}
