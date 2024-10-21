@@ -580,7 +580,7 @@ class Translate
 	 */
 	private function getTradFromKey($key)
 	{
-		global $conf, $db;
+		global $db;
 
 		if (!is_string($key)) {
 			//xdebug_print_function_stack('ErrorBadValueForParamNotAString');
@@ -660,7 +660,7 @@ class Translate
 				}
 			}
 
-			// Crypt string into HTML
+			// Encode string into HTML
 			$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
 
 			// Restore reliable HTML tags into original translation string
@@ -669,6 +669,10 @@ class Translate
 				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
 				$str
 			);
+
+			// Remove dangerous sequence we should never have. Not needed into a translated response.
+			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.
+			$str = str_replace(array('%27', '&#39'), '', $str);
 
 			if ($maxsize) {
 				$str = dol_trunc($str, $maxsize);
@@ -738,6 +742,10 @@ class Translate
 				//print $str;
 				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
 			}
+
+			// Remove dangerous sequence we should never have. Not needed into a translated response.
+			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.
+			$str = str_replace(array('%27', '&#39'), '', $str);
 
 			return $str;
 		} else {
