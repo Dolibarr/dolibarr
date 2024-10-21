@@ -1814,7 +1814,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, '', "set");
+		print $form->selectDate($datedelivery ?: -1, 'liv_', $usehourmin, $usehourmin, '', "set");
 		print '</td></tr>';
 
 		// Bank Account
