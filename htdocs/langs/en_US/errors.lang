@@ -390,6 +390,9 @@ WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is a
 WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
 WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 WarningAmountOfFileDiffersFromSumOfLines=Warning, amount of file (%s) differs from the sum of lines (%s)
+WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported to the Dolibarr foundation as being published by a company using illegal practices (non-compliance with the rules for using the Dolibarr brand, collecting your data without your consent or deploying malware). Use it at your own risk!
+WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid or free) from a suspicious non official platform like %s
+
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s

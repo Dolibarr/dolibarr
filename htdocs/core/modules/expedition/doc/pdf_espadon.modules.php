@@ -574,10 +574,6 @@ class pdf_espadon extends ModelePdfExpedition
 					$posYAfterDescription = 0;
 					$heightforsignature = 0;
 
-					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
-					}
-
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
 						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot))) {	// If photo too high, we moved completely on new page
@@ -666,8 +662,12 @@ class pdf_espadon extends ModelePdfExpedition
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// weight
+					// # of line
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+					}
 
+					// weight
 					$weighttxt = '';
 					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->weight) {
 						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
