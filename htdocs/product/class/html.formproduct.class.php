@@ -298,7 +298,7 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS') && ($filterstatus==="warehouseinternal")) {
+		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus==="warehouseinternal")) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {
