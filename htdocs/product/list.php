@@ -649,8 +649,9 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-
 	$resql = $db->query($sqlforcount);
+    
+    var_dump($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
 		$nbtotalofrecords = $objforcount->nbtotalofrecords;
