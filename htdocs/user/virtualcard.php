@@ -24,6 +24,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -70,19 +71,9 @@ $permissiontoedit = ((($object->id == $user->id) && $user->hasRight('user', 'sel
 
 if ($action == 'update' && $permissiontoedit) {
 	$tmparray = array();
-	$tmparray['USER_PUBLIC_HIDE_PHOTO'] = (getDolGlobalString('USER_PUBLIC_HIDE_PHOTO') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_EMAIL'] = (getDolGlobalString('USER_PUBLIC_HIDE_EMAIL') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (getDolGlobalString('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
-	$tmparray['USER_PUBLIC_SHOW_BIRTH'] = (getDolGlobalString('USER_PUBLIC_SHOW_BIRTH') ? 1 : 0);
-	$tmparray['USER_PUBLIC_SHOW_ADDRESS'] = (getDolGlobalString('USER_PUBLIC_SHOW_ADDRESS') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (getDolGlobalString('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (getDolGlobalString('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (getDolGlobalString('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_OFFICE_FAX'] = (getDolGlobalString('USER_PUBLIC_HIDE_OFFICE_FAX') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (getDolGlobalString('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS'] = (getDolGlobalString('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS') ? 1 : 0);
-	$tmparray['USER_PUBLIC_MORE'] = (getDolGlobalString('USER_PUBLIC_MORE') ? getDolGlobalString('USER_PUBLIC_MORE') : '');
-	dol_set_user_param($db, $conf, $object, $tmparray);
+	$tmparray['USER_PUBLIC_MORE'] = (GETPOST('USER_PUBLIC_MORE') ? GETPOST('USER_PUBLIC_MORE') : '');
+
+	dolibarr_set_const($db, 'USER_PUBLIC_MORE', $tmparray['USER_PUBLIC_MORE'], 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'setUSER_ENABLE_PUBLIC' && $permissiontoedit) {
@@ -151,6 +142,9 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'external');
 	$fullinternalurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'internal');
+
+	$showUserSocialNetworks = getDolGlobalString('USER_PUBLIC_HIDE_SOCIALNETWORKS');
+	$showSocieteSocialNetworks = getDolGlobalString('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS');
 
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurluser" class="quatrevingtpercentminusx" value="'.$fullexternaleurltovirtualcard.'">';
@@ -248,6 +242,29 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS");
 	print "</td></tr>\n";
 
+	//Show list of socialnetworks for user
+	if (empty($showUserSocialNetworks)) {
+		print '<tr class="liste_titre" id="tramount">';
+		print '<td>'.$langs->trans("SocialNetworksUser").'</td>';
+		print '<td></td>';
+		print "</tr>\n";
+		$socialnetworks = $object->socialnetworks;
+		var_dump($socialnetworks);
+		if (!empty($socialnetworks)) {
+			foreach ($socialnetworks as $key => $networkVal) {
+				print '<tr class="oddeven">';
+				print '<td>'.dol_escape_htmltag($key).'</td><td>';
+				print ajax_constantonoff('USER_SOCIALNETWORK_'.strtoupper($key));
+				print '</td>';
+				print "</tr>";
+			}
+		}
+		print '<tr class="liste_titre" id="tramount">';
+		print '<td></td>';
+		print '<td></td>';
+		print "</tr>\n";
+	}
+
 	// Birth date
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
@@ -281,6 +298,25 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS");
 	print "</td></tr>\n";
 
+	// show list of social networks for company
+
+	if (empty($showSocieteSocialNetworks)) {
+		print '<tr class="liste_titre" id="tramount">';
+		print '<td>'.$langs->trans("SocialNetworksBusiness").'</td>';
+		print '<td></td>';
+		print "</tr>\n";
+		$listofnetworks = $mysoc->socialnetworks;
+
+		if (!empty($listofnetworks)) {
+			foreach ($listofnetworks as $key => $networkVal) {
+				print '<tr class="oddeven">';
+				print '<td>'.dol_escape_htmltag($key).'</td><td>';
+				print ajax_constantonoff('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key));
+				print '</td>';
+				print "</tr>";
+			}
+		}
+	}
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Other").'</td>';
