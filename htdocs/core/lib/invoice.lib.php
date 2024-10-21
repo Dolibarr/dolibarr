@@ -262,6 +262,11 @@ function invoice_rec_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+	$head[$h][2] = 'generated';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda-rec.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
@@ -341,6 +346,10 @@ function supplier_invoice_rec_prepare_head($object)
 		$head[$h][2] = 'note';
 		$h++;
 	}
+	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+	$head[$h][2] = 'generated';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

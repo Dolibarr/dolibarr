@@ -414,6 +414,19 @@ a.dropdown-item {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
+/*
+ * SELECT FIELDS
+ */
+
+li.liinputsearch {
+	position: sticky;
+	display: block;
+	top: 0;
+	background: var(--colorbackbody);
+}
+
+
 /*
  * SEARCH
  */

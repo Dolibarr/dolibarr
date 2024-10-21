@@ -2569,7 +2569,7 @@ class Form
 			$out .= '<li>';
 			$resourcestatic->fetch($value['id']);
 			$out .= $resourcestatic->getNomUrl(-1);
-			if ($nbassignetoresource > 1 && $action != 'view') {
+			if ($nbassignetoresource >= 1 && $action != 'view') {
 				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $resourcestatic->id . '" class="removedassigned reposition" id="removedassignedresource_' . $resourcestatic->id . '" name="removedassignedresource_' . $resourcestatic->id . '">';
 			}
 			// Show my availability
@@ -9293,7 +9293,7 @@ class Form
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
-                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    <li class="liinputsearch"><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>
@@ -11136,9 +11136,10 @@ class Form
 	 * @param	string		$modelType		Model type
 	 * @param	int<0,1>	$default		1=Show also Default mail template
 	 * @param	int<0,1>	$addjscombo		Add js combobox
+	 * @param   string      $selected       Selected model mail
 	 * @return	string						HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = '')
 	{
 		global $langs, $user;
 
@@ -11163,6 +11164,9 @@ class Form
 
 		foreach ($TModels as $id_model => $label_model) {
 			$retstring .= '<option value="' . $id_model . '"';
+			if (!empty($selected) && $selected == $id_model) {
+				$retstring .= "selected";
+			}
 			$retstring .= ">" . $label_model . "</option>";
 		}
 

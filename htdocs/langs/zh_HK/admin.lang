@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=在發票上顯示瑞士 QR-Bill 碼（已定義信用
 INVOICE_ADD_SWISS_QR_CODEMore=瑞士發票標準；確保填寫郵遞區號和城市，且賬戶具有有效的瑞士/列支敦士登 IBAN。
 INVOICE_ADD_EPC_QR_CODE=在發票上顯示 EPC QR 碼（已定義信用轉帳的銀行賬戶）
 INVOICE_ADD_EPC_QR_CODEMore=此功能允許您在發票上新增或刪除 EPC QR 碼，這有助於自動進行 SEPA 信用轉帳。啟用此選項可以幫助您的客戶輕鬆地掃描 QR 碼進行付款，減少手動輸入錯誤。如果您有來自奧地利、比利時、芬蘭、德國和荷蘭等支持此系統的國家的客戶，請使用此功能。如果您的業務運營或客戶群不需要它，則禁用此功能。
-INVOICE_ADD_EPC_QR_CODEPay=掃描此 QR 碼以使用支持 EPC QR 碼付款的智能手機進行付款。
 INVOICE_SHOW_SHIPPING_ADDRESS=顯示送貨地址
 INVOICE_SHOW_SHIPPING_ADDRESSMore=在某些國家（如法國）為強制性指示
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=在提案上顯示帳單聯絡人

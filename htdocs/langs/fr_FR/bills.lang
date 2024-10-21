@@ -670,3 +670,4 @@ SearchValidatedSupplierInvoicesWithDate=Rechercher les factures impayées des fo
 SendEmailsRemindersOnSupplierInvoiceDueDate=Envoyer un rappel par email pour les factures fournisseur validées et impayées
 PaymentMadeForSeveralInvoices=Paiement effectué pour plusieurs factures
 SituationInvoiceProgressCurrent=Progression facture
+INVOICE_ADD_EPC_QR_CODEPay=Scannez ce code QR pour payer avec un smartphone prenant en charge le paiement avec le code QR EPC.

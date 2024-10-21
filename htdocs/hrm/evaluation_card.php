@@ -605,11 +605,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$sk->fetch($t->skill_id);
 
 				print '<tr>';
-				print ' <td>' . Skill::typeCodeToLabel($t->skill_type) . '</td>';
-				print ' <td>' . $sk->getNomUrl(1) . '</td>';
-				print ' <td>' . $t->description . '</td>';
-				print ' <td align="center">' . $t->userRankForSkill . '</td>';
-				print ' <td align="center">' . $t->required_rank . '</td>';
+				print ' <td>' . dolPrintHTML(Skill::typeCodeToLabel($t->skill_type)) . '</td>';
+				print ' <td class="tdoverflowmax200">' . $sk->getNomUrl(1) . '</td>';
+				print ' <td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($t->description).'">' . dolPrintHTML($t->description) . '</td>';
+				print ' <td class="center">' . $t->userRankForSkill . '</td>';
+				print ' <td class="center">' . $t->required_rank . '</td>';
 				print ' <td>' . $t->result . '</td>';
 				print '</tr>';
 			}

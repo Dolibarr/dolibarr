@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Căutați facturile furnizorilor neplăt
 SendEmailsRemindersOnSupplierInvoiceDueDate=Trimite reminder prin email pentru facturile furnizor validate și neplătite
 PaymentMadeForSeveralInvoices=Plată efectuată pentru mai multe facturi
 SituationInvoiceProgressCurrent=Progres facturare
+INVOICE_ADD_EPC_QR_CODEPay=Scanează acest cod QR pentru a plăti cu un smartphone care acceptă plata cu codul QR EPC.
