@@ -58,12 +58,12 @@ class BankCateg // extends CommonObject
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors;
 
 	/**
-	 * @var array context
+	 * @var array<string,string> context
 	 */
 	public $context;
 
