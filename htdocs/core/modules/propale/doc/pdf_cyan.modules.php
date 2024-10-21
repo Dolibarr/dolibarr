@@ -626,7 +626,7 @@ class pdf_cyan extends ModelePDFPropales
 
 
 					// We suppose that a too long description or photo were moved completely on next page
-					if ($afterPosData['page'] > $pageposbefore && empty($showpricebeforepagebreak) || ($curY + 9) > ($this->page_hauteur - $heightforfooter)) {
+					if ($afterPosData['page'] > $pageposbefore && (empty($showpricebeforepagebreak) || ($curY + 4) > ($this->page_hauteur - $heightforfooter))) {
 						$pdf->setPage($afterPosData['page']);
 						$curY = $tab_top_newpage;
 					}
