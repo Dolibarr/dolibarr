@@ -249,7 +249,6 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 		print '<td></td>';
 		print "</tr>\n";
 		$socialnetworks = $object->socialnetworks;
-		var_dump($socialnetworks);
 		if (!empty($socialnetworks)) {
 			foreach ($socialnetworks as $key => $networkVal) {
 				print '<tr class="oddeven">';
