@@ -463,3 +463,4 @@ AADEWebserviceCredentials=AADE Webservice Credentials
 ThirdPartyMustBeACustomerToCreateBANOnStripe=The third-party must be a customer to allow the creation of its bank info on Stripe side
 NewSocNameForClone=New company name
 ConfirmCloneThirdparties=Are you sure that you want to clone <b>%s</b> company ?
+SocialNetworksBusiness=Social networks for company
