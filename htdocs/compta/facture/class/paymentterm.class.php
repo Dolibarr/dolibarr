@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,9 @@ class PaymentTerm // extends CommonObject
 
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var array<string,string>
+	 */
 	public $context = array();
 
 	/**
@@ -58,13 +62,37 @@ class PaymentTerm // extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $code;
+	/**
+	 * @var string
+	 */
 	public $sortorder;
+	/**
+	 * @var string
+	 */
 	public $active;
+	/**
+	 * @var string
+	 */
 	public $libelle;
+	/**
+	 * @var string
+	 */
 	public $libelle_facture;
+	/**
+	 * @var string
+	 */
 	public $type_cdr;
+	/**
+	 * @var string
+	 */
 	public $nbjour;
+	/**
+	 * @var string
+	 */
 	public $decalage;
 
 

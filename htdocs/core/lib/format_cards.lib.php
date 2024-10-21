@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,6 @@ if ($resql) {
 		$_Avery_Labels[$row['code']]['orientation'] = $row['orientation'];
 		$_Avery_Labels[$row['code']]['metric'] = $row['metric'];
 		$_Avery_Labels[$row['code']]['marginLeft'] = $row['leftmargin'];
-		$_Avery_Labels[$row['code']]['marginTop'] = $row['topmargin'];
 		$_Avery_Labels[$row['code']]['marginTop'] = $row['topmargin'];
 		$_Avery_Labels[$row['code']]['NX'] = $row['nx'];
 		$_Avery_Labels[$row['code']]['NY'] = $row['ny'];
