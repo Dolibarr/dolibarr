@@ -301,6 +301,23 @@ function invoice_rec_prepare_head($object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note-rec.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
