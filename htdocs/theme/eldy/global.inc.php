@@ -4803,6 +4803,7 @@ input.liste_titre {
 	line-height: 24px;
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	background: var(--colorbacktitle1);
 	color: var(--listetotal);
 	font-weight: normal;
 }
@@ -4879,9 +4880,9 @@ div.tabBar .noborder {
 
 /* Prepare to remove class pair - impair */
 
-.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
+.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4894,9 +4895,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	border-bottom: 1px solid #f0f0f0;
 }
 
-.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
+.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
