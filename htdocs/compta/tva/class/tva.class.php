@@ -679,9 +679,9 @@ class Tva extends CommonObject
 					}
 
 					if ($this->amount > 0) {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs((float) $this->amount), $this->num_payment, '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs((float) $this->amount), $this->num_payment, 0, $user);
 					} else {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs((float) $this->amount), $this->num_payment, '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs((float) $this->amount), $this->num_payment, 0, $user);
 					}
 
 					// Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
