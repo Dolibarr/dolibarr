@@ -128,13 +128,34 @@ if (empty($reshook)) {
 
 	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	// action update on Skilldet must be done before real update action in core/actions_addupdatedelete.inc.php
+	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
+	if (!$error) {
+		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
+			if ($action == 'update' && $permissiontoadd) {
+				foreach ($skilldetArray as $key => $SkValueToUpdate) {
+					$skilldetObj = new Skilldet($object->db);
+					$res = $skilldetObj->fetch($key);
+					if ($res > 0) {
+						$skilldetObj->description = $SkValueToUpdate;
+						$resupd = $skilldetObj->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							$error++;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	$noback = 1;
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	if (in_array($action, array("confirm_delete", "update"))) {
+		$noback = 0;
+	}
 
-	// action update on Skilldet
-	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
@@ -153,19 +174,8 @@ if (empty($reshook)) {
 					}
 					$index++;
 				}
-			}
-			if ($action == 'update' && $permissiontoadd) {
-				foreach ($skilldetArray as $key => $SkValueToUpdate) {
-					$skilldetObj = new Skilldet($object->db);
-					$res = $skilldetObj->fetch($key);
-					if ($res > 0) {
-						$skilldetObj->description = $SkValueToUpdate;
-						$resupd = $skilldetObj->update($user);
-						if ($resupd <= 0) {
-							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
-						}
-					}
-				}
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+				exit;
 			}
 		}
 	}
