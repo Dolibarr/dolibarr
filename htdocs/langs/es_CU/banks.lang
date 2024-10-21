@@ -112,7 +112,6 @@ AllAccounts=Todas las cuentas bancarias y de efectivo
 BackToAccount=volver a la cuenta
 FutureTransaction=Transacción futura. Incapaz de conciliar.
 InputReceiptNumberBis=AAAAMM o AAAAMMDD
-EventualyAddCategory=Eventualmente, especifique una categoría en la cual clasificar los registros
 ToConciliate=¿Para reconciliar?
 ThenCheckLinesAndConciliate=Luego, verifique las líneas presentes en el extracto bancario y haga clic en
 DefaultRIB=PROHIBICIÓN predeterminada

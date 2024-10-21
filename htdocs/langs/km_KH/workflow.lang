@@ -1,26 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=ការដំឡើងម៉ូឌុលលំហូរការងារ
+WorkflowDesc=ម៉ូឌុលនេះផ្តល់នូវសកម្មភាពដោយស្វ័យប្រវត្តិមួយចំនួន។ តាមលំនាំដើម លំហូរការងារបើក (អ្នកអាចធ្វើអ្វីៗតាមលំដាប់ដែលអ្នកចង់បាន) ប៉ុន្តែនៅទីនេះអ្នកអាចធ្វើសកម្មភាពដោយស្វ័យប្រវត្តិមួយចំនួន។
+ThereIsNoWorkflowToModify=មិនមានការកែប្រែលំហូរការងារដែលមានជាមួយម៉ូឌុលដែលបានធ្វើឱ្យសកម្មទេ។
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=បង្កើតការបញ្ជាទិញលក់ដោយស្វ័យប្រវត្តិបន្ទាប់ពីសំណើពាណិជ្ជកម្មត្រូវបានចុះហត្ថលេខា (ការបញ្ជាទិញថ្មីនឹងមានបរិមាណដូចគ្នាទៅនឹងសំណើរ)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=បង្កើតវិក្កយបត្រអតិថិជនដោយស្វ័យប្រវត្តិ បន្ទាប់ពីសំណើពាណិជ្ជកម្មត្រូវបានចុះហត្ថលេខា (វិក្កយបត្រថ្មីនឹងមានចំនួនទឹកប្រាក់ដូចគ្នាទៅនឹងសំណើរនេះ)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=បង្កើតវិក្កយបត្ររបស់អតិថិជនដោយស្វ័យប្រវត្តិ បន្ទាប់ពីកិច្ចសន្យាមានសុពលភាព
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=បង្កើតវិក្កយបត្រអតិថិជនដោយស្វ័យប្រវត្តិ បន្ទាប់ពីការបញ្ជាទិញត្រូវបានបិទ (វិក្កយបត្រថ្មីនឹងមានចំនួនទឹកប្រាក់ដូចគ្នាទៅនឹងការបញ្ជាទិញ)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=នៅលើការបង្កើតសំបុត្រ បង្កើតការអន្តរាគមន៍ដោយស្វ័យប្រវត្តិ។
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=នៅពេលដែលការបញ្ជាទិញលក់ត្រូវបានកំណត់ឱ្យចេញវិក្កយបត្រ ចាត់ថ្នាក់សំណើប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួននៃការបញ្ជាទិញគឺដូចគ្នានឹងចំនួនសរុបនៃសំណើដែលបានភ្ជាប់ដែលបានចុះហត្ថលេខា)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=នៅពេលដែលវិក្កយបត្ររបស់អតិថិជនមានសុពលភាព សូមចាត់ថ្នាក់សំណើប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃសំណើដែលបានភ្ជាប់ដែលបានចុះហត្ថលេខា)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=នៅពេលដែលវិក្កយបត្ររបស់អតិថិជនត្រូវបានកំណត់ឱ្យបង់ប្រាក់ សូមចាត់ថ្នាក់ការបញ្ជាទិញលក់ប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃការបញ្ជាទិញលក់ដែលបានភ្ជាប់)។ ប្រសិនបើអ្នកបង្កើតវិក្កយបត្រ 1 សម្រាប់ការបញ្ជាទិញ N វាអាចកំណត់ការបញ្ជាទិញទាំងអស់ឱ្យចេញវិក្កយបត្រផងដែរ។
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=នៅពេលដែលវិក្កយបត្ររបស់អតិថិជនមានសុពលភាព សូមចាត់ថ្នាក់ការបញ្ជាទិញលក់ប្រភពដែលបានភ្ជាប់ទាំងអស់ថាបានចេញវិក្កយបត្រ (ហើយប្រសិនបើចំនួនវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃការបញ្ជាទិញលក់ប្រភពដែលបានភ្ជាប់)។ ប្រសិនបើអ្នកបង្កើតវិក្កយបត្រទូទៅ 1 សម្រាប់ការបញ្ជាទិញ n វាអាចកំណត់ការបញ្ជាទិញប្រភពទាំងអស់ទៅជាវិក្កយបត្រ។
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=នៅពេលដែលវិក្កយបត្ររបស់អតិថិជនមានសុពលភាព សូមចាត់ថ្នាក់នៃការបញ្ជាទិញលក់ដែលបានភ្ជាប់ (ប្រសិនបើមានតែមួយ) ដូចដែលបានចេញវិក្កយបត្រ ប្រសិនបើចំនួនសរុបនៃការបញ្ជាទិញលក់ដែលបានភ្ជាប់គឺស្មើនឹងចំនួនសរុបនៃវិក្កយបត្រទាំងអស់ដែលបានចេញពីវា។ ប្រសិនបើអ្នកបង្កើតវិក្កយបត្រ n សម្រាប់ការបញ្ជាទិញ 1 វាអនុញ្ញាតឱ្យកំណត់ការបញ្ជាទិញដើម្បីចេញវិក្កយបត្រភ្លាមៗ នៅពេលដែលវិក្កយបត្រទាំងអស់មានសុពលភាព។
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=នៅពេលដែលការដឹកជញ្ជូនមានសុពលភាព ចាត់ថ្នាក់ការបញ្ជាទិញលក់ប្រភពដែលបានភ្ជាប់ជាការដឹកជញ្ជូន (ហើយប្រសិនបើបរិមាណដែលបានដឹកជញ្ជូនដោយការដឹកជញ្ជូនទាំងអស់គឺដូចគ្នាទៅនឹងការបញ្ជាទិញដើម្បីធ្វើបច្ចុប្បន្នភាព)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=នៅពេលដែលការដឹកជញ្ជូនត្រូវបានបិទ ចាត់ថ្នាក់លំដាប់នៃការលក់ប្រភពដែលបានភ្ជាប់ជាការដឹកជញ្ជូន (ហើយប្រសិនបើបរិមាណដែលបានដឹកជញ្ជូនដោយការដឹកជញ្ជូនទាំងអស់គឺដូចគ្នាទៅនឹងការបញ្ជាទិញដើម្បីធ្វើបច្ចុប្បន្នភាព)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=នៅពេលដែលវិក្កយបត្ររបស់អ្នកលក់មានសុពលភាព ចាត់ថ្នាក់សំណើរបស់អ្នកលក់ប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃសំណើដែលបានភ្ជាប់)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=នៅពេលដែលវិក្កយបត្ររបស់អ្នកលក់មានសុពលភាព ចាត់ថ្នាក់លំដាប់នៃការទិញប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នានឹងចំនួនសរុបនៃការបញ្ជាទិញដែលបានភ្ជាប់)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=នៅពេលដែលការទទួលមួយត្រូវបានផ្ទៀងផ្ទាត់ ចាត់ថ្នាក់លំដាប់នៃការទិញប្រភពដែលបានភ្ជាប់ដូចដែលបានទទួល (ហើយប្រសិនបើបរិមាណដែលទទួលបានដោយការទទួលទាំងអស់គឺដូចគ្នាទៅនឹងការបញ្ជាទិញដើម្បីធ្វើបច្ចុប្បន្នភាព)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=នៅពេលការទទួលភ្ញៀវត្រូវបានបិទ ចាត់ថ្នាក់ការបញ្ជាទិញប្រភពដែលបានភ្ជាប់ដូចដែលបានទទួល (ហើយប្រសិនបើបរិមាណដែលទទួលបានដោយការទទួលភ្ញៀវទាំងអស់ដែលចេញពីការបញ្ជាទិញគឺដូចគ្នាទៅនឹងការបញ្ជាទិញដើម្បីធ្វើបច្ចុប្បន្នភាព)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=នៅពេលដែលវិក្កយបត្ររបស់អតិថិជនមានសុពលភាព សូមចាត់ថ្នាក់នៃការដឹកជញ្ជូនប្រភពដែលបានភ្ជាប់ថាបានបិទ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃការដឹកជញ្ជូនដែលបានភ្ជាប់)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=នៅពេលដែលវិក្កយបត្ររបស់អតិថិជនមានសុពលភាព ចាត់ថ្នាក់នៃការដឹកជញ្ជូនប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួនវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃការដឹកជញ្ជូនដែលបានភ្ជាប់)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=នៅពេលដែលវិក្កយបត្រទិញត្រូវបានផ្ទៀងផ្ទាត់ សូមចាត់ថ្នាក់ទទួលប្រភពដែលបានភ្ជាប់ថាបានបិទ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃការទទួលដែលបានភ្ជាប់)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=នៅពេលដែលវិក្កយបត្រទិញត្រូវបានផ្ទៀងផ្ទាត់ សូមចាត់ថ្នាក់ការទទួលប្រភពដែលបានភ្ជាប់ជាវិក្កយបត្រ (ហើយប្រសិនបើចំនួនទឹកប្រាក់នៃវិក្កយបត្រគឺដូចគ្នាទៅនឹងចំនួនសរុបនៃការទទួលដែលបានភ្ជាប់)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=នៅពេលសំបុត្រត្រូវបានបង្កើត ភ្ជាប់វាជាមួយកិច្ចសន្យាដែលមាន ដោយត្រូវគ្នានឹងភាគីទីបីដូចគ្នាជាងសំបុត្រ
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=នៅពេលភ្ជាប់សំបុត្រដោយស្វ័យប្រវត្តិជាមួយកិច្ចសន្យា កិច្ចសន្យាស្វែងរកក្នុងចំណោមក្រុមហ៊ុនឪពុកម្តាយ
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=បិទរាល់អន្តរាគមន៍ដែលភ្ជាប់ទៅសំបុត្រនៅពេលសំបុត្រត្រូវបានបិទ
+AutomaticCreation=ការបង្កើតដោយស្វ័យប្រវត្តិ
+AutomaticClassification=ចំណាត់ថ្នាក់ដោយស្វ័យប្រវត្តិ
+AutomaticClosing=ការបិទដោយស្វ័យប្រវត្តិ
+AutomaticLinking=ការភ្ជាប់ដោយស្វ័យប្រវត្តិ

@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 $childids = $user->getAllChildIds(1);
@@ -80,7 +80,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 

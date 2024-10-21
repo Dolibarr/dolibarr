@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 // if (! $user->rights->knowledgemanagement->myobject->read) {
 // 	accessforbidden();
 // }
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -63,7 +63,7 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("KnowledgeManagementArea"));
+llxHeader("", $langs->trans("KnowledgeManagementArea"), '', '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card_dashboard');
 
 print load_fiche_titre($langs->trans("KnowledgeManagementArea"), '', 'knowledgemanagement.png@knowledgemanagement');
 

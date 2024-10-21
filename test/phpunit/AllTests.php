@@ -24,11 +24,18 @@
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
+
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
 
-// Workaround for false security issue with main.inc.php in tests:
-$_SERVER['PHP_SELF'] = "phpunit";
+// Workaround for false security issue with main.inc.php on Windows in tests:
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
+if (! defined('NOREQUIREUSER')) {
+	define('PHPUNIT_MODE', 1);
+}
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
@@ -91,6 +98,8 @@ class AllTests
 		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/MarginsLibTest.php';
 		$suite->addTestSuite('MarginsLibTest');
+		require_once dirname(__FILE__).'/FilesLibMoveDirTest.php';
+		$suite->addTestSuite('FilesLibMoveDirTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
@@ -146,6 +155,8 @@ class AllTests
 		$suite->addTestSuite('ActionCommTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
+		require_once dirname(__FILE__).'/ExpeditionTest.php';
+		$suite->addTestSuite('ExpeditionTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';

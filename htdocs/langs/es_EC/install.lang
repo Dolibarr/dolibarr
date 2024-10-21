@@ -104,7 +104,6 @@ MigrationCustomerOrderShipping=Migrar envíos para el almacenamiento de pedidos 
 MigrationShippingDelivery=Actualizar el almacenamiento del envío
 MigrationShippingDelivery2=Actualizar almacenamiento de envío 2
 MigrationFinished=Migración terminada
-LastStepDesc=<strong>Último paso</strong>: Defina aquí el nombre de usuario y la contraseña que desea utilizar para conectarse a Dolibarr. <b>No pierda esto, ya que es la cuenta maestra para administrar todas las otras cuentas de usuario / adicionales.</b>
 ActivateModule=Activar módulo%s
 ShowEditTechnicalParameters=Haga clic aquí para mostrar / editar parámetros avanzados (modo experto)
 WarningUpgrade=Advertencia:\n¿Ejecutó primero una copia de seguridad de la base de datos?\nEsto es muy recomendable. La pérdida de datos (debido a, por ejemplo, errores en mysql versión 5.5.40 / 41/42/43) puede ser posible durante este proceso, por lo que es esencial realizar un volcado completo de su base de datos antes de iniciar cualquier migración.\n\nHaga clic en Aceptar para iniciar el proceso de migración ...
@@ -114,7 +113,6 @@ KeepDefaultValuesDeb=Usó el asistente de configuración de Dolibarr de un paque
 KeepDefaultValuesMamp=Utilizó el asistente de configuración de Dolibarr de DoliMamp, por lo que los valores propuestos aquí ya están optimizados. Cámbialas solo si sabes lo que estás haciendo.
 KeepDefaultValuesProxmox=Utilizó el asistente de configuración de Dolibarr desde un dispositivo virtual Proxmox, por lo que los valores propuestos aquí ya están optimizados. Cámbialas solo si sabes lo que estás haciendo.
 UpgradeExternalModule=Ejecutar proceso de actualización dedicado de módulo externo
-SetAtLeastOneOptionAsUrlParameter=Establezca al menos una opción como parámetro en URL. Por ejemplo: '...repair.php?Standard=confirmed'
 MigrationOrder=Migración de datos para órdenes del cliente
 MigrationSupplierOrder=Migración de datos para pedidos del proveedor
 MigrationProposal=Migración de datos para propuestas comerciales

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016-2020  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2016-2023  Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2019-2021  Frédéric France			<frederic.france@netlogic.fr>
+/* Copyright (C) 2016-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('accountancyindex'));
 
 // Security check
@@ -57,8 +57,8 @@ $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 
@@ -75,14 +75,26 @@ if (GETPOST('addbox')) {
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("AccountancyArea"), $help_url);
+llxHeader('', $langs->trans("AccountancyArea"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-index');
+
+$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+
+$boxlist = '';
+$boxlist .= '<div class="twocolumns">';
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>';
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>';
+$boxlist .= "\n";
+$boxlist .= '</div>';
 
 if (isModEnabled('accounting')) {
 	$step = 0;
 
-	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
-
-	$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
+	$helpisexpanded = false;
+	//$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
 	if (!$helpisexpanded) {
@@ -94,7 +106,13 @@ if (isModEnabled('accounting')) {
 		$showtutorial .= '<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
-	            jQuery( "#idfaq" ).toggle({
+				console.log("We click on show-hide");
+				if ($(".idfaq2").is(":hidden")) {
+					jQuery( ".idfaq2" ).show();
+				} else {
+					jQuery( ".idfaq2" ).hide();
+				}
+	            jQuery( ".idfaq" ).toggle({
 	                duration: 400,
 	            });
 	        });
@@ -102,36 +120,42 @@ if (isModEnabled('accounting')) {
 	    </script>';
 	}
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+		$messagewarning = $langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices");
+		$messagewarning .= ' '.$langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org');
+		print info_admin($messagewarning);
 		print "<br>";
 	}
 
-	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
+	if (!$helpisexpanded && empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])) {
+		print '<div class="opacitymedium idfaq2"><br>'.$langs->trans("ClickOnUseTutorialForHelp", $langs->transnoentities("ShowTutorial"))."</div>\n";
+	}
+
+	print '<div class="'.($helpisexpanded ? '' : 'hideobject').' idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
 	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
 		print '<br>';
-		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
+		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '', 0, '', 'nomarginbottom')."\n";
 		print '<hr>';
 		print "<br>\n";
 
 		// STEPS
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescJournalSetup", $step, '{s}');
-		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("AccountingJournals").'</strong></a>', $s);
+		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35&&leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("AccountingJournals").'</strong></a>', $s);
 		print $s;
 		print "<br>\n";
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChartModel", $step, '{s}');
-		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/accountmodel.php?search_country_id='.$mysoc->country_id.'" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Pcg_version").'</strong></a>', $s);
+		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/accountmodel.php?search_country_id='.$mysoc->country_id.'&leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Pcg_version").'</strong></a>', $s);
 		print $s;
 		print "<br>\n";
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step, '{s}');
-		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Chartofaccounts").'</strong></a>', $s);
+		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Chartofaccounts").'</strong></a>', $s);
 		print $s;
 		if ($pcgver > 0) {
 			$pcgversion = '';
@@ -155,40 +179,42 @@ if (isModEnabled('accounting')) {
 		}
 		print "<br>\n";
 
+		// Fiscal period
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
+			$step++;
+			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescFiscalPeriod", $step, '{s}');
+			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php?leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("FiscalPeriod").'</strong></a>', $s);
+			print $s;
+			print "<br>\n";
+		}
+
+
 		print "<br>\n";
 		print $langs->trans("AccountancyAreaDescActionOnceBis");
 		print "<br>\n";
 		print "<br>\n";
 
-		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
-			$step++;
-			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescFiscalPeriod", $step, '{s}');
-			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("FiscalPeriod").'</strong></a>', $s);
-			print $s;
-			print "<br>\n";
-		}
-
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
-		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/defaultaccounts.php" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong></a>', $s);
+		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/defaultaccounts.php?leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong></a>', $s);
 		print $s;
 		print "<br>\n";
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, '{s}')."\n";
-		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuBankAccounts").'</strong></a>', $s);
+		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuBankAccounts").'</strong></a>', $s);
 		print $s;
 		print "<br>\n";
 
 		$step++;
-		$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=10&from=accountancy" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuVatAccounts").'</strong></a>';
+		$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=10&from=accountancy&leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuVatAccounts").'</strong></a>';
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescVat", $step, '{s}');
 		$s = str_replace('{s}', $textlink, $s);
 		print $s;
 		print "<br>\n";
 
 		if (isModEnabled('tax')) {
-			$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
+			$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy&leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, '{s}');
 			$s = str_replace('{s}', $textlink, $s);
@@ -198,14 +224,14 @@ if (isModEnabled('accounting')) {
 		if (isModEnabled('expensereport')) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '{s}');
-			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);
+			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy&leftmenu=accountancy_admin"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);
 			print $s;
 			print "<br>\n";
 		}
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '{s}');
-		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/productaccount.php" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("ProductsBinding").'</strong></a>', $s);
+		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/productaccount.php?leftmenu=accountancy_admin" target="setupaccountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("ProductsBinding").'</strong></a>', $s);
 		print $s;
 		print "<br>\n";
 
@@ -215,7 +241,7 @@ if (isModEnabled('accounting')) {
 	// Step A - E
 
 	print "<br>\n";
-	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '');
+	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '', 0, '', 'nomarginbottom')."\n";
 	print '<hr>';
 	print "<br>\n";
 	$step = 0;
@@ -255,50 +281,28 @@ if (isModEnabled('accounting')) {
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescClosePeriod", chr(64 + $step))."<br>\n";
 	print $s;
 
-	print "<br>\n";
-
-
-	print '<br>';
+	if (!empty($resultboxes['boxlista']) || !empty($resultboxes['boxlistb'])) {
+		print "<br>\n";
+		print '<br>';
+	}
 
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-
-	print '<div class="fichecenter fichecenterbis">';
-
-	/*
-	 * Show boxes
-	 */
-	$boxlist = '<div class="twocolumns">';
-
-	$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-
-	$boxlist .= $resultboxes['boxlista'];
-
-	$boxlist .= '</div>';
-
-	$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-
-	$boxlist .= $resultboxes['boxlistb'];
-
-	$boxlist .= '</div>';
-	$boxlist .= "\n";
-
-	$boxlist .= '</div>';
-
-
-	print $boxlist;
-
-	print '</div>';
 } elseif (isModEnabled('comptabilite')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
 	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
 	print "<br>";
 } else {
-	// This case can happen mode no accounting module is on but module "intracommreport" is on
+	// This case can happen when no accounting module is on but module "intracommreport" is on
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 }
+
+/*
+ * Show boxes
+ */
+print $boxlist;
 
 // End of page
 llxFooter();

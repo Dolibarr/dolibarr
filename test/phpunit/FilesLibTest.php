@@ -247,6 +247,7 @@ class FilesLibTest extends CommonClassTest
 	 * testDolCopyMoveDelete
 	 *
 	 * @return	void
+	 * @group WindowsWaitingForFix
 	 */
 	public function testDolCopyMoveDelete()
 	{
@@ -490,6 +491,7 @@ class FilesLibTest extends CommonClassTest
 	 * testDolDirMove
 	 *
 	 * @return void
+	 * @group WindowsWaitingForFix
 	 */
 	public function testDolDirMove()
 	{

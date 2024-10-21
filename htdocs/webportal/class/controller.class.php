@@ -1,11 +1,32 @@
 <?php
+/* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+ /**
+ * \file       htdocs/webportal/class/controller.class.php
+ * \ingroup    webportal
+ * \brief      File of controller class for WebPortal
+ */
 
 /**
  *  Class to manage pages
  */
 class Controller
 {
-
 	/**
 	 * if this controller need logged user or not
 	 * @var bool
@@ -46,7 +67,7 @@ class Controller
 
 		$this->db = $db;
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('webportalpage', 'webportal'));
 	}
 

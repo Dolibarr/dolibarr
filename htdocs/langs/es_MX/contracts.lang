@@ -2,7 +2,6 @@
 ContractsArea=Área de contratos
 ListOfContracts=Lista de contratos
 ContractStatusNotRunning=Detenidos
-ContractStatusClosed=Cerrada
 ServiceStatusInitial=Detenidos
 ServiceStatusRunning=En ejecución
 ServiceStatusNotLate=En ejecución, no expirados

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -402,39 +403,5 @@ class UserTest extends CommonClassTest
 	public function changeProperties(&$localobject)
 	{
 		$localobject->note_private = 'New note after update';
-	}
-
-	/**
-	 * Compare all public properties values of 2 objects
-	 *
-	 * @param   Object      $oA                     Object operand 1
-	 * @param   Object      $oB                     Object operand 2
-	 * @param   boolean     $ignoretype             False will not report diff if type of value differs
-	 * @param   array       $fieldstoignorearray    Array of fields to ignore in diff
-	 * @return  array                               Array with differences
-	 */
-	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
-	{
-		$retAr = array();
-
-		if (get_class($oA) !== get_class($oB)) {
-			$retAr[] = "Supplied objects are not of same class.";
-		} else {
-			$oVarsA = get_object_vars($oA);
-			$oVarsB = get_object_vars($oB);
-			$aKeys = array_keys($oVarsA);
-			foreach ($aKeys as $sKey) {
-				if (in_array($sKey, $fieldstoignorearray)) {
-					continue;
-				}
-				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
-				}
-				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
-				}
-			}
-		}
-		return $retAr;
 	}
 }

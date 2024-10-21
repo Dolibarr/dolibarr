@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formAssetAccountancyCode. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
  * $object (asset, assetmodel, ...)
  * $assetaccountancycodes
  * $action
@@ -27,7 +28,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (!is_object($form)) {
@@ -121,10 +122,10 @@ if (empty($reshook)) {
 			print '</td>';
 			print '<td class="valuefieldcreate">';
 			if (!empty($field_info['picto'])) {
-				print img_picto('', $field_info['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+				print img_picto('', $field_info['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 			}
 			if (in_array($field_info['type'], array('int', 'integer'))) {
-				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'int') : $assetdepreciationoptions->$field_key;
+				$value = GETPOSTISSET($html_name) ? GETPOSTINT($html_name) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'double') {
 				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name, 'alphanohtml')) : $assetdepreciationoptions->$field_key;
 			} elseif (preg_match('/^(text|html)/', $field_info['type'])) {
@@ -136,7 +137,7 @@ if (empty($reshook)) {
 				}
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, $check) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'price') {
-				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? dol_eval($field_info['default'], 1) : 0));
+				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? $field_info['default'] : 0));
 			} elseif ($field_key == 'lang') {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : $assetdepreciationoptions->lang;
 			} else {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -64,7 +65,7 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -77,15 +78,15 @@ class AssetDepreciationOptions extends CommonObject
 			'label' => 'AssetDepreciationOptionEconomic',
 			'table'	=> 'asset_depreciation_options_economic',
 			'fields' => array(
-				'depreciation_type' => array('type'=>'smallint', 'label'=>'AssetDepreciationOptionDepreciationType', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'arrayofkeyval'=>array('0'=>'AssetDepreciationOptionDepreciationTypeLinear', '1'=>'AssetDepreciationOptionDepreciationTypeDegressive', '2'=>'AssetDepreciationOptionDepreciationTypeExceptional'), 'validate'=>'1',),
-				'degressive_coefficient' => array('type'=>'double(24,8)', 'label'=>'AssetDepreciationOptionDegressiveRate', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1','enabled_field' => 'economic:depreciation_type:1'),
-				'duration' => array('type'=>'integer', 'label'=>'AssetDepreciationOptionDuration', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-				'duration_type' => array('type'=>'smallint', 'label'=>'AssetDepreciationOptionDurationType', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'arrayofkeyval'=>array('0'=>'AssetDepreciationOptionDurationTypeAnnual', '1'=>'AssetDepreciationOptionDurationTypeMonthly'/*, '2'=>'AssetDepreciationOptionDurationTypeDaily'*/), 'validate'=>'1',),
-				'rate' => array('type'=>'double(24,8)', 'label'=>'AssetDepreciationOptionRate', 'enabled'=>'1', 'position'=>50, 'visible'=>3, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1', 'computed' => '$object->asset_depreciation_options->getRate("economic")',),
-				'accelerated_depreciation_option' => array('type'=>'boolean', 'label'=>'AssetDepreciationOptionAcceleratedDepreciation', 'enabled'=>'1', 'position'=>60, 'column_break' => true, 'notnull'=>0, 'default'=>'0', 'visible'=>1, 'validate'=>'1',),
-				'amount_base_depreciation_ht' => array('type'=>'price', 'label'=>'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled'=>'isset($object)&&get_class($object)=="Asset"', 'only_on_asset'=>1, 'position'=>90, 'notnull'=>0, 'required'=>1, 'visible'=>1, 'default'=>'$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure'=>'1', 'validate'=>'1',),
-				'amount_base_deductible_ht' => array('type'=>'price', 'label'=>'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled'=>'isset($object)&&get_class($object)=="Asset"', 'only_on_asset'=>1, 'position'=>100, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-				'total_amount_last_depreciation_ht' => array('type'=>'price', 'label'=>'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled'=>'isset($object)&&get_class($object)=="Asset"', 'only_on_asset'=>1, 'position'=>110, 'noteditable'=> 1, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
+				'depreciation_type' => array('type' => 'smallint', 'label' => 'AssetDepreciationOptionDepreciationType', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'AssetDepreciationOptionDepreciationTypeLinear', 1 => 'AssetDepreciationOptionDepreciationTypeDegressive', 2 => 'AssetDepreciationOptionDepreciationTypeExceptional'), 'validate' => 1,),
+				'degressive_coefficient' => array('type' => 'double(24,8)', 'label' => 'AssetDepreciationOptionDegressiveRate', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,'enabled_field' => 'economic:depreciation_type:1'),
+				'duration' => array('type' => 'integer', 'label' => 'AssetDepreciationOptionDuration', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'duration_type' => array('type' => 'smallint', 'label' => 'AssetDepreciationOptionDurationType', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'AssetDepreciationOptionDurationTypeAnnual', 1 => 'AssetDepreciationOptionDurationTypeMonthly'/*, '2'=>'AssetDepreciationOptionDurationTypeDaily'*/), 'validate' => 1,),
+				'rate' => array('type' => 'double(24,8)', 'label' => 'AssetDepreciationOptionRate', 'enabled' => 1, 'position' => 50, 'visible' => 3, 'default' => '0', 'isameasure' => 1, 'validate' => 1, 'computed' => '$object->asset_depreciation_options->getRate("economic")',),
+				'accelerated_depreciation_option' => array('type' => 'boolean', 'label' => 'AssetDepreciationOptionAcceleratedDepreciation', 'enabled' => 1, 'position' => 60, 'column_break' => true, 'notnull' => 0, 'default' => '0', 'visible' => 1, 'validate' => 1,),
+				'amount_base_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 90, 'notnull' => 0, 'required' => 1, 'visible' => 1, 'default' => '$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure' => 1, 'validate' => 1,),
+				'amount_base_deductible_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'total_amount_last_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 110, 'noteditable' => 1, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
 			),
 		),
 		'accelerated_depreciation' => array(
@@ -93,19 +94,28 @@ class AssetDepreciationOptions extends CommonObject
 			'table'	=> 'asset_depreciation_options_fiscal',
 			'enabled_field' => 'economic:accelerated_depreciation_option:1',
 			'fields' => array(
-				'depreciation_type' => array('type'=>'smallint', 'label'=>'AssetDepreciationOptionDepreciationType', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'arrayofkeyval'=>array('0'=>'AssetDepreciationOptionDepreciationTypeLinear', '1'=>'AssetDepreciationOptionDepreciationTypeDegressive', '2'=>'AssetDepreciationOptionDepreciationTypeExceptional'), 'validate'=>'1',),
-				'degressive_coefficient' => array('type'=>'double(24,8)', 'label'=>'AssetDepreciationOptionDegressiveRate', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1','enabled_field' => 'accelerated_depreciation:depreciation_type:1'),
-				'duration' => array('type'=>'integer', 'label'=>'AssetDepreciationOptionDuration', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-				'duration_type' => array('type'=>'smallint', 'label'=>'AssetDepreciationOptionDurationType', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'arrayofkeyval'=>array('0'=>'AssetDepreciationOptionDurationTypeAnnual', '1'=>'AssetDepreciationOptionDurationTypeMonthly'/*, '2'=>'AssetDepreciationOptionDurationTypeDaily'*/), 'validate'=>'1',),
-				'rate' => array('type'=>'double(24,8)', 'label'=>'AssetDepreciationOptionRate', 'enabled'=>'1', 'position'=>50, 'visible'=>3, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1', 'computed' => '$object->asset_depreciation_options->getRate("accelerated_depreciation")',),
-				'amount_base_depreciation_ht' => array('type'=>'price', 'label'=>'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled'=>'isset($object)&&get_class($object)=="Asset"', 'only_on_asset'=>1, 'position'=>80, 'column_break' => true, 'notnull'=>0, 'required'=>1, 'visible'=>1, 'default'=>'$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure'=>'1', 'validate'=>'1',),
-				'amount_base_deductible_ht' => array('type'=>'price', 'label'=>'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled'=>'isset($object)&&get_class($object)=="Asset"', 'only_on_asset'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-				'total_amount_last_depreciation_ht' => array('type'=>'price', 'label'=>'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled'=>'isset($object)&&get_class($object)=="Asset"', 'only_on_asset'=>1, 'position'=>100, 'noteditable'=> 1, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
+				'depreciation_type' => array('type' => 'smallint', 'label' => 'AssetDepreciationOptionDepreciationType', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'AssetDepreciationOptionDepreciationTypeLinear', 1 => 'AssetDepreciationOptionDepreciationTypeDegressive', 2 => 'AssetDepreciationOptionDepreciationTypeExceptional'), 'validate' => 1,),
+				'degressive_coefficient' => array('type' => 'double(24,8)', 'label' => 'AssetDepreciationOptionDegressiveRate', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,'enabled_field' => 'accelerated_depreciation:depreciation_type:1'),
+				'duration' => array('type' => 'integer', 'label' => 'AssetDepreciationOptionDuration', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'duration_type' => array('type' => 'smallint', 'label' => 'AssetDepreciationOptionDurationType', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'AssetDepreciationOptionDurationTypeAnnual', 1 => 'AssetDepreciationOptionDurationTypeMonthly'/*, '2'=>'AssetDepreciationOptionDurationTypeDaily'*/), 'validate' => 1,),
+				'rate' => array('type' => 'double(24,8)', 'label' => 'AssetDepreciationOptionRate', 'enabled' => 1, 'position' => 50, 'visible' => 3, 'default' => '0', 'isameasure' => 1, 'validate' => 1, 'computed' => '$object->asset_depreciation_options->getRate("accelerated_depreciation")',),
+				'amount_base_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 80, 'column_break' => true, 'notnull' => 0, 'required' => 1, 'visible' => 1, 'default' => '$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure' => 1, 'validate' => 1,),
+				'amount_base_deductible_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 90, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'total_amount_last_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 100, 'noteditable' => 1, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
 			),
 		),
 	);
+	/**
+	 * @var int
+	 */
 	public $fk_asset;
+	/**
+	 * @var int
+	 */
 	public $fk_asset_model;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -113,10 +123,25 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public $deprecation_options = array();
 
+	/**
+	 * @var int
+	 */
 	public $depreciation_type;
+	/**
+	 * @var float
+	 */
 	public $degressive_coefficient;
+	/**
+	 * @var int
+	 */
 	public $duration;
+	/**
+	 * @var int
+	 */
 	public $duration_type;
+	/**
+	 * @var int<0,1>
+	 */
 	public $accelerated_depreciation_option;
 
 	/**
@@ -178,14 +203,14 @@ class AssetDepreciationOptions extends CommonObject
 				$this->{$field_key} = $this->deprecation_options[$mode][$field_key] ?? null;
 			}
 
-			$this->fields['rowid'] = array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id");
+			$this->fields['rowid'] = array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id");
 			if (empty($class_type)) {
-				$this->fields['fk_asset'] = array('type' => 'integer:Asset:asset/class/asset.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label' => 'Asset', 'enabled' => '1', 'position' => 0, 'notnull' => 0, 'visible' => 0, 'index' => 1, 'validate' => '1',);
+				$this->fields['fk_asset'] = array('type' => 'integer:Asset:asset/class/asset.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label' => 'Asset', 'enabled' => 1, 'position' => 0, 'notnull' => 0, 'visible' => 0, 'index' => 1, 'validate' => 1,);
 			} else {
-				$this->fields['fk_asset_model'] = array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label' => 'AssetModel', 'enabled' => '1', 'position' => 0, 'notnull' => 0, 'visible' => 0, 'index' => 1, 'validate' => '1',);
+				$this->fields['fk_asset_model'] = array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label' => 'AssetModel', 'enabled' => 1, 'position' => 0, 'notnull' => 0, 'visible' => 0, 'index' => 1, 'validate' => 1,);
 			}
-			$this->fields['tms'] = array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 501, 'notnull' => 0, 'visible' => 0,);
-			$this->fields['fk_user_modif'] = array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => 0,);
+			$this->fields['tms'] = array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => 0,);
+			$this->fields['fk_user_modif'] = array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => 0,);
 		}
 
 		return 1;
@@ -194,8 +219,8 @@ class AssetDepreciationOptions extends CommonObject
 	/**
 	 *  Fill deprecation_options property of object (using for data sent by forms)
 	 *
-	 * @param	int		$class_type		Type (0:asset, 1:asset model)
-	 * @return	int						Return integer <0 if KO, >0 if OK
+	 * @param	int<0,1>			$class_type	Type (0:asset, 1:asset model)
+	 * @return	int<-1,-1>|int<1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeprecationOptionsFromPost($class_type = 0)
 	{
@@ -236,11 +261,11 @@ class AssetDepreciationOptions extends CommonObject
 				if (in_array($field_info['type'], array('text', 'html'))) {
 					$value = GETPOST($html_name, 'restricthtml');
 				} elseif ($field_info['type'] == 'date') {
-					$value = dol_mktime(12, 0, 0, GETPOST($html_name . 'month', 'int'), GETPOST($html_name . 'day', 'int'), GETPOST($html_name . 'year', 'int')); // for date without hour, we use gmt
+					$value = dol_mktime(12, 0, 0, GETPOSTINT($html_name . 'month'), GETPOSTINT($html_name . 'day'), GETPOSTINT($html_name . 'year')); // for date without hour, we use gmt
 				} elseif ($field_info['type'] == 'datetime') {
-					$value = dol_mktime(GETPOST($html_name . 'hour', 'int'), GETPOST($html_name . 'min', 'int'), GETPOST($html_name . 'sec', 'int'), GETPOST($html_name . 'month', 'int'), GETPOST($html_name . 'day', 'int'), GETPOST($html_name . 'year', 'int'), 'tzuserrel');
+					$value = dol_mktime(GETPOSTINT($html_name . 'hour'), GETPOSTINT($html_name . 'min'), GETPOSTINT($html_name . 'sec'), GETPOSTINT($html_name . 'month'), GETPOSTINT($html_name . 'day'), GETPOSTINT($html_name . 'year'), 'tzuserrel');
 				} elseif ($field_info['type'] == 'duration') {
-					$value = 60 * 60 * GETPOST($html_name . 'hour', 'int') + 60 * GETPOST($html_name . 'min', 'int');
+					$value = 60 * 60 * GETPOSTINT($html_name . 'hour') + 60 * GETPOSTINT($html_name . 'min');
 				} elseif (preg_match('/^(integer|price|real|double)/', $field_info['type'])) {
 					$value = price2num(GETPOST($html_name, 'alphanohtml')); // To fix decimal separator according to lang setup
 				} elseif ($field_info['type'] == 'boolean') {
@@ -268,7 +293,7 @@ class AssetDepreciationOptions extends CommonObject
 				if ($field_info['notnull'] > 0 && $field_value == '' && !is_null($field_info['default']) && $field_info['default'] == '(PROV)') {
 					$field_value = '(PROV)';
 				} elseif ((!empty($field_info['required']) || $field_info['notnull'] > 0) && $field_value == '' && !empty($field_info['default'])) {
-					$field_value = dol_eval($field_info['default'], 1);
+					$field_value = $field_info['default'];
 				}
 				if ($field_info['notnull'] > 0 && $field_value == '' && is_null($field_info['default'])) {
 					$error++;
@@ -382,7 +407,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  get general depreciation info for a mode (used in depreciation card)
 	 *
 	 * @param	string			$mode		Depreciation mode (economic, accelerated_depreciation, ...)
-	 * @return	array|int					Return integer <0 if KO otherwise array with general depreciation info
+	 * @return array{base_depreciation_ht:string,duration:string,duration_type:string,rate:string}|int<-1,-1>		Return integer <0 if KO otherwise array with general depreciation info
 	 */
 	public function getGeneralDepreciationInfoForMode($mode)
 	{

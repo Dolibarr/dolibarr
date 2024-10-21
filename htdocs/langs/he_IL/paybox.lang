@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=הגדרת מודול PayBox
 PayBoxDesc=מודול זה מציע דפים המאפשרים תשלום ב-<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> על ידי לקוחות. זה יכול לשמש עבור תשלום חינם או עבור תשלום על אובייקט Dolibarr מסוים (חשבונית, הזמנה, ...)
-FollowingUrlAreAvailableToMakePayments=כתובות האתרים הבאות זמינות להציע דף ללקוח לבצע תשלום על אובייקטים של Dolibarr
-PaymentForm=טופס תשלום
-WelcomeOnPaymentPage=ברוכים הבאים לשירות התשלומים המקוון שלנו
-ThisScreenAllowsYouToPay=מסך זה מאפשר לך לבצע תשלום מקוון אל %s.
-ThisIsInformationOnPayment=זה מידע על תשלום שצריך לעשות
-ToComplete=להשלים
-YourEMail=אימייל לקבלת אישור תשלום
-Creditor=נוֹשֶׁה
-PaymentCode=קוד תשלום
 PayBoxDoPayment=שלם עם Paybox
 YouWillBeRedirectedOnPayBox=אתה תופנה בדף תיבת תשלום מאובטחת כדי להזין את פרטי כרטיס האשראי שלך
-Continue=הַבָּא
 SetupPayBoxToHavePaymentCreatedAutomatically=הגדר את תיבת התשלום שלך עם כתובת האתר <b>%s</b> כדי ליצור את התשלום באופן אוטומטי מאומת על ידי Paybox.
 YourPaymentHasBeenRecorded=דף זה מאשר שהתשלום שלך נרשם. תודה.
 YourPaymentHasNotBeenRecorded=התשלום שלך לא נרשם והעסקה בוטלה. תודה.
-AccountParameter=פרמטרים של חשבון
-UsageParameter=פרמטרי שימוש
-InformationToFindParameters=עזרה במציאת פרטי חשבון %s שלך
 PAYBOX_CGI_URL_V2=כתובת האתר של מודול CGI של Paybox לתשלום
-CSSUrlForPaymentForm=כתובת אתר של גיליון סגנון CSS לטופס תשלום
 NewPayboxPaymentReceived=תשלום חדש ב-Paybox התקבל
 NewPayboxPaymentFailed=תשלום חדש ב-Paybox נוסה אך נכשל
 PAYBOX_PAYONLINE_SENDEMAIL=הודעת דוא"ל לאחר ניסיון תשלום (הצלחה או נכשלה)

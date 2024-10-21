@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2021  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Contact	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function contact_prepare_head(Contact $object)
 {
@@ -93,7 +94,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';

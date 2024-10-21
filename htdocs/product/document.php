@@ -46,7 +46,7 @@ $langs->loadLangs(array('other', 'products'));
 
 
 // Get parameters
-$id     = GETPOST('id', 'int');
+$id     = GETPOSTINT('id');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -58,14 +58,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -208,7 +208,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_document');
 
 
 if ($object->id) {
@@ -239,7 +239,7 @@ if ($object->id) {
 	}
 
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	$shownav = 1;

@@ -26,7 +26,7 @@ body.login-page {
 
     position: relative;
     height: 600px;
-    width: 360px;
+    width: 500px;
     overflow: hidden;
     box-shadow: 0px 0px 24px hsl(var(--primary-color-hue), var(--primary-color-saturation), 30%,0.4);
 }
@@ -99,7 +99,7 @@ body.login-page {
     --login-logo-height:64px;
     --login-form-offset:156px;
 
-    width: 320px;
+    /* width: 320px; */
     padding: 30px;
     padding-top: calc(var(--login-form-offset) - var(--login-logo-height));
 }
@@ -131,7 +131,6 @@ input.login__input {
     border-bottom: 2px solid var(--login-form-border-color);
     background: none;
     padding: 10px 10px 10px 24px;
-    font-weight: 700;
     width: 75%;
     transition: .2s;
 }

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2023 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
  */
 
 /**
- * \file    lib/bookcal_calendar.lib.php
+ * \file    htdocs/bookcal/lib/bookcal_calendar.lib.php
  * \ingroup bookcal
  * \brief   Library files with common functions for Calendar
  */
@@ -25,7 +27,7 @@
  * Prepare array of tabs for Calendar
  *
  * @param	Calendar	$object		Calendar
- * @return 	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function calendarPrepareHead($object)
 {
@@ -41,13 +43,13 @@ function calendarPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/bookcal/calendar_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/bookcal/calendar_card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Calendar");
 	$head[$h][2] = 'card';
 	$h++;
 
 	if ($object->status == Calendar::STATUS_VALIDATED) {
-		$head[$h][0] = dol_buildpath("/bookcal/booking_list.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/booking_list.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans("Bookings");
 		$head[$h][2] = 'booking';
 		$h++;
@@ -55,7 +57,7 @@ function calendarPrepareHead($object)
 
 
 	if ($showtabofpagecontact) {
-		$head[$h][0] = dol_buildpath("/bookcal/calendar_contact.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/calendar_contact.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans("Contacts");
 		$head[$h][2] = 'contact';
 		$h++;
@@ -70,10 +72,10 @@ function calendarPrepareHead($object)
 			if (!empty($object->note_public)) {
 				$nbNote++;
 			}
-			$head[$h][0] = dol_buildpath('/bookcal/calendar_note.php', 1).'?id='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT . '/bookcal/calendar_note.php?id=' . $object->id;
 			$head[$h][1] = $langs->trans('Notes');
 			if ($nbNote > 0) {
-				$head[$h][1] .= (!getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+				$head[$h][1] .= (!getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
 			}
 			$head[$h][2] = 'note';
 			$h++;
@@ -81,22 +83,22 @@ function calendarPrepareHead($object)
 	}
 
 	if ($showtabofpagedocument) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->bookcal->dir_output."/calendar/".dol_sanitizeFileName($object->ref);
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+		$upload_dir = $conf->bookcal->dir_output . "/calendar/" . dol_sanitizeFileName($object->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = dol_buildpath("/bookcal/calendar_document.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/calendar_document.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans('Documents');
 		if (($nbFiles + $nbLinks) > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
 		}
 		$head[$h][2] = 'document';
 		$h++;
 	}
 
 	if ($showtabofpageagenda) {
-		$head[$h][0] = dol_buildpath("/bookcal/calendar_agenda.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/calendar_agenda.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;

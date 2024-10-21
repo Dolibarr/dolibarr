@@ -2,6 +2,8 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
-
 	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Monkey';
 	public $version = 'dolibarr';
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_modifiable_null;
-	public $code_auto;
-	public $prefixIsRequired;
 
 	// variables not inherited
 	public $prefixcustomer = 'CU';
@@ -81,12 +76,12 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	societe		$objsoc		Object thirdparty
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
@@ -95,11 +90,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *  @return string|-1      			Value if OK, '' if module not configured, -1 if KO
+	 *  @param	Societe|string	$objsoc     Object third party
+	 *  @param  int				$type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *  @return string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
 		global $db;
 
@@ -142,7 +137,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($max >= (pow(10, 5) - 1)) {
 			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
 		} else {
-			$num = sprintf("%05s", $max + 1);
+			$num = sprintf("%05d", $max + 1);
 		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
@@ -156,12 +151,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{

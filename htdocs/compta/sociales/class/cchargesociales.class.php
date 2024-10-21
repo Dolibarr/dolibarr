@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +389,7 @@ class Cchargesociales
 		if ($result < 0) {
 			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($this->context['createfromclone']);
@@ -514,7 +515,7 @@ class Cchargesociales
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -527,6 +528,8 @@ class Cchargesociales
 		$this->fk_pays = 0;
 		$this->module = '';
 		$this->accountancy_code = '';
+
+		return 1;
 	}
 
 	/**

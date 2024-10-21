@@ -3,6 +3,8 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,23 +129,23 @@ class Utils
 			}
 
 			if ($choice == 'allfiles') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'allfilesold') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'logfile' || $choice == 'logfiles') {
 				// Define files log
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
 				if (isModEnabled('syslog')) {
@@ -157,7 +159,7 @@ class Utils
 						}
 					}
 					if (!$alreadyincluded) {
-						$filesarray[] = array('fullname'=>$filelog, 'type'=>'file');
+						$filesarray[] = array('fullname' => $filelog, 'type' => 'file');
 					}
 				}
 			}
@@ -170,6 +172,7 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
 						$excluded = [
 							$conf->user->dir_temp,
 						];
@@ -277,12 +280,10 @@ class Utils
 			$ext = 'sql';
 			if (in_array($type, array('mysql', 'mysqli'))) {
 				$prefix = 'mysqldump';
-				$ext = 'sql';
 			}
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) {
 				$prefix = 'pg_dump';
-				$ext = 'sql';
 			}
 			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
@@ -560,13 +561,13 @@ class Utils
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
-				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*M?!999999/', $errormsg)) {	// Start of file is ok, NOT an error
 					$errormsg = '';
 				} else {
-					// Renommer fichier sortie en fichier erreur
+					// Rename file out into a file error
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
-					@rename($outputfile, $outputerror);
+					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
 					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
 					if (!$errormsg) {
 						$langs->load("errors");
@@ -705,15 +706,15 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
-	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
-	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
-	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
-	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string		$command			Command line to execute.
+	 * 											Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string		$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int<0,2>	$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	?string		$redirectionfile	If defined, a redirection of output to this file is added.
+	 * @param	int<0,1>	$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
+	 * 											This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	?string		$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
+	 * @return	array{result:int,output:string,error:string}	array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
 	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
@@ -783,7 +784,7 @@ class Utils
 
 		dol_syslog("Utils::executeCLI result=".$result." output=".$output." error=".$error, LOG_DEBUG);
 
-		return array('result'=>$result, 'output'=>$output, 'error'=>$error);
+		return array('result' => $result, 'output' => $output, 'error' => $error);
 	}
 
 	/**
@@ -816,12 +817,12 @@ class Utils
 				$moduleobj = new $class($this->db);
 			} catch (Exception $e) {
 				$error++;
-				dol_print_error($e->getMessage());
+				dol_print_error(null, $e->getMessage());
 			}
 		} else {
 			$error++;
 			$langs->load("errors");
-			dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			dol_print_error(null, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 			exit;
 		}
 
@@ -853,16 +854,16 @@ class Utils
 				}
 
 				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
-				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
-				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
+				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', '0', 1);
+				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', '0', 1);
 
 				// Replace into README.md and ChangeLog.md (in case they are included into documentation with tag __README__ or __CHANGELOG__)
 				$arrayreplacement = array();
 				$arrayreplacement['/^#\s.*/m'] = ''; // Remove first level of title into .md files
 				$arrayreplacement['/^#/m'] = '##'; // Add on # to increase level
 
-				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', 0, 0, 1);
-				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', '0', 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', '0', 0, 1);
 
 
 				$destfile = $dirofmoduletmp.'/'.$FILENAMEASCII;
@@ -909,25 +910,26 @@ class Utils
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement = array(
-						'mymodule'=>strtolower($module),
-						'MyModule'=>$module,
-						'MYMODULE'=>strtoupper($module),
-						'My module'=>$module,
-						'my module'=>$module,
-						'Mon module'=>$module,
-						'mon module'=>$module,
-						'htdocs/modulebuilder/template'=>strtolower($module),
-						'__MYCOMPANY_NAME__'=>$mysoc->name,
-						'__KEYWORDS__'=>$module,
-						'__USER_FULLNAME__'=>$user->getFullName($langs),
-						'__USER_EMAIL__'=>$user->email,
-						'__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
-						'---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
-						'__DATA_SPECIFICATION__'=>'Not yet available',
-						'__README__'=>dolMd2Asciidoc($contentreadme),
-						'__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
+						'mymodule' => strtolower($module),
+						'MyModule' => $module,
+						'MYMODULE' => strtoupper($module),
+						'My module' => $module,
+						'my module' => $module,
+						'Mon module' => $module,
+						'mon module' => $module,
+						'htdocs/modulebuilder/template' => strtolower($module),
+						'__MYCOMPANY_NAME__' => $mysoc->name,
+						'__KEYWORDS__' => $module,
+						'__USER_FULLNAME__' => $user->getFullName($langs),
+						'__USER_EMAIL__' => $user->email,
+						'__YYYY-MM-DD__' => dol_print_date($now, 'dayrfc'),
+						'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+						'__DATA_SPECIFICATION__' => 'Not yet available',
+						'__README__' => dolMd2Asciidoc($contentreadme),
+						'__CHANGELOG__' => dolMd2Asciidoc($contentchangelog),
 					);
 
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					dolReplaceInFile($destfile, $arrayreplacement);
 				}
 
@@ -1006,7 +1008,7 @@ class Utils
 			return -1;
 		}
 
-		dol_include_once('/core/lib/files.lib.php');
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
@@ -1053,7 +1055,7 @@ class Utils
 					if ($numsave >= $nbSaves) {
 						dol_delete_file($logpath.'/'.$logname.'.'.$numsave.'.gz', 0, 0, 0, null, false, 0);
 					} else {
-						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', 0, 1, 0, 0);
+						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', '0', 1, 0, 0);
 					}
 				}
 
@@ -1227,7 +1229,7 @@ class Utils
 						} elseif (is_string($row[$j]) && $row[$j] == '') {
 							// if it's an empty string, we set it as an empty string
 							$row[$j] = "''";
-						} elseif (is_numeric($row[$j]) && !strcmp($row[$j], $row[$j] + 0)) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+						} elseif (is_numeric($row[$j]) && !strcmp((string) $row[$j], (string) ((float) $row[$j] + 0))) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 							// if it's a number, we return it as-is
 							//	                    $row[$j] = $row[$j];
 						} else { // else for all other cases we escape the value and put quotes around
@@ -1359,7 +1361,7 @@ class Utils
 			if ($filesize > $sizelimit) {
 				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
 				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
-				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$message .= '<br><a href='.$documenturl.'>Download link</a>';
 				$filepath = '';
 				$mimetype = '';
 				$filename = '';
@@ -1389,7 +1391,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backp file ".((string) $error);
+		$this->error = "Error sending backup file ".((string) $error);
 		$this->output = $output;
 
 		if ($result) {
@@ -1412,7 +1414,7 @@ class Utils
 		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
 
 		// Import Cronjob class if not present
-		dol_include_once('/cron/class/cronjob.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
 		// Get this job object
 		$this_job = new Cronjob($db);
@@ -1454,7 +1456,7 @@ class Utils
 				$job->pid = null;
 
 				// Set last result as an error and add the reason on the last output
-				$job->lastresult = -1;
+				$job->lastresult = strval(-1);
 				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
 
 				if ($job->update($user) < 0) {

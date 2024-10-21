@@ -41,6 +41,10 @@ class ExpeditionLineBatch extends CommonObject
 	public $sellby;
 	public $eatby;
 	public $batch;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;
@@ -226,8 +230,8 @@ class ExpeditionLineBatch extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$tmp = new self($this->db);
-				$tmp->sellby = $this->db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $this->db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				$tmp->sellby = $this->db->jdate(($fk_product > 0 && $obj->sellby) ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $this->db->jdate(($fk_product > 0 && $obj->eatby) ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;

@@ -2,6 +2,7 @@
 <?php
 /*
  * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +35,11 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -69,7 +71,7 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (!isset($argv[3]) || !$argv[3]) {
 	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
-	exit(-1);
+	exit(1);
 }
 $bankref = $argv[1];
 $num = $argv[2];
@@ -115,7 +117,7 @@ $acct = new Account($db);
 $result = $acct->fetch('', $bankref);
 if ($result <= 0) {
 	print "Failed to find bank account with ref ".$bankref.".\n";
-	exit(-1);
+	exit(1);
 } else {
 	print "Export for bank account ".$acct->ref." (".$acct->label.").\n";
 }
@@ -126,7 +128,7 @@ $file = "export_".$model.".modules.php";
 $classname = "Export".$model;
 if (!dol_is_file($dir.$file)) {
 	print "No driver to export with format ".$model."\n";
-	exit(-1);
+	exit(1);
 }
 require_once $dir.$file;
 $objmodel = new $classname($db);
@@ -232,7 +234,7 @@ if ($resql) {
 				$db->free($resql2);
 			} else {
 				dol_print_error($db);
-				exit(-1);
+				exit(1);
 			}
 
 			$total = $balancebefore[$objp->num_releve];
@@ -260,7 +262,7 @@ if ($resql) {
 		}
 
 		/*
-		 * Ajout les liens (societe, company...)
+		 * Add links (societe, company...)
 		 */
 		$links = $acct->get_url($objp->rowid);
 		foreach ($links as $key => $val) {
@@ -414,7 +416,7 @@ if ($resql) {
 	}
 } else {
 	dol_print_error($db);
-	$ret = -1;
+	$ret = 1;
 }
 
 $db->close();

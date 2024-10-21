@@ -37,7 +37,6 @@ WithdrawalsSetup=Configuración de pago por domiciliación bancaria
 CreditTransferSetup=Configuración de transferencia de crédito
 WithdrawStatistics=Estadísticas de pago domiciliado
 CreditTransferStatistics=Estadísticas de transferencia de crédito
-Rejects=Rechazos
 LastWithdrawalReceipt=Últimos recibos domiciliados %s
 MakeWithdrawRequest=Realizar una solicitud de pago domiciliado
 MakeBankTransferOrder=Hacer una solicitud de transferencia de crédito

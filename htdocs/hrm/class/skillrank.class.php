@@ -4,6 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,17 +52,6 @@ class SkillRank extends CommonObject
 	public $table_element = 'hrm_skillrank';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for skillrank. Must be the part after the 'object_' into object_skillrank.png
 	 */
 	public $picto = 'skillrank@hrm';
@@ -102,28 +93,51 @@ class SkillRank extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'fk_skill' => array('type'=>'integer:Skill:hrm/class/skill.class.php:1', 'label'=>'Skill', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
-		'rankorder' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1, 'default' => 0),
-		'fk_object' => array('type'=>'integer', 'label'=>'object', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'objecttype' => array('type'=>'varchar(128)', 'label'=>'objecttype', 'enabled'=>'1', 'position'=>6, 'notnull'=>1, 'visible'=>0,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'fk_skill' => array('type' => 'integer:Skill:hrm/class/skill.class.php:1', 'label' => 'Skill', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => 1, 'index' => 1,),
+		'rankorder' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'position' => 4, 'notnull' => 1, 'visible' => 1, 'default' => '0'),
+		'fk_object' => array('type' => 'integer', 'label' => 'object', 'enabled' => 1, 'position' => 5, 'notnull' => 1, 'visible' => 0,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'objecttype' => array('type' => 'varchar(128)', 'label' => 'objecttype', 'enabled' => 1, 'position' => 6, 'notnull' => 1, 'visible' => 0,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $fk_skill;
+	/**
+	 * @var int
+	 */
 	public $rank;
+	/**
+	 * @var int
+	 */
 	public $fk_object;
-	public $date_creation;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $objecttype;
 	// END MODULEBUILDER PROPERTIES
+	/**
+	 * @var int
+	 */
 	public $rankorder;
 
 
@@ -174,6 +188,9 @@ class SkillRank extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
+
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
@@ -217,8 +234,9 @@ class SkillRank extends CommonObject
 	{
 		global $langs;
 
-		$sqlfilter = 'fk_object='.((int) $this->fk_object)." AND objecttype='".$this->db->escape($this->objecttype)."' AND fk_skill = ".((int) $this->fk_skill);
-		$alreadyLinked = $this->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => $sqlfilter));
+		$filter = '(fk_object:=:'.((int) $this->fk_object).") AND (objecttype:=:'".$this->db->escape($this->objecttype)."') AND (fk_skill:=:".((int) $this->fk_skill).")";
+
+		$alreadyLinked = $this->fetchAll('ASC', 'rowid', 0, 0, $filter);
 		if (!empty($alreadyLinked)) {
 			$this->error = $langs->trans('ErrSkillAlreadyAdded');
 			return -1;
@@ -306,8 +324,7 @@ class SkillRank extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -394,18 +411,17 @@ class SkillRank extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset      	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return SkillRank[]|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -418,25 +434,14 @@ class SkillRank extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (array_key_exists($key, $this->fields) && $key != 'customsql' && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -824,7 +829,7 @@ class SkillRank extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('skillrankdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -912,7 +917,7 @@ class SkillRank extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -920,7 +925,7 @@ class SkillRank extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -934,7 +939,7 @@ class SkillRank extends CommonObject
 
 		/*
 		$objectline = new SkillRankLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_skillrank = '.((int) $this->id)));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_skillrank:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;
@@ -975,16 +980,17 @@ class SkillRank extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/hrm/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1009,10 +1015,10 @@ class SkillRank extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1042,51 +1048,4 @@ class SkillRank extends CommonObject
 
 		return $result;
 	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
-
-	/**
-	 * @param array $val
-	 * @param string $key
-	 * @param string $value
-	 * @param string $moreparam
-	 * @param string $keysuffix
-	 * @param string $keyprefix
-	 * @param string $morecss
-	 * @return string
-	 */
-	//  public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
-	//  {
-	//      if ($key == "rank") {
-	//          return displayRankInfos($this);
-	//      } else return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-	//  }
 }

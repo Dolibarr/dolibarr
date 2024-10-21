@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
 
+
 /**
  * Class to manage Dolibarr database access
  */
@@ -35,7 +37,7 @@ abstract class DoliDB implements Database
 	/** Force subclass to implement LABEL - description of DB type */
 	const LABEL = self::LABEL;
 
-	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
+	/** @var false|resource|mysqli|mysqliDoli|SQLite3|PgSql\Connection|DoliDB Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -45,7 +47,7 @@ abstract class DoliDB implements Database
 	public $forcecollate = 'utf8_unicode_ci';
 
 	/** @var resource Resultset of last query */
-	private $_results;
+	private $_results; // @phpstan-ignore-line
 
 	/** @var bool true if connected, else false */
 	public $connected;
@@ -103,6 +105,17 @@ abstract class DoliDB implements Database
 	{
 		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
 		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
+	}
+
+	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevpop($nameoffield)
+	{
+		return 'STDDEV_POP('.$nameoffield.')';
 	}
 
 	/**
@@ -166,11 +179,12 @@ abstract class DoliDB implements Database
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
 	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @param	int		$allowsspace		1=Allow space char
+	 * @param	int		$allowschars		1=Allow a-z chars
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		return preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
@@ -187,8 +201,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
+				return 1;
+			} else {
+				return 0;
 			}
-			return $ret;
 		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
@@ -266,7 +282,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Return version of database server into an array
 	 *
-	 *	@return	        array  		Version array
+	 *	@return	        string[]  		Version array
 	 */
 	public function getVersionArray()
 	{
@@ -341,11 +357,11 @@ abstract class DoliDB implements Database
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
-	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
+	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
-	 *	@return	int|string						Date TMS or ''
+	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
 	{
@@ -381,10 +397,11 @@ abstract class DoliDB implements Database
 	{
 		$sql .= ' LIMIT 1';
 
-		$res = $this->query($sql);
-		if ($res) {
-			$obj = $this->fetch_object($res);
+		$resql = $this->query($sql);
+		if ($resql) {
+			$obj = $this->fetch_object($resql);
 			if ($obj) {
+				$this->free($resql);
 				return $obj;
 			} else {
 				return 0;
@@ -395,24 +412,28 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-	 * Return all results from query as an array of objects
-	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
-	 * be careful with this method use it only with some limit of results to avoid performances loss.
+	 * Return all results from query as an array of objects. Using this is a bad practice and is discouraged.
+	 * Note : It should only be used with SELECT queries and with a limit. If you are not able to defined/know what can be the limit, it
+	 * just means this function is not what you need. Do not use it.
 	 *
-	 * @param 	string 		$sql 		The sql query string
-	 * @return 	bool|array				Result
-	 * @deprecated
+	 * @param 	string 			$sql 	The sql query string. Must end with "... LIMIT x"
+	 * @return  bool|array              Result
 	 */
 	public function getRows($sql)
 	{
-		$res = $this->query($sql);
-		if ($res) {
+		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
+		}
+
+		$resql = $this->query($sql);
+		if ($resql) {
 			$results = array();
-			if ($this->num_rows($res) > 0) {
-				while ($obj = $this->fetch_object($res)) {
+			if ($this->num_rows($resql) > 0) {
+				while ($obj = $this->fetch_object($resql)) {
 					$results[] = $obj;
 				}
 			}
+			$this->free($resql);
 			return $results;
 		}
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formAssetAccountancyCode. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
  * $object (asset, assetmodel, ...)
  * $assetaccountancycodes
  * $action
@@ -27,7 +27,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (!is_object($form)) {

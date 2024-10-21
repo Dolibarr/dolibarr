@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';	// Class to u
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-$id = GETPOST('fk_element', 'int');
+$id = GETPOSTINT('fk_element');
 $element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $elementupload = $element;
 

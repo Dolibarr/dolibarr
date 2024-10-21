@@ -7,7 +7,9 @@
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017-2018  Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +28,7 @@
 
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_einstein.modules.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File of Class to generate PDF orders with template Einstein
  */
 
@@ -74,7 +76,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -84,7 +86,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -106,7 +108,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
@@ -117,12 +119,6 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
-
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
-		}
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -142,7 +138,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') || getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->posxtva = $this->posxup;
 		}
-		$this->posxpicture = $this->posxtva - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxtva - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
 			$this->posxtva -= 20;
@@ -159,19 +155,30 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Commande	$object				Object to generate
+	 *	@param		Commande	$object				Object source to build document
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int             			    1=OK, 0=KO
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -196,9 +203,9 @@ class pdf_einstein extends ModelePDFCommandes
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 		}
 
@@ -217,7 +224,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Possibility to use suffix for proforma
 				$suffix = '';
 				if (getDolGlobalString('PROFORMA_PDF_WITH_SUFFIX')) {
-					$suffix = (GETPOST('model') == 'proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
+					$suffix = (GETPOST('model') == 'proforma') ? getDolGlobalString('PROFORMA_PDF_WITH_SUFFIX') : '';
 					$suffix = dol_sanitizeFileName($suffix);
 				}
 
@@ -240,7 +247,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -253,7 +260,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -313,13 +320,14 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, (is_object($outputlangsbis) ? $outputlangsbis : null));
+				$pagehead = $this->_pagehead($pdf, $object, 1, $outputlangs, (is_object($outputlangsbis) ? $outputlangsbis : null));
+				$top_shift = $pagehead['top_shift'];
+				$shipp_shift = $pagehead['shipp_shift'];
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-
-				$tab_top = 90 + $top_shift;
+				$tab_top = 90 + $top_shift + $shipp_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// Incoterm
@@ -336,7 +344,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
+						$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
 
 						$tab_top = $nexY + 6;
 					}
@@ -376,7 +384,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1, $this->corner_radius, '1234', 'D');
 
 					$tab_top = $nexY + 6;
 				}
@@ -552,15 +560,15 @@ class pdf_einstein extends ModelePDFCommandes
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
 					}
-					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					$nexY += 2; // Add space between lines
@@ -584,7 +592,7 @@ class pdf_einstein extends ModelePDFCommandes
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
@@ -628,7 +636,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -637,7 +645,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -647,7 +655,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -723,7 +731,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$lib_condition_paiement = ($outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			if ($object->deposit_percent > 0) {
-				$lib_condition_paiement = str_replace('__DEPOSIT_PERCENT__', $object->deposit_percent, $lib_condition_paiement);
+				$lib_condition_paiement = str_replace('__DEPOSIT_PERCENT__', (string) $object->deposit_percent, $lib_condition_paiement);
 			}
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
@@ -813,7 +821,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->proprio), 0, 'L', 0);
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->owner_name), 0, 'L', 0);
 					$posy = $pdf->GetY() + 1;
 
 					if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
@@ -881,9 +889,9 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 			$default_font_size--;
 		}
@@ -919,13 +927,11 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			$tvaisnull = ((!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
 				//Local tax 1 before VAT
-				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
-				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
 						continue;
@@ -938,24 +944,30 @@ class pdf_einstein extends ModelePDFCommandes
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+
+							if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
-				//}
+
 				//Local tax 2 before VAT
-				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
 						continue;
@@ -968,21 +980,28 @@ class pdf_einstein extends ModelePDFCommandes
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+
+							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
-				//}
 
 				// VAT
 				foreach ($this->tva_array as $tvakey => $tvaval) {
@@ -1003,6 +1022,8 @@ class pdf_einstein extends ModelePDFCommandes
 							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
 						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
 							$totalvat .= $tvaval['vatcode'].$tvacompl;
+						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+							$totalvat .= $tvacompl;
 						} else {
 							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
 						}
@@ -1029,17 +1050,25 @@ class pdf_einstein extends ModelePDFCommandes
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
 							$totalvat .= ' ';
 
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
@@ -1061,18 +1090,25 @@ class pdf_einstein extends ModelePDFCommandes
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
 							$totalvat .= ' ';
 
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
@@ -1133,8 +1169,8 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -1171,7 +1207,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1179,7 +1215,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidetop)) {
 			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5); // line takes a position y in 2nd parameter and 4th parameter
@@ -1244,7 +1280,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	float|int                   Return topshift value
+	 *  @return	array<string, int|float>	top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
@@ -1372,13 +1408,14 @@ class pdf_einstein extends ModelePDFCommandes
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
 		$posy += 2;
 
 		$top_shift = 0;
+		$shipp_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
@@ -1421,7 +1458,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, 82, $hautcadre, $this->corner_radius, '1234', 'F');
 				$pdf->SetTextColor(0, 0, 60);
 			}
 
@@ -1457,7 +1494,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
 			$mode =  'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
@@ -1477,12 +1514,13 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
 				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
@@ -1492,11 +1530,54 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetXY($posx + 2, $posy);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
+
+			// Show shipping address
+			if (getDolGlobalInt('SALES_ORDER_SHOW_SHIPPING_ADDRESS')) {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$companystatic = new Societe($this->db);
+					$companystatic->fetch($object->contact->fk_soc);
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, ($usecontact ? 1 : 0), 'target', $object);
+				} else {
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+				}
+				if (!empty($carac_client_shipping)) {
+					$posy += $hautcadre;
+
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+
+					// Show shipping frame
+					$pdf->SetXY($posx + 2, $posy - 5);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
+					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
+
+					// Show shipping name
+					$pdf->SetXY($posx + 2, $posy + 1);
+					$pdf->SetFont('', 'B', $default_font_size);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, '', 'L');
+
+					$posy = $pdf->getY();
+
+					// Show shipping information
+					$pdf->SetXY($posx + 2, $posy);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
+
+					$shipp_shift += $hautcadre + 10;
+				}
+			}
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		return $top_shift;
+		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+
+		return $pagehead;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

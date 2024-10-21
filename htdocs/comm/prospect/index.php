@@ -36,7 +36,7 @@ if ($user->socid > 0) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$action = '';
 	$socid = $user->socid;

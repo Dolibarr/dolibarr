@@ -237,7 +237,7 @@ class Link extends CommonObject
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 		if ($sortfield) {
 			if (empty($sortorder)) {

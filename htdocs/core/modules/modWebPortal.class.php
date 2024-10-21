@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024  	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024		Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,23 +353,6 @@ class modWebPortal extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		//global $conf, $langs;
-
-		//$result = $this->_load_tables('/install/mysql/', 'webportal');
-		$result = $this->_load_tables('/webportal/sql/');
-		if ($result < 0) {
-			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
-		}
-
-		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('webportal_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
-		//$result2=$extrafields->addExtraField('webportal_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
-		//$result3=$extrafields->addExtraField('webportal_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
-		//$result4=$extrafields->addExtraField('webportal_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
-		//$result5=$extrafields->addExtraField('webportal_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'website', 'isModEnabled("webportal")');
-
 		// Permissions
 		$this->remove($options);
 

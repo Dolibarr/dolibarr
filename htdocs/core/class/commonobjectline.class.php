@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,16 @@
 abstract class CommonObjectLine extends CommonObject
 {
 	/**
+	 * @var string ID to identify parent CommonObject type (element name)
+	 */
+	public $parent_element = '';
+
+	/**
+	 * @var string Attribute related to parent CommonObject rowid (many2one)
+	 */
+	public $fk_parent_attribute = '';
+
+	/**
 	 * Id of the line
 	 * @var int
 	 */
@@ -51,34 +63,93 @@ abstract class CommonObjectLine extends CommonObject
 	public $picto = 'line';
 
 	/**
-	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @var ?int		ID of the unit of measurement (rowid in llx_c_units table)
 	 * @see measuringUnitString()
 	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
+	/**
+	 * @var int|''
+	 */
 	public $date_debut_prevue;
+	/**
+	 * @var int|''
+	 */
 	public $date_debut_reel;
+	/**
+	 * @var int|''
+	 */
 	public $date_fin_prevue;
+	/**
+	 * @var int|''
+	 */
 	public $date_fin_reel;
 
-	public $weight;
-	public $weight_units;
-	public $width;
-	public $width_units;
-	public $height;
-	public $height_units;
-	public $length;
-	public $length_units;
-	public $surface;
-	public $surface_units;
-	public $volume;
-	public $volume_units;
 
+	/**
+	 * @var float|string
+	 */
+	public $weight;
+
+	/**
+	 * @var int|string
+	 */
+	public $weight_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string
+	 */
+	public $length;
+	/**
+	 * @var int|string
+	 */
+	public $length_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string
+	 */
+	public $width;
+	/**
+	 * @var int|string
+	 */
+	public $width_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string|null
+	 */
+	public $height;
+	/**
+	 * @var int|string|null
+	 */
+	public $height_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string|null
+	 */
+	public $surface;
+	/**
+	 * @var int|string|null
+	 */
+	public $surface_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string|null
+	 */
+	public $volume;
+	/**
+	 * @var int|string|null
+	 */
+	public $volume_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var ?array<string,array<string,string>>
+	 */
 	public $multilangs;
 
-	public $product_type;		// type in line
-	public $fk_product;			// product id in line (when line is linked to a product)
+	/**
+	 * @var int type in line
+	 */
+	public $product_type;
+
+	/**
+	 * @var int product id in line (when line is linked to a product or service)
+	 */
+	public $fk_product;
 
 	/**
 	 * Description of the line
@@ -94,19 +165,70 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $description;
 
-	public $product;			// To store full product object after a fetch_product() on a line
-	public $product_ref;		// ref in product table
-	public $product_label;		// label in product table
-	public $product_barcode;	// barcode in product table
-	public $product_desc;		// desc in product table
-	public $fk_product_type;	// type in product table
+	/**
+	 * @var Product Object product to store full product object after a fetch_product() on a line
+	 */
+	public $product;
 
+	/**
+	 * @var string reference in product table
+	 */
+	public $product_ref;
+
+	/**
+	 * @var string label in product table
+	 */
+	public $product_label;
+
+	/**
+	 * @var string barcode in product table
+	 */
+	public $product_barcode;
+
+	/**
+	 * @var string description in product table
+	 */
+	public $product_desc;
+
+	/**
+	 * @var int type in product table
+	 */
+	public $fk_product_type;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+	/**
+	 * @var int
+	 */
 	public $duree;
+	/**
+	 * @var float|string
+	 */
 	public $remise_percent;
+
+	/**
+	 * List of cumulative options:
+	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
 	public $info_bits;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
+	/**
+	 * @var float|string
+	 */
 	public $tva_tx;
 
 	/**
@@ -155,7 +277,7 @@ abstract class CommonObjectLine extends CommonObject
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
-	 *	@return	string|int 		Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
+	 *	@return	string|int<-1,1>	Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -168,8 +290,6 @@ abstract class CommonObjectLine extends CommonObject
 		$langs->load('products');
 
 		$label_type = 'label';
-
-		$label_type = 'label';
 		if ($type == 'short') {
 			$label_type = 'short_label';
 		} elseif ($type == 'code') {
@@ -179,8 +299,7 @@ abstract class CommonObjectLine extends CommonObject
 		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0) {
-			$res = $this->db->fetch_array($resql);
+		if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 			if ($label_type == 'code') {
 				$label = 'unit'.$res['code'];
 			} else {
@@ -196,18 +315,19 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Empty function to prevent errors on call of this function must be overload if useful
+	 * Empty function to prevent errors on call of this function. Must be overload if useful
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param  string      		$sortorder    	Sort Order
+	 * @param  string      		$sortfield    	Sort field
+	 * @param  int         		$limit        	Limit the number of lines returned
+	 * @param  int         		$offset       	Offset
+	 * @param  string|string[]	$filter       	Filter as an Universal Search string.
+	 * 											Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      		$filtermode   	No more used
+	 * @return self[]|int<-1,-1>        	         	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		return 0;
+		return -1;  // NOK because nothing done.
 	}
 }

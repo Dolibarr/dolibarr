@@ -1,12 +1,14 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2011	Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2012       Cedric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2017-2024  Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +26,14 @@
 
 /**
  *	\file       htdocs/fourn/facture/class/fournisseur.facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File for class to manage invoice templates
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.ligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
@@ -84,6 +87,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $socid;
 
 	/**
+	 * @var int
 	 * @deprecated
 	 */
 	public $fk_soc;
@@ -135,24 +139,32 @@ class FactureFournisseurRec extends CommonInvoice
 	public $unit_frequency;
 	public $date_when;
 	public $date_last_gen;
-	public $nb_gen_done;
-	public $nb_gen_max;
-	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
-	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
-	public $model_pdf;
+	/**
+	 * @var int nb generation done
+	 */
+	public $nb_gen_done;
+
+	/**
+	 * @var int nb generation max
+	 */
+	public $nb_gen_max;
+
+	/**
+	 * @var int<0,1> auto validate 0 to create in draft, 1 to create and validate the new invoice
+	 */
+	public $auto_validate; //
+	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
 	/**
 	 * Invoice lines
-	 * @var FactureFournisseurLigneRec[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 
 
 	/* Override fields in CommonObject
 	public $entity;
-	public $date_creation;
-	public $date_modification;
 	public $total_ht;
 	public $total_tva;
 	public $total_ttc;
@@ -189,56 +201,55 @@ class FactureFournisseurRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
-		'ref_supplier' =>array('type'=>'varchar(180)', 'label'=>'RefSupplier', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>20),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>30),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>40),
-		'suspended' =>array('type'=>'integer', 'label'=>'Suspended', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
-		'libelle' =>array('type'=>'varchar(100)', 'label'=>'Libelle', 'enabled'=>1, 'showoncombobox' => 0, 'visible'=>-1, 'position'=>15),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'titre' => array('type' => 'varchar(100)', 'label' => 'Titre', 'enabled' => 1, 'showoncombobox' => 1, 'visible' => -1, 'position' => 15),
+		'ref_supplier' => array('type' => 'varchar(180)', 'label' => 'RefSupplier', 'enabled' => 1, 'showoncombobox' => 1, 'visible' => -1, 'position' => 20),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25, 'index' => 1),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 30),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 40),
+		'suspended' => array('type' => 'integer', 'label' => 'Suspended', 'enabled' => 1, 'visible' => -1, 'position' => 225),
+		'libelle' => array('type' => 'varchar(100)', 'label' => 'Libelle', 'enabled' => 1, 'showoncombobox' => 0, 'visible' => -1, 'position' => 15),
 
-		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
-		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
-		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total', 'enabled'=>1, 'visible'=>-1, 'position'=>70, 'isameasure'=>1),
-		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>55, 'isameasure'=>1),
-		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>75, 'isameasure'=>1),
+		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 60, 'isameasure' => 1),
+		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'isameasure' => 1),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total', 'enabled' => 1, 'visible' => -1, 'position' => 70, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'Tva', 'enabled' => 1, 'visible' => -1, 'position' => 55, 'isameasure' => 1),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 75, 'isameasure' => 1),
 
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>175),
-		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 210),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Fk projet', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
+		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'Fk cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'Fk mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'date_lim_reglement' => array('type' => 'date', 'label' => 'Date lim reglement', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 
-		'note_private' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
-		'note_public' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
-		'modelpdf' =>array('type'=>'varchar(255)', 'label'=>'Modelpdf', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'note_private' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105),
+		'note_public' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
+		'modelpdf' => array('type' => 'varchar(255)', 'label' => 'Modelpdf', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency tx', 'enabled'=>1, 'visible'=>-1, 'position'=>190, 'isameasure'=>1),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>195, 'isameasure'=>1),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>200, 'isameasure'=>1),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>205, 'isameasure'=>1),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrency tx', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'isameasure' => 1),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ht', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'isameasure' => 1),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total tva', 'enabled' => 1, 'visible' => -1, 'position' => 200, 'isameasure' => 1),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 205, 'isameasure' => 1),
 
-		'usenewprice' =>array('type'=>'integer', 'label'=>'UseNewPrice', 'enabled'=>1, 'visible'=>0, 'position'=>155),
-		'frequency' =>array('type'=>'integer', 'label'=>'Frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'unit_frequency' =>array('type'=>'varchar(2)', 'label'=>'Unit frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'usenewprice' => array('type' => 'integer', 'label' => 'UseNewPrice', 'enabled' => 1, 'visible' => 0, 'position' => 155),
+		'frequency' => array('type' => 'integer', 'label' => 'Frequency', 'enabled' => 1, 'visible' => -1, 'position' => 150),
+		'unit_frequency' => array('type' => 'varchar(2)', 'label' => 'Unit frequency', 'enabled' => 1, 'visible' => -1, 'position' => 125),
 
-		'date_when' =>array('type'=>'datetime', 'label'=>'Date when', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
-		'date_last_gen' =>array('type'=>'datetime', 'label'=>'Date last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
-		'nb_gen_done' =>array('type'=>'integer', 'label'=>'Nb gen done', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'nb_gen_max' =>array('type'=>'integer', 'label'=>'Nb gen max', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
-		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>160, 'isameasure'=>1),
-		'auto_validate' =>array('type'=>'integer', 'label'=>'Auto validate', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'generate_pdf' =>array('type'=>'integer', 'label'=>'Generate pdf', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-
+		'date_when' => array('type' => 'datetime', 'label' => 'Date when', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'date_last_gen' => array('type' => 'datetime', 'label' => 'Date last gen', 'enabled' => 1, 'visible' => -1, 'position' => 135),
+		'nb_gen_done' => array('type' => 'integer', 'label' => 'Nb gen done', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'nb_gen_max' => array('type' => 'integer', 'label' => 'Nb gen max', 'enabled' => 1, 'visible' => -1, 'position' => 145),
+		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'isameasure' => 1),
+		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
+		'generate_pdf' => array('type' => 'integer', 'label' => 'Generate pdf', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -299,6 +310,7 @@ class FactureFournisseurRec extends CommonInvoice
 		if ($result > 0) {
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_rec (';
 			$sql .= 'titre';
+			$sql .= ", subtype";
 			$sql .= ', ref_supplier';
 			$sql .= ', entity';
 			$sql .= ', fk_soc';
@@ -329,6 +341,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
 			$sql .= "'".$this->db->escape($this->title)."'";
+			$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -372,14 +385,14 @@ class FactureFournisseurRec extends CommonInvoice
 				$num = count($facfourn_src->lines);
 				for ($i = 0; $i < $num; $i++) {
 					$tva_tx = $facfourn_src->lines[$i]->tva_tx;
-					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 						$tva_tx .= ' ('.$facfourn_src->lines[$i]->vat_src_code.')';
 					}
 
 					$result_insert = $this->addline(
 						$facfourn_src->lines[$i]->fk_product,
 						$facfourn_src->lines[$i]->ref_supplier,
-						$facfourn_src->lines[$i]->label,
+						$facfourn_src->lines[$i]->product_label,
 						$facfourn_src->lines[$i]->desc ? $facfourn_src->lines[$i]->desc : $facfourn_src->lines[$i]->description,
 						$facfourn_src->lines[$i]->pu_ht,
 						$facfourn_src->lines[$i]->pu_ttc,
@@ -497,6 +510,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if (!empty($this->socid) && $this->socid > 0) {
@@ -577,7 +591,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.rowid, f.titre as title, f.ref_supplier, f.entity, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.titre as title, f.subtype, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
 		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
@@ -613,6 +627,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->title;
 				$this->title                    = $obj->title;
+				$this->subtype				          = $obj->subtype;
 				$this->ref                      = $obj->title;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -909,9 +924,9 @@ class FactureFournisseurRec extends CommonInvoice
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
 			}
 
 			// Clean parameters
@@ -1106,7 +1121,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$pu_ttc         = price2num($pu_ttc);
 			$pu_ht_devise = price2num($pu_ht_devise);
 
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 
@@ -1249,7 +1264,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * Format string to output with by striking the string if max number of generation was reached
 	 *
 	 * @param	string		$ret	Default value to output
-	 * @return	boolean				False by default, True if maximum number of generation is reached
+	 * @return	string				False by default, True if maximum number of generation is reached
 	 */
 	public function strikeIfMaxNbGenReached($ret)
 	{
@@ -1312,7 +1327,7 @@ class FactureFournisseurRec extends CommonInvoice
 			}
 
 			$saventity = $conf->entity;
-			$laststep="None";
+			$laststep = "None";
 
 			while ($i < $num) {     // Loop on each template invoice. If $num = 0, test is false at first pass.
 				$line = $this->db->fetch_object($resql);
@@ -1323,7 +1338,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$new_fac_fourn = null;
 				$facturerec = new FactureFournisseurRec($this->db);
-				$laststep="Fetch {$line->rowid}";
+				$laststep = "Fetch {$line->rowid}";
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0) {
@@ -1337,6 +1352,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
+					$new_fac_fourn->subtype = $facturerec->subtype;
 					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
@@ -1349,7 +1365,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
-					$laststep="Create invoiceidgenerated $invoiceidgenerated";
+					$laststep = "Create invoiceidgenerated $invoiceidgenerated";
 					if ($invoiceidgenerated <= 0) {
 						$this->errors = $new_fac_fourn->errors;
 						$this->error = $new_fac_fourn->error;
@@ -1387,7 +1403,7 @@ class FactureFournisseurRec extends CommonInvoice
 				if (!$error && $invoiceidgenerated >= 0) {
 					$facturerec->nb_gen_done++;
 					$facturerec->date_last_gen = dol_now();
-					$facturerec->date_when= $facturerec->getNextDate();
+					$facturerec->date_when = $facturerec->getNextDate();
 					$facturerec->update($user);
 					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->title);
 					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->title. ' is finished with a success generation');
@@ -1421,7 +1437,7 @@ class FactureFournisseurRec extends CommonInvoice
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto       			Add picto into link
 	 * @param  string	$option          			Where point the link
@@ -1488,7 +1504,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1651,7 +1667,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -1771,6 +1787,8 @@ class FactureFournisseurRec extends CommonInvoice
 		}
 
 		$this->usenewprice = 0;
+
+		return 1;
 	}
 
 	/**
@@ -1977,271 +1995,6 @@ class FactureFournisseurRec extends CommonInvoice
 		} else {
 			dol_print_error($this->db);
 			return -1;
-		}
-	}
-}
-
-
-
-/**
- *	Class to manage supplier invoice lines of templates.
- *  Saved into database table llx_facture_fourn_det_rec
- */
-class FactureFournisseurLigneRec extends CommonObjectLine
-{
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'invoice_supplier_det_rec';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'facture_fourn_det_rec';
-
-	public $fk_facture_fourn;
-	public $fk_parent;
-	public $fk_product;
-	public $ref_supplier;
-	public $label;
-	/**
-	 * @deprecated	Use desc
-	 */
-	public $description;
-	public $pu_ht;
-	public $pu_ttc;
-	public $qty;
-	public $remise_percent;
-	public $fk_remise_except;
-	public $vat_src_code;
-	public $tva_tx;
-	public $localtax1_tx;
-	public $localtax1_type;
-	public $localtax2_tx;
-	public $localtax2_type;
-
-	public $product_type;
-	public $date_start;
-	public $date_end;
-	public $info_bits;
-	public $special_code;
-	public $rang;
-
-	public $fk_user_author;
-	public $fk_user_modif;
-
-
-	/**
-	 *    Delete supplier order template line in database
-	 *
-	 * @param User $user Object user
-	 * @param int $notrigger Disable triggers
-	 * @return        int                    Return integer <0 if KO, >0 if OK
-	 */
-	public function delete(User $user, $notrigger = 0)
-	{
-		$error = 0;
-		$this->db->begin();
-
-		if (! $error) {
-			if (! $notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('LINESUPPLIERBILLREC_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				} // Do also here what you must do to rollback action if trigger fail
-				// End call triggers
-			}
-		}
-
-		if (! $error) {
-			$result = $this->deleteExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
-		}
-
-		if (! $error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element . ' WHERE rowid=' . (int) $this->id;
-
-			$res = $this->db->query($sql);
-			if ($res === false) {
-				$error++;
-				$this->errors[] = $this->db->lasterror();
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-			return -1;
-		} else {
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-
-	/**
-	 *	Get line of template invoice
-	 *
-	 *	@param		int 	$rowid		Id of invoice
-	 *	@return     int         		1 if OK, < 0 if KO
-	 */
-	public function fetch($rowid)
-	{
-		$sql = 'SELECT l.rowid,';
-		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product,';
-		$sql .= ' l.ref as ref_supplier, l.label, l.description as line_desc, l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except,';
-		$sql .= ' l.vat_src_code, l.tva_tx, l.localtax1_tx, l.localtax1_type, l.localtax2_tx, l.localtax2_type,';
-		$sql .= ' l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc,';
-		$sql .= ' l.product_type, l.date_start, l.date_end,';
-		$sql .= ' l.info_bits, l.special_code, l.rang, l.fk_unit, l.import_key,';
-		$sql .= ' l.fk_user_author, l.fk_user_modif, l.fk_multicurrency,';
-		$sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.rowid = '. (int) $rowid;
-		$sql .= ' ORDER BY l.rang';
-
-		dol_syslog('FactureRec::fetch', LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$objp = $this->db->fetch_object($result);
-
-			$this->id                       = $objp->rowid;
-			$this->fk_facture_fourn         = $objp->fk_facture_fourn;
-			$this->fk_parent                = $objp->fk_parent_line;
-			$this->fk_product               = $objp->fk_product;
-			$this->ref_supplier             = $objp->ref_supplier;
-			$this->label                    = $objp->label;
-			$this->description              = $objp->line_desc;
-			$this->desc			            = $objp->line_desc;
-			$this->pu_ht                    = $objp->pu_ht;
-			$this->pu_ttc                   = $objp->pu_ttc;
-			$this->qty                      = $objp->qty;
-			$this->remise_percent           = $objp->remise_percent;
-			$this->fk_remise_except         = $objp->fk_remise_except;
-			$this->vat_src_code             = $objp->vat_src_code;
-			$this->tva_tx                   = $objp->tva_tx;
-			$this->localtax1_tx             = $objp->localtax1_tx;
-			$this->localtax1_type           = $objp->localtax1_type;
-			$this->localtax2_tx             = $objp->localtax2_tx;
-			$this->localtax2_type           = $objp->localtax2_type;
-			$this->total_ht                 = $objp->total_ht;
-			$this->total_tva                = $objp->total_tva;
-			$this->total_localtax1          = $objp->total_localtax1;
-			$this->total_localtax2          = $objp->total_localtax2;
-			$this->total_ttc                = $objp->total_ttc;
-			$this->product_type             = $objp->product_type;
-			$this->date_start               = $objp->date_start;
-			$this->date_end                 = $objp->date_end;
-			$this->info_bits                = $objp->info_bits;
-			$this->special_code             = $objp->special_code;
-			$this->rang                     = $objp->rang;
-			$this->fk_unit                  = $objp->fk_unit;
-			$this->import_key               = $objp->import_key;
-			$this->fk_user_author           = $objp->fk_user_author;
-			$this->fk_user_modif            = $objp->fk_user_modif;
-			$this->fk_multicurrency         = $objp->fk_multicurrency;
-			$this->multicurrency_code       = $objp->multicurrency_code;
-			$this->multicurrency_subprice   = $objp->multicurrency_subprice;
-			$this->multicurrency_total_ht   = $objp->multicurrency_total_ht;
-			$this->multicurrency_total_tva  = $objp->multicurrency_total_tva;
-			$this->multicurrency_total_ttc  = $objp->multicurrency_total_ttc;
-
-			$this->db->free($result);
-			return 1;
-		} else {
-			$this->error = $this->db->lasterror();
-			return -3;
-		}
-	}
-
-
-	/**
-	 * 	Update a line to supplier invoice template .
-	 *
-	 *  @param		User	$user					User
-	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
-	 */
-	public function update(User $user, $notrigger = 0)
-	{
-		global $conf;
-
-		$error = 0;
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET';
-		$sql .= ' fk_facture_fourn = ' . (int) $this->fk_facture_fourn;
-		$sql .= ', fk_parent_line = ' . (int) $this->fk_parent;
-		$sql .= ', fk_product = ' . (int) $this->fk_product;
-		$sql .= ', ref = ' . (!empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
-		$sql .= ", label = " . (!empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
-		$sql .= ", description = '" . $this->db->escape($this->desc ? $this->desc : $this->description) . "'";
-		$sql .= ', pu_ht = ' . price2num($this->pu_ht);
-		$sql .= ', pu_ttc = ' . price2num($this->pu_ttc);
-		$sql .= ', qty = ' . price2num($this->qty);
-		$sql .= ", remise_percent = '" . price2num($this->remise_percent) . "'";
-		$sql .= ', fk_remise_except = ' . (int) $this->fk_remise_except;
-		$sql .= ", vat_src_code = '" . $this->db->escape($this->vat_src_code) . "'";
-		$sql .= ', tva_tx = ' . price2num($this->tva_tx);
-		$sql .= ', localtax1_tx = ' . price2num($this->localtax1_tx);
-		$sql .= ", localtax1_type = '" . $this->db->escape($this->localtax1_type) . "'";
-		$sql .= ', localtax2_tx = ' . price2num($this->localtax2_tx);
-		$sql .= ", localtax2_type = '" . $this->db->escape($this->localtax2_type) . "'";
-		if (empty($this->skip_update_total)) {
-			$sql .= ', total_ht = ' . price2num($this->total_ht);
-			$sql .= ', total_tva = ' . price2num($this->total_tva);
-			$sql .= ', total_localtax1 = ' . price2num($this->total_localtax1);
-			$sql .= ', total_localtax2 = ' . price2num($this->total_localtax2);
-			$sql .= ', total_ttc = ' . price2num($this->total_ttc);
-		}
-		$sql .= ', product_type = ' . (int) $this->product_type;
-		$sql .= ', date_start = ' . (int) $this->date_start;
-		$sql .= ', date_end = ' . (int) $this->date_end;
-		$sql .= ", info_bits = " . ((int) $this->info_bits);
-		$sql .= ', special_code =' . (int) $this->special_code;
-		$sql .= ', rang = ' . (int) $this->rang;
-		$sql .= ', fk_unit = ' .($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : 'null');
-		$sql .= ', fk_user_modif = ' . (int) $user->id;
-		$sql .= ' WHERE rowid = ' . (int) $this->id;
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this). '::updateline', LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINESUPPLIERBILLREC_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if ($error) {
-				$this->db->rollback();
-				return -2;
-			} else {
-				$this->db->commit();
-				return 1;
-			}
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return -2;
 		}
 	}
 }

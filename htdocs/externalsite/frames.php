@@ -35,7 +35,7 @@ $langs->load("other");
 
 $mainmenu = GETPOST('mainmenu', "aZ09");
 $leftmenu = GETPOST('leftmenu', "aZ09");
-$idmenu = GETPOST('idmenu', 'int');
+$idmenu = GETPOSTINT('idmenu');
 $theme = GETPOST('theme', 'aZ09');
 $codelang = GETPOST('lang', 'aZ09');
 $keyforcontent = GETPOST('keyforcontent', 'aZ09');
@@ -50,14 +50,14 @@ if (!isModEnabled("externalsite")) {
  */
 
 if (empty($keyforcontent) && !getDolGlobalString('EXTERNALSITE_URL')) {
-	llxHeader();
+	llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-externalsite page-frames');
 	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
 	exit;
 }
 
 if (!empty($keyforcontent)) {
-	llxHeader();
+	llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-externalsite page-frames');
 
 	print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight'] - 90).'px">';
 
@@ -143,7 +143,7 @@ if (!empty($keyforcontent)) {
 	</html>
 	";
 	} else {
-		llxHeader();
+		llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-externalsite page-frames');
 		print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight'] - 90).'px">';
 		print $conf->global->EXTERNALSITE_URL;
 		print '<div>';

@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Ahmad Jamaly Rabib		<rabib@metroworks.co.jp>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +199,9 @@ class modPropale extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'co.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer",
 			'c.fk_soc'=>"IdCompany", 'c.datec'=>"DateCreation", 'c.datep'=>"DatePropal", 'c.fin_validite'=>"DateEndPropal",
-			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC");
+			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC",
+			'cir.label'=>'Source',
+		);
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
@@ -241,6 +244,7 @@ class modPropale extends DolibarrModules
 			'pj.ref'=>'Text', 'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric",
 			'cd.total_tva'=>"Numeric", 'cd.total_ttc'=>"Numeric", 'p.ref'=>'Text', 'p.label'=>'Text',
 			'c.entity'=>'List:entity:label:rowid',
+			'cir.label'=>'Text',
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
@@ -281,6 +285,7 @@ class modPropale extends DolibarrModules
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'propal as c';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as cir ON cir.rowid = c.fk_input_reason';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON c.fk_projet = pj.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON c.fk_user_author = uc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON c.fk_user_valid = uv.rowid';
@@ -491,7 +496,7 @@ class modPropale extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

@@ -47,7 +47,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink'],
-	    ['Image','Table','HorizontalRule','Smiley','SpecialChar'],
+	    ['Image','Table','HorizontalRule','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']
@@ -125,4 +125,3 @@ CKEDITOR.on('instanceReady', function(event) {
 	  });
 	}
 });
-

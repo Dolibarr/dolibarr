@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -52,18 +53,18 @@ if (!$sortorder) {
 
 $startdate = $enddate = '';
 if (GETPOST('startdatemonth')) {
-	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
+	$startdate = dol_mktime(0, 0, 0, GETPOSTINT('startdatemonth'), GETPOSTINT('startdateday'), GETPOSTINT('startdateyear'));
 }
 if (GETPOST('enddatemonth')) {
-	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
+	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $TSelectedProducts = GETPOST('products', 'array');
 $TSelectedCats = GETPOST('categories', 'array');
 
@@ -83,7 +84,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"), '', '', 0, 0, '', '', '', 'mod-margin page-customermargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -153,12 +154,12 @@ foreach ($TRes as $prod) {
 }
 
 print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
-print '<td class="maxwidthonsmartpone" colspan="4">';
+print '<td class="maxwidthonsmartphone" colspan="4">';
 print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 3);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
@@ -170,11 +171,11 @@ print '</tr>';
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -274,15 +275,15 @@ $sql .= $db->order($sortfield, $sortorder);
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
 $param = '&socid='.((int) $socid);
-if (GETPOST('startdatemonth', 'int')) {
-	$param .= '&startdateyear='.GETPOST('startdateyear', 'int');
-	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int');
-	$param .= '&startdateday='.GETPOST('startdateday', 'int');
+if (GETPOSTINT('startdatemonth')) {
+	$param .= '&startdateyear='.GETPOSTINT('startdateyear');
+	$param .= '&startdatemonth='.GETPOSTINT('startdatemonth');
+	$param .= '&startdateday='.GETPOSTINT('startdateday');
 }
-if (GETPOST('enddatemonth', 'int')) {
-	$param .= '&enddateyear='.GETPOST('enddateyear', 'int');
-	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int');
-	$param .= '&enddateday='.GETPOST('enddateday', 'int');
+if (GETPOSTINT('enddatemonth')) {
+	$param .= '&enddateyear='.GETPOSTINT('enddateyear');
+	$param .= '&enddatemonth='.GETPOSTINT('enddatemonth');
+	$param .= '&enddateday='.GETPOSTINT('enddateday');
 }
 $listofproducts = GETPOST('products', 'array:int');
 if (is_array($listofproducts)) {
@@ -297,12 +298,16 @@ if (is_array($listofcateg)) {
 	}
 }
 
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::customerMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<br>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {

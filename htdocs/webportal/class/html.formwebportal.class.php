@@ -2,6 +2,8 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +40,7 @@ class FormWebPortal extends Form
 	public $db;
 
 	/**
-	 * @var array $infofiles Array of file info
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Array of file info
 	 */
 	public $infofiles; // Used to return information by function getDocumentsLink
 
@@ -91,18 +93,21 @@ class FormWebPortal extends Form
 	/**
 	 * Input for date
 	 *
-	 * @param	string	$name			Name of html input
-	 * @param	string	$value			[=''] Value of input (format : YYYY-MM-DD)
-	 * @param	string	$placeholder	[=''] Placeholder for input (keep empty for no label)
-	 * @param	string	$id				[=''] Id
-	 * @param	string	$morecss		[=''] Class
-	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
-	 * @return	string  Html for input date
+	 * @param	string		$name			Name of html input
+	 * @param	string|int	$value			[=''] Value of input (format : YYYY-MM-DD)
+	 * @param	string		$placeholder	[=''] Placeholder for input (keep empty for no label)
+	 * @param	string		$id				[=''] Id
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string  	Html for input date
 	 */
 	public function inputDate($name, $value = '', $placeholder = '', $id = '', $morecss = '', $moreparam = '')
 	{
 		$out = '';
 
+		// Disabled: Use of native browser date input field as it is not compliant with multilanguagedate format,
+		// nor with timezone management.
+		/*
 		$out .= '<input';
 		if ($placeholder != '' && $value == '') {
 			// to show a placeholder on date input
@@ -119,6 +124,9 @@ class FormWebPortal extends Form
 		$out .= ($moreparam ? ' ' . $moreparam : '');
 
 		$out .= '>';
+		*/
+
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '');
 
 		return $out;
 	}
@@ -128,7 +136,7 @@ class FormWebPortal extends Form
 	 * Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 * @param	string				$htmlname				Name of html select area.
-	 * @param	array				$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	array<string,mixed>	$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param	string|string[]		$id						Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
 	 * @param	int|string			$show_empty				0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
 	 * @param	int					$key_in_label			1 to show key into label with format "[key] value"
@@ -245,13 +253,11 @@ class FormWebPortal extends Form
 	 * @param string $filedir Full path to directory to scan
 	 * @param string $filter Filter filenames on this regex string (Example: '\.pdf$')
 	 * @param string $morecss Add more css to the download picto
-	 * @param int    $allfiles 0=Only generated docs, 1=All files
+	 * @param int<0,1> $allfiles 0=Only generated docs, 1=All files
 	 * @return    string                Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$out = '';
@@ -282,9 +288,8 @@ class FormWebPortal extends Form
 
 		//var_dump($file_list);
 		// For ajax treatment
-		$out .= '<!-- html.formfile::getDocumentsLink -->' . "\n";
+		$out .= '<!-- html.formwebportal::getDocumentsLink -->' . "\n";
 		if (!empty($file_list)) {
-			$out = '';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -313,21 +318,22 @@ class FormWebPortal extends Form
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
 				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$this->infofiles['extensions'][$ext]++;
 				}
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="button"';
+				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$tmpout .= '>';
-				//$tmpout .= img_mime($relativepath, $file["name"]);
+				$tmpout .= img_mime($relativepath, $file["name"]);
 				$tmpout .= strtoupper($ext);
 				$tmpout .= '</a>';
 			}
@@ -337,6 +343,31 @@ class FormWebPortal extends Form
 			}
 		}
 
+		return $out;
+	}
+
+	/**
+	 * Show a Signature icon with link
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 *
+	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
+	 * @param Object $object Object linked to the document to be signed
+	 * @param string $morecss Add more css to the download picto
+	 * @return    string                Output string with HTML link of signature (might be empty string).
+	 */
+	public function getSignatureLink($modulepart, $object, $morecss = '')
+	{
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
+		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
+		if (!empty($url)) {
+			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
+			$out .= '<i class="fa fa-file-signature"></i>';
+			$out .= $langs->trans("Sign");
+			$out .= '</a>';
+		}
 		return $out;
 	}
 
@@ -428,7 +459,7 @@ class FormWebPortal extends Form
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
 	 * @param string 		$filter 			Add more filter (Universal Search Filter)
-	 * @return string|array                     Return HTML string
+	 * @return string|array<array{key:int,value:string,label:string}>	Return HTML string
 	 * @see selectForForms()
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
@@ -447,7 +478,7 @@ class FormWebPortal extends Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (!dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -532,7 +563,7 @@ class FormWebPortal extends Form
 			$textifempty = '&nbsp;';
 
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode)) {
+			if (getDolGlobalString($confkeyforautocompletemode)) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
@@ -596,13 +627,13 @@ class FormWebPortal extends Form
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
-	 * @param array|null $val Array of properties for field to show
-	 * @param string $key Key of attribute
-	 * @param string|array $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param string $moreparam [=''] To add more parameters on html input tag
-	 * @param string $keysuffix [=''] Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $keyprefix [=''] Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $morecss [=''] Value for css to define style/length of field. May also be a numeric.
+	 * @param array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val Array of properties for field to show
+	 * @param string 		$key 			Key of attribute
+	 * @param string|mixed[]	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param string 		$moreparam 		To add more parameters on html input tag
+	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
@@ -707,44 +738,44 @@ class FormWebPortal extends Form
 				$out = $this->inputType('number', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'text' :
-			case 'html' :
+			case 'text':
+			case 'html':
 				$moreparam .= ($size > 0 ? ' maxlength="' . $size . '"' : '');
 				$out = $this->inputType('text', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'email' :
+			case 'email':
 				$out = $this->inputType('email', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'tel' :
+			case 'tel':
 				$out = $this->inputType('tel', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'url' :
+			case 'url':
 				$out = $this->inputType('url', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'price' :
+			case 'price':
 				if (!empty($value)) {
 					$value = price($value); // $value in memory is a php numeric, we format it into user number format.
 				}
 				$addInputLabel = ' ' . $langs->getCurrencySymbol($conf->currency);
-				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam, $addInputLabel);
+				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam, '', $addInputLabel);
 				break;
 
-			case 'double' :
+			case 'double':
 				if (!empty($value)) {
 					$value = price($value); // $value in memory is a php numeric, we format it into user number format.
 				}
 				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'password' :
+			case 'password':
 				$out = $this->inputType('password', $htmlName, $value, $htmlId, $morecss, $moreparam);
 				break;
 
-			case 'radio' :
+			case 'radio':
 				foreach ($param['options'] as $keyopt => $valopt) {
 					$htmlId = $htmlName . '_' . $keyopt;
 					$htmlMoreParam = $moreparam . ($value == $keyopt ? ' checked' : '');
@@ -752,7 +783,7 @@ class FormWebPortal extends Form
 				}
 				break;
 
-			case 'select' :
+			case 'select':
 				$out = '<select class="' . $morecss . '" name="' . $htmlName . '" id="' . $htmlId . '"' . ($moreparam ? ' ' . $moreparam : '') . ' >';
 				if ($default == '' || $notNull != 1) {
 					$out .= '<option value="0">&nbsp;</option>';
@@ -771,7 +802,7 @@ class FormWebPortal extends Form
 				}
 				$out .= '</select>';
 				break;
-			case 'sellist' :
+			case 'sellist':
 				$out = '<select class="' . $morecss . '" name="' . $htmlName . '" id="' . $htmlId . '"' . ($moreparam ? ' ' . $moreparam : '') . '>';
 
 				$param_list = array_keys($param['options']);
@@ -806,7 +837,7 @@ class FormWebPortal extends Form
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -912,7 +943,11 @@ class FormWebPortal extends Form
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-					$data = $this->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categorytype = $InfoFieldList[5];
+					if (is_numeric($categorytype)) {
+						$categorytype = Categorie::$MAP_ID_TO_CODE[(int) $categorytype]; // For backward compatibility
+					}
+					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
 						$out .= '<option value="' . $data_key . '"';
@@ -923,15 +958,15 @@ class FormWebPortal extends Form
 				$out .= '</select>';
 				break;
 
-			case 'link' :
+			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-				$showempty = (($required && $default != '') ? 0 : 1);
+				$showempty = (($required && $default != '') ? '0' : '1');
 
 				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 				break;
 
-			default :
+			default:
 				if (!empty($hidden)) {
 					$out = $this->inputType('hidden', $htmlName, $value, $htmlId);
 				}
@@ -945,9 +980,9 @@ class FormWebPortal extends Form
 	 * Return HTML string to show a field into a page
 	 *
 	 * @param CommonObject $object Common object
-	 * @param array $val Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param string $key Key of attribute
-	 * @param string $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param string $moreparam To add more parameters on html input tag
 	 * @param string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -960,13 +995,14 @@ class FormWebPortal extends Form
 
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type = empty($val['type']) ? '' : $val['type'];
-		$size = empty($val['css']) ? '' : $val['css'];
+		$css = empty($val['css']) ? '' : $val['css'];
+		$picto = empty($val['picto']) ? '' : $val['picto'];
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
-			$size = $reg[1];
+			$css = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
@@ -1021,10 +1057,13 @@ class FormWebPortal extends Form
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0, '');
+			$value = (string) dol_eval($computed, 1, 0, '2');
 		}
 
 		// Format output value differently according to properties of field
+		//
+		// First the cases that do not use $value from the arguments:
+		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
 				$value = $object->ref;
@@ -1035,6 +1074,20 @@ class FormWebPortal extends Form
 			}
 		} elseif ($key == 'status' && method_exists($object, 'getLibStatut')) {
 			$value = $object->getLibStatut(3);
+			//
+			// Then the cases where $value is an array
+			//
+		} elseif (is_array($value)) {
+			// Handle array early to get type identification solve for static
+			// analysis
+			if ($type == 'array') {
+				$value = implode('<br>', $value);
+			} else {
+				dol_syslog(__METHOD__."Unexpected type=".$type." for array value=".((string) json_encode($value)), LOG_ERR);
+			}
+			//
+			// Then the cases where $value is not an array (hence string)
+			//
 		} elseif ($type == 'date') {
 			if (!empty($value)) {
 				$value = dol_print_date($value, 'day');    // We suppose dates without time are always gmt (storage of course + output)
@@ -1050,11 +1103,17 @@ class FormWebPortal extends Form
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value);
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';
@@ -1073,6 +1132,9 @@ class FormWebPortal extends Form
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
@@ -1117,8 +1179,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -1167,7 +1229,7 @@ class FormWebPortal extends Form
 				dol_syslog(__METHOD__ . ' error ' . $this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = (string) $param['options'][$value];
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1220,8 +1282,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|libelle:rowid)
@@ -1283,15 +1345,16 @@ class FormWebPortal extends Form
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;
+								$value = $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;
+								$value = $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;
+								$value = $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}
@@ -1304,8 +1367,6 @@ class FormWebPortal extends Form
 			}
 		} elseif ($type == 'password') {
 			$value = preg_replace('/./i', '*', $value);
-		} elseif ($type == 'array') {
-			$value = implode('<br>', $value);
 		} else {    // text|html|varchar
 			$value = dol_htmlentitiesbr($value);
 		}

@@ -7,7 +7,8 @@
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
- * Copyright (C) 2023       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,12 +51,6 @@ class UserGroup extends CommonObject
 	public $table_element = 'usergroup';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'group';
@@ -78,6 +73,12 @@ class UserGroup extends CommonObject
 	public $name; // Name of group
 
 	public $globalgroup; // Global group
+
+	/**
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
+	 */
+	public $usergroup_entity;
 
 	/**
 	 * Date creation record (datec)
@@ -111,13 +112,13 @@ class UserGroup extends CommonObject
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
-		'nom'=>array('type'=>'varchar(180)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Group name'),
-		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1),
-		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>60, 'notnull'=>1,),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>100),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
+		'nom' => array('type' => 'varchar(180)', 'label' => 'Name', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Group name'),
+		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'searchall' => 1),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 50, 'notnull' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 60, 'notnull' => 1,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPDF', 'enabled' => 1, 'visible' => 0, 'position' => 100),
 	);
 
 	/**
@@ -126,12 +127,12 @@ class UserGroup extends CommonObject
 	public $fk_element = 'fk_usergroup';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('usergroup_rights', 'usergroup_user');
 
@@ -144,12 +145,14 @@ class UserGroup extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->nb_rights = 0;
 	}
 
 
 	/**
-	 *  Charge un object group avec toutes ses caracteristiques (except ->members array)
+	 *  Load a group object with all properties (except ->members array that is array of users in group)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
@@ -158,8 +161,6 @@ class UserGroup extends CommonObject
 	 */
 	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		if (!empty($groupname)) {
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
@@ -171,7 +172,8 @@ class UserGroup extends CommonObject
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();	// This make a lot of subrequests
+				$excludefilter = '';
+				$this->members = $this->listUsersForGroup($excludefilter, 0);	// This make a request to get list of users but may also do subrequest to fetch each users on some versions
 			}
 
 			return 1;
@@ -185,9 +187,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int			$userid 		User id to search
-	 *  @param		boolean		$load_members	Load all members of the group
-	 *  @return		array|int     				Array of groups objects
+	 *  @param		int			$userid 			User id to search
+	 *  @param		boolean		$load_members		Load all members of the group
+	 *  @return		array<int,UserGroup>|int<-1,-1>	Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -216,8 +218,11 @@ class UserGroup extends CommonObject
 					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid] = $newgroup;
 				}
-
-				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+					$ret[$obj->rowid]->usergroup_entity = array();
+				}
+				// $ret[$obj->rowid] is instance of UserGroup
+				$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
@@ -232,9 +237,9 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of User objects for group this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. Do not use here a string coming from user input.
-	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	mixed						Array of users or -1 on error
+	 * 	@param	string		$excludefilter		Filter to exclude. Do not use here a string coming from user input.
+	 *  @param	int<0,1>	$mode				0=Return array of user instance, 1=Return array of users id only
+	 * 	@return	array<int,User>|array<int,int>|int<-1,-1>	Array of users or -1 on error
 	 */
 	public function listUsersForGroup($excludefilter = '', $mode = 0)
 	{
@@ -292,7 +297,11 @@ class UserGroup extends CommonObject
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
-					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+					// $ret[$obj->rowid] is instance of User
+					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+						$ret[$obj->rowid]->usergroup_entity = array();
+					}
+					$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 				}
 			}
 
@@ -407,7 +416,7 @@ class UserGroup extends CommonObject
 
 			if (!$error) {
 				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
+				$this->context = array('audit' => $langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
@@ -536,7 +545,7 @@ class UserGroup extends CommonObject
 
 			if (!$error) {
 				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
+				$this->context = array('audit' => $langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
@@ -556,6 +565,20 @@ class UserGroup extends CommonObject
 		}
 	}
 
+	/**
+	 *  Load the list of permissions for the user into the group object
+	 *
+	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject and was replaced in v20 with loadRights()
+	 *
+	 *  @phpstan-ignore-next-line
+	 */
+	public function getrights($moduletag = '')
+	{
+		return $this->loadRights($moduletag);
+	}
 
 	/**
 	 *  Load the list of permissions for the user into the group object
@@ -563,7 +586,7 @@ class UserGroup extends CommonObject
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
 	 *  @return     int						Return integer <0 if KO, >=0 if OK
 	 */
-	public function getrights($moduletag = '')
+	public function loadRights($moduletag = '')
 	{
 		global $conf;
 
@@ -577,9 +600,7 @@ class UserGroup extends CommonObject
 			return 0;
 		}
 
-		/*
-		 * Recuperation des droits
-		 */
+		// Load permission from group
 		$sql = "SELECT r.module, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
@@ -757,10 +778,9 @@ class UserGroup extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -860,7 +880,7 @@ class UserGroup extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -947,7 +967,7 @@ class UserGroup extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -967,6 +987,8 @@ class UserGroup extends CommonObject
 		$this->members = array(
 			$user->id => $user
 		);
+
+		return 1;
 	}
 
 	/**
@@ -1001,11 +1023,11 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,8 @@ class MyModuleApi extends DolibarrApi
 		$this->myobject = new MyObject($this->db);
 	}
 
-	/*begin methods CRUD*/
+
+	/* BEGIN MODULEBUILDER API MYOBJECT */
 
 	/**
 	 * Get properties of a myobject object
@@ -63,6 +65,10 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
+	 * @phan-return	MyObject			Object with cleaned properties
+	 * @phpstan-return	MyObject			Object with cleaned properties
+	 *
+	 * @phan-return  MyObject
 	 *
 	 * @url	GET myobjects/{id}
 	 *
@@ -75,7 +81,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
-			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
@@ -98,7 +104,9 @@ class MyModuleApi extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of order objects
+	 * @return  array                               Array of MyObject objects
+	 * @phan-return array<int,MyObject>
+	 * @phpstan-return array<int,MyObject>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
@@ -185,7 +193,9 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Create myobject object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param array{string,mixed} $request_data
+	 * @phpstan-param array{string,mixed} $request_data
 	 * @return int  				ID of myobject
 	 *
 	 * @throws RestException 403 Not allowed
@@ -200,22 +210,29 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$result = $this->_validateMyObject($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->myobject->context['caller'] = $request_data['caller'];
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller @phan-suppress-next-line PhanTypeInvalidDimOffset
+				$this->myobject->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
+				}
+				continue;
+			}
+
+			$this->myobject->$field = $this->_checkValForAPI((string) $field, $value, $this->myobject);
 		}
 
 		// Clean data
 		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
-		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
+		if ($this->myobject->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
 		return $this->myobject->id;
@@ -225,8 +242,14 @@ class MyModuleApi extends DolibarrApi
 	 * Update myobject
 	 *
 	 * @param 	int   		$id             Id of myobject to update
-	 * @param 	array 		$request_data   Datas
+	 * @param 	array 		$request_data   Data
+	 * @phan-param mixed[]	$request_data
+	 * @phpstan-param mixed[]	$request_data
 	 * @return 	Object						Object after update
+	 * @phan-return MyObject
+	 * @phpstan-return MyObject
+	 *
+	 * @phan-return  MyObject
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -254,7 +277,14 @@ class MyModuleApi extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->myobject->context['caller'] = $request_data['caller'];
+				$this->myobject->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
+				}
 				continue;
 			}
 
@@ -276,6 +306,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param   int     $id   MyObject ID
 	 * @return  array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -314,14 +346,18 @@ class MyModuleApi extends DolibarrApi
 
 
 	/**
-	 * Validate fields before create or update object
+	 * Validate fields before creating or updating object
 	 *
 	 * @param	array		$data   Array of data to validate
+	 * @phan-param array<string,null|int|float|string> $data
+	 * @phpstan-param	array<string,null|int|float|string> $data
 	 * @return	array
+	 * @phan-return array<string,null|int|float|string>|array{}
+	 * @phpstan-return array<string,null|int|float|string>|array{}
 	 *
 	 * @throws	RestException
 	 */
-	private function _validate($data)
+	private function _validateMyObject($data)
 	{
 		$myobject = array();
 		foreach ($this->myobject->fields as $field => $propfield) {
@@ -336,14 +372,20 @@ class MyModuleApi extends DolibarrApi
 		return $myobject;
 	}
 
-	/*end methods CRUD*/
+	/* END MODULEBUILDER API MYOBJECT */
+
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive object data fields
+	 * @phpstan-template T of Object
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

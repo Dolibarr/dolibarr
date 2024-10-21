@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Email để ngăn chặn dịch vụ HRM bên ngoài
 Establishments=Cơ sở
@@ -24,7 +23,7 @@ SkillsManagement=Quản lý kỹ năng
 HRM_MAXRANK=Số cấp độ tối đa để xếp hạng một kỹ năng
 HRM_DEFAULT_SKILL_DESCRIPTION=Mô tả mặc định về cấp bậc khi kỹ năng được tạo
 deplacement=Sự thay đổi
-DateEval=Ngày đánh giá
+DateEval=Competency assessment date
 JobCard=Thẻ công việc
 NewJobProfile=Hồ sơ công việc mới
 JobProfile=Hồ sơ công việc
@@ -41,12 +40,12 @@ Skill=Kỹ năng
 Skills=Kỹ năng
 SkillCard=Thẻ kỹ năng
 EmployeeSkillsUpdated=Kỹ năng của nhân viên đã được cập nhật (xem tab "Kỹ năng" của thẻ nhân viên)
-Eval=Sự đánh giá
-Evals=Đánh giá
-NewEval=Đánh giá mới
-ValidateEvaluation=Xác thực đánh giá
-ConfirmValidateEvaluation=Bạn có chắc chắn muốn xác thực đánh giá này bằng tài liệu tham khảo <b>%s</b>?
-EvaluationCard=Thẻ đánh giá
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Cấp bậc bắt buộc cho hồ sơ công việc
 RequiredRankShort=Thứ hạng bắt buộc
 PositionsWithThisProfile=Các vị trí có hồ sơ công việc này
@@ -90,8 +89,9 @@ SaveAddSkill = (Các) kỹ năng đã được thêm
 SaveLevelSkill = Đã lưu cấp độ kỹ năng
 DeleteSkill = Đã xóa kỹ năng
 SkillsExtraFields=Thuộc tính bổ sung (Kỹ năng)
-JobsExtraFields=Thuộc tính bổ sung (Hồ sơ công việc)
-EvaluationsExtraFields=Thuộc tính bổ sung (Đánh giá)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Cần đi công tác
 NoDescription=Không có mô tả
 TheJobProfileHasNoSkillsDefinedFixBefore=Hồ sơ công việc được đánh giá của nhân viên này không có kỹ năng nào được xác định trên đó. Vui lòng thêm (các) kỹ năng, sau đó xóa và bắt đầu lại quá trình đánh giá.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

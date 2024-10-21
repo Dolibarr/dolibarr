@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +23,15 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'
+@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force FormProduct $formproduct
+@phan-var-force FormProjets $formproject
+@phan-var-force string $backtopage
+';
 
 ?>
 
@@ -45,7 +53,7 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
-$pdluoid = GETPOST('pdluoid', 'int');
+$pdluoid = GETPOSTINT('pdluoid');
 
 $pdluo = new Productbatch($db);
 
@@ -105,9 +113,9 @@ print '<script type="text/javascript">
 			});';
 
 if ($disableSellBy == 0 || $disableEatBy == 0) {
-		print '
-			var disableSellBy = '.dol_escape_js($disableSellBy).';
-			var disableEatBy = '.dol_escape_js($disableSellBy).';
+	print '
+			var disableSellBy = '.dol_escape_js((string) $disableSellBy).';
+			var disableEatBy = '.dol_escape_js((string) $disableSellBy).';
 			jQuery("#batch_number").change(function(event) {
 				var batch = jQuery(this).val();
 				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$id.'&batch="+batch, function(data) {
@@ -146,23 +154,23 @@ print '<tr>';
 if ($object->element == 'product') {
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
-	$ident = (GETPOST("dwid") ? GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
+	$ident = (GETPOST("dwid") ? GETPOSTINT("dwid") : (GETPOST('id_entrepot') ? GETPOSTINT('id_entrepot') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
 	if (empty($ident) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$ident = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 	}
-	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
+	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
-if ($object->element == 'stock') {
+if ($object->element == 'stockmouvement') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td>';
-if ($object->element == 'product' || $object->element == 'stock') {
+if ($object->element == 'product' || $object->element == 'stockmouvement') {
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
@@ -187,10 +195,10 @@ if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $object->element == 'product' 
 // Serial / Eat-by date
 if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
-|| ($object->element == 'stock'))
+|| ($object->element == 'stockmouvement'))
 ) {
 	print '<tr>';
-	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
+	print '<td'.($object->element == 'stockmouvement' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {
 		// If form was opened for a specific pdluoid, field is disabled
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
@@ -206,14 +214,14 @@ if (isModEnabled('productbatch') &&
 		print '<td'.($sellByCss ? ' class="'.$sellByCss.'"' : '').'>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
-		print $form->selectDate(($pdluo->id > 0 ? $pdluo->sellby : $sellbyselected), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
+		print $form->selectDate(($pdluo->id > 0 ? $pdluo->sellby : $sellbyselected), 'sellby', 0, 0, 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
 		print '</td>';
 	}
 	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<td'.($eatByCss ? ' class="'.$eatByCss.'"' : '').'>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
-		print $form->selectDate(($pdluo->id > 0 ? $pdluo->eatby : $eatbyselected), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
+		print $form->selectDate(($pdluo->id > 0 ? $pdluo->eatby : $eatbyselected), 'eatby', 0, 0, 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
 		print '</td>';
 	}
 	print '</tr>';

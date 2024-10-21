@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +42,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$id 	= GETPOST('id', 'int');
+$id 	= GETPOSTINT('id');
 
-// Initialize technical objects
+// Initialize a technical objects
 $form = new Form($db);
 $object = new Position($db);
 $res = $object->fetch($id);
@@ -75,8 +76,8 @@ $langs->loadLangs(array("hrm", "other"));
 
 
 // Get parameters
-$id 	= GETPOST('id', 'int');
-$fk_job = GETPOST('fk_job', 'int');
+$id 	= GETPOSTINT('id');
+$fk_job = GETPOSTINT('fk_job');
 
 $ref 	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -87,7 +88,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //	$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 //$object = new Position($db);
 //$res = $object->fetch($id);
 /*if ($res < 0) {
@@ -118,7 +119,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 /*
@@ -164,10 +165,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -308,8 +309,8 @@ function displayPositionCard(&$object)
 		//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 		//unset($object->fields['fk_project']);				// Hide field already shown in banner
 		//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-		$object->fields['fk_user']['visible']=0; // Already in banner
-		$object->fields['fk_job']['visible']=0; // Already in banner
+		$object->fields['fk_user']['visible'] = 0; // Already in banner
+		$object->fields['fk_job']['visible'] = 0; // Already in banner
 		include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.

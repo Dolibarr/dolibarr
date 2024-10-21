@@ -36,10 +36,11 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
@@ -73,7 +74,7 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 if (!isset($argv[1])) {
 	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -123,7 +124,7 @@ if (!$confirmed) {
 
 if (!getDolGlobalString('LDAP_GROUP_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
@@ -142,9 +143,9 @@ if ($result >= 0) {
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
 			$group->fetch('', $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
-			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')];
+			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] ?? null;
 			$group->nom = $group->name; // For backward compatibility
-			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')];
+			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] ?? null;
 			$group->entity = $conf->entity;
 
 			// print_r($ldapgroup);

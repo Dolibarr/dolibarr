@@ -231,7 +231,10 @@ class WebservicesInvoicesTest extends CommonClassTest
 		}
 
 		print __METHOD__." result=".$result['result']['result_code']." ".$result['result']['result_label']."\n";
-		$this->assertEquals('OK', $result['result']['result_code']);
+
+		$resultcode = empty($result['result']['result_code']) ? 'KO' : $result['result']['result_code'];
+
+		$this->assertEquals('OK', $resultcode);
 		$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 

@@ -47,6 +47,7 @@ PlannedTransactions=Entrées prévues
 ExportDataset_banque_1=Entrées bancaires et relevé de compte
 PaymentNumberUpdateSucceeded=Numéro de paiement mis à jour avec succès
 BankTransactionLine=Entrée de la banque
+EventualyAddCategory=Optionally, a category in which to classify the operations
 ToConciliate=Réconcilier?
 DefaultRIB=RIB par défaut
 AllRIB=Tous les RIB

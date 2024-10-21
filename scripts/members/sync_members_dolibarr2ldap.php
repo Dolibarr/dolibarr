@@ -35,10 +35,11 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
 
@@ -62,7 +63,7 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: $script_file now [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -73,7 +74,7 @@ foreach ($argv as $key => $val) {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $now = $argv[1];
@@ -109,7 +110,7 @@ if (!$confirmed) {
 /*
  * if (getDolGlobalString('LDAP_MEMBER_ACTIVE') {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
 
@@ -133,12 +134,12 @@ if ($resql) {
 		$result = $member->fetch($obj->rowid);
 		if ($result < 0) {
 			dol_print_error($db, $member->error);
-			exit(-1);
+			exit(1);
 		}
 		$result = $member->fetch_subscriptions();
 		if ($result < 0) {
 			dol_print_error($db, $member->error);
-			exit(-1);
+			exit(1);
 		}
 
 		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->getFullName($langs);

@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 
 
 $action = GETPOST('action', 'aZ09');
-$idproduct = GETPOST('idproduct', 'int');
+$idproduct = GETPOSTINT('idproduct');
 
 
 /*

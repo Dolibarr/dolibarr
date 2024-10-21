@@ -33,17 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id         = GETPOST('id', 'int');
+$id         = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -65,7 +64,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 //if ($user->socid > 0) accessforbidden();
@@ -128,6 +127,8 @@ if (!empty($action) && $action != 'view') {
 	}
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -140,9 +141,12 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$backurlforlist = dol_buildpath('/societe/website.php', 1).'?id='.$object->fk_soc;
+
+	if ($action == 'add' && !GETPOST('site')) {		// Test on permission not required
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website")), null, 'errors');
+		$action = 'create';
+	}
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -168,7 +172,7 @@ $formfile = new FormFile($db);
 $title = $langs->trans("WebsiteAccount");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-website page-card_websiteaccount');
 
 // prepare output js
 $out_js = '';
@@ -209,13 +213,13 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
-	if ($backtopagejsfields) {
+	if (!empty($backtopagejsfields)) {
 		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 	}
-	if ($dol_openinpopup) {
+	if (!empty($dol_openinpopup)) {
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 	}
 
@@ -440,7 +444,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Presend form
 	$modelmail = 'websiteaccount';
 	$defaulttopic = 'Information';
-	$diroutput = $conf->website->dir_output;
+	$diroutput = isModEnabled('website') ? $conf->website->dir_output : '';
 	$trackid = 'websiteaccount'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

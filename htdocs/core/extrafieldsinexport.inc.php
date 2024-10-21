@@ -1,5 +1,10 @@
 <?php
-'@phan-var-force DolibarrModules $this';
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
+'
+@phan-var-force DolibarrModules $this
+@phan-var-force int $r
+';
 
 // $keyforselect = name of main table
 // keyforelement = name of picto
@@ -53,7 +58,7 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 					$tmpkeys = array_keys($tmpparam['options']);
 					$tmp = array_shift($tmpkeys);
 				}
-				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
+				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', (string) $tmp)) {
 					$typeFilter = "List:".$tmp;
 				}
 				break;

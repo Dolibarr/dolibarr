@@ -37,14 +37,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
+
 $action = GETPOST('action', 'alpha');
 
 $object = new StockTransfer($db);
 
 // Load object
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret == 0) {
@@ -68,7 +70,24 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-$result = restrictedArea($user, 'stocktransfer', $id, '', 'stocktransfer');
+
+$permissiontoread = $user->hasRight('stocktransfer', 'stocktransfer', 'read');
+$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status < $object::STATUS_TRANSFERED);
+$permissiondellink = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
+
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
+
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -77,8 +96,8 @@ $result = restrictedArea($user, 'stocktransfer', $id, '', 'stocktransfer');
 
 if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 	if ($object->id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-		$result = $object->add_contact($contactid, !empty($_POST["typecontact"]) ? $_POST["typecontact"] : $_POST["type"], $_POST["source"]);
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+		$result = $object->add_contact($contactid, GETPOST("typecontact") ? GETPOST("typecontact") : GETPOST("type"), GETPOST("source"));
 	}
 
 	if ($result >= 0) {
@@ -106,12 +125,6 @@ if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer',
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->stocktransfer->stocktransfer->write)
-{
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*

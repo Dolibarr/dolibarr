@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -53,14 +54,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -143,11 +144,15 @@ $db->close();
 /**
  * Show header for card member
  *
- * @param 	string		$title		Title
- * @param 	string		$head		More info into header
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "")
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	top_htmlhead($head, $title);
 

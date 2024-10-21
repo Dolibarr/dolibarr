@@ -5,6 +5,10 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +35,7 @@
  * Prepare array with list of tabs
  *
  * @param   Product	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
 {
@@ -72,9 +76,9 @@ function product_prepare_head($object)
 	// if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	if ((isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'read') || $user->hasRight('supplier_invoice', 'read'))
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
-		) {
+	) {
 		if ($usercancreadprice) {
-			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
 			$head[$h][2] = 'suppliers';
 			$h++;
@@ -92,6 +96,10 @@ function product_prepare_head($object)
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translations");
+		$nbTranslations = !empty($object->multilangs) ? count($object->multilangs) : 0;
+		if ($nbTranslations > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTranslations.'</span>';
+		}
 		$head[$h][2] = 'translation';
 		$h++;
 	}
@@ -191,6 +199,7 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
@@ -217,7 +226,7 @@ function product_prepare_head($object)
 	$h++;
 
 	// Log
-	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/messaging.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
@@ -237,7 +246,7 @@ function product_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   ProductLot	$object		Object related to tabs
- * @return  array		     		Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function productlot_prepare_head($object)
 {
@@ -313,16 +322,18 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object information.
-*
-*  @return	array   	        head array with tabs
-*/
+ *  Return array head with list of tabs to view object information.
+ *
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
 function product_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_price');
+	$extrafields->fetch_name_optionals_label('product_customer_price');
 	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
 
 	$h = 0;
@@ -357,6 +368,24 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductLevelExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_price']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'levelAttributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'customerAttributes';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
@@ -376,7 +405,7 @@ function product_admin_prepare_head()
 /**
  * Return array head with list of tabs to view object information.
  *
- * @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_lot_admin_prepare_head()
 {
@@ -416,7 +445,7 @@ function product_lot_admin_prepare_head()
 
 
 /**
- * Show stats for company
+ * Show stats for a product
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
@@ -424,7 +453,7 @@ function product_lot_admin_prepare_head()
  */
 function show_stats_for_company($product, $socid)
 {
-	global $conf, $langs, $user, $db, $hookmanager;
+	global $langs, $user, $db, $hookmanager;
 
 	$form = new Form($db);
 
@@ -446,13 +475,13 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/propal.php?id='.$product->id.'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
 		print '</td><td class="right">';
 		print $product->stats_propale['nb'];
 		print '</td><td class="right">';
-		print $product->stats_propale['qty'];
+		print price($product->stats_propale['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -465,18 +494,18 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("supplier_proposal");
 		print '<tr><td>';
-		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['nb'];
 		print '</td><td class="right">';
-		print $product->stats_proposal_supplier['qty'];
+		print price($product->stats_proposal_supplier['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
 	// Sales orders
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {
@@ -484,13 +513,13 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/commande.php?id='.$product->id.'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
 		print '</td><td class="right">';
 		print $product->stats_commande['nb'];
 		print '</td><td class="right">';
-		print $product->stats_commande['qty'];
+		print price($product->stats_commande['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -503,18 +532,18 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['nb'];
 		print '</td><td class="right">';
-		print $product->stats_commande_fournisseur['qty'];
+		print price($product->stats_commande_fournisseur['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
 	// Customer invoices
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -522,18 +551,18 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facture.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/facture.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td class="right">';
 		print $product->stats_facture['nb'];
 		print '</td><td class="right">';
-		print $product->stats_facture['qty'];
+		print price($product->stats_facture['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (isModEnabled("facture") && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled("invoice") && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {
@@ -541,7 +570,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td class="right">';
@@ -560,19 +589,59 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['nb'];
 		print '</td><td class="right">';
-		print $product->stats_facture_fournisseur['qty'];
+		print price($product->stats_facture_fournisseur['qty'], 1, $langs, 0, 0);
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Shipments
+	if (isModEnabled('shipping') && $user->hasRight('shipping', 'lire')) {
+		$nblines++;
+		$ret = $product->load_stats_sending($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("sendings");
+		print '<tr><td>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/expedition.php?id='.$product->id.'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_expedition['customers'];
+		print '</td><td class="right">';
+		print $product->stats_expedition['nb'];
+		print '</td><td class="right">';
+		print $product->stats_expedition['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Receptions
+	if ((isModEnabled("reception") && $user->hasRight('reception', 'lire'))) {
+		$nblines++;
+		$ret = $product->load_stats_reception($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("receptions");
+		print '<tr><td>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/reception.php?id='.$product->id.'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_reception['suppliers'];
+		print '</td><td class="right">';
+		print $product->stats_reception['nb'];
+		print '</td><td class="right">';
+		print $product->stats_reception['qty'];
 		print '</td>';
 		print '</tr>';
 	}
 
 	// Contracts
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
@@ -580,13 +649,13 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("contracts");
 		print '<tr><td>';
-		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/contrat.php?id='.$product->id.'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
 		print '</td><td class="right">';
 		print $product->stats_contrat['nb'];
 		print '</td><td class="right">';
-		print $product->stats_contrat['qty'];
+		print price($product->stats_contrat['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -601,14 +670,16 @@ function show_stats_for_company($product, $socid)
 		$langs->load("mrp");
 
 		print '<tr><td>';
-		print '<a href="bom.php?id='.$product->id.'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/bom.php?id='.$product->id.'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
 		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("RowMaterial"));
+		print ' ';
 		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("Finished"));
 		print '</td><td class="right">';
 		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("RowMaterial"));
+		print ' ';
 		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("Finished"));
 		print '</td>';
 		print '</tr>';
@@ -623,26 +694,35 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/mo.php?id='.$product->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		print $form->textwithpicto($product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
 		print $form->textwithpicto($product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
 		print $form->textwithpicto($product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print ' ';
 		print $form->textwithpicto($product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -679,7 +759,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {
@@ -762,7 +842,7 @@ function show_stats_for_batch($batch, $socid)
 		print '</tr>';
 	}
 
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -797,7 +877,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *	@param	int			$unit               ID of unit (rowid in llx_c_units table)
  *	@param  string		$measuring_style    Style of unit: 'weight', 'volume', ..., '' = 'net_measure' for option PRODUCT_ADD_NET_MEASURE
  *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
- *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ *  @param	int			$use_short_label	1=Use very short label ('g' instead of 'gram'), not translated. 2=Use translated short label.
  *  @param	Translate	$outputlangs		Language object
  *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
@@ -839,8 +919,10 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 			return -1;
 		} else {
 			if (is_array($measuringUnits->records) && count($measuringUnits->records) > 0) {
-				if ($use_short_label) {
+				if ($use_short_label == 1) {
 					$labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
+				} elseif ($use_short_label == 2) {
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst($measuringUnits->records[key($measuringUnits->records)]->label).'Short');
 				} else {
 					$labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
 				}

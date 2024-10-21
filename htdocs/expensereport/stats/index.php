@@ -3,6 +3,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +39,12 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 $object_status = GETPOST('object_status', 'intcomma');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
+if ($socid < 0) {
 	$socid = 0;
 }
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 if ($user->socid > 0) {
@@ -55,7 +57,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expensereport', $id, '');
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -212,7 +214,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -272,7 +274,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {	// If we have empty year
+	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

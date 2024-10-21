@@ -9,31 +9,30 @@ ActionsOnResource=Ҳодисаҳо дар бораи ин манбаъ
 ResourcePageIndex=Рӯйхати захираҳо
 ResourceSingular=Манбаъ
 ResourceCard=Корти захиравӣ
+NewResource=New resource
 AddResource=Манбаъ эҷод кунед
 ResourceFormLabel_ref=Номи манбаъ
-ResourceType=Навъи манбаъ
 ResourceFormLabel_description=Тавсифи захираҳо
-
+ResourceType=Навъи манбаъ
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Сарчашмаҳои ба унсур алоқаманд
 
 ShowResource=Нишон додани манбаъ
-
 ResourceElementPage=Захираҳои элементӣ
 ResourceCreatedWithSuccess=Манбаъ бомуваффақият сохта шуд
 RessourceLineSuccessfullyDeleted=Хатти манбаъ бомуваффақият нест карда шуд
 RessourceLineSuccessfullyUpdated=Хатти манбаъ бомуваффақият нав карда шуд
 ResourceLinkedWithSuccess=Манбаъ бо муваффақият алоқаманд аст
-
 ConfirmDeleteResource=Барои нест кардани ин манбаъ тасдиқ кунед
 RessourceSuccessfullyDeleted=Манбаъ бомуваффақият нест карда шуд
 DictionaryResourceType=Навъи захираҳо
-
 SelectResource=Захираро интихоб кунед
-
 IdResource=Манбаи ID
 AssetNumber=Шумораи пай дар пай
 ResourceTypeCode=Рамзи намуди захираҳо
 ImportDataset_resource_1=Манбаъҳо
-
 ErrorResourcesAlreadyInUse=Баъзе захираҳо истифода мешаванд
 ErrorResourceUseInEvent=%s дар як чорабинии %s истифода мешавад
+MaxUsers=Истифодабарандагони максималӣ (ҷойҳо, ҷойҳо ва ғ.)
+MaxUsersLabel=Maximum users

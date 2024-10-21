@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 /**
  *  Define head array for tabs of paypal tools setup pages
  *
- *  @return			Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function paypaladmin_prepare_head()
 {
@@ -214,17 +215,17 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$nvpstr = $nvpstr."&RETURNURL=".urlencode($returnURL);
 	$nvpstr = $nvpstr."&CANCELURL=".urlencode($cancelURL);
 	if (getDolGlobalString('PAYPAL_ALLOW_NOTES')) {
-		$nvpstr = $nvpstr."&ALLOWNOTE=0";
+		$nvpstr .= "&ALLOWNOTE=0";
 	}
 	if (!getDolGlobalString('PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS')) {
-		$nvpstr = $nvpstr."&NOSHIPPING=1"; // An empty or not complete shipping address will be accepted
+		$nvpstr .= "&NOSHIPPING=1"; // An empty or not complete shipping address will be accepted
 	} else {
-		$nvpstr = $nvpstr."&NOSHIPPING=0"; // A valid shipping address is required (full required fields mandatory)
+		$nvpstr .= "&NOSHIPPING=0"; // A valid shipping address is required (full required fields mandatory)
 	}
-	$nvpstr = $nvpstr."&SOLUTIONTYPE=".urlencode($solutionType);
-	$nvpstr = $nvpstr."&LANDINGPAGE=".urlencode($landingPage);
+	$nvpstr .= "&SOLUTIONTYPE=".urlencode($solutionType);
+	$nvpstr .= "&LANDINGPAGE=".urlencode($landingPage);
 	if (getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')) {
-		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode(getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')); // Hotline phone number
+		$nvpstr .= "&CUSTOMERSERVICENUMBER=".urlencode(getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')); // Hotline phone number
 	}
 
 	$paypalprefix = 'PAYMENTREQUEST_0_';
@@ -233,16 +234,16 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 		$paymentType = 'Sale';
 	}
 
-	$nvpstr = $nvpstr."&AMT=".urlencode($paymentAmount); // Total for all elements
+	$nvpstr = $nvpstr."&AMT=".urlencode((string) ($paymentAmount)); // Total for all elements
 
 	$nvpstr = $nvpstr."&".$paypalprefix."INVNUM=".urlencode($tag);
-	$nvpstr = $nvpstr."&".$paypalprefix."AMT=".urlencode($paymentAmount); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
-	$nvpstr = $nvpstr."&".$paypalprefix."ITEMAMT=".urlencode($paymentAmount); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+	$nvpstr = $nvpstr."&".$paypalprefix."AMT=".urlencode((string) ($paymentAmount)); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+	$nvpstr = $nvpstr."&".$paypalprefix."ITEMAMT=".urlencode((string) ($paymentAmount)); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
 	$nvpstr = $nvpstr."&".$paypalprefix."PAYMENTACTION=".urlencode($paymentType); // PAYMENTACTION deprecated by paypal -> PAYMENTREQUEST_n_PAYMENTACTION
 	$nvpstr = $nvpstr."&".$paypalprefix."CURRENCYCODE=".urlencode($currencyCodeType); // CURRENCYCODE deprecated by paypal -> PAYMENTREQUEST_n_CURRENCYCODE
 
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_QTY0=1";
-	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode($paymentAmount);
+	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode((string) ($paymentAmount));
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_NAME0=".urlencode($desc);
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_NUMBER0=0";
 

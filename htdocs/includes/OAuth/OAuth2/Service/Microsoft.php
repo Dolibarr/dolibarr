@@ -38,11 +38,11 @@ class Microsoft extends AbstractService
     const SCOPE_APPLICATIONS = 'applications';
     const SCOPE_APPLICATIONS_CREATE = 'applications_create';
     const SCOPE_IMAP = 'imap';
-    const SOCPE_IMAP_ACCESSASUSERALL = 'https://outlook.office365.com/IMAP.AccessAsUser.All';
-    const SOCPE_SMTPSEND = 'https://outlook.office365.com/SMTP.Send';
-    const SOCPE_USERREAD = 'User.Read';
-    const SOCPE_MAILREAD = 'Mail.Read';
-    const SOCPE_MAILSEND = 'Mail.Send';
+    const SCOPE_IMAP_ACCESSASUSERALL = 'https://outlook.office365.com/IMAP.AccessAsUser.All';
+    const SCOPE_SMTPSEND = 'https://outlook.office365.com/SMTP.Send';
+    const SCOPE_USERREAD = 'User.Read';
+    const SCOPE_MAILREAD = 'Mail.Read';
+    const SCOPE_MAILSEND = 'Mail.Send';
 
     protected $storage;
 

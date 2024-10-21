@@ -200,8 +200,8 @@ MembersStatisticsDesc=وہ اعدادوشمار منتخب کریں جنہیں �
 MenuMembersStats=شماریات
 LastMemberDate=تازہ ترین رکنیت کی تاریخ
 LatestSubscriptionDate=تعاون کی تازہ ترین تاریخ
-MemberNature=ممبر کی نوعیت
-MembersNature=ارکان کی نوعیت
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s میری رکنیت کو <a target="_blank" href="%s">عوامی رجسٹر</a> میں شائع کر سکتا ہے۔
 MembershipPublic=عوامی رکنیت
 NewMemberbyWeb=نیا ممبر شامل کیا گیا۔ منظوری کا انتظار ہے۔
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

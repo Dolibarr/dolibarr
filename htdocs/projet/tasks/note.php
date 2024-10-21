@@ -33,9 +33,9 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$withproject = GETPOST('withproject', 'int');
+$withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 
 // Security check
@@ -104,7 +104,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -122,7 +122,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_note');
 
 if ($object->id > 0) {
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
@@ -207,7 +207,7 @@ if ($object->id > 0) {
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+			print price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 		}
 		print '</td></tr>';
 
@@ -241,7 +241,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";

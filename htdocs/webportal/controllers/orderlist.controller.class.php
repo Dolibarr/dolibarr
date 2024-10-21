@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  * \brief       This file is a controller for order list
  */
 
-dol_include_once('/webportal/class/html.formlistwebportal.class.php');
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formlistwebportal.class.php';
 
 /**
  * Class for OrderListController
@@ -42,7 +43,7 @@ class OrderListController extends Controller
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
+		$this->accessRight = isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2021 Laurent Destailleur <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -64,8 +65,7 @@ $formproject = new FormProjets($db);
 
 $includeuserlist = array();
 
-
-llxHeader('', $langs->trans('Projects'));
+llxHeader('', $langs->trans('Projects'), '', '', 0, 0, '', '', '', 'mod-project page-stats');
 
 $title = $langs->trans("ProjectsStatistics");
 $dir = $conf->project->dir_output.'/temp';
@@ -221,7 +221,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
+print dol_get_fiche_head($head, 'byyear', '', -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -280,7 +280,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data_all_year as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {	// If we have empty year
+	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

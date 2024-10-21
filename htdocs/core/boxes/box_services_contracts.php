@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017 	   Nicolas Zabouri      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,9 @@ class box_services_contracts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoContractedProducts';
 	}
 
 	/**
@@ -68,7 +72,9 @@ class box_services_contracts extends ModeleBoxes
 
 		$form = new Form($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxLastProductsInContract", $max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire')) {
 			$contractstatic = new Contrat($this->db);
@@ -123,6 +129,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractstatic->ref_customer = $objp->ref_customer;
 					$contractstatic->ref_supplier = $objp->ref_supplier;
 					$contractstatic->statut = $objp->contract_status;
+					$contractstatic->status = $objp->contract_status;
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
@@ -132,10 +139,11 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
+					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
 						$late = img_warning($langs->trans("Late"));
 					}
 
@@ -185,7 +193,7 @@ class box_services_contracts extends ModeleBoxes
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
-						'text2'=> $late,
+						'text2' => $late,
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -194,12 +202,6 @@ class box_services_contracts extends ModeleBoxes
 					);
 
 					$i++;
-				}
-				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoContractedProducts").'</span>'
-					);
 				}
 
 				$this->db->free($result);
@@ -218,12 +220,14 @@ class box_services_contracts extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2005		Brice Davoleau				<brice.davoleau@gmail.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
+ * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('agenda', 'contrat', 'companies'));
+$langs->loadLangs(array('agenda', 'contracts', 'companies'));
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contratagenda';
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contratagenda';
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -45,21 +48,19 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,14 +74,14 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Contrat($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
@@ -101,7 +102,7 @@ if (!$user->hasRight('contrat', 'lire')) {
 /*
  *	Actions
  */
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -145,12 +146,12 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 $object->fetch_thirdparty();
 
 $title = $langs->trans("Agenda");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 	$title = $object->ref." - ".$title;
 }
-$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_messaging');
 
 if (isModEnabled('notification')) {
 	$langs->load("mails");
@@ -226,9 +227,8 @@ print dol_get_fiche_end();
 
 $morehtmlright = '';
 
-$morehtmlright = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id, '', 2);
+$morehtmlright .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id, '', 2);
 $morehtmlright .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id, '', 1);
-
 
 if (isModEnabled('agenda')) {
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
@@ -241,7 +241,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 
-	$param = '&id='.urlencode($id);
+	$param = '&id='.urlencode((string) ($id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -254,9 +254,9 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	$cachekey = 'count_events_thirdparty_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': '');
+	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
-		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': '');
+		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}
 
 	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);

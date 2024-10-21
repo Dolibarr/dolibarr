@@ -2,6 +2,8 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Floran Henry  <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
-
 	// variables inherited from ModelNumRefContracts class
 	public $name = 'Olive';
 	public $version = 'dolibarr';
-	public $code_null = 1;
-	public $code_modifiable = 1;
-	public $code_modifiable_invalide = 1;
-	public $code_modifiable_null = 1;
-	public $code_auto = 0;
 
 
+	/**
+	 *	Constructor
+	 */
+	public function __construct()
+	{
+		$this->code_null = 1;
+		$this->code_modifiable = 1;
+		$this->code_modifiable_invalide = 1;
+		$this->code_modifiable_null = 1;
+		$this->code_auto = 0;
+	}
 	/**
 	 *	Return description of module
 	 *
@@ -70,9 +77,9 @@ class mod_contract_olive extends ModelNumRefContracts
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Societe		$objsoc		Object thirdparty
-	 * @param	Contrat		$contract	Object contract
-	 * @return	string					Return next value
+	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	Contrat		$contract	Object contract
+	 *	@return string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'resource', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -52,10 +52,10 @@ $result = restrictedArea($user, 'resource', $id, 'resource');
 
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,7 +73,7 @@ if (!$sortfield) {
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $upload_dir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'resource';
@@ -95,8 +95,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $form = new Form($db);
-
-llxHeader('', $langs->trans("Resource"));
+$help_url = '';
+llxHeader('', $langs->trans("Resource"), $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_documents');
 
 if ($object->id > 0) {
 	$object->fetch_thirdparty();

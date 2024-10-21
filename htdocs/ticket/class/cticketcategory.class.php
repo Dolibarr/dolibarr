@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,17 +50,6 @@ class CTicketCategory extends CommonObject
 	public $table_element = 'c_ticket_category';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'ticket';
@@ -73,7 +64,7 @@ class CTicketCategory extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString('MY_SETUP_PARAM'))
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -96,20 +87,20 @@ class CTicketCategory extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'position'=>15, 'index'=>1),
-		'code' =>array('type'=>'varchar(32)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'pos' =>array('type'=>'integer', 'label'=>'Pos', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30, 'showoncombobox'=>1),
-		'active' =>array('type'=>'integer', 'label'=>'Active', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'use_default' =>array('type'=>'integer', 'label'=>'Usedefault', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'description' =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_parent' =>array('type'=>'integer', 'label'=>'Fkparent', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50),
-		'force_severity' =>array('type'=>'varchar(32)', 'label'=>'Forceseverity', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'public' =>array('type'=>'integer', 'label'=>'Public', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'position' => 15, 'index' => 1),
+		'code' => array('type' => 'varchar(32)', 'label' => 'Code', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 20),
+		'pos' => array('type' => 'integer', 'label' => 'Pos', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 30, 'showoncombobox' => 1),
+		'active' => array('type' => 'integer', 'label' => 'Active', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'use_default' => array('type' => 'integer', 'label' => 'Usedefault', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'description' => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
+		'force_severity' => array('type' => 'varchar(32)', 'label' => 'Forceseverity', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'public' => array('type' => 'integer', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 	);
 
 	/**
@@ -141,11 +132,6 @@ class CTicketCategory extends CommonObject
 	 * @var int Status
 	 */
 	public $status;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var int ID
@@ -181,18 +167,15 @@ class CTicketCategory extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
+
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('mymodule', 'myobject', 'read')) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -267,6 +250,7 @@ class CTicketCategory extends CommonObject
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'date_creation')) {
@@ -359,15 +343,16 @@ class CTicketCategory extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -381,25 +366,14 @@ class CTicketCategory extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -551,7 +525,7 @@ class CTicketCategory extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('cticketcategorydao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -637,10 +611,10 @@ class CTicketCategory extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

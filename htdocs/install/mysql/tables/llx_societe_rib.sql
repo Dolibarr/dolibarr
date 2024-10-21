@@ -55,7 +55,7 @@ create table llx_societe_rib
   -- For BAN direct debit feature
   rum           varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum      date,							-- Date of mandate
-  frstrecur     varchar(16) default 'FRST',     -- 'FRST' or 'RECUR'
+  frstrecur     varchar(16) DEFAULT 'FRST',     -- 'FRST' or 'RECUR'
 
   -- For credit card
   last_four         varchar(4),					-- last 4
@@ -81,12 +81,12 @@ create table llx_societe_rib
   ext_payment_site  varchar(128),               -- name of external paymentmode (for example 'StripeLive')
 
   extraparams       varchar(255),               -- for other parameters with json format
-  
+
   -- For Online Sign
   date_signature    datetime,
   online_sign_ip    varchar(48),
   online_sign_name  varchar(64),
-  
+
   comment           varchar(255),
   ipaddress         varchar(68),
   status            integer NOT NULL DEFAULT 1, -- 1=ACTIVE, 0=IN_TRASH

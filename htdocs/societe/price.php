@@ -6,6 +6,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2023	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 	$prodcustprice = new ProductCustomerPrice($db);
@@ -55,17 +57,18 @@ $search_price 	= GETPOST('search_price');
 $search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
-$socid = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int');
+$socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize objects
 $object = new Societe($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
 
 $error = 0;
 
@@ -74,7 +77,7 @@ $error = 0;
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -86,7 +89,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		if (!(GETPOST('prodid', 'int') > 0)) {
+		if (!(GETPOSTINT('prodid') > 0)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
 			$action = 'add_customer_price';
@@ -98,7 +101,7 @@ if (empty($reshook)) {
 			// add price by customer
 			$prodcustprice->fk_soc = $socid;
 			$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
-			$prodcustprice->fk_product = GETPOST('prodid', 'int');
+			$prodcustprice->fk_product = GETPOSTINT('prodid');
 			$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 			$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 			$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
@@ -144,6 +147,26 @@ if (empty($reshook)) {
 			$prodcustprice->localtax2_type = $localtax2_type;
 
 			$result = $prodcustprice->create($user, 0, $update_child_soc);
+			if ($result > 0) {
+				$extrafields->fetch_name_optionals_label("product_customer_price");
+				$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
+				$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
+				if (!empty($extralabels) && is_array($extralabels)) {
+					$productcustomerprice = new ProductCustomerPrice($db);
+					$res = $productcustomerprice->fetch($prodcustprice->id);
+					if ($res > 0) {
+						foreach ($extrafield_values as $key => $value) {
+							$productcustomerprice->array_options[$key] = $value;
+						}
+						$result2 = $productcustomerprice->insertExtraFields();
+						if ($result2 < 0) {
+							$prodcustprice->error = $productcustomerprice->error;
+							$prodcustprice->errors = $productcustomerprice->errors;
+							$error++;
+						}
+					}
+				}
+			}
 
 			if ($result < 0) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
@@ -157,7 +180,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOST('lineid', 'int');
+		$prodcustprice->id = GETPOSTINT('lineid');
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
@@ -169,7 +192,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		$prodcustprice->fetch(GETPOST('lineid', 'int'));
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
 
 		$update_child_soc = GETPOST('updatechildprice');
 
@@ -182,6 +205,26 @@ if (empty($reshook)) {
 		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 
 		$result = $prodcustprice->update($user, 0, $update_child_soc);
+		if ($result > 0) {
+			$extrafields->fetch_name_optionals_label("product_customer_price");
+				$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
+				$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
+			if (!empty($extralabels) && is_array($extralabels)) {
+				$productcustomerprice = new ProductCustomerPrice($db);
+				$res = $productcustomerprice->fetch($prodcustprice->id);
+				if ($res > 0) {
+					foreach ($extrafield_values as $key => $value) {
+						$productcustomerprice->array_options[$key] = $value;
+					}
+					$result2 = $productcustomerprice->insertExtraFields();
+					if ($result2 < 0) {
+						$prodcustprice->error = $productcustomerprice->error;
+						$prodcustprice->errors = $productcustomerprice->errors;
+						$error++;
+					}
+				}
+			}
+		}
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		} else {
@@ -204,9 +247,6 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty").'-'.$langs->trans('PriceByCustomer'));
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'price', $langs->trans("ThirdParty"), -1, 'company');
@@ -259,13 +299,13 @@ print dol_get_fiche_end();
 
 
 
-if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	$prodcustprice = new ProductCustomerPrice($db);
 
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -345,14 +385,14 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
-		print '<input name="price" size="10" value="'.GETPOST('price', 'int').'">';
+		print '<input name="price" size="10" value="'.GETPOSTINT('price').'">';
 		print '</td></tr>';
 
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
-		print '<td><input name="price_min" size="10" value="'.GETPOST('price_min', 'int').'">';
+		print '<td><input name="price_min" size="10" value="'.GETPOSTINT('price_min').'">';
 		print '</td></tr>';
 
 		// Update all child soc
@@ -364,6 +404,30 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		print '</td>';
 		print '</tr>';
 
+		// Extrafields
+		$extrafields->fetch_name_optionals_label("product_customer_price");
+		$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
+		$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
+		if (!empty($extralabels)) {
+			if (empty($prodcustprice->id)) {
+				foreach ($extralabels as $key => $value) {
+					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "add_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
+							$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
+						}
+
+						print '<tr><td'.($extrafields->attributes["product_customer_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+						if (!empty($extrafields->attributes["product_customer_price"]['help'][$key])) {
+							print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_customer_price"]['help'][$key]));
+						} else {
+							print $langs->trans($value);
+						}
+						print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : '', '', '', '', '', 0, 'product_customer_price').'</td></tr>';
+					}
+				}
+			}
+		}
+
 		print '</table>';
 
 		print $form->buttonsSaveCancel();
@@ -374,7 +438,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
-		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
+		$result = $prodcustprice->fetch(GETPOSTINT('lineid'));
 
 		if ($result <= 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
@@ -442,6 +506,60 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			print '</td>';
 			print '</tr>';
 
+			// Extrafields
+			$extrafields->fetch_name_optionals_label("product_customer_price");
+			$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
+			$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
+			if (!empty($extralabels)) {
+				if (empty($object->id)) {
+					foreach ($extralabels as $key => $value) {
+						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+							if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
+								$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
+							}
+
+							print '<tr><td'.($extrafields->attributes["product_customer_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+							if (!empty($extrafields->attributes["product_customer_price"]['help'][$key])) {
+								print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_customer_price"]['help'][$key]));
+							} else {
+								print $langs->trans($value);
+							}
+							print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : '', '', '', '', '', 0, 'product_customer_price').'</td></tr>';
+						}
+					}
+				} else {
+					$sql  = "SELECT";
+					$sql .= " fk_object";
+					foreach ($extralabels as $key => $value) {
+						$sql .= ", ".$key;
+					}
+					$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields";
+					$sql .= " WHERE fk_object = ".((int) $prodcustprice->id);
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						foreach ($extralabels as $key => $value) {
+							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+								if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
+									$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
+								}
+
+								print '<tr><td'.($extrafields->attributes["product_customer_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+								if (!empty($extrafields->attributes["product_customer_price"]['help'][$key])) {
+									print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_customer_price"]['help'][$key]));
+								} else {
+									print $langs->trans($value);
+								}
+								print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key}, '', '', '', '', 0, 'product_customer_price');
+
+								print '</td></tr>';
+							}
+						}
+						$db->free($resql);
+					}
+				}
+			}
+
 			print '</table>';
 
 			print $form->buttonsSaveCancel();
@@ -453,7 +571,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
-			't.fk_product' => GETPOST('prodid', 'int'),
+			't.fk_product' => GETPOSTINT('prodid'),
 			't.fk_soc' => $socid
 		);
 
@@ -468,8 +586,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			}
 		}
 
-		$option = '&socid='.GETPOST('socid', 'int').'&prodid='.GETPOST('prodid', 'int');
+		$option = '&socid='.GETPOSTINT('socid').'&prodid='.GETPOSTINT('prodid');
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
 		if (count($prodcustprice->lines) > 0) {
@@ -545,16 +664,41 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		foreach ($prodcustprice->fields as $key => $val) {
 			// If $val['visible']==0, then we never show the field
 			if (!empty($val['visible'])) {
-				$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+				$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 				$arrayfields['t.'.$key] = array(
-					'label'=>$val['label'],
-					'checked'=>(($visible < 0) ? 0 : 1),
-					'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
-					'position'=>$val['position'],
-					'help'=> isset($val['help']) ? $val['help'] : ''
+					'label' => $val['label'],
+					'checked' => (($visible < 0) ? 0 : 1),
+					'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+					'position' => $val['position'],
+					'help' => isset($val['help']) ? $val['help'] : ''
 				);
 			}
 		}
+		// fetch optionals attributes and labels
+		$extrafields->fetch_name_optionals_label("product_customer_price");
+		if ($extrafields->attributes["product_customer_price"] && array_key_exists('label', $extrafields->attributes["product_customer_price"])) {
+			$extralabels = $extrafields->attributes["product_customer_price"]['label'];
+
+			if (!empty($extralabels)) {
+				foreach ($extralabels as $key => $value) {
+					// Show field if not hidden
+					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+						$extratitle = $langs->trans($value);
+						if (!empty($val['visible'])) {
+							$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
+							$arrayfields['ef.' . $key] = array(
+								'label'    => $extratitle,
+								'checked' => (($visible < 0) ? 0 : 1),
+								'position' => (int) $extrafields->attributes['product_customer_price']['pos'][$key],
+								'langfile' => $extrafields->attributes["product_customer_price"]['langfile'][$key],
+								'help'     => $extrafields->attributes["product_customer_price"]['help'][$key]
+							);
+						}
+					}
+				}
+			}
+		}
+
 		$arrayfields = dol_sort_array($arrayfields, 'position');
 
 		// Count total nb of records
@@ -572,6 +716,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		print '<!-- view specific price for each product -->'."\n";
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
@@ -609,6 +754,11 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
 			}
 		}
+		foreach ($extralabels as $key => $val) {
+			if (!empty($arrayfields['ef.'.$key]['checked'])) {
+				print getTitleFieldOfList($arrayfields['ef.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
+			}
+		}
 		print '<td></td>';
 		print '</tr>';
 
@@ -625,6 +775,12 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			if (!empty($extralabels)) {
+				foreach ($extralabels as $key) {
+					print '<td class="right"></td>';
+				}
+			}
 			// Print the search button
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -653,10 +809,41 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				print '<td class="left">'.price($line->price_ttc)."</td>";
 				print '<td class="left">'.price($line->price_min).'</td>';
 				print '<td class="left">'.price($line->price_min_ttc).'</td>';
+				print '<td class="left">'.$line->price_label.'</td>';
 				// User
 				print '<td class="left">';
 				print $userstatic->getNomUrl(-1);
 				print '</td>';
+				// Extrafields
+				$extrafields->fetch_name_optionals_label("product_customer_price");
+				$extralabels = $extrafields->attributes["product_customer_price"]['label'];
+				if (!empty($extralabels)) {
+					$sql  = "SELECT";
+					$sql .= " fk_object";
+					foreach ($extralabels as $key => $value) {
+						$sql .= ", ".$key;
+					}
+					$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields";
+					$sql .= " WHERE fk_object = ".((int) $line->id);
+					$resql = $db->query($sql);
+					if ($resql) {
+						if ($db->num_rows($resql) != 1) {
+							foreach ($extralabels as $key => $value) {
+								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+									print "<td></td>";
+								}
+							}
+						} else {
+							$obj = $db->fetch_object($resql);
+							foreach ($extralabels as $key => $value) {
+								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+									print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_customer_price')."</td>";
+								}
+							}
+						}
+						$db->free($resql);
+					}
+				}
 				// Action
 				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<td class="right nowraponall">';

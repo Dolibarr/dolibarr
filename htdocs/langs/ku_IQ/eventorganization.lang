@@ -1,0 +1,178 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Event Organization
+EventOrganizationDescription = Event Organization through Module Project
+EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+EventOrganizationMenuLeft = Organized events
+EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+PaymentEvent=Payment of event
+EventFee=Event fee
+
+#
+# Admin page
+#
+NewRegistration=Registration
+EventOrganizationSetup=Event Organization setup
+EventOrganization=Event organization
+EventOrganizationSetupPage = Event Organization setup page
+EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+
+#
+# Object
+#
+OrganizedEvent=Organized event
+EventOrganizationConfOrBooth= Conference Or Booth
+EventOrganizationConfOrBoothes=Conferences or Boothes
+ManageOrganizeEvent = Manage the organization of an event
+ConferenceOrBooth = Conference Or Booth
+ConferenceOrBoothTab = Conference Or Booth
+AmountPaid = Amount paid
+DateOfRegistration = Date of registration
+ConferenceOrBoothAttendee = Conference Or Booth Attendee
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Your request for conference was received
+YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
+EventOrganizationEmailAskConf = Request for conference
+EventOrganizationEmailAskBooth = Request for booth
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationMassEmailAttendees = Communication to attendees
+EventOrganizationMassEmailSpeakers = Communication to speakers
+ToSpeakers=To speakers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+PriceOfRegistration=Price of registration
+PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfBooth=Subscription price to stand a booth
+PriceOfBoothHelp=Subscription price to stand a booth
+EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLink=Link ICS for conferences
+ConferenceOrBoothInformation=Conference Or Booth information
+Attendees=Attendees
+ListOfAttendeesOfEvent=List of attendees of the event project
+DownloadICSLink = Download ICS link
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+NbVotes=Number of votes
+
+#
+# Status
+#
+EvntOrgDraft = Draft
+EvntOrgSuggested = Suggested
+EvntOrgConfirmed = Confirmed
+EvntOrgNotQualified = Not Qualified
+EvntOrgDone = Done
+EvntOrgCancelled = Canceled
+
+#
+# Other
+#
+SuggestForm = Suggestion page
+SuggestOrVoteForConfOrBooth = Page for suggestion or vote
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+ListOfSuggestedConferences = List of suggested conferences
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
+SuggestConference = Suggest a new conference
+SuggestBooth = Suggest a booth
+ViewAndVote = View and vote for suggested events
+PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
+PublicAttendeeSubscriptionPage = Public link for registration to this event only
+MissingOrBadSecureKey = The security key is invalid or missing
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgDuration = This conference starts on %s and ends on %s.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EventType = Event type
+LabelOfBooth=Booth label
+LabelOfconference=Conference label
+ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
+NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+OrganizationEvenLabelName=Public name of the conference or booth
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application to hold a conference
+EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
+EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
+EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
+EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
+VoteOk = Your vote has been accepted.
+AlreadyVoted = You have already voted for this event.
+VoteError = An error has occurred during the vote, please try again.
+SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+Attendee = Attendee
+PaymentConferenceAttendee = Conference attendee payment
+PaymentBoothLocation = Booth location payment
+DeleteConferenceOrBoothAttendee=Remove attendee
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Attendee email
+EmailCompany=Company email
+EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated=%s Records updated
+RecordUpdated=Record updated
+NoRecordUpdated=No Record updated
+ProfitPerValidatedAttendee=Profit per attendee

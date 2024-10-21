@@ -7,6 +7,8 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -53,7 +55,7 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productcompositioncard', 'globalcard'));
 
 $object = new Product($db);
@@ -98,12 +100,12 @@ if (empty($reshook)) {
 	// Add subproduct to product
 	if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$error = 0;
-		$maxprod = GETPOST("max_prod", 'int');
+		$maxprod = GETPOSTINT("max_prod");
 
 		for ($i = 0; $i < $maxprod; $i++) {
 			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
 			if ($qty > 0) {
-				if ($object->add_sousproduit($id, GETPOST("prod_id_" . $i, 'int'), $qty, GETPOST("prod_incdec_" . $i, 'int')) > 0) {
+				if ($object->add_sousproduit($id, GETPOSTINT("prod_id_" . $i), $qty, GETPOSTINT("prod_incdec_" . $i)) > 0) {
 					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
 					$action = 'edit';
 				} else {
@@ -116,7 +118,7 @@ if (empty($reshook)) {
 					}
 				}
 			} else {
-				if ($object->del_sousproduit($id, GETPOST("prod_id_" . $i, 'int')) > 0) {
+				if ($object->del_sousproduit($id, GETPOSTINT("prod_id_" . $i)) > 0) {
 					$action = 'edit';
 				} else {
 					$error++;
@@ -197,7 +199,7 @@ if ($action == 'search') {
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
+	if (isModEnabled('category') && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -217,7 +219,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
 }
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-composition_card');
 
 $head = product_prepare_head($object);
 
@@ -232,7 +234,7 @@ if ($id > 0 || !empty($ref)) {
 	 * Product card
 	 */
 	if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
 		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -313,7 +315,7 @@ if ($id > 0 || !empty($ref)) {
 		$tmpid = $id;
 		if (!empty($conf->use_javascript_ajax)) {
 			$nboflines = $prods_arbo;
-			$table_element_line='product_association';
+			$table_element_line = 'product_association';
 
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
@@ -446,7 +448,7 @@ if ($id > 0 || !empty($ref)) {
 					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
-					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, 0, '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
@@ -460,7 +462,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="right" colspan="2">';
 					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
-						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
+						print '<span class="amount">'.price($pricesell, 0, '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
 						print '<span class="opacitymedium">'.$langs->trans($pricesell).'</span>';
 					}
@@ -473,7 +475,7 @@ if ($id > 0 || !empty($ref)) {
 
 					// Hook fields
 					$parameters = array();
-					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
 					// Qty + IncDec
@@ -528,11 +530,11 @@ if ($id > 0 || !empty($ref)) {
 
 					// Hook fields
 					$parameters = array();
-					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
 					// Qty in kit
-					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';
+					print '<td class="right">'.dol_escape_htmltag((string) $value['nb']).'</td>';
 
 					// Inc/dec
 					print '<td>&nbsp;</td>';
@@ -567,7 +569,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($total, 0, '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Minimum selling price
@@ -579,7 +581,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($totalsell, 0, '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Stock
@@ -625,7 +627,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<br>';
 
 			$rowspan = 1;
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				$rowspan++;
 			}
 
@@ -638,7 +640,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
 				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
@@ -692,6 +694,7 @@ if ($id > 0 || !empty($ref)) {
 								$prods_arbo = $prod_arbo->get_arbo_each_prod();
 								if (count($prods_arbo) > 0) {
 									foreach ($prods_arbo as $key => $value) {
+										// @phan-suppress-next-line PhanTypeInvalidDimOffset
 										if ($value[1] == $id) {
 											$is_pere = 1;
 										}

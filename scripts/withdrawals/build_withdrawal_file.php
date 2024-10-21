@@ -34,10 +34,11 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
@@ -70,7 +71,7 @@ if (!isset($argv[1])) { // Check parameters
 	print "This script check invoices with a withdrawal request and\n";
 	print "then create payment and build a withdraw file.\n";
 	print "Usage: ".$script_file." simu|real\n";
-	exit(-1);
+	exit(1);
 }
 
 $withdrawreceipt = new BonPrelevement($db);

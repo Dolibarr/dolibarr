@@ -30,7 +30,6 @@ StatusActionInProcess=En proceso
 TasksHistoryForThisContact=Eventos para este contacto
 LastProspectNeverContacted=Nunca contactado
 LastProspectContactDone=Contacto realizado
-ActionDoneBy=Evento realizado por
 ActionAC_FAX=Enviar fax
 ActionAC_PROP=Enviar propuesta por correo
 ActionAC_EMAIL=Enviar correo electrónico

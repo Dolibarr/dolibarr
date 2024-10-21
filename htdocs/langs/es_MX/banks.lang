@@ -73,7 +73,6 @@ PaymentDateUpdateSucceeded=Fecha de pago actualizada con éxito
 PaymentDateUpdateFailed=La fecha de pago no se pudo actualizar
 BankTransactionLine=Entrada bancaria
 ShowAllAccounts=Mostrar todas las cuentas
-EventualyAddCategory=Eventualmente, especifique una categoría en la que clasificar los registros
 ThenCheckLinesAndConciliate=A continuación, compruebe las líneas presentes en el estado de cuenta bancaria y haga clic
 RejectCheck=Cheque rechazado
 RejectCheckDate=Fecha en la que el cheque fue rechazado

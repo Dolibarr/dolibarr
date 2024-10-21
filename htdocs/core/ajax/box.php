@@ -41,10 +41,10 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
-$boxid = GETPOST('boxid', 'int');
+$boxid = GETPOSTINT('boxid');
 $boxorder = GETPOST('boxorder');
-$zone = GETPOST('zone', 'int');
-$userid = GETPOST('userid', 'int');
+$zone = GETPOST('zone');		// Can be '0' or '1' or 'pagename'...
+$userid = GETPOSTINT('userid');
 
 // Security check
 if ($userid != $user->id) {

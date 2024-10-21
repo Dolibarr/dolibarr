@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
  * \brief      File of class with all html predefined components for WebPortal
  */
 
-dol_include_once('/webportal/class/html.formwebportal.class.php');
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php';
 
 /**
  *    Class to manage generation of HTML components
@@ -174,7 +176,7 @@ class FormCardWebPortal
 		$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');    // if not set, $backtopage will be used
 		$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$object = new $objectclass($this->db);
 		//$extrafields = new ExtraFields($db);
 		$hookmanager->initHooks(array('webportal' . $elementEn . 'card', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -188,7 +190,7 @@ class FormCardWebPortal
 		}
 
 		// Load object
-		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 		// Security check (enable the most restrictive one)
 		if (!isModEnabled('webportal')) {
@@ -335,8 +337,8 @@ class FormCardWebPortal
 					}
 					$value = dol_mktime($timeHours, $timeMinutes, $timeSeconds, $dateMonth, $dateDay, $dateYear);
 				} elseif ($object->fields[$key]['type'] == 'duration') {
-					if (GETPOST($key . 'hour', 'int') != '' || GETPOST($key . 'min', 'int') != '') {
-						$value = 60 * 60 * GETPOST($key . 'hour', 'int') + 60 * GETPOST($key . 'min', 'int');
+					if (GETPOSTINT($key . 'hour') != '' || GETPOSTINT($key . 'min') != '') {
+						$value = 60 * 60 * GETPOSTINT($key . 'hour') + 60 * GETPOSTINT($key . 'min');
 					} else {
 						$value = '';
 					}
@@ -368,7 +370,7 @@ class FormCardWebPortal
 				}
 
 				$object->$key = $value;
-				if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+				if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
 					$error++;
 					$context->setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 				}
@@ -382,7 +384,7 @@ class FormCardWebPortal
 					}
 				}
 
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					$categories = GETPOST('categories', 'array');
 					if (method_exists($object, 'setCategories')) {
 						$object->setCategories($categories);
@@ -403,7 +405,7 @@ class FormCardWebPortal
 				if ($result >= 0) {
 					$action = 'view';
 					$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-					$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+					$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 					if ($urltogo && empty($noback)) {
 						header("Location: " . $urltogo);
 						exit;
@@ -452,19 +454,27 @@ class FormCardWebPortal
 		//    }
 		//}
 
+		$html .= '<!-- html.formcardwebportal.class.php -->';
 		$html .= '<header>';
 
 		// Left block - begin
-		$html .= '<div class="header-card-left-block" style="width: 75%;">';
+		$html .= '<div class="header-card-left-block inline-block" style="width: 75%;">';
 		$html .= '<div>';
 
 		// logo or photo
-		$html .= '<div></div>';
+		$form = new Form($this->db);
+		$html .= '<div class="inline-block floatleft valignmiddle">';
+		$html .= '<div class="floatleft inline-block valignmiddle divphotoref">';
+		$html .= $form->showphoto('memberphoto', $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
+		//include DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+		//$html .= getImagePublicURLOfObject($object, 1, '_small');
+		$html .= '</div>';
+		$html .= '</div>';
 
 		// main information - begin
-		$html .= '<div class="header-card-main-information">';
+		$html .= '<div class="header-card-main-information inline-block valignmiddle">';
 		// ref
-		$html .= '<div><strong>' . $object->ref . '</strong></div>';
+		$html .= '<div><strong>' . $langs->trans("Ref").' : '.dol_escape_htmltag($object->ref) . '</strong></div>';
 		// full name
 		$fullname = '';
 		if (method_exists($object, 'getFullName')) {
@@ -472,6 +482,7 @@ class FormCardWebPortal
 		}
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			if ($object->morphy == 'mor' && !empty($object->societe)) {
 				$html .= dol_htmlentities($object->societe);
 				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
@@ -502,7 +513,7 @@ class FormCardWebPortal
 		// Left block - end
 
 		// Right block - begin
-		$html .= '<div class="grid header-card-right-block">';
+		$html .= '<div class="header-card-right-block inline-block" style="width: 24%;">';
 		// show status
 		$htmlStatus = $object->getLibStatut(6);
 		if (empty($htmlStatus) || $htmlStatus == $object->getLibStatut(3)) {
@@ -607,7 +618,7 @@ class FormCardWebPortal
 					$cardRight = true;
 				}
 			}
-			if ($cardRight === true) {
+			if ($cardRight) {
 				$html .= '</div>';
 				$html .= '<div class="card-right">';
 			}
@@ -655,7 +666,7 @@ class FormCardWebPortal
 
 			$html .= '<div class="valuefieldcreate">';
 			if (in_array($val['type'], array('int', 'integer'))) {
-				$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $object->$key;
+				$value = GETPOSTISSET($key) ? GETPOSTINT($key) : $object->$key;
 			} elseif ($val['type'] == 'double') {
 				$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
 			} elseif (preg_match('/^text/', $val['type'])) {
@@ -735,7 +746,7 @@ class FormCardWebPortal
 	{
 		global $hookmanager, $langs;
 
-		$html = '';
+		$html = '<!-- elementCard -->';
 
 		// initialize
 		$action = $this->action;

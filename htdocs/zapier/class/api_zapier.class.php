@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->hook);
@@ -120,7 +121,7 @@ class Zapier extends DolibarrApi
 		// }
 
 		// if (! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-		//     throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		//     throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		// }
 
 		return $arraychoices;
@@ -242,11 +243,11 @@ class Zapier extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->hook->context['caller'] = $request_data['caller'];
+				$this->hook->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->hook->$field = $value;
+			$this->hook->$field = $this->_checkValForAPI($field, $value, $this->hook);
 		}
 
 		$this->hook->fk_user = DolibarrApiAccess::$user->id;
@@ -279,7 +280,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->hook->delete(DolibarrApiAccess::$user)) {
@@ -312,9 +313,9 @@ class Zapier extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array       $data       Array of data to validate
-	 * @param   array       $fields     Array of fields needed
-	 * @return  array
+	 * @param   array<string,mixed>	$data       Array of data to validate
+	 * @param   string[]			$fields     Array of fields needed
+	 * @return  array<string,mixed>
 	 *
 	 * @throws  RestException
 	 */

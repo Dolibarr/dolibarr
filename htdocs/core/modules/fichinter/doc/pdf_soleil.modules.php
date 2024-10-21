@@ -6,6 +6,9 @@
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +69,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -95,7 +98,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
@@ -104,14 +107,19 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
 
+		// Define position of columns
+		$this->posxdesc = $this->marge_gauche + 1;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if not defined
 		}
-
-		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -121,10 +129,10 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		Fichinter		$object				Object to generate
 	 *  @param		Translate		$outputlangs		Lang output object
 	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int				$hidedetails		Do not show line details
-	 *  @param		int				$hidedesc			Do not show desc
-	 *  @param		int				$hideref			Do not show ref
-	 *  @return		int									1=OK, 0=KO
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<0,1>							1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -175,7 +183,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				}
 
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -185,7 +193,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -216,6 +224,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -250,9 +259,9 @@ class pdf_soleil extends ModelePDFFicheinter
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2, $this->corner_radius, '1234', 'D');
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -375,7 +384,7 @@ class pdf_soleil extends ModelePDFFicheinter
 								$pdf->useTemplate($tplidx);
 							}
 						}
-						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 							if ($pagenb == 1) {
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object);
 							} else {
@@ -406,7 +415,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -414,7 +423,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -424,7 +433,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1;
 			} else {
@@ -442,16 +451,16 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
-	 *   @param		Fichinter	$object			FichInter Object
+	 *   @param		?Fichinter	$object			FichInter Object
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, FichInter $object = null)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $object = null)
 	{
 		global $conf;
 
@@ -484,7 +493,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		*/
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, 0, 0); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, $this->corner_radius, 0, 0, 'D');	 // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidebottom)) {
 			$employee_name = '';
@@ -627,7 +636,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY($posx, $posy - 5);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, 82, $hautcadre, $this->corner_radius, '1234', 'F');
 			}
 
 			// Show sender name
@@ -662,7 +671,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), $usecontact, 'target', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 100;
@@ -680,7 +689,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 				$pdf->SetTextColor(0, 0, 0);
 			}
 

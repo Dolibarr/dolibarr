@@ -383,7 +383,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
-	overflow: hidden;
+	overflow-x: hidden;
 }
 
 .div1{
@@ -450,10 +450,8 @@ div.paymentbordline
 	padding-right: 8px;
 }
 
-
 tr.selected, tr.selected td {
-	/* font-weight: bold; */
-	background-color: rgb(240,230,210) !important;
+	background-color: var(--colorbacklinepairchecked) !important;
 }
 .order td {
 	color: green;
@@ -596,6 +594,12 @@ div.description_content {
 	max-width: 250px;
 	border-radius: 5px;
 }
+
+
+.login_block_other.takepos {
+	margin-top: 5px;
+}
+
 
 div#moreinfo, div#infowarehouse {
 	color: #aaa;

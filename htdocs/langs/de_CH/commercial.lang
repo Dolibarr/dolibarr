@@ -41,3 +41,4 @@ ThisScreenAllowsYouToSignDocFromProposal=Hier kannst du die Offerte akzeptieren,
 ThisIsInformationOnDocumentToSignProposal=Hier die Informationen zum Dokument, das zu akzeptieren oder zurückzuweisen ist.
 SignatureProposalRef=Unterschrift zur Offerte %s
 FeatureOnlineSignDisabled=Hoppla, online unterschreiben ist entweder deaktiviert - oder die Offerte wurde erstellt, bevor online unterschreiben aktiviert worden war.
+NoSignature=Nicht unterzeichnet

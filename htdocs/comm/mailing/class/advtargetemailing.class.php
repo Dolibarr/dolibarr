@@ -1,6 +1,7 @@
 <?php
 /* Advance Targeting Emailing for mass emailing module
- * Copyright (C) 2013  Florian Henry <florian.henry@open-concept.pro>
+ * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * 	\file		comm/mailing/class/advtargetemailing.class.php
+ * 	\file		htdocs/comm/mailing/class/advtargetemailing.class.php
  * 	\ingroup	mailing
  * 	\brief		This file is an example CRUD class file (Create/Read/Update/Delete)
  */
@@ -92,7 +93,15 @@ class AdvanceTargetingMailing extends CommonObject
 	 * @var array type status comm prospect
 	 */
 	public $type_statuscommprospect = array();
+
+	/**
+	 * @var int[]
+	 */
 	public $thirdparty_lines;
+
+	/**
+	 * @var int[]
+	 */
 	public $contact_lines;
 
 
@@ -584,6 +593,9 @@ class AdvanceTargetingMailing extends CommonObject
 			if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
 				$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
 			}
+			if (!empty($arrayquery['cust_state']) && count($arrayquery['cust_state']) > 0) {
+				$sqlwhere[] = " (t.fk_departement IN (".$this->db->sanitize(implode(',', $arrayquery['cust_state']))."))";
+			}
 			if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
 				$sqlwhere[] = " (t.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";
 			}
@@ -824,6 +836,12 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 					if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
 						$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
+					}
+					//if (!empty($arrayquery['cust_state'])) {
+					//	$sqlwhere[] = $this->transformToSQL('tsd.nom', $arrayquery['cust_state']);
+					//}
+					if (!empty($arrayquery['cust_state']) && count($arrayquery['cust_state']) > 0) {
+						$sqlwhere[] = " (t.fk_departement IN (".$this->db->sanitize(implode(',', $arrayquery['cust_state']))."))";
 					}
 					if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
 						$sqlwhere[] = " (ts.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";

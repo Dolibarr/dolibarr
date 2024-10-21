@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022      Harry Winner Kamdem  <harry@sense.africa>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +146,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						global $mc;
 
 						if (!isset($mc)) {
-							!isModEnabled('multicompany'); // Global not available, disable $conf->multicompany->enabled for safety
+							unset($conf->multicompany->enabled); // Global not available, disable $conf->multicompany->enabled for safety
 						} else {
 							$ret = $mc->checkRight($obj->rowid, $entitytotest);
 							if ($ret < 0) {

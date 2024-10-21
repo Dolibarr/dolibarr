@@ -2,6 +2,8 @@
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +117,7 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 
 	/**
-	 * @var string 			Unit frequency of job execution
+	 * @var string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
 	 */
 	public $unitfrequency;
 
@@ -244,9 +246,6 @@ class Cronjob extends CommonObject
 		if (isset($this->module_name)) {
 			$this->module_name = trim($this->module_name);
 		}
-		if (isset($this->priority)) {
-			$this->priority = trim($this->priority);
-		}
 		if (isset($this->lastoutput)) {
 			$this->lastoutput = trim($this->lastoutput);
 		}
@@ -349,7 +348,7 @@ class Cronjob extends CommonObject
 		$sql .= "libname,";
 		$sql .= "test";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ? $conf->entity : $this->db->escape($this->entity)).",";
+		$sql .= " ".(!isset($this->entity) ? (int) $conf->entity : (int) $this->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".(!isset($this->jobtype) ? 'NULL' : "'".$this->db->escape($this->jobtype)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -360,7 +359,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->params) ? 'NULL' : "'".$this->db->escape($this->params)."'").",";
 		$sql .= " ".(!isset($this->md5params) ? 'NULL' : "'".$this->db->escape($this->md5params)."'").",";
 		$sql .= " ".(!isset($this->module_name) ? 'NULL' : "'".$this->db->escape($this->module_name)."'").",";
-		$sql .= " ".(!isset($this->priority) ? '0' : $this->priority).",";
+		$sql .= " ".(is_numeric($this->priority) ? (int) $this->priority : 50).",";
 		$sql .= " ".(!isset($this->datelastrun) || dol_strlen($this->datelastrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastrun)."'").",";
 		$sql .= " ".(!isset($this->datenextrun) || dol_strlen($this->datenextrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datenextrun)."'").",";
 		$sql .= " ".(!isset($this->dateend) || dol_strlen($this->dateend) == 0 ? 'NULL' : "'".$this->db->idate($this->dateend)."'").",";
@@ -512,16 +511,16 @@ class Cronjob extends CommonObject
 	/**
 	 * Load list of cron jobs in a memory array from the database
 	 *
-	 * @param	string		$sortorder		sort order
-	 * @param	string		$sortfield		sort field
-	 * @param	int			$limit			limit page
-	 * @param	int			$offset			page
-	 * @param	int			$status			display active or not
-	 * @param	array		$filter			filter output
-	 * @param	int			$processing		Processing or not
-	 * @return	int							if KO: <0 || if OK: >0
+	 * @param	string			$sortorder		Sort order
+	 * @param	string			$sortfield		Sort field
+	 * @param	int				$limit			Limit page
+	 * @param	int				$offset			Offset ppage
+	 * @param	int				$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
+	 * @param	string|array	$filter			Filter USF.
+	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
+	 * @return	int								if KO: <0 || if OK: >0
 	 */
-	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = [], int $processing = -1)
+	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
 	{
 		$this->lines = array();
 
@@ -570,15 +569,29 @@ class Cronjob extends CommonObject
 		} elseif ($status == 2) {
 			$sql .= " AND t.status = 2";
 		}
+
 		// Manage filter
-		if (is_array($filter) && count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sql .= " AND ".$key." = ".((int) $value);
-				} else {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid') {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+					} else {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					}
 				}
 			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -651,11 +664,11 @@ class Cronjob extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update(User $user = null, int $notrigger = 0)
+	public function update($user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -713,7 +726,7 @@ class Cronjob extends CommonObject
 			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->nbrun)) {
-			$this->nbrun = (is_numeric($this->nbrun)) ? (int) trim($this->nbrun) : 0;
+			$this->nbrun = (is_numeric($this->nbrun)) ? (int) trim((string) $this->nbrun) : 0;
 		}
 		if (isset($this->libname)) {
 			$this->libname = trim($this->libname);
@@ -934,14 +947,14 @@ class Cronjob extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return	void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 		$this->ref = '';
 		$this->entity = 0;
-		$this->tms = dol_now();
+		$this->date_modification = dol_now();
 		$this->datec = '';
 		$this->label = '';
 		$this->jobtype = '';
@@ -960,7 +973,7 @@ class Cronjob extends CommonObject
 		$this->datelastresult = '';
 		$this->lastoutput = '';
 		$this->lastresult = '';
-		$this->unitfrequency = '';
+		$this->unitfrequency = '86400';
 		$this->frequency = 0;
 		$this->status = 0;
 		$this->processing = 0;
@@ -972,15 +985,16 @@ class Cronjob extends CommonObject
 		$this->nbrun = 0;
 		$this->maxrun = 100;
 		$this->libname = '';
+
+		return 1;
 	}
 
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param	array		$params		params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return	array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1170,7 +1184,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1208,7 +1222,7 @@ class Cronjob extends CommonObject
 		$this->lastresult = '';
 		$this->processing = 1; // To know job was started
 		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
-		$this->nbrun = $this->nbrun + 1;
+		$this->nbrun += 1;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1279,7 +1293,7 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); (Note: Log for cron jobs may be into a different log file)", LOG_DEBUG);
 
 				// Create Object for the called module
-				$nameofclass = $this->objectname;
+				$nameofclass = (string) $this->objectname;
 				$object = new $nameofclass($this->db);
 				if ($this->entity > 0) {
 					$object->entity = $this->entity; // We work on a dedicated entity
@@ -1295,11 +1309,10 @@ class Cronjob extends CommonObject
 				} else {
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
-
+				$errmsg = '';
 				if ($result === false || (!is_bool($result) && $result != 0)) {
 					$langs->load("errors");
 
-					$errmsg = '';
 					if (!is_array($object->errors) || !in_array($object->error, $object->errors)) {
 						$errmsg .= $object->error;
 					}
@@ -1391,7 +1404,7 @@ class Cronjob extends CommonObject
 
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
-					$this->lastresult = $arrayresult['result'];
+					$this->lastresult = (string) $arrayresult['result'];
 				}
 			}
 		}
@@ -1438,7 +1451,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
@@ -1455,27 +1468,27 @@ class Cronjob extends CommonObject
 
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
 				}
 			} else {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		}
 
-		if ($this->datenextrun < $now && $this->frequency > 0 && $this->unitfrequency > 0) {
+		if ($this->datenextrun < $now && $this->frequency > 0 && !empty($this->unitfrequency)) {
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
 					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
 				} else {
-					$this->datenextrun += ($this->frequency * $this->unitfrequency);
+					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		} else {

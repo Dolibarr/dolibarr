@@ -21,7 +21,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/note.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      page for notes on supplier orders
  */
 
@@ -38,7 +38,7 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 // Get Parameters
-$id = GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id');
 $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
 
@@ -69,7 +69,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 

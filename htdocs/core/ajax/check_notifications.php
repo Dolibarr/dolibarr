@@ -41,8 +41,9 @@ if (!defined('NOREQUIRETRAN')) {
 require '../../main.inc.php';
 
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
-$time = dol_now();
 $action = GETPOST('action', 'aZ09');
+
+$time = dol_now();
 $listofreminderids = GETPOST('listofreminderids', 'aZ09');
 
 // Security check
@@ -53,7 +54,7 @@ $listofreminderids = GETPOST('listofreminderids', 'aZ09');
  * Actions
  */
 
-if ($action == 'stopreminder') {
+if ($action == 'stopreminder') {	// Test on permission not required here. Endpoint can be called
 	dol_syslog("Clear notification for listofreminderids=".$listofreminderids);
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 
@@ -95,7 +96,7 @@ $eventfound = array();
 //$eventfound[]=array('type'=>'agenda', 'id'=>1, 'tipo'=>'eee', 'location'=>'aaa');
 
 // TODO Remove use of $_SESSION['auto_check_events_not_before']. Seems not used.
-if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow', 'int')) {
+if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOSTINT('forcechecknow')) {
 	/*$time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined
 	if (!empty($_SESSION['auto_check_events_not_before']))
 	{

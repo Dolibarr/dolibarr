@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 $langs->load("users");
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 if (!isset($id) || empty($id)) {
@@ -52,10 +52,10 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -72,7 +72,7 @@ if (!$sortorder) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 }
 
 // Security check
@@ -89,7 +89,7 @@ if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
-$parameters = array('id'=>$userId);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -118,7 +118,7 @@ $form = new Form($db);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Info');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_agenda');
 
 $head = user_prepare_head($object);
 
@@ -185,7 +185,7 @@ if (isModEnabled('agenda')) {
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
 	print '<br>';
-	$param = '&id='.urlencode($id);
+	$param = '&id='.urlencode((string) ($id));
 
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
@@ -195,9 +195,9 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_events_user_'.$object->id;
-	//$nbEvent = dol_getcache($cachekey);	// TODO Add nb into badge in menu so we can get it from cache also here
+	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	$titlelist = $langs->trans("ActionsOnUser").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}

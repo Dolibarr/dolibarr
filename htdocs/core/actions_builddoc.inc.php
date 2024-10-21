@@ -36,7 +36,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 // Build doc
 if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
-		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Model")), null, 'errors');
 	} else {
 		// Reload to get all modified line records and be ready for hooks
 		$ret = $object->fetch($id);
@@ -55,9 +55,9 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		// Special case to force bank account
 		//if (property_exists($object, 'fk_bank'))
 		//{
-		if (GETPOST('fk_bank', 'int')) {
+		if (GETPOSTINT('fk_bank')) {
 			// this field may come from an external module
-			$object->fk_bank = GETPOST('fk_bank', 'int');
+			$object->fk_bank = GETPOSTINT('fk_bank');
 		} elseif (!empty($object->fk_account)) {
 			$object->fk_bank = $object->fk_account;
 		}

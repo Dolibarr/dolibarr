@@ -8,6 +8,8 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry		   <jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +59,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask') {
 	$maskconstsupplier_proposal = GETPOST('maskconstsupplier_proposal', 'aZ09');
 	$masksupplier_proposal = GETPOST('masksupplier_proposal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstsupplier_proposal && preg_match('/_MASK$/', $maskconstsupplier_proposal)) {
 		$res = dolibarr_set_const($db, $maskconstsupplier_proposal, $masksupplier_proposal, 'chaine', 0, '', $conf->entity);
 	}
@@ -81,21 +86,20 @@ if ($action == 'specimen') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/supplier_proposal/doc/pdf_".$modele.".modules.php");
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFSupplierProposal $module';
 
 		if ($module->write_file($supplier_proposal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_proposal&file=SPECIMEN.pdf");
@@ -221,7 +225,7 @@ if ($action == 'set') {
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
-llxHeader('', $langs->trans("SupplierProposalSetup"));
+llxHeader('', $langs->trans("SupplierProposalSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-supplier_proposal');
 
 $form = new Form($db);
 
@@ -262,6 +266,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefSupplierProposal $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -272,7 +277,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -351,7 +356,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -379,6 +386,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -393,6 +401,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force CommonDocGenerator $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -407,7 +416,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -532,7 +541,7 @@ print '<input type="submit" class="button button-edit" value="'.$langs->trans("M
 print "</td></tr>\n";
 print '</form>';
 
-if (isModEnabled('banque')) {
+if (isModEnabled('bank')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
 	print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL');

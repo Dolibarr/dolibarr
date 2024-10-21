@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('suppliersproposalsindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -54,9 +55,11 @@ $supplier_proposalstatic = new SupplierProposal($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
+$title = $langs->trans("SupplierProposalArea");
 $help_url = "EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
-llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-index');
 
 print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'supplier_proposal');
 
@@ -328,7 +331,9 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 		if ($num > 0) {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened");
+			print ' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1" alt="'.$langs->trans("GoOnList").'"><span class="badge">'.$num.'</span></a>';
+			print '</th></tr>';
 
 			$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop) {

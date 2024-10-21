@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -88,6 +89,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 }
 
 $logouttext = '';
+$logouthtmltext = '';
+$toprightmenu = '';
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	//$logouthtmltext=$appli.'<br>';
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
@@ -109,9 +112,9 @@ print '<div class="login_block_getinfo">'."\n";
 $toprightmenu .= '<div class="login_block_user">';
 
 // Login name with photo and tooltip
-$mode = -1;
+$picto = -1;
 $toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-$toprightmenu .= $user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+$toprightmenu .= $user->getNomUrl($picto, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
 $toprightmenu .= '</div></div>';
 
 $toprightmenu .= '</div>'."\n";
@@ -142,11 +145,12 @@ if (isModEnabled('modulebuilder')) {
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text .= '<span class="fa fa-bug atoplogin"></span>';
 	$text .= '</a>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
 // Logout link
-if (GETPOST('withlogout', 'int')) {
+if (GETPOSTINT('withlogout')) {
 	$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 }
 

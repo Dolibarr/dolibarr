@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=HRM வெளிப்புற சேவையைத் தடுக்க மின்னஞ்சல்
 Establishments=ஸ்தாபனங்கள்
@@ -24,7 +23,7 @@ SkillsManagement=திறன் மேலாண்மை
 HRM_MAXRANK=ஒரு திறமையை தரவரிசைப்படுத்துவதற்கான அதிகபட்ச நிலைகள்
 HRM_DEFAULT_SKILL_DESCRIPTION=திறன் உருவாக்கப்படும் போது தரவரிசைகளின் இயல்புநிலை விளக்கம்
 deplacement=ஷிப்ட்
-DateEval=மதிப்பீட்டு தேதி
+DateEval=Competency assessment date
 JobCard=வேலை அட்டை
 NewJobProfile=New Job Profile
 JobProfile=Job profile
@@ -41,12 +40,12 @@ Skill=Skill
 Skills=திறன்கள்
 SkillCard=திறன் அட்டை
 EmployeeSkillsUpdated=பணியாளர் திறன்கள் புதுப்பிக்கப்பட்டுள்ளன (பணியாளர் அட்டையின் "திறன்கள்" தாவலைப் பார்க்கவும்)
-Eval=மதிப்பீடு
-Evals=மதிப்பீடுகள்
-NewEval=புதிய மதிப்பீடு
-ValidateEvaluation=மதிப்பீட்டைச் சரிபார்க்கவும்
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=மதிப்பீட்டு அட்டை
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Required rank for the job profile
 RequiredRankShort=Required rank
 PositionsWithThisProfile=Positions with this job profiles
@@ -90,8 +89,9 @@ SaveAddSkill = Skill(s) added
 SaveLevelSkill = Skill(s) level saved
 DeleteSkill = Skill removed
 SkillsExtraFields=Complementary attributes (Skills)
-JobsExtraFields=Complementary attributes (Job profile)
-EvaluationsExtraFields=Complementary attributes (Evaluations)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Need business travels
 NoDescription=No description
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

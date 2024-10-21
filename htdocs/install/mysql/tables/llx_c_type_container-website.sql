@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2018     Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2022 	  Juanjo Menent        <jmenent@2byte.es>
--- 
+--
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,8 +31,9 @@ create table llx_c_type_container
   rowid      	integer AUTO_INCREMENT PRIMARY KEY,
   code          varchar(32) NOT NULL,
   entity		integer	DEFAULT 1 NOT NULL,	-- multi company id
-  label 	    varchar(128)	NOT NULL,
+  label 	    varchar(128) NOT NULL,
   module     	varchar(32) NULL,
+  typecontainer varchar(10) DEFAULT 'page',
   position      integer DEFAULT 0,
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

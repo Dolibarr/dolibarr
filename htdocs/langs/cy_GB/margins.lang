@@ -6,6 +6,7 @@ TotalMargin=Cyfanswm Ymyl
 MarginOnProducts=Ymyl / Cynhyrchion
 MarginOnServices=Ymyl / Gwasanaethau
 MarginRate=Cyfradd ymyl
+ModifyMarginRates=Addasu cyfraddau ymyl
 MarkRate=Cyfradd marcio
 DisplayMarginRates=Arddangos cyfraddau ymyl
 DisplayMarkRates=Arddangos cyfraddau marciau

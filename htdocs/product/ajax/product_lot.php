@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023 	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2023   Lionel Vessiller     	<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,12 +43,13 @@ require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 $action = GETPOST('action', 'aZ09');
-$productId = GETPOST('product_id', 'int');
+$productId = GETPOSTINT('product_id');
 $batch = GETPOST('batch', 'alphanohtml');
 
 // Security check
 restrictedArea($user, 'produit|service', $productId, 'product&product');
 
+$permissiontoread = $user->hasRight('stock', 'lire');
 
 /*
  * View
@@ -57,9 +59,9 @@ top_httphead('application/json');
 
 $rows = array();
 
-if ($action == 'search' && $batch != '') {
+if ($action == 'search' && $batch != '' && $permissiontoread) {
 	$productLot = new Productlot($db);
-	$result = $productLot->fetch('', $productId, $batch);
+	$result = $productLot->fetch(0, $productId, $batch);
 
 	if ($result > 0 && $productLot->id > 0) {
 		$rows[] = array(

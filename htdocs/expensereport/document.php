@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "trips", "companies", "interventions"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -46,10 +46,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $childids = $user->getAllChildIds(1);
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,7 +73,7 @@ $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object-
 $modulepart = 'trip';
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Security check
 if ($user->socid) {

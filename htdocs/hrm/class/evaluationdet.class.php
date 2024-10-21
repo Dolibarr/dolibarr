@@ -4,6 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +28,9 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class for EvaluationLine
@@ -52,15 +53,14 @@ class EvaluationLine extends CommonObjectLine
 	public $table_element = 'hrm_evaluationdet';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @see CommonObjectLine
 	 */
-	public $ismultientitymanaged = 0;
+	public $parent_element = 'hrm_evaluation';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * @see CommonObjectLine
 	 */
-	public $isextrafieldmanaged = 1;
+	public $fk_parent_attribute = 'fk_evaluation';
 
 	/**
 	 * @var string String with name of icon for evaluationdet. Must be the part after the 'object_' into object_evaluationdet.png
@@ -101,28 +101,51 @@ class EvaluationLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'fk_skill' => array('type'=>'integer:Skill:hrm/class/skill.class.php:1', 'label'=>'Skill', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
-		'fk_evaluation' => array('type'=>'integer:Evaluation:hrm/class/evaluation.class.php:1', 'label'=>'Evaluation', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
-		'rankorder' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1,),
-		'required_rank' => array('type'=>'integer', 'label'=>'requiredRank', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>1,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'fk_skill' => array('type' => 'integer:Skill:hrm/class/skill.class.php:1', 'label' => 'Skill', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => 1, 'index' => 1,),
+		'fk_evaluation' => array('type' => 'integer:Evaluation:hrm/class/evaluation.class.php:1', 'label' => 'Evaluation', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => 1, 'index' => 1,),
+		'rankorder' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'position' => 4, 'notnull' => 1, 'visible' => 1,),
+		'required_rank' => array('type' => 'integer', 'label' => 'requiredRank', 'enabled' => 1, 'position' => 5, 'notnull' => 1, 'visible' => 1,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
-	public $date_creation;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $fk_skill;
+	/**
+	 * @var int
+	 */
 	public $fk_evaluation;
+	/**
+	 * @var int
+	 */
 	public $fk_rank;
+	/**
+	 * @var int
+	 */
 	public $required_rank;
+	/**
+	 * @var string
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -172,6 +195,9 @@ class EvaluationLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -286,8 +312,7 @@ class EvaluationLine extends CommonObjectLine
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -351,15 +376,16 @@ class EvaluationLine extends CommonObjectLine
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		global $conf;
 
@@ -375,25 +401,14 @@ class EvaluationLine extends CommonObjectLine
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
-				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -786,7 +801,7 @@ class EvaluationLine extends CommonObjectLine
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('evaluationlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -874,7 +889,7 @@ class EvaluationLine extends CommonObjectLine
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -882,7 +897,7 @@ class EvaluationLine extends CommonObjectLine
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -895,11 +910,10 @@ class EvaluationLine extends CommonObjectLine
 		$this->lines = array();
 
 		$objectline = new EvaluationLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_evaluationdet = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_evaluationdet:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
+			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -933,16 +947,17 @@ class EvaluationLine extends CommonObjectLine
 				$dir = dol_buildpath($reldir."core/modules/hrm/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -965,13 +980,13 @@ class EvaluationLine extends CommonObjectLine
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param 	int<0,1>	$hidedetails    Hide details of lines
+	 *  @param	int<0,1>	$hidedesc       Hide description
+	 *  @param	int<0,1>	$hideref        Hide ref
+	 *  @param	?array<string,mixed>	$moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -1000,37 +1015,4 @@ class EvaluationLine extends CommonObjectLine
 
 		return $result;
 	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
 }
-
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';

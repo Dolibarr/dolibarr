@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2015 	Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Florian HENRY 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 
 /**
@@ -261,7 +262,7 @@ class Propalmergepdfproduct extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$line = new PropalmergepdfproductLine();
+					$line = new PropalmergepdfproductLine($this->db);
 
 					$line->id = $obj->rowid;
 
@@ -547,7 +548,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -560,13 +561,15 @@ class Propalmergepdfproduct extends CommonObject
 		$this->datec = '';
 		$this->tms = dol_now();
 		$this->import_key = '';
+
+		return 1;
 	}
 }
 
 /**
  * Class to manage propal merge of product line
  */
-class PropalmergepdfproductLine
+class PropalmergepdfproductLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
@@ -599,14 +602,6 @@ class PropalmergepdfproductLine
 	public $fk_user_mod;
 
 	public $datec = '';
-	public $tms = '';
-	public $import_key;
 
-	/**
-	 *  Constructor
-	 */
-	public function __construct()
-	{
-		return;
-	}
+	public $import_key;
 }

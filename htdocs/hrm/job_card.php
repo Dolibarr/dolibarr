@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 $langs->loadLangs(array('hrm', 'other', 'products'));   // why products?
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -48,9 +49,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'jobcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Job($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
@@ -75,7 +76,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'all', 'read');
@@ -142,10 +143,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -375,7 +376,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="' . dol_buildpath('/hrm/job_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref = '<div class="refid">';
-	$morehtmlref.= $object->label;
+	$morehtmlref .= $object->label;
 	$morehtmlref .= '</div>';
 
 
@@ -391,7 +392,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$object->fields['label']['visible']=0; // Already in banner
+	$object->fields['label']['visible'] = 0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -414,7 +415,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Show object lines
 		$result = $object->getLinesArray();
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOSTINT('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . newToken() . '">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
@@ -432,7 +433,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1);
 		}
 
 		// Form to add new line

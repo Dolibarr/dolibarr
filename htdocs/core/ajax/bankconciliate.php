@@ -60,8 +60,8 @@ top_httphead();
 if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'dvnext') {
 	// Increase date
 	$al = new AccountLine($db);
-	$al->datev_next(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->datev_next(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
 	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
 
@@ -71,8 +71,8 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'dvprev') {
 	// Decrease date
 	$al = new AccountLine($db);
-	$al->datev_previous(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->datev_previous(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
 	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
 
@@ -82,8 +82,8 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'donext') {
 	// Increase date
 	$al = new AccountLine($db);
-	$al->dateo_next(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->dateo_next(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
 	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 
@@ -93,8 +93,8 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'doprev') {
 	// Decrease date
 	$al = new AccountLine($db);
-	$al->dateo_previous(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->dateo_previous(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
 	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 

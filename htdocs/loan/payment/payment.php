@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2018	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +33,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $langs->loadLangs(array("bills", "loan"));
 
-$chid = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
+$confirm	= GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+
+$chid = GETPOSTINT('id');
+$datepaid = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 } elseif (GETPOSTISSET('socid')) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if (!$user->hasRight('loan', 'write')) {
 	accessforbidden();
@@ -84,12 +86,14 @@ if (!empty($line_id)) {
 	}
 }
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -98,7 +102,7 @@ if ($action == 'add_payment') {
 		exit;
 	}
 
-	if (!GETPOST('paymenttype', 'int') > 0) {
+	if (!GETPOSTINT('paymenttype') > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 	}
@@ -106,7 +110,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (isModEnabled("banque") && !GETPOST('accountid', 'int') > 0) {
+	if (isModEnabled("bank") && !GETPOSTINT('accountid') > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -114,16 +118,16 @@ if ($action == 'add_payment') {
 	if (!$error) {
 		$paymentid = 0;
 
-		$pay_amount_capital = price2num(GETPOST('amount_capital'));
-		$pay_amount_insurance = price2num(GETPOST('amount_insurance'));
+		$pay_amount_capital = (float) price2num(GETPOST('amount_capital'));
+		$pay_amount_insurance = (float) price2num(GETPOST('amount_insurance'));
 		// User can't set interest him self if schedule is set (else value in schedule can be incoherent)
 		if (!empty($line)) {
 			$pay_amount_interest = $line->amount_interest;
 		} else {
-			$pay_amount_interest = price2num(GETPOST('amount_interest'));
+			$pay_amount_interest = (float) price2num(GETPOST('amount_interest'));
 		}
-		$remaindertopay = price2num(GETPOST('remaindertopay'));
-		$amount = $pay_amount_capital + $pay_amount_insurance + $pay_amount_interest;
+		$remaindertopay = (float) price2num(GETPOST('remaindertopay'));
+		$amount = (float) price2num($pay_amount_capital + $pay_amount_insurance + $pay_amount_interest, 'MT');
 
 		// This term is already paid
 		if (!empty($line) && !empty($line->fk_bank)) {
@@ -153,7 +157,7 @@ if ($action == 'add_payment') {
 			$payment->amount_insurance	= $pay_amount_insurance;
 			$payment->amount_interest	= $pay_amount_interest;
 			$payment->fk_bank           = GETPOSTINT('accountid');
-			$payment->paymenttype       = GETPOST('paymenttype', 'int');
+			$payment->paymenttype       = GETPOSTINT('paymenttype');
 			$payment->num_payment		= GETPOST('num_payment', 'alphanohtml');
 			$payment->note_private      = GETPOST('note_private', 'restricthtml');
 			$payment->note_public       = GETPOST('note_public', 'restricthtml');
@@ -167,6 +171,7 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', $payment->fk_bank, '', '');
 				if (!($result > 0)) {
 					setEventMessages($payment->error, $payment->errors, 'errors');
@@ -225,10 +230,12 @@ if ($action == 'add_payment') {
 /*
  * View
  */
-
-llxHeader();
-
 $form = new Form($db);
+
+$title = $langs->trans('Loans');
+$help_url = "EN:Module_Loan|FR:Module_Emprunt";
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-payment-list');
 
 
 // Form to create loan's payment
@@ -288,7 +295,7 @@ if ($action == 'create') {
 	} else {
 		$datepayment = $datepaid;
 	}
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -302,7 +309,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number

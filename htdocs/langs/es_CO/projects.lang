@@ -137,7 +137,6 @@ PlannedWorkload=Carga de trabajo planificada
 ProjectReferers=Artículos relacionados
 ProjectMustBeValidatedFirst=El proyecto debe ser validado primero
 TimeAlreadyRecorded=Este es el tiempo pasado ya registrado para esta tarea / día y el usuario %s
-ProjectsWithThisUserAsContact=Proyectos con este usuario como contacto.
 TasksWithThisUserAsContact=Tareas asignadas a este usuario.
 ResourceNotAssignedToProject=No asignado al proyecto.
 ResourceNotAssignedToTheTask=No asignado a la tarea.

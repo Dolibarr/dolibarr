@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Αποθηκεύτηκε από
 AUTHORPAIEMENT=Πληρώθηκε από
 AddTrip=Δημιουργία αναφοράς εξόδων
@@ -13,6 +13,8 @@ byEX_EXP=ανά γραμμή (περιορισμός σε %s)
 byEX_MON=ανά μήνα (περιορισμός σε %s)
 byEX_YEA=ανά έτος (περιορισμός σε %s)
 CANCEL_USER=Διαγράφηκε από
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Λογαριασμός (από το λογιστικό σχέδιο) που χρησιμοποιείται από προεπιλογή για "χρήστες" στις αναφορές εξόδων
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Ο αποκλειστικός λογαριασμός που ορίζεται στην κάρτα χρήστη θα χρησιμοποιηθεί μόνο για το λογαριασμό βοηθητικού καθολικού. Αυτός θα χρησιμοποιηθεί για το γενικό καθολικό, και επίσης ως η προεπιλεγμένη τιμή του βοηθητικού καθολικού εάν δεν έχει οριστεί στο χρήστη αποκλειστικός λογαριασμός λογιστικής.
 CarCategory=Κατηγορία οχήματος
 ClassifyRefunded=Ταξινόμηση ως "Επιστροφή χρημάτων"
 CompanyVisited=Επισκέψεις εταιρείας/οργανισμού
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Μπορείτε να ορίσετε κανόνες μέ�
 ExpenseReportWaitingForApproval=Μια νέα αναφορά εξόδων έχει υποβληθεί προς έγκριση
 ExpenseReportWaitingForApprovalMessage=Έχει υποβληθεί νέα αναφορά εξόδων και είναι σε αναμονή έγκρισης. <br> - Χρήστης: %s <br> - Περίοδος: %s <br> Κάντε κλικ εδώ για επικύρωση: %s
 ExpenseReportWaitingForReApproval=Έχει υποβληθεί μια αναφορά εξόδων για επανέγκριση
-ExpenseReportWaitingForReApprovalMessage=Έχει υποβληθεί αναφορά εξόδων και αναμένει επανέγκριση. <br> Την %s, αρνηθήκατε να εγκρίνετε την αναφορά εξόδων για το λόγο αυτό: %s. <br> Έχει προταθεί μια νέα έκδοση και περιμένει την έγκρισή σας. <br> - Χρήστης: %s <br> - Περίοδος: %s <br> Κάντε κλικ εδώ για να επικυρώσετε: %s
+ExpenseReportWaitingForReApprovalMessage=Έχει υποβληθεί μια αναφορά εξόδων και χρειάζεται επανέγκριση. <br> Η %s,  που αρνηθήκατε να εγκρίνετε την αναφορά εξόδων για το λόγο αυτό: %s. <br> Έχει προταθεί μια νέα έκδοση και περιμένει την έγκρισή σας. <br> - Χρήστης: %s <br> - Περίοδος: %s <br>
+ExpenseReportWaitingForReApprovalMessage2=Κάντε κλικ εδώ για να επικυρώσετε: %s
 ExpenseReportsIk=Διαμόρφωση χιλιομετρικών χρεώσεων
 ExpenseReportsRules=Κανόνες αναφοράς εξόδων
 ExpenseReportsToApprove=Αναφορές εξόδων για έγκριση
@@ -93,7 +96,7 @@ nolimitbyEX_YEA=ανά έτος (χωρίς περιορισμό)
 NoTripsToExportCSV=Δεν υπάρχει αναφορά εξόδων για εξαγωγή για αυτήν την περίοδο.
 NOT_AUTHOR=Δεν είστε ο συντάκτης αυτής της αναφοράς εξόδων. Η λειτουργία ακυρώθηκε.
 OnExpense=Γραμμή εξόδων
-PDFStandardExpenseReports=Τυπικό πρότυπο για τη δημιουργία ενός εγγράφου PDF για την αναφορά εξόδων
+PDFStandardExpenseReports=Τυπικό πρότυπο για τη δημιουργία ενός εγγράφου PDF για μια αναφορά εξόδων
 PaidTrip=Πληρώστε μια αναφορά εξόδων
 REFUSEUR=Απορρίφθηκε από
 RangeIk=Εύρος χιλιομέτρων
@@ -115,6 +118,10 @@ VALIDOR=Εγκρίθηκε από
 ValidateAndSubmit=Επικύρωση και υποβολή για έγκριση
 ValidatedWaitingApproval=Επικυρώθηκε (αναμονή για έγκριση)
 ValideTrip=Έγκριση αναφοράς εξόδων
+ExpenseReportPayments=πληρωμές αναφορών εξόδων
+TaxUndefinedForThisCategory = Ο φόρος δεν έχει καθοριστεί για αυτήν την κατηγορία
+errorComputeTtcOnMileageExpense=Σφάλμα κατά τον υπολογισμό του κόστους ταξιδιού
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Μόνο τα στοιχεία σε κατάσταση πρόχειρου μπορούν να διαγραφούν στη μαζική δράση
 
 ## Dictionary
 EX_BRE=Πρωινό γεύμα

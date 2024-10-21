@@ -132,5 +132,7 @@ ShowAllPerms=Barcha ruxsat qatorlarini ko'rsatish
 HideAllPerms=Barcha ruxsat qatorlarini yashirish
 UserPublicPageDesc=Ushbu foydalanuvchi uchun virtual kartani yoqishingiz mumkin. Foydalanuvchi profili va shtrix-kodi bilan url mavjud bo'lib, u smartfonga ega bo'lgan har bir kishi uni skanerlashi va kontaktingizni manzillar kitobiga qo'shishi mumkin.
 EnablePublicVirtualCard=Foydalanuvchining virtual tashrifnomasini yoqing
+ExcludedByFilter=Non qualified by filters but shown to see its hierarchy
 UserEnabledDisabled=Foydalanuvchi holati oʻzgardi: %s
 AlternativeEmailForOAuth2=OAuth2 tizimiga kirish uchun muqobil elektron pochta
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Error, The update was canceled because one of the pieces of data, that should be unique, already exists

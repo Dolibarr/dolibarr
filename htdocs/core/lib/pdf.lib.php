@@ -13,7 +13,8 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function pdf_admin_prepare_head()
 {
@@ -62,7 +63,7 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (isModEnabled("propal") || isModEnabled('facture') || isModEnabled('reception')) {
+	if (isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('reception')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
 		$head[$h][1] = $langs->trans("Others");
 		$head[$h][2] = 'other';
@@ -78,11 +79,11 @@ function pdf_admin_prepare_head()
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
- *  @param		string			$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
- *  @return     array								Array('width'=>w,'height'=>h,'unit'=>u);
+ *	@param		?Translate		$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		'setup'|'auto'	$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
+ *  @return     array{width:float|int,height:float|int,unit:string}		Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
+function pdf_getFormat($outputlangs = null, $mode = 'setup')
 {
 	global $conf, $db, $langs;
 
@@ -113,16 +114,16 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 	}
 
 	//print "pdfformat=".$pdfformat." width=".$width." height=".$height." unit=".$unit;
-	return array('width'=>$width, 'height'=>$height, 'unit'=>$unit);
+	return array('width' => $width, 'height' => $height, 'unit' => $unit);
 }
 
 /**
  *      Return a PDF instance object. We create a FPDI instance that instantiate TCPDF.
  *
- *      @param	string		$format         Array(width,height). Keep empty to use default setup.
+ *      @param	array{float|int,float|int}|array{}|''	$format	Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
- *      @param  string		$pagetype       'P' or 'l'
- *      @return TCPDF						PDF object
+ *      @param  'P'|'l'		$pagetype       'P' or 'l'
+ *      @return TCPDF|TCPDI					PDF object
  */
 function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 {
@@ -179,10 +180,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	$pdfa = false; // PDF-1.3
-	if (getDolGlobalString('PDF_USE_A')) {
-		$pdfa = getDolGlobalString('PDF_USE_A'); 	// PDF/A-1 ou PDF/A-3
-	}
+	//$pdfa = false; // PDF default version
+	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
@@ -208,13 +207,13 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		$pdfrights = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_RIGHTS') ? json_decode($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS, true) : array('modify', 'copy')); // Json format in llx_const
 
 		// Password for the end user
-		$pdfuserpass = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_USERPASS') ? $conf->global->PDF_SECURITY_ENCRYPTION_USERPASS : '');
+		$pdfuserpass = getDolGlobalString('PDF_SECURITY_ENCRYPTION_USERPASS');
 
 		// Password of the owner, created randomly if not defined
-		$pdfownerpass = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_OWNERPASS') ? $conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS : null);
+		$pdfownerpass = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_OWNERPASS') ? getDolGlobalString('PDF_SECURITY_ENCRYPTION_OWNERPASS') : null);
 
 		// For encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit
-		$encstrength = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_STRENGTH') ? $conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH : 0);
+		$encstrength = getDolGlobalInt('PDF_SECURITY_ENCRYPTION_STRENGTH', 0);
 
 		// Array of recipients containing public-key certificates ('c') and permissions ('p').
 		// For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
@@ -309,7 +308,7 @@ function pdf_getPDFFontSize($outputlangs)
  *
  * @param	string		$logo		Full path to logo file to use
  * @param	bool		$url		Image with url (true or false)
- * @return	number
+ * @return	int|float
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
@@ -381,7 +380,7 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
  *
  * @param   Societe|Contact     $thirdparty     Contact or thirdparty
  * @param   Translate           $outputlangs    Output language
- * @param   int                 $includealias   1=Include alias name after name
+ * @param   int<0,1>            $includealias   1=Include alias name after name
  * @return  string                              String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias = 0)
@@ -421,7 +420,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 
 
 /**
- *   	Return a string with full address formatted for output on documents
+ *   	Return a string with full address formatted for output on PDF documents
  *
  * 		@param	Translate	          $outputlangs		    Output langs object
  *   	@param  Societe		          $sourcecompany		Source company object
@@ -429,12 +428,12 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *      @param  Contact|string|null	  $targetcontact	    Target contact object
  * 		@param	int			          $usecontact		    Use contact instead of company
  * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object                $object               Object we want to build document for
+ *      @param  ?CommonObject         $object               Object we want to build document for
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
-	global $conf, $hookmanager;
+	global $hookmanager;
 
 	if ($mode == 'source' && !is_object($sourcecompany)) {
 		return -1;
@@ -650,9 +649,15 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
 						$stringaddress .= ($stringaddress ? "\n" : '') . $outputlangs->transnoentities("VATIntraShort") . ': ' . $outputlangs->convToOutputCharset($targetcontact->thirdparty->tva_intra);
 					}
-				} elseif ($targetcompany->tva_intra) {
+				} elseif (!empty($targetcompany->tva_intra)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 				}
+			}
+
+			// Legal form
+			if (getDolGlobalString('MAIN_LEGALFORM_IN_ADDRESS') && !empty($targetcompany->forme_juridique_code)) {
+				$tmp = getFormeJuridiqueLabel((string) $targetcompany->forme_juridique_code);
+				$stringaddress .= ($stringaddress ? "\n" : '').$tmp;
 			}
 
 			// Professional Ids
@@ -718,9 +723,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 /**
  *   	Show header of page for PDF generation
  *
- *   	@param      TCPDF			$pdf     		Object PDF
- *      @param      Translate	$outputlangs	Object lang for output
- * 		@param		int			$page_height	Height of page
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ * 		@param	int			$page_height	Height of page
  *      @return	void
  */
 function pdf_pagehead(&$pdf, $outputlangs, $page_height)
@@ -752,12 +757,12 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 /**
  *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
- *	@param	Translate	$outputlangs	Output language
- *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
- *	@param	Object      $object         Object
- *	@param	int         $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
- *  @param   array      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
- *	@return	array						Array of substitutions
+ *	@param	Translate	    $outputlangs	Output language
+ *	@param	null|string[]	$exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *	@param	?Object			$object         Object
+ *	@param	int<0,2>        $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *  @param  null|string[]	$include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
+ *	@return	array<string,string>			Array of substitutions
  */
 function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0, $include = null)
 {
@@ -790,6 +795,9 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 		$k = 72 / 2.54;
 	} elseif ($unit == 'in') {
 		$k = 72;
+	} else {
+		$k = 1;
+		dol_print_error(null, 'Unexpected unit "'.$unit.'" for pdf_watermark');
 	}
 
 	// Make substitution
@@ -812,6 +820,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
 	//print watermark
+	$pdf->SetAlpha(0.5);
 	$pdf->SetXY($watermark_x_pos, $watermark_y_pos);
 	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", 0);
 	//antirotate
@@ -824,7 +833,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 /**
  *  Show bank information for PDF generation
  *
- *  @param	TCPDF			$pdf            		Object PDF
+ *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
@@ -839,8 +848,8 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 
-	$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-	$diffsizecontent = (!getDolGlobalString('PDF_DIFFSIZE_CONTENT') ? 4 : $conf->global->PDF_DIFFSIZE_CONTENT);
+	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
+	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber)) {
@@ -924,7 +933,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			$curx = $savcurx;
 			$cury += 8;
 		}
-	} else {
+	} elseif (!empty($account->number)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
@@ -952,9 +961,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$cury += $tmpy;
 	}
 
-	if (!empty($account->proprio)) {
+	if (!empty($account->owner_name)) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->proprio);
+		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->owner_name);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		$tmpy = $pdf->getStringHeight(100, $val);
 		$cury += $tmpy;
@@ -999,12 +1008,12 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *	@param	TCPDF		$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
- * 	@param	Societe		$fromcompany	Object company
+ * 	@param	?Societe	$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height
- * 	@param	Object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
+ * 	@param	CommonObject	$object			Object shown in PDF
+ * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
  *  @param	int			$page_largeur	Page width
  *  @param	string		$watermark		Watermark text to print on page
@@ -1017,15 +1026,18 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$outputlangs->load("dict");
 	$line = '';
 	$reg = array();
+	$marginwithfooter = 0;  // Return value
 
 	$dims = $pdf->getPageDimensions();
 
 	// Line of free text
-	if (empty($hidefreetext) && !empty($conf->global->$paramfreetext)) {
+	if (empty($hidefreetext) && getDolGlobalString($paramfreetext)) {
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
-		$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
-		$substitutionarray['__FROM_EMAIL__'] = $fromcompany->email;
+		if (is_object($fromcompany)) {
+			$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
+			$substitutionarray['__FROM_EMAIL__'] = $fromcompany->email;
+		}
 		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray, $outputlangs);
 
@@ -1044,7 +1056,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$line3 = "";
 	$line4 = "";
 
-	if ($showdetails == 1 || $showdetails == 3) {
+	if (is_object($fromcompany) && in_array($showdetails, array(1, 3))) {
 		// Company name
 		if ($fromcompany->name) {
 			$line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
@@ -1093,7 +1105,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	// Line 3 of company infos
 	// Juridical status
 	if (!empty($fromcompany->forme_juridique_code) && $fromcompany->forme_juridique_code) {
-		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
+		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code));
 	}
 	// Capital
 	if (!empty($fromcompany->capital)) {
@@ -1201,6 +1213,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// The start of the bottom of this page footer is positioned according to # of lines
 	$freetextheight = 0;
+	$align = null;
 	if ($line) {	// Free text
 		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 		if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
@@ -1217,9 +1230,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 
-	// For customize footer
+	$posy = 0;
+	// For customized footer
 	if (is_object($hookmanager)) {
-		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs'=>$outputlangs);
+		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs);
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
@@ -1233,7 +1247,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
-				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
+				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
@@ -1285,7 +1299,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
-				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
+				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
@@ -1350,17 +1364,16 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 		}
 	}
-	// Show page nb only on iso languages (so default Helvetica font)
+
+	// Show page nb and apply correction for some font.
 	$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
 
-	if (getDolGlobalString('PDF_USE_GETALIASNBPAGE_FOR_TOTAL')) {
-		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); 	// works with $pdf->Cell
-		$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();	// seems to not works with all fonts like ru_UK
-	} else {
-		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();		// seems to always work even with $pdf->Cell. But some users has reported wrong nb (no way to reproduce)
+	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
+	$fontRenderCorrection = 0;
+	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
+		$fontRenderCorrection = 10;
 	}
-
-	$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -1373,15 +1386,15 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 /**
  *	Show linked objects for PDF generation
  *
- *	@param	TCPDF			$pdf				Object PDF
- *	@param	object		$object				Object
+ *	@param	TCPDF		$pdf				Object PDF
+ *	@param	CommonObject	$object				Object
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
  *	@param  int			$posy				Y
  *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
- *	@param	int			$align				Align
- *	@param	string		$default_font_size	Font size
+ *	@param	string		$align				Align
+ *	@param	float		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
 function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
@@ -1396,7 +1409,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', (float) $default_font_size - 2);
 			$pdf->MultiCell($w, $h, $reftoshow, '', $align);
 		}
 	}
@@ -1408,17 +1421,17 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *	Output line description into PDF
  *
  *  @param  TCPDF			$pdf               	PDF object
- *	@param	Object			$object				Object
+ *	@param	CommonObject	$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output
  *  @param  int				$w					Width
  *  @param  int				$h					Height
  *  @param  int				$posx				Pos x
  *  @param  int				$posy				Pos y
- *  @param  int				$hideref       		Hide reference
- *  @param  int				$hidedesc           Hide description
- * 	@param	int				$issupplierline		Is it a line for a supplier object ?
- *  @param	string			$align				text alignment ('L', 'C', 'R', 'J' (default))
+ *  @param  int<0,1>		$hideref       		Hide reference
+ *  @param  int<0,1>		$hidedesc           Hide description
+ * 	@param	int<0,1>		$issupplierline		Is it a line for a supplier object ?
+ *  @param	'L'|'C'|'R'|'J'	$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
 function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
@@ -1428,12 +1441,12 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('pdf'=>$pdf, 'i'=>$i, 'outputlangs'=>$outputlangs, 'w'=>$w, 'h'=>$h, 'posx'=>$posx, 'posy'=>$posy, 'hideref'=>$hideref, 'hidedesc'=>$hidedesc, 'issupplierline'=>$issupplierline, 'special_code'=>$special_code);
+		$parameters = array('pdf' => $pdf, 'i' => $i, 'outputlangs' => $outputlangs, 'w' => $w, 'h' => $h, 'posx' => $posx, 'posy' => $posy, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'issupplierline' => $issupplierline, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_writelinedesc', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -1443,6 +1456,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 	}
 	if (empty($reshook)) {
 		$labelproductservice = pdf_getlinedesc($object, $i, $outputlangs, $hideref, $hidedesc, $issupplierline);
+		$labelproductservice = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)/', '\1file:/'.DOL_DATA_ROOT.'/medias/\2\3', $labelproductservice, -1, $nbrep);
 
 		//var_dump($labelproductservice);exit;
 
@@ -1451,7 +1465,11 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
-		//var_dump($labelproductservice);exit;
+		if (getDolGlobalString('MARGIN_TOP_ZERO_UL')) {
+			$pdf->setListIndentWidth(5);
+			$TMarginList = ['ul' => [['h' => 0.1, ],['h' => 0.1, ]], 'li' => [['h' => 0.1, ],],];
+			$pdf->setHtmlVSpace($TMarginList);
+		}
 
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
@@ -1463,7 +1481,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 /**
  *  Return line description translated in outputlangs and encoded into htmlentities and with <br>
  *
- *  @param  Object		$object              Object
+ *  @param  CommonObject	$object              Object
  *  @param  int			$i                   Current line number (0 = first line, 1 = second line, ...)
  *  @param  Translate	$outputlangs         Object langs for output
  *  @param  int			$hideref             Hide reference
@@ -1490,7 +1508,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
 
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 		}
 	}
@@ -1538,6 +1556,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
+	$libelleproduitservice = '';  // Default value
 	if (!getDolGlobalString('PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES')) {
 		// Description short of product line
 		$libelleproduitservice = $label;
@@ -1571,7 +1590,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 					$libelleproduitservice = dol_concatdesc(
 						dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
 						(!empty($qtyText) ?
-							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText :
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1] * $qtyText :
 							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1])
 					);
 				}
@@ -1580,7 +1599,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 					$libelleproduitservice = dol_concatdesc(
 						dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
 						(!empty($qtyText) ?
-							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText :
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1] * $qtyText :
 							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1])
 					);
 				}
@@ -1621,7 +1640,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				// Check if description must be output
 				if (!empty($object->element)) {
 					$tmpkey = 'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_'.strtoupper($object->element);
-					if (!empty($conf->global->$tmpkey)) {
+					if (getDolGlobalString($tmpkey)) {
 						$hidedesc = 1;
 					}
 				}
@@ -1668,7 +1687,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
@@ -1710,7 +1729,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
-	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('categorie')) {
+	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('category')) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categstatic = new Categorie($db);
 		// recovering the list of all the categories linked to product
@@ -1807,7 +1826,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 /**
  *	Return line num
  *
- *	@param	Object		$object				Object
+ *	@param	CommonObject	$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
@@ -1820,12 +1839,12 @@ function pdf_getlinenum($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlinenum', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$result .= $hookmanager->resPrint;
@@ -1840,7 +1859,7 @@ function pdf_getlinenum($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line product ref
  *
- *	@param	Object		$object				Object
+ *	@param	CommonObject	$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
@@ -1853,12 +1872,12 @@ function pdf_getlineref($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineref', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$result .= $hookmanager->resPrint;
@@ -1869,13 +1888,14 @@ function pdf_getlineref($object, $i, $outputlangs, $hidedetails = 0)
 	return $result;
 }
 
+
 /**
  *	Return line ref_supplier
  *
- *	@param	Object		$object				Object
+ *	@param	Contrat|CommandeFournisseur|FactureFournisseur|Facture|Product|Reception|SupplierProposal	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
@@ -1885,12 +1905,12 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineref_supplier', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$result .= $hookmanager->resPrint;
@@ -1904,10 +1924,10 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line vat rate
  *
- *	@param	Object		$object				Object
- *	@param	int			$i					Current line number
- *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *	@param	SupplierProposal|CommandeFournisseur|FactureFournisseur|Propal|Facture|Commande|ExpenseReport|StockTransfer	$object	Object
+ *	@param	int				$i					Current line number
+ *  @param  Translate		$outputlangs		Object langs for output
+ *  @param	int<0,2>		$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
@@ -1922,7 +1942,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlinevatrate', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -1942,7 +1962,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate(abs($object->lines[$i]->localtax1_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), 0);
 				}
 			}
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) {
@@ -1952,7 +1972,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate(abs($object->lines[$i]->localtax2_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), 0);
 				}
 			}
 			$tmpresult .= '%';
@@ -1966,10 +1986,10 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line unit price excluding tax
  *
- *	@param	Object		$object				Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
@@ -1984,12 +2004,12 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineupexcltax', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2009,10 +2029,10 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line unit price including tax
  *
- *	@param	Object		$object				Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|Commande	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
  *  @return	string
  */
 function pdf_getlineupwithtax($object, $i, $outputlangs, $hidedetails = 0)
@@ -2027,12 +2047,12 @@ function pdf_getlineupwithtax($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineupwithtax', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2051,10 +2071,10 @@ function pdf_getlineupwithtax($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line quantity
  *
- *	@param	Object		$object				Object
+ *	@param	Delivery|Asset|Commande|Facture|CommandeFournisseur|FactureFournisseur|SupplierProposal|Propal|StockTransfer|MyObject	$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  *  @return	string
  */
 function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
@@ -2064,12 +2084,12 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineqty', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2091,10 +2111,10 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line quantity asked
  *
- *	@param	Object		$object				Object
+ *	@param	Delivery	$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlineqty_asked($object, $i, $outputlangs, $hidedetails = 0)
@@ -2104,12 +2124,12 @@ function pdf_getlineqty_asked($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineqty_asked', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2131,10 +2151,10 @@ function pdf_getlineqty_asked($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line quantity shipped
  *
- *	@param	Object		$object				Object
+ *	@param	Delivery	$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlineqty_shipped($object, $i, $outputlangs, $hidedetails = 0)
@@ -2144,12 +2164,12 @@ function pdf_getlineqty_shipped($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineqty_shipped', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2174,7 +2194,7 @@ function pdf_getlineqty_shipped($object, $i, $outputlangs, $hidedetails = 0)
  *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
@@ -2184,12 +2204,12 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineqty_keeptoship', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2211,10 +2231,10 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line unit
  *
- *	@param	Object		$object				Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  *  @return	string							Value for unit cell
  */
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
@@ -2224,7 +2244,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -2254,10 +2274,10 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line remise percent
  *
- *	@param	Object		$object				Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
@@ -2269,12 +2289,12 @@ function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlineremisepercent', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2296,11 +2316,11 @@ function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
 /**
  * Return line percent
  *
- * @param Object $object Object
- * @param int $i Current line number
- * @param Translate $outputlangs Object langs for output
- * @param int $hidedetails Hide details (0=no, 1=yes, 2=just special lines)
- * @param HookManager $hookmanager Hook manager instance
+ * @param Facture		$object             Object
+ * @param int			$i                  Current line number
+ * @param Translate		$outputlangs        Object langs for output
+ * @param int<0,2>		$hidedetails        Hide details (0=no, 1=yes, 2=just special lines)
+ * @param ?HookManager	$hookmanager        Hook manager instance
  * @return string
  */
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
@@ -2313,7 +2333,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -2348,10 +2368,10 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 /**
  *	Return line total excluding tax
  *
- *	@param	Object		$object				Object
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string							Return total of line excl tax
  */
 function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
@@ -2366,12 +2386,12 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code, 'sign'=>$sign);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code, 'sign' => $sign);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlinetotalexcltax', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2404,10 +2424,10 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line total including tax
  *
- *	@param	Object		$object				Object
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object				Object
  *	@param	int			$i					Current line number
  *  @param 	Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
+ *  @param	int<0,2>	$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
  *  @return	string							Return total of line incl tax
  */
 function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
@@ -2422,12 +2442,12 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
-	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
 		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
-		$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_getlinetotalwithtax', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -2440,7 +2460,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
-			if ($object->lines[$i]->situation_percent > 0) {
+			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
 				$progress = 1;
@@ -2463,7 +2483,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
  *
  * 	@param	CommonObject	$object			Object
  * 	@param	Translate		$outputlangs	Object lang for output
- * 	@return	array                       	Linked objects
+ * 	@return	array<string,array<string,null|int|float|string>>	Linked objects
  */
 function pdf_getLinkedObjects(&$object, $outputlangs)
 {
@@ -2477,6 +2497,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		if ($objecttype == 'facture') {
 			// For invoice, we don't want to have a reference line on document. Image we are using recurring invoice, we will have a line longer than document width.
 		} elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal') {
+			'@phan-var-force array<Propal|SupplierProposal> $objects';
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
@@ -2486,15 +2507,10 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
+			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
-				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
-				}
-			} elseif (count($objects) == 1) {
+			if (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
@@ -2502,6 +2518,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'contrat') {
+			'@phan-var-force Contrat[] $objects';
 			$outputlangs->load('contracts');
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
@@ -2510,6 +2527,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'fichinter') {
+			'@phan-var-force Fichinter[] $objects';
 			$outputlangs->load('interventions');
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
@@ -2518,14 +2536,17 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'shipping') {
+			'@phan-var-force Expedition[] $objects';
 			$outputlangs->loadLangs(array("orders", "sendings"));
 
 			if (count($objects) > 1) {
 				$order = null;
+
+				$refListsTxt = '';
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
 				} else {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.=$outputlangs->transnoentities("RefSending").' :';
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2540,14 +2561,16 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 							}
 						}
 					}
-
+					$refListsTxt.= (!empty($refListsTxt)?' ':'');
 					if (! is_object($order)) {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->transnoentities($elementobject->ref);
 					} else {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
-						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$refListsTxt.= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					}
 				}
+
+				$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$order = null;
@@ -2587,7 +2610,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 	// For add external linked objects
 	if (is_object($hookmanager)) {
-		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs'=>$outputlangs);
+		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs' => $outputlangs);
 		$action = '';
 		$hookmanager->executeHooks('pdf_getLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (!empty($hookmanager->resArray)) {
@@ -2600,17 +2623,17 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 /**
  * Return dimensions to use for images onto PDF checking that width and height are not higher than
- * maximum (16x32 by default).
+ * maximum (20x32 by default).
  *
  * @param	string		$realpath		Full path to photo file to use
- * @return	array						Height and width to use to output image (in pdf user unit, so mm)
+ * @return	array{width:int,height:int}	Height and width to use to output image (in pdf user unit, so mm)
  */
 function pdf_getSizeForImage($realpath)
 {
 	global $conf;
 
-	$maxwidth = (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
-	$maxheight = (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT') ? 32 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
+	$maxwidth = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20);
+	$maxheight = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT', 32);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
 	$width = 0;
@@ -2624,16 +2647,16 @@ function pdf_getSizeForImage($realpath)
 			$height = $maxheight;
 		}
 	}
-	return array('width'=>$width, 'height'=>$height);
+	return array('width' => $width, 'height' => $height);
 }
 
 /**
  *	Return line total amount discount
  *
- *	@param	CommonObject	$object				Object
+ *	@param	Facture			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object langs for output
- *  @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,2>		$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	float|string						Return total of line excl tax
  */
 function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
@@ -2654,10 +2677,10 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 			}
 
 			$parameters = array(
-				'i'=>$i,
-				'outputlangs'=>$outputlangs,
-				'hidedetails'=>$hidedetails,
-				'special_code'=>$special_code
+				'i' => $i,
+				'outputlangs' => $outputlangs,
+				'hidedetails' => $hidedetails,
+				'special_code' => $special_code
 			);
 
 			$action = '';
@@ -2672,7 +2695,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return $sign * (($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
+			return $sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
 	}
 	return 0;

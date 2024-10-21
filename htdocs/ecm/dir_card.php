@@ -41,16 +41,16 @@ $confirm    = GETPOST('confirm', 'alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -139,7 +139,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 // Remove file
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
-	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -289,7 +289,7 @@ if ($module == 'ecm' && $ecmdir->id > 0) {
 	$object->fetch($ecmdir->id);
 }
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-dir_card');
 
 // Built the file List
 $filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

@@ -19,20 +19,9 @@ body:
   - type: input
     id: environment-version
     attributes:
-      label: Environment Version
+      label: Dolibarr Version
       description: Affected Dolibarr version(s)
-
-  - type: input
-    id: environment-os
-    attributes:
-      label: Environment OS
-      description: Server OS type and version
-
-  - type: input
-    id: environment-webserver
-    attributes:
-      label: Environment Web server
-      description: Webserver type and version
+      placeholder: 19.0, develop, ...
 
   - type: input
     id: environment-php
@@ -46,22 +35,10 @@ body:
       label: Environment Database
       description: Database type and version
 
-  - type: input
-    id: environment-urls
-    attributes:
-      label: Environment URL(s)
-      description: Affected URL(s)
-
-  - type: textarea
-    id: expected-behaviour
-    attributes:
-      label: Expected and actual behavior
-      description: Verbose description
-
   - type: textarea
     id: reproduce
     attributes:
-      label: Steps to reproduce the behavior
+      label: Steps to reproduce the behavior and expected behavior
       description: Verbose description
 
   - type: textarea

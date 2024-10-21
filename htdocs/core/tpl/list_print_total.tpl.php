@@ -1,4 +1,8 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ */
+
+'@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
 
 // Move fields of totalizable into the common array pos and val
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
@@ -9,16 +13,16 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 }
 // Show total line
 if (isset($totalarray['pos'])) {
-	print '<tfoot>';
+	//print '<tfoot>';
 	print '<tr class="liste_total">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			printTotalValCell($totalarray['type'][$i] ?? '', $totalarray['val'][$totalarray['pos'][$i]]);
+			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? 0 : $totalarray['val'][$totalarray['pos'][$i]]);
 		} else {
 			if ($i == 1) {
-				if (is_null($limit) || $num < $limit) {
+				if ((is_null($limit) || $num < $limit) && empty($offset)) {
 					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
 					print '<td>';
@@ -56,13 +60,14 @@ if (isset($totalarray['pos'])) {
 			} else {
 				//dol_print_error($db); // as we're not sure it's ok for ALL lists, we don't print sq errors, they'll be in logs
 			}
-			if (is_array($sumsarray) && count($sumsarray) >0) {
+			if (is_array($sumsarray) && count($sumsarray) > 0) {
 				print '<tr class="liste_grandtotal">';
 				$i = 0;
 				while ($i < $totalarray['nbfield']) {
 					$i++;
 					if (!empty($totalarray['pos'][$i])) {
-						printTotalValCell($totalarray['type'][$i], $sumsarray[$totalarray['pos'][$i]]);
+						$fieldname = preg_replace('/[^a-z0-9]/', '', $totalarray['pos'][$i]);
+						printTotalValCell($totalarray['type'][$i], $sumsarray[$fieldname]);
 					} else {
 						if ($i == 1) {
 							print '<td>';
@@ -81,7 +86,7 @@ if (isset($totalarray['pos'])) {
 			}
 		}
 	}
-	print '</tfoot>';
+	//print '</tfoot>';
 }
 
 /** print a total cell value according to its type
@@ -100,12 +105,12 @@ function printTotalValCell($type, $val)
 	switch ($type) {
 		case 'duration':
 			print '<td class="right">';
-			print (!empty($val) ? convertSecondToTime($val, 'allhourmin') : 0);
+			print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
 			print '</td>';
 			break;
 		case 'string':	// This type is no more used. type is now varchar(x)
 			print '<td class="left">';
-			print (!empty($val) ? $val : '');
+			print(!empty($val) ? $val : '');
 			print '</td>';
 			break;
 		case 'stock':

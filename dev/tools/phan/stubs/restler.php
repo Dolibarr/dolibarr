@@ -1,5 +1,9 @@
 <?php
+/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ */
 // phpcs:disable PEAR.Commenting,Generic.NamingConventions,PEAR.NamingConventions,Squiz.Scope.MethodScope.Missing
+
 namespace Luracast\Restler {
 	/**
 	 * Interface for the cache system that manages caching of given data
@@ -142,7 +146,11 @@ namespace Luracast\Restler {
 	 */
 	class AutoLoader
 	{
-		protected static $instance, $perfectLoaders, $rogueLoaders = array(), $classMap = array(), $aliases = array(
+		protected static $instance;
+		protected static $perfectLoaders;
+		protected static $rogueLoaders = array();
+		protected static $classMap = array();
+		protected static $aliases = array(
 			// aliases and prefixes instead of null list aliases
 			'Luracast\\Restler' => null,
 			'Luracast\\Restler\\Format' => null,
@@ -312,6 +320,7 @@ namespace Luracast\Restler {
 		}
 	}
 }
+
 namespace {
 	/**
 	 * Interface iAuthenticate only exists for compatibility mode for Restler 2 and below, it should
@@ -322,6 +331,7 @@ namespace {
 		public function __isAuthenticated();
 	}
 }
+
 namespace Luracast\Restler {
 	/**
 	 * Interface for composing response
@@ -404,6 +414,7 @@ namespace Luracast\Restler {
 		}
 	}
 }
+
 namespace Luracast\Restler\Data {
 	/**
 	 * Restler is using many ValueObjects across to make it easy for the developers
@@ -1180,6 +1191,7 @@ namespace Luracast\Restler\Data {
 		}
 	}
 }
+
 namespace Luracast\Restler {
 	/**
 	 * Static class to hold all restler defaults, change the values to suit your
@@ -1713,6 +1725,7 @@ namespace Luracast\Restler {
 		public function __setAuthenticationStatus($isAuthenticated = false);
 	}
 }
+
 namespace Luracast\Restler\Filter {
 	/**
 	 * Describe the purpose of this class/interface/trait
@@ -1782,6 +1795,7 @@ namespace Luracast\Restler\Filter {
 		}
 	}
 }
+
 namespace Luracast\Restler {
 	/**
 	 * Storing and retrieving a message or array of key value pairs for one time use using $_SESSION
@@ -1900,6 +1914,7 @@ namespace Luracast\Restler {
 		}
 	}
 }
+
 namespace Luracast\Restler\Format {
 	/**
 	 * Interface for creating custom data formats
@@ -2378,7 +2393,7 @@ namespace Luracast\Restler\Format {
 		 *
 		 * @example return ['Illuminate\\View\\View' => 'illuminate/view:4.2.*']
 		 */
-		public abstract function getDependencyMap();
+		abstract public function getDependencyMap();
 		protected function checkDependency($class = null)
 		{
 		}
@@ -2802,7 +2817,7 @@ namespace Luracast\Restler\Format {
 		public function decode($data)
 		{
 		}
-		function isWritable()
+		public function isWritable()
 		{
 		}
 	}
@@ -2936,6 +2951,7 @@ namespace Luracast\Restler\Format {
 		}
 	}
 }
+
 namespace Luracast\Restler {
 	/**
 	 * Default Cache that writes/reads human readable files for caching purpose
@@ -3147,7 +3163,7 @@ namespace Luracast\Restler {
 			505 => 'HTTP Version Not Supported',
 		);
 		/**
-		 * @param string      $httpStatusCode http status code
+		 * @param int         $httpStatusCode http status code
 		 * @param string|null $errorMessage   error message
 		 * @param array       $details        any extra detail about the exception
 		 * @param Exception   $previous       previous exception if any
@@ -3223,7 +3239,7 @@ namespace Luracast\Restler {
 		/**
 		 * @param string $namespace
 		 */
-		function __construct($namespace = 'restler')
+		public function __construct($namespace = 'restler')
 		{
 		}
 		/**
@@ -3663,7 +3679,7 @@ namespace Luracast\Restler {
 		 * Instance of the current format class
 		 * which implements the iFormat interface
 		 *
-		 * @var iFormat
+		 * @var Format\iFormat
 		 * @example jsonFormat, xmlFormat, yamlFormat etc
 		 */
 		public $requestFormat;
@@ -3673,7 +3689,7 @@ namespace Luracast\Restler {
 		 * Instance of the current format class
 		 * which implements the iFormat interface
 		 *
-		 * @var iFormat
+		 * @var Format\iFormat
 		 * @example jsonFormat, xmlFormat, yamlFormat etc
 		 */
 		public $responseFormat;
@@ -3695,7 +3711,7 @@ namespace Luracast\Restler {
 		/**
 		 * method information including metadata
 		 *
-		 * @var ApiMethodInfo
+		 * @var Data\ApiMethodInfo
 		 */
 		public $apiMethodInfo;
 		/**
@@ -3897,7 +3913,7 @@ namespace Luracast\Restler {
 		 * Parses the request to figure out format of the request data
 		 *
 		 * @throws RestException
-		 * @return iFormat any class that implements iFormat
+		 * @return Format\iFormat any class that implements iFormat
 		 * @example JsonFormat
 		 */
 		protected function getRequestFormat()
@@ -3947,7 +3963,7 @@ namespace Luracast\Restler {
 		 * Extension, if present, overrides the Accept header
 		 *
 		 * @throws RestException
-		 * @return iFormat
+		 * @return Format\iFormat
 		 * @example JsonFormat
 		 */
 		protected function negotiateResponseFormat()
@@ -4241,7 +4257,7 @@ namespace Luracast\Restler {
 		 * @param array  $data       Data collected from the request
 		 *
 		 * @throws RestException
-		 * @return ApiMethodInfo
+		 * @return Data\ApiMethodInfo
 		 */
 		public static function find($path, $httpMethod, $version = 1, array $data = array())
 		{
@@ -4258,7 +4274,7 @@ namespace Luracast\Restler {
 		 * @param array $call
 		 * @param       $data
 		 *
-		 * @return ApiMethodInfo
+		 * @return Data\ApiMethodInfo
 		 *
 		 * @access private
 		 */
@@ -4403,6 +4419,7 @@ namespace Luracast\Restler {
 		}
 	}
 }
+
 namespace Luracast\Restler\UI {
 	/**
 	 * Class Emmet
@@ -4751,6 +4768,7 @@ namespace Luracast\Restler\UI {
 		}
 	}
 }
+
 namespace Luracast\Restler {
 	/**
 	 * Information gathered about the api user is kept here using static methods
@@ -4932,6 +4950,7 @@ namespace Luracast\Restler {
 		}
 	}
 }
+
 namespace {
 	/**
 	 * Include function in the root namespace to include files optimized
@@ -4945,6 +4964,7 @@ namespace {
 	{
 	}
 }
+
 namespace {
 	function exceptions()
 	{

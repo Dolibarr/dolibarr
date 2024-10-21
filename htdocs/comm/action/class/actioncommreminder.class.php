@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
  */
 
 /**
- * \file        class/actioncommreminder.class.php
+ * \file        htdocs/comm/action/class/actioncommreminder.class.php
  * \ingroup     agenda
  * \brief       This file is a CRUD class file for ActionCommReminder (Create/Read/Update/Delete)
  */
@@ -39,11 +41,6 @@ class ActionCommReminder extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'actioncomm_reminder';
-
-	/**
-	 * @var int  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
 
 	/**
 	 * @var string String with name of icon for actioncommreminder. Must be the part after the 'object_' into object_actioncommreminder.png
@@ -74,20 +71,20 @@ class ActionCommReminder extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'dateremind' => array('type'=>'datetime', 'label'=>'DateRemind', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'index'=>1,),
-		'typeremind' => array('type'=>'varchar(32)', 'label'=>'TypeRemind', 'visible'=>-1, 'enabled'=>1, 'position'=>55, 'notnull'=>1, 'comment'=>"email, browser, sms",),
-		'fk_user' => array('type'=>'integer', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>65, 'notnull'=>1, 'index'=>1,),
-		'offsetvalue' => array('type'=>'integer', 'label'=>'OffsetValue', 'visible'=>1, 'enabled'=>1, 'position'=>56, 'notnull'=>1,),
-		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"y, m, d, w, h, i",),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>58, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
-		'lasterror' => array('type'=>'varchar(128)', 'label'=>'LastError', 'visible'=>-1, 'enabled'=>1, 'position'=>59, 'index'=>0),
-		'fk_actioncomm' => array('type'=>'integer', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'index'=>1,),
-		'fk_email_template' => array('type'=>'integer', 'label'=>'EmailTemplate', 'visible'=>1, 'enabled'=>1, 'position'=>80, 'notnull'=>0),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -1, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'visible' => 0, 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'index' => 1,),
+		'dateremind' => array('type' => 'datetime', 'label' => 'DateRemind', 'visible' => 1, 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'index' => 1,),
+		'typeremind' => array('type' => 'varchar(32)', 'label' => 'TypeRemind', 'visible' => -1, 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'comment' => "email, browser, sms",),
+		'fk_user' => array('type' => 'integer', 'label' => 'User', 'visible' => -1, 'enabled' => 1, 'position' => 65, 'notnull' => 1, 'index' => 1,),
+		'offsetvalue' => array('type' => 'integer', 'label' => 'OffsetValue', 'visible' => 1, 'enabled' => 1, 'position' => 56, 'notnull' => 1,),
+		'offsetunit' => array('type' => 'varchar(1)', 'label' => 'OffsetUnit', 'visible' => 1, 'enabled' => 1, 'position' => 57, 'notnull' => 1, 'comment' => "y, m, d, w, h, i",),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 58, 'notnull' => 1, 'default' => '0', 'index' => 0, 'arrayofkeyval' => array('0' => 'ToDo', '1' => 'Done')),
+		'lasterror' => array('type' => 'varchar(128)', 'label' => 'LastError', 'visible' => -1, 'enabled' => 1, 'position' => 59, 'index' => 0),
+		'fk_actioncomm' => array('type' => 'integer', 'label' => 'Project', 'visible' => 1, 'enabled' => 1, 'position' => 70, 'notnull' => 1, 'index' => 1,),
+		'fk_email_template' => array('type' => 'integer', 'label' => 'EmailTemplate', 'visible' => 1, 'enabled' => 1, 'position' => 80, 'notnull' => 0),
 	);
 
 	/**
@@ -100,6 +97,9 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int date remind
+	 */
 	public $dateremind;
 
 	/**
@@ -143,6 +143,7 @@ class ActionCommReminder extends CommonObject
 	public $fk_email_template;
 	// END MODULEBUILDER PROPERTIES
 
+
 	/**
 	 * Constructor
 	 *
@@ -150,9 +151,9 @@ class ActionCommReminder extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
@@ -264,10 +265,10 @@ class ActionCommReminder extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Regjistruar nga
 AUTHORPAIEMENT=E paguar nga
 AddTrip=Krijoni raportin e shpenzimeve
@@ -13,6 +13,8 @@ byEX_EXP=sipas rreshtit (kufizim në %s)
 byEX_MON=sipas muajit (kufizim në %s)
 byEX_YEA=sipas vitit (kufizim në %s)
 CANCEL_USER=Fshirë nga
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Llogaria e dedikuar e përcaktuar në kartën e përdoruesit do të përdoret vetëm për kontabilitetin Subledger. Kjo do të përdoret për Librin Kryesor, dhe gjithashtu si vlera e paracaktuar e kontabilitetit të Subledger nëse përdoruesi nuk është përcaktuar asnjë llogari kontabël e dedikuar.
 CarCategory=Kategoria e automjetit
 ClassifyRefunded=Klasifiko 'të rimbursuara'
 CompanyVisited=Kompania/organizata e vizituar
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=sipas vitit (pa kufizim)
 NoTripsToExportCSV=Nuk ka raport shpenzimesh për eksport për këtë periudhë.
 NOT_AUTHOR=Ju nuk jeni autori i këtij raporti të shpenzimeve. Operacioni u anulua.
 OnExpense=Linja e shpenzimeve
-PDFStandardExpenseReports=Model standard për të gjeneruar një dokument PDF për raportin e shpenzimeve
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Paguani një raport shpenzimesh
 REFUSEUR=Mohuar nga
 RangeIk=Gama e kilometrazhit
@@ -115,6 +117,10 @@ VALIDOR=E miratuar nga
 ValidateAndSubmit=Vërtetoni dhe dorëzoni për miratim
 ValidatedWaitingApproval=Vleruar (në pritje të miratimit)
 ValideTrip=Mirato raportin e shpenzimeve
+ExpenseReportPayments=Pagesat e raportit të shpenzimeve
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Gabim në llogaritjen e shpenzimeve të kilometrazhit
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Mëngjesi

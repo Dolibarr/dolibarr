@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -47,14 +49,14 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothattendeecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 $mode = GETPOST('mode', 'alpha');
 
-$conf_or_booth_id = GETPOST('conforboothid', 'int');
-$fk_project = GETPOST('fk_project', 'int');
+$conf_or_booth_id = GETPOSTINT('conforboothid');
+$fk_project = GETPOSTINT('fk_project');
 $withproject = 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
@@ -87,8 +89,8 @@ foreach ($object->fields as $key => $val) {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
-		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
+		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 	}
 }
 
@@ -105,7 +107,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Now we have loaded the attendee, we can force the project (in case value provided as parameter is wrong or value not provided)
 if ($object->fk_project > 0) {
@@ -115,7 +117,7 @@ if ($object->fk_project > 0) {
 // Permissions
 $permissiontoread = $user->hasRight('eventorganization', 'read');
 $permissiontoadd = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('eventorganization', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -179,10 +181,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -204,8 +206,9 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans("ConferenceOrBoothAttendee");
-$help_url = '';
-llxHeader('', $title, $help_url);
+$help_url = 'EN:Module_Event_Organization';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-attendee-card');
 
 $result = $projectstatic->fetch(empty($confOrBooth->fk_project) ? $fk_project : $confOrBooth->fk_project);
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
@@ -309,7 +312,7 @@ if (!empty($withproject)) {
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($projectstatic->budget_amount, '')) {
-		print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		print price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 	}
 	print '</td></tr>';
 
@@ -332,7 +335,7 @@ if (!empty($withproject)) {
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($projectstatic->id, 'project', 1);
 		print "</td></tr>";
@@ -343,7 +346,7 @@ if (!empty($withproject)) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td>';
-	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -351,19 +354,19 @@ if (!empty($withproject)) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td>';
-	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';

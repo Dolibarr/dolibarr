@@ -10,6 +10,7 @@
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ if (!function_exists('is_countable')) {
 	 * function is_countable (to remove when php version supported will be >= 7.3)
 	 * @param mixed $c data to check if countable
 	 * @return bool
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function is_countable($c)
 	{
@@ -83,8 +85,8 @@ $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $doliba
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
 $conf->file->dol_main_url_root = $dolibarr_main_url_root;	// Define url inside the config file
-$conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define array of document root directories ('/home/htdocs')
-$conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define array of url root path ('' or '/dolibarr')
+$conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define an array of document root directories ('/home/htdocs')
+$conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define an array of url root path ('' or '/dolibarr')
 if (!empty($dolibarr_main_document_root_alt)) {
 	// dolibarr_main_document_root_alt can contains several directories
 	$values = preg_split('/[;,]/', $dolibarr_main_document_root_alt);
@@ -156,10 +158,10 @@ if (!defined('NOREQUIREDB')) {
 				print "SorryWebsiteIsCurrentlyOffLine";
 			}
 			print '</div>';
-			exit;
+			exit(1);
 		}
 		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-		exit;
+		exit(1);
 	}
 }
 
@@ -192,9 +194,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOSTINT("entity") || GETPOSTINT("switchentity"))) {
 	// Just after a login page
-	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOSTINT("entity") : GETPOSTINT("switchentity"));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
@@ -262,10 +264,4 @@ if (!defined('NOREQUIRETRAN')) {
 		$langcode = constant('MAIN_LANG_DEFAULT');
 	}
 	$langs->setDefaultLang($langcode);
-}
-
-
-
-if (!defined('MAIN_LABEL_MENTION_NPR')) {
-	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }

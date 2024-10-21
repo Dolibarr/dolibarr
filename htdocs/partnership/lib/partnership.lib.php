@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2021 Dorian Laurent <i.merraha@sofimedmaroc.com>
+/* Copyright (C) 2021       Dorian Laurent              <i.merraha@sofimedmaroc.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
  */
 
 /**
- * \file    partnership/lib/partnership.lib.php
+ * \file    htdocs/partnership/lib/partnership.lib.php
  * \ingroup partnership
  * \brief   Library files with common functions for Partnership
  */
@@ -24,7 +26,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function partnershipAdminPrepareHead()
 {
@@ -38,22 +40,22 @@ function partnershipAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/partnership/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/partnership/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
 
-	$head[$h][0] = dol_buildpath("/partnership/admin/partnership_extrafields.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/partnership/admin/partnership_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['partnership']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'partnership_extrafields';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/partnership/admin/website.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/partnership/admin/website.php';
 	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
 	$head[$h][2] = 'website';
 	$h++;
@@ -77,7 +79,7 @@ function partnershipAdminPrepareHead()
  * Prepare array of tabs for Partnership
  *
  * @param	Partnership	$object		Partnership
- * @return 	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function partnershipPrepareHead($object)
 {
@@ -88,7 +90,7 @@ function partnershipPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/partnership/partnership_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -101,29 +103,29 @@ function partnershipPrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dol_buildpath('/partnership/partnership_note.php', 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_note.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->partnership->dir_output."/partnership/".dol_sanitizeFileName($object->ref);
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->partnership->dir_output . "/partnership/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/partnership/partnership_document.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_document.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
 	}
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/partnership/partnership_agenda.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_agenda.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Events");
 	$head[$h][2] = 'agenda';
 	$h++;

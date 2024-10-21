@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formObjectOptions. Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -29,7 +29,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (!is_object($form)) {
@@ -74,15 +74,15 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 		$enabled = 1;
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '2');
+			$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '2');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
@@ -130,7 +130,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			print '>';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
-			print '<td class="titlefield">';
+			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 
@@ -213,9 +213,10 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			print '</tr></table>';
 			print '</td>';
 
+			$cssview = !empty($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra]) ? ($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra] . ' ') : '';
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
-			print '<td id="' . $html_id . '" class="valuefield ' . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
+			print '<td id="' . $html_id . '" class="valuefield ' . $cssview . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date'))) {
@@ -225,7 +226,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
 				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
@@ -234,7 +235,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), GETPOST("options_".$tmpkeyextra."sec", 'int'), GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int'), 'tzuserrel') : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection

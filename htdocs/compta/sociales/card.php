@@ -4,6 +4,7 @@
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2017-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if (isModEnabled('accounting')) {
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -55,20 +56,21 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid = GETPOST('lineid', 'int');
 
-$fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
+$lineid = GETPOSTINT('lineid');
+
+$fk_project = (GETPOST('fk_project') ? GETPOSTINT('fk_project') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 $label = GETPOST('label', 'alpha');
-$actioncode = GETPOST('actioncode');
-$fk_user = GETPOST('userid', 'int') > 0 ? GETPOST('userid', 'int') : 0;
+$actioncode = GETPOSTINT('actioncode');
+$fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('taxcard', 'globalcard'));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ChargeSociales($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
@@ -91,12 +93,11 @@ $permissiondellink = $user->hasRight('tax', 'charges', 'creer'); // Used by the 
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
-
 
 
 /*
@@ -138,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setlib' && $permissiontoadd) {
-		$result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+		$result = $object->setValueFrom('libelle', GETPOST('lib'), '', null, 'text', '', $user, 'TAX_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -146,7 +147,7 @@ if (empty($reshook)) {
 
 	// payment mode
 	if ($action == 'setmode' && $permissiontoadd) {
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -154,7 +155,7 @@ if (empty($reshook)) {
 
 	// Bank account
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -204,9 +205,9 @@ if (empty($reshook)) {
 			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user			= $fk_user;
-			$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
-			$object->fk_account = (int) GETPOST('fk_account', 'int');
-			$object->fk_project = (int) GETPOST('fk_project', 'int');
+			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+			$object->fk_account = GETPOSTINT('fk_account');
+			$object->fk_project = GETPOSTINT('fk_project');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -215,7 +216,6 @@ if (empty($reshook)) {
 			}
 		}
 	}
-
 
 	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
@@ -235,21 +235,29 @@ if (empty($reshook)) {
 		} else {
 			$result = $object->fetch($id);
 
+			$object->oldcopy = dol_clone($object, 2);
+
+			$object->type = $actioncode;
 			$object->date_ech = $dateech;
-			$object->periode = $dateperiod;
 			$object->period = $dateperiod;
+			$object->periode = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user = $fk_user;
 
 			$result = $object->update($user);
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				// Reload object to get new value of some properties
+				if ($object->oldcopy->type != $object->type) {
+					$object->fetch($id);
+				}
 			}
 		}
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 
@@ -259,7 +267,8 @@ if (empty($reshook)) {
 		$originalId = $object->id;
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = '';
 			$object->paye = 0;
 			if (GETPOST('amount', 'alphanohtml')) {
 				$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
@@ -271,16 +280,14 @@ if (empty($reshook)) {
 				$object->label = $langs->trans("CopyOf").' '.$object->label;
 			}
 
-			if (GETPOST('clone_for_next_month', 'int')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
-				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
-				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
+			if (GETPOSTINT('clone_for_next_month')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
+				$object->period = dol_time_plus_duree($object->period, 1, 'm');
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
-				$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
-				$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
+				$newdateperiod = dol_mktime(0, 0, 0, GETPOSTINT('clone_periodmonth'), GETPOSTINT('clone_periodday'), GETPOSTINT('clone_periodyear'));
+				$newdateech = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_echmonth'), GETPOSTINT('clone_date_echday'), GETPOSTINT('clone_date_echyear'));
 				if ($newdateperiod) {
-					$object->periode = $newdateperiod;
 					$object->period = $newdateperiod;
 					if (empty($newdateech)) {
 						$object->date_ech = $object->periode;
@@ -290,8 +297,7 @@ if (empty($reshook)) {
 					$object->date_ech = $newdateech;
 					if (empty($newdateperiod)) {
 						// TODO We can here get dol_get_last_day of previous month:
-						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
-						$object->periode = $object->date_ech;
+						// $object->period = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						$object->period = $object->date_ech;
 					}
 				}
@@ -369,7 +375,7 @@ if ($action == 'create') {
 	print $langs->trans("Type");
 	print '</td>';
 	print '<td>';
-	$formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode", 'alpha') ? GETPOST("actioncode", 'alpha') : '', 'actioncode', 1);
+	$formsocialcontrib->select_type_socialcontrib(GETPOST('actioncode', 'alpha') ? GETPOST('actioncode', 'alpha') : '', 'actioncode', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -423,13 +429,13 @@ if ($action == 'create') {
 
 	// Payment Mode
 	print '<tr><td>'.$langs->trans('DefaultPaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(GETPOST('mode_reglement_id', 'int'), 'mode_reglement_id');
+	$form->select_types_paiements(GETPOSTINT('mode_reglement_id'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOST('fk_account', 'int'), 'fk_account', 0, '', 2, '', 0, '', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOSTINT('fk_account'), 'fk_account', 0, '', 2, '', 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -458,12 +464,12 @@ if ($id > 0) {
 		// Clone confirmation
 		if ($action === 'clone') {
 			$formquestion = array(
-				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass'=>'fieldrequired'),
+				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass' => 'fieldrequired'),
 			);
 			if (getDolGlobalString('TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX')) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			} else {
-				$formquestion[] = array('type' => 'date', 'datenow'=>1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
+				$formquestion[] = array('type' => 'date', 'datenow' => 1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 				$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 			}
@@ -497,9 +503,7 @@ if ($id > 0) {
 			$formconfirm = $hookmanager->resPrint;
 		}
 
-		/*
-		 *	View card
-		 */
+
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
 
 		// Print form confirm
@@ -581,8 +585,16 @@ if ($id > 0) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefield">';
-		print $langs->trans("Type")."</td><td>".$object->type_label."</td>";
+		print '<tr><td class="titlefieldmiddle">';
+		print $langs->trans("Type")."</td><td>";
+		if ($action == 'edit' && $object->getSommePaiement() == 0) {
+			$actionPostValue = GETPOSTINT('actioncode');
+			$formsocialcontrib->select_type_socialcontrib($actionPostValue ? $actionPostValue : $object->type, 'actioncode', 1);
+		} else {
+			print $object->type_label;
+		}
+		print "</td>";
+
 		print "</tr>";
 
 		// Date
@@ -598,9 +610,9 @@ if ($id > 0) {
 		print "<tr><td>".$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"))."</td>";
 		print "<td>";
 		if ($action == 'edit') {
-			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->period, 'period', 0, 0, 0, 'charge', 1);
 		} else {
-			print dol_print_date($object->periode, "day");
+			print dol_print_date($object->period, "day");
 		}
 		print "</td></tr>";
 
@@ -631,7 +643,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Bank account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('DefaultBankAccount');
@@ -663,7 +675,7 @@ if ($id > 0) {
 		print '<div class="underbanner clearboth"></div>';
 
 		$nbcols = 3;
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$nbcols++;
 		}
 
@@ -698,7 +710,7 @@ if ($id > 0) {
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="right">'.$langs->trans("Amount").'</td>';
@@ -721,7 +733,7 @@ if ($id > 0) {
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 					$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-					if (isModEnabled("banque")) {
+					if (isModEnabled("bank")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;

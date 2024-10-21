@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +57,12 @@ if (!getDolGlobalString('CONTRACT_ADDON')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-$error=0;
+$error = 0;
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstcontract', 'aZ09');
 	$maskvalue = GETPOST('maskcontract', 'alpha');
+	$res = 0;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -82,28 +85,28 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFContract $module';
 
+		/** @var ModelePDFContract $module */
 		if ($module->write_file($contract, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=contract&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
@@ -203,7 +206,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-contract');
 
 $form = new Form($db);
 
@@ -245,6 +248,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
+
+					'@phan-var-force ModelNumRefContracts $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -334,7 +339,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -363,6 +370,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -379,6 +387,8 @@ foreach ($dirmodels as $reldir) {
 							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFContract $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -392,7 +402,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

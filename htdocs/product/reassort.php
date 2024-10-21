@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,18 +42,18 @@ $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_toolowstock = GETPOST('search_toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
-$fourn_id = GETPOST("fourn_id", 'int');
-$sbarcode = GETPOST("sbarcode", 'int');
+$fourn_id = GETPOSTINT("fourn_id");
+$sbarcode = GETPOSTINT("sbarcode");
 $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -62,7 +63,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -71,9 +72,9 @@ $offset = $limit * $page;
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
 if (GETPOSTISSET('catid')) {
-	$search_categ = GETPOST('catid', 'int');
+	$search_categ = GETPOSTINT('catid');
 } else {
-	$search_categ = GETPOST('search_categ', 'int');
+	$search_categ = GETPOSTINT('search_categ');
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -96,15 +97,17 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productreassortlist'));
 
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
+$result = restrictedArea($user, 'stock');
 
 $object = new Product($db);
+
 
 /*
  * Actions
@@ -208,7 +211,7 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 				SELECT SUM(ed3.qty) as qty
 				FROM " . MAIN_DB_PREFIX . "expeditiondet as ed3
 				LEFT JOIN " . MAIN_DB_PREFIX . "expedition as e3 ON e3.rowid = ed3.fk_expedition
-				LEFT JOIN " . MAIN_DB_PREFIX . "commandedet as cd3 ON ed3.fk_origin_line = cd3.rowid
+				LEFT JOIN " . MAIN_DB_PREFIX . "commandedet as cd3 ON ed3.fk_elementdet = cd3.rowid
 				LEFT JOIN " . MAIN_DB_PREFIX . "commande as c3 ON c3.rowid = cd3.fk_commande
 				WHERE e3.entity IN (1) AND cd3.fk_product = p.rowid AND c3.fk_statut IN (1,2) AND e3.fk_statut IN (1,2) AND ed3.qty <> 0
 			) IS NOT NULL
@@ -225,7 +228,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {
@@ -360,10 +363,10 @@ if ($resql) {
 		$param .= "&tobuy=".urlencode($tobuy);
 	}
 	if ($type != '') {
-		$param .= "&type=".urlencode($type);
+		$param .= "&type=".urlencode((string) ($type));
 	}
 	if ($fourn_id) {
-		$param .= "&fourn_id=".urlencode($fourn_id);
+		$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 	}
 	if ($snom) {
 		$param .= "&snom=".urlencode($snom);
@@ -375,19 +378,19 @@ if ($resql) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
 	if ($search_categ > 0) {
-		$param .= "&search_categ=".urlencode($search_categ);
+		$param .= "&search_categ=".urlencode((string) ($search_categ));
 	}
 	if ($search_toolowstock) {
 		$param .= "&search_toolowstock=".urlencode($search_toolowstock);
 	}
 	if ($sbarcode) {
-		$param .= "&sbarcode=".urlencode($sbarcode);
+		$param .= "&sbarcode=".urlencode((string) ($sbarcode));
 	}
 	if ($search_stock_physique) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 	}
 
-	llxHeader("", $texte, $helpurl);
+	llxHeader("", $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-reassort');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -409,7 +412,7 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
@@ -424,7 +427,7 @@ if ($resql) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		print '</div>';
 	}
@@ -519,7 +522,7 @@ if ($resql) {
 	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -617,7 +620,7 @@ if ($resql) {
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Fields from hook
-		$parameters = array('obj'=>$objp);
+		$parameters = array('obj' => $objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column

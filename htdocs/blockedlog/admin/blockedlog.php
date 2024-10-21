@@ -40,7 +40,7 @@ if (!$user->admin || empty($conf->blockedlog->enabled)) {
 // Get Parameters
 $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$withtab    = GETPOST('withtab', 'int');
+$withtab    = GETPOSTINT('withtab');
 
 
 /*
@@ -85,7 +85,7 @@ $block_static->loadTrackedEvents();
 $title = $langs->trans("BlockedLogSetup");
 $help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
 $linkback = '';
 if ($withtab) {

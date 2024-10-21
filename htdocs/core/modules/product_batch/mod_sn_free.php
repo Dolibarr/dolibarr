@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +39,9 @@ class mod_sn_free extends ModeleNumRefBatch
 	 *    Therefore, the implementation must remain as open as possible.
 	 */
 
-	// variables inherited from ModeleThirdPartyCode class
+	// variables inherited from ModeleNumRefBatch class
 	public $name = 'sn_free';
 	public $version = 'dolibarr';
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_modifiable_null;
-	public $code_auto;
-
 
 	/**
 	 *	Constructor
@@ -80,15 +76,22 @@ class mod_sn_free extends ModeleNumRefBatch
 	 */
 	public function getExample()
 	{
-		return $this->getNextValue(null, null);
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		return $this->getNextValue($thirdparty, null);
 	}
 
 	/**
-	 * Return an example of result returned by getNextValue
+	 * 	Return next free value
 	 *
-	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Productlot	$object		Object we need next value for
-	 * @return	string					Return next value
+	 *  @param	?Societe	$objsoc		Object thirdparty
+	 *  @param  ?Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0
 	 */
 	public function getNextValue($objsoc, $object)
 	{

@@ -4,89 +4,73 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
+ModulePartnershipName=Партнерски менаџмент
+PartnershipDescription=Модул Партнерство за управување
+PartnershipDescriptionLong= Модул Партнерство за управување
+Partnership=Партнерство
+Partnerships=Партнерства
+AddPartnership=Додадете партнерство
+CancelPartnershipForExpiredMembers=Партнерство: Откажете го партнерството на членовите со истечени претплати
+PartnershipCheckBacklink=Партнерство: Проверете ја повикувачката врска
 # Menu
-#
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
-
-#
+NewPartnership=Ново партнерство
+NewPartnershipbyWeb=Вашето барање за партнерство е успешно додадено. Можеби наскоро ќе ве контактираме...
+ListOfPartnerships=Список на партнерство
 # Admin page
-#
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
-
-#
+PartnershipSetup=Поставување на партнерство
+PartnershipAbout=За Партнерството
+PartnershipAboutPage=Партнерство за страница
+partnershipforthirdpartyormember=Статусот на партнерот мора да биде поставен на „трето лице“ или „член“
+PARTNERSHIP_IS_MANAGED_FOR=Партнерството управувано за
+PARTNERSHIP_BACKLINKS_TO_CHECK=Врски за проверка
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Напомена на денови пред откажување на статусот на партнерство кога претплатата е истечена
+ReferingWebsiteCheck=Проверка на упатување на веб-страницата
+ReferingWebsiteCheckDesc=Можете да овозможите функција за да проверите дали вашите партнери додале повратна врска до домените на вашата веб-локација на нивната сопствена веб-локација.
+PublicFormRegistrationPartnerDesc=Dolibarr може да ви обезбеди јавна URL/веб-страница за да им овозможи на надворешните посетители да побараат да бидат дел од програмата за партнерство.
 # Object
-#
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Избришете партнерство
+PartnershipDedicatedToThisThirdParty=Партнерство посветено на оваа трета страна
+PartnershipDedicatedToThisMember=Партнерство посветено на овој член
 DatePartnershipStart=Почетен датум
 DatePartnershipEnd=Краен датум
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=Одбијте ја причината
+ReasonDeclineOrCancel=Причина за одбивање или откажување
+PartnershipAlreadyExist=Партнерството веќе постои
+ManagePartnership=Управувајте со партнерството
+BacklinkNotFoundOnPartnerWebsite=Врската за враќање не е пронајдена на веб-страницата на партнерот
+ConfirmClosePartnershipAsk=Дали сте сигурни дека сакате да го откажете ова партнерство?
+PartnershipType=Тип на партнерство
+PartnershipRefApproved=Партнерството %s е одобрено
+KeywordToCheckInWebsite=Ако сакате да проверите дали даден клучен збор е присутен на веб-страницата на секој партнер, дефинирајте го овој клучен збор овде
 PartnershipDraft=Нацрт
-PartnershipAccepted=Accepted
+PartnershipAccepted=Прифатено
 PartnershipRefused=Refused
 PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=Партнери се
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Партнерството наскоро ќе биде откажано
+SendingEmailOnPartnershipRefused=Партнерството одби
+SendingEmailOnPartnershipAccepted=Партнерството е прифатено
+SendingEmailOnPartnershipCanceled=Партнерството е откажано
+YourPartnershipWillSoonBeCanceledTopic=Партнерството наскоро ќе биде откажано
+YourPartnershipRefusedTopic=Партнерството одби
+YourPartnershipAcceptedTopic=Партнерството е прифатено
+YourPartnershipCanceledTopic=Партнерството е откажано
+YourPartnershipWillSoonBeCanceledContent=Би сакале да ве информираме дека нашето партнерство наскоро ќе биде откажано (не добивме обновување или не е исполнет предуслов за нашето партнерство). Ве молиме контактирајте со нас ако го добивте ова поради грешка.
+YourPartnershipRefusedContent=Би сакале да ве информираме дека вашето барање за партнерство е одбиено. Предусловите не се исполнети. Ве молиме контактирајте со нас ако ви требаат повеќе информации.
+YourPartnershipAcceptedContent=Би сакале да ве информираме дека вашето барање за партнерство е прифатено.
+YourPartnershipCanceledContent=Би сакале да ве информираме дека нашето партнерство е откажано. Ве молиме контактирајте со нас ако ви требаат повеќе информации.
+CountLastUrlCheckError=Број на грешки за последната проверка на URL-то
+LastCheckBacklink=Датум на последната проверка на URL-то
+NewPartnershipRequest=Ново барање за партнерство
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Оваа страница мора да содржи најмалку една врска до еден од следниве домени: %s
+IPOfApplicant=IP на апликантот

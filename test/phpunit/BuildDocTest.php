@@ -87,11 +87,15 @@ class BuildDocTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!isModEnabled('facture')) {
+		if (!isModEnabled('supplier')) {
+			print __METHOD__." supplier module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('invoice')) {
 			print __METHOD__." invoice module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('commande')) {
+		if (!isModEnabled('order')) {
 			print __METHOD__." order module not enabled\n";
 			die(1);
 		}
@@ -99,15 +103,15 @@ class BuildDocTest extends CommonClassTest
 			print __METHOD__." propal module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('projet')) {
+		if (!isModEnabled('project')) {
 			print __METHOD__." project module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('expedition')) {
+		if (!isModEnabled('shipping')) {
 			print __METHOD__." shipment module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('ficheinter')) {
+		if (!isModEnabled('intervention')) {
 			print __METHOD__." intervention module not enabled\n";
 			die(1);
 		}
@@ -157,7 +161,7 @@ class BuildDocTest extends CommonClassTest
 		// Crabe (english)
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of crabe invoice');
 		print __METHOD__." result=".$result." for generation from crabe\n";
 
 		// Restore default usage with TCPDI
@@ -166,7 +170,7 @@ class BuildDocTest extends CommonClassTest
 		// Crabe (english)
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of crabe invoice (MAIN_DISABLE_TCPDI=0 + watermark)');
 		print __METHOD__." result=".$result." for generation from crabe with MAIN_DISABLE_TCPDI and a watermark\n";
 
 		// Crabe (japanese)
@@ -174,7 +178,7 @@ class BuildDocTest extends CommonClassTest
 		$newlangs1->setDefaultLang('ja_JP');
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs1);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document ja_JP');
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (saudiarabia)
@@ -182,7 +186,7 @@ class BuildDocTest extends CommonClassTest
 		$newlangs2a->setDefaultLang('sa_SA');
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2a);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document sa_SA');
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (english_saudiarabia)
@@ -190,7 +194,7 @@ class BuildDocTest extends CommonClassTest
 		$newlangs2b->setDefaultLang('en_SA');
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2b);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document en_SA');
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (greek)
@@ -198,7 +202,7 @@ class BuildDocTest extends CommonClassTest
 		$newlangs3->setDefaultLang('el_GR');
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs3);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document el_GR');
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (chinese)
@@ -206,7 +210,7 @@ class BuildDocTest extends CommonClassTest
 		$newlangs4->setDefaultLang('zh_CN');
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs4);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document zh_CN');
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (russian)
@@ -214,7 +218,7 @@ class BuildDocTest extends CommonClassTest
 		$newlangs5->setDefaultLang('ru_RU');
 		$localobject->model_pdf = 'crabe';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs5);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document ru_RU');
 		print __METHOD__." result=".$result."\n";
 
 		return 0;
@@ -233,7 +237,7 @@ class BuildDocTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$conf->fournisseur->facture->dir_output .= '/temp';
+		$conf->fournisseur->facture->dir_output .= '/temp';	// To not poluate the existing dir_output dir
 		$localobject = new FactureFournisseur($db);
 		$localobject->initAsSpecimen();
 

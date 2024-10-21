@@ -35,10 +35,11 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
@@ -91,7 +92,7 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 
 if (!isset($argv[1])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -142,7 +143,7 @@ if (!$confirmed) {
 
 if (!getDolGlobalString('LDAP_USER_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
-	exit(-1);
+	exit(1);
 }
 
 // Load table of correspondence of countries
@@ -169,7 +170,7 @@ if ($resql) {
 	}
 } else {
 	dol_print_error($db);
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
@@ -201,30 +202,30 @@ if ($result >= 0) {
 			}
 
 			// Propriete membre
-			$fuser->firstname = $ldapuser[getDolGlobalString('LDAP_FIELD_FIRSTNAME')];
-			$fuser->lastname = $ldapuser[getDolGlobalString('LDAP_FIELD_NAME')];
-			$fuser->login = $ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')];
-			$fuser->pass = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD')];
-			$fuser->pass_indatabase_crypted = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')];
+			$fuser->firstname = $ldapuser[getDolGlobalString('LDAP_FIELD_FIRSTNAME')] ?? null;
+			$fuser->lastname = $ldapuser[getDolGlobalString('LDAP_FIELD_NAME')] ?? null;
+			$fuser->login = $ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')] ?? null;
+			$fuser->pass = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD')] ?? null;
+			$fuser->pass_indatabase_crypted = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] ?? null;
 
 			// $user->societe;
 			/*
-			 * $fuser->address=$ldapuser[getDolGlobalString('LDAP_FIELD_ADDRESS')];
-			 * $fuser->zip=$ldapuser[getDolGlobalString('LDAP_FIELD_ZIP')];
-			 * $fuser->town=$ldapuser[getDolGlobalString('LDAP_FIELD_TOWN')];
-			 * $fuser->country=$ldapuser[getDolGlobalString('LDAP_FIELD_COUNTRY')];
+			 * $fuser->address=$ldapuser[getDolGlobalString('LDAP_FIELD_ADDRESS')] ?? null;
+			 * $fuser->zip=$ldapuser[getDolGlobalString('LDAP_FIELD_ZIP')] ?? null;
+			 * $fuser->town=$ldapuser[getDolGlobalString('LDAP_FIELD_TOWN')] ?? null;
+			 * $fuser->country=$ldapuser[getDolGlobalString('LDAP_FIELD_COUNTRY')] ?? null;
 			 * $fuser->country_id=$countries[$hashlib2rowid[strtolower($fuser->country)]]['rowid'];
 			 * $fuser->country_code=$countries[$hashlib2rowid[strtolower($fuser->country)]]['code'];
 			 */
 
-			$fuser->office_phone = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE')];
-			$fuser->user_mobile = $ldapuser[getDolGlobalString('LDAP_FIELD_MOBILE')];
-			$fuser->office_fax = $ldapuser[getDolGlobalString('LDAP_FIELD_FAX')];
-			$fuser->email = $ldapuser[getDolGlobalString('LDAP_FIELD_MAIL')];
-			$fuser->ldap_sid = $ldapuser[getDolGlobalString('LDAP_FIELD_SID')];
+			$fuser->office_phone = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE')] ?? null;
+			$fuser->user_mobile = $ldapuser[getDolGlobalString('LDAP_FIELD_MOBILE')] ?? null;
+			$fuser->office_fax = $ldapuser[getDolGlobalString('LDAP_FIELD_FAX')] ?? null;
+			$fuser->email = $ldapuser[getDolGlobalString('LDAP_FIELD_MAIL')] ?? null;
+			$fuser->ldap_sid = $ldapuser[getDolGlobalString('LDAP_FIELD_SID')] ?? null;
 
-			$fuser->job = $ldapuser[getDolGlobalString('LDAP_FIELD_TITLE')];
-			$fuser->note = $ldapuser[getDolGlobalString('LDAP_FIELD_DESCRIPTION')];
+			$fuser->job = $ldapuser[getDolGlobalString('LDAP_FIELD_TITLE')] ?? null;
+			$fuser->note = $ldapuser[getDolGlobalString('LDAP_FIELD_DESCRIPTION')] ?? null;
 			$fuser->admin = 0;
 			$fuser->socid = 0;
 			$fuser->contact_id = 0;
@@ -236,7 +237,7 @@ if ($result >= 0) {
 			 * if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
 			 * $fuser->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
 			 * $fuser->datevalid=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			 * $fuser->statut=$ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
+			 * $fuser->statut=$ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] ?? null;
 			 * }
 			 */
 			// if ($fuser->statut > 1) $fuser->statut=1;

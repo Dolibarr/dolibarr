@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,21 +116,21 @@ if ($action == 'updateMaskLot') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir . "core/modules/product_batch/doc/pdf_" . $modele . ".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_" . $modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+
+		'@phan-var-force ModelePDFProductBatch $module';
 
 		if ($module->write_file($product_batch, $langs) > 0) {
 			header("Location: " . DOL_URL_ROOT . "/document.php?modulepart=product_batch&file=SPECIMEN.pdf");
@@ -165,7 +166,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("ProductLotSetup"));
+llxHeader("", $langs->trans("ProductLotSetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_product_lot');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ProductLotSetup"), $linkback, 'title_setup');
@@ -212,6 +213,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -255,7 +257,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$htmltooltip = '';
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$nextval = $module->getNextValue($mysoc, $batch);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= ''.$langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -313,6 +315,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -396,7 +399,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -420,6 +425,7 @@ print "</tr>\n";
 
 clearstatcache();
 
+$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir . "core/modules/product_batch" . $valdir);
@@ -440,6 +446,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir . '/' . $file;
 							$module = new $classname($db);
+							'@phan-var-force ModelePDFProductBatch $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -454,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

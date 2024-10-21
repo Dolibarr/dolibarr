@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ $langs->loadLangs(array('compta', 'supplier_proposal', 'other'));
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 
 // Security check
@@ -52,10 +53,10 @@ if (!empty($user->socid)) {
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -94,7 +95,8 @@ if ($object->id > 0) {
 
 $title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_documents');
 
 $form = new Form($db);
 

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +90,12 @@ if ($action == 'add') {
 			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
 			$action = 'create';
 		}
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesg[] = $langs->trans("ErrorSizeForStarsType");
+			$action = 'create';
+		}
 		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
@@ -172,19 +179,19 @@ if ($action == 'add') {
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
-						$params['options'] = array($parameters=>null);
+						$params['options'] = array($parameters => null);
 					}
 				} else {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						if (strpos($param_ligne, ',')!==false) {
+						if (strpos($param_ligne, ',') !== false) {
 							list($key, $value) = explode(',', $param_ligne);
 							if (!array_key_exists('options', $params)) {
 								$params['options'] = array();
 							}
 						} else {
-							$key=$param_ligne;
-							$value=null;
+							$key = $param_ligne;
+							$value = null;
 						}
 						$params['options'][$key] = $value;
 					}
@@ -192,7 +199,7 @@ if ($action == 'add') {
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 
@@ -200,7 +207,7 @@ if ($action == 'add') {
 					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
 					$type,
-					GETPOST('pos', 'int'),
+					GETPOSTINT('pos'),
 					$extrasize,
 					$elementtype,
 					(GETPOST('unique', 'alpha') ? 1 : 0),
@@ -281,6 +288,12 @@ if ($action == 'update') {
 			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'edit';
 		}
+		if ($type == 'stars' && ($extrasize < 1|| $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesg[] = $langs->trans("ErrorSizeForStarsType");
+			$action = 'edit';
+		}
 		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
@@ -337,7 +350,7 @@ if ($action == 'update') {
 
 		if (!$error) {
 			if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
-				$pos = GETPOST('pos', 'int');
+				$pos = GETPOSTINT('pos');
 				// Construct array for parameter (value of select list)
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
@@ -345,12 +358,16 @@ if ($action == 'update') {
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
-						$params['options'] = array($parameters=>null);
+						$params['options'] = array($parameters => null);
 					}
 				} else {
 					//Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						list($key, $value) = explode(',', $param_ligne);
+						$tmp = explode(',', $param_ligne);
+						$key = $tmp[0];
+						if (!empty($tmp[1])) {
+							$value = $tmp[1];
+						}
 						if (!array_key_exists('options', $params)) {
 							$params['options'] = array();
 						}
@@ -358,9 +375,11 @@ if ($action == 'update') {
 					}
 				}
 
+				// $params['options'][$key] can be 'Facture:/compta/facture/class/facture.class.php' => '/custom'
+
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 
@@ -447,7 +466,7 @@ if ($action == 'encrypt') {
 					if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity || empty($extrafields->attributes[$elementtype]['entityid'][$attributekey])) {
 						dol_syslog("Loop on each extafields of table ".$arrayofelement['table_element']);
 
-						$sql .= "SELECT te.rowid, te.".$attributekey;
+						$sql  = "SELECT te.rowid, te.".$attributekey;
 						$sql .= " FROM ".MAIN_DB_PREFIX.$arrayofelement['table_element']." as t, ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields as te';
 						$sql .= " WHERE te.fk_object = t.rowid";
 						$sql .= " AND te.".$attributekey." NOT LIKE 'dolcrypt:%'";
@@ -462,7 +481,7 @@ if ($action == 'encrypt') {
 						$resql = $db->query($sql);
 						if ($resql) {
 							$num_rows = $db->num_rows($resql);
-							$i=0;
+							$i = 0;
 							while ($i < $num_rows) {
 								$objtmp = $db->fetch_object($resql);
 								$id = $objtmp->rowid;
@@ -478,7 +497,7 @@ if ($action == 'encrypt') {
 									if ($resupdate) {
 										$nbupdatedone++;
 									} else {
-										setEventMessages($db->lasterror(), '', 'errors');
+										setEventMessages($db->lasterror(), null, 'errors');
 										$error++;
 										break;
 									}

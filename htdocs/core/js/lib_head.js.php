@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,8 +195,7 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		/*console.log(input);
-		console.log(input.minimum);*/
+		/*console.log(input); console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -274,7 +274,7 @@ function formatDate(date,format)
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
+	var year=date.getFullYear();
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -344,7 +344,7 @@ function getDateFromFormat(val,format)
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
+	var year=now.getFullYear();
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -563,7 +563,7 @@ function hideMessage(fieldId,message) {
  * @param	string	code		Code
  * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
- * @param	int		strict		Strict
+ * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
  * @param	int		value       Value to set
@@ -976,8 +976,8 @@ function newpopup(url, title) {
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
 	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,location=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen = window.open(tmp, title, wfeatures);
 
 	return false;
 }
@@ -1163,7 +1163,7 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
@@ -1241,7 +1241,7 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 
@@ -1321,20 +1321,57 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
-	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-			 var offset = parentholder.offset();
-		var widthdocument = $(document).width();
-		var left = offset.left;
-		var right = widthdocument - offset.left - parentholder.width();
-		var widthpopup = parentholder.children(".dropdown-content").width();
-		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-		if (widthpopup + right >= widthdocument) {
-			right = 10;
+		let parentHolder = jQuery(event.target).parent();
+		let dropDownContent = parentHolder.children(".dropdown-content");
+		let offset = parentHolder.offset();
+		let widthDocument = $(document).width();
+		let heightDocument = $(document).height();
+		let right = widthDocument - offset.left - parentHolder.width();
+		let widthPopup = parentHolder.children(".dropdown-content").width();
+		if (widthPopup + right >= widthDocument) {
+			//right = 10;
 		}
-		parentholder.toggleClass("open");
-		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+
+		parentHolder.toggleClass("open");	/* If open, it closes, if closed, it opens */
+
+		// Check tooltip is in viewport
+		let dropDownContentTop = dropDownContent.offset().top;
+		let dropDownContentLeft = dropDownContent.offset().left;
+		let dropDownContentHeight = dropDownContent.outerHeight();
+		let dropDownContentBottom = dropDownContentTop + dropDownContentHeight;
+		let viewportBottom = $(window).scrollTop() + $(window).height();
+
+		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
+		if(parentHolder.hasClass('open')
+			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
+			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
+		){
+			parentHolder.addClass("--up");
+		}else{
+			parentHolder.removeClass("--up");
+		}
+
+		// Change dropdown left/right offset if dropdown is close to left viewport
+		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+			parentHolder.addClass("--left");
+		}else{
+			parentHolder.removeClass("--left");
+		}
+	});
+
+	// Close drop down
+	jQuery(document).on("click", function(event) {
+		// search if click was outside drop down
+		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
+			/* console.log("click close butAction - we click outside"); */
+			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+			if (parentholder){
+				// Hide the menus.
+				parentholder.removeClass("open --up --left");
+			}
+		}
 	});
 });
 

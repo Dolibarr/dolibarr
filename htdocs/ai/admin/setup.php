@@ -1,6 +1,9 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +20,7 @@
  */
 
 /**
- * \file    ai/admin/setup.php
+ * \file    htdocs/ai/admin/setup.php
  * \ingroup ai
  * \brief   Ai setup page.
  */
@@ -46,11 +49,6 @@ $type = 'myobject';
 $error = 0;
 $setupnotempty = 0;
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -61,19 +59,50 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
-$arrayofia = array('chatgpt');
+// List all available IA
+$arrayofia = array(
+	'chatgpt' => 'ChatGPT',
+	'groq' => 'Groq',
+	'custom' => 'Custom'
+	//'gemini' => 'Gemini'
+);
 
-foreach ($arrayofia as $ia) {
+$item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+$item->setAsSelect($arrayofia);
+$item->cssClass = 'minwidth150';
+
+foreach ($arrayofia as $ia => $ialabel) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
-	$item = $formSetup->newItem('AI_KEY_API_'.strtoupper($ia));
+	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
+	$item->cssClass = 'minwidth500';*/
+
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
+	$item->defaultFieldValue = '';
+	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['trClass'] = $ia;
+	$item->cssClass = 'minwidth500 text-security';
+
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
+	$item->defaultFieldValue = '';
+	$item->fieldParams['trClass'] = $ia;
+	$item->cssClass = 'minwidth500';
 }
 
-
-$setupnotempty =+ count($formSetup->items);
+$setupnotempty = + count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
 
 
 /*
@@ -82,105 +111,6 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'aZ09');
-	$maskvalue = GETPOST('maskvalue', 'alpha');
-
-	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
-		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-} elseif ($action == 'specimen') {
-	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
-
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
-
-	// Search template files
-	$file = '';
-	$classname = '';
-	$filefound = 0;
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/ai/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$filefound = 1;
-			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
-			break;
-		}
-	}
-
-	if ($filefound) {
-		require_once $file;
-
-		$module = new $classname($db);
-
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bookcal-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
-		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
-		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
-} elseif ($action == 'setmod') {
-	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'Ai_'.strtoupper($tmpobjectkey)."_ADDON";
-		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
-	}
-} elseif ($action == 'set') {
-	// Activate a model
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del') {
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
-		if (!empty($tmpobjectkey)) {
-			$constforval = 'Ai_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if (getDolGlobalString($constforval) == "$value") {
-				dolibarr_del_const($db, $constforval, $conf->entity);
-			}
-		}
-	}
-} elseif ($action == 'setdoc') {
-	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'Ai_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
-			// The constant that was read before the new set
-			// We therefore requires a variable to have a coherent view
-			$conf->global->$constforval = $value;
-		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
-	}
-} elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'Ai_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		dolibarr_del_const($db, $constforval, $conf->entity);
-	}
-}
-
 $action = 'edit';
 
 
@@ -188,45 +118,42 @@ $action = 'edit';
  * View
  */
 
- $form = new Form($db);
+$form = new Form($db);
 
- $help_url = '';
- $title = "AiSetup";
+$help_url = '';
+$title = "AiSetup";
 
- llxHeader('', $langs->trans($title), $help_url);
+llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin');
 
- // Subheader
- $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+// Subheader
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
- print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
- // Configuration header
- $head = aiAdminPrepareHead();
- print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "fa-microchip");
-
- // Setup page goes here
- //echo '<span class="opacitymedium">'.$langs->trans("AiSetupPage").'</span><br><br>';
+// Configuration header
+$head = aiAdminPrepareHead();
+print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "fa-microchip");
 
 
 if ($action == 'edit') {
-	 print $formSetup->generateOutput(true);
-	 print '<br>';
+	print $formSetup->generateOutput(true);
+	print '<br>';
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 } else {
-	 print '<br>'.$langs->trans("NothingToSetup");
+	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 
 if (empty($setupnotempty)) {
-	 print '<br>'.$langs->trans("NothingToSetup");
+	print '<br>'.$langs->trans("NothingToSetup");
 }
 
- // Page end
- print dol_get_fiche_end();
+// Page end
+print dol_get_fiche_end();
 
- llxFooter();
- $db->close();
+llxFooter();
+$db->close();

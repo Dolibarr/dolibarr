@@ -51,7 +51,7 @@ if ($action == 'setvalue') {
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
 	$checkread = GETPOST('value', 'alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
-	$contactbulkdefault = GETPOST('MAILING_CONTACT_DEFAULT_BULK_STATUS', 'int');
+	$contactbulkdefault = GETPOSTINT('MAILING_CONTACT_DEFAULT_BULK_STATUS');
 	if (GETPOST('MAILING_DELAY', 'alpha') != '') {
 		$mailingdelay = price2num(GETPOST('MAILING_DELAY', 'alpha'), 3);		// Not less than 1 millisecond.
 	} else {
@@ -98,7 +98,7 @@ if ($action == 'setvalue') {
 	}
 }
 if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
-	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+	$setonsearchandlistgooncustomerorsuppliercard = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -114,7 +114,7 @@ if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
  *	View
  */
 
-llxHeader('', $langs->trans("MailingSetup"));
+llxHeader('', $langs->trans("MailingSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-mailing');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');

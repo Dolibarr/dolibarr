@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ class ModelePDFLabels
 	 *
 	 *  @param  DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @return	string[]|int<-1,0>			List of templates
 	 */
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -67,7 +68,7 @@ class ModelePDFLabels
  *  Create a document onto disk according to template module.
  *
  *	@param  DoliDB		$db					Database handler
- *	@param  array		$arrayofrecords		Array of records
+ *	@param  array{}		$arrayofrecords		Array of records
  *	@param	string		$modele				Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs		Object lang a utiliser pour traduction
  *	@param	string		$outputdir			Output directory
@@ -117,7 +118,6 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -129,21 +129,21 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			// Determine the model path and validate that it exists
 			$file = dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
 	// Load the model
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);
+		'@phan-var-force CommonStickerGenerator $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,10 @@ class box_members_last_subscriptions extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/adherents/card.php?leftmenu=members&action=create';
+		$this->msgNoRecords = 'NoRecordedMembers';
 	}
 
 	/**
@@ -110,7 +114,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 					$staticmember->email = $obj->email;
 					$staticmember->photo = $obj->photo;
 					$staticmember->morphy = $obj->morphy;
-					$staticmember->statut = $obj->status;
+					$staticmember->status = $obj->status;
 					$staticmember->need_subscription = $obj->need_subscription;
 					$staticmember->datefin = $this->db->jdate($obj->date_end_subscription);
 					if (!empty($obj->fk_soc)) {
@@ -155,18 +159,12 @@ class box_members_last_subscriptions extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
-					);
-				}
 
 				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -178,12 +176,14 @@ class box_members_last_subscriptions extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

@@ -40,7 +40,7 @@ class InvoiceListController extends Controller
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS');
+		$this->accessRight = isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}

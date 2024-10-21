@@ -1,9 +1,7 @@
 <?php
-/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+/* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,27 +17,42 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
+/**
+* \file    htdocs/ai/class/ai.class.php
+* \ingroup ai
+* \brief   Class files with common methods for Ai
+*/
+
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
 
 /**
  * Class for AI
  */
 class Ai
 {
-
 	/**
 	 * @var DoliDB $db Database object
 	 */
 	protected $db;
+
 	/**
-	 * @var string $apiEndpoint
+	 * @var string $apiService
 	 */
-	private $apiEndpoint;
+	private $apiService;
 
 	/**
 	 * @var string $apiKey
 	 */
 	private $apiKey;
+
+	/**
+	 * @var string $apiEndpoint
+	 */
+	private $apiEndpoint;
+
 
 	/**
 	 * Constructor
@@ -50,71 +63,237 @@ class Ai
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->apiEndpoint = dolibarr_get_const($this->db, 'AI_API_ENDPOINT');
-		$this->apiKey = dolibarr_get_const($this->db, 'AI_KEY_API_CHATGPT');
+
+		// Get API key according to enabled AI
+		$this->apiService = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
+		$this->apiKey = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_KEY');
 	}
 
 	/**
 	 * Generate response of instructions
-	 * @param   string  $instructions   instruction for generate content
-	 * @param   string  $model          model name (chat,text,image...)
-	 * @param   string  $moduleName     Name of module
-	 * @return   mixed   $response
+	 *
+	 * @param   string  		$instructions   Instruction to generate content
+	 * @param   string  		$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
+	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
+	 * @param	string			$format			Format for output ('', 'html', ...)
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:''|int,format?:string,service?:string,function?:string}	$response		Text or array if error
 	 */
-	public function generateContent($instructions, $model = 'gpt-3.5-turbo', $moduleName = 'MAILING')
+	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
-		global $conf;
+		if (empty($this->apiKey)) {
+			return array('error' => true, 'message' => 'API key is not defined for the AI enabled service ('.$this->apiService.')');
+		}
+
+		// $this->apiEndpoint is set here only if forced.
+		// In most cases, it is empty and we must get it from $function and $this->apiService
+		if (empty($this->apiEndpoint)) {
+			if ($function == 'imagegeneration') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/images/generations';
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/images/generations';
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/images/generations';
+				}
+			} elseif ($function == 'audiogeneration') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/audio/speech';
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/audio/speech';
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/audio/speech';
+				}
+			} elseif ($function == 'transcription') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/transcriptions';
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/transcriptions';
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/transcriptions';
+				}
+			} elseif ($function == 'translation') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/translations';
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/translations';
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/translations';
+				}
+			} else {	// else textgeneration...
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/chat/completions';
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/chat/completions';
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/chat/completions';
+				}
+			}
+		}
+
+		// $model may be undefined or 'auto'.
+		// If this is the case, we must get it from $function and $this->apiService
+		if (empty($model) || $model == 'auto') {
+			// Return the endpoint and the model from $this->apiService.
+			if ($function == 'imagegeneration') {
+				if ($this->apiService == 'chatgpt') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
+				} elseif ($this->apiService == 'groq') {
+					$model = getDolGlobalString('AI_API_GROK_MODEL_IMAGE', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+				} elseif ($this->apiService == 'custom') {
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_IMAGE', 'dall-e-3');
+				}
+			} elseif ($function == 'audiogeneration') {
+				if ($this->apiService == 'chatgpt') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_AUDIO', 'tts-1');
+				} elseif ($this->apiService == 'groq') {
+					$model = getDolGlobalString('AI_API_GROK_MODEL_AUDIO', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+				} elseif ($this->apiService == 'custom') {
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_AUDIO', 'tts-1');
+				}
+			} elseif ($function == 'transcription') {
+				if ($this->apiService == 'chatgpt') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSCRIPT', 'whisper-1');
+				} elseif ($this->apiService == 'groq') {
+					$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSCRIPT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+				} elseif ($this->apiService == 'custom') {
+					$model = getDolGlobalString('AI_API_CUSTOM_TRANSCRIPT', 'whisper-1');
+				}
+			} elseif ($function == 'translation') {
+				if ($this->apiService == 'chatgpt') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSLATE', 'whisper-1');
+				} elseif ($this->apiService == 'groq') {
+					$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSLATE', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+				} elseif ($this->apiService == 'custom') {
+					$model = getDolGlobalString('AI_API_CUSTOM_TRANSLATE', 'whisper-1');
+				}
+			} else {	// else textgeneration...
+				if ($this->apiService == 'chatgpt') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TEXT', 'gpt-3.5-turbo');
+				} elseif ($this->apiService == 'groq') {
+					$model = getDolGlobalString('AI_API_GROK_MODEL_TEXT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+				} elseif ($this->apiService == 'custom') {
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_TEXT', 'tinyllama-1.1b');		// with JAN: 'tinyllama-1.1b', 'mistral-ins-7b-q4'
+				}
+			}
+		}
+
+		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 3).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+
 		try {
-			$configurationsJson = dolibarr_get_const($this->db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
+			if (empty($this->apiEndpoint)) {
+				throw new Exception('The AI service '.$this->apiService.' is not yet supported for the type of request '.$function);
+			}
+
+			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 			$configurations = json_decode($configurationsJson, true);
 
 			$prePrompt = '';
 			$postPrompt = '';
 
-			if (isset($configurations[$moduleName])) {
-				if (isset($configurations[$moduleName]['prePrompt'])) {
-					$prePrompt = $configurations[$moduleName]['prePrompt'];
+			if (isset($configurations[$function])) {
+				if (isset($configurations[$function]['prePrompt'])) {
+					$prePrompt = $configurations[$function]['prePrompt'];	// TODO We can send prePrompt into a separated message with role system.
 				}
 
-				if (isset($configurations[$moduleName]['postPrompt'])) {
-					$postPrompt = $configurations[$moduleName]['postPrompt'];
+				if (isset($configurations[$function]['postPrompt'])) {
+					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
-			$fullInstructions = $prePrompt.' '.$instructions.' .'.$postPrompt;
+			$fullInstructions = ($prePrompt ? $prePrompt.' ' : '').$instructions.($postPrompt ? '. '.$postPrompt : '');
 
-			$ch = curl_init($this->apiEndpoint);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+			// Set payload string
+			/*{
+				"messages": [
+				{
+					"content": "You are a helpful assistant.",
+					"role": "system"
+				},
+				{
+					"content": "Hello!",
+					"role": "user"
+				}
+				],
+				"model": "tinyllama-1.1b",
+				"stream": true,
+				"max_tokens": 2048,
+				"stop": [
+					"hello"
+				],
+				"frequency_penalty": 0,
+				"presence_penalty": 0,
+				"temperature": 0.7,
+				"top_p": 0.95
+			}*/
+			$payload = json_encode([
 				'messages' => [
 					['role' => 'user', 'content' => $fullInstructions]
 				],
-				'model' => $model
-			]));
-			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+				'model' => $model,
+				//'stream' => false
+			]);
+
+			$headers = ([
 				'Authorization: Bearer ' . $this->apiKey,
 				'Content-Type: application/json'
 			]);
 
-			$response = curl_exec($ch);
-			if (curl_errno($ch)) {
-				throw new Exception('cURL error: ' . curl_error($ch));
+			$localurl = 2;	// Accept both local and external endpoints
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
+
+			if (empty($response['http_code'])) {
+				throw new Exception('API request failed. No http received');
+			}
+			if (!empty($response['http_code']) && $response['http_code'] != 200) {
+				throw new Exception('API request on AI endpoint '.$this->apiEndpoint.' failed with status code '.$response['http_code'].(empty($response['content']) ? '' : ' - '.$response['content']));
 			}
 
-			$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			if ($statusCode != 200) {
-				throw new Exception('API request failed with status code ' . $statusCode);
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("response content = ".var_export($response['content'], true));
 			}
+
 			// Decode JSON response
-			$decodedResponse = json_decode($response, true);
+			$decodedResponse = json_decode($response['content'], true);
 
 			// Extraction content
-			$generatedEmailContent = $decodedResponse['choices'][0]['message']['content'];
+			$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 
-			return $generatedEmailContent;
+			dol_syslog("generatedContent=".dol_trunc($generatedContent, 50));
+
+			// If content is not HTML, we convert it into HTML
+			if ($format == 'html') {
+				if (!dol_textishtml($generatedContent)) {
+					dol_syslog("Result was detected as not HTML so we convert it into HTML.");
+					$generatedContent = dol_nl2br($generatedContent);
+				} else {
+					dol_syslog("Result was detected as already HTML. Do nothing.");
+				}
+
+				// TODO If content is for website module, we must
+				// - clan html header, keep body only and remove ``` ticks added by AI
+				// - add tags <section contenEditable="true"> </section>
+			}
+
+			return $generatedContent;
 		} catch (Exception $e) {
-			return array('error' => true, 'message' => $e->getMessage());
-		} finally {
-			curl_close($ch);
+			$errormessage = $e->getMessage();
+			if (!empty($response['content'])) {
+				$decodedResponse = json_decode($response['content'], true);
+
+				// With OpenAI, error is into an object error into the content
+				if (!empty($decodedResponse['error']['message'])) {
+					$errormessage .= ' - '.$decodedResponse['error']['message'];
+				}
+			}
+
+			return array(
+				'error' => true,
+				'message' => $errormessage,
+				'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
+				'curl_error_no' => (!empty($response['curl_error_no']) ? $response['curl_error_no'] : ''),
+				'format' => $format,
+				'service' => $this->apiService,
+				'function' => $function
+			);
 		}
 	}
 }
