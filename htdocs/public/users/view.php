@@ -345,7 +345,7 @@ if (empty($object->socialnetworks)) {
 	$object->socialnetworks = getSocialNetworks($object->id);
 }
 if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && count($object->socialnetworks) > 0) {
-	if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
+	if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0)) {
 		$listOfSocialNetworks = array_values($object->socialnetworks);
 		foreach ($listOfSocialNetworks as $key => $value) {
 			if (!empty(getDolGlobalString('USER_SOCIALNETWORK_'.strtoupper($value['name'])))) {
@@ -416,7 +416,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 
 	// Social networks
 	if (!empty($mysoc->socialnetworks) && is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
-		if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object)) {
+		if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0)) {
 			foreach ($mysoc->socialnetworks as $key => $value) {
 				if (!empty(getDolGlobalString('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key)))) {
 					$companysection .= '<div class="flexitemsmall wordbreak">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
