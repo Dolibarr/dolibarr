@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *

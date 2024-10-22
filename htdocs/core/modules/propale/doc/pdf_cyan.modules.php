@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
+ * Copyright (C) 2024      Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
