@@ -2717,7 +2717,7 @@ function pdf_setPosSign($p, $x, $y, $width)
 
 	$db->begin();
 
-	$possign = $p.":".$x.":".$y.":".$height.":".$width;
+	$possign = $p.":".$x.":".$y.":".$width;
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX.$object->element;
 	$sql .= " SET model_pdf_pos_sign = '".$possign."'";
