@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=البحث عن فواتير مورد غ
 SendEmailsRemindersOnSupplierInvoiceDueDate=إرسال تذكير عبر البريد الإلكتروني بشأن فواتير و غير المدفوعة مورد التي تم التحقق منها
 PaymentMadeForSeveralInvoices=تم الدفع لعدة فواتير
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

@@ -526,10 +526,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
-					}
-
 					// We start with Photo of product line
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -556,6 +552,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							$posYAfterImage = $curY + $imglinesize['height'];
 						}
 					}
+
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
@@ -610,6 +607,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
+
+					// # of line
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
+					}
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
