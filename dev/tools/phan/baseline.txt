@@ -14,10 +14,10 @@ return [
     // PhanPluginUnknownPropertyType : 420+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 360+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
-    // PhanPluginUnknownArrayMethodReturnType : 280+ occurrences
-    // PhanPluginUnknownArrayMethodParamType : 190+ occurrences
-    // PhanPossiblyUndeclaredVariable : 190+ occurrences
-    // PhanTypeMismatchProperty : 160+ occurrences
+    // PhanPluginUnknownArrayMethodReturnType : 290+ occurrences
+    // PhanPluginUnknownArrayMethodParamType : 210+ occurrences
+    // PhanPossiblyUndeclaredVariable : 200+ occurrences
+    // PhanTypeMismatchProperty : 170+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 95+ occurrences
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 60+ occurrences
@@ -25,6 +25,7 @@ return [
     // PhanRedefineFunction : 50+ occurrences
     // PhanPluginEmptyStatementIf : 45+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
+    // PhanPluginUnknownArrayPropertyType : 35+ occurrences
     // PhanTypeInvalidDimOffset : 35+ occurrences
     // PhanPluginUnknownArrayPropertyType : 30+ occurrences
     // PhanTypeMismatchDimFetch : 30+ occurrences
