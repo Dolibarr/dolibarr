@@ -1957,7 +1957,7 @@ if ($action == 'create') {
 	// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
 	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
 	print '</td></tr>';
-//
+
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
