@@ -366,6 +366,7 @@ class PaymentSalary extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datepaye = $this->db->jdate($obj->datep);
+				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_paiement = $obj->num_payment;
