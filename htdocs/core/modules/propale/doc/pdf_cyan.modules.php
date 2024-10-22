@@ -1858,7 +1858,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
-		pdf_setPosSign($pdf->PageNo(), $posx, $tab_top + $tab_hl, $tab_hl * 3, $largcol);
+		pdf_setPosSign($pdf->PageNo(), $posx, $tab_top + $tab_hl, $largcol);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl + 3);
 		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
