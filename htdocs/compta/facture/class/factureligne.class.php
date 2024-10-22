@@ -291,9 +291,9 @@ class FactureLigne extends CommonInvoiceLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		                 1 no triggers
-	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
-	 *	@return		int						                 Return integer <0 if KO, >0 if OK
+	 *	@param	int<0,1>	$notrigger						1 no triggers
+	 *  @param	int<0,1>	$noerrorifdiscountalreadylinked	1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return	int											Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{

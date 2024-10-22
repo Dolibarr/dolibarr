@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/socialnetworkmanager.class.php';
 class DiasporaHandler
 {
 	/**
-	 * @var array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar:string}>		Posts fetched from the API
+	 * @var array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	private $posts = [];
 
@@ -180,7 +180,7 @@ class DiasporaHandler
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar:string}>		Posts fetched from the API		List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	public function getPosts()
 	{
