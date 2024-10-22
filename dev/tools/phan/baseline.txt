@@ -14,10 +14,10 @@ return [
     // PhanPossiblyUndeclaredGlobalVariable : 580+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 400+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
-    // PhanPluginUnknownArrayMethodReturnType : 290+ occurrences
+    // PhanPluginUnknownArrayMethodReturnType : 280+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 210+ occurrences
     // PhanPossiblyUndeclaredVariable : 200+ occurrences
-    // PhanTypeMismatchProperty : 170+ occurrences
+    // PhanTypeMismatchProperty : 160+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 95+ occurrences
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 65+ occurrences
@@ -249,13 +249,8 @@ return [
         'htdocs/core/class/conf.class.php' => ['PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/cunits.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/core/class/doleditor.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType'],
-        'htdocs/core/class/dolgeoip.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/dolreceiptprinter.class.php' => ['PhanEmptyForeach', 'PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownPropertyType'],
-        'htdocs/core/class/emailsenderprofile.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
-        'htdocs/core/class/evalmath.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/core/class/events.class.php' => ['PhanPluginUnknownPropertyType'],
+        'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/extrafields.class.php' => ['PhanPluginConstantVariableNull', 'PhanPluginUnknownArrayMethodParamType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
         'htdocs/core/class/extralanguages.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType'],
         'htdocs/core/class/fediverseparser.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
