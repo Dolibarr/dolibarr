@@ -110,14 +110,15 @@ abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
 	 * Custom label of line. Not used by default.
-	 * @deprecated
+	 * @deprecated Use $product_label
+	 * @var string
 	 */
 	public $label;
 
 	/**
 	 * Product ref
 	 * @var string
-	 * @deprecated Use product_ref
+	 * @deprecated Use $product_ref
 	 * @see $product_ref
 	 */
 	public $ref;
@@ -249,10 +250,28 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $special_code = 0;
 
+	/**
+	 * @var int
+	 */
 	public $fk_multicurrency;
+	/**
+	 * @var string
+	 */
 	public $multicurrency_code;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_subprice;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
 }

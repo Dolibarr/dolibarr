@@ -15,7 +15,7 @@ return [
     // PhanTypeMismatchArgumentProbablyReal : 400+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 290+ occurrences
-    // PhanPluginUnknownArrayMethodParamType : 220+ occurrences
+    // PhanPluginUnknownArrayMethodParamType : 210+ occurrences
     // PhanPossiblyUndeclaredVariable : 200+ occurrences
     // PhanTypeMismatchProperty : 170+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 95+ occurrences
@@ -24,8 +24,8 @@ return [
     // PhanPluginUnknownArrayFunctionReturnType : 50+ occurrences
     // PhanRedefineFunction : 50+ occurrences
     // PhanPluginEmptyStatementIf : 45+ occurrences
-    // PhanPluginUnknownArrayPropertyType : 40+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
+    // PhanPluginUnknownArrayPropertyType : 35+ occurrences
     // PhanTypeInvalidDimOffset : 35+ occurrences
     // PhanTypeMismatchDimFetch : 30+ occurrences
     // PhanPluginUnknownObjectMethodCall : 15+ occurrences
@@ -247,11 +247,8 @@ return [
         'htdocs/core/class/commonpeople.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/commonsocialnetworks.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/conf.class.php' => ['PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchProperty'],
-        'htdocs/core/class/ctypent.class.php' => ['PhanPluginUnknownPropertyType'],
-        'htdocs/core/class/ctyperesource.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
-        'htdocs/core/class/cunits.class.php' => ['PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/core/class/diasporahandler.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType'],
-        'htdocs/core/class/discount.class.php' => ['PhanPluginUnknownPropertyType'],
+        'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/class/cunits.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/class/doleditor.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/dolgeoip.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],

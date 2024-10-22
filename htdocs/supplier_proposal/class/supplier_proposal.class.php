@@ -372,16 +372,16 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->fk_remise_except = $remise->id;
 			$supplier_proposalligne->desc = $remise->description; // Description ligne
 			$supplier_proposalligne->tva_tx = $remise->tva_tx;
-			$supplier_proposalligne->subprice = -$remise->amount_ht;
+			$supplier_proposalligne->subprice = -(float) $remise->amount_ht;
 			$supplier_proposalligne->fk_product = 0; // Id produit predefini
 			$supplier_proposalligne->qty = 1;
 			$supplier_proposalligne->remise_percent = 0;
 			$supplier_proposalligne->rang = -1;
 			$supplier_proposalligne->info_bits = 2;
 
-			$supplier_proposalligne->total_ht  = -$remise->amount_ht;
-			$supplier_proposalligne->total_tva = -$remise->amount_tva;
-			$supplier_proposalligne->total_ttc = -$remise->amount_ttc;
+			$supplier_proposalligne->total_ht  = -(float) $remise->amount_ht;
+			$supplier_proposalligne->total_tva = -(float) $remise->amount_tva;
+			$supplier_proposalligne->total_ttc = -(float) $remise->amount_ttc;
 
 			$result = $supplier_proposalligne->insert();
 			if ($result > 0) {
