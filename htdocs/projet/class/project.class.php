@@ -960,8 +960,8 @@ class Project extends CommonObject
 			'fichinter' => 'fk_projet',
 			'don' => array('field' => 'fk_projet', 'module' => 'don'),
 			'actioncomm' => 'fk_project',
-			'mrp_mo' => 'fk_project',
-			'entrepot' => 'fk_project'
+			'mrp_mo' => array('field' => 'fk_project', 'module' => 'mrp'),
+			'entrepot' => 'fk_project',
 		);
 		foreach ($listoftables as $key => $value) {
 			if (is_array($value)) {
