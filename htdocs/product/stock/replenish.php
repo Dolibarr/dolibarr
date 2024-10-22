@@ -87,7 +87,7 @@ if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalStr
 	$fk_entrepot = $lastWarehouseID;
 }
 //If the warehouse is set to the default selected user
-if ((empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+if (!GETPOSTISSET('fk_warehouse') && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 	$fk_entrepot = $user->fk_warehouse;
 }
 
