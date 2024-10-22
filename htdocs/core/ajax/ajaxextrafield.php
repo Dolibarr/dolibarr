@@ -231,19 +231,19 @@ if (is_object($object)) {
 				}
 			}
 			$sql .= $sqlwhere;
-
-			$sql .= ' ORDER BY ' . implode(', ', $fields_label);
+			$orderfields = explode('|', $InfoFieldList[1]);
+			$keyList = $InfoFieldList[1];
+			if (is_array($orderfields)) {
+				$keyList = implode(', ', $orderfields);
+			}
+			$sql .= $db->order($keyList);
 			$sql .= $db->plimit($limit, $offset);
-			// print $sql;
+
 			$data['sql'] = $sql;
 
 			$resql = $db->query($sql);
 			if ($resql) {
 				// $out .= '<option value="0">&nbsp;</option>';
-				// $data['results'][] = [
-				// 	'id' => 0,
-				// 	'text' => '&nbsp;',
-				// ];
 				$num = $db->num_rows($resql);
 				$i = 0;
 				while ($i < $num) {
