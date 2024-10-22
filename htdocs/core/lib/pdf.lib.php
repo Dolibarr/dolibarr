@@ -2711,7 +2711,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
  * @param	real		$width			Width sign
  * @return	int							<0 if KO, >0 if OK
  */
-function pdf_setPosSign($p, $x, $y, $height, $width)
+function pdf_setPosSign($p, $x, $y, $width)
 {
 	global $conf, $db, $object;
 	$error = 0;
