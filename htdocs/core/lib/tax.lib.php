@@ -100,16 +100,16 @@ function tax_prepare_head(ChargeSociales $object)
 /**
  *  Look for collectable VAT clients in the chosen year (and month)
  *
- *  @param	string		 $type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
+ *  @param	'vat'|'localtax1'|'localtax2'	$type	Tax type, either 'vat', 'localtax1' or 'localtax2'
  *  @param	DoliDB		 $db          	Database handle
  *  @param  int			 $y           	Year
  *  @param  int|''		 $date_start  	Start date
  *  @param  int|''		 $date_end    	End date
  *  @param  int			 $modetax     	Not used
  *  @param  'sell'|'buy' $direction     'sell' or 'buy'
- *  @param  int			 $m				Month
- *  @param  int			 $q           	Quarter
- *  @return array|int               	Array with details of VATs (per third parties), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @param  int<0,12>	 $m				Month
+ *  @param  int<0,4>	 $q           	Quarter
+ *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
@@ -141,6 +141,9 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$paymenttable = 'paiementfourn';
 		$paymentfacturetable = 'paiementfourn_facturefourn';
 		$invoicefieldref = 'ref';
+	} else {
+		dol_print_error(null, 'Invalid "direction" - must be buy or sell - found ' . $direction);
+		return -2;
 	}
 
 	if (strpos($type, 'localtax') === 0) {
@@ -301,51 +304,51 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 					$oldrowid = $assoc['rowid'];
-					$list[$assoc['company_id']]['totalht']  += $assoc['total_ht'];
-					$list[$assoc['company_id']]['vat']      += $assoc['total_vat'];
-					$list[$assoc['company_id']]['localtax1']      += $assoc['total_localtax1'];
-					$list[$assoc['company_id']]['localtax2']      += $assoc['total_localtax2'];
+					$list[$assoc['company_id']]['totalht']  += (float) $assoc['total_ht'];
+					$list[$assoc['company_id']]['vat']      += (float) $assoc['total_vat'];
+					$list[$assoc['company_id']]['localtax1']      += (float) $assoc['total_localtax1'];
+					$list[$assoc['company_id']]['localtax2']      += (float) $assoc['total_localtax2'];
 				}
 
-				$list[$assoc['company_id']]['dtotal_ttc'][] = $assoc['total_ttc'];
-				$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
+				$list[$assoc['company_id']]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
+				$list[$assoc['company_id']]['dtype'][] = (int) $assoc['dtype'];
 				$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
 
-				$list[$assoc['company_id']]['company_name'][] = $assoc['company_name'];
-				$list[$assoc['company_id']]['company_id'][] = $assoc['company_id'];
-				$list[$assoc['company_id']]['company_alias'][] = $assoc['company_alias'];
-				$list[$assoc['company_id']]['company_email'][] = $assoc['company_email'];
-				$list[$assoc['company_id']]['company_tva_intra'][] = $assoc['company_tva_intra'];
-				$list[$assoc['company_id']]['company_client'][] = $assoc['company_client'];
-				$list[$assoc['company_id']]['company_fournisseur'][] = $assoc['company_fournisseur'];
-				$list[$assoc['company_id']]['company_customer_code'][] = $assoc['company_customer_code'];
-				$list[$assoc['company_id']]['company_supplier_code'][] = $assoc['company_supplier_code'];
-				$list[$assoc['company_id']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
-				$list[$assoc['company_id']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
-				$list[$assoc['company_id']]['company_status'][] = $assoc['company_status'];
+				$list[$assoc['company_id']]['company_name'][] = (string) $assoc['company_name'];
+				$list[$assoc['company_id']]['company_id'][] = (int) $assoc['company_id'];
+				$list[$assoc['company_id']]['company_alias'][] = (string) $assoc['company_alias'];
+				$list[$assoc['company_id']]['company_email'][] = (string) $assoc['company_email'];
+				$list[$assoc['company_id']]['company_tva_intra'][] = (string) $assoc['company_tva_intra'];
+				$list[$assoc['company_id']]['company_client'][] = (int) $assoc['company_client'];
+				$list[$assoc['company_id']]['company_fournisseur'][] = (int) $assoc['company_fournisseur'];
+				$list[$assoc['company_id']]['company_customer_code'][] = (string) $assoc['company_customer_code'];
+				$list[$assoc['company_id']]['company_supplier_code'][] = (string) $assoc['company_supplier_code'];
+				$list[$assoc['company_id']]['company_customer_accounting_code'][] = (string) $assoc['company_customer_accounting_code'];
+				$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
+				$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
 				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-				$list[$assoc['company_id']]['facid'][] = $assoc['facid'];
-				$list[$assoc['company_id']]['facnum'][] = $assoc['facnum'];
-				$list[$assoc['company_id']]['type'][] = $assoc['type'];
-				$list[$assoc['company_id']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-				$list[$assoc['company_id']]['descr'][] = $assoc['descr'];
+				$list[$assoc['company_id']]['facid'][] = (int) $assoc['facid'];
+				$list[$assoc['company_id']]['facnum'][] = (string) $assoc['facnum'];
+				$list[$assoc['company_id']]['type'][] = (int) $assoc['type'];
+				$list[$assoc['company_id']]['ftotal_ttc'][] = (float) $assoc['ftotal_ttc'];
+				$list[$assoc['company_id']]['descr'][] = (string) $assoc['descr'];
 
-				$list[$assoc['company_id']]['totalht_list'][] = $assoc['total_ht'];
-				$list[$assoc['company_id']]['vat_list'][] = $assoc['total_vat'];
-				$list[$assoc['company_id']]['localtax1_list'][] = $assoc['total_localtax1'];
-				$list[$assoc['company_id']]['localtax2_list'][] = $assoc['total_localtax2'];
+				$list[$assoc['company_id']]['totalht_list'][] = (float) $assoc['total_ht'];
+				$list[$assoc['company_id']]['vat_list'][] = (float) $assoc['total_vat'];
+				$list[$assoc['company_id']]['localtax1_list'][] = (float) $assoc['total_localtax1'];
+				$list[$assoc['company_id']]['localtax2_list'][] = (float) $assoc['total_localtax2'];
 
-				$list[$assoc['company_id']]['pid'][] = $assoc['pid'];
-				$list[$assoc['company_id']]['pref'][] = $assoc['pref'];
-				$list[$assoc['company_id']]['ptype'][] = $assoc['ptype'];
+				$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
+				$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
+				$list[$assoc['company_id']]['ptype'][] = (int) $assoc['ptype'];
 
-				$list[$assoc['company_id']]['payment_id'][] = $assoc['payment_id'];
-				$list[$assoc['company_id']]['payment_amount'][] = $assoc['payment_amount'];
+				$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
+				$list[$assoc['company_id']]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 				$company_id = $assoc['company_id'];
 			}
@@ -503,51 +506,51 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 					$oldrowid = $assoc['rowid'];
-					$list[$assoc['company_id']]['totalht']  += $assoc['total_ht'];
-					$list[$assoc['company_id']]['vat']      += $assoc['total_vat'];
-					$list[$assoc['company_id']]['localtax1']	 += $assoc['total_localtax1'];
-					$list[$assoc['company_id']]['localtax2']	 += $assoc['total_localtax2'];
+					$list[$assoc['company_id']]['totalht']  += (float) $assoc['total_ht'];
+					$list[$assoc['company_id']]['vat']      += (float) $assoc['total_vat'];
+					$list[$assoc['company_id']]['localtax1']	 += (float) $assoc['total_localtax1'];
+					$list[$assoc['company_id']]['localtax2']	 += (float) $assoc['total_localtax2'];
 				}
-				$list[$assoc['company_id']]['dtotal_ttc'][] = $assoc['total_ttc'];
+				$list[$assoc['company_id']]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
 				$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
 				$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
 
-				$list[$assoc['company_id']]['company_name'][] = $assoc['company_name'];
-				$list[$assoc['company_id']]['company_id'][] = $assoc['company_id'];
-				$list[$assoc['company_id']]['company_alias'][] = $assoc['company_alias'];
-				$list[$assoc['company_id']]['company_email'][] = $assoc['company_email'];
-				$list[$assoc['company_id']]['company_tva_intra'][] = $assoc['company_tva_intra'];
-				$list[$assoc['company_id']]['company_client'][] = $assoc['company_client'];
-				$list[$assoc['company_id']]['company_fournisseur'][] = $assoc['company_fournisseur'];
-				$list[$assoc['company_id']]['company_customer_code'][] = $assoc['company_customer_code'];
-				$list[$assoc['company_id']]['company_supplier_code'][] = $assoc['company_supplier_code'];
-				$list[$assoc['company_id']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
-				$list[$assoc['company_id']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
-				$list[$assoc['company_id']]['company_status'][] = $assoc['company_status'];
+				$list[$assoc['company_id']]['company_name'][] = (string) $assoc['company_name'];
+				$list[$assoc['company_id']]['company_id'][] = (int) $assoc['company_id'];
+				$list[$assoc['company_id']]['company_alias'][] = (string) $assoc['company_alias'];
+				$list[$assoc['company_id']]['company_email'][] = (string) $assoc['company_email'];
+				$list[$assoc['company_id']]['company_tva_intra'][] = (string) $assoc['company_tva_intra'];
+				$list[$assoc['company_id']]['company_client'][] = (int) $assoc['company_client'];
+				$list[$assoc['company_id']]['company_fournisseur'][] = (int) $assoc['company_fournisseur'];
+				$list[$assoc['company_id']]['company_customer_code'][] = (string) $assoc['company_customer_code'];
+				$list[$assoc['company_id']]['company_supplier_code'][] = (string) $assoc['company_supplier_code'];
+				$list[$assoc['company_id']]['company_customer_accounting_code'][] = (string) $assoc['company_customer_accounting_code'];
+				$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
+				$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
 				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-				$list[$assoc['company_id']]['facid'][] = $assoc['facid'];
-				$list[$assoc['company_id']]['facnum'][] = $assoc['facnum'];
-				$list[$assoc['company_id']]['type'][] = $assoc['type'];
-				$list[$assoc['company_id']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-				$list[$assoc['company_id']]['descr'][] = $assoc['descr'];
+				$list[$assoc['company_id']]['facid'][] = (int) $assoc['facid'];
+				$list[$assoc['company_id']]['facnum'][] = (string) $assoc['facnum'];
+				$list[$assoc['company_id']]['type'][] = (int) $assoc['type'];
+				$list[$assoc['company_id']]['ftotal_ttc'][] = (float) $assoc['ftotal_ttc'];
+				$list[$assoc['company_id']]['descr'][] = (string) $assoc['descr'];
 
-				$list[$assoc['company_id']]['totalht_list'][] = $assoc['total_ht'];
-				$list[$assoc['company_id']]['vat_list'][] = $assoc['total_vat'];
-				$list[$assoc['company_id']]['localtax1_list'][] = $assoc['total_localtax1'];
-				$list[$assoc['company_id']]['localtax2_list'][] = $assoc['total_localtax2'];
+				$list[$assoc['company_id']]['totalht_list'][] = (float) $assoc['total_ht'];
+				$list[$assoc['company_id']]['vat_list'][] = (float) $assoc['total_vat'];
+				$list[$assoc['company_id']]['localtax1_list'][] = (float) $assoc['total_localtax1'];
+				$list[$assoc['company_id']]['localtax2_list'][] = (float) $assoc['total_localtax2'];
 
-				$list[$assoc['company_id']]['pid'][] = $assoc['pid'];
-				$list[$assoc['company_id']]['pref'][] = $assoc['pref'];
-				$list[$assoc['company_id']]['ptype'][] = $assoc['ptype'];
+				$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
+				$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
+				$list[$assoc['company_id']]['ptype'][] = (int) $assoc['ptype'];
 
-				$list[$assoc['company_id']]['payment_id'][] = $assoc['payment_id'];
-				$list[$assoc['company_id']]['payment_ref'][] = $assoc['payment_ref'];
-				$list[$assoc['company_id']]['payment_amount'][] = $assoc['payment_amount'];
+				$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
+				$list[$assoc['company_id']]['payment_ref'][] = (string) $assoc['payment_ref'];
+				$list[$assoc['company_id']]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 				$company_id = $assoc['company_id'];
 			}
@@ -625,52 +628,52 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 					if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 						$oldrowid = $assoc['rowid'];
-						$list[$assoc['company_id']]['totalht'] += $assoc['total_ht'];
-						$list[$assoc['company_id']]['vat'] += $assoc['total_vat'];
-						$list[$assoc['company_id']]['localtax1']	 += $assoc['total_localtax1'];
-						$list[$assoc['company_id']]['localtax2']	 += $assoc['total_localtax2'];
+						$list[$assoc['company_id']]['totalht'] += (float) $assoc['total_ht'];
+						$list[$assoc['company_id']]['vat'] += (float) $assoc['total_vat'];
+						$list[$assoc['company_id']]['localtax1']	 += (float) $assoc['total_localtax1'];
+						$list[$assoc['company_id']]['localtax2']	 += (float) $assoc['total_localtax2'];
 					}
 
-					$list[$assoc['company_id']]['dtotal_ttc'][] = $assoc['total_ttc'];
+					$list[$assoc['company_id']]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
 					$list[$assoc['company_id']]['dtype'][] = 'ExpenseReportPayment';
-					$list[$assoc['company_id']]['datef'][] = $assoc['datef'];
+					$list[$assoc['company_id']]['datef'][] = (int) $assoc['datef'];
 
 					$list[$assoc['company_id']]['company_name'][] = '';
-					$list[$assoc['company_id']]['company_id'][] = '';
+					$list[$assoc['company_id']]['company_id'][] = 0;
 					$list[$assoc['company_id']]['company_alias'][] = '';
 					$list[$assoc['company_id']]['company_email'][] = '';
 					$list[$assoc['company_id']]['company_tva_intra'][] = '';
-					$list[$assoc['company_id']]['company_client'][] = '';
-					$list[$assoc['company_id']]['company_fournisseur'][] = '';
+					$list[$assoc['company_id']]['company_client'][] = 0;
+					$list[$assoc['company_id']]['company_fournisseur'][] = 0;
 					$list[$assoc['company_id']]['company_customer_code'][] = '';
 					$list[$assoc['company_id']]['company_supplier_code'][] = '';
 					$list[$assoc['company_id']]['company_customer_accounting_code'][] = '';
 					$list[$assoc['company_id']]['company_supplier_accounting_code'][] = '';
-					$list[$assoc['company_id']]['company_status'][] = '';
+					$list[$assoc['company_id']]['company_status'][] = 0;
 
-					$list[$assoc['company_id']]['user_id'][] = $assoc['fk_user_author'];
+					$list[$assoc['company_id']]['user_id'][] = (int) $assoc['fk_user_author'];
 					$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
 					$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 					$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-					$list[$assoc['company_id']]['facid'][] = $assoc['facid'];
-					$list[$assoc['company_id']]['facnum'][] = $assoc['facnum'];
-					$list[$assoc['company_id']]['type'][] = $assoc['type'];
-					$list[$assoc['company_id']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-					$list[$assoc['company_id']]['descr'][] = $assoc['descr'];
+					$list[$assoc['company_id']]['facid'][] = (int) $assoc['facid'];
+					$list[$assoc['company_id']]['facnum'][] = (string) $assoc['facnum'];
+					$list[$assoc['company_id']]['type'][] = (int) $assoc['type'];
+					$list[$assoc['company_id']]['ftotal_ttc'][] = (float) $assoc['ftotal_ttc'];
+					$list[$assoc['company_id']]['descr'][] = (string) $assoc['descr'];
 
-					$list[$assoc['company_id']]['totalht_list'][] = $assoc['total_ht'];
-					$list[$assoc['company_id']]['vat_list'][] = $assoc['total_vat'];
-					$list[$assoc['company_id']]['localtax1_list'][] = $assoc['total_localtax1'];
-					$list[$assoc['company_id']]['localtax2_list'][] = $assoc['total_localtax2'];
+					$list[$assoc['company_id']]['totalht_list'][] = (float) $assoc['total_ht'];
+					$list[$assoc['company_id']]['vat_list'][] = (float) $assoc['total_vat'];
+					$list[$assoc['company_id']]['localtax1_list'][] = (float) $assoc['total_localtax1'];
+					$list[$assoc['company_id']]['localtax2_list'][] = (float) $assoc['total_localtax2'];
 
-					$list[$assoc['company_id']]['pid'][] = $assoc['pid'];
-					$list[$assoc['company_id']]['pref'][] = $assoc['pref'];
+					$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
+					$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
 					$list[$assoc['company_id']]['ptype'][] = 'ExpenseReportPayment';
 
-					$list[$assoc['company_id']]['payment_id'][] = $assoc['payment_id'];
-					$list[$assoc['company_id']]['payment_ref'][] = $assoc['payment_ref'];
-					$list[$assoc['company_id']]['payment_amount'][] = $assoc['payment_amount'];
+					$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
+					$list[$assoc['company_id']]['payment_ref'][] = (string) $assoc['payment_ref'];
+					$list[$assoc['company_id']]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 					$company_id = $assoc['company_id'];
 				}
@@ -684,21 +687,22 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	return $list;
 }
 
+
 /**
  *  Gets Tax to collect for the given year (and given quarter or month)
  *  The function gets the Tax in split results, as the Tax declaration asks
  *  to report the amounts for different Tax rates as different lines.
  *
- *  @param	string		 $type          Tax type, either 'vat', 'localtax1' or 'localtax2'
- *  @param	DoliDB		 $db          	Database handler object
- *  @param  int			 $y           	Year
- *  @param  int			 $q           	Quarter
+ *  @param	'vat'|'localtax1'|'localtax2'	$type	Tax type, either 'vat', 'localtax1' or 'localtax2'
+ *  @param	DoliDB		 $db			Database handler object
+ *  @param  int			 $y				Year
+ *  @param  int<0,4>	 $q           	Quarter
  *  @param  int|''		 $date_start  	Start date
  *  @param  int|''		 $date_end    	End date
  *  @param  int			 $modetax     	Not used
  *  @param  'sell'|'buy' $direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
- *  @param  int			 $m           	Month
- *  @return array|int               	Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @param  int<0,12>	 $m           	Month
+ *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
@@ -891,50 +895,50 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 					$oldrowid = $assoc['rowid'];
-					$list[$rate_key]['totalht']   += $assoc['total_ht'];
-					$list[$rate_key]['vat']       += $assoc['total_vat'];
-					$list[$rate_key]['localtax1'] += $assoc['total_localtax1'];
-					$list[$rate_key]['localtax2'] += $assoc['total_localtax2'];
+					$list[$rate_key]['totalht']   += (float) $assoc['total_ht'];
+					$list[$rate_key]['vat']       += (float) $assoc['total_vat'];
+					$list[$rate_key]['localtax1'] += (float) $assoc['total_localtax1'];
+					$list[$rate_key]['localtax2'] += (float) $assoc['total_localtax2'];
 				}
-				$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
-				$list[$rate_key]['dtype'][] = $assoc['dtype'];
+				$list[$rate_key]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
+				$list[$rate_key]['dtype'][] = (int) $assoc['dtype'];
 				$list[$rate_key]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$rate_key]['datep'][] = $db->jdate($assoc['datep']);
 
-				$list[$rate_key]['company_name'][] = $assoc['company_name'];
-				$list[$rate_key]['company_id'][] = $assoc['company_id'];
-				$list[$rate_key]['company_alias'][] = $assoc['company_alias'];
-				$list[$rate_key]['company_email'][] = $assoc['company_email'];
-				$list[$rate_key]['company_tva_intra'][] = $assoc['company_tva_intra'];
-				$list[$rate_key]['company_client'][] = $assoc['company_client'];
-				$list[$rate_key]['company_fournisseur'][] = $assoc['company_fournisseur'];
-				$list[$rate_key]['company_customer_code'][] = $assoc['company_customer_code'];
-				$list[$rate_key]['company_supplier_code'][] = $assoc['company_supplier_code'];
-				$list[$rate_key]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
-				$list[$rate_key]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
-				$list[$rate_key]['company_status'][] = $assoc['company_status'];
+				$list[$rate_key]['company_name'][] = (string) $assoc['company_name'];
+				$list[$rate_key]['company_id'][] = (int) $assoc['company_id'];
+				$list[$rate_key]['company_alias'][] = (string) $assoc['company_alias'];
+				$list[$rate_key]['company_email'][] = (string) $assoc['company_email'];
+				$list[$rate_key]['company_tva_intra'][] = (string) $assoc['company_tva_intra'];
+				$list[$rate_key]['company_client'][] = (int) $assoc['company_client'];
+				$list[$rate_key]['company_fournisseur'][] = (int) $assoc['company_fournisseur'];
+				$list[$rate_key]['company_customer_code'][] = (string) $assoc['company_customer_code'];
+				$list[$rate_key]['company_supplier_code'][] = (string) $assoc['company_supplier_code'];
+				$list[$rate_key]['company_customer_accounting_code'][] = (string) $assoc['company_customer_accounting_code'];
+				$list[$rate_key]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
+				$list[$rate_key]['company_status'][] = (int) $assoc['company_status'];
 
 				$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-				$list[$rate_key]['facid'][] = $assoc['facid'];
-				$list[$rate_key]['facnum'][] = $assoc['facnum'];
-				$list[$rate_key]['type'][] = $assoc['type'];
-				$list[$rate_key]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-				$list[$rate_key]['descr'][] = $assoc['descr'];
+				$list[$rate_key]['facid'][] = (int) $assoc['facid'];
+				$list[$rate_key]['facnum'][] = (string) $assoc['facnum'];
+				$list[$rate_key]['type'][] = (int) $assoc['type'];
+				$list[$rate_key]['ftotal_ttc'][] = (float) $assoc['ftotal_ttc'];
+				$list[$rate_key]['descr'][] = (string) $assoc['descr'];
 
-				$list[$rate_key]['totalht_list'][] = $assoc['total_ht'];
-				$list[$rate_key]['vat_list'][] = $assoc['total_vat'];
-				$list[$rate_key]['localtax1_list'][] = $assoc['total_localtax1'];
-				$list[$rate_key]['localtax2_list'][] = $assoc['total_localtax2'];
+				$list[$rate_key]['totalht_list'][] = (float) $assoc['total_ht'];
+				$list[$rate_key]['vat_list'][] = (float) $assoc['total_vat'];
+				$list[$rate_key]['localtax1_list'][] = (float) $assoc['total_localtax1'];
+				$list[$rate_key]['localtax2_list'][] = (float) $assoc['total_localtax2'];
 
-				$list[$rate_key]['pid'][] = $assoc['pid'];
-				$list[$rate_key]['pref'][] = $assoc['pref'];
-				$list[$rate_key]['ptype'][] = $assoc['ptype'];
+				$list[$rate_key]['pid'][] = (int) $assoc['pid'];
+				$list[$rate_key]['pref'][] = (string) $assoc['pref'];
+				$list[$rate_key]['ptype'][] = (int) $assoc['ptype'];
 
-				$list[$rate_key]['payment_id'][] = $assoc['payment_id'];
-				$list[$rate_key]['payment_ref'][] = $assoc['payment_ref'];
-				$list[$rate_key]['payment_amount'][] = $assoc['payment_amount'];
+				$list[$rate_key]['payment_id'][] = (int) $assoc['payment_id'];
+				$list[$rate_key]['payment_ref'][] = (string) $assoc['payment_ref'];
+				$list[$rate_key]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 				$rate = $assoc['rate'];
 			}
@@ -1092,50 +1096,50 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 					$oldrowid = $assoc['rowid'];
-					$list[$rate_key]['totalht']   += $assoc['total_ht'];
-					$list[$rate_key]['vat']       += $assoc['total_vat'];
-					$list[$rate_key]['localtax1'] += $assoc['total_localtax1'];
-					$list[$rate_key]['localtax2'] += $assoc['total_localtax2'];
+					$list[$rate_key]['totalht']   += (float) $assoc['total_ht'];
+					$list[$rate_key]['vat']       += (float) $assoc['total_vat'];
+					$list[$rate_key]['localtax1'] += (float) $assoc['total_localtax1'];
+					$list[$rate_key]['localtax2'] += (float) $assoc['total_localtax2'];
 				}
-				$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
-				$list[$rate_key]['dtype'][] = $assoc['dtype'];
+				$list[$rate_key]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
+				$list[$rate_key]['dtype'][] = (int) $assoc['dtype'];
 				$list[$rate_key]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$rate_key]['datep'][] = $db->jdate($assoc['datep']);
 
 				$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-				$list[$rate_key]['company_name'][] = $assoc['company_name'];
-				$list[$rate_key]['company_id'][] = $assoc['company_id'];
-				$list[$rate_key]['company_alias'][] = $assoc['company_alias'];
-				$list[$rate_key]['company_email'][] = $assoc['company_email'];
-				$list[$rate_key]['company_tva_intra'][] = $assoc['company_tva_intra'];
-				$list[$rate_key]['company_client'][] = $assoc['company_client'];
-				$list[$rate_key]['company_fournisseur'][] = $assoc['company_fournisseur'];
-				$list[$rate_key]['company_customer_code'][] = $assoc['company_customer_code'];
-				$list[$rate_key]['company_supplier_code'][] = $assoc['company_supplier_code'];
-				$list[$rate_key]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
-				$list[$rate_key]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
-				$list[$rate_key]['company_status'][] = $assoc['company_status'];
+				$list[$rate_key]['company_name'][] = (string) $assoc['company_name'];
+				$list[$rate_key]['company_id'][] = (int) $assoc['company_id'];
+				$list[$rate_key]['company_alias'][] = (string) $assoc['company_alias'];
+				$list[$rate_key]['company_email'][] = (string) $assoc['company_email'];
+				$list[$rate_key]['company_tva_intra'][] = (string) $assoc['company_tva_intra'];
+				$list[$rate_key]['company_client'][] = (int) $assoc['company_client'];
+				$list[$rate_key]['company_fournisseur'][] = (int) $assoc['company_fournisseur'];
+				$list[$rate_key]['company_customer_code'][] = (string) $assoc['company_customer_code'];
+				$list[$rate_key]['company_supplier_code'][] = (string) $assoc['company_supplier_code'];
+				$list[$rate_key]['company_customer_accounting_code'][] = (string) $assoc['company_customer_accounting_code'];
+				$list[$rate_key]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
+				$list[$rate_key]['company_status'][] = (int) $assoc['company_status'];
 
-				$list[$rate_key]['facid'][] = $assoc['facid'];
-				$list[$rate_key]['facnum'][] = $assoc['facnum'];
-				$list[$rate_key]['type'][] = $assoc['type'];
-				$list[$rate_key]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-				$list[$rate_key]['descr'][] = $assoc['descr'];
+				$list[$rate_key]['facid'][] = (int) $assoc['facid'];
+				$list[$rate_key]['facnum'][] = (string) $assoc['facnum'];
+				$list[$rate_key]['type'][] = (int) $assoc['type'];
+				$list[$rate_key]['ftotal_ttc'][] = (float) $assoc['ftotal_ttc'];
+				$list[$rate_key]['descr'][] = (string) $assoc['descr'];
 
-				$list[$rate_key]['totalht_list'][] = $assoc['total_ht'];
-				$list[$rate_key]['vat_list'][] = $assoc['total_vat'];
-				$list[$rate_key]['localtax1_list'][] = $assoc['total_localtax1'];
-				$list[$rate_key]['localtax2_list'][] = $assoc['total_localtax2'];
+				$list[$rate_key]['totalht_list'][] = (float) $assoc['total_ht'];
+				$list[$rate_key]['vat_list'][] = (float) $assoc['total_vat'];
+				$list[$rate_key]['localtax1_list'][] = (float) $assoc['total_localtax1'];
+				$list[$rate_key]['localtax2_list'][] = (float) $assoc['total_localtax2'];
 
-				$list[$rate_key]['pid'][] = $assoc['pid'];
-				$list[$rate_key]['pref'][] = $assoc['pref'];
-				$list[$rate_key]['ptype'][] = $assoc['ptype'];
+				$list[$rate_key]['pid'][] = (int) $assoc['pid'];
+				$list[$rate_key]['pref'][] = (string) $assoc['pref'];
+				$list[$rate_key]['ptype'][] = (int) $assoc['ptype'];
 
-				$list[$rate_key]['payment_id'][] = $assoc['payment_id'];
-				$list[$rate_key]['payment_ref'][] = $assoc['payment_ref'];
-				$list[$rate_key]['payment_amount'][] = $assoc['payment_amount'];
+				$list[$rate_key]['payment_id'][] = (int) $assoc['payment_id'];
+				$list[$rate_key]['payment_ref'][] = (string) $assoc['payment_ref'];
+				$list[$rate_key]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 				$rate = $assoc['rate'];
 			}
@@ -1219,39 +1223,39 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 					if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 						$oldrowid = $assoc['rowid'];
-						$list[$rate_key]['totalht']   += $assoc['total_ht'];
-						$list[$rate_key]['vat'] += $assoc['total_vat'];
-						$list[$rate_key]['localtax1'] += $assoc['total_localtax1'];
-						$list[$rate_key]['localtax2'] += $assoc['total_localtax2'];
+						$list[$rate_key]['totalht']   += (float) $assoc['total_ht'];
+						$list[$rate_key]['vat'] += (float) $assoc['total_vat'];
+						$list[$rate_key]['localtax1'] += (float) $assoc['total_localtax1'];
+						$list[$rate_key]['localtax2'] += (float) $assoc['total_localtax2'];
 					}
 
-					$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
+					$list[$rate_key]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
 					$list[$rate_key]['dtype'][] = 'ExpenseReportPayment';
-					$list[$rate_key]['datef'][] = $assoc['datef'];
+					$list[$rate_key]['datef'][] = (int) $assoc['datef'];
 					$list[$rate_key]['company_name'][] = '';
-					$list[$rate_key]['company_id'][] = '';
-					$list[$rate_key]['user_id'][] = $assoc['fk_user_author'];
+					$list[$rate_key]['company_id'][] = 0;
+					$list[$rate_key]['user_id'][] = (int) $assoc['fk_user_author'];
 					$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
 					$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-					$list[$rate_key]['facid'][] = $assoc['facid'];
-					$list[$rate_key]['facnum'][] = $assoc['facnum'];
-					$list[$rate_key]['type'][] = $assoc['type'];
-					$list[$rate_key]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-					$list[$rate_key]['descr'][] = $assoc['descr'];
+					$list[$rate_key]['facid'][] = (int) $assoc['facid'];
+					$list[$rate_key]['facnum'][] = (string) $assoc['facnum'];
+					$list[$rate_key]['type'][] = (int) $assoc['type'];
+					$list[$rate_key]['ftotal_ttc'][] = (float) $assoc['ftotal_ttc'];
+					$list[$rate_key]['descr'][] = (string) $assoc['descr'];
 
-					$list[$rate_key]['totalht_list'][] = $assoc['total_ht'];
-					$list[$rate_key]['vat_list'][] = $assoc['total_vat'];
-					$list[$rate_key]['localtax1_list'][] = $assoc['total_localtax1'];
-					$list[$rate_key]['localtax2_list'][] = $assoc['total_localtax2'];
+					$list[$rate_key]['totalht_list'][] = (float) $assoc['total_ht'];
+					$list[$rate_key]['vat_list'][] = (float) $assoc['total_vat'];
+					$list[$rate_key]['localtax1_list'][] = (float) $assoc['total_localtax1'];
+					$list[$rate_key]['localtax2_list'][] = (float) $assoc['total_localtax2'];
 
-					$list[$rate_key]['pid'][] = $assoc['pid'];
-					$list[$rate_key]['pref'][] = $assoc['pref'];
+					$list[$rate_key]['pid'][] = (int) $assoc['pid'];
+					$list[$rate_key]['pref'][] = (string) $assoc['pref'];
 					$list[$rate_key]['ptype'][] = 'ExpenseReportPayment';
 
-					$list[$rate_key]['payment_id'][] = $assoc['payment_id'];
-					$list[$rate_key]['payment_ref'][] = $assoc['payment_ref'];
-					$list[$rate_key]['payment_amount'][] = $assoc['payment_amount'];
+					$list[$rate_key]['payment_id'][] = (int) $assoc['payment_id'];
+					$list[$rate_key]['payment_ref'][] = (string) $assoc['payment_ref'];
+					$list[$rate_key]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 					$rate = $assoc['rate'];
 				}

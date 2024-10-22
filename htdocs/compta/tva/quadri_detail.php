@@ -247,6 +247,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_both = array();
 	//now, from these two arrays, get another array with one rate per line
 	foreach (array_keys($x_coll) as $my_coll_rate) {
+		$x_both[$my_coll_rate] = array(
+			'coll' => array(),
+			'paye' => array(),
+		);
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 		$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
@@ -263,7 +267,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_rate]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_rate]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_rate]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : 0;
+			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : '0';
 			$company_static->client = $x_coll[$my_coll_rate]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_rate]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_rate]['company_status'][$id];
@@ -462,7 +466,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				}
 
 				// Total collected
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 
 				// VAT
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
@@ -594,7 +598,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// Total collected
 					print '<td class="nowrap right">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</td>';
 
