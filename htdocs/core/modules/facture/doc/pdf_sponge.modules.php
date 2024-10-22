@@ -714,10 +714,6 @@ class pdf_sponge extends ModelePDFFactures
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
-					}
-
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
 						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - $page_bottom_margin)) {	// If photo too high, we moved completely on new page
@@ -798,6 +794,11 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
+
+					// # of line
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+					}
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
@@ -2702,7 +2703,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_PROPAL_HIDE_PRICE_EXCL_TAX') ? true : false,
+			'status' => !getDolGlobalString('PDF_INVOICE_HIDE_PRICE_EXCL_TAX') ? true : false,
 			'title' => array(
 				'textkey' => 'TotalHTShort'
 			),
@@ -2713,7 +2714,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_PROPAL_SHOW_PRICE_INCL_TAX') ? false : true,
+			'status' => !getDolGlobalString('PDF_INVOICE_SHOW_PRICE_INCL_TAX') ? false : true,
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),

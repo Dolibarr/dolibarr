@@ -597,6 +597,7 @@ class pdf_cyan extends ModelePDFPropales
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$curY = $tab_top_newpage;
+							$showpricebeforepagebreak = 0;
 						}
 
 						$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
@@ -625,14 +626,15 @@ class pdf_cyan extends ModelePDFPropales
 
 
 					// We suppose that a too long description or photo were moved completely on next page
-					if ($afterPosData['page'] > $pageposbefore && empty($showpricebeforepagebreak) || ($curY + 9) > ($this->page_hauteur - $heightforfooter)) {
+					if ($afterPosData['page'] > $pageposbefore && (empty($showpricebeforepagebreak) || ($curY + 4) > ($this->page_hauteur - $heightforfooter))) {
 						$pdf->setPage($afterPosData['page']);
 						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// Line position
+
+					// # of line
 					if ($this->getColumnStatus('position')) {
 						$this->printStdColumnContent($pdf, $curY, 'position', $linePosition);
 					}
@@ -1847,7 +1849,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
 
-		$pdf->SetXY($posx, $tab_top + $tab_hl);
+		$pdf->SetXY($posx, $tab_top + $tab_hl + 3);
 		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
 
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {

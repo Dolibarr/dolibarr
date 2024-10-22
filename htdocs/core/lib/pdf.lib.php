@@ -2534,10 +2534,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 			if (count($objects) > 1) {
 				$order = null;
+
+				$refListsTxt = '';
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
 				} else {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.=$outputlangs->transnoentities("RefSending").' :';
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2552,14 +2554,16 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 							}
 						}
 					}
-
+					$refListsTxt.= (!empty($refListsTxt)?' ':'');
 					if (! is_object($order)) {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->transnoentities($elementobject->ref);
 					} else {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
-						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$refListsTxt.= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					}
 				}
+
+				$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$order = null;
