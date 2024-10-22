@@ -14852,9 +14852,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 }
 
 /**
- * Get socal network for user or societe
+ * Get social network for user or societe
  * @param   int      $userId    user Id
- * @return  int|array    -1 if KO, array if OK
+ * @return  array<array{name:string,url:string}>|int<-1,-1>    -1 if KO, array if OK
 */
 function getSocialNetworks($userId)
 {
