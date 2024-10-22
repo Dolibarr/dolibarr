@@ -27,7 +27,7 @@ require "../../main.inc.php";
 
 $username = getDolGlobalString('AADE_WEBSERVICE_USER'); // Get username from request
 $password = getDolGlobalString('AADE_WEBSERVICE_KEY'); // Get password from request
-$myafm = getDolGlobalString('MAIN_INFO_TVAINTRA'); // Get Vat from request
+$myafm = preg_replace('/\D/', '', getDolGlobalString('MAIN_INFO_TVAINTRA')); // Get Vat from request after removing non-digit characters
 $afm = GETPOST('afm'); // Get client Vat from request
 
 // Make call to check VAT for Greek client
@@ -40,11 +40,11 @@ echo json_encode($result); // Encode the result as JSON and output
 * Request VAT details
 * @param 	string 	$username 			Company AADE username
 * @param 	string 	$password 			Company AADE password
-* @param 	string 	$AFMcalledfor 		Company vat number
-* @param 	string 	$AFMcalledby 		Client vat number
+* @param 	string 	$AFMcalledby 		Company vat number
+* @param 	string 	$AFMcalledfor 		Client vat number
 * @return   string
 */
-function checkVATGR($username, $password, $AFMcalledfor, $AFMcalledby = '')
+function checkVATGR($username, $password, $AFMcalledby, $AFMcalledfor)
 {
 	/*
 	$WS_DOL_URL_WSDL = "https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL";
@@ -69,13 +69,15 @@ function checkVATGR($username, $password, $AFMcalledfor, $AFMcalledby = '')
 
 	*/
 
-	// TODO Replace this with code using nusoap_client()
+	// TODO Replace this with code using nusoap_client(), see previous commented code, and remove phpstan tag
+	// @phpstan-ignore-next-line
 	$client = new SoapClient("https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL", array('trace' => true));
 	$authHeader = new stdClass();
 	$authHeader->UsernameToken = new stdClass();
 	$authHeader->UsernameToken->Username = "$username";
 	$authHeader->UsernameToken->Password = "$password";
-	$Headers[] = new SoapHeader('http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
+	$Headers = array();
+	$Headers[] = new SoapHeader('https://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
 	$client->__setSoapHeaders($Headers);
 	$result = $client->rgWsPublicAfmMethod(
 		array(

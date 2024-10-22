@@ -17,8 +17,8 @@
  */
 
 /**
- * 	\defgroup   datapolicy     Module datapolicy
- *  \brief      datapolicy module descriptor.
+ * 	\defgroup   datapolicy     Module data policy
+ *  \brief      Data policy module descriptor.
  *
  *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
@@ -29,13 +29,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 // The class name should start with a lower case mod for Dolibarr to pick it up
-// so we ignore the Squiz.Classes.ValidClassName.NotCamelCaps rule.
+// so we ignore the Squiz.Class.ValidClassName.NotCamelCaps rule.
 // @codingStandardsIgnoreStart
 /**
  *  Description and activation class for module datapolicy
  */
-class modDataPolicy extends DolibarrModules {
-
+class modDataPolicy extends DolibarrModules
+{
 	// @codingStandardsIgnoreEnd
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
@@ -75,23 +75,13 @@ class modDataPolicy extends DolibarrModules {
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'lock';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /datapolicy/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /datapolicy/core/modules/barcode)
 		// for specific css file (eg: /datapolicy/css/datapolicy.css.php)
-		$this->module_parts = array(
-			'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
-			'login' => 0, // Set this to 1 if module has its own login method file (core/login)
-			'substitutions' => 0, // Set this to 1 if module has its own substitution function file (core/substitutions)
-			'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
-			'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
-			'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
-			'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
-			'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
-			'hooks' => array('data' => array('membercard', 'contactcard', 'thirdpartycard'), 'entity' => $conf->entity)  // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		);
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/datapolicy/temp","/datapolicy/subdir");
@@ -131,7 +121,7 @@ class modDataPolicy extends DolibarrModules {
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
-		$country = explode(":", empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) ? '' : $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+		//$country = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 
 		// Some keys to add into the overwriting translation tables
 		/* $this->overwrite_translation = array(
@@ -160,7 +150,7 @@ class modDataPolicy extends DolibarrModules {
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -186,7 +176,7 @@ class modDataPolicy extends DolibarrModules {
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
+			0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => 'isModEnabled("datapolicy")'),
 		);
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)

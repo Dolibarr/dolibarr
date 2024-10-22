@@ -21,6 +21,7 @@ create table llx_facture_fourn_rec
     titre                       varchar(200)        NOT NULL,
     ref_supplier			    varchar(180) NOT NULL,
     entity                      integer   DEFAULT 1 NOT NULL,                                    -- multi company id
+    subtype				        smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
     fk_soc                      integer             NOT NULL,
 
     datec                       datetime,                                                        -- date de creation

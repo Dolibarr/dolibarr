@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ if (isModEnabled('holiday')) {
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks('hrmindex');
@@ -61,18 +61,18 @@ $hookmanager->initHooks('hrmindex');
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 // Get Parameters
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 
 // Protection if external user
 if ($user->socid > 0) {
 	accessforbidden();
 }
 
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	$setupcompanynotcomplete = 1;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -89,6 +89,8 @@ if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
 /*
  * View
  */
+
+$listofsearchfields = array();
 
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
@@ -110,18 +112,23 @@ if (!empty($setupcompanynotcomplete)) {
 }
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	if (isModEnabled('holiday') && $user->rights->holiday->read) {
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
+
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This is useless due to the global search combo
+	if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
 	}
-	if (isModEnabled('deplacement') && $user->rights->deplacement->lire) {
+	if (isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')) {
 		$langs->load("trips");
 		$listofsearchfields['search_deplacement'] = array('text'=>'ExpenseReport');
 	}
-	if (isModEnabled('expensereport') && $user->rights->expensereport->lire) {
+	if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
 		$langs->load("trips");
 		$listofsearchfields['search_expensereport'] = array('text'=>'ExpenseReport');
 	}
@@ -152,14 +159,14 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 
 
 if (isModEnabled('holiday')) {
-	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+	if (!getDolGlobalString('HOLIDAY_HIDE_BALANCE')) {
 		$holidaystatic = new Holiday($db);
 		$user_id = $user->id;
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
 		print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven nohover">';
 		print '<td>';
 
 		$out = '';
@@ -177,25 +184,24 @@ if (isModEnabled('holiday')) {
 		print '</td>';
 		print '</tr>';
 		print '</table></div><br>';
-	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
-		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
+	} elseif (!is_numeric(getDolGlobalString('HOLIDAY_HIDE_BALANCE'))) {
+		print $langs->trans(getDolGlobalString('HOLIDAY_HIDE_BALANCE')).'<br>';
 	}
 }
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
-
-// Latest leave requests
+// Latest modified leave requests
 if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.gender, u.statut as user_status,";
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->holiday->readall)) {
-		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+	if (!$user->hasRight('holiday', 'readall')) {
+		$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
@@ -210,7 +216,13 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$holidaystatic = new Holiday($db);
 		$userstatic = new User($db);
 
-		$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+		$listhalfday = array(
+			'morning'=>$langs->trans("Morning"),
+			'morningshort'=>$langs->trans("Morning"),
+			"afternoon"=>$langs->trans("Afternoon"),
+			"afternoonshort"=>$langs->trans("Afternoon")
+		);
+
 		$typeleaves = $holidaystatic->getTypes(1, -1);
 
 		$i = 0;
@@ -218,18 +230,25 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
-		print '<th>'.$langs->trans("from").'</th>';
-		print '<th>'.$langs->trans("to").'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num));
+		print '<a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		print '</a>';
+		print '</th>';
+		print '<th></th>';
+		print '<th></th>';
+		print '<th></th>';
+		print '<th class="right">';
+		print '</th>';
 		print '</tr>';
+
 		if ($num) {
 			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($result);
 
 				$holidaystatic->id = $obj->rowid;
 				$holidaystatic->ref = $obj->ref;
-				$holidaystatic->statut = $obj->status;
+				$holidaystatic->status = $obj->status;
 				$holidaystatic->date_debut = $db->jdate($obj->date_start);
 
 				$userstatic->id = $obj->uid;
@@ -238,7 +257,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$userstatic->login = $obj->login;
 				$userstatic->photo = $obj->photo;
 				$userstatic->email = $obj->email;
-				$userstatic->statut = $obj->user_status;
+				$userstatic->gender = $obj->gender;
 				$userstatic->status = $obj->user_status;
 
 				print '<tr class="oddeven">';
@@ -251,9 +270,17 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td class="tdoverflowmax125 center lineheightsmall">'.dol_print_date($db->jdate($obj->date_start), 'dayreduceformat');
+				print '<br><span class="opacitymedium small" title="'.dolPrintHTML($langs->trans($listhalfday[$starthalfday])).'">';
+				$labelshort = $langs->trans($listhalfday[$starthalfday.'short']) != $listhalfday[$starthalfday.'short'] ? $langs->trans($listhalfday[$starthalfday.'short']) : $langs->trans($listhalfday[$starthalfday]);
+				print $labelshort;
+				print '</span>';
+				print '<td class="tdoverflowmax125 center lineheightsmall">'.dol_print_date($db->jdate($obj->date_end), 'dayreduceformat');
+				print '<br><span class="opacitymedium small" title="'.dolPrintHTML($langs->trans($listhalfday[$endhalfday])).'">';
+				$labelshort = $langs->trans($listhalfday[$endhalfday.'short']) != $listhalfday[$endhalfday.'short'] ? $langs->trans($listhalfday[$endhalfday.'short']) : $langs->trans($listhalfday[$starthalfday]);
+				print $labelshort;
+				print '</span>';
+				print '<td class="right" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($obj->dm), 'dayhourreduceformat').'">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
@@ -271,16 +298,16 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 }
 
 
-// Latest expense report
+// Latest modified expense report
 if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
-	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo, u.gender,";
+	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ht, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
-		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
+	if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
+		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
@@ -296,13 +323,20 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
-		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num));
+		print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		//print img_picto($langs->trans("FullList"), 'expensereport');
+		print '</a>';
+		print '</th>';
+		print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th></th>';
+		print '<th class="right">';
+		print '</th>';
 		print '</tr>';
-		if ($num) {
-			$total_ttc = $totalam = $total = 0;
 
+		if ($num) {
 			$expensereportstatic = new ExpenseReport($db);
 			$userstatic = new User($db);
 			while ($i < $num && $i < $max) {
@@ -318,14 +352,16 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
 				$userstatic->login = $obj->login;
-				$userstatic->statut = $obj->user_status;
+				$userstatic->status = $obj->user_status;
+				$userstatic->gender = $obj->gender;
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="right amount">'.price($obj->total_ht).'</td>';
 				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
@@ -351,11 +387,11 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -374,8 +410,14 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">';
 		print $langs->trans("BoxTitleLatestModifiedCandidatures", min($max, $num));
+		print '<a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		//print img_picto($langs->trans("FullList"), 'recruitmentcandidature');
+		print '</a>';
 		print '</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right">';
+		print '</th>';
 		print '</tr>';
 		if ($num) {
 			while ($i < $num) {
@@ -396,7 +438,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
 				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";
@@ -406,7 +448,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";
@@ -416,9 +458,9 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	}
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardHRM', $parameters, $object); // Note that $action and $object may have been modified by hook
 

@@ -37,8 +37,8 @@ create table llx_entrepot
   fax             varchar(20),                  -- fax number
   barcode         varchar(180) DEFAULT NULL,          -- barcode
   fk_barcode_type integer      DEFAULT NULL,          -- barcode type
-  warehouse_usage integer DEFAULT 1,            -- 1=internal, 2=external (virtual warehouse or stock out of company)           
-  statut          tinyint DEFAULT 1,			-- 1 open, 0 close
+  warehouse_usage integer DEFAULT 1,            -- 1=internal, 2=external (virtual warehouse or stock out of company). Need STOCK_USE_WAREHOUSE_USAGE opton.
+  statut          tinyint DEFAULT 1,			-- 1 open, 0 close. If option ENTREPOT_EXTRA_STATUS is set, value 2 means open for internal move only/close for external mode.
   fk_user_author  integer,
   model_pdf       varchar(255),
   import_key	  varchar(14),

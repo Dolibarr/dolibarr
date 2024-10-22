@@ -32,6 +32,7 @@ PRINTIPP_HOST=Drukas serveris
 PRINTIPP_PORT=Ports
 PRINTIPP_USER=Pieslēgties
 PRINTIPP_PASSWORD=Parole
+PRINTIPP_SSL=Izmantojiet SSL
 NoDefaultPrinterDefined=Nav definēts noklusējuma printeris
 DefaultPrinter=Noklusējuma printeris
 Printer=Printeris
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cl
 PrintingDriverDescprintipp=Konfigurācijas mainīgie drukāšanas vadītāja krūzes.
 PrintTestDescprintgcp=Google mākoņdrukas printeru saraksts.
 PrintTestDescprintipp=CUPS printeru saraksts.
+Testbbbb

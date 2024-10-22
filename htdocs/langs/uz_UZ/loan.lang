@@ -23,12 +23,12 @@ AddLoan=Kredit yaratish
 FinancialCommitment=Moliyaviy majburiyat
 InterestAmount=Qiziqish
 CapitalRemain=Kapital qoladi
-TermPaidAllreadyPaid = Ushbu muddat allaqachon to'langan
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = Bu muddat allaqachon to'langan
+CantUseScheduleWithLoanStartedToPaid = Toʻlov boshlangan kredit uchun vaqt jadvalini yaratib boʻlmadi
 CantModifyInterestIfScheduleIsUsed = Agar jadvaldan foydalansangiz, foizlarni o'zgartira olmaysiz
 # Admin
 ConfigLoan=Modulli kreditni sozlash
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapital uchun sukut bo'yicha foydalaniladigan hisob (hisob jadvalidan) (qarz moduli)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Foizlar uchun sukut bo'yicha foydalaniladigan hisob (Hisob jadvalidan) (qarz moduli)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Sug'urtalash uchun sukut bo'yicha foydalaniladigan hisob (hisob jadvalidan) (qarz moduli)
 CreateCalcSchedule=Moliyaviy majburiyatni tahrirlash

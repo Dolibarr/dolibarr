@@ -58,7 +58,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
-		 setEventMessages($db->lasterror(), null, 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
 
@@ -101,7 +101,7 @@ print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('CATEGORIE_RECURSIV_ADD');
 } else {
-	if (empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+	if (!getDolGlobalString('CATEGORIE_RECURSIV_ADD')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

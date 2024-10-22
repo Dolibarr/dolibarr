@@ -16,8 +16,8 @@ ThisService=Huduma hii
 ThisProduct=Bidhaa hii
 DefaultForService=Chaguomsingi kwa huduma
 DefaultForProduct=Chaguomsingi kwa bidhaa
-ProductForThisThirdparty=Bidhaa kwa wahusika wengine
-ServiceForThisThirdparty=Huduma kwa wahusika wengine
+ProductForThisThirdparty=Product for this third party
+ServiceForThisThirdparty=Service for this third party
 CantSuggest=Haiwezi kupendekeza
 AccountancySetupDoneFromAccountancyMenu=Usanidi mwingi wa uhasibu hufanywa kutoka kwa menyu %s
 ConfigAccountingExpert=Usanidi wa uhasibu wa moduli (ingizo mara mbili)
@@ -38,7 +38,7 @@ DeleteCptCategory=Ondoa akaunti ya uhasibu kutoka kwa kikundi
 ConfirmDeleteCptCategory=Je, una uhakika unataka kuondoa akaunti hii ya uhasibu kutoka kwa kikundi cha akaunti ya uhasibu?
 JournalizationInLedgerStatus=Hali ya uandishi wa habari
 AlreadyInGeneralLedger=Tayari kuhamishiwa majarida ya uhasibu na leja
-NotYetInGeneralLedger=Bado haijahamishwa kwa majarida na leja ya uhasibu
+NotYetInGeneralLedger=Not yet transferred to accounting journals and ledger
 GroupIsEmptyCheckSetup=Kikundi ni tupu, angalia usanidi wa kikundi cha uhasibu kilichobinafsishwa
 DetailByAccount=Onyesha maelezo kwa akaunti
 DetailBy=Maelezo na
@@ -53,30 +53,26 @@ ExportAccountingSourceDocHelp=Ukiwa na zana hii, unaweza kutafuta na kuhamisha m
 ExportAccountingSourceDocHelp2=Ili kuhamisha majarida yako, tumia ingizo la menyu %s - %s.
 ExportAccountingProjectHelp=Bainisha mradi ikiwa unahitaji ripoti ya uhasibu kwa mradi mahususi pekee. Ripoti za gharama na malipo ya mkopo hazijajumuishwa katika ripoti za mradi.
 ExportAccountancy=Uhasibu wa kuuza nje
-WarningDataDisappearsWhenDataIsExported=Onyo, orodha hii ina maingizo ya uhasibu pekee ambayo hayajahamishwa (Tarehe ya uhamishaji ni tupu). Ikiwa ungependa kujumuisha maingizo ya uhasibu ambayo tayari yamehamishwa ili kuyasafirisha tena, bofya kitufe kilicho hapo juu.
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=Tazama kwa akaunti ya uhasibu
 VueBySubAccountAccounting=Tazama kwa akaunti ndogo ya uhasibu
 
 MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
 MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
 MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Akaunti ya uhasibu kwa mtumiaji haijafafanuliwa katika usanidi
-
 AccountancyArea=Eneo la uhasibu
 AccountancyAreaDescIntro=Matumizi ya moduli ya uhasibu hufanywa kwa hatua kadhaa:
 AccountancyAreaDescActionOnce=Vitendo vifuatavyo kwa kawaida hutekelezwa mara moja tu, au mara moja kwa mwaka...
-AccountancyAreaDescActionOnceBis=Hatua zinazofuata zinapaswa kufanywa ili kuokoa muda katika siku zijazo kwa kukupendekezea kiotomatiki akaunti sahihi ya uhasibu chaguomsingi wakati wa kuhamisha data katika uhasibu.
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Hatua zifuatazo kwa kawaida hutekelezwa kila mwezi, wiki au siku kwa makampuni makubwa sana...
-
 AccountancyAreaDescJournalSetup=STEP %s: Angalia maudhui ya orodha yako ya jarida kutoka kwenye menyu %s
 AccountancyAreaDescChartModel=STEP %s: Hakikisha kuwa kuna muundo wa chati ya akaunti au uunde kutoka kwa menyu %s
 AccountancyAreaDescChart=STEP %s: Chagua na|au ukamilishe chati yako ya akaunti kutoka kwenye menyu %s
-
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=STEP %s: Bainisha akaunti za uhasibu kwa kila Viwango vya VAT. Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescDefault=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu. Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescExpenseReport=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu kwa kila aina ya ripoti ya Gharama. Kwa hili, tumia ingizo la menyu %s.
@@ -84,19 +80,18 @@ AccountancyAreaDescSal=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu kwa ma
 AccountancyAreaDescContrib=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu za Kodi (gharama maalum). Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescDonation=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu kwa mchango. Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescSubscription=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu kwa usajili wa wanachama. Kwa hili, tumia ingizo la menyu %s.
-AccountancyAreaDescMisc=STEP %s: Bainisha akaunti chaguo-msingi ya lazima na akaunti chaguo-msingi za uhasibu kwa shughuli mbalimbali. Kwa hili, tumia ingizo la menyu %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Bainisha akaunti chaguo-msingi za uhasibu za mikopo. Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescBank=STEP %s: Bainisha akaunti za uhasibu na msimbo wa jarida kwa kila benki na akaunti za fedha. Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescProd=STEP %s: Bainisha akaunti za uhasibu kwenye Bidhaa/Huduma zako. Kwa hili, tumia ingizo la menyu %s.
-
 AccountancyAreaDescBind=STEP %s: Angalia ufungaji kati ya %s iliyopo mistari na akaunti ya uhasibu imefanywa, kwa hivyo programu itaweza kuandika shughuli kwenye Ledger kwa mbofyo mmoja. Kamilisha vifungo vilivyokosekana. Kwa hili, tumia ingizo la menyu %s.
 AccountancyAreaDescWriteRecords=STEP %s: Andika miamala kwenye Leja. Ili kufanya hivyo, nenda kwenye menyu <strong> %s </strong> , na ubofye kitufe cha <strong> %s </strong> .
-AccountancyAreaDescAnalyze=STEP %s: Ongeza au hariri miamala iliyopo na uzalishe ripoti na mauzo ya nje.
-
-AccountancyAreaDescClosePeriod=STEP %s: Funga kipindi ili tusiweze kufanya marekebisho katika siku zijazo.
-
+AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
+TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Hatua ya lazima ya usanidi haijakamilika (jarida la kanuni za uhasibu halijafafanuliwa kwa akaunti zote za benki)
 Selectchartofaccounts=Chagua chati inayotumika ya akaunti
+CurrentChartOfAccount=Current active chart of account
 ChangeAndLoad=Badilisha na upakie
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Data inayotumika kupendekeza akaunti
 AccountAccountingSuggest=Akaunti ilipendekezwa
 MenuDefaultAccounts=Akaunti chaguo-msingi
 MenuBankAccounts=Akaunti za benki
-MenuVatAccounts=Akaunti za Vat
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Akaunti za ushuru
 MenuExpenseReportAccounts=Hesabu za ripoti ya gharama
 MenuLoanAccounts=Akaunti za mkopo
@@ -144,8 +139,6 @@ ExpenseReportLines=Mistari ya ripoti za gharama za kufunga
 ExpenseReportLinesDone=Mistari iliyofungwa ya ripoti za gharama
 IntoAccount=Unganisha mstari na akaunti ya uhasibu
 TotalForAccount=Jumla ya akaunti ya hesabu
-
-
 Ventilate=Funga
 LineId=Mstari wa kitambulisho
 Processing=Processing
@@ -158,22 +151,21 @@ VentilatedinAccount=Imeunganishwa kwa ufanisi kwenye akaunti ya uhasibu
 NotVentilatedinAccount=Haifungamani na akaunti ya uhasibu
 XLineSuccessfullyBinded=%s bidhaa/huduma zimefungwa kwa akaunti ya uhasibu
 XLineFailedToBeBinded=%s bidhaa/huduma hazikuwa zimefungwa kwa akaunti yoyote ya uhasibu
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Idadi ya juu zaidi ya mistari kwenye orodha na ukurasa wa kufunga (inapendekezwa: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Anza upangaji wa ukurasa "Kufunga kufanya" kwa vipengele vya hivi karibuni
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Anza kupanga ukurasa "Kufunga kumefanywa" kwa vipengele vya hivi karibuni
-
 ACCOUNTING_LENGTH_DESCRIPTION=Punguza maelezo ya bidhaa na huduma katika uorodheshaji baada ya herufi x (Bora = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Punguza fomu ya maelezo ya akaunti ya bidhaa na huduma katika uorodheshaji baada ya herufi x (Bora = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Urefu wa akaunti za jumla za uhasibu (Ukiweka thamani hadi 6 hapa, akaunti '706' itaonekana kama '706000' kwenye skrini)
 ACCOUNTING_LENGTH_AACCOUNT=Urefu wa akaunti za wahusika wengine (Ukiweka thamani hadi 6 hapa, akaunti '401' itaonekana kama '401000' kwenye skrini)
 ACCOUNTING_MANAGE_ZERO=Ruhusu kudhibiti idadi tofauti ya sufuri mwishoni mwa akaunti ya uhasibu. Inahitajika na baadhi ya nchi (kama Uswizi). Ikiwa imezimwa (chaguo-msingi), unaweza kuweka vigezo viwili vifuatavyo ili kuomba programu kuongeza sufuri pepe.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Zima rekodi ya moja kwa moja ya shughuli katika akaunti ya benki
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Washa uhamishaji wa rasimu kwenye jarida
 ACCOUNTANCY_COMBO_FOR_AUX=Washa orodha ya mchanganyiko kwa akaunti tanzu (inaweza kuwa polepole ikiwa una washirika wengi, vunja uwezo wa kutafuta kwa sehemu ya thamani)
-ACCOUNTING_DATE_START_BINDING=Bainisha tarehe ya kuanza kushurutisha na kuhamisha katika uhasibu. Chini ya tarehe hii, shughuli hazitahamishwa kwa uhasibu.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Kwenye uhamishaji wa hesabu, ni kipindi gani kilichochaguliwa kwa chaguo-msingi
-
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 ACCOUNTING_SELL_JOURNAL=Jarida la mauzo - mauzo na mapato
 ACCOUNTING_PURCHASE_JOURNAL=Jarida la ununuzi - ununuzi na urejeshaji
 ACCOUNTING_BANK_JOURNAL=Jarida la pesa - risiti na malipo
@@ -182,38 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Jarida la jumla
 ACCOUNTING_HAS_NEW_JOURNAL=Ina Jarida jipya
 ACCOUNTING_INVENTORY_JOURNAL=Jarida la hesabu
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-
 ACCOUNTING_RESULT_PROFIT=Akaunti ya uhasibu ya matokeo (Faida)
 ACCOUNTING_RESULT_LOSS=Akaunti ya uhasibu ya matokeo (Hasara)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Jarida la kufungwa
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti ya uhamisho wa mpito wa benki
 TransitionalAccount=Akaunti ya mpito ya uhamisho wa benki
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti ya fedha ambazo hazijatengwa ama zilizopokelewa au kulipwa, yaani, fedha katika "kusubiri[ing]"
 DONATION_ACCOUNTINGACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kusajili michango (moduli ya mchango)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kusajili usajili wa wanachama (Njia ya Uanachama - ikiwa uanachama umerekodiwa bila ankara)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Akaunti (kutoka Chati ya Akaunti) itatumika kama akaunti chaguo-msingi ya kusajili amana ya mteja
 UseAuxiliaryAccountOnCustomerDeposit=Hifadhi akaunti ya mteja kama akaunti ya kibinafsi katika leja tanzu kwa njia za malipo ya chini (ikiwa imezimwa, akaunti ya mtu binafsi ya njia za malipo ya chini itasalia tupu)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama chaguomsingi
 UseAuxiliaryAccountOnSupplierDeposit=Hifadhi akaunti ya mtoa huduma kama akaunti ya mtu binafsi katika leja tanzu kwa njia za malipo ya chini (ikiwa imezimwa, akaunti ya mtu binafsi ya njia za malipo ya chini itasalia tupu)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Akaunti ya uhasibu kwa chaguo-msingi ili kusajili dhamana ya mteja iliyobaki
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya bidhaa zinazonunuliwa katika nchi moja (inatumika ikiwa haijafafanuliwa kwenye laha ya bidhaa)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya bidhaa zinazonunuliwa kutoka EEC hadi nchi nyingine ya EEC (inatumika ikiwa haijafafanuliwa katika laha ya bidhaa)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya bidhaa zilizonunuliwa na kuagizwa kutoka nchi nyingine yoyote ya kigeni (inatumika ikiwa haijafafanuliwa kwenye laha ya bidhaa)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya bidhaa zinazouzwa (inatumika ikiwa haijafafanuliwa kwenye laha ya bidhaa)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya bidhaa zinazouzwa kutoka EEC hadi nchi nyingine ya EEC (inatumika ikiwa haijafafanuliwa katika laha ya bidhaa)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya bidhaa zinazouzwa na kusafirishwa hadi nchi nyingine yoyote ya kigeni (inatumika ikiwa haijafafanuliwa kwenye laha ya bidhaa)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya huduma zinazonunuliwa katika nchi moja (inatumika ikiwa haijafafanuliwa kwenye laha ya huduma)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya huduma zinazonunuliwa kutoka EEC hadi nchi nyingine ya EEC (inatumika ikiwa haijafafanuliwa katika laha ya huduma)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya huduma zinazonunuliwa na kuagizwa kutoka nchi nyingine za kigeni (inatumika ikiwa haijafafanuliwa kwenye laha ya huduma)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya huduma zinazouzwa (inatumika ikiwa haijafafanuliwa kwenye laha ya huduma)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya huduma zinazouzwa kutoka EEC hadi nchi nyingine ya EEC (inatumika ikiwa haijafafanuliwa katika laha ya huduma)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kama akaunti chaguo-msingi ya huduma zinazouzwa na kusafirishwa kwa nchi nyingine yoyote ya kigeni (inatumika ikiwa haijafafanuliwa kwenye laha ya huduma)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -235,7 +222,6 @@ AccountingAccountGroupsDesc=Unaweza kufafanua hapa baadhi ya vikundi vya akaunti
 ByAccounts=Kwa hesabu
 ByPredefinedAccountGroups=Kwa vikundi vilivyoainishwa
 ByPersonalizedAccountGroups=Kwa vikundi vilivyobinafsishwa
-ByYear=Kwa mwaka
 NotMatch=Haijawekwa
 DeleteMvt=Futa baadhi ya mistari kutoka kwa uhasibu
 DelMonth=Mwezi wa kufuta
@@ -274,41 +260,34 @@ OpeningBalance=Kufungua usawa
 ShowOpeningBalance=Onyesha usawa wa ufunguzi
 HideOpeningBalance=Ficha usawa wa ufunguzi
 ShowSubtotalByGroup=Onyesha jumla ndogo kwa kiwango
-
 Pcgtype=Kundi la akaunti
 PcgtypeDesc=Kikundi cha akaunti kinatumika kama 'kichujio' kilichofafanuliwa awali na vigezo vya 'kupanga' kwa baadhi ya ripoti za uhasibu. Kwa mfano, 'KIPATO' au 'GHARAMA' hutumika kama vikundi vya hesabu za bidhaa ili kuunda ripoti ya gharama/mapato.
 AccountingCategoriesDesc=Kikundi maalum cha akaunti kinaweza kutumika kupanga akaunti za uhasibu katika jina moja ili kurahisisha matumizi ya kichujio au uundaji wa ripoti maalum.
-
 Reconcilable=Inapatanishwa
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=Rejelea hapa orodha ya ankara za wateja zinazofungamana (au la) kwa akaunti ya bidhaa kutoka chati ya akaunti
 DescVentilMore=Katika hali nyingi, ikiwa unatumia bidhaa au huduma zilizoainishwa awali na ukaweka akaunti (kutoka chati ya akaunti) kwenye kadi ya bidhaa/huduma, programu itaweza kufanya ufungaji wote kati ya ankara zako na akaunti ya uhasibu ya chati yako ya akaunti, kwa kubofya mara moja tu kitufe cha <strong> "%s" </strong> . Ikiwa akaunti haikuwekwa kwenye kadi za bidhaa/huduma au kama bado una baadhi ya laini ambazo hazijafungwa kwa akaunti, itabidi ufanye ufungaji wa mikono kutoka kwenye menyu " <strong> %s </strong> ".
 DescVentilDoneCustomer=Angalia hapa orodha ya laini za ankara za wateja na akaunti ya bidhaa zao kutoka kwa chati ya akaunti
 DescVentilTodoCustomer=Unganisha ankara ambazo tayari hazijafungwa na akaunti ya bidhaa kutoka chati ya akaunti
 ChangeAccount=Badilisha akaunti ya bidhaa/huduma (kutoka chati ya akaunti) kwa laini zilizochaguliwa na akaunti ifuatayo:
 Vide=-
-DescVentilSupplier=Rejelea hapa orodha ya ankara za wauzaji zinazofungwa au ambazo bado hazijafungwa kwa akaunti ya bidhaa kutoka chati ya akaunti (rekodi pekee ambayo haijahamishwa katika uhasibu ndiyo inayoonekana)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=Angalia hapa orodha ya mistari ya ankara za wauzaji na akaunti zao za uhasibu
 DescVentilTodoExpenseReport=Unganisha mistari ya ripoti ya gharama ambayo tayari haijafungwa na akaunti ya uhasibu wa ada
 DescVentilExpenseReport=Angalia hapa orodha ya mistari ya ripoti ya gharama inayofungamana (au la) kwa akaunti ya uhasibu wa ada
 DescVentilExpenseReportMore=Ukisanidi akaunti ya uhasibu kwa aina ya njia za ripoti ya gharama, programu itaweza kuweka masharti yote kati ya njia zako za ripoti ya gharama na akaunti ya uhasibu ya chati yako ya akaunti, kwa kubofya mara moja tu kitufe cha <strong> "%s" </strong> . Ikiwa akaunti haikuwekwa kwenye kamusi ya ada au ikiwa bado una baadhi ya laini ambazo hazijafungwa kwa akaunti yoyote, itabidi uunde kibali kutoka kwa menyu " <strong> %s </strong> ".
 DescVentilDoneExpenseReport=Angalia hapa orodha ya mistari ya ripoti za gharama na akaunti ya uhasibu wa ada
-
 Closure=Kufungwa kwa mwaka
-DescClosure=Angalia hapa idadi ya miondoko kwa mwezi ambayo bado haijathibitishwa na kufungwa
-OverviewOfMovementsNotValidated=Muhtasari wa harakati ambazo hazijathibitishwa na kufungwa
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=Vitendo vyote vilirekodiwa kama vilivyothibitishwa na kufungwa
 NotAllMovementsCouldBeRecordedAsValidated=Sio miondoko yote ingeweza kurekodiwa kama iliyothibitishwa na kufungwa
 ValidateMovements=Thibitisha na funga harakati
 DescValidateMovements=Marekebisho yoyote au ufutaji wa maandishi, uandishi na ufutaji utapigwa marufuku. Maingizo yote ya zoezi lazima yathibitishwe la sivyo kufungwa hakutawezekana
-
 ValidateHistory=Funga Kiotomatiki
 AutomaticBindingDone=Ufungaji otomatiki umefanywa (%s) - Kufunga kiotomatiki haiwezekani kwa baadhi ya rekodi (%s)
 DoManualBindingForFailedRecord=Inabidi ufanye kiungo cha mwongozo cha %s safu mlalo hazijaunganishwa kiotomatiki.
-
 ErrorAccountancyCodeIsAlreadyUse=Hitilafu, huwezi kuondoa au kuzima akaunti hii ya chati ya akaunti kwa sababu inatumika
 MvtNotCorrectlyBalanced=Mwendo haujasawazishwa kwa usahihi. Debit = %s & Credit = %s
 Balancing=Kusawazisha
@@ -321,19 +300,18 @@ ChangeBinding=Badilisha mshikamano
 Accounted=Imehesabiwa katika daftari
 NotYetAccounted=Bado haijahamishwa kwa uhasibu
 ShowTutorial=Onyesha Mafunzo
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Haijapatanishwa
 WarningRecordWithoutSubledgerAreExcluded=Onyo, laini zote zisizo na akaunti ndogo iliyofafanuliwa huchujwa na kutengwa kwenye mwonekano huu
 AccountRemovedFromCurrentChartOfAccount=Akaunti ya uhasibu ambayo haipo katika chati ya sasa ya akaunti
-
 ## Admin
-BindingOptions=Chaguzi za kumfunga
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Tumia kategoria za misa
 AddAccountFromBookKeepingWithNoCategories=Akaunti inayopatikana bado haijajumuishwa katika kikundi kilichobinafsishwa
 CategoryDeleted=Kitengo cha akaunti ya uhasibu kimeondolewa
 AccountingJournals=Majarida ya uhasibu
 AccountingJournal=Jarida la uhasibu
 NewAccountingJournal=Jarida jipya la uhasibu
-ShowAccountingJournal=Onyesha jarida la uhasibu
 NatureOfJournal=Asili ya Jarida
 AccountingJournalType1=Shughuli mbalimbali
 AccountingJournalType2=Mauzo
@@ -341,7 +319,7 @@ AccountingJournalType3=Ununuzi
 AccountingJournalType4=Benki
 AccountingJournalType5=Ripoti za gharama
 AccountingJournalType8=Malipo
-AccountingJournalType9=Ina-mpya
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Uzalishaji wa maingizo ya uhasibu
 ErrorAccountingJournalIsAlreadyUse=Jarida hili tayari linatumika
 AccountingAccountForSalesTaxAreDefinedInto=Kumbuka: Akaunti ya uhasibu ya kodi ya Mauzo imefafanuliwa katika menyu <b> %s </b>  - <b> %s </b> 
@@ -352,13 +330,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Zima ufungaji na uhamisho katika uhasibu
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Zima ufungaji na uhamishaji katika uhasibu kwenye ripoti za gharama (ripoti za gharama hazitazingatiwa katika uhasibu)
 ACCOUNTING_ENABLE_LETTERING=Washa kipengele cha uandishi katika uhasibu
 ACCOUNTING_ENABLE_LETTERING_DESC=Chaguo hizi zikiwashwa, unaweza kufafanua, kwenye kila ingizo la uhasibu, msimbo ili uweze kupanga harakati tofauti za uhasibu pamoja. Hapo awali, wakati majarida tofauti yalisimamiwa kwa kujitegemea, kipengele hiki kilikuwa muhimu ili kuunganisha mistari ya harakati ya majarida tofauti. Hata hivyo, kwa uhasibu wa Dolibarr, msimbo kama huo wa ufuatiliaji, unaoitwa " <b> %s </b> "Tayari imehifadhiwa kiatomati, kwa hivyo uandishi wa kiotomatiki tayari umefanywa, bila hatari ya makosa kwa hivyo kipengele hiki kimekuwa bure kwa matumizi ya kawaida. Kipengele cha uandishi wa mwongozo hutolewa kwa watumiaji wa mwisho ambao hawaamini injini ya kompyuta inayofanya uhamishaji wa data katika uhasibu.
-EnablingThisFeatureIsNotNecessary=Kuwasha kipengele hiki si lazima tena kwa usimamizi mkali wa uhasibu.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Washa uandishi wa kiotomatiki wakati wa kuhamisha kwa uhasibu
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Msimbo wa uandishi huzalishwa kiotomatiki na kuongezwa na sio kuchaguliwa na mtumiaji wa mwisho
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
+ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
 OptionsAdvanced=Chaguzi za hali ya juu
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Wezesha udhibiti wa malipo ya VAT kwa ununuzi wa wasambazaji
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Chaguo hili likiwashwa, unaweza kufafanua kuwa msambazaji au ankara ya mchuuzi aliyepewa lazima ihamishwe kwenye uhasibu kwa njia tofauti: Debiti ya ziada na laini ya mkopo itatolewa katika uhasibu kwenye akaunti 2 zilizotolewa kutoka kwa chati ya akaunti iliyofafanuliwa katika "<span class='notranslate'>%s\n" ukurasa wa kuanzisha.
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ## Export
 NotExportLettering=Usihamishe maandishi wakati wa kuunda faili
 NotifiedExportDate=Alamisha mistari ambayo bado haijatumwa kama Imetumwa <span class="warning"> (ili kurekebisha laini iliyoalamishwa kama imehamishwa, utahitaji kufuta muamala wote na kuuhamishia tena kwenye hesabu) </span> 
@@ -368,7 +347,7 @@ DateValidationAndLock=Uthibitishaji wa tarehe na kufuli
 ConfirmExportFile=Uthibitishaji wa utengenezaji wa faili ya uhasibu ya kuuza nje?
 ExportDraftJournal=Hamisha rasimu ya jarida
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Usafirishaji kwa Mtaalam wa CEGID Comptabilité
 Modelcsv_COALA=Hamisha kwa Sage Coala
@@ -390,7 +369,6 @@ Modelcsv_Gestinumv3=Hamisha kwa Gestinum (v3)
 Modelcsv_Gestinumv5=Hamisha kwa Gestinum (v5)
 Modelcsv_charlemagne=Hamisha kwa Aplim Charlemagne
 ChartofaccountsId=Chati ya akaunti Id
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Anzisha uhasibu
 InitAccountancyDesc=Ukurasa huu unaweza kutumika kuanzisha akaunti ya uhasibu kwenye bidhaa na huduma ambazo hazina akaunti ya uhasibu iliyobainishwa kwa mauzo na ununuzi.
@@ -420,17 +398,18 @@ SaleLocal=Uuzaji wa ndani
 SaleExport=Uuzaji wa kuuza nje
 SaleEEC=Inauzwa katika EEC
 SaleEECWithVAT=Uuzaji katika EEC na VAT sio batili, kwa hivyo tunadhani hii SIO mauzo ya ndani ya jumuiya na akaunti iliyopendekezwa ni akaunti ya kawaida ya bidhaa.
-SaleEECWithoutVATNumber=Inauzwa katika EEC bila VAT lakini Kitambulisho cha VAT cha wahusika wengine hakijabainishwa. Tunarudi kwenye akaunti kwa mauzo ya kawaida. Unaweza kurekebisha Kitambulisho cha VAT cha wahusika wengine, au kubadilisha akaunti ya bidhaa iliyopendekezwa ili kufungwa ikihitajika.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Hairuhusiwi: Muamala umeidhinishwa na/au kuhamishwa.
 ForbiddenTransactionAlreadyValidated=Hairuhusiwi: Muamala umeidhinishwa.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Mfululizo wa akaunti ya uhasibu
 Calculated=Imehesabiwa
 Formula=Mfumo
-
 ## Reconcile
 LetteringAuto=Patanisha otomatiki
 LetteringManual=Kupatanisha mwongozo
+LetteringPartial=Reconcile partial
 Unlettering=Kutopatanishwa
 UnletteringAuto=Batilishana kiotomatiki
 UnletteringManual=Batilisha mwongozo
@@ -440,17 +419,28 @@ AccountancyLetteringModifiedSuccessfully=%s suluhu imebadilishwa kwa ufanisi
 AccountancyNoUnletteringModified=Hakuna upatanisho uliorekebishwa
 AccountancyOneUnletteringModifiedSuccessfully=Moja ya kutopatanisha imerekebishwa
 AccountancyUnletteringModifiedSuccessfully=%s kubatilisha imebadilishwa kwa ufanisi
-
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
 ## Confirm box
 ConfirmMassUnletteringAuto=Uthibitishaji wa kutenganisha kiotomatiki kwa wingi
 ConfirmMassUnletteringManual=Uthibitishaji wa kutopatanishwa kwa mwongozo wa wingi
 ConfirmMassUnletteringQuestion=Je, una uhakika unataka kubatilisha %s rekodi zilizochaguliwa?
 ConfirmMassDeleteBookkeepingWriting=Uthibitishaji wa Kufuta Wingi
 ConfirmMassDeleteBookkeepingWritingQuestion=Hii itafuta muamala kutoka kwa uhasibu (maingizo yote ya laini yanayohusiana na muamala sawa yatafutwa). Je, una uhakika unataka kufuta %s maingizo yaliyochaguliwa?
-
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Baadhi ya hatua za lazima za usanidi hazijafanywa, tafadhali zikamilishe
-ErrorNoAccountingCategoryForThisCountry=Hakuna kikundi cha akaunti ya uhasibu kinachopatikana kwa nchi %s (Angalia Nyumbani - Mipangilio - Kamusi)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Unajaribu kuorodhesha baadhi ya mistari ya ankara <strong> %s </strong> , lakini njia zingine bado hazijafungwa kwenye akaunti ya uhasibu. Uandishi wa habari wa ankara zote za ankara hii umekataliwa.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Baadhi ya mistari kwenye ankara haifungwi kwenye akaunti ya uhasibu.
 ExportNotSupported=Umbizo la kuhamisha lililowekwa halitumiki katika ukurasa huu
@@ -465,7 +455,9 @@ AccountancyErrorMismatchBalanceAmount=Salio (%s) si sawa na 0
 AccountancyErrorLetteringBookkeeping=Hitilafu zimetokea kuhusu shughuli za malipo: %s
 ErrorAccountNumberAlreadyExists=Nambari ya hesabu %s tayari ipo
 ErrorArchiveAddFile=Haiwezi kuweka "%s"faili kwenye kumbukumbu
-
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 ## Import
 ImportAccountingEntries=Maingizo ya hesabu
 ImportAccountingEntriesFECFormat=Maingizo ya uhasibu - umbizo la FEC
@@ -487,11 +479,9 @@ FECFormatReconcilableDate=Tarehe ya kupatanishwa (DateLet)
 FECFormatValidateDate=Tarehe ya kipande imethibitishwa (Tarehe halali)
 FECFormatMulticurrencyAmount=Kiasi cha fedha nyingi (Montantdevise)
 FECFormatMulticurrencyCode=Msimbo wa sarafu nyingi (Idevise)
-
 DateExport=Tarehe ya kusafirisha
 WarningReportNotReliable=Onyo, ripoti hii haitokani na Leja, kwa hivyo haina miamala iliyorekebishwa kwa mikono kwenye Leja. Ikiwa uandishi wako wa habari umesasishwa, mtazamo wa uwekaji hesabu ni sahihi zaidi.
 ExpenseReportJournal=Jarida la Ripoti ya Gharama
 DocsAlreadyExportedAreIncluded=Hati ambazo tayari zimehamishwa zimejumuishwa
 ClickToShowAlreadyExportedLines=Bofya ili kuonyesha mistari ambayo tayari imetumwa
-
 NAccounts=%s akaunti

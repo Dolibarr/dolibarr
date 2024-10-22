@@ -4,6 +4,7 @@
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
  *  \file       htdocs/core/lib/import.lib.php
- *  \brief      Ensemble de fonctions de base pour le module import
+ *  \brief      Ensemble de functions de base pour le module import
  *  \ingroup    import
  */
 
@@ -31,7 +32,7 @@
  *
  * @param	string		$param		Params to add on url links
  * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
- * @return	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function import_prepare_head($param, $maxstep = 0)
 {

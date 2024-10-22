@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = 知識管理系統
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=管理知識管理 (KM) 或HelpDesk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = 知識管理系統設定
-Settings = 設定
 KnowledgeManagementSetupPage = 知識管理系統設定頁面
-
-
-#
 # About page
-#
-About = 關於
 KnowledgeManagementAbout = 關於知識管理
 KnowledgeManagementAboutPage = 知識管理的關於頁面
-
 KnowledgeManagementArea = 知識管理
 MenuKnowledgeRecord = 知識庫
+MenuKnowledgeRecordShort = 知識庫
 ListKnowledgeRecord = 文章清單
 NewKnowledgeRecord = 新文章
 ValidateReply = 驗證解決方案
@@ -47,8 +33,13 @@ KnowledgeRecord = 文章
 KnowledgeRecordExtraFields = 文章的補充屬性
 GroupOfTicket=服務單群組
 YouCanLinkArticleToATicketCategory=您可以將文章連結至服務單群組（這樣文章將突顯在該群組中的任何服務單上）
-SuggestedForTicketsInGroup=建議的服務單群組
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=設定為已過時
 ConfirmCloseKM=您確定要將此文章關閉並設定為已過時嗎？
 ConfirmReopenKM=您想將此文章恢復到“已驗證”狀態嗎？
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

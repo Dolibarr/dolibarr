@@ -32,6 +32,7 @@ CKEDITOR.editorConfig = function( config )
 	//config.autoParagraph = false;
 	//config.removeFormatTags = 'b,big,code,del,dfn,em,font,i,ins,kbd';		// See also rules on this.dataProcessor.writer.setRules
 	//config.forcePasteAsPlainText = true;
+	config.entities_latin = false;
 
 	config.toolbar_Full =
 	[
@@ -47,7 +48,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink'],
-	    ['Image','Table','HorizontalRule','Smiley','SpecialChar'],
+	    ['Image','Table','HorizontalRule','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']

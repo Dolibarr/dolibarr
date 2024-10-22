@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,15 +51,15 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $SECUREKEY = GETPOST("securekey");
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $backtopage = '';
 $suffix = "";
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -97,8 +99,8 @@ if (empty($conf->recruitment->enabled)) {
  */
 
 $head = '';
-if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('MAIN_RECRUITMENT_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_RECRUITMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -135,10 +137,10 @@ print '<!-- Form to view jobs -->'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+if (getDolGlobalString($paramlogo)) {
+	$logosmall = getDolGlobalString($paramlogo);
+} elseif (getDolGlobalString('ONLINE_RECRUITMENT_LOGO')) {
+	$logosmall = getDolGlobalString('ONLINE_RECRUITMENT_LOGO_');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -157,21 +159,22 @@ if ($urllogo) {
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
 
-if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="' . getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 
 
-$results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
+$params = array();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -185,17 +188,18 @@ if (is_array($results)) {
 
 		foreach ($results as $job) {
 			$object = $job;
+			$arrayofpostulatebutton = array();
 
 			print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 			// Output introduction text
 			$text = '';
-			if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
+			if (getDolGlobalString('RECRUITMENT_NEWFORM_TEXT')) {
 				$reg = array();
 				if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
 					$text .= $langs->trans($reg[1])."<br>\n";
 				} else {
-					$text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+					$text .= getDolGlobalString('RECRUITMENT_NEWFORM_TEXT') . "<br>\n";
 				}
 				$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 			}
@@ -258,10 +262,10 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 			}
 			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 			}
 
 			print '<br>';
@@ -272,6 +276,17 @@ if (is_array($results)) {
 			print $text;
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
+			$arrayofpostulatebutton[] = array(
+				'url' => '/public/recruitment/view.php?ref='.$object->ref,
+				'label' => $langs->trans('ApplyJobCandidature'),
+				'lang' => 'recruitment',
+				'perm' => true,
+				'enabled' => true,
+			);
+
+			print '<div class="center">';
+			print dolGetButtonAction('', $langs->trans("ApplyJobCandidature"), 'default', $arrayofpostulatebutton, 'applicate_'.$object->ref, true, $params);
+			print '</div>';
 			print '</div>'."\n";
 			print "\n";
 

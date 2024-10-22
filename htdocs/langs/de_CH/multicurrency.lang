@@ -16,5 +16,4 @@ CurrenciesUsed_help_to_add=Füge die verschiedenen Währungen für deine benutzt
 rate=Kurs
 MulticurrencyReceived=Eingang in Orignalwährung
 MulticurrencyRemainderToTake=Restbetrag in Originalwährung
-MulticurrencyPaymentAmount=Zahlungsbetrag, Originalwährung
 AmountToOthercurrency=Entspricht in der Währung des Eingangkontos

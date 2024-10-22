@@ -19,11 +19,12 @@
 /**
  * 	\defgroup   modulebuilder   Module ModuleBuilder
  *  \brief      Add a log into a block chain for some actions.
- *  \file       htdocs/core/modules/modBlockedLog.class.php
- *  \ingroup    blockedlog
+ *  \file       htdocs/core/modules/modModuleBuilder.class.php
+ *  \ingroup    modulebuilder
  *  \brief      Description and activation file for the module ModuleBuilder
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *	Class to describe a ModuleBuilder module

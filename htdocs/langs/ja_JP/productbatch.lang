@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=いいえ (ロット/シリアル 不要)
 ProductStatusOnBatchShort=ロット
 ProductStatusOnSerialShort=シリアル
 ProductStatusNotOnBatchShort=いいえ
+BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryNone=なし
+BatchSellOrEatByMandatoryAll=%s と %s
 Batch=ロット/シリアル
 atleast1batchfield=賞味期限、消費期限、ロット/シリアル 番号
 batch_number=ロット/シリアル 番号
@@ -45,3 +48,5 @@ OutOfOrder=故障中
 InWorkingOrder=正常動作中
 ToReplace=交換
 CantMoveNonExistantSerial=エラー。既に存在しないシリアルに対応するレコードの移動を要求。同じ倉庫で同じ出荷に同一のシリアルを複数回取得したか、別の出荷でそのシリアルが使用された可能性がある。この出荷を削除して、別の出荷を準備する。
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=パラメータ「...repair.php?standard=confirmed」を使用してロット テーブルの不完全実行を修復
+IlligalQtyForSerialNumbers= シリアル番号が固有であるため、在庫 修正が必要。

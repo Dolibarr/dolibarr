@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
  *	Class to manage HTML output components for orders
@@ -30,16 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormOrder extends Form
 {
-
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different statuses of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
-	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @param	string	$htmlname	Name of HTML select element
+	 *  @param	string	$morecss	More CSS
+	 *  @param	int		$multi		Use a multiselect
 	 *  @return	void
 	 */
-	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	public function selectSupplierOrderStatus($selected = '', $short = 0, $htmlname = 'order_status', $morecss = '', $multi = 1)
 	{
 		$options = array();
 
@@ -59,6 +62,7 @@ class FormOrder extends Form
 
 		foreach ($statustohow as $key => $value) {
 			$tmpsupplierorder->statut = $key;
+			$tmpsupplierorder->status = $key;
 			$options[$value] = $tmpsupplierorder->getLibStatut($short);
 		}
 
@@ -68,7 +72,53 @@ class FormOrder extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
+		if (!empty($selectedarray[6])) {	// special case for status '6,7'
+			unset($selectedarray[6]);
+			unset($selectedarray[7]);
+			$selectedarray['6,7'] = '6,7';
+		}
+
+		if ($multi) {
+			print Form::multiselectarray($htmlname, $options, $selectedarray, 0, 0, $morecss, 0, 0);
+		} else {
+			print Form::selectarray($htmlname, $options, $selectedarray, 0, 0, 0, '', 0, 0, 0, '', $morecss);  // $selectedarray is ok for $id param @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+		}
+	}
+
+	/**
+	 *  Return combo list of different status of orders
+	 *
+	 *  @param	string	$selected   Preselected value
+	 *  @param	int		$short		Use short labels
+	 *  @param	string	$htmlname	Name of HTML select element
+	 *  @return	void
+	 */
+	public function selectOrderStatus($selected = '', $short = 0, $htmlname = 'order_status')
+	{
+		$options = array();
+
+		$statustohow = array(
+			Commande::STATUS_DRAFT,
+			Commande::STATUS_VALIDATED,
+			Commande::STATUS_SHIPMENTONPROCESS,
+			Commande::STATUS_CLOSED,
+			Commande::STATUS_CANCELED
+		);
+
+		$tmpsupplierorder = new Commande($this->db);
+
+		foreach ($statustohow as $value) {
+			$tmpsupplierorder->statut = $value;
+			$options[$value] = $tmpsupplierorder->getLibStatut($short);
+		}
+
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
+
+		print Form::multiselectarray($htmlname, $options, $selectedarray, 0, 0, '', 0, 150);
 	}
 
 	/**
@@ -78,7 +128,7 @@ class FormOrder extends Form
 	 *	@param	string	$selected		Id of preselected input method
 	 *  @param  string	$htmlname 		Name of HTML select list
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
 	{

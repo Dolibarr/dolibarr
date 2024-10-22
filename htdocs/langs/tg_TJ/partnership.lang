@@ -4,89 +4,73 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Идоракунии шарикӣ
 PartnershipDescription=Идоракунии шарикии модул
 PartnershipDescriptionLong= Идоракунии шарикии модул
-Partnership=Partnership
+Partnership=Шарикӣ
+Partnerships=шарикӣ
 AddPartnership=Иловаи шарикӣ
 CancelPartnershipForExpiredMembers=Шарикӣ: Ҳамкории аъзоёнро бо обунаҳои ба охир расидаро бекор кунед
 PartnershipCheckBacklink=Ҳамкорӣ: Истиноди истинод ба истинодро тафтиш кунед
-
-#
 # Menu
-#
 NewPartnership=Шарикии нав
+NewPartnershipbyWeb=Дархости шарикии шумо бомуваффақият илова карда шуд. Мо метавонем ба зудӣ бо шумо тамос гирем...
 ListOfPartnerships=Рӯйхати шарикӣ
-
-#
 # Admin page
-#
 PartnershipSetup=Танзими шарикӣ
 PartnershipAbout=Дар бораи шарикӣ
 PartnershipAboutPage=Ҳамкорӣ дар бораи саҳифа
-partnershipforthirdpartyormember=Ҳолати шарик бояд дар 'тарафи сеюм' ё 'аъзо' муқаррар карда шавад
+partnershipforthirdpartyormember=Статуси шарик бояд дар "шарики сеюм" ё "узв" муқаррар карда шавад
 PARTNERSHIP_IS_MANAGED_FOR=Ҳамкорӣ барои идора карда мешавад
 PARTNERSHIP_BACKLINKS_TO_CHECK=Истинодҳо барои тафтиш
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Якчанд рӯз пеш аз бекор кардани мақоми шарикӣ ҳангоми ба охир расидани обуна
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Рӯзҳои пеш аз бекор кардани мақоми шарикӣ ҳангоми ба охир расидани мӯҳлати обуна
 ReferingWebsiteCheck=Санҷиши истинод ба вебсайт
 ReferingWebsiteCheckDesc=Шумо метавонед як хусусиятро фаъол созед, то боварӣ ҳосил кунед, ки шарикони шумо ба доменҳои вебсайти шумо дар вебсайти худ истиноди такрорӣ илова кардаанд.
-
-#
+PublicFormRegistrationPartnerDesc=Dolibarr метавонад ба шумо URL/вебсайти оммавӣ пешниҳод кунад, то ба меҳмонони беруна иҷозат диҳад, ки қисми барномаи шарикӣ бошанд.
 # Object
-#
 DeletePartnership=Ҳамкориро нест кунед
 PartnershipDedicatedToThisThirdParty=Шарикӣ ба ин шахси сеюм бахшида шудааст
 PartnershipDedicatedToThisMember=Шарикӣ ба ин узв бахшида шудааст
 DatePartnershipStart=Саршавии Сана
 DatePartnershipEnd=Санаи анҷом
 ReasonDecline=Сабаби рад кардан
-ReasonDeclineOrCancel=Сабаби рад кардан
+ReasonDeclineOrCancel=Сабаби рад кардан ё бекор кардан
 PartnershipAlreadyExist=Ҳамкорӣ аллакай вуҷуд дорад
 ManagePartnership=Идоракунии шарикӣ
 BacklinkNotFoundOnPartnerWebsite=Истиноди бозгашт дар вебсайти шарик ёфт нашуд
 ConfirmClosePartnershipAsk=Шумо мутмаин ҳастед, ки мехоҳед ин шарикиро бекор кунед?
 PartnershipType=Навъи шарикӣ
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Ба наздикӣ шарикӣ бекор карда мешавад
-SendingEmailOnPartnershipRefused=Шарикӣ рад карда шуд
-SendingEmailOnPartnershipAccepted=Шарикӣ қабул карда шуд
-SendingEmailOnPartnershipCanceled=Ҳамкорӣ бекор карда шуд
-
-YourPartnershipWillSoonBeCanceledTopic=Ба наздикӣ шарикӣ бекор карда мешавад
-YourPartnershipRefusedTopic=Шарикӣ рад карда шуд
-YourPartnershipAcceptedTopic=Шарикӣ қабул карда шуд
-YourPartnershipCanceledTopic=Ҳамкорӣ бекор карда шуд
-
-YourPartnershipWillSoonBeCanceledContent=Мо ба шумо хабар медиҳем, ки шарикии шумо ба қарибӣ бекор карда мешавад (Backlink ёфт нашуд)
-YourPartnershipRefusedContent=Мо ба шумо хабар медиҳем, ки дархости шарикии шумо рад карда шуд.
-YourPartnershipAcceptedContent=Мо ба шумо хабар медиҳем, ки дархости шарикии шумо қабул карда шуд.
-YourPartnershipCanceledContent=Мо ба шумо хабар медиҳем, ки шарикии шумо бекор карда шудааст.
-
-CountLastUrlCheckError=Шумораи хатогиҳо барои санҷиши охирини URL
-LastCheckBacklink=Санаи санҷиши охирини URL
-ReasonDeclineOrCancel=Сабаби рад кардан
-
-#
-# Status
-#
+PartnershipRefApproved=Шарики %s тасдиқ карда шуд
+KeywordToCheckInWebsite=Агар шумо хоҳед, ки тафтиш кунед, ки калимаи додашуда дар вебсайти ҳар як шарик мавҷуд аст, ин калимаи калидиро дар ин ҷо муайян кунед
 PartnershipDraft=Лоиҳа
 PartnershipAccepted=Қабул карда шуд
 PartnershipRefused=Рад
 PartnershipCanceled=Бекор карда шуд
 PartnershipManagedFor=Шарикон ҳастанд
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Ба наздикӣ шарикӣ бекор карда мешавад
+SendingEmailOnPartnershipRefused=Шарикӣ рад карда шуд
+SendingEmailOnPartnershipAccepted=Шарикӣ қабул карда шуд
+SendingEmailOnPartnershipCanceled=Ҳамкорӣ бекор карда шуд
+YourPartnershipWillSoonBeCanceledTopic=Ба наздикӣ шарикӣ бекор карда мешавад
+YourPartnershipRefusedTopic=Шарикӣ рад карда шуд
+YourPartnershipAcceptedTopic=Шарикӣ қабул карда шуд
+YourPartnershipCanceledTopic=Ҳамкорӣ бекор карда шуд
+YourPartnershipWillSoonBeCanceledContent=Мо мехоҳем ба шумо хабар диҳем, ки шарикии мо ба зудӣ бекор карда мешавад (мо навсозӣ нагирифтем ё шарти шартии шарикии мо иҷро нашуд). Лутфан бо мо тамос гиред, агар шумо инро бо сабаби хатогӣ гирифта бошед.
+YourPartnershipRefusedContent=Мо ба шумо хабар медиҳем, ки дархости шарикии шумо рад карда шуд. Шартҳои пешакӣ иҷро карда нашудаанд. Лутфан бо мо тамос гиред, агар ба шумо маълумоти бештар лозим бошад.
+YourPartnershipAcceptedContent=Мо ба шумо хабар медиҳем, ки дархости шарикии шумо қабул шудааст.
+YourPartnershipCanceledContent=Мо ба шумо хабар медиҳем, ки шарикии мо бекор карда шудааст. Лутфан бо мо тамос гиред, агар ба шумо маълумоти бештар лозим бошад.
+CountLastUrlCheckError=Шумораи хатогиҳо барои санҷиши охирини URL
+LastCheckBacklink=Санаи санҷиши охирини URL
+NewPartnershipRequest=Дархости нави шарикӣ
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ин саҳифа бояд ақаллан як истинод ба яке аз доменҳои зерин дошта бошад: %s
+IPOfApplicant=IP-и аризадиҳанда

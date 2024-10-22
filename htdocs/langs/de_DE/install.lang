@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Migrieren Sie den Versand für die Speicherung vo
 MigrationShippingDelivery=Aktualisiere die Speicherung von Lieferungen (Versandart?)
 MigrationShippingDelivery2=Aktualisiere die Speicherung von Lieferungen 2 (Versandart 2?)
 MigrationFinished=Migration abgeschlossen
-LastStepDesc=<strong>Fast geschafft</strong>: Legen Sie hier Benutzername und Passwort des Administrators für Dolibarr fest. <b>Bewahren Sie diese Daten gut auf, da es sich hierbei um das Administratorkonto handelt, über das alle anderen Benutzerkonten verwaltet werden.</b>
+LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie hier Benutzername und Passwort des Administrators für Dolibarr fest. <b>Bewahren Sie diese Daten gut auf, da es sich hierbei um das Administratorkonto handelt, über das alle anderen Benutzerkonten verwaltet werden.</b>
 ActivateModule=Aktivieren von Modul %s
 ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bearbeiten (Expertenmodus)
 WarningUpgrade=Warnung:\nHaben Sie ein Datenbank Backup erstellt?\nDies wird unbedingt empfohlen. Datenverluste (durch Fehler in der mysql Version 5.5.40/41/42/43) können durch diesen Prozess auftreten, daher ist ein komplettes Datenbank-Backup vor jeder Migration unumgänglich.\n\nKlicke auf OK , um die Migration zu starten...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Sie haben den Dolibarr-Setup-Assistenten aus einem Linux-Pa
 KeepDefaultValuesMamp=Sie haben den Dolibarr-Setup-Assistenten von DoliMamp verwendet, sodass die hier vorgeschlagenen Werte bereits optimiert sind. Ändern Sie sie nur, wenn Sie wissen, was Sie tun.
 KeepDefaultValuesProxmox=Sie haben den Dolibarr-Setup-Assistenten von einer virtuellen Proxmox-Appliance verwendet, sodass die hier vorgeschlagenen Werte bereits optimiert sind. Ändern Sie sie nur, wenn Sie wissen, was Sie tun.
 UpgradeExternalModule=Führen Sie ein dediziertes Upgrade des externen Moduls durch
-SetAtLeastOneOptionAsUrlParameter=Zumindest eine Option für die URL Argumente ist notwendig. z.B. '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Setzen Sie mindestens eine Option als Parameter in der URL mit dem Wert „test“ oder „confirmed“. Beispiel: „...repair.php?standard=confirmed“
 NothingToDelete=Nichts zu säubern / zu löschen
 NothingToDo=Keine Aufgaben zu erledigen
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Die Anwendung hat versucht, sich selbst zu aktua
 YouTryUpgradeDisabledByMissingFileUnLock=Die Anwendung hat versucht, sich selbst zu aktualisieren, aber der Aktualisierungsprozess ist derzeit nicht zulässig. <br>
 ClickHereToGoToApp=Hier klicken um zu Ihrer Anwendung zu kommen
 ClickOnLinkOrRemoveManualy=Wenn ein Upgrade durchgeführt wird, warten Sie bitte. Wenn nicht, klicken Sie auf den folgenden Link. Wenn Sie immer dieselbe Seite sehen, müssen Sie die Datei install.lock im Dokumentenverzeichnis entfernen / umbenennen.
-ClickOnLinkOrCreateUnlockFileManualy=Wenn gerade ein Upgrade durchgeführt wird, warten Sie bitte... Wenn nicht, müssen Sie eine Datei upgrade.unlock im Dokumentenverzeichnis von Dolibarr erstellen.
+ClickOnLinkOrCreateUnlockFileManualy=Wenn gerade ein Upgrade ausgeführt wird, warten Sie bitte ... Wenn nicht, müssen Sie im Dokumentenverzeichnis von Dolibarr die Datei install.lock entfernen (oder eine Datei Datei upgrade.unlock für das Upgrade erstellen).
 Loaded=Geladen
 FunctionTest=Funktionstest
 NodoUpgradeAfterDB=Keine Aktion von externen Modulen nach Upgrade der Datenbank angefordert

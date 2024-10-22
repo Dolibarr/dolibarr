@@ -24,6 +24,7 @@ create table llx_facture_rec
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   titre              varchar(200) NOT NULL,
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
+  subtype				     smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc             integer NOT NULL,
   datec              datetime,            -- date de creation
   tms				 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,           -- last modification date

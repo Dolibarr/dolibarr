@@ -96,12 +96,13 @@ if (empty($conf->dol_no_mouse_hover)) {
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
 		console.log("we will create timer for ajax call");
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+
 		var params = JSON.parse($(this).attr("data-params"));
 		params.token = currenttoken;
 		var elemfortooltip = $(this);
 
-	    event.stopImmediatePropagation();
-		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
@@ -119,7 +120,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 			 }, opendelay));
 	});
 	target.on("mouseout", function(event) {
-		console.log("mouse out");
+		console.log("mouse out of a .classforajaxtooltip");
 	    event.stopImmediatePropagation();
 	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    target.tooltip("close");
@@ -220,6 +221,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 if ($conf->browser->layout != 'phone') {
 	print "\n/* JS CODE TO ENABLE document_preview */\n"; // Function document_preview is into header
 	print '		jQuery(document).ready(function () {
+					// Click on the preview picto
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
             		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
@@ -232,7 +234,7 @@ if ($conf->browser->layout != 'phone') {
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
 	jQuery(document).ready(function() {
-				/* If page_y set, we set scollbar with it */
+				/* If page_y set, we set scrollbar with it */
 				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
 				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
 				if (page_y > 0)
@@ -271,7 +273,7 @@ print '
 				jQuery(\'.clipboardCPShowOnHover\').hover(
 					function() {
 						console.log("We hover a value with a copy paste feature");
-						$(this).children(".clipboardCPButton, .clipboardCPText").show();
+						$(this).children(".clipboardCPButton, .clipboardCPText").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 					},
 					function() {
 						console.log("We hover out the value with a copy paste feature");
@@ -304,7 +306,7 @@ print '
 							succeed = document.execCommand(\'copy\');
 
 							console.log("We set the style display back to inline-block");
-							jqobj.css("display", "inline-block");
+							jqobj.css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 					    } catch(e) {
 					        succeed = false;
 					    }
@@ -313,16 +315,18 @@ print '
 						window.getSelection().removeAllRanges();
 					}
 
-					/* Show message */
-					/* TODO Show message into a top left corner or center of screen */
+					/* Show result - message */
+					var lastparent = $(this).parent();				/* .parent is clipboardCP */
 					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {
-						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+						$(this).parent().children(".clipboardCPButton").hide();
+						$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
+						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
 						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
 					}
-					setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+					setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 				});
 	});'."\n";
 
@@ -386,15 +390,15 @@ print '
 						text: confirmActionBtnLabel,
 						"class": \'ui-state-information\',
 						click: function () {
-						window.location.replace(confirmUrl);
-					}
+							window.location.replace(confirmUrl);
+						}
 					},
 					{
 						text: confirmCancelBtnLabel,
 						"class": \'ui-state-information\',
 						click: function () {
-						$(this).dialog("close");
-					}
+							$(this).dialog("close");
+						}
 					}
 				],
 				close: function( event, ui ) {

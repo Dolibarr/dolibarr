@@ -36,23 +36,27 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." now\n";
-	exit(-1);
+	exit(1);
 }
 
 $now = $argv[1];
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 
 // Global variables
 $version = constant('DOL_VERSION');
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -63,16 +67,15 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 /*
- * if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
- * {
+ * if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 
@@ -85,7 +88,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		while ($i < $num) {
@@ -107,7 +110,7 @@ if ($resql) {
 			$info = $membertype->_load_ldap_info();
 			$dn = $membertype->_load_ldap_dn($info);
 
-			$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+			$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 			$result = $ldap->update($dn, $info, $user, $olddn);
 			if ($result > 0) {
 				print " - ".$langs->trans("OK");

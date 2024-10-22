@@ -5,90 +5,69 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Zahtevki
 Module56000Desc=Sistem za upravljanje zahtevkov
-
 Permission56001=Poglej zahtevke
 Permission56002=Sprememba zahtevkov
 Permission56003=Izbriši zahtevke
 Permission56004=Upravljanje zahtevkov
 Permission56005=Pogled zahtevkov vseh partnerjev (ne velja za zunanje uporabnike, vedno bodite pozorni na pomebne partnerje)
 Permission56006=Izvoz zahtevkov
-
 Tickets=Zahtevki
 TicketDictType=Zahtevki - vrste
-TicketDictCategory=Zahtevki - skupine
+TicketDictCategory=Vstopnica - skupine
 TicketDictSeverity=Zahtevki - pomembnost
 TicketDictResolution=Zahtevki - rešitev
-
 TicketTypeShortCOM=Komercialno vprašanje
-TicketTypeShortHELP=Zahteva za pomoč
+TicketTypeShortHELP=Zahteva za funkcionalno pomoč
 TicketTypeShortISSUE=Težava ali napaka
 TicketTypeShortPROBLEM=Težava
 TicketTypeShortREQUEST=Spremeni oziroma izpopolni zahtevo
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Ostalo
-
 TicketSeverityShortLOW=Nizka
 TicketSeverityShortNORMAL=Normalna
 TicketSeverityShortHIGH=Visoka
 TicketSeverityShortBLOCKING=Kritična, blokiranje
-
 TicketCategoryShortOTHER=Ostalo
-
 ErrorBadEmailAddress=Polje '%s' ni pravilno
 MenuTicketMyAssign=Moji zahtevki
 MenuTicketMyAssignNonClosed=Moji odprti zahtevki
 MenuListNonClosed=Odprti zahtevki
-
 TypeContact_ticket_internal_CONTRIBUTOR=Sodelavec
 TypeContact_ticket_internal_SUPPORTTEC=Dodeljeno uporabniku
 TypeContact_ticket_external_SUPPORTCLI=Stik kupec / sledenje incidentom
 TypeContact_ticket_external_CONTRIBUTOR=Zunanji sodelavec
-
 OriginEmail=Poročevalec e-pošta
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Pošljite sporočilo po e-pošti
-
 ExportDataset_ticket_1=Vstopnice
-
 # Status
 Read=Preberite
 Assigned=Dodeljeno
 NeedMoreInformation=Čakanje na povratne informacije poročevalca
 NeedMoreInformationShort=Čakanje na povratne informacije
-Answered=Odgovoril
 Waiting=Na čakanju
 SolvedClosed=Rešeno
 Deleted=Izbrisano
-
 # Dict
-Type=Tip
 Severity=Pomembnost
 TicketGroupIsPublic=Javna skupina
 TicketGroupIsPublicDesc=Če je skupina zahtevka javna, bo vidna v obrazcu, ko ustvarite zahtevek v javnem vmesniku
-
 # Email templates
 MailToSendTicketMessage=Pošiljanje zahtevka po e-pošti
-
-#
 # Admin page
-#
 TicketSetup=Nastavitev zahtevkov
 TicketSettings=Nastavitve
-TicketSetupPage=
 TicketPublicAccess=Javni vmesnik, ki ne zahteva identifikacije, je na voljo na naslednjem URL-ju
 TicketSetupDictionaries=Vrsto zahtevka, pomebnost in analitično kodo je mogoče konfigurirati iz slovarjev
 TicketParamModule=Nastavitev spremenljivke modula
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=V javnem vmesniku mora biti e-poštni naslov že izpol
 TicketsShowProgression=Prikaži izvajanje zahtevka v javnem vmesniku
 TicketsShowProgressionHelp=Omogočite izbiro, da skrijete izvajanje zahtevka v javnem vmesniku
 TicketCreateThirdPartyWithContactIfNotExist=Vprašajte za ime in naziv podjetja za neznane e-poštne naslove.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Preverite, ali obstaja partner ali stik za vneseno e-pošto. Če ne, zahtevajte ime in naziv podjetja, da ustvarite stik z partnerjem.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Preverite, ali obstaja tretja oseba ali kontakt za vneseno e-pošto. Če ne, zahtevajte ime in ime podjetja, da ustvarite tretjo osebo s kontaktom.
 PublicInterface=Javni vmesnik
-TicketUrlPublicInterfaceLabelAdmin=Nadomestni URL za javni vmesnik
-TicketUrlPublicInterfaceHelpAdmin=Spletnemu strežniku je mogoče določiti vzdevek in tako dati na voljo javni vmesnik z drugim URL-jem (strežnik mora delovati kot proxy na tem novem URL-ju)
 TicketPublicInterfaceTextHomeLabelAdmin=Pozdravno besedilo javnega vmesnika
 TicketPublicInterfaceTextHome=Ustvarite lahko zahtevek za podporo ali si ogledate obstoječ zahtevek za sledenje identifikatorja.
 TicketPublicInterfaceTextHomeHelpAdmin=Tukaj definirano besedilo bo prikazano na domači strani javnega vmesnika.
@@ -126,9 +103,9 @@ TicketParams=Parametri
 TicketsShowModuleLogo=Prikažite logotip modula v javnem vmesniku
 TicketsShowModuleLogoHelp=Omogočite to možnost, če želite skriti modul logotipa na straneh javnega vmesnika
 TicketsShowCompanyLogo=Prikažite logotip podjetja v javnem vmesniku
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Omogočite to možnost za prikaz logotipa glavnega podjetja na straneh javnega vmesnika
+TicketsShowCompanyFooter=Prikažite nogo podjetja v javnem vmesniku
+TicketsShowCompanyFooterHelp=Omogočite to možnost, če želite prikazati nogo glavnega podjetja na straneh javnega vmesnika
 TicketsEmailAlsoSendToMainAddress=Obvestilo pošljite tudi na glavni elektronski naslov
 TicketsEmailAlsoSendToMainAddressHelp=Omogočite to možnost, če želite poslati e-pošto tudi na naslov, določen v nastavitvah "%s" (glejte zavihek "%s")
 TicketsLimitViewAssignedOnly=Omejite prikaz na zahtevka, dodeljene trenutnemu uporabniku (ne velja za zunanje uporabnike, vedno bodite omejeni na pomebne partnerje)
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Pošlji e-pošto, ko je zahtevku dodano novo
 TicketsPublicNotificationNewMessageHelp=Pošlji e-pošto, ko je novo sporočilo dodano iz javnega vmesnika (dodeljenemu uporabniku ali e-poštno sporočilo z obvestili na (posodobitev) in/ali e-poštno sporočilo z obvestili na)
 TicketPublicNotificationNewMessageDefaultEmail=Obvestila po e-pošti na (posodobitev)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Na ta naslov pošljite e-poštno sporočilo za obvestila o vsakem novem sporočilu, če zahtevku ni dodeljen uporabnik ali če uporabnik nima znanega e-poštnega naslova.
-TicketsAutoReadTicket=Samodejno označi zahtevek kot prebran (ko je ustvarjen v zaledni pisarni)
-TicketsAutoReadTicketHelp=Samodejno označi zahtevek kot prebran, ko je ustvarjen v zaledni pisarni. Ko je zahtevek ustvarjen iz javnega vmesnika, ostane s statusom »Ni prebrano«.
+TicketsAutoReadTicket=Samodejno označi vstopnico kot prebrano (ko je ustvarjena v zaledni pisarni)
+TicketsAutoReadTicketHelp=Samodejno označi vstopnico kot prebrano, ko je ustvarjena v zaledni pisarni. Ko je vstopnica ustvarjena iz javnega vmesnika, ostane vstopnica s statusom »Ni prebrano«.
 TicketsDelayBeforeFirstAnswer=Nov zahtevek mora prejeti prvi odgovor pred (ur):
 TicketsDelayBeforeFirstAnswerHelp=Če nov zahtevek po tem časovnem obdobju (v urah) ne prejme odgovora, bo v pogledu seznama prikazana pomembna opozorilna ikona.
 TicketsDelayBetweenAnswers=Nerešen zahtevek ne sme biti neaktiven med (ur):
 TicketsDelayBetweenAnswersHelp=Če nerazrešena zahtevek, ki je že prejel odgovor, ni imel nadaljnje interakcije po tem časovnem obdobju (v urah), bo v seznamu prikazana opozorilna ikona.
-TicketsAutoNotifyClose=Samodejno obvesti partnerja, ko zaprete zahtevek
-TicketsAutoNotifyCloseHelp=Pri zapiranju zahtevka vam bo predlagano, da pošljete sporočilo enemu od stikov partnerja. Ob množičnem zaprtju bo poslano sporočilo enemu stiku partnerja, ki je povezan z zahtevkom.
+TicketsAutoNotifyClose=Samodejno obvesti tretjo osebo ob zapiranju vstopnice
+TicketsAutoNotifyCloseHelp=Ko zaprete vstopnico, vam bo predlagano, da pošljete sporočilo enemu od kontaktov tretjih oseb. Ob množičnem zaprtju bo poslano sporočilo na en kontakt tretje osebe, ki je povezana z vstopnico.
 TicketWrongContact=Navedeni stik ni del trenutnih stikov na zahtevku. E-pošta ni poslana.
 TicketChooseProductCategory=Kategorija izdelka za podporo zahtevku
 TicketChooseProductCategoryHelp=Izberite kategorijo izdelka podpore za zahtevek. To bo uporabljeno za samodejno povezovanje pogodbe z zahtevkom.
 TicketUseCaptchaCode=Pri ustvarjanju zahtevka uporabite grafično kodo (CAPTCHA).
 TicketUseCaptchaCodeHelp=Doda preverjanje CAPTCHA pri ustvarjanju novega zahtevka.
-
-#
+TicketsAllowClassificationModificationIfClosed=Dovolite spreminjanje razvrstitve zaprtih vozovnic
+TicketsAllowClassificationModificationIfClosedHelp=Omogoča spreminjanje razvrstitve (vrsta, skupina vstopnic, resnost), tudi če so vstopnice zaprte.
 # Index & list page
-#
 TicketsIndex=Območje zahtevka
 TicketList=Seznam zahtevkov
 TicketAssignedToMeInfos=Na tej strani je prikazan seznam zahtevkov, ki jih je ustvaril ali dodelil trenutni uporabnik
@@ -176,10 +152,7 @@ ShowAsConversation=Prikaži kot seznam pogovorov
 MessageListViewType=Prikaži kot seznam tabel
 ConfirmMassTicketClosingSendEmail=Samodejno pošiljanje e-pošte ob zapiranju zahtevkov
 ConfirmMassTicketClosingSendEmailQuestion=Ali želite ob zapiranju teh zahtevkov obvestiti partnerje?
-
-#
 # Ticket card
-#
 Ticket=Zahtevek
 TicketCard=Kartica zahtevka
 CreateTicket=Ustvari zahtevek
@@ -201,8 +174,8 @@ TicketAssigned=Zahtevek je zdaj dodeljen
 TicketChangeType=Spremeni vrsto
 TicketChangeCategory=Spremenite analitično kodo
 TicketChangeSeverity=Spremenite pomembnost
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Dodajte ali pošljite sporočilo
+TicketAddPrivateMessage=Dodajte zasebno sporočilo
 MessageSuccessfullyAdded=Zahtevek dodan
 TicketMessageSuccessfullyAdded=Sporočilo je bilo uspešno dodano
 TicketMessagesList=Seznam sporočil
@@ -251,10 +224,10 @@ TicketAssignedEmailBody=%s vam je dodelil zahtevek #%s
 TicketAssignedCustomerEmail=Vaš zahtevek je bila dodeljena v izvajanje.
 TicketAssignedCustomerBody=To je samodejno e-poštno sporočilo za potrditev, da se vaš zahtevek obravnava.
 MarkMessageAsPrivate=Označi sporočilo kot zasebno
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact
-TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
-TicketMessagePrivateHelp=This message will not be visible to external users
+TicketMessageSendEmailHelp=E-poštno sporočilo bo poslano vsem dodeljenim stikom
+TicketMessageSendEmailHelp2a=(notranji stiki, vendar tudi zunanji stiki, razen če je označena možnost »%s«)
+TicketMessageSendEmailHelp2b=(notranji kontakti, pa tudi zunanji kontakti)
+TicketMessagePrivateHelp=To sporočilo ne bo vidno zunanjim uporabnikom
 TicketMessageRecipientsHelp=Polje prejemnika je izpolnjeno z aktivnimi kontakti, povezanimi z zahtevkom
 TicketEmailOriginIssuer=Izdajatelj originalnega zahtevka
 InitialMessage=Začetno sporočilo
@@ -278,21 +251,15 @@ TicketsDelayForFirstResponseTooLong=Preveč časa je preteklo od odprtja zahtevk
 TicketsDelayFromLastResponseTooLong=Od zadnjega odgovora na tej kartici je preteklo preveč časa.
 TicketNoContractFoundToLink=Najdena ni bila nobena pogodba, ki bi bila samodejno povezana z zahtevkom. Prosimo, da ročno povežete pogodbo.
 TicketManyContractsLinked=Številne pogodbe so bile samodejno povezane z zahtevkom. Prepričajte se, kateri bi morali izbrati.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
+TicketRefAlreadyUsed=Referenca [%s] je že uporabljena, vaša nova referenca je [%s]
 # Logs
-#
 TicketLogMesgReadBy=Zahtevek %s je prebral %s
 NoLogForThisTicket=Za zahtevek še ni dnevnika
 TicketLogAssignedTo=Zahtevek %s je dodeljen %s
 TicketLogPropertyChanged=Zahtevek %s spremenjen: razvrstitev iz %s v %s
 TicketLogClosedBy=Zahtevek %s je zaprl %s
 TicketLogReopen=Zahtevek %s je ponovno odprt
-
-#
 # Public pages
-#
 TicketSystem=Sistem zahtevkov
 ShowListTicketWithTrackId=Prikaži seznam zahtevkov na podlagi ID
 ShowTicketWithTrackId=Prikaži zahtevek na podlagi ID
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=To je samodejno e-poštno sporočilo za potrditev, da
 TicketNewEmailBodyInfosTicket=Informacije za spremljanje zahtevka
 TicketNewEmailBodyInfosTrackId=Sledilna številka zahtevka: %s
 TicketNewEmailBodyInfosTrackUrl=Zahtevek si lahko spremljate s klikom na naslednji povezavi
-TicketNewEmailBodyInfosTrackUrlCustomer=Zahtevek si lahko ogledate v posebnem vmesniku s klikom na naslednjo povezavo
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Zgodovino zahtevka si lahko ogledate s klikom na naslednjo povezavo
 TicketEmailPleaseDoNotReplyToThisEmail=Prosimo, ne odgovarjajte neposredno na to e-pošto! Uporabite povezavo za odgovor v vmesniku.
 TicketPublicInfoCreateTicket=Ta obrazec vam omogoča, da v našem sistemu upravljanja zabeležite zahtevek za podporo.
-TicketPublicPleaseBeAccuratelyDescribe=Prosimo, natančno opišite svoje vprašanje. Navedite največ možnih informacij, da bomo lahko pravilno prepoznali vašo zahtevo.
+TicketPublicPleaseBeAccuratelyDescribe=Prosimo, natančno opišite svojo zahtevo. Navedite čim več informacij, da bomo lahko pravilno prepoznali vašo zahtevo.
 TicketPublicMsgViewLogIn=Vnesite ID za sledenje zahtevku
-TicketTrackId=Javni ID za sledenje
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Eden od vaših ID-jev za sledenje
 ErrorTicketNotFound=Zahtevka z ID-jem za sledenje %s ni mogoče najti!
 Subject=Predmet
@@ -329,9 +296,8 @@ OldUser=Stari uporabnik
 NewUser=Nov uporabnik
 NumberOfTicketsByMonth=Število zahtevkov na mesec
 NbOfTickets=Število zahtevkov
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=Zunanji sodelavci
+AddContributor=Dodajte zunanjega sodelavca
 # notifications
 TicketCloseEmailSubjectCustomer=Zahtevek zaprt
 TicketCloseEmailBodyCustomer=To je samodejno sporočilo, ki vas obvešča, da je bil zahtevek%s pravkar zaprt.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=Prejemnik obvestila
 TicketNotificationLogMessage=Dnevnik sporočila
 TicketNotificationEmailBodyInfosTrackUrlinternal=Oglejte si zahtevek v vmesniku
 TicketNotificationNumberEmailSent=Poslano e-poštno obvestilo: %s
-
 ActionsOnTicket=Dogodki na zahtevku
-
-#
 # Boxes
-#
 BoxLastTicket=Zadnji ustvarjeni zahtevki
 BoxLastTicketDescription=Najnovejših %s ustvarjenih zahtevkov
 BoxLastTicketContent=

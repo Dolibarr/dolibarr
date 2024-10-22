@@ -33,18 +33,18 @@ global $conf;
 global $stripearrayofkeysbyenv;
 
 $stripearrayofkeysbyenv = array(
-	0=>array(
-		"secret_key"      => empty($conf->global->STRIPE_TEST_SECRET_KEY) ? '' : $conf->global->STRIPE_TEST_SECRET_KEY,
-		"publishable_key" => empty($conf->global->STRIPE_TEST_PUBLISHABLE_KEY) ? '' : $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
+	array(
+		"secret_key"      => getDolGlobalString('STRIPE_TEST_SECRET_KEY'),
+		"publishable_key" => getDolGlobalString('STRIPE_TEST_PUBLISHABLE_KEY')
 	),
-	1=>array(
-		"secret_key"      => empty($conf->global->STRIPE_LIVE_SECRET_KEY) ? '' : $conf->global->STRIPE_LIVE_SECRET_KEY,
-		"publishable_key" => empty($conf->global->STRIPE_LIVE_PUBLISHABLE_KEY) ? '' : $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
+	array(
+		"secret_key"      => getDolGlobalString('STRIPE_LIVE_SECRET_KEY'),
+		"publishable_key" => getDolGlobalString('STRIPE_LIVE_PUBLISHABLE_KEY')
 	)
 );
 
 $stripearrayofkeys = array();
-if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) {
+if (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha')) {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[0]; // Test
 } else {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[1]; // Live
@@ -52,4 +52,4 @@ if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) {
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
-\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION) ? "2020-08-27" : $conf->global->STRIPE_FORCE_VERSION); // force version API
+\Stripe\Stripe::setApiVersion(getDolGlobalString('STRIPE_FORCE_VERSION', "2022-11-15")); // force version API

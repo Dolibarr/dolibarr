@@ -8,6 +8,8 @@
 # More information on https://wiki.dolibarr.org/index.php/Module_ClickToDial_En
 #---------------------------------------------------------
 
+# shellcheck disable=2006,2086
+
 # Note: Adding handler into gconf-tools seems to do nothing
 # gconftool-2 -t string -s /desktop/gnome/url-handlers/sip/command "linphone-3 -c %s"
 # gconftool-2 -s /desktop/gnome/url-handlers/sip/needs_terminal false -t bool

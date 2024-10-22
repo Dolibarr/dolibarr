@@ -2041,3 +2041,21 @@ INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-78
 INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-79',22105,'Kilis');
 INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-80',22104,'Osmaniye');
 INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-81',22106,'Düzce');
+
+-- Provinces Cuba (id country=77)
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-PRI', 7701, 'Pinar del Rio');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-ART', 7701, 'Artemisa');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-HAB', 7701, 'La Habana');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-MYB', 7701, 'Mayabeque');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-MTZ', 7701, 'Matanzas');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-IJV', 7701, 'Isla de la Juventud');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-VLC', 7702, 'Villa Calra');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-CFG', 7702, 'Cienfuegos');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-SSP', 7702, 'Sancti Spiritus');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-CAV', 7702, 'Ciego de Avila');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-CMG', 7702, 'Camagüey');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-LTU', 7703, 'Las Tunas');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-GRM', 7703, 'Granma');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-SCU', 7703, 'Santiago de Cuba');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-GTM', 7703, 'Guantanamo');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('CU-HLG', 7703, 'Holguin');

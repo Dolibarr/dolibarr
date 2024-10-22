@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Ρύθμιση ενότητας PayBox
 PayBoxDesc=Αυτή η ενότητα προσφέρει σελίδες που επιτρέπουν την πληρωμή στο <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> από πελάτες. Αυτό μπορεί να χρησιμοποιηθεί για ελεύθερη πληρωμή ή για πληρωμή σε συγκεκριμένο αντικείμενο του Dolibarr (τιμολόγιο, παραγγελία, ...)
-FollowingUrlAreAvailableToMakePayments=Οι ακόλουθες διευθύνσεις URL είναι διαθέσιμες για να προσφέρουν μια σελίδα σε έναν πελάτη για να πραγματοποιήσει μια πληρωμή σε αντικείμενα του Dolibarr
-PaymentForm=Φόρμα πληρωμής
-WelcomeOnPaymentPage= Καλώς ήλθατε στην υπηρεσία διαδικτυακών πληρωμών
-ThisScreenAllowsYouToPay=Σε αυτή την οθόνη μπορείτε να κάνετε μια ηλεκτρονική πληρωμή στο %s.
-ThisIsInformationOnPayment=Πληροφορίες σχετικά με την πληρωμή σας
-ToComplete=Προς ολοκλήρωση
-YourEMail=E-mail για να λάβετε επιβεβαίωση της πληρωμής
-Creditor=Πιστωτής
-PaymentCode=Κωδικός Πληρωμής
 PayBoxDoPayment=Πληρώστε με Paybox
 YouWillBeRedirectedOnPayBox=Θα ανακατευθυνθείτε σε ασφαλή σελίδα του Paybox για να εισαγάγετε τα στοιχεία της πιστωτικής σας κάρτας
-Continue=Επόμενο
 SetupPayBoxToHavePaymentCreatedAutomatically=Ρυθμίστε το Paybox σας με τη διεύθυνση url <b>%s</b> για την αυτόματη δημιουργία πληρωμής όταν γίνεται επικύρωση από το Paybox.
 YourPaymentHasBeenRecorded=Σελίδα επιβεβαίωσης καταγραφής της πληρωμής σας. Ευχαριστούμε.
 YourPaymentHasNotBeenRecorded=Η πληρωμή σας ΔΕΝ έχει καταγραφεί και η συναλλαγή έχει ακυρωθεί. Ευχαριστούμε.
-AccountParameter=Παράμετροι λογαριασμού
-UsageParameter=Παράμετροι χρήσης
-InformationToFindParameters=Βοήθεια για να βρείτε %s τα στοιχεία του λογαριασμού σας
 PAYBOX_CGI_URL_V2=Διεύθυνση Url της ενότητας Paybox CGI για την πληρωμή
-CSSUrlForPaymentForm=URL CSS style sheet για φόρμα πληρωμής
 NewPayboxPaymentReceived=Νέα πληρωμή Paybox ελήφθη
 NewPayboxPaymentFailed=Η πληρωμή Paybox απέτυχε
 PAYBOX_PAYONLINE_SENDEMAIL=Ειδοποίηση ηλεκτρονικού ταχυδρομείου μετά από προσπάθεια πληρωμής (επιτυχία ή αποτυχία)

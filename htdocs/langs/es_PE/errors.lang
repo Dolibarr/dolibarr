@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
+ErrorNoAccountancyModuleLoaded=No se ha activado ningún módulo de contabilidad
+ErrorLinesCantBeNegativeForOneVATRate=El total de líneas (neto de impuestos) no puede ser negativo para un IGV no nulo (se encontró un total negativo para el IGV <b> %s </b> %%).
+ErrorNoActivatedBarcode=No se ha activado ningún tipo de código de barras

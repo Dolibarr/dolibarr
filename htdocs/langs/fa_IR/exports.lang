@@ -18,6 +18,7 @@ ExportableFields=بخش‌های قابل صادرات
 ExportedFields=بخش‌های صادر شده
 ImportModelName=نام نمایۀ واردات
 ImportModelSaved=فایل واردات به شکل <b>%s</b> ذخیره شد.
+ImportProfile=Import profile
 DatasetToExport=مجموعۀ داده برای صادرات
 DatasetToImport=وارد کردن فایل به مجموعۀ‌داده
 ChooseFieldsOrdersAndTitle=انتخاب ترتیب بخش‌ها...
@@ -26,8 +27,8 @@ FieldTitle=عنوان بخش
 NowClickToGenerateToBuildExportFile=حالا نوع فایل را در کادرترکیبی وارد کرده و کلید "تولید" را برای ساخت فایل صادرات کلیک کنید..
 AvailableFormats=انواع‌فایل ممکن
 LibraryShort=کتابخانه
-ExportCsvSeparator=Csv caracter separator
-ImportCsvSeparator=Csv caracter separator
+ExportCsvSeparator=Csv character separator
+ImportCsvSeparator=Csv character separator
 Step=گام
 FormatedImport=دستیار واردات
 FormatedImportDesc1=این واحد به شما امکان می‌دهد با استفاده از فایل و بدون دانش فنی، با استفاده از یک دستیار داده‌های موجود را روزآمد کرده یا اشیاء جدید به پایگاه‌داده اضافه کنید.
@@ -53,14 +54,14 @@ TypeOfLineServiceOrProduct=نوع سطر (0 = محصول، 1 = خدمات)
 FileWithDataToImport=فایل حاوی داده برای وارد کردن
 FileToImport=فایل منبع برای واردکردن
 FileMustHaveOneOfFollowingFormat=فایلی که وارد می‌شود باید یکی از انواع زیر باشد
-DownloadEmptyExample=Download template file with field content information
-StarAreMandatory=* are mandatory fields
+DownloadEmptyExampleShort=Download a sample file
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=انتخاب نوع فایل برای استفاده به‌عنوان فایل واردات با کلیک بر روی نمادک %s برای انتخاب آن ...
 ChooseFileToImport=فایل را بالاگذاری کرده و سپس روی نشانک %s کلیک کرده تا به‌عنوان فایل منبع واردات استفاده شود.
 SourceFileFormat=نوع فایل منبع
 FieldsInSourceFile=بخش‌های فایل منبع
 FieldsInTargetDatabase=بخش‌های مقصد در پایگاه‌دادۀ Dolibarr (پررنگ=الزامی)
-Field=بخش
 NoFields=بخشی وجود ندارد
 MoveField=جابجائی شماره ستون بخش %s 
 ExampleOfImportFile=Example_of_import_file
@@ -82,7 +83,7 @@ SelectFormat=این نوع فایل را برای وارد کردن انتخاب
 RunImportFile=واردکردن داده‌ها
 NowClickToRunTheImport=نتیجۀ شبیه‌سازی واردات داده‌ها را بررسی کنید. خطاها را اصلاح کرده و مجددا آزمایش کنید. <br> هنگامی که گزارش‌های شبیه‌سازی هیچ خطائی را گزارش نمی‌کند شما می‌توانید برای وارد کردن داده‌ها به پایگاه‌داده اقدام کنید.
 DataLoadedWithId=داده‌های وارد شده یک بخش اضافی در هر جدول پایگاه‌داده‌ با این شناسۀ واردات دارند: <b>%s</b>، تا امکان قابل جستجو بودن در رابطه با پیگیری مشکلات مربوط به این واردات را داشته باشد.
-ErrorMissingMandatoryValue=داده‌های الزامی برای بخش <b>%s</b> در فایل مبدأ خالی هستند.
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=هنوز <b>%s</b> سطور مبدأ دیگر خطا دارند اما خروجی محدود بوده است.
 TooMuchWarnings=هنوز <b>%s</b> سطور مبدأ دیگر خطا دارند اما خروجی محدود بوده است.
 EmptyLine=سطر خالی ( نادیده گرفته خواهد شد)
@@ -92,9 +93,9 @@ YouCanUseImportIdToFindRecord=شما می‌توانید همۀ ردیف‌ها�
 NbOfLinesOK=تعداد سطور بدون خطا و هشدار: <b>%s</b>.
 NbOfLinesImported=تعداد سطوری که با موفقیت وارد شدند: <b>%s</b>.
 DataComeFromNoWhere=مقدار برای درج ورودی‌هائی که از هیچ‌کجا در فایل مبدأ نیامده‌اند.
-DataComeFromFileFieldNb=مثدار برای درج ورودی‌هائی که از بخش شمارۀ <b>%s</b> در فایل مبدأ آمده‌اند
-DataComeFromIdFoundFromRef=مقداری که از بخش شمارۀ <b>%s</b> از فایل مبدأ آمده است برای یافتن شناسۀ شیء مادر برای استفاده می‌شود. (بنابراین شیء <b>%s</b> که دارای ارجاعی به فایل مبدأ است باید در پایگاه‌داده وجود داشته باشد).
-DataComeFromIdFoundFromCodeId=کدی که از بخش شمارۀ <b>%s</b> از فایل مبدأ وارد می‌شود برای یافتن شناسۀ شیء مادر مورد استفاده قرار می‌گیرد (بنابراین کد فایل مبدأ باید در واژه نامۀ <b>%s</b> وجود داشته باشد). توجه داشته باشید در صورتی که شما این شناسه را بدانید، شما همچنین می‌توانید آن را به جای کد، در فایل مبدأ نیز استفاده کنید. واردات باید در هر دو صورت کار کند.
+DataComeFromFileFieldNb=Value to insert comes from column <b>%s</b> in source file.
+DataComeFromIdFoundFromRef=The value that comes from the source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database).
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=داده‌ای که از فایل مبدأ می‌آید باید در بخش زیر درج شود:
 DataIDSourceIsInsertedInto=The id of the parent object, that was found using the data in the source file, will be inserted into the following field:
 DataCodeIDSourceIsInsertedInto=The id of the parent line, that was found from code, will be inserted into the following field:
@@ -132,6 +133,15 @@ FormatControlRule=قاعدۀ کنترل شکل-فرمت
 ## imports updates
 KeysToUseForUpdates=کلید (ستون) برای استفاده در <b>به‌روزرسانی</b> داده‌های موجود
 NbInsert=تعدا سطور درج شده: %s
+NbInsertSim=Number of lines that will be inserted: %s
 NbUpdate=تعداد سطور روزآمد شده: %s
+NbUpdateSim=Number of lines that will be updated : %s
 MultipleRecordFoundWithTheseFilters=ردیف‌های متعددی با این صافی پیدا شد: %s
 StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:
+MandatoryTargetFieldsNotMapped=Some mandatory target fields are not mapped
+AllTargetMandatoryFieldsAreMapped=All target fields that need a mandatory value are mapped
+ResultOfSimulationNoError=Result of simulation: No error
+NumberOfLinesLimited=Number of lines limited

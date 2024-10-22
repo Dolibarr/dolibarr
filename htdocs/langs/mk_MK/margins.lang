@@ -6,6 +6,7 @@ TotalMargin=Вкупна Маргина
 MarginOnProducts=Маргина / Производи
 MarginOnServices=Маргина / Услуги
 MarginRate=Стапка на маргина
+ModifyMarginRates=Изменете ги стапките на маргините
 MarkRate=Mark rate
 DisplayMarginRates=Display margin rates
 DisplayMarkRates=Display mark rates
@@ -16,30 +17,30 @@ MarginDetails=Детали за маргините
 ProductMargins=Маргина на производ
 CustomerMargins=Маргина на клиент
 SalesRepresentativeMargins=Маргина на продажен агент
-ContactOfInvoice=Contact of invoice
+ContactOfInvoice=Контакт на фактурата
 UserMargins=Маргина на корисник
 ProductService=Производ или Услуга
 AllProducts=Сите Производи и Услуги
 ChooseProduct/Service=Одбери Производ или Услуга
 ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Ако цената за купување/цена не е обезбедена кога додаваме нова линија, а оваа опција е „ON“, маржата ќе биде 0%% на новата линија (купување/цена цена = продажна цена). Ако оваа опција е „ИСКЛУЧЕНО“ (препорачано), маргината ќе биде еднаква на вредноста предложена стандардно (и може да биде 100%% ако не може да се најде стандардна вредност).
 MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
 UseDiscountAsProduct=Како Производ
 UseDiscountAsService=Како Услуга
 UseDiscountOnTotal=На СУБТОТАЛ
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeType1=Margin on Best vendor price
+MargeType1=Маржа на најдобрата цена на продавачот
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Маргина на Цената на чинење
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* Маржа за најдобра куповна цена = Продажна цена - Најдобра цена на продавачот дефинирана на картичката на производот<br>* Маржа на пондерирана просечна цена (WAP) = Продажна цена - Просечна пондерирана цена на производот (WAP) или најдобра цена на продавачот ако WAP сè уште не е дефиниран<br>* Маржа на цена на чинење = Продажна цена - Цена на чинење дефинирана на картичката на производот или WAP ако цената на чинење не е дефинирана, или најдобра цена на продавачот ако WAP сè уште не е дефиниран
 CostPrice=Цена на чинење
 UnitCharges=Unit charges
 Charges=Charges
 AgentContactType=Тип на контакт за комерцијалист
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails=Дефинирајте каков тип на контакт (поврзан на фактурите) ќе се користи за извештај за маргина по контакт/адреса. Имајте предвид дека читањето статистика на контакт не е веродостојно бидејќи во повеќето случаи контактот може да не е експлицитно дефиниран на фактурите.
 rateMustBeNumeric=Стапката мора да биде нумеричка вредност
 markRateShouldBeLesserThan100=Стапката на ознака треба да биде помала од 100
 ShowMarginInfos=Покажи информации за Маргина
 CheckMargins=Детали за Маргините
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=Извештајот за маржа по корисник ја користи врската помеѓу трети страни и претставниците за продажба за да ја пресмета маржата на секој претставник за продажба. Бидејќи некои трети страни можеби немаат посебен претставник за продажба, а некои трети страни може да се поврзани со неколку, некои износи може да не бидат вклучени во овој извештај (ако нема претставник за продажба), а некои може да се појавуваат на различни линии (за секој претставник за продажба) .

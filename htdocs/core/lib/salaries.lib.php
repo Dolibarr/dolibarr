@@ -4,6 +4,7 @@
  * Copyright (C) 2019	Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * It loads tabs from modules looking for the entity salaries
  *
  * @param Paiement $object Current salaries object
- * @return array Tabs for the salaries section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the salaries section
  */
 function salaries_prepare_head($object)
 {
@@ -38,6 +39,31 @@ function salaries_prepare_head($object)
 	$head[$h][1] = $langs->trans("Salary");
 	$head[$h][2] = 'card';
 	$h++;
+
+	if (isModEnabled('paymentbybanktransfer')) {
+		$nbStandingOrders = 0;
+		$sql = "SELECT COUNT(pfd.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
+		$sql .= " AND type = 'ban'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$nbStandingOrders = $obj->nb;
+			}
+		} else {
+			dol_print_error($db);
+		}
+		$langs->load("banks");
+		$head[$h][0] = DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id.'&type=bank-transfer';
+		$head[$h][1] = $langs->trans('BankTransfer');
+		if ($nbStandingOrders > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		}
+		$head[$h][2] = 'request_virement';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -71,9 +97,9 @@ function salaries_prepare_head($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
- *  @return	array		head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function salaries_admin_prepare_head()
 {

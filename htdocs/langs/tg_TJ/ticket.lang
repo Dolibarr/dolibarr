@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Чиптаҳо
 Module56000Desc=Системаи чиптаҳо барои идоракунии масъала ё дархост
-
 Permission56001=Билетҳоро бубинед
 Permission56002=Тағир додани чиптаҳо
 Permission56003=Билетҳоро нест кунед
 Permission56004=Идоракунии чиптаҳо
 Permission56005=Чиптаҳои ҳамаи шахсони сеюмро бинед (барои корбарони беруна муассир нест, ҳамеша бо тарафи сеюме, ки ба онҳо вобаста аст, маҳдуд аст)
-Permission56006=Export tickets
-
-Tickets=Tickets
+Permission56006=Чиптаҳои содиротӣ
+Tickets=Чиптаҳо
 TicketDictType=Чипта - намудҳо
-TicketDictCategory=Чипта - гурӯҳҳо
+TicketDictCategory=Билет — гуруххо
 TicketDictSeverity=Чипта - вазнинӣ
 TicketDictResolution=Билет - Қарор
-
 TicketTypeShortCOM=Саволи тиҷоратӣ
 TicketTypeShortHELP=Дархост барои кӯмаки функсионалӣ
 TicketTypeShortISSUE=Мушкилот ё хато
@@ -41,74 +33,59 @@ TicketTypeShortPROBLEM=Мушкилот
 TicketTypeShortREQUEST=Дархост ё тағир додан
 TicketTypeShortPROJET=Лоиҳа
 TicketTypeShortOTHER=Дигар
-
 TicketSeverityShortLOW=Паст
 TicketSeverityShortNORMAL=Оддӣ
 TicketSeverityShortHIGH=Баланд
 TicketSeverityShortBLOCKING=Танқидӣ, басташавӣ
-
-TicketCategoryShortOTHER=Other
-
+TicketCategoryShortOTHER=Дигар
 ErrorBadEmailAddress=Майдони '%s' нодуруст аст
 MenuTicketMyAssign=Билетҳои ман
 MenuTicketMyAssignNonClosed=Билетҳои кушодаи ман
 MenuListNonClosed=Чиптаҳои кушод
-
 TypeContact_ticket_internal_CONTRIBUTOR=Ҳиссагузор
 TypeContact_ticket_internal_SUPPORTTEC=Истифодабарандаи таъиншуда
 TypeContact_ticket_external_SUPPORTCLI=Пайгирии тамос бо мизоҷон / пайгирии ҳодиса
 TypeContact_ticket_external_CONTRIBUTOR=Иштирокчии беруна
-
 OriginEmail=Хабарнигори почтаи электронӣ
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Паёми чиптаро тавассути почтаи электронӣ фиристед
-
-ExportDataset_ticket_1=Tickets
-
+ExportDataset_ticket_1=Чиптаҳо
 # Status
 Read=Хондан
 Assigned=Таъин карда шудааст
 NeedMoreInformation=Интизори шарҳи хабарнигорон
 NeedMoreInformationShort=Интизори фикру мулоҳизаҳо
-Answered=Ҷавоб дод
 Waiting=Интизорӣ
 SolvedClosed=Ҳал шуд
 Deleted=Ҳазф шуд
-
 # Dict
-Type=Навиштан
 Severity=Шиддатнокӣ
 TicketGroupIsPublic=Гурӯҳ оммавӣ аст
 TicketGroupIsPublicDesc=Агар гурӯҳи чиптаҳо оммавӣ бошанд, он дар шакли ҳангоми сохтани чипта аз интерфейси оммавӣ намоён мешавад
-
 # Email templates
 MailToSendTicketMessage=Барои фиристодани почтаи электронӣ аз паёми чипта
-
-#
 # Admin page
-#
 TicketSetup=Танзими модули чипта
 TicketSettings=Танзимот
-TicketSetupPage=
 TicketPublicAccess=Интерфейси оммавӣ, ки бидуни шиносоӣ талаб карда мешавад, дар URL -и зерин дастрас аст
 TicketSetupDictionaries=Навъи чипта, вазнинӣ ва рамзҳои таҳлилӣ аз луғатҳо танзим карда мешаванд
 TicketParamModule=Танзими тағирёбандаи модул
 TicketParamMail=Танзимоти почтаи электронӣ
-TicketEmailNotificationFrom=Sender e-mail for notification on answers
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the backoffice. For example noreply@example.com
-TicketEmailNotificationTo=Notify ticket creation to this e-mail address
-TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketEmailNotificationFrom=Ирсолкунандаи почтаи электронӣ барои огоҳӣ дар бораи ҷавобҳо
+TicketEmailNotificationFromHelp=Почтаи электронии ирсолкунанда барои фиристодани паёми огоҳинома ҳангоми фиристодани ҷавоб дар дохили офис истифода мешавад. Масалан noreply@example.com
+TicketEmailNotificationTo=Эҷоди чиптаҳоро ба ин суроғаи почтаи электронӣ огоҳ кунед
+TicketEmailNotificationToHelp=Агар мавҷуд бошад, ин суроғаи почтаи электронӣ дар бораи эҷоди чипта огоҳ карда мешавад
 TicketNewEmailBodyLabel=Паёми матнӣ пас аз сохтани чипта фиристода мешавад
 TicketNewEmailBodyHelp=Матни дар ин ҷо нишон додашуда ба почтаи электронӣ, ки таъсиси чиптаи навро аз интерфейси оммавӣ тасдиқ мекунад, ворид карда мешавад. Маълумот дар бораи машварати чипта ба таври худкор илова карда мешавад.
 TicketParamPublicInterface=Танзимоти интерфейси оммавӣ
 TicketsEmailMustExist=Барои сохтани чипта суроғаи почтаи электронии мавҷударо талаб кунед
 TicketsEmailMustExistHelp=Дар интерфейси оммавӣ, суроғаи почтаи электронӣ бояд барои сохтани чиптаи нав дар пойгоҳи додаҳо пур карда шавад.
-TicketsShowProgression=Display the ticket progress in the public interface
-TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
-TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a thirdparty or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
+TicketsShowProgression=Пешрафти чиптаро дар интерфейси ҷамъиятӣ нишон диҳед
+TicketsShowProgressionHelp=Ин хосиятро барои пинҳон кардани пешрафти чипта дар саҳифаҳои интерфейси ҷамъиятӣ фаъол созед
+TicketCreateThirdPartyWithContactIfNotExist=Ном ва номи ширкатро барои мактубҳои номаълум пурсед.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Санҷед, ки оё шахси сеюм ё алоқа барои почтаи воридшуда мавҷуд аст. Агар не, ном ва номи ширкатро пурсед, то шахси сеюмро бо тамос эҷод кунед.
 PublicInterface=Интерфейси оммавӣ
-TicketUrlPublicInterfaceLabelAdmin=URL -и алтернативӣ барои интерфейси оммавӣ
-TicketUrlPublicInterfaceHelpAdmin=Тақаллусро ба веб -сервер муайян кардан ва ба ин васила интерфейси оммавиро бо URLи дигар дастрас кардан мумкин аст (сервер бояд дар ин URLи нав ҳамчун прокси амал кунад)
 TicketPublicInterfaceTextHomeLabelAdmin=Матни қабули интерфейси оммавӣ
 TicketPublicInterfaceTextHome=Шумо метавонед чиптаи дастгирӣ созед ё аз чиптаи пайгирии идентификатори мавҷудбударо бинед.
 TicketPublicInterfaceTextHomeHelpAdmin=Матни дар ин ҷо муайяншуда дар саҳифаи асосии интерфейси оммавӣ пайдо мешавад.
@@ -126,9 +103,9 @@ TicketParams=Парамс
 TicketsShowModuleLogo=Нишон додани логотипи модул дар интерфейси оммавӣ
 TicketsShowModuleLogoHelp=Ин параметрро барои пинҳон кардани модули логотип дар саҳифаҳои интерфейси оммавӣ фаъол созед
 TicketsShowCompanyLogo=Нишон додани логотипи ширкат дар интерфейси оммавӣ
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Ин хосиятро барои нишон додани логотипи ширкати асосӣ дар саҳифаҳои интерфейси ҷамъиятӣ фаъол созед
+TicketsShowCompanyFooter=Поёни ширкатро дар интерфейси ҷамъиятӣ нишон диҳед
+TicketsShowCompanyFooterHelp=Ин хосиятро барои нишон додани поёни ширкати асосӣ дар саҳифаҳои интерфейси ҷамъиятӣ фаъол созед
 TicketsEmailAlsoSendToMainAddress=Инчунин ба суроғаи асосии почтаи электронӣ огоҳӣ фиристед
 TicketsEmailAlsoSendToMainAddressHelp=Ин хосиятро фаъол созед, то почтаи электронӣ ба суроғае, ки дар танзимоти "%s" муайян шудааст, фиристед (ба ҷадвали "%s" нигаред)
 TicketsLimitViewAssignedOnly=Дисплейро ба чиптаҳое, ки ба корбари ҷорӣ таъин шудааст, маҳдуд кунед (барои корбарони беруна муассир нест, ҳамеша бо тарафи сеюме, ки ба онҳо вобаста аст, маҳдуд аст)
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Ҳангоми илова кардани п�
 TicketsPublicNotificationNewMessageHelp=Ҳангоми илова кардани паёми нав аз интерфейси оммавӣ почтаи электронӣ фиристед (ба корбари таъиншуда ё почтаи огоҳинома ба (навсозӣ) ва/ё почтаи огоҳинома ба)
 TicketPublicNotificationNewMessageDefaultEmail=Паёми электронӣ ба (навсозӣ)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Барои ҳар як огоҳиномаи паёми нав ба ин суроға паёми электронӣ фиристед, агар чипта корбари ба он таъиншударо надошта бошад ё агар корбар ягон почтаи маълум надошта бошад.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
-TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
-TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
-TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
-TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
-TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
-TicketChooseProductCategory=Product category for ticket support
-TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
-TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketsAutoReadTicket=Ба таври худкор чиптаро ҳамчун хондашуда қайд кунед (вақте ки аз офис сохта шудааст)
+TicketsAutoReadTicketHelp=Ҳангоми сохтани чипта аз офис ба таври худкор ҳамчун хондашуда қайд кунед. Вақте ки чипта аз интерфейси ҷамъиятӣ сохта мешавад, чипта бо ҳолати "Хонда нашудааст" боқӣ мемонад.
+TicketsDelayBeforeFirstAnswer=Чиптаи нав бояд ҷавоби аввалро пеш аз (соат) гирад:
+TicketsDelayBeforeFirstAnswerHelp=Агар чиптаи нав пас аз ин мӯҳлат (бо соатҳо) ҷавоб нагирифта бошад, дар намуди рӯйхат аломати огоҳии муҳим нишон дода мешавад.
+TicketsDelayBetweenAnswers=Чиптаи ҳалнашуда набояд дар давоми (соатҳо) ғайрифаъол бошад:
+TicketsDelayBetweenAnswersHelp=Агар чиптаи ҳалнашудае, ки аллакай ҷавоб гирифтааст, пас аз ин давра (бо соат) робитаи минбаъда надошта бошад, дар намуди рӯйхат нишонаи огоҳкунанда нишон дода мешавад.
+TicketsAutoNotifyClose=Ҳангоми пӯшидани чипта ба таври худкор шахси сеюмро огоҳ кунед
+TicketsAutoNotifyCloseHelp=Ҳангоми пӯшидани чипта ба шумо пешниҳод карда мешавад, ки ба яке аз мухотибони тарафи сеюм паём фиристед. Ҳангоми пӯшидани оммавӣ, ба як тамоси шахси сеюм, ки ба чипта алоқаманд аст, паём фиристода мешавад.
+TicketWrongContact=Алоқаи пешниҳодшуда қисми алоқаҳои ҷории чипта нест. Почтаи электронӣ фиристода нашудааст.
+TicketChooseProductCategory=Категорияи маҳсулот барои дастгирии чипта
+TicketChooseProductCategoryHelp=Категорияи маҳсулоти дастгирии чиптаро интихоб кунед. Ин барои ба таври худкор пайваст кардани шартнома ба чипта истифода мешавад.
+TicketUseCaptchaCode=Ҳангоми сохтани чипта рамзи графикиро (CAPTCHA) истифода баред
+TicketUseCaptchaCodeHelp=Ҳангоми сохтани чиптаи нав тасдиқи CAPTCHA -ро илова мекунад.
+TicketsAllowClassificationModificationIfClosed=Иҷозат диҳед, ки гурӯҳбандии чиптаҳои пӯшида тағир дода шавад
+TicketsAllowClassificationModificationIfClosedHelp=Иҷозат диҳед, ки таснифро тағир диҳед (навъ, гурӯҳи чиптаҳо, вазнинӣ), ҳатто агар чиптаҳо баста бошанд.
 # Index & list page
-#
 TicketsIndex=Минтақаи чиптаҳо
 TicketList=Рӯйхати чиптаҳо
 TicketAssignedToMeInfos=Ин саҳифа рӯйхати чиптаҳоро, ки аз ҷониби корбари кунунӣ сохта шудааст ё таъин шудааст, нишон медиҳад
@@ -174,12 +150,9 @@ OrderByDateAsc=Аз рӯи санаи болоравӣ мураттаб куне
 OrderByDateDesc=Аз рӯи санаи камшаванда ҷудо кунед
 ShowAsConversation=Ҳамчун рӯйхати сӯҳбат нишон диҳед
 MessageListViewType=Ҳамчун рӯйхати ҷадвал нишон диҳед
-ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
-ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
+ConfirmMassTicketClosingSendEmail=Ҳангоми пӯшидани чиптаҳо ба таври худкор паёмҳои электронӣ фиристед
+ConfirmMassTicketClosingSendEmailQuestion=Оё шумо мехоҳед, ки шахсони сеюмро ҳангоми пӯшидани ин чиптаҳо огоҳ кунед?
 # Ticket card
-#
 Ticket=Билет
 TicketCard=Корти билет
 CreateTicket=Эҷоди чипта
@@ -189,7 +162,7 @@ CreatedBy=Аз ҷониби муаллиф
 NewTicket=Билети нав
 SubjectAnswerToTicket=Ҷавоби билет
 TicketTypeRequest=Навъи дархост
-TicketCategory=Ticket group
+TicketCategory=Гурӯҳи билет
 SeeTicket=Билетро бинед
 TicketMarkedAsRead=Билет ҳамчун хондашуда қайд карда шудааст
 TicketReadOn=Хонда шуд
@@ -201,20 +174,20 @@ TicketAssigned=Ҳоло чипта таъин карда мешавад
 TicketChangeType=Тағир додани намуди
 TicketChangeCategory=Тағир додани рамзи таҳлилӣ
 TicketChangeSeverity=Тағир додани шиддат
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Илова кунед ё паём фиристед
+TicketAddPrivateMessage=Паёми хусусӣ илова кунед
 MessageSuccessfullyAdded=Билет илова карда шуд
 TicketMessageSuccessfullyAdded=Паём бомуваффақият илова карда шуд
 TicketMessagesList=Рӯйхати паёмҳо
 NoMsgForThisTicket=Барои ин чипта хабаре нест
-TicketProperties=Classification
+TicketProperties=Тасниф
 LatestNewTickets=Чиптаҳои охирини %s (хонда намешаванд)
 TicketSeverity=Шиддатнокӣ
 ShowTicket=Билетро бинед
 RelatedTickets=Чиптаҳои марбут
 TicketAddIntervention=Эҷоди мудохила
-CloseTicket=Close|Solve
-AbandonTicket=Abandon
+CloseTicket=Пӯшед|Ҳалли
+AbandonTicket=Тарк кардан
 CloseATicket=Пӯшед | Билетро ҳал кунед
 ConfirmCloseAticket=Бастани чиптаро тасдиқ кунед
 ConfirmAbandonTicket=Оё шумо пӯшидани чиптаро ба мақоми 'партофташуда' тасдиқ мекунед?
@@ -228,17 +201,17 @@ SendMessageByEmail=Паёмро тавассути почтаи электрон
 TicketNewMessage=Хабари нав
 ErrorMailRecipientIsEmptyForSendTicketMessage=Қабулкунанда холӣ аст. Фиристодани почтаи электронӣ нест
 TicketGoIntoContactTab=Лутфан ба ҷадвали "Тамос" ворид шавед, то онҳоро интихоб кунед
-TicketMessageMailIntro=Message header
+TicketMessageMailIntro=Сарлавҳаи паём
 TicketMessageMailIntroHelp=Ин матн танҳо дар аввали почтаи электронӣ илова карда мешавад ва захира карда намешавад.
-TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailFooter=Message footer
-TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
-TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailFooterHelpAdmin=This text will be inserted after the response message.
+TicketMessageMailIntroText=Салом,<br>Ба чиптае, ки шумо пайравӣ мекунед, ҷавоби нав илова карда шуд. Ин аст паём:<br>
+TicketMessageMailIntroHelpAdmin=Ин матн пеш аз ҷавоб ҳангоми ҷавоб додан ба билет аз Долибарр ворид карда мешавад
+TicketMessageMailFooter=Поёнтарии паём
+TicketMessageMailFooterHelp=Ин матн танҳо дар охири паёме, ки тавассути почтаи электронӣ фиристода мешавад, илова карда мешавад ва захира карда намешавад.
+TicketMessageMailFooterText=Паём аз ҷониби <b>%s</b> тавассути Dolibarr
+TicketMessageMailFooterHelpAdmin=Ин матн пас аз паёми ҷавобӣ ворид карда мешавад.
 TicketMessageHelp=Танҳо ин матн дар рӯйхати паёмҳо дар корти чипта сабт карда мешавад.
 TicketMessageSubstitutionReplacedByGenericValues=Тағирёбандаҳои ивазшаванда бо арзишҳои умумӣ иваз карда мешаванд.
-ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
+ForEmailMessageWillBeCompletedWith=Барои паёмҳои почтаи электронӣ ба корбарони хориҷӣ фиристода мешавад, паём бо он анҷом дода мешавад
 TimeElapsedSince=Аз он вақт гузашт
 TicketTimeToRead=Вақт пеш аз хондан гузашт
 TicketTimeElapsedBeforeSince=Вақт пеш / аз он гузашт
@@ -248,14 +221,14 @@ ConfirmReOpenTicket=Боз кардани ин чиптаро тасдиқ ку�
 TicketMessageMailIntroAutoNewPublicMessage=Дар чипта паёми нав бо мавзӯи %s нашр карда шуд:
 TicketAssignedToYou=Билет таъин карда шуд
 TicketAssignedEmailBody=Ба шумо чиптаи #%s аз ҷониби %s таъин карда шудааст
-TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerEmail=Чиптаи шумо барои коркард таъин шудааст.
+TicketAssignedCustomerBody=Ин почтаи электронии худкор барои тасдиқи чиптаи шумо барои коркард таъин шудааст.
 MarkMessageAsPrivate=Паёмро ҳамчун хусусӣ қайд кунед
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact
-TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
-TicketMessagePrivateHelp=This message will not be visible to external users
-TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
+TicketMessageSendEmailHelp=Ба ҳамаи тамосҳои таъиншуда паёми электронӣ фиристода мешавад
+TicketMessageSendEmailHelp2a=(тамосҳои дохилӣ, инчунин алоқаҳои беруна, ба истиснои ҳолатҳое, ки имконоти "%s" тафтиш карда шуда бошад)
+TicketMessageSendEmailHelp2b=(тамосҳои дохилӣ, инчунин алоқаҳои беруна)
+TicketMessagePrivateHelp=Ин паём барои корбарони хориҷӣ намоён нахоҳад шуд
+TicketMessageRecipientsHelp=Майдони қабулкунанда бо алоқаҳои фаъоли ба чипта алоқаманд пур карда шудааст
 TicketEmailOriginIssuer=Эмитент дар пайдоиши чиптаҳо
 InitialMessage=Паёми ибтидоӣ
 LinkToAContract=Пайванд ба шартнома
@@ -268,31 +241,25 @@ TicketChangeStatus=Тағир додани ҳолати
 TicketConfirmChangeStatus=Тағир додани вазъро тасдиқ кунед: %s?
 TicketLogStatusChanged=Статус тағир ёфт: %s ба %s
 TicketNotNotifyTiersAtCreate=Ҳангоми эҷод кардан ба ширкат хабар надиҳед
-NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
-TicketNotifyAllTiersAtClose=All related contacts
-TicketNotNotifyTiersAtClose=No related contact
+NotifyThirdpartyOnTicketClosing=Тамосҳо барои огоҳ кардан ҳангоми пӯшидани чипта
+TicketNotifyAllTiersAtClose=Ҳама алоқаҳои алоқаманд
+TicketNotNotifyTiersAtClose=Ягон тамоси алоқаманд
 Unread=Нохонда
 TicketNotCreatedFromPublicInterface=Дастрас нест. Чипта аз интерфейси оммавӣ сохта нашудааст.
 ErrorTicketRefRequired=Номи истинод ба чипта лозим аст
-TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
-TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
-TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
-TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
+TicketsDelayForFirstResponseTooLong=Аз рузи кушода шудани билет бе ягон чавоб вакти хеле зиёд гузашт.
+TicketsDelayFromLastResponseTooLong=Аз ҷавоби охирини ин чипта вақти хеле зиёд гузашт.
+TicketNoContractFoundToLink=Ягон шартнома ба таври худкор ба ин чипта пайваст карда нашуд. Лутфан шартномаро дастӣ пайваст кунед.
+TicketManyContractsLinked=Бисёр шартномаҳо ба таври худкор ба ин чипта пайваст карда шудаанд. Боварӣ ҳосил кунед, ки кадоме аз онҳо интихоб карда мешавад.
+TicketRefAlreadyUsed=Истинод [%s] аллакай истифода шудааст, истинод ба нави шумо ин аст [%s]
 # Logs
-#
 TicketLogMesgReadBy=Билет %s хондааст %s
 NoLogForThisTicket=Ҳоло барои ин билет сабт нашудааст
 TicketLogAssignedTo=Билет %s ба %s таъин шудааст
 TicketLogPropertyChanged=Чипта %s тағир дода шудааст: тасниф аз %s ба %s
 TicketLogClosedBy=Чипта %s аз ҷониби %s баста шуд
 TicketLogReopen=Чипта %s дубора боз мешавад
-
-#
 # Public pages
-#
 TicketSystem=Системаи чиптаҳо
 ShowListTicketWithTrackId=Намоиши рӯйхати чиптаҳо аз ID -и суруд
 ShowTicketWithTrackId=Намоиши чипта аз ID -и суруд
@@ -306,14 +273,14 @@ TicketNewEmailBody=Ин почтаи автоматӣ барои тасдиқ к
 TicketNewEmailBodyCustomer=Ин почтаи автоматӣ барои тасдиқ кардани чиптаи нав аст, ки акнун ба ҳисоби шумо сохта шудааст.
 TicketNewEmailBodyInfosTicket=Маълумот барои мониторинги чипта
 TicketNewEmailBodyInfosTrackId=Рақами пайгирии чиптаҳо: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=Шумо метавонед ҷараёни чиптаро дар интерфейси мушаххас бо истиноди зерин дидан кунед
-TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
+TicketNewEmailBodyInfosTrackUrl=Шумо метавонед рафти чиптаро тавассути зер кардани истиноди зерин тамошо кунед
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
+TicketCloseEmailBodyInfosTrackUrlCustomer=Шумо метавонед бо клик кардани пайванди зерин бо таърихи ин чипта шинос шавед
 TicketEmailPleaseDoNotReplyToThisEmail=Лутфан бевосита ба ин почтаи электронӣ ҷавоб надиҳед! Истинодро барои посух додан ба интерфейс истифода баред.
 TicketPublicInfoCreateTicket=Ин шакл ба шумо имкон медиҳад, ки чиптаи дастгирӣ дар системаи идоракунии мо сабт кунед.
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your question. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicPleaseBeAccuratelyDescribe=Лутфан дархости худро дақиқ тавсиф кунед. Маълумоти бештареро пешниҳод кунед, то ба мо имкон диҳад, ки дархости шуморо дуруст муайян кунем.
 TicketPublicMsgViewLogIn=Лутфан ID пайгирии чиптаро ворид кунед
-TicketTrackId=ID пайгирии ҷамъиятӣ
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Яке аз ID пайгирии шумо
 ErrorTicketNotFound=Чипта бо ID пайгирии %s ёфт нашуд!
 Subject=Мавзӯъ
@@ -329,26 +296,21 @@ OldUser=Истифодабарандаи кӯҳна
 NewUser=Корбари нав
 NumberOfTicketsByMonth=Шумораи чиптаҳо дар як моҳ
 NbOfTickets=Шумораи чиптаҳо
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=Саҳмгузорони беруна
+AddContributor=Илова кардани саҳмгузори беруна
 # notifications
-TicketCloseEmailSubjectCustomer=Ticket closed
-TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
-TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
-TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
+TicketCloseEmailSubjectCustomer=Билет баста
+TicketCloseEmailBodyCustomer=Ин паёми худкорест, ки ба шумо хабар медиҳад, ки чиптаи %s нав баста шудааст.
+TicketCloseEmailSubjectAdmin=Чипта баста - Réf %s (идентификатсияи чиптаи ҷамъиятӣ %s)
+TicketCloseEmailBodyAdmin=Чипта бо ID #%s нав баста шудааст, ба маълумот нигаред:
 TicketNotificationEmailSubject=Билет %s нав карда шуд
 TicketNotificationEmailBody=Ин паёми автоматӣ аст, то шуморо огоҳ созад, ки чиптаи %s навсозӣ шудааст
 TicketNotificationRecipient=Қабулкунандаи огоҳӣ
 TicketNotificationLogMessage=Паёми сабт
 TicketNotificationEmailBodyInfosTrackUrlinternal=Дидани чипта ба интерфейс
 TicketNotificationNumberEmailSent=Паёми электронӣ фиристода мешавад: %s
-
 ActionsOnTicket=Ҳодисаҳо дар чипта
-
-#
 # Boxes
-#
 BoxLastTicket=Охирин чиптаҳои эҷодшуда
 BoxLastTicketDescription=Охирин чиптаҳои %s
 BoxLastTicketContent=
@@ -364,7 +326,7 @@ BoxTicketLastXDays=Шумораи чиптаҳои нав аз рӯи рӯзҳо
 BoxTicketLastXDayswidget = Шумораи чиптаҳои нав аз рӯи рӯзҳои X рӯзи охир
 BoxNoTicketLastXDays=Дар давоми %s рӯзи охир билетҳои нав нест
 BoxNumberOfTicketByDay=Шумораи чиптаҳои нав дар як рӯз
-BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+BoxNewTicketVSClose=Шумораи чиптаҳо нисбат ба чиптаҳои пӯшида (имрӯз)
 TicketCreatedToday=Билет имрӯз офарида шудааст
 TicketClosedToday=Чипта имрӯз баста шуд
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+KMFoundForTicketGroup=Мо мавзӯъҳо ва саволҳои FAQ-ро пайдо кардем, ки метавонанд ба саволи шумо ҷавоб диҳанд, ба туфайли тафтиши онҳо пеш аз пешниҳоди чипта

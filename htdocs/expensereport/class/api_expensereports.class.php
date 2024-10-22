@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+
 
 /**
  * API class for Expense Reports
@@ -29,12 +31,20 @@
  */
 class ExpenseReports extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'fk_user_author'
+	);
+
+	/**
+	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 */
+	public static $FIELDSPAYMENT = array(
+		"fk_typepayment",
+		'datepaid',
+		'amounts',
 	);
 
 	/**
@@ -48,15 +58,16 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->expensereport = new ExpenseReport($this->db);
 	}
 
 	/**
-	 * Get properties of a Expense Report object
+	 * Get properties of an Expense Report
 	 *
-	 * Return an array with Expense Report informations
+	 * Return an array with Expense Report information
 	 *
 	 * @param   int         $id         ID of Expense Report
 	 * @return  Object					Object with cleaned properties
@@ -65,8 +76,8 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -75,7 +86,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->expensereport->fetchObjectLinked();
@@ -87,21 +98,20 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * Get a list of Expense Reports
 	 *
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array               Array of Expense Report objects
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $db, $conf;
-
-		if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -124,6 +134,9 @@ class ExpenseReports extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -152,9 +165,24 @@ class ExpenseReports extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve Expense Report list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Expense Report found');
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
+
 		return $obj_ret;
 	}
 
@@ -166,15 +194,21 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
-			throw new RestException(401, "Insuffisant rights");
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403, "Insuffisant rights");
 		}
 
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->expensereport->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->expensereport->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -202,8 +236,8 @@ class ExpenseReports extends DolibarrApi
 	/*
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->expensereport->lire) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -212,7 +246,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->expensereport->getLinesArray();
 		$result = array();
@@ -236,8 +270,8 @@ class ExpenseReports extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-	  if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			  throw new RestException(401);
+	  if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			  throw new RestException(403);
 		  }
 
 	  $result = $this->expensereport->fetch($id);
@@ -246,7 +280,7 @@ class ExpenseReports extends DolibarrApi
 	  }
 
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			  throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
 
 	  $request_data = (object) $request_data;
@@ -304,8 +338,8 @@ class ExpenseReports extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			  throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			  throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -314,7 +348,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -368,8 +402,8 @@ class ExpenseReports extends DolibarrApi
 	/*
 	public function deleteLine($id, $lineid)
 	{
-	  if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			  throw new RestException(401);
+	  if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			  throw new RestException(403);
 		  }
 
 	  $result = $this->expensereport->fetch($id);
@@ -378,12 +412,12 @@ class ExpenseReports extends DolibarrApi
 	  }
 
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			  throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
 
-	  // TODO Check the lineid $lineid is a line of ojbect
+	  // TODO Check the lineid $lineid is a line of object
 
-	  $updateRes = $this->expensereport->deleteline($lineid);
+	  $updateRes = $this->expensereport->deleteLine($lineid);
 	  if ($updateRes == 1) {
 		return $this->get($id);
 	  }
@@ -394,10 +428,9 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Update Expense Report general fields (won't touch lines of expensereport)
 	 *
-	 * @param int   $id             Id of Expense Report to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of Expense Report to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
 	 * @throws  RestException	404		Expense report not found
@@ -405,8 +438,8 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -415,13 +448,19 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
 			}
-			$this->expensereport->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->expensereport->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {
@@ -440,8 +479,8 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'supprimer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -450,7 +489,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
@@ -483,8 +522,8 @@ class ExpenseReports extends DolibarrApi
 	/*
 	public function validate($id, $idwarehouse=0)
 	{
-		if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -493,7 +532,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if( ! $this->expensereport->valid(DolibarrApiAccess::$user, $idwarehouse)) {
@@ -507,6 +546,196 @@ class ExpenseReports extends DolibarrApi
 			)
 		);
 	}*/
+
+
+
+	/**
+	 * Get the list of payments of expensereport.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Limit for list
+	 * @param int       $page       Page number
+	 * @return array                List of paymentExpenseReport objects
+	 *
+	 * @url     GET /payments
+	 *
+	 * @throws RestException
+	 */
+	public function getAllPayments($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0)
+	{
+		$list = array();
+
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "payment_expensereport as t, ".MAIN_DB_PREFIX."expensereport as e";
+		$sql .= " WHERE e.rowid = t.fk_expensereport";
+		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$obj = $this->db->fetch_object($result);
+				$paymentExpenseReport = new PaymentExpenseReport($this->db);
+				if ($paymentExpenseReport->fetch($obj->rowid) > 0) {
+					$list[] = $this->_cleanObjectDatas($paymentExpenseReport);
+				}
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of paymentexpensereport: ' . $this->db->lasterror());
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Get a given payment.
+	 *
+	 * @param	int		$pid	Payment ID
+	 * @return 	object 			PaymentExpenseReport object
+	 *
+	 * @url     GET /payments/{pid}
+	 *
+	 * @throws RestException
+	 */
+	public function getPayments($pid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$paymentExpenseReport = new PaymentExpenseReport($this->db);
+		$result = $paymentExpenseReport->fetch($pid);
+		if (!$result) {
+			throw new RestException(404, 'paymentExpenseReport not found');
+		}
+
+		return $this->_cleanObjectDatas($paymentExpenseReport);
+	}
+
+	/**
+	 * Create payment of ExpenseReport
+	 *
+	 * @param 	int 	$id   							ID of expense report
+	 * @param 	array 	$request_data   {@from body}  	Request data
+	 * @return 	int 									ID of paymentExpenseReport
+	 *
+	 * @url     POST {id}/payments
+	 */
+	public function addPayment($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403);
+		}
+		// Check mandatory fields
+		$result = $this->_validatepayment($request_data);
+
+		$paymentExpenseReport = new PaymentExpenseReport($this->db);
+		$paymentExpenseReport->fk_expensereport = $id;
+		foreach ($request_data as $field => $value) {
+			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+		}
+
+		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
+		}
+		if (isModEnabled("bank")) {
+			$paymentExpenseReport->addPaymentToBank(
+				DolibarrApiAccess::$user,
+				'payment_expensereport',
+				'(ExpenseReportPayment)',
+				(int) $request_data['accountid'],
+				'',
+				''
+			);
+		}
+
+		return $paymentExpenseReport->id;
+	}
+
+	/**
+	 * Update a payment of ExpenseReport
+	 *
+	 * @param   int     $id              ID of paymentExpenseReport
+	 * @param   array   $request_data    data
+	 * @return  object
+	 *
+	 * @url     PUT {id}/payments
+	 */
+	public function updatePayment($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$paymentExpenseReport = new PaymentExpenseReport($this->db);
+		$result = $paymentExpenseReport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'payment of expense report not found');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+		}
+
+		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $paymentExpenseReport->error);
+		}
+	}
+
+	/**
+	 * Delete paymentExpenseReport
+	 *
+	 * @param 	int    $id    ID of payment ExpenseReport
+	 * @return 	array
+	 *
+	 * @url     DELETE {id}/payments
+	 */
+	/*public function delete($id)
+	 {
+	 if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer') {
+	 throw new RestException(403);
+	 }
+	 $paymentExpenseReport = new PaymentExpenseReport($this->db);
+	 $result = $paymentExpenseReport->fetch($id);
+	 if (!$result) {
+	 throw new RestException(404, 'paymentExpenseReport not found');
+	 }
+
+	 if ($paymentExpenseReport->delete(DolibarrApiAccess::$user) < 0) {
+	 throw new RestException(403, 'error when deleting paymentExpenseReport');
+	 }
+
+	 return array(
+	 'success' => array(
+	 'code' => 200,
+	 'message' => 'paymentExpenseReport deleted'
+	 )
+	 );
+	 }*/
+
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -573,6 +802,25 @@ class ExpenseReports extends DolibarrApi
 	{
 		$expensereport = array();
 		foreach (ExpenseReports::$FIELDS as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$expensereport[$field] = $data[$field];
+		}
+		return $expensereport;
+	}
+
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException
+	 */
+	private function _validatepayment($data)
+	{
+		$expensereport = array();
+		foreach (ExpenseReports::$FIELDSPAYMENT as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

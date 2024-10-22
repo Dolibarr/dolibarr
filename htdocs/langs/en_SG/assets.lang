@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - assets
+AssetRecoveredVAT=Recovered GST
+AssetDisposalSubjectToVat=Disposal subject to GST
+AssetDepreciationOptionAmountBaseDepreciationHT=Depreciation base (excl. GST)
+AssetDepreciationOptionAmountBaseDeductibleHT=Deductible base (excl. GST)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. GST)
+AssetAccountancyCodeVatCollected=Collected GST
+AssetAccountancyCodeVatDeductible=Recovered GST on assets
+AssetBaseDepreciationHT=Depreciation basis (excl. GST)
+AssetDepreciationHT=Depreciation (excl. GST)
+AssetCumulativeDepreciationHT=Cumulative depreciation (excl. GST)
+AssetResidualHT=Residual value (excl. GST)

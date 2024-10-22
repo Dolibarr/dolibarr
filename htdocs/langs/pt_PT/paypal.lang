@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configurar módulo do PayPal
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalDesc=Este módulo permite o pagamento por clientes via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Isso pode ser usado para um pagamento ad-hoc ou para um pagamento relacionado a um objeto Dolibarr (fatura, encomenda, .. .)
+PaypalOrCBDoPayment=Pague com PayPal (cartão ou PayPal)
 PaypalDoPayment=Pague com PayPal
 PAYPAL_API_SANDBOX=Modo de teste / sandbox
 PAYPAL_API_USER=Nome de utilizador API
 PAYPAL_API_PASSWORD=Senha API
 PAYPAL_API_SIGNATURE=Assinatura API
 PAYPAL_SSLVERSION=Versão do Curl SSL
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferecer pagamento "integral" (cartão de crédito+PayPal) ou apenas "PayPal"
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Apenas Paypal
 ONLINE_PAYMENT_CSS_URL=URL opcional da folha de estilo CSS na página de pagamento on-line
 ThisIsTransactionId=Esta é id. da transação: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
+PAYPAL_ADD_PAYMENT_URL=Incluir o URL de pagamento do PayPal ao enviar um documento por e-mail
 NewOnlinePaymentReceived=Novo pagamento online recebido
 NewOnlinePaymentFailed=Novo pagamento em linha tentado, mas falhado
-ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
+ONLINE_PAYMENT_SENDEMAIL=Endereço de e-mail para notificações após cada tentativa de pagamento (em caso de falha e)
 ReturnURLAfterPayment=URL de retorno depois do pagamento
 ValidationOfOnlinePaymentFailed=Falha na validação do pagamento online
 PaymentSystemConfirmPaymentPageWasCalledButFailed=A página de confirmação de pagamento foi chamada pelo sistema de pagamento mas retornou um erro
@@ -27,10 +27,11 @@ ShortErrorMessage=Mensagem de Erro Abreviada
 ErrorCode=Código de Erro
 ErrorSeverityCode=Código de Severidade do Erro
 OnlinePaymentSystem=Sistema de pagamento online
-PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalLiveEnabled=Modo "ao vivo" do PayPal ativado (caso contrário, modo de teste/sandbox)
 PaypalImportPayment=Importar pagamentos do PayPal
 PostActionAfterPayment=Ações posteriores depois dos pagamentos
 ARollbackWasPerformedOnPostActions=Uma reversão foi executada em todas as ações do Post. Você deve concluir as ações de postagem manualmente, se necessário.
 ValidationOfPaymentFailed=A validação do pagamento falhou
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+CardOwner=Titular do cartão
+PayPalBalance=Crédito PayPal
+OnlineSubscriptionPaymentLine=Assinatura on-line registrada em %s<br>Paga via %s<br>Endereço IP de origem: %s<br>Transação Id.: %s

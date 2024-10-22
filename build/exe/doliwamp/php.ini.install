@@ -251,7 +251,7 @@ safe_mode_protected_env_vars = LD_LIBRARY_PATH
 ; and below.  This directive makes most sense if used in a per-directory
 ; or per-virtualhost web server configuration file. This directive is
 ; *NOT* affected by whether Safe Mode is turned On or Off.
-open_basedir = "WAMPROOT"
+open_basedir = "WAMPROOT;C:\WINDOWS\TEMP"
 
 ; This directive allows you to disable certain functions for security reasons.
 ; It receives a comma-delimited list of function names. This directive is

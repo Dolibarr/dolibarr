@@ -51,7 +51,7 @@ trait MessageDecoratorTrait
     }
 
     /**
-     * Returns the message body, as it's internal representation.
+     * Returns the message body, as its internal representation.
      *
      * This could be either a string or a stream.
      *
@@ -91,7 +91,7 @@ trait MessageDecoratorTrait
     }
 
     /**
-     * Returns a specific HTTP header, based on it's name.
+     * Returns a specific HTTP header, based on its name.
      *
      * The name must be treated as case-insensitive.
      * If the header does not exist, this method must return null.
@@ -116,7 +116,7 @@ trait MessageDecoratorTrait
      * For every time the HTTP header appeared in the request or response, an
      * item will appear in the array.
      *
-     * If the header did not exists, this method will return an empty array.
+     * If the header did not exist, this method will return an empty array.
      */
     public function getHeaderAsArray(string $name): array
     {
@@ -180,8 +180,6 @@ trait MessageDecoratorTrait
      * The specified header name must be treated as case-insensitive.
      * This method should return true if the header was successfully deleted,
      * and false if the header did not exist.
-     *
-     * @return bool
      */
     public function removeHeader(string $name): bool
     {

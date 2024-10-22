@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Perfformiwyd dychweliad ar holl weithrediadau
 ValidationOfPaymentFailed=Mae dilysu taliad wedi methu
 CardOwner=Deiliad cerdyn
 PayPalBalance=Credyd Paypal
+OnlineSubscriptionPaymentLine=Tanysgrifiad ar-lein wedi'i recordio ar %s<br>Talwyd drwy %s<br>Cyfeiriad IP gwreiddiol: %s<br>ID Trafodiad: b0f49fz0 
