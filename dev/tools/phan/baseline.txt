@@ -14,10 +14,10 @@ return [
     // PhanPluginUnknownPropertyType : 420+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 360+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
-    // PhanPluginUnknownArrayMethodReturnType : 290+ occurrences
+    // PhanPluginUnknownArrayMethodReturnType : 280+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 210+ occurrences
     // PhanPossiblyUndeclaredVariable : 200+ occurrences
-    // PhanTypeMismatchProperty : 170+ occurrences
+    // PhanTypeMismatchProperty : 160+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 95+ occurrences
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 60+ occurrences
