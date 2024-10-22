@@ -301,7 +301,7 @@ if (is_object($object)) {
 				}
 				$db->free($resql);
 			} else {
-				print 'Error in request ' . $sql . ' ' . $db->lasterror() . '. Check setup of extra parameters.<br>';
+				dol_syslog('Error in request ' . $db->lasterror() . '. Check setup of extra parameters.', LOG_ERR);
 			}
 		} else {
 			// require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
