@@ -171,6 +171,11 @@ if ($id > 0 ) {
 
 	$cssclass = "titlefield";
 
+	$dateexample = dol_now();
+	if (!empty($object->frequency) && !empty($object->date_when)) {
+		$dateexample = $object->date_when;
+	}
+
 	$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
 
 	$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%m') . ')';
