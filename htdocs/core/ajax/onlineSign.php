@@ -177,28 +177,15 @@ if ($action == "importSignature") {
 							//$pdf->Open();
 							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
 
+							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 							$param = array();
 							$param['online_sign_name'] = $online_sign_name;
 							$param['pathtoimage'] = $upload_dir . $filename;
 							$param['specificpage'] = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
-
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-
-							if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
-								$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
-							} else {
-								$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-							}
-							if (getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART")) {
-								$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
-							} else {
-								$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
-							}
-							if (getDolGlobalString("PROPAL_SIGNATURE_WFORIMG")) {
-								$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
-							} else {
-								$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
-							}
+							$param['allpages'] = getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES");
+							$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+							$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
+							$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
 
 							// Read pos sign in database
 							if (isset($object->model_pdf_pos_sign) && !empty($object->model_pdf_pos_sign)) {
@@ -207,6 +194,7 @@ if ($action == "importSignature") {
 								$param['xforimgstart'] = isset($pos[1]) ? $pos[1] : ''; // Pos x to print sign
 								$param['yforimgstart'] = isset($pos[2]) ? $pos[2] : ''; // Pos y to print sign
 								$param['wforimg'] = isset($pos[3]) ? $pos[3] : ''; // Width image sign
+								$param['allpages'] = isset($pos[0]) && empty($pos[0]) ? 1 : 0;
 							}
 
 							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
@@ -215,12 +203,19 @@ if ($action == "importSignature") {
 									$tppl = $pdf->importPage($i);
 									$s = $pdf->getTemplatesize($tppl);
 									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-									$pdf->useTemplate($tppl);									
+									$pdf->useTemplate($tppl);
+
+									if (empty($param['xforimgstart']) && empty($param['yforimgstart'])) {
+										$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+										$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+										$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+									}
+
 									if ($param['specificpage'] < 0) {
 										$param['specificpage'] = $pagecount - abs($param['specificpage']);
 									}
 
-									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || $param['specificpage'] == $i) {
+									if (!empty($param['allpages']) || $param['specificpage'] == $i) {
 										dolPrintSignatureImage($pdf, $langs, $param);
 									}
 								} catch (Exception $e) {
@@ -230,7 +225,13 @@ if ($action == "importSignature") {
 								}
 							}
 
-							if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
+							if (empty($param['allpages']) && empty($param['specificpage'])) {
+								if (empty($param['xforimgstart']) && empty($param['yforimgstart'])) {
+									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+									$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+								}
+
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
 
