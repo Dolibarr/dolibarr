@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,7 @@ class FediverseParser
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	public function getPosts()
 	{
@@ -94,7 +95,7 @@ class FediverseParser
 	/**
 	 * Get the last fetch date.
 	 *
-	 * @return int|String Timestamp of the last successful fetch.
+	 * @return int|string Timestamp of the last successful fetch.
 	 */
 	public function getLastFetchDate()
 	{

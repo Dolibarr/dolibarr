@@ -46,6 +46,9 @@ class FormProjets extends Form
 	public $errors = array();
 
 
+	/**
+	 * @var int
+	 */
 	public $nboftasks;
 
 
@@ -149,7 +152,8 @@ class FormProjets extends Form
 	 * @param string	$htmlid 		Html id to use instead of htmlname
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
-	 * @return int|string|array         HTML string or array of option or <0 if KO
+	 * @return int|string|array<array{key:int,value:string,ref:string,labelx:string,label:string,disabled:bool}>         HTML string or array of option or <0 if KO
+
 	 */
 	public function select_projects_list($socid = -1, $selected = 0, $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
@@ -818,7 +822,7 @@ class FormProjets extends Form
 	 * @param string $htmlNameInvoice Name of HTML select for Invoice
 	 * @param string $htmlNameInvoiceLine Name of HTML select for Invoice Line
 	 * @param string $morecss More css added to the select component
-	 * @param array $filters Array of filters
+	 * @param array<string,int>	$filters Array of filters
 	 * @param int $lineOnly return only option for line
 	 * @return string                    HTML Select
 	 */

@@ -382,7 +382,7 @@ class dolReceiptPrinter extends Printer
 			$this->errors[] = $this->db->lasterror;
 		}
 
-		$this->listprinterstemplates = $listofprinters;  // @phpstan-ignore-line
+		$this->listprinterstemplates = $listofprinters;
 
 		return $error;
 	}
