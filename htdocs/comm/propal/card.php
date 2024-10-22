@@ -1614,14 +1614,14 @@ if (empty($reshook)) {
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payment
 		$sql = 'SELECT code ';
-		$sql .= 'FROM '.$db->prefix().'c_payment_term ';
-		$sql .= 'WHERE rowid = '.(GETPOST('cond_reglement_id', 'int'));
+		$sql .= 'FROM ' . $db->prefix() . 'c_payment_term ';
+		$sql .= 'WHERE rowid = ' . (GETPOST('cond_reglement_id', 'int'));
 		$result = $db->query($sql);
-		if ($result){
+		if ($result) {
 			$obj = $db->fetch_object($result);
-			if ($obj->code == 'DEP30PCTDEL'){
+			if ($obj->code == 'DEP30PCTDEL') {
 				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
-			}else{
+			} else {
 				$object->deposit_percent = 0;
 				$object->update($user);
 				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), $object->deposit_percent);
