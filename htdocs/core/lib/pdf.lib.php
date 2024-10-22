@@ -2707,7 +2707,6 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
  * @param	real		$p				Number page to print sign
  * @param	real		$x				Posx to print sign
  * @param	real		$y				Posy to print sign
- * @param	real		$height			Height sign
  * @param	real		$width			Width sign
  * @return	int							<0 if KO, >0 if OK
  */
