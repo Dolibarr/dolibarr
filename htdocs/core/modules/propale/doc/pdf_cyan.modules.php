@@ -633,7 +633,8 @@ class pdf_cyan extends ModelePDFPropales
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// Line position
+
+					// # of line
 					if ($this->getColumnStatus('position')) {
 						$this->printStdColumnContent($pdf, $curY, 'position', $linePosition);
 					}
@@ -1848,7 +1849,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
 
-		$pdf->SetXY($posx, $tab_top + $tab_hl);
+		$pdf->SetXY($posx, $tab_top + $tab_hl + 3);
 		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
 
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
