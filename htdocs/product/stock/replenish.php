@@ -86,6 +86,10 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
 	$fk_entrepot = $lastWarehouseID;
 }
+//If the warehouse is set to the default selected user
+if (!GETPOSTISSET('fk_warehouse') && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+	$fk_entrepot = $user->fk_warehouse;
+}
 
 $texte = '';
 
