@@ -1527,7 +1527,7 @@ class ExtraFields
 						}
 						$sql .= $sqlwhere;
 
-						$sql .= $db->order(implode(', ', $fields_label));
+						$sql .= $this->db->order(implode(', ', $fields_label));
 						$sql .= ' LIMIT ' . getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
 						// print $sql;
 

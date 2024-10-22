@@ -304,14 +304,16 @@ if (is_object($object)) {
 				dol_syslog('Error in request ' . $db->lasterror() . '. Check setup of extra parameters.', LOG_ERR);
 			}
 		} else {
-			// require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-			// $data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+			$form = new Form($db);
+			$categories = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
 			// $out .= '<option value="0">&nbsp;</option>';
-			// if (is_array($data)) {
-			// 	foreach ($data as $data_key => $data_value) {
-			// 		$out .= '<option value="'.$data_key.'"';
-			// 		$out .= ($value == $data_key ? ' selected' : '');
-			// 		$out .= '>'.$data_value.'</option>';
+			// if (is_array($categories)) {
+			// 	foreach ($categories as $category_key => $category_value) {
+			// 		$out .= '<option value="'.$category_key.'"';
+			// 		$out .= ($value == $category_key ? ' selected' : '');
+			// 		$out .= '>'.$category_value.'</option>';
 			// 	}
 			// }
 		}
