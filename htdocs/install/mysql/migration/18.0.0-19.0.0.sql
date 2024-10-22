@@ -222,3 +222,5 @@ UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
 UPDATE llx_c_tva SET taux = 3 WHERE fk_pays = 102 AND taux = 16;
 
 UPDATE llx_menu SET url = CONCAT(url, '&mode=init') WHERE fk_mainmenu = 'ticket' AND titre = 'NewTicket' AND url LIKE '/ticket/card.php?action=create%' AND url NOT LIKE '%mode=init%';
+
+ALTER TABLE llx_actioncomm MODIFY email_to TEXT, MODIFY email_tocc TEXT, MODIFY email_tobcc TEXT;
