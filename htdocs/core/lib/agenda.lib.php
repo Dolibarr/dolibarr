@@ -97,7 +97,7 @@ function print_actions_filter(
 		$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 	}
 	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 0, $multiselect, 0, 'minwidth200 maxwidth250 widthcentpercentminusx', 1);
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 0, $multiselect, 0, 'minwidth150 maxwidth200 widthcentpercentminusx', 1);
 	print '</div>';
 
 	if ($canedit) {

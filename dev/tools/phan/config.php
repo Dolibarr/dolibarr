@@ -266,7 +266,7 @@ return [
 		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
-		'mysoc' => '\Societe',
+		'mysoc' => '?\Societe',
 		'nblines' => '\int',
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
@@ -320,7 +320,7 @@ return [
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
 		// mymodule seen in cti, but not in git.
-		.'|htdocs/custom/mymodule/.*'  // @phpstan-ignore-line
+		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
@@ -450,6 +450,7 @@ return [
 		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
+		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

@@ -112,12 +112,6 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
-
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
 		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 82;
@@ -151,6 +145,17 @@ class pdf_rouget extends ModelePdfExpedition
 			$this->posxweightvol += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxpicture += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxqtyordered = $this->posxqtytoship;
+		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 	}
 
@@ -637,7 +642,7 @@ class pdf_rouget extends ModelePdfExpedition
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {

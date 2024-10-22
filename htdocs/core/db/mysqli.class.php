@@ -262,6 +262,7 @@ class DoliDBMysqli extends DoliDB
 		try {
 			if (!class_exists('mysqli')) {
 				dol_print_error(null, 'Driver mysqli for PHP not available');
+				return false;
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
@@ -1289,38 +1290,41 @@ class DoliDBMysqli extends DoliDB
 	}
 }
 
-/**
- * Class to make SSL connection
- */
-class mysqliDoli extends mysqli
-{
+
+if (class_exists('myslqi')) {
 	/**
-	 *	Constructor.
-	 *	This create an opened connection to a database server and eventually to a database
-	 *
-	 *	@param	    string	$host		Address of database server
-	 *	@param	    string	$user		Name of database user
-	 *	@param	    string	$pass		Password of database user
-	 *	@param	    string	$name		Name of database
-	 *	@param	    int		$port		Port of database server
-	 *	@param	    string	$socket		Socket
+	 * Class to make SSL connection
 	 */
-	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+	class mysqliDoli extends mysqli
 	{
-		$flags = 0;
-		if (PHP_VERSION_ID >= 80100) {
-			parent::__construct();
-		} else {
-			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
-			parent::init();
+		/**
+		 *	Constructor.
+		 *	This create an opened connection to a database server and eventually to a database
+		 *
+		 *	@param	    string	$host		Address of database server
+		 *	@param	    string	$user		Name of database user
+		 *	@param	    string	$pass		Password of database user
+		 *	@param	    string	$name		Name of database
+		 *	@param	    int		$port		Port of database server
+		 *	@param	    string	$socket		Socket
+		 */
+		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+		{
+			$flags = 0;
+			if (PHP_VERSION_ID >= 80100) {
+				parent::__construct();
+			} else {
+				// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+				parent::init();
+			}
+			if (strpos($host, 'ssl://') === 0) {
+				$host = substr($host, 6);
+				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+				// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
+				parent::ssl_set(null, null, "", null, null);
+				$flags = MYSQLI_CLIENT_SSL;
+			}
+			parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
 		}
-		if (strpos($host, 'ssl://') === 0) {
-			$host = substr($host, 6);
-			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
-			// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
-			parent::ssl_set(null, null, "", null, null);
-			$flags = MYSQLI_CLIENT_SSL;
-		}
-		parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
 	}
 }

@@ -1106,7 +1106,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSendings").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num < $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSendings").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';

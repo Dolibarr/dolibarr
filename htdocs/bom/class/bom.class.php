@@ -739,7 +739,7 @@ class BOM extends CommonObject
 
 			$this->db->begin();
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new BOMLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();
@@ -823,7 +823,7 @@ class BOM extends CommonObject
 
 		$this->db->begin();
 
-		//Fetch current line from the database and then clone the object and set it in $oldline property
+		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new BOMLine($this->db);
 		$line->fetch($idline);
 		$line->fetch_optionals();

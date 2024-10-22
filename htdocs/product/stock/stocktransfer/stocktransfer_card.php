@@ -46,6 +46,7 @@ if (isModEnabled('incoterm')) {
 // Get parameters
 $id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
+
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -630,7 +631,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>';
+		$morehtmlref .= (empty($object->thirdparty) ? '' : '<br>');
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {

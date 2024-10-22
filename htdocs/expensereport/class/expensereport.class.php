@@ -2314,18 +2314,9 @@ class ExpenseReport extends CommonObject
 			$this->applyOffset();
 			$this->checkRules();
 
-			$result = $this->line->update($user);
+			$result = $this->line->update($user, $notrigger);
 			if ($result < 0) {
 				$error++;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
 			}
 
 			if (!$error) {

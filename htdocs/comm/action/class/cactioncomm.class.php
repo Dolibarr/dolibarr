@@ -162,6 +162,8 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
+		$actionstatic = new ActionComm($this->db);
+
 		$rep_id = array();
 		$rep_code = array();
 		$rep_all = array();
@@ -294,17 +296,25 @@ class CActionComm
 						}
 
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
+						/*
+						$actionstatic->type_color = $obj->type_color;
+						$actionstatic->type_picto = $obj->type_picto;
+						$actionstatic->type = $obj->type;
+						$picto = $actionstatic->getTypePicto();
+						$label = $picto.$label;
+						*/
+
 						if (($onlyautoornot == -1 || $onlyautoornot == -2) && getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 							// Add a group of elements
 							if ($typecalendar == 'system' || $typecalendar == 'user') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$TSystem['id'][-99] = $langs->trans("ActionAC_MANUAL");
-								$TSystem['code']['AC_NON_AUTO'] = '-- '.$langs->trans("ActionAC_MANUAL");
+								$TSystem['code']['AC_NON_AUTO'] = '<small>-- '.$langs->trans("ActionAC_MANUAL").'</small>';
 							}
 							if ($typecalendar == 'systemauto') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$TSystemAuto['id'][-98] = $langs->trans("ActionAC_AUTO");
-								$TSystemAuto['code']['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
+								$TSystemAuto['code']['AC_ALL_AUTO'] = '<small>-- '.$langs->trans("ActionAC_AUTO").'</small>';
 							}
 
 							if ($typecalendar == 'module') {
@@ -314,7 +324,7 @@ class CActionComm
 									$idforallfornewmodule--;
 								}
 								$TModule['id'][-1 * $idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
-								$TModule['code']['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
+								$TModule['code']['AC_ALL_'.strtoupper($module)] = '<small>-- '.$langs->trans("Module").' '.ucfirst($module).'</small>';
 							}
 						}
 						// Add element

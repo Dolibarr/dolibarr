@@ -197,7 +197,7 @@ if ($action == 'presend') {
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'email';
 	$formmail->withaiprompt = 'html';
 
 	// Define $liste, a list of recipients with email inside <>.

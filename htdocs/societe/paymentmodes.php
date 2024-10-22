@@ -94,10 +94,12 @@ $stripe = null;  // Stripe object
 $stripeacc = null; // Stripe Account
 $stripecu = null; // Remote stripe customer
 
+$servicestatus = 0;
+$site_account = 'UnknownSiteAccount';
+
 // Init Stripe objects
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
-	$servicestatus = 0;
 	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
@@ -168,7 +170,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
+			$cbClassName = get_class($companybankaccount);
+			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
 
 			$companybankaccount->socid           = $object->id;
 
@@ -246,7 +249,8 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
+			$cbClassName = get_class($companybankaccount);
+			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -905,7 +909,7 @@ if (!$id) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companybankaccount->fetch(0, '', $object->id);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$companypaymentmode->fetch(0, null, $object->id, 'card');
+	$companypaymentmode->fetch(0, '', $object->id, 'card');
 } else {
 	$companybankaccount->fetch($id);
 	$companypaymentmode->fetch($id);
@@ -1142,6 +1146,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// Get list of remote payment modes
 	$listofsources = array();
 
+	$customerstripe = null;
 	if (isset($stripe) && is_object($stripe)) {
 		try {
 			$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
@@ -1631,14 +1636,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// } elseif ($val == 'IBAN') {
 				//     $string .= $rib->iban.' ';*/
 				//}
-			}
-			if (!empty($rib->label) && $rib->number) {
-				if (!checkBanForAccount($rib)) {
-					$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
-				} else {
-					$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+				if (!empty($rib->label) && $rib->number) {
+					if (!checkBanForAccount($rib)) {
+						$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+					} else {
+						$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+					}
 				}
-			}
+			}  // EndFor $rib_list as $rib
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($string).'">';
 			print $string;
 			print '</td>';
@@ -1721,7 +1726,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($conf->browser->layout == 'phone') {
 						$morecss = 'maxwidth100';
 					}
-					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
+					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, array(), 0, 0, 0, $morecss);
 				}
 				// Button
 				$out .= '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
@@ -1922,7 +1927,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$companybankaccounttemp = new CompanyBankAccount($db);
 			$companypaymentmodetemp = new CompanyPaymentMode($db);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$result = $companypaymentmodetemp->fetch(0, null, $object->id, 'ban');
+			$result = $companypaymentmodetemp->fetch(0, '', $object->id, 'ban');
 
 			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 			$ecmfile = new EcmFiles($db);
@@ -1991,6 +1996,9 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
+		$name = 'Unset';
+		$size = 8;
+		$content = 'NoContent';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
@@ -2028,6 +2036,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<tr>';
 		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
+			// $tooltip looks like $tooltiptrigger so: @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
 			print $langs->trans($val);
@@ -2163,6 +2172,9 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
+		$size = 8;
+		$name = 'Unknown';
+		$content = 'NoContent';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
@@ -2199,6 +2211,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 		print '<tr><td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
+			// tooltip lookslike tooltip trigger so @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
 			print $langs->trans($val);

@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Cari faktur pemasok yang belum dibayar d
 SendEmailsRemindersOnSupplierInvoiceDueDate=Kirim pengingat melalui email untuk faktur pemasok yang valid dan belum dibayar
 PaymentMadeForSeveralInvoices=Pembayaran dilakukan untuk beberapa faktur
 SituationInvoiceProgressCurrent=Kemajuan faktur
+INVOICE_ADD_EPC_QR_CODEPay=Pindai kode QR ini untuk membayar dengan smartphone yang mendukung pembayaran dengan kode QR EPC.
