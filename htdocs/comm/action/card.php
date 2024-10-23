@@ -8,8 +8,8 @@
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019	    Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019	      Ferran Marcet	          <fmarcet@2byte.es>
+ * Copyright (C) 2024		    MDW						          <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1794,7 +1794,7 @@ if ($id > 0) {
 	}
 
 	$result2 = $object->fetch_thirdparty();
-	$result2 = $object->fetch_projet();
+	$result2 = $object->fetchProject();
 	$result3 = $object->fetch_contact();
 	$result4 = $object->fetch_userassigned();
 	$result5 = $object->fetch_optionals();

@@ -107,7 +107,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($ret > 0) {
 		$ret = $object->fetch_thirdparty();
 		if ($ret > 0 && isset($object->fk_project)) {
-			$ret = $object->fetch_project();
+			$ret = $object->fetchProject();
 		}
 	}
 	if ($ret <= 0) {
