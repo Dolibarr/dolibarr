@@ -1194,10 +1194,10 @@ class FormFile
 	 * 	@param	 ?CommonObject	$object				Object on which document is linked to.
 	 * 	@param	 string			$modulepart			Value for modulepart used by download or viewimage wrapper.
 	 * 	@param	 string			$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
-	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
+	 * 	@param	 int<0,1>		$forcedownload		Force to open dialog box "Save As" when clicking on file.
 	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
-	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int			$useinecm			Change output to add more information:
+	 * 	@param	 int<0,1>		$permonobject		Permission on object (so permission to delete or crop document)
+	 * 	@param	 int<0,6>		$useinecm			Change output to add more information:
 	 * 												0, 4, 5, 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 												1: Add link to edit ECM entry
 	 * 												2: Add rename and crop link
@@ -1206,16 +1206,16 @@ class FormFile
 	 *  @param   int			$maxlength          Maximum length of file name shown.
 	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
 	 *  @param	 string 		$url				Full url to use for click links ('' = autodetect)
-	 *  @param	 int			$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
-	 *  @param   int    		$permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
+	 *  @param	 int<0,1>		$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
+	 *  @param   int<-1,1> 		$permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
 	 *  @param   string 		$upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this to complete file data with database indexes.
 	 *  @param   string 		$sortfield          Sort field ('name', 'size', 'position', ...)
 	 *  @param   string 		$sortorder          Sort order ('ASC' or 'DESC')
-	 *  @param   int    		$disablemove        1=Disable move button, 0=Position move is possible.
-	 *  @param	 int			$addfilterfields	Add the line with filters
-	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitly to 0 or 1)
+	 *  @param   int<0,1>  		$disablemove        1=Disable move button, 0=Position move is possible.
+	 *  @param	 int<0,1>		$addfilterfields	Add the line with filters
+	 *  @param	 int<-1,1>		$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitly to 0 or 1)
 	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
-	 *  @param	 array			$moreoptions		Add more options like array('afteruploadtitle', ...)
+	 *  @param	 array<string,mixed>	$moreoptions	Add more options like array('afteruploadtitle', ...)
 	 * 	@return	 int								Return integer <0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
@@ -2110,13 +2110,13 @@ class FormFile
 	/**
 	 * Show array with linked files
 	 *
-	 * @param 	Object		$object			Object
-	 * @param 	int			$permissiontodelete	Deletion is allowed
-	 * @param 	string		$action			Action
-	 * @param 	string		$selected		???
-	 * @param	string		$param			More param to add into URL
-	 * @param	string		$htmlname		Html name of component
-	 * @param	array		$moreoptions	Add more options like array('afterlinktitle', ...)
+	 * @param 	CommonObject	$object			Object
+	 * @param 	int<0,1>		$permissiontodelete	Deletion is allowed
+	 * @param 	?string			$action			Action
+	 * @param 	?string			$selected		???
+	 * @param	string			$param			More param to add into URL
+	 * @param	string			$htmlname		Html name of component
+	 * @param	array<string,mixed>	$moreoptions	Add more options like array('afterlinktitle', ...)
 	 * @return 	int							Number of links
 	 */
 	public function listOfLinks($object, $permissiontodelete = 1, $action = null, $selected = null, $param = '', $htmlname = 'formaddlink', $moreoptions = array())
