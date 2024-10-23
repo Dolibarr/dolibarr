@@ -1613,9 +1613,9 @@ if (empty($reshook)) {
 		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id', 'int'));
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payment
-		$sql = 'SELECT code ';
-		$sql .= 'FROM ' . $db->prefix() . 'c_payment_term ';
-		$sql .= 'WHERE rowid = ' . (GETPOST('cond_reglement_id', 'int'));
+		$sql = "SELECT code ";
+		$sql .= "FROM " . $db->prefix() . "c_payment_term";
+		$sql .= " WHERE rowid = " . ((int) GETPOST('cond_reglement_id', 'int'));
 		$result = $db->query($sql);
 		if ($result) {
 			$obj = $db->fetch_object($result);
