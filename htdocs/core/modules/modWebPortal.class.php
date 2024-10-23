@@ -205,7 +205,7 @@ class modWebPortal extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'website',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
