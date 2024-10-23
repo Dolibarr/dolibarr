@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -2697,6 +2697,50 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		if (empty($hidedetails) || $hidedetails > 1) {
 			return $sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
+	}
+	return 0;
+}
+
+/**
+ * Define signing position
+ *
+ * @param	real		$p				Number page to print sign
+ * @param	real		$x				Posx to print sign
+ * @param	real		$y				Posy to print sign
+ * @param	real		$width			Width sign
+ * @return	int							<0 if KO, >0 if OK
+ */
+function pdf_setPosSign($p, $x, $y, $width)
+{
+	global $conf, $db, $object;
+	$error = 0;
+
+	$db->begin();
+
+	$possign = $p.":".$x.":".$y.":".$width;
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX.$object->element;
+	$sql .= " SET model_pdf_pos_sign = '".$possign."'";
+	$sql .= " WHERE rowid = ".((int) $object->id);
+
+	dol_syslog(__METHOD__, LOG_DEBUG);
+	$resql = $db->query($sql);
+
+	if (!$resql) {
+		$object->errors[] = $db->error();
+		$error++;
+	}
+
+	if (!$error) {
+		$db->commit();
+		return 1;
+	} else {
+		foreach ($object->errors as $errmsg) {
+			dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+			$object->error .= ($object->error ? ', '.$errmsg : $errmsg);
+		}
+		$db->rollback();
+		return -1 * $error;
 	}
 	return 0;
 }
