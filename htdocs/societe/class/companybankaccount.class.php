@@ -166,13 +166,34 @@ class CompanyBankAccount extends Account
 	 * @var string label
 	 */
 	public $label;
+	/**
+	 * @var string
+	 */
 	public $code_banque;
+	/**
+	 * @var string
+	 */
 	public $code_guichet;
+	/**
+	 * @var string
+	 */
 	public $number;
+	/**
+	 * @var string
+	 */
 	public $cle_rib;
+	/**
+	 * @var string
+	 */
 	public $bic;
+	/**
+	 * @var string
+	 */
 	public $iban_prefix;
 
+	/**
+	 * @var string
+	 */
 	public $bank;
 
 	/**
@@ -185,6 +206,9 @@ class CompanyBankAccount extends Account
 	 */
 	public $fk_country;
 
+	/**
+	 * @var string
+	 */
 	public $country_code;
 
 	/**
@@ -213,22 +237,58 @@ class CompanyBankAccount extends Account
 	 * @var string
 	 */
 	public $frstrecur;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $last_four;
+	/**
+	 * @var string
+	 */
 	public $card_type;
+	/**
+	 * @var string
+	 */
 	public $cvn;
+	/**
+	 * @var int
+	 */
 	public $exp_date_month;
+	/**
+	 * @var int
+	 */
 	public $exp_date_year;
+	/**
+	 * @var int
+	 */
 	public $approved;
 
 	/**
 	 * @var string email
 	 */
 	public $email;
+	/**
+	 * @var int|string
+	 */
 	public $ending_date;
+	/**
+	 * @var float
+	 */
 	public $max_total_amount_of_all_payments;
+	/**
+	 * @var string
+	 */
 	public $preapproval_key;
+	/**
+	 * @var int|string
+	 */
 	public $starting_date;
+	/**
+	 * @var float
+	 */
 	public $total_amount_of_all_payments;
 
 
@@ -302,7 +362,7 @@ class CompanyBankAccount extends Account
 	/**
 	 * Create bank information record.
 	 *
-	 * @param     	$user		User
+	 * @param	?User		$user		User
 	 * @param   int<0,1>   	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
