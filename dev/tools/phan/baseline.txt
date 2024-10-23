@@ -25,7 +25,6 @@ return [
     // PhanRedefineFunction : 50+ occurrences
     // PhanPluginEmptyStatementIf : 45+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
-    // PhanPluginUnknownArrayPropertyType : 35+ occurrences
     // PhanTypeInvalidDimOffset : 35+ occurrences
     // PhanPluginUnknownArrayPropertyType : 30+ occurrences
     // PhanTypeMismatchDimFetch : 30+ occurrences
