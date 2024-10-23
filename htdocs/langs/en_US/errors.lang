@@ -141,6 +141,7 @@ ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative o
 ErrorLinesCantBeNegativeForOneVATRate=Total of lines (net of tax) can't be negative for a given not null VAT rate (Found a negative total for VAT rate <b>%s</b>%%).
 ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=Quantity for line into customer invoices can't be negative
+ErrorQtyForSupplierInvoiceCantBeNegative=Quantity for line into supplier invoices can't be negative
 ErrorWebServerUserHasNotPermission=User account <b>%s</b> used to execute web server has no permission for that
 ErrorNoActivatedBarcode=No barcode type activated
 ErrUnzipFails=Failed to unzip %s with ZipArchive
