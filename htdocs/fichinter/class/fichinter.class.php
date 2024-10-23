@@ -84,11 +84,6 @@ class Fichinter extends CommonObject
 	public $table_element = 'fichinter';
 
 	/**
-	 * @var string Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
-
-	/**
 	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'fichinterdet';
@@ -1122,7 +1117,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'fichinterdet';
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_fichinter = ".((int) $this->id).")";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
