@@ -87,7 +87,7 @@ class modCaptchaStandard extends ModeleCaptcha
 		$ecriture_color = imagecolorallocate($img, 0, 0, 0);
 		imagestring($img, 4, 15, 8, $example, $ecriture_color);
 
-		ob_start ();
+		ob_start();
 		imagepng($img);
 		$image_data = ob_get_contents();
 		ob_end_clean();
