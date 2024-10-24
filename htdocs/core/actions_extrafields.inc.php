@@ -391,7 +391,7 @@ if ($action == 'update') {
 				$attrname = GETPOST('attrname', 'aZ09');
 				$perms = $extrafields->attributes[$elementtype]['perms'][$attrname] ?? '';
 				if ((isset($_GET['perms'])) || (isset($_POST['perms']))) {
-					$perms = (GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : '';
+					$perms = (GETPOST('perms', 'alpha')) ? GETPOST('perms', 'alpha') : '';
 				}
 				$result = $extrafields->update(
 					$attrname,
