@@ -388,9 +388,9 @@ if ($action == 'update') {
 
 				// Load $extrafields->attributes
 				$extrafields->fetch_name_optionals_label($elementtype);
-
+                                $attrname = GETPOST('attrname', 'aZ09');
 				$result = $extrafields->update(
-					GETPOST('attrname', 'aZ09'),
+					$attrname,
 					GETPOST('label', 'alpha'),
 					$type,
 					$extrasize,
@@ -400,7 +400,7 @@ if ($action == 'update') {
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ($extrafields->attributes[$elementtype]['perms'][$attrname] ?? '')),
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),
@@ -438,7 +438,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
 		$attributekey = GETPOST('attrname', 'aZ09');
 
-	   // Load $extrafields->attributes
+                // Load $extrafields->attributes
 		$extrafields->fetch_name_optionals_label($elementtype);
 		$result = $extrafields->delete($attributekey, $extrafields->attributes[$elementtype]['elementtype_org'] ?? $elementtype);
 		if ($result >= 0) {
