@@ -388,7 +388,7 @@ if ($action == 'update') {
 
 				// Load $extrafields->attributes
 				$extrafields->fetch_name_optionals_label($elementtype);
-                                $attrname = GETPOST('attrname', 'aZ09');
+                $attrname = GETPOST('attrname', 'aZ09');
 				$result = $extrafields->update(
 					$attrname,
 					GETPOST('label', 'alpha'),
