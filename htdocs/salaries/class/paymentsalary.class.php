@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,13 +80,14 @@ class PaymentSalary extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount
 	 * @see $amount
+	 * @var float|string
 	 */
 	public $total;
 
 	/**
-	 * @var float			Total amount of payment
+	 * @var float	Total amount of payment
 	 */
 	public $amount;
 
@@ -102,7 +103,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $num_payment
 	 */
 	public $num_paiement;
 
@@ -153,10 +154,32 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 1, 'index' => 1, 'comment' => "Reference of object"),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => 0, 'position' => 30),
+		'datep' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 0, 'position' => 40, 'comment' => 'Date'),
+		'datev' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 0,  'position' => 50, 'comment' => 'Date'),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'picto' => 'user'),
+		'salary' => array('type' => 'double(24,8)', 'label' => 'salary', 'enabled' => 1, 'visible' => 0, 'position' => 70),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => 0, 'position' => 90),
+		'fk_typepayment' => array('type' => 'typepayment', 'label' => 'DefaultPaymentMode', 'enabled' => 1, 'visible' => 1, 'position' => 100, 'comment' => 'Payment type'),
+		'num_payment' => array('type' => 'string', 'label' => 'Reference', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'comment' => 'Reference'),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1),
+		'datesp' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'comment' => 'Date'),
+		'dateep' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 140, 'comment' => 'Date'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'position' => 150, 'index' => 1),
+		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 160, 'visible' => 0,),
+		'fk_bank' => array('type' => 'integer', 'label' => 'BankId', 'enabled' => 1, 'visible' => 0, 'position' => 170),
+		'paye' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 180),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 0, 'position' => 190),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 200, 'visible' => 0,),
+		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 210),
+		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 220),
 	);
 
 	/**
@@ -187,7 +210,7 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		//deprecatd
+		//deprecated
 		if (!empty($this->datepaye) && empty($this->datep)) {
 			dol_syslog(__METHOD__.": using datepaye is deprecated, please use datep instead", LOG_WARNING);
 			$this->datep = $this->datepaye;
@@ -273,7 +296,7 @@ class PaymentSalary extends CommonObject
 						//$deposits=$tmpsalary->getSumDepositsUsed();
 						$deposits = 0;
 						$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-						$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
+						$remaintopay = price2num((float) $tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 						if ($remaintopay == 0) {
 							$result = $tmpsalary->setPaid($user);
 						} else {
@@ -343,6 +366,7 @@ class PaymentSalary extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datepaye = $this->db->jdate($obj->datep);
+				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_paiement = $obj->num_payment;
@@ -418,7 +442,7 @@ class PaymentSalary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 		$sql .= " fk_salary=".(isset($this->fk_salary) ? $this->fk_salary : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datepaye) != 0 ? "'".$this->db->idate($this->datepaye)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
@@ -689,7 +713,7 @@ class PaymentSalary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  salaire et la ligne dans llx_bank generee
+	 *  Update the relation between the salary paiment and the line generated in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -828,7 +852,7 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen						Longueur max libelle
@@ -930,9 +954,9 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params params to construct tooltip data
-	 * @return array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -965,11 +989,11 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

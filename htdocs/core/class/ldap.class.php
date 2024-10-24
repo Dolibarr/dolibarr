@@ -322,7 +322,7 @@ class Ldap
 		$this->error = '';
 		$this->connectedServer = '';
 
-		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+		$ldapdebug = !((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false"));
 
 		if ($ldapdebug) {
 			dol_syslog(get_class($this)."::connectBind");
@@ -1086,9 +1086,11 @@ class Ldap
 	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
+	 *  array{count:int,0..max:string,string:array}
+	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			if KO: <=0 || if OK: array
+	 *	@return	int|array<'count'|int|string,int|string|array>	if KO: <=0 || if OK: array
 	 */
 	public function getAttribute($dn, $filter)
 	{
@@ -1166,13 +1168,13 @@ class Ldap
 	 *	Returns an array containing a details or list of LDAP record(s).
 	 *	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
 	 *
-	 *	@param	string	$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
-	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
-	 *	@param	string	$useridentifier 	Name of key field (Ex: uid).
-	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
-	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
-	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
-	 *	@return	array|int					if KO: <0 || if OK: array of [id_record][ldap_field]=value
+	 *	@param	string			$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
+	 *	@param	string			$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
+	 *	@param	string			$useridentifier 	Name of key field (Ex: uid).
+	 *	@param	string[]		$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
+	 *	@param	0|1|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
+	 *	@param	string[]		$attributeAsArray 	Array of fields wanted as an array not a string
+	 *	@return	array<string,array<string,string>>|int<min,-1>				if KO: <0 || if OK: array of [id_record][ldap_field]=value
 	 */
 	public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
@@ -1269,7 +1271,7 @@ class Ldap
 	public function littleEndian($hex)
 	{
 		$result = '';
-		for ($x = dol_strlen($hex) - 2; $x >= 0; $x = $x - 2) {
+		for ($x = dol_strlen($hex) - 2; $x >= 0; $x -= 2) {
 			$result .= substr($hex, $x, 2);
 		}
 		return $result;
@@ -1568,13 +1570,19 @@ class Ldap
 	/**
 	 *	Converts ActiveDirectory time to Unix timestamp
 	 *
-	 *	@param	string	$value		AD time to convert
+	 *	@param	string	$value		AD time to convert (ns since 1601)
 	 *	@return	integer				Unix timestamp
 	 */
 	public function convertTime($value)
 	{
 		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
-		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		if (PHP_INT_SIZE < 8) {
+			// 32 bit platform
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+		} else {
+			// At least 64 bit platform
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		}
 		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;

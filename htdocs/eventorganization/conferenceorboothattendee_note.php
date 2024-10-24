@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
@@ -54,7 +54,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 //$result = restrictedArea($user, 'eventorganization', $id);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity]."/".$object->id;
 }
@@ -74,7 +74,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 /*
@@ -83,16 +83,17 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
-$help_url = '';
-llxHeader('', $langs->trans('ConferenceOrBoothAttendee'), $help_url);
+$title = $langs->trans('ConferenceOrBoothAttendee');
+$help_url = "EN:Module_Event_Organization";
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-attendee-card_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = conferenceorboothAttendeePrepareHead($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $title, -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

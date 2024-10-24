@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,11 @@ if ($socid < 0) {
 }
 
 $object = new Paiement($db);
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
@@ -72,6 +73,9 @@ if ($user->socid) {
 if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
+
+$stripecu = null;
+$stripeacc = null;
 
 // Init Stripe objects
 if (isModEnabled('stripe')) {
@@ -574,7 +578,7 @@ if ($resql) {
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
 
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}

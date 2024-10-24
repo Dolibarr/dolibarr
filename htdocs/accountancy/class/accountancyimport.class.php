@@ -11,6 +11,7 @@
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,8 +63,8 @@ class AccountancyImport
 	/**
 	 *  Clean amount
 	 *
-	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   array       $listfields         Fields list to add
+	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
 	 * @return  float							Value
 	 */
@@ -76,8 +77,8 @@ class AccountancyImport
 	/**
 	 *  Clean value with trim
 	 *
-	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   array       $listfields         Fields list to add
+	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
 	 * @return  mixed							Value
 	 */
@@ -89,8 +90,8 @@ class AccountancyImport
 	/**
 	 *  Compute amount
 	 *
-	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   array       $listfields         Fields list to add
+	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
 	 * @return  string							Value
 	 */
@@ -118,8 +119,8 @@ class AccountancyImport
 	/**
 	 *  Compute direction
 	 *
-	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   array       $listfields         Fields list to add
+	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
 	 * @return  string							Value
 	 */
@@ -144,8 +145,8 @@ class AccountancyImport
 	/**
 	 *  Compute piece number
 	 *
-	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   array       $listfields         Fields list to add
+	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
 	 * @return  string							Value
 	 */
@@ -179,7 +180,7 @@ class AccountancyImport
 				}
 
 				// at least one record value has changed, so we search for the next piece number from database or increment it
-				if ($atLeastOneLastRecordChanged === true) {
+				if ($atLeastOneLastRecordChanged) {
 					$lastPieceNum = 0;
 					if (empty($conf->cache['accounting']['nextPieceNum'])) {
 						// get last piece number from database

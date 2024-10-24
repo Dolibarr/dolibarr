@@ -170,13 +170,13 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	CommonObject	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
-	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int		$status							Status (0=test, 1=live)
-	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
+	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
+	 * @param	string		$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int<0,1>	$status							Status (0=test, 1=live)
+	 * @param	int<0,1>	$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\Customer|null 					Stripe Customer or null if not found
 	 */
-	public function customerStripe(CommonObject $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
+	public function customerStripe($object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -354,18 +354,18 @@ class Stripe extends CommonObject
 	 * @param   string  $currency_code                      Currency code
 	 * @param   string  $tag                                Tag
 	 * @param   string  $description                        Description
-	 * @param	mixed	$object							    Object to pay with Stripe
-	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	?CommonObject	$object					    Object to pay with Stripe
+	 * @param	?string $customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	?string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param	string	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
-	 * @param   string  $payment_method                     'pm_....' (if known)
+	 * @param   ?string  $payment_method                     'pm_....' (if known)
 	 * @param   int     $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	int     $noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @param	int		$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
-	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
+	 * @return 	?\Stripe\PaymentIntent				        Stripe PaymentIntent or null if not found and failed to create
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
@@ -1362,6 +1362,7 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
+			'@phan-var-force stdClass|\Stripe\Charge $charge';
 			if (isset($charge->id)) {
 			}
 
@@ -1376,7 +1377,7 @@ class Stripe extends CommonObject
 				} elseif ($charge->source->type == 'three_d_secure') {
 					$stripe = new Stripe($this->db);
 					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card, array(
-					"stripe_account" => $stripe->getStripeAccount($service)
+						"stripe_account" => $stripe->getStripeAccount($service)
 					));
 					$return->message = $src->card->brand." ....".$src->card->last4;
 				} else {

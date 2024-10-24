@@ -72,7 +72,7 @@ if (!$sortorder) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 }
 
 // Security check

@@ -53,7 +53,7 @@ print '<br>';
 
 print '<div class="center">';
 if (count($export->array_export_code)) {
-	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'creer'));
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'lire'));
 }
 print '</div>';
 print '<br>';

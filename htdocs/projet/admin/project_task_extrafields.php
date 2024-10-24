@@ -63,7 +63,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Project");
 
-llxHeader("", $langs->trans("ProjectsSetup"));
+llxHeader("", $langs->trans("ProjectsSetup"), '', '', 0, 0, '', '', '', 'mod-project project-tasks page-admin_extrafields');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ProjectsSetup"), $linkback, 'title_setup');

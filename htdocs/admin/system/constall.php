@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,8 @@ $langs->loadLangs(array("install", "user", "admin"));
 if (!$user->admin) {
 	accessforbidden();
 }
+
+$lastkeyshown = null;
 
 
 /*
@@ -140,7 +143,7 @@ $configfilelib = array(
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="280">'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print '</tr>'."\n";
 $i = 0;
 foreach ($configfileparameters as $key) {
@@ -203,7 +206,7 @@ print load_fiche_titre($langs->trans("Database"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }

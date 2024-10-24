@@ -7,6 +7,7 @@
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,7 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('reassortlotlist'));
 
 // Definition of array of fields for columns
@@ -296,7 +297,7 @@ if ($search_all) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $search_all);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {

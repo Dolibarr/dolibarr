@@ -407,7 +407,7 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
@@ -831,7 +831,7 @@ function validOrder($authentication, $id = 0, $id_warehouse = 0)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);

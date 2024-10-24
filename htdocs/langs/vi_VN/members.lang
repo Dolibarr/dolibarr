@@ -201,7 +201,7 @@ MenuMembersStats=Thống kê
 LastMemberDate=Ngày thành viên mới nhất
 LatestSubscriptionDate=Ngày đóng góp mới nhất
 MemberNature=Bản chất của thành viên
-MembersNature=Bản chất của các thành viên
+MembersNature=Nature of members
 Public=%s có thể công bố tư cách thành viên của tôi trong <a target="_blank" href="%s">danh sách công khai</a>
 MembershipPublic=Thành viên công cộng
 NewMemberbyWeb=Thành viên mới được thêm vào. Chờ phê duyệt
@@ -239,10 +239,11 @@ MemberLastname=Họ của thành viên
 MemberCodeDesc=Mã thành viên, duy nhất cho tất cả thành viên
 MemberSubscriptionStartFirstDayOf=Ngày bắt đầu tư cách thành viên tương ứng với ngày đầu tiên của
 MemberSubscriptionStartAfter=Khoảng thời gian tối thiểu trước khi ngày bắt đầu đăng ký có hiệu lực, ngoại trừ gia hạn (ví dụ +3 tháng = +3 tháng, -5d = -5 ngày, +1Y = +1 năm)
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
+SubscriptionLinkedToConciliatedTransaction=Tư cách thành viên được liên kết với một giao dịch hòa giải nên việc sửa đổi này không được phép.
+ConfirmMassSubsriptionCreation=Xác nhận việc tạo đăng ký
+ConfirmMassSubsriptionCreationQuestion=Bạn có chắc chắn muốn tạo %s đăng ký đã chọn không?
+XSubsriptionCreated=Đã tạo %s đăng ký
+XSubsriptionErrors=%s đăng ký bị lỗi
 CreateSubscription=Tạo đăng ký
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=Không có hành động bổ sung nào về ghi âm sẽ được thực hiện với khối lượng này
+NewMembership=New membership

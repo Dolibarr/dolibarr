@@ -88,7 +88,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->reception->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptiondocument'));
 
 // Security check

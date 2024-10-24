@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +37,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -107,28 +109,30 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+		$numExample = $this->getNextValue($thirdparty, $propal);
 
 		if (!$numExample) {
-			$numExample = 'NotConfigured';
+			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe			$objsoc     Object third party
-	 * 	@param	Propal			$propal		Object commercial proposal
-	 *  @return string|int      			Value if OK, 0 if KO
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	Propal		$propal		Object commercial proposal
+	 *  @return string|int<-1,0>		Next value, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $propal)
 	{

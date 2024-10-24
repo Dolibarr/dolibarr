@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=ອີເມລ prevent ເພື່ອປ້ອງກັນການບໍລິການພາຍນອກຂອງ HRM
 Establishments=ການສ້າງຕັ້ງ
@@ -24,7 +23,7 @@ SkillsManagement=ການຄຸ້ມຄອງທັກສະ
 HRM_MAXRANK=ຈໍານວນລະດັບສູງສຸດເພື່ອຈັດອັນດັບທັກສະ
 HRM_DEFAULT_SKILL_DESCRIPTION=ຄຳອະທິບາຍເລີ່ມຕົ້ນຂອງອັນດັບເມື່ອທັກສະຖືກສ້າງ
 deplacement=Shift
-DateEval=ວັນທີປະເມີນຜົນ
+DateEval=Competency assessment date
 JobCard=ບັດວຽກ
 NewJobProfile=ໂປຣໄຟລ໌ວຽກໃໝ່
 JobProfile=ໂປຣໄຟລ໌ວຽກ
@@ -41,12 +40,12 @@ Skill=ທັກສະ
 Skills=ທັກສະ
 SkillCard=ບັດທັກສະ
 EmployeeSkillsUpdated=ທັກສະພະນັກງານໄດ້ຖືກປັບປຸງ (ເບິ່ງແຖບ "ທັກສະ" ຂອງບັດພະນັກງານ)
-Eval=ການປະເມີນຜົນ
-Evals=ການປະເມີນຜົນ
-NewEval=ການ​ປະ​ເມີນ​ຜົນ​ໃຫມ່​
-ValidateEvaluation=ກວດສອບການປະເມີນຜົນ
-ConfirmValidateEvaluation=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການກວດສອບການປະເມີນນີ້ດ້ວຍການອ້າງອີງ <b>%s</b>?
-EvaluationCard=ບັດ​ປະ​ເມີນ​ຜົນ​
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=ອັນດັບທີ່ຕ້ອງການສໍາລັບໂປຣໄຟລ໌ວຽກ
 RequiredRankShort=ອັນດັບທີ່ຕ້ອງການ
 PositionsWithThisProfile=ຕຳແໜ່ງທີ່ມີໂປຣໄຟລ໌ວຽກນີ້
@@ -90,8 +89,9 @@ SaveAddSkill = ເພີ່ມທັກສະ
 SaveLevelSkill = ບັນທຶກລະດັບທັກສະແລ້ວ
 DeleteSkill = ເອົາທັກສະອອກ
 SkillsExtraFields=ຄຸນສົມບັດເສີມ (ທັກສະ)
-JobsExtraFields=ຄຸນສົມບັດເສີມ (ໂປຣໄຟລ໌ວຽກ)
-EvaluationsExtraFields=ຄຸນສົມບັດເສີມ (ການປະເມີນ)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=ຕ້ອງການການເດີນທາງທຸລະກິດ
 NoDescription=ບໍ່ມີຄໍາອະທິບາຍ
 TheJobProfileHasNoSkillsDefinedFixBefore=ໂປຣໄຟລ໌ວຽກທີ່ຖືກປະເມີນຂອງພະນັກງານນີ້ບໍ່ມີທັກສະທີ່ກຳນົດໄວ້. ກະລຸນາເພີ່ມທັກສະ, ຈາກນັ້ນລຶບ ແລະເລີ່ມການປະເມີນຄືນ.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

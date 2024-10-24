@@ -48,12 +48,15 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Localtax($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+$permissiontodelete = $user->hasRight('tax', 'charges', 'supprimer');
 
 
 /**
@@ -65,7 +68,7 @@ if ($cancel && !$id) {
 	exit;
 }
 
-if ($action == 'add' && !$cancel) {
+if ($action == 'add' && !$cancel && $permissiontoadd) {
 	$db->begin();
 
 	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
@@ -92,7 +95,7 @@ if ($action == 'add' && !$cancel) {
 }
 
 //delete payment of localtax
-if ($action == 'delete') {
+if ($action == 'delete' && $permissiontodelete) {
 	$result = $object->fetch($id);
 
 	if ($object->rappro == 0) {
@@ -132,6 +135,8 @@ if ($action == 'delete') {
  *	View
  */
 
+$form = new Form($db);
+
 if ($id) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
@@ -139,8 +144,6 @@ if ($id) {
 		exit;
 	}
 }
-
-$form = new Form($db);
 
 $title = $langs->trans("LT".$object->ltt)." - ".$langs->trans("Card");
 $help_url = '';

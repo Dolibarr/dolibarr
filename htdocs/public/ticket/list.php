@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ */
 /*  Copyright (C) 2013-2016    Jean-François FERRY    <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +81,7 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
 if (!isModEnabled('ticket')) {
@@ -99,9 +101,32 @@ if ($cancel) {
 	exit;
 }
 
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+$user_assign = new User($db);
+$user_create = new User($db);
+$formTicket = new FormTicket($db);
+
+if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
+	$db->close();
+	exit();
+}
+
+$arrayofjs = array();
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
+
+llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
+
+$display_ticket_list = false;
+
+// Load the ticket from track_id
 if ($action == "view_ticketlist") {
 	$error = 0;
-	$display_ticket_list = false;
 	if (!strlen($track_id)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTrackId")));
@@ -121,7 +146,7 @@ if ($action == "view_ticketlist") {
 	}
 
 	if (!$error) {
-		$ret = $object->fetch('', '', $track_id);
+		$ret = $object->fetch(0, '', $track_id);
 
 		if ($ret && $object->id > 0) {
 			// vérifie si l'adresse email est bien dans les contacts du ticket
@@ -167,31 +192,11 @@ if ($action == "view_ticketlist") {
 		}
 	}
 
-	if ($error || $errors) {
+	if ($error) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
 	}
 }
-
-/*
- * View
- */
-
-$form = new Form($db);
-$user_assign = new User($db);
-$user_create = new User($db);
-$formTicket = new FormTicket($db);
-
-if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
-	$db->close();
-	exit();
-}
-
-$arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
-
-llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
@@ -421,7 +426,7 @@ if ($action == "view_ticketlist") {
 
 				$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
-				$newcardbutton = '<a class="marginrightonly" href="'.$baseurl . 'create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'&token='.newToken().'" rel="nofollow noopener"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon" title="'.dol_escape_htmltag($langs->trans("CreateTicket")).'"></span></a>';
+				$newcardbutton = '<a class="marginrightonly" href="'.$baseurl . 'create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'" rel="nofollow noopener"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon" title="'.dol_escape_htmltag($langs->trans("CreateTicket")).'"></span></a>';
 
 				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket', 0, $newcardbutton);
 
@@ -719,7 +724,7 @@ if ($action == "view_ticketlist") {
 
 				$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 1));
 
-				print '<form method="POST" id="form_view_ticket" name="form_view_ticket" action="'.$url_public_ticket.'view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
+				print '<form method="POST" id="form_view_ticket" name="form_view_ticket" action="'.$url_public_ticket.'view.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';

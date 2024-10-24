@@ -62,6 +62,9 @@ $error = 0;
 if ($action == 'updateMask') {
 	$maskconstpropal = GETPOST('maskconstpropal', 'aZ09');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstpropal && preg_match('/_MASK$/', $maskconstpropal)) {
 		$res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 	}
@@ -97,8 +100,9 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFPropales $module';
 
+		/** @var ModelePDFPropales $module */
 		if ($module->write_file($propal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;
@@ -274,6 +278,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefPropales $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -283,7 +289,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -409,6 +415,8 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFPropales $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -422,7 +430,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

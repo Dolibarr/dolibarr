@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2018      Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +31,15 @@ global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force CommonObject[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("contracts");
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
@@ -55,8 +59,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	if ($user->hasRight('contrat', 'lire') && !getDolGlobalString('CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE')) {
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
-			$totalcontrat = $totalcontrat + $linecontrat->total_ht;
-			$total = $total + $linecontrat->total_ht;
+			$totalcontrat += $linecontrat->total_ht;
+			$total += $linecontrat->total_ht;
 		}
 		echo price($totalcontrat);
 	} ?></td>

@@ -444,13 +444,13 @@ class CUnits extends CommonDict
 		$scaleUnitPow = $this->scaleOfUnitPow($fk_unit);
 
 		// convert to standard unit
-		$value = $value * $scaleUnitPow;
+		$value *= $scaleUnitPow;
 		if ($fk_new_unit != 0) {
 			// Calcul en unité de base
 			$scaleUnitPow = $this->scaleOfUnitPow($fk_new_unit);
 			if (!empty($scaleUnitPow)) {
 				// convert to new unit
-				$value = $value / $scaleUnitPow;
+				$value /= $scaleUnitPow;
 			}
 		}
 		return round($value, 2);

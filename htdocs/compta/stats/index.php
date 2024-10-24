@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Benjamin B.             <b.crozon@trebisol.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +46,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOSTINT('year');
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), "%Y");
-	$month_current = dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(dol_now(), "%Y");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -211,7 +212,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
-		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 	} else {
 		// Test if there is at least one line in bookkeeping
 		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -233,7 +234,7 @@ if (isModEnabled('accounting')) {
 		$nb = $db->num_rows($resql);
 		if ($nb == 0) {
 			$langs->load("errors");
-			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, 1);
+			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, '1');
 		}
 	}
 }
@@ -487,22 +488,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cumulative_ht[$caseprev]) && !empty($cumulative_ht[$case])) {
-						$percent = (round(($cumulative_ht[$case] - $cumulative_ht[$caseprev]) / $cumulative_ht[$caseprev], 4) * 100);
-						//print "X $cumulative_ht[$case] - $cumulative_ht[$caseprev] - $cumulative_ht[$caseprev] - $percent X";
+					if (!empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
+						$percent = (round(($cumulative[$case] - $cumulative[$caseprev]) / $cumulative[$caseprev], 4) * 100);
+						//print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
 						print($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if (!empty($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
+					if (!empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 						print '-100%';
 					}
-					if (empty($cumulative_ht[$caseprev]) && !empty($cumulative_ht[$case])) {
+					if (empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cumulative_ht[$caseprev]) && empty($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
+					if (isset($cumulative[$caseprev]) && empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 						print '+0%';
 					}
-					if (!isset($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
+					if (!isset($cumulative[$caseprev]) && empty($cumulative[$case])) {
 						print '-';
 					}
 				} else {
@@ -627,24 +628,24 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Pourcentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
-		if (!empty($total_ht[$annee - 1]) && !empty($total_ht[$annee])) {
-			$percent = (round(($total_ht[$annee] - $total_ht[$annee - 1]) / $total_ht[$annee - 1], 4) * 100);
+		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
+			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
 			print($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
-		if (!empty($total_ht[$annee - 1]) && empty($total_ht[$annee])) {
+		if (!empty($total[$annee - 1]) && empty($total[$annee])) {
 			print '<td class="borderrightlight right">-100%</td>';
 		}
-		if (empty($total_ht[$annee - 1]) && !empty($total_ht[$annee])) {
+		if (empty($total[$annee - 1]) && !empty($total[$annee])) {
 			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
-		if (empty($total_ht[$annee - 1]) && empty($total_ht[$annee])) {
+		if (empty($total[$annee - 1]) && empty($total[$annee])) {
 			print '<td class="borderrightlight right">+0%</td>';
 		}
 	} else {
 		print '<td class="borderrightlight right">';
-		if (!empty($total_ht[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
+		if (!empty($total[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
 			print '-';
 		} else {
 			print '&nbsp;';
@@ -677,8 +678,8 @@ print '</div>';
 
  print '<br><table width="100%" class="noborder">';
 
- // Factures non reglees
- // Y a bug ici. Il faut prendre le reste a payer et non le total des factures non reglees !
+ // Unpaid invoices
+ // There is a bug here.  We need to use the remaining to pay and not the total of unpaid invoices!
 
  $sql = "SELECT f.ref, f.rowid, s.nom, s.rowid as socid, f.total_ttc, sum(pf.amount) as am";
  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";

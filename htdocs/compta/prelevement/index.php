@@ -145,6 +145,7 @@ if ($resql) {
 			$invoicestatic->status = $obj->status;
 			$invoicestatic->paye = $obj->paye;
 			$invoicestatic->type = $obj->type;
+
 			$totalallpayments = $invoicestatic->getSommePaiement(0);
 			$totalallpayments += $invoicestatic->getSumCreditNotesUsed(0);
 			$totalallpayments += $invoicestatic->getSumDepositsUsed(0);

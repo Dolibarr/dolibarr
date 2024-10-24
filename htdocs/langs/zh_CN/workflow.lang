@@ -9,27 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=当合同被验证通过后自动创建
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=当销售订单被关闭后自动创建客户发票（新发票的金额与订单金额相同）
 descWORKFLOW_TICKET_CREATE_INTERVENTION=创建服务工单时，自动创建现场服务单。
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当发货单被关闭时，自动将其链接的源销售订单归类为已发货（如果所有发货单的发货数量之和与要更新的订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=当销售订单设置为已开票时，将链接源报价归类为已开票（且如果订单总额与已签名链接报价的总额相同）
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户发票设置为已支付时，将链接的源销售订单归类为已开票（且如果发票 订单的金额与链接的销售订单的总金额相同）。如果您对n个订单设置生成 1 张发票，这也可能将所有订单设置为已开票。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当一个客户发票订单被验证后，将所有关联的源销售订单归类为已开票（且如果发票的金额与关联的源销售订单的总金额相同）。如果您为 n 个订单设置生成 1 个共同的发票，这可能会将所有源订单设置为已开票。
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=当一个客户发票被验证时，如果关联的销售订单的总金额等于从其发出的所有发票的总金额，将关联的销售订单（如果只有一个）归类为已开票。如果您为 1  个订单生成 n 张发票，则一旦所有发票都已验证，就可以将该订单设置为已开票。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=当发货单被验证后，将链接源销售订单归类为已发货（且如果所有货件的发货数量与要更新的订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当发货单关闭时，将链接源销售订单归类为已发货（且如果所有货件的发货数量与要更新的订单中的数量相同）
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=当供应商发票被验证后，将链接源供应商报价归类为已开票（且如果发票的数量与链接报价的总数量相同）
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=当收货单被验证通过时，自动将其链接的源采购订单归类为已收货（如果所有接货单的接收数量之和与要更新的采购订单中的数量相同）
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=当收货单被关闭时，自动将其链接的源采购订单归类为已收货（如果所有接货单的接收数量之和与要更新的采购订单中的数量相同）
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=当供应商发票被验证后，将链接源采购订单归类为已开票（且如果发票的金额与链接订单的总金额相同）
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=当收货单被验证后，将链接源采购订单归类为已收货（且如果所有接收的数量与要更新的采购订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=当收货单关闭时，将链接源采购订单归类为已收货（且如果从采购订单发出的所有收货单所收到的总数量与要更新的采购订单中的数量相同）
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=在链接合同时，在母公司的合同中搜索
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=关闭服务工单后，关闭与服务工单关联的所有现场服务单
 AutomaticCreation=自动创建

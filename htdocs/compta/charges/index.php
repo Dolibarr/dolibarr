@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
 // Load translation files required by the page
@@ -256,8 +257,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print '</td>';
 			print '</tr>';
 
-			$total = $total + $obj->total;
-			$totalpaid = $totalpaid + $obj->totalpaid;
+			$total += $obj->total;
+			$totalpaid += $obj->totalpaid;
 			$i++;
 		}
 		print '<tr class="liste_total">';
@@ -337,8 +338,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($result);
 
-			$totaltopay = $totaltopay + $obj->amount_tva;
-			$total = $total + $obj->amount;
+			$totaltopay += $obj->amount_tva;
+			$total += $obj->amount;
 
 			print '<tr class="oddeven">';
 
@@ -478,7 +479,7 @@ while ($j < $numlt) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
-			$total = $total + $obj->amount;
+			$total += $obj->amount;
 
 			print '<tr class="oddeven">';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";

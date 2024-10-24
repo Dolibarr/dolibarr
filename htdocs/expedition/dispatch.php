@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -377,7 +378,7 @@ $title = $object->ref." - ".$langs->trans('ShipmentDistribution');
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 $morejs = array('/expedition/js/lib_dispatch.js.php');
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-expedition page-card_dispatch');
 
 if ($object->id > 0 || !empty($object->ref)) {
 	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_elementdet, then each line may have sub data
@@ -675,7 +676,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				print "</tr>\n";
 			}
 
-			$nbfreeproduct = 0; // Nb of lins of free products/services
+			$nbfreeproduct = 0; // Nb of lines of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 

@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 周
 AvailabilityTypeAV_2W=2 周
 AvailabilityTypeAV_3W=3 周
 AvailabilityTypeAV_1M=1 个月
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=跟进报价单的销售代表
 TypeContact_propal_external_BILLING=客户账单联系人
 TypeContact_propal_external_CUSTOMER=跟进报价单的客户联系人
 TypeContact_propal_external_SHIPPING=交货的客户联系人
-
 # Document models
 CantBeNoSign=cannot be set not signed
 CaseFollowedBy=Case followed by
@@ -104,7 +102,7 @@ FichinterSigned=现场服务已签署
 IdProduct=Product ID
 IdProposal=报价单 ID
 IsNotADraft=不是草稿
-LineBuyPriceHT=Buy Price Amount net of tax for line
+LineBuyPriceHT=行税前采购价
 NoSign=拒绝
 NoSigned=set not signed
 PassedInOpenStatus=has been validated
@@ -122,3 +120,5 @@ SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

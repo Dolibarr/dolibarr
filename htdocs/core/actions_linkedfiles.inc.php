@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C)    2013    Cédric Salvador    <csalvador@gpcsolutions.fr>
- * Copyright (C)    2015    Marcos García      <marcosgdf@gmail.com>
- * Copyright (C)    2015    Ferran Marcet      <fmarcet@2byte.es>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 		}
 
 		if (!$error) {
-			dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
+			dol_add_file_process($upload_dir, 0, 1, 'userfile', '', $link, '', 0);
 		}
 	}
 }

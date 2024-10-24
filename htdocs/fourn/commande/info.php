@@ -76,14 +76,14 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Init Hooks
+$hookmanager->initHooks(array('ordersuppliercardinfo'));
+
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (!$user->hasRight("fournisseur", "commande", "lire")) {
 	accessforbidden();
 }
-
-// Init Hooks
-$hookmanager->initHooks(array('ordersuppliercardinfo'));
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
