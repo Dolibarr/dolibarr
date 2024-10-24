@@ -117,6 +117,7 @@ class ExtraFields
 	/**
 	* Element list sanitizer to translate new element type names into old ones
 	* @param		string		$elementName		element type to check
+ 	* @return 		string 		new element name
 	*/
 	private function sanitizeElementName($elementName)
 	{
@@ -245,7 +246,7 @@ class ExtraFields
 			$unique = 0;
 			$required = 0;
 		}	// Force unique and not required if this is a separator field to avoid troubles.
-		
+
 		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
 		// Create field into database except for separator type which is not stored in database
@@ -365,7 +366,7 @@ class ExtraFields
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 						$resql = $this->db->query($sql, 1, 'dml');
 					}
-//                                    return 1;
+					// return 1;
 				} else {
 					$this->error = $this->db->lasterror();
 					$this->errno = $this->db->lasterrno();
@@ -536,12 +537,12 @@ class ExtraFields
 	 */
 	public function delete($attrname, $elementtype = '')
 	{
-                $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
 		$error = 0;
 
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
-			$result = $this->delete_label($attrname, implode(",",$elementtype));
+			$result = $this->delete_label($attrname, implode(",", $elementtype));
 			if ($result < 0) {
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->db->lasterror();
@@ -712,61 +713,61 @@ class ExtraFields
 				$required = 0;
 				$unique = 0;
 			}
-				$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+			$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
-				foreach ($elementtype as $etype) {
-					$table = $etype.'_extrafields';
-					if ($etype == 'categorie') {
-							$table = 'categories_extrafields';
-					}
-
-					if (is_object($hookmanager)) {
-							$hookmanager->initHooks(array('extrafieldsdao'));
-							$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
-							$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-
-							if ($reshook < 0) {
-									$this->error = $this->db->lasterror();
-									return -1;
-							}
-					}
-					dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
-					if ($type != 'separate') { // No table update when separate type
-							$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
-					}
+			foreach ($elementtype as $etype) {
+				$table = $etype.'_extrafields';
+				if ($etype == 'categorie') {
+						$table = 'categories_extrafields';
 				}
-				if ($result > 0 || $type == 'separate') {
-						if ($label) {
-								dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-								$result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
-						}
-						if ($result > 0) {
-							foreach ($elementtype as $etype) {
-								$table = $etype.'_extrafields';
-								if ($etype == 'categorie') {
-										$table = 'categories_extrafields';
-								}
-								$sql = '';
-								if ($unique) {
-										dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
-										$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
-								} else {
-										dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-										$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
-								}
-								dol_syslog(get_class($this).'::update', LOG_DEBUG);
-								$resql = $this->db->query($sql, 1, 'dml');
-								/*if ($resql < 0) {
-								 $this->error = $this->db->lasterror();
-								 return -1;
-								 }*/
-//                                        return 1;
-							}
-							return 1;
-						} else {
+
+				if (is_object($hookmanager)) {
+						$hookmanager->initHooks(array('extrafieldsdao'));
+						$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
+						$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+						if ($reshook < 0) {
 								$this->error = $this->db->lasterror();
 								return -1;
 						}
+				}
+				dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
+				if ($type != 'separate') { // No table update when separate type
+						$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
+				}
+			}
+			if ($result > 0 || $type == 'separate') {
+					if ($label) {
+							dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
+							$result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+					}
+					if ($result > 0) {
+						foreach ($elementtype as $etype) {
+							$table = $etype.'_extrafields';
+							if ($etype == 'categorie') {
+									$table = 'categories_extrafields';
+							}
+							$sql = '';
+							if ($unique) {
+									dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
+									$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
+							} else {
+									dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
+									$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
+							}
+							dol_syslog(get_class($this).'::update', LOG_DEBUG);
+							$resql = $this->db->query($sql, 1, 'dml');
+							/*if ($resql < 0) {
+							 $this->error = $this->db->lasterror();
+							 return -1;
+							 }*/
+							// return 1;
+						}
+						return 1;
+					} else {
+							$this->error = $this->db->lasterror();
+							return -1;
+					}
 				} else {
 						$this->error = $this->db->lasterror();
 						return -1;
@@ -812,7 +813,7 @@ class ExtraFields
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable);
 
 		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
-                
+
 		if (empty($pos)) {
 			$pos = 0;
 		}
@@ -979,7 +980,7 @@ class ExtraFields
 			$sql .= " AND name = '".$this->db->escape($attrname)."'";
 		}
 		$sql .= " ORDER BY pos";
-                
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$count = 0;
