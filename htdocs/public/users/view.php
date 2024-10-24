@@ -342,7 +342,6 @@ if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
 
 // Social networks
 if (empty($object->socialnetworks)) {
-	var_dump($object->id);
 	$object->socialnetworks = getSocialNetworks($object->id);
 }
 if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && count($object->socialnetworks) > 0) {
