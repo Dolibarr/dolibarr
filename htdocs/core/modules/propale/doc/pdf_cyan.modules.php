@@ -877,7 +877,6 @@ class pdf_cyan extends ModelePDFPropales
 					$posy = $this->drawSignatureArea($pdf, $object, $posy, $outputlangs);
 				}
 
-				
 				// Add number of pages in footer
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
