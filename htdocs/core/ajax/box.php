@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +79,7 @@ if ($boxorder && $zone != '' && $userid > 0) {
 	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
 	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	$result = InfoBox::saveboxorder($db, (int) $zone, $boxorder, $userid);
 	if ($result > 0) {
 		$langs->load("boxes");
 		if (!GETPOST('closing')) {

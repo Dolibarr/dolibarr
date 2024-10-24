@@ -540,63 +540,61 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 		}
 
 		if ($mode == 'target' || preg_match('/targetwithdetails/', $mode)) {
-			if ($usecontact) {
-				if (is_object($targetcontact)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
+			if ($usecontact && (is_object($targetcontact))) {
+				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
-					if (!empty($targetcontact->address)) {
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
-					} else {
-						$companytouseforaddress = $targetcompany;
+				if (!empty($targetcontact->address)) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
+				} else {
+					$companytouseforaddress = $targetcompany;
 
-						// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
-						if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id) {
-							$targetcontact->fetch_thirdparty();
-							$companytouseforaddress = $targetcontact->thirdparty;
-						}
-
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
-					}
-					// Country
-					if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
-					} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
+					if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id) {
+						$targetcontact->fetch_thirdparty();
+						$companytouseforaddress = $targetcontact->thirdparty;
 					}
 
-					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || preg_match('/targetwithdetails/', $mode)) {
-						// Phone
-						if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
-							if (!empty($targetcontact->phone_pro) || !empty($targetcontact->phone_mobile)) {
-								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
-							}
-							if (!empty($targetcontact->phone_pro)) {
-								$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
-							}
-							if (!empty($targetcontact->phone_pro) && !empty($targetcontact->phone_mobile)) {
-								$stringaddress .= " / ";
-							}
-							if (!empty($targetcontact->phone_mobile)) {
-								$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
-							}
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+				}
+				// Country
+				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
+				} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+				}
+
+				if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || preg_match('/targetwithdetails/', $mode)) {
+					// Phone
+					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
+						if (!empty($targetcontact->phone_pro) || !empty($targetcontact->phone_mobile)) {
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
 						}
-						// Fax
-						if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
-							if ($targetcontact->fax) {
-								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
-							}
+						if (!empty($targetcontact->phone_pro)) {
+							$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
 						}
-						// EMail
-						if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
-							if ($targetcontact->email) {
-								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
-							}
+						if (!empty($targetcontact->phone_pro) && !empty($targetcontact->phone_mobile)) {
+							$stringaddress .= " / ";
 						}
-						// Web
-						if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
-							if ($targetcontact->url) {
-								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
-							}
+						if (!empty($targetcontact->phone_mobile)) {
+							$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
+						}
+					}
+					// Fax
+					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
+						if ($targetcontact->fax) {
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
+						}
+					}
+					// EMail
+					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
+						if ($targetcontact->email) {
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
+						}
+					}
+					// Web
+					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
+						if ($targetcontact->url) {
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
 						}
 					}
 				}
@@ -2541,10 +2539,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 			if (count($objects) > 1) {
 				$order = null;
+
+				$refListsTxt = '';
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
 				} else {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.=$outputlangs->transnoentities("RefSending").' :';
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2559,14 +2559,16 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 							}
 						}
 					}
-
+					$refListsTxt.= (!empty($refListsTxt)?' ':'');
 					if (! is_object($order)) {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->transnoentities($elementobject->ref);
 					} else {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
-						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$refListsTxt.= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					}
 				}
+
+				$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$order = null;

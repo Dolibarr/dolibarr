@@ -9293,7 +9293,7 @@ class Form
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
-                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    <li class="liinputsearch"><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>

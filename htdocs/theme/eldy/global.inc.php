@@ -894,6 +894,9 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.lineheightsmall {
+	line-height: 1.2em;
+}
 .large {
 	font-size: 125%;
 }
@@ -2371,6 +2374,7 @@ div.blockvmenulogo
 	width: inherit;
 	height: inherit;
 	image-rendering: -webkit-optimize-contrast;
+	border-radius: 3px;
 }
 #mainmenutd_companylogo::after, #mainmenutd_menu::after {
 	content: unset !important;
@@ -3826,9 +3830,6 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbackbody);
 }
-table.noborder {
-	background: var(--colorbacktabcard1);
-}
 
 div.tabBar tr.titre td {
 	padding-top: 20px;
@@ -4205,7 +4206,9 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 
-
+table.noborder {
+	background: var(--colorbacktabcard1);
+}
 .fichehalfright table.noborder , .fichehalfleft table.noborder{
 	margin: 0px 0px 0px 0px;
 }
@@ -4225,9 +4228,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 	margin: 0px 0px 20px 0px;
 
-	border-radius: 2px;
-
-	/*width: calc(100% - 7px);
+	/*border-radius: 2px;
+	width: calc(100% - 7px);
 	border-collapse: separate !important;
 	border-spacing: 0px;
 	border-top-width: 0px;
@@ -4251,6 +4253,65 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tableliness
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
 	border-top: unset !important;
+}
+
+
+/* Experimental code to manage rounding */
+<?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
+table.noborder:not(.cal_month, .paymenttable) {
+	border-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder.cal_month {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table.liste tr.liste_titre_filter:first-child td:first-child,
+table.liste tr.liste_titre_filter:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:first-child,
+table.liste tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:last-child,
+table.liste tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
 
@@ -4295,7 +4356,7 @@ tr.liste_titre_filter td.liste_titre {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-tr.liste_titre_create td {
+tr.liste_titre_create td:not(.linecoldescription) {
 	padding-right: 4px !important;
 	padding-left: 4px !important;
 }
@@ -4314,6 +4375,9 @@ table.liste tr, table.noborder tr, div.noborder form {
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
+}
+td.linecoldescription {
+	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
 table.tableforfield td, .tagtr.table-border-row .tagtd {
 	padding: 2px 4px 2px 10px;			/* t r b l */
@@ -4451,9 +4515,6 @@ div.pagination li span.inactive:hover {
 	  -webkit-box-shadow: none !important;
 	  box-shadow: none !important;
 }
-/*div.pagination li.litext {
-	padding-top: 8px;
-}*/
 div.pagination li.litext a {
   border: none;
   padding-right: 10px;
@@ -4480,13 +4541,6 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-/*div.pagination li a:hover,
-div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
-div.pagination li a:focus,
-div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
-  -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-  box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -4830,6 +4884,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 }
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
@@ -4842,6 +4899,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 }
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
@@ -5071,13 +5131,13 @@ span.dashboardlineko {
 
 
 .fichecenter .tableforfield tr td, .tagtr.table-border-row {
-	background: var(--colorbacklineimpair2) !important;
+	background-color: var(--colorbacklineimpair2);
 }
-table.liste tr.oddeven:nth-of-type(odd) td{
-	background: var(--colorbacklineimpair2) !important;
+table.liste tr.oddeven:nth-of-type(odd) {
+	background-color: var(--colorbacklineimpair2);
 }
-table.liste tr.oddeven:nth-of-type(even) td{
-	background: var(--colorbacklinepair2) !important;
+table.liste tr.oddeven:nth-of-type(even) {
+	background-color: var(--colorbacklinepair2);
 }
 
 .boxtable {
@@ -5197,17 +5257,20 @@ div.ok {
   color: #114466;
 }
 
-/* Info admin */
-div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+div.info, div.warning, div.error {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
+	border-radius: 5px;
+}
+
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
 	color: #558;
-	border-radius: 3px;
 }
 
 /* Warning message */
@@ -5215,13 +5278,7 @@ div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
 div.warning {
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 1em 0em 1em 0em;
 	background: #fcf8e3;
-	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: var(--colortextlink);
@@ -5230,13 +5287,7 @@ div.warning a, div.info a, div.error a {
 /* Error message */
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 1em 0em 1em 0em;
 	background: #EFCFCF;
-	border-radius: 3px;
 }
 
 
@@ -5350,9 +5401,16 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
-table.table-fiche-title tr.toptitle {
+/* height of top title */
+.fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
 	height: 60px;
 }
+/* height of other title */
+table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
+	height: 44px;
+}
+
+
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
@@ -5380,11 +5438,6 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-/*
-table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
-	line-height: 40px;
-}
-*/
 table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 	line-height: normal;
 }
@@ -5917,14 +5970,19 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px !important; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
-.cal_impair        { ackground: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%); }
+.cal_impair        {
+	background: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
+}
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
@@ -6231,14 +6289,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 	font-weight: bold;
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-	background: #007fff !important;
+	background: var(--colorbackhmenu1);
 	color: #ffffff !important;
+	border: 1px solid var(--colorbackhmenu1);
 }
-
+.ui-menu {
+	padding: 5px;
+/*
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	*/
+}
 .ui-menu .ui-menu-item a {
 	text-decoration:none;
 	display:block;
-	padding:.2em .4em;
+	padding:.5em .6em;
 	line-height:1.5;
 	font-weight: normal;
 	font-family:<?php echo $fontlist; ?>;
@@ -7963,6 +8028,9 @@ div.tabsElem a.tab {
   background: white;
   border-radius: 0.25em;
   padding: 1em;
+  background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
   background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
 }
 .cd-timeline-content:after {

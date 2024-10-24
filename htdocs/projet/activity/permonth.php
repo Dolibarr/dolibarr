@@ -632,7 +632,7 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<td class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</td>';
 }
 foreach ($TWeek as $week_number) {
-	print '<td width="6%" class="center bold hide">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</td>';
+	print '<td width="6%" class="center bold hide"><a href="'.DOL_URL_ROOT.'/projet/activity/perweek.php?year='.$year.'&month='.$month.'&day='.$TFirstDays[$week_number].'">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</a></td>';
 }
 
 //print '<td></td>';

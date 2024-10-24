@@ -166,7 +166,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-$useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
+$useboldtitle = getDolGlobalInt('THEME_ELDY_USEBOLDTITLE');
 $borderwidth = 2;
 $userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 
@@ -1107,6 +1107,9 @@ textarea.centpercent {
 }
 .small, small {
 	font-size: 85%;
+}
+.lineheightsmall {
+	line-height: 1.2em;
 }
 .large {
 	font-size: 125%;
@@ -3743,6 +3746,7 @@ div.blockvmenulogo
 	width: inherit;
 	height: inherit;
 	image-rendering: -webkit-optimize-contrast;
+	border-radius: 3px;
 }
 #mainmenutd_companylogo::after {
 	content: unset;
@@ -5196,16 +5200,19 @@ div.ok {
   color: #114466;
 }
 
-/* Info admin */
-div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+div.info, div.warning, div.error {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
+	border-radius: 1px;
+}
+
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
-	border-radius: 3px;
 }
 
 /* Warning message */
@@ -5213,13 +5220,7 @@ div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
 div.warning {
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
 	background: #fcf8e3;
-	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -5228,13 +5229,7 @@ div.warning a, div.info a, div.error a {
 /* Error message */
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
 	background: #EFCFCF;
-	border-radius: 3px;
 }
 
 

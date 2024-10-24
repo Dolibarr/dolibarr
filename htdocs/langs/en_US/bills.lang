@@ -169,6 +169,7 @@ BillTo=To
 ShippingTo=Shipping to
 ActionsOnBill=Actions on invoice
 ActionsOnBillRec=Actions on recurring invoice
+InvoicesGeneratedFromRec=Generated invoices
 RecurringInvoiceTemplate=Template / Recurring invoice
 NoQualifiedRecurringInvoiceTemplateFound=No recurring template invoice qualified for generation.
 FoundXQualifiedRecurringInvoiceTemplate=%s recurring template invoice(s) qualified for generation.
