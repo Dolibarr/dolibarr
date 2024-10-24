@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +88,12 @@ if ($action == 'add') {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$action = 'create';
+		}
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesg[] = $langs->trans("ErrorSizeForStarsType");
 			$action = 'create';
 		}
 		if ($type == 'select' && !$param) {
@@ -281,6 +288,12 @@ if ($action == 'update') {
 			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'edit';
 		}
+		if ($type == 'stars' && ($extrasize < 1|| $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesg[] = $langs->trans("ErrorSizeForStarsType");
+			$action = 'edit';
+		}
 		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
@@ -372,11 +385,11 @@ if ($action == 'update') {
 
 				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
 				$computedvalue = GETPOST('computed_value', 'nohtml');
-                                
-                                // Load $extrafields->attributes
-                                $extrafields->fetch_name_optionals_label($elementtype);
 
-                                $result = $extrafields->update(
+				// Load $extrafields->attributes
+				$extrafields->fetch_name_optionals_label($elementtype);
+
+				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
 					$type,
@@ -425,9 +438,8 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
 		$attributekey = GETPOST('attrname', 'aZ09');
 
-                // Load $extrafields->attributes
-                $extrafields->fetch_name_optionals_label($elementtype);
-
+	   // Load $extrafields->attributes
+		$extrafields->fetch_name_optionals_label($elementtype);
 		$result = $extrafields->delete($attributekey, $extrafields->attributes[$elementtype]['elementtype_org'] ?? $elementtype);
 		if ($result >= 0) {
 			setEventMessages($langs->trans("ExtrafieldsDeleted", $attributekey), null, 'mesgs');
@@ -490,7 +502,7 @@ if ($action == 'encrypt') {
 									if ($resupdate) {
 										$nbupdatedone++;
 									} else {
-										setEventMessages($db->lasterror(), '', 'errors');
+										setEventMessages($db->lasterror(), null, 'errors');
 										$error++;
 										break;
 									}
