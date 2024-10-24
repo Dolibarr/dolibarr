@@ -544,7 +544,7 @@ if ($num > 0) {
 		$object->datelastrun = $db->jdate($obj->datelastrun);
 		$object->datenextrun = $db->jdate($obj->datenextrun);
 
-		$datelastrun = $db->jdate($obj->datelastrun);
+		$datelastrun = (int)$db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
 
 		print '<tr class="oddeven">';
