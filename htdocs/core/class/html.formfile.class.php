@@ -886,6 +886,9 @@ class FormFile
 				}
 
 				foreach ($file_list as $file) {
+					require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+					$ecmfile = new EcmFiles($this->db);
+					$ecmfile->fetch($file['rowid']);
 					// Define relative path for download link (depends on module)
 					$relativepath = $file["name"]; // Cas general
 					if ($modulesubdir) {
@@ -911,21 +914,22 @@ class FormFile
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}
-					$out .= '<a class="documentdownload paddingright" ';
-					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-						$out .= 'target="_blank" ';
-					}
-					$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					// $out .= '<a class="documentdownload paddingright" ';
+					// if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+					// 	$out .= 'target="_blank" ';
+					// }
+					// $out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
-					$mime = dol_mimetype($relativepath, '', 0);
-					if (preg_match('/text/', $mime)) {
-						$out .= ' target="_blank" rel="noopener noreferrer"';
-					}
-					$out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
-					$out .= '>';
-					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
-					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>';
+					// $mime = dol_mimetype($relativepath, '', 0);
+					// if (preg_match('/text/', $mime)) {
+					// 	$out .= ' target="_blank" rel="noopener noreferrer"';
+					// }
+					// $out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
+					// $out .= '>';
+					// $out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
+					// $out .= dol_trunc($file["name"], 150);
+					// $out .= '</a>';
+					$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
 					$out .= '</span>'."\n";
 					$out .= $imgpreview;
 					$out .= '</td>';
