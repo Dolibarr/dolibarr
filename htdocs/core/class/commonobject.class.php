@@ -5027,10 +5027,6 @@ abstract class CommonObject
 			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
-		if (empty($this->lines)) {
-			return array();
-		}
-
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
 				$totalOrdered += $line->qty_asked; // defined for shipment only
