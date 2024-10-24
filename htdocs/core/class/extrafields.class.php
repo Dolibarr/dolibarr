@@ -985,13 +985,21 @@ class ExtraFields
 		if ($resql) {
 			$count = 0;
 			if ($this->db->num_rows($resql)) {
+				$org_elementtype = $elementtype;	// Save original element type for later use
 				while ($tab = $this->db->fetch_object($resql)) {
-					$this->attributes[$elementtype]['elementtype_org'] = $tab->elementtype;
-					$tab->elementtype = $elementtype;
+					// Make element type as a list array
+					if ($org_elementtype != 'all') {
+						$elist = array($org_elementtype);	// not all, use only original element type in list
+					} else {
+						$elist = explode(",", $tab->elementtype);	// decode all element types if all was used
+					}
 					if ($tab->entity != 0 && $tab->entity != $conf->entity) {
 						// This field is not in current entity. We discard but before we save it into the array of mandatory fields if it is a mandatory field without default value
 						if ($tab->fieldrequired && is_null($tab->fielddefault)) {
-							$this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name] = $tab->type;
+							foreach ($elist as $elementtype) {	// Store mandatory element for each element type contained in this extra field record
+								$this->attributes[$elementtype]['elementtype_org'] = $tab->elementtype;
+								$this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name] = $tab->type;
+							}
 						}
 						continue;
 					}
@@ -1000,33 +1008,39 @@ class ExtraFields
 					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
 					}
-
-					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
-					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
-					$this->attributes[$tab->elementtype]['size'][$tab->name] = $tab->size;
-					$this->attributes[$tab->elementtype]['elementtype'][$tab->name] = $tab->elementtype;
-					$this->attributes[$tab->elementtype]['default'][$tab->name] = $tab->fielddefault;
-					$this->attributes[$tab->elementtype]['computed'][$tab->name] = $tab->fieldcomputed;
-					$this->attributes[$tab->elementtype]['unique'][$tab->name] = $tab->fieldunique;
-					$this->attributes[$tab->elementtype]['required'][$tab->name] = $tab->fieldrequired;
-					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
-					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
-					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name] = ((is_null($tab->perms) || strlen($tab->perms) == 0) ? 1 : $tab->perms);
-					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
-					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
-					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
-					$this->attributes[$tab->elementtype]['totalizable'][$tab->name] = ($tab->totalizable ? 1 : 0);
-					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
-					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
-					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
-					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
-					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
-					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
-
-					$this->attributes[$tab->elementtype]['loaded'] = 1;
-					$count++;
+					$db_elementtype = $tab->elementtype;	// Keep original element type from database record
+					foreach ($elist as $elementtype) {		// Create attriutes for each search element types
+						// keep original database element type field for GUI update
+						$this->attributes[$elementtype]['elementtype_org'] = $db_elementtype;
+						$tab->elementtype = $elementtype;
+						$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
+						$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
+						$this->attributes[$tab->elementtype]['size'][$tab->name] = $tab->size;
+						$this->attributes[$tab->elementtype]['elementtype'][$tab->name] = $tab->elementtype;
+						$this->attributes[$tab->elementtype]['default'][$tab->name] = $tab->fielddefault;
+						$this->attributes[$tab->elementtype]['computed'][$tab->name] = $tab->fieldcomputed;
+						$this->attributes[$tab->elementtype]['unique'][$tab->name] = $tab->fieldunique;
+						$this->attributes[$tab->elementtype]['required'][$tab->name] = $tab->fieldrequired;
+						$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
+						$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
+						$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
+						$this->attributes[$tab->elementtype]['perms'][$tab->name] = ((is_null($tab->perms) || strlen($tab->perms) == 0) ? 1 : $tab->perms);
+						$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
+						$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
+						$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
+						$this->attributes[$tab->elementtype]['totalizable'][$tab->name] = ($tab->totalizable ? 1 : 0);
+						$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
+						$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
+						$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
+						$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
+						$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
+						$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
+	
+						$this->attributes[$tab->elementtype]['loaded'] = 1;
+						$count++;
+					}
 				}
+				$elementtype = $org_elementtype;	// Restore original element type
 			}
 			if ($elementtype) {
 				$this->attributes[$elementtype]['loaded'] = 1; // Note: If nothing is found, we also set the key 'loaded' to 1.
