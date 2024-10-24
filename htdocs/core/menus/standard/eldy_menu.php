@@ -26,6 +26,8 @@
 
 /**
  *	Class to manage menu Eldy
+ *
+ *	@phan-suppress PhanRedefineClass
  */
 class MenuManager
 {
@@ -54,9 +56,18 @@ class MenuManager
 	 */
 	public $menu;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array;
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array_after;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $tabMenu;
 
 
@@ -64,7 +75,7 @@ class MenuManager
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	int			$type_user	Type of user
+	 *  @param	int<0,1>	$type_user		Type of user
 	 */
 	public function __construct($db, $type_user)
 	{
@@ -99,7 +110,7 @@ class MenuManager
 			$_SESSION["mainmenu"] = $mainmenu;
 			$_SESSION["leftmenuopened"] = "";
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
 		}
 		if (!empty($forcemainmenu)) {
@@ -118,7 +129,7 @@ class MenuManager
 				$_SESSION["leftmenuopened"] = $leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$leftmenu = isset($_SESSION["leftmenu"]) ? $_SESSION["leftmenu"] : '';
 		}
 		if (!empty($forceleftmenu)) {
@@ -137,9 +148,9 @@ class MenuManager
 	 *  Show menu.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
-	 *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
-	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *	@param	string				$mode			'top', 'topnb', 'left', 'leftdropdown', 'jmobile' (used to get full xml ul/li menu)
+	 *  @param	?array<string,mixed>	$moredata		An array with more data to output
+	 *  @return int                 			    0 or nb of top menu entries if $mode = 'topnb'
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -161,6 +172,10 @@ class MenuManager
 			}
 			if ($mode == 'left') {
 				print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata, $this->type_user);
+			}
+			if ($mode == 'leftdropdown') {
+				//$leftmenudropdown = print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata, $this->type_user);
+				$leftmenudropdown = print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 1, '', '', $moredata, $this->type_user);
 			}
 		} else {
 			$conf->global->MAIN_SHOW_LOGO = 0;
@@ -270,7 +285,7 @@ class MenuManager
 					*/
 
 					$lastlevel2 = array();
-					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu','prefix']
 						$showmenu = true;
 						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;

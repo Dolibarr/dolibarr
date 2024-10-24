@@ -101,7 +101,7 @@ $pagenext = $page + 1;
 $diroutputmassaction = $conf->reception->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 $object = new Reception($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptionlist'));
 $extrafields = new ExtraFields($db);
 
@@ -112,7 +112,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'e.ref' => "Ref",
-	'e.ref_supplier'=>"RefSupplier",
+	'e.ref_supplier' => "RefSupplier",
 	's.nom' => "ThirdParty",
 	'e.note_public' => 'NotePublic',
 );
@@ -226,6 +226,7 @@ if (empty($reshook)) {
 
 		$TFact = array();
 		$TFactThird = array();
+		'@phan-var FactureFournisseur[] $TFactThird';
 		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
@@ -253,7 +254,7 @@ if (empty($reshook)) {
 				// Add all links of this new reception to the existing invoice
 				$objecttmp->fetchObjectLinked();
 				$rcp->fetchObjectLinked();
-				if (count($rcp->linkedObjectsIds['order_supplier']) > 0) {
+				if (!empty($rcp->linkedObjectsIds['order_supplier']) && is_array($rcp->linkedObjectsIds['order_supplier'])) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
 						if (empty($objecttmp->linkedObjectsIds['order_supplier']) || !in_array($value, $objecttmp->linkedObjectsIds['order_supplier'])) { //Don't try to link if already linked
 							$objecttmp->add_object_linked('order_supplier', $value); // add supplier order linked object
@@ -304,7 +305,8 @@ if (empty($reshook)) {
 						}
 					}
 
-					// try get from third-party of reception
+					$soc = null;
+					// try get from third party of reception
 					if (!empty($rcp->thirdparty)) {
 						$soc = $rcp->thirdparty;
 						if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
@@ -331,7 +333,9 @@ if (empty($reshook)) {
 				$objecttmp->transport_mode_id = $transport_mode_id;
 
 				// if the VAT reverse-charge is activated by default in supplier card to resume the information
-				$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
+				if (is_object($soc)) {
+					$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
+				}
 
 				$objecttmp->fk_project			= $rcp->fk_project;
 				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
@@ -405,7 +409,8 @@ if (empty($reshook)) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 						// If we build one invoice for several reception, we must put the ref of reception on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref.' - '.dol_print_date($rcp->date, 'day'));
+							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref);
+							$desc .= (!empty($rcp->date_reception) ? ' - '.dol_print_date($rcp->date_reception, 'day') : '');
 						}
 
 						if ($lines[$i]->subprice < 0) {
@@ -1096,6 +1101,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

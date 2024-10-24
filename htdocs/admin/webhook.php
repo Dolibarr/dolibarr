@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "webhook"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webhooksetup', 'globalsetup'));
 
 // Access control
@@ -165,7 +165,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->t
 
 
 if ($action == 'edit') {
-	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {  // @phpstan-ignore-line
 		print $formSetup->generateOutput(true);
 	} else {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -175,6 +175,7 @@ if ($action == 'edit') {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+		// @phan-suppress-next-line PhanEmptyForeach
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled'] == 1) {
 				$setupnotempty++;
@@ -256,7 +257,7 @@ if ($action == 'edit') {
 
 	print '<br>';
 } else {
-	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {  // @phpstan-ignore-line
 		if (!empty($formSetup->items)) {
 			print $formSetup->generateOutput();
 		}

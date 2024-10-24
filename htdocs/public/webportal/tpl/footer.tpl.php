@@ -1,10 +1,13 @@
 <!-- file footer.tpl.php -->
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'@phan-var-force Context $context';
 
 global $langs;
 

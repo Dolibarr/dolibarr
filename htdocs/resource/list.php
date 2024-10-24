@@ -52,7 +52,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 // Initialize context for list
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
@@ -526,6 +526,7 @@ $totalarray['nbfield'] = 0;
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['t.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ty.label']['checked'])) {

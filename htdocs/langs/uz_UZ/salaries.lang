@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Hisob qaydnomasi (Hisob jadvalidan) sukut bo'yicha "foydalanuvchi" uchinchi shaxslar uchun ishlatiladi
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Foydalanuvchi kartasida belgilangan ajratilgan hisob faqat Subledger hisobi uchun ishlatiladi. Agar foydalanuvchi uchun maxsus hisob qaydnomasi aniqlanmagan bo'lsa, bu Bosh kitob uchun va Subledger hisobining standart qiymati sifatida ishlatiladi.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Ish haqi to'lovlari bo'yicha sukut bo'yicha buxgalteriya hisobi
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Odatiy bo'lib, Ish haqini yaratishda "Umumiy to'lovni avtomatik ravishda yaratish" parametrini bo'sh qoldiring
 Salary=Ish haqi

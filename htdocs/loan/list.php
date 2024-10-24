@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2015       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2024  Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Loan($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->loan->dir_output.'/temp/massgeneration/'.$user->id;
@@ -80,7 +80,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
@@ -145,10 +145,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-$help_url="EN:Module_Loan|FR:Module_Emprunt";
-$help_url = '';
 $title = $langs->trans('Loans');
-
+$help_url = "EN:Module_Loan|FR:Module_Emprunt";
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -223,7 +221,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

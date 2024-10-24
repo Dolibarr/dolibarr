@@ -157,7 +157,7 @@ $form = new Form($db);
 
 $title = $langs->trans("MarginDetails");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-margin page-checkmargins');
 
 // print load_fiche_titre($text);
 

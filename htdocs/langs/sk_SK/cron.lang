@@ -1,91 +1,101 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Ukázať naplánovanú úlohu
 Permission23102 = Vytvoriť / upraviť naplánovanú úlohu
 Permission23103 = Odstrániť naplánovanú úlohu
 Permission23104 = Spustiť naplánovanú úlohu
 # Admin
 CronSetup=Naplánované úlohy správy Nastavenie
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+URLToLaunchCronJobs=URL na kontrolu a spustenie kvalifikovaných úloh cron z prehliadača
+OrToLaunchASpecificJob=Alebo skontrolovať a spustiť konkrétnu úlohu z prehliadača
 KeyForCronAccess=Bezpečnostný kľúč pre URL spustiť cron
-FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
-CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
-CronMethodDoesNotExists=Class %s does not contains any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+FileToLaunchCronJobs=Príkazový riadok na kontrolu a spustenie kvalifikovaných úloh cron
+CronExplainHowToRunUnix=V prostredí Unix by ste mali použiť nasledujúci záznam crontab na spustenie príkazového riadku každých 5 minút
+CronExplainHowToRunWin=V prostredí Microsoft(tm) Windows môžete použiť nástroje Scheduled Task na spustenie príkazového riadka každých 5 minút
+CronMethodDoesNotExists=Trieda %s neobsahuje žiadnu metódu %s
+CronMethodNotAllowed=Metóda %s triedy %s je v zozname blokovaných metód
+CronJobDefDesc=Profily úloh cron sú definované v súbore deskriptora modulu. Keď je modul aktivovaný, sú načítané a dostupné, takže úlohy môžete spravovať z ponuky správcovských nástrojov %s.
+CronJobProfiles=Zoznam preddefinovaných profilov úloh cron
 # Menu
-EnabledAndDisabled=Enabled and disabled
+EnabledAndDisabled=Povolené a zakázané
 # Page list
-CronLastOutput=Latest run output
-CronLastResult=Latest result code
+CronLastOutput=Výstup posledného chodu
+CronLastResult=Kód posledného výsledku
 CronCommand=Príkaz
 CronList=Naplánované úlohy
-CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronDelete=Odstrániť naplánované úlohy
+CronConfirmDelete=Naozaj chcete odstrániť tieto naplánované úlohy?
+CronExecute=Spustite teraz
+CronConfirmExecute=Naozaj chcete vykonať tieto naplánované úlohy teraz?
+CronInfo=Modul plánovanej úlohy umožňuje naplánovať úlohy tak, aby sa vykonávali automaticky. Úlohy je možné spustiť aj manuálne.
 CronTask=Práca
-CronNone=Nikto
-CronDtStart=Not before
-CronDtEnd=Not after
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
+CronDtStart=Nie predtým
+CronDtEnd=Nie potom
 CronDtNextLaunch=Ďalšie prevedenie
-CronDtLastLaunch=Start date of latest execution
-CronDtLastResult=End date of latest execution
+CronDtLastLaunch=Dátum začiatku posledného vykonania
+CronDtLastResult=Dátum ukončenia posledného vykonania
 CronFrequency=Frekvencia
-CronClass=Class
+CronClass=Trieda
 CronMethod=Metóda
 CronModule=Modul
 CronNoJobs=Žiadny registrovaný práce
 CronPriority=Priorita
 CronLabel=Štítok
-CronNbRun=Number of launches
-CronMaxRun=Maximum number of launches
+CronNbRun=Počet spustení
+CronMaxRun=Maximálny počet spustení
 CronEach=Každý
 JobFinished=Práca zahájená a dokončená
-Scheduled=Scheduled
+Scheduled=Naplánovaný
 #Page card
-CronAdd= Pridať pracovných miest
-CronEvery=Execute job each
+CronAdd=Pridať pracovných miest
+CronEvery=Run job every
 CronObject=Inštancia / objekt vytvoriť
 CronArgs=Parametre
-CronSaveSucess=Save successfully
+CronSaveSucess=Uložiť úspešne
 CronNote=Komentár
 CronFieldMandatory=Pole je povinné %s
 CronErrEndDateStartDt=Dátum ukončenia nemôže byť pred dátumom začatia
-StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Schedule
+StatusAtInstall=Stav pri inštalácii modulu
+CronStatusActiveBtn=Povoliť plánovanie
 CronStatusInactiveBtn=Zakázať
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=Táto úloha je zakázaná (nie je naplánovaná)
 CronId=Id
-CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronClassFile=Názov súboru s triedou
+CronModuleHelp=Názov adresára modulu Dolibarr (funguje aj s externým modulom Dolibarr). <BR> Napríklad na volanie metódy načítania objektu Dolibarr Product /htdocs/<u>productb0adaaa40dz87 /class/product.class.php, hodnota modulu je<br><i>product</i>
+CronClassFileHelp=Relatívna cesta a názov súboru, ktorý sa má načítať (cesta je relatívna ku koreňovému adresáru webového servera). <BR> Napríklad na volanie metódy načítania objektu Dolibarr Product htdocs/product/class/<u>product.class.php</u>, hodnota názvu súboru triedy je <br><i>produkt/trieda/produkt .class.php</i>
+CronObjectHelp=Názov objektu, ktorý sa má načítať. <BR> Ak chcete napríklad volať metódu načítania objektu Dolibarr Product /htdocs/product/class/product.class.php, hodnota názvu súboru triedy je<br><i>Produkt</i>
+CronMethodHelp=Metóda objektu na spustenie. <BR> Ak chcete napríklad volať metódu načítania objektu Dolibarr Product /htdocs/product/class/product.class.php, hodnota metódy je <br><i>fetch</i>
+CronArgsHelp=Argumenty metódy. <BR> Ak chcete napríklad volať metódu načítania objektu Dolibarr Product /htdocs/product/class/product.class.php, hodnota parametrov môže byť<br><i>0, ProductRef</i>
 CronCommandHelp=Systém príkazového riadka spustiť.
-CronCreateJob=Create new Scheduled Job
+CronCreateJob=Vytvorte novú plánovanú úlohu
 CronFrom=Z
 # Info
 # Common
-CronType=Job type
-CronType_method=Call method of a PHP Class
+CronType=Typ práce
+CronType_method=Metóda volania triedy PHP
 CronType_command=Shell príkaz
-CronCannotLoadClass=Cannot load class file %s (to use class %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
-JobDisabled=Job disabled
-MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
-WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
+CronCannotLoadClass=Nie je možné načítať súbor triedy %s (na použitie triedy %s)
+CronCannotLoadObject=Súbor triedy %s bol načítaný, ale nenašiel sa v ňom objekt %s
+UseMenuModuleToolsToAddCronJobs=Ak chcete zobraziť a upraviť naplánované úlohy, prejdite do ponuky "<a href="%s">Domov - Nástroje správcu - Naplánované úlohy</a>".
+JobDisabled=Práca je zakázaná
+MakeLocalDatabaseDumpShort=Lokálna záloha databázy
+MakeLocalDatabaseDump=Vytvorte lokálny výpis databázy. Parametre sú: kompresia ('gz' alebo 'bz' alebo 'none'), typ zálohy ('mysql', 'pgsql', 'auto'), 1, 'auto' alebo názov súboru na zostavenie, počet záložných súborov, ktoré sa majú zachovať
+MakeSendLocalDatabaseDumpShort=Odoslať lokálnu zálohu databázy
+MakeSendLocalDatabaseDump=Odoslať lokálnu zálohu databázy e-mailom. Parametre sú: to, from, subject, message, filename (názov odoslaného súboru), filter ('sql' len pre zálohu databázy)
+BackupIsTooLargeSend=Ľutujeme, posledný záložný súbor je príliš veľký na odoslanie e-mailom
+CleanUnfinishedCronjobShort=Vyčistite nedokončený cronjob
+CleanUnfinishedCronjob=Vyčistite cronjob zaseknutý pri spracovaní, keď proces už nie je spustený
+WarningCronDelayed=Pozor, z dôvodu výkonu, bez ohľadu na nasledujúci dátum vykonania povolených úloh, môžu byť vaše úlohy pred spustením oneskorené maximálne o %s hodín.
+DATAPOLICYJob=Čistič dát a anonymizátor
+JobXMustBeEnabled=Úloha %s musí byť povolená
+EmailIfError=E-mail s upozornením na chybu
+JobNotFound=Úloha %s sa nenašla v zozname úloh (skúste vypnúť/povoliť modul)
+ErrorInBatch=Chyba pri spustení úlohy %s
+
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
+LastExecutedScheduledJob=Posledná vykonaná naplánovaná úloha
+NextScheduledJobExecute=Ďalšia naplánovaná úloha na vykonanie
+NumberScheduledJobError=Počet chybne naplánovaných úloh
+NumberScheduledJobNeverFinished=Počet nikdy nedokončených naplánovaných úloh

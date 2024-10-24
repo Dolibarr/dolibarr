@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Qabul qilindi
 SupplierProposalStatusNotSignedShort=Rad etildi
 CopyAskFrom=Mavjud so'rovni nusxalash orqali narx bo'yicha so'rov yarating
 CreateEmptyAsk=Bo'sh so'rov yarating
-ConfirmCloneAsk=Narx so'rovini <b> %s </b> klonlamoqchimisiz?
 ConfirmReOpenAsk=Narx so'rovini qayta ochishni xohlaysizmi <b> %s </b>?
 SendAskByMail=Pochta orqali narx bo'yicha so'rov yuboring
 SendAskRef=%s narx so'rovini yuborish

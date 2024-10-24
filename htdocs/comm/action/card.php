@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019	    Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,22 +80,23 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
+$tzforfullday = null;
 if ($fulldayevent) {
 	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-	$datep = dol_mktime('00', '00', 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-	$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	//print $db->idate($datep); exit;
 } else {
 	$datep = dol_mktime($aphour, $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
-	$datef = dol_mktime($p2hour, $p2min, '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+	$datef = dol_mktime($p2hour, $p2min, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 }
 $reg = array();
 if (GETPOST('datep')) {
 	if (GETPOST('datep') == 'now') {
 		$datep = dol_now();
 	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// Try to not use this. Use instead '&datep=now'
-		$datep = dol_mktime(0, 0, 0, $reg[2], $reg[3], $reg[1], 'tzuserrel');
+		$datep = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
 	}
 }
 
@@ -123,6 +124,7 @@ $formactions = new FormActions($db);
 // Load object
 if ($id > 0 && $action != 'add') {
 	$ret = $object->fetch($id);
+	$ret1 = 0;
 	if ($ret > 0) {
 		$ret = $object->fetch_optionals();
 		$ret1 = $object->fetch_userassigned();
@@ -135,7 +137,7 @@ if ($id > 0 && $action != 'add') {
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 $parameters = array('socid' => $socid);
@@ -146,10 +148,10 @@ if ($reshook < 0) {
 
 $TRemindTypes = array();
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 1 : 0));
+	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
 }
 if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 1 : 0));
+	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
 }
 
 $TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
@@ -323,12 +325,14 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	if ($fulldayevent) {
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-		$datep = dol_mktime('00', '00', '00', GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-		$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	} else {
 		$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
 		$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 	}
+	//set end date to now if percentage is set to 100 and end date not set
+	$datef = (!$datef && $percentage == 100)?dol_now():$datef;
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -372,6 +376,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			}
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
+				$object->elementid = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -398,6 +403,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			}
 
 			$object->fk_element = $taskid;
+			$object->elementid = $taskid;
 			$object->elementtype = 'task';
 		}
 
@@ -517,6 +523,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		// Creation of action/event
 		$idaction = $object->create($user);
+		$moreparam = '';
 
 		if ($idaction > 0) {
 			if (!$object->error) {
@@ -526,7 +533,6 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				unset($_SESSION['assignedtouser']);
 
-				$moreparam = '';
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 				}
@@ -604,6 +610,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		}
 
 		if ($eventisrecurring) {
+			$dayoffset = 0;
+			$monthoffset = 0;
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOSTINT("apday"), GETPOSTINT("apmonth"), GETPOSTINT("apyear"));
@@ -718,9 +726,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				// increment date for recurrent events
 				$datep = dol_time_plus_duree($datep, $dayoffset, 'd');
-				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');
+				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 				$datef = dol_time_plus_duree($datef, $dayoffset, 'd');
-				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');
+				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 			}
 		}
 		if (!empty($backtopage) && !$error) {
@@ -768,12 +776,14 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		if ($fulldayevent) {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-			$datep = dol_mktime('00', '00', '00', GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-			$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$datep = dol_mktime(0, 0, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$datef = dol_mktime(23, 59, 59, GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
 		} else {
 			$datep = dol_mktime(GETPOST("aphour", 'int'), GETPOST("apmin", 'int'), GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
 			$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 		}
+		//set end date to now if percentage is set to 100 and end date not set
+		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
@@ -828,16 +838,11 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			}
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
+				$object->elementid = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
 
-		if (!$datef && $percentage == 100) {
-			$error++;
-			$donotclearsession = 1;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
-			$action = 'edit';
-		}
 
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
@@ -1066,8 +1071,8 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 	$error = 0;
 
-	$shour = dol_print_date($object->datep, "%H", 'tzuserrel');		// We take the date visible by user $newdate is also date visible by user.
-	$smin = dol_print_date($object->datep, "%M", 'tzuserrel');
+	$shour = (int) dol_print_date($object->datep, "%H", 'tzuserrel');		// We take the date visible by user $newdate is also date visible by user.
+	$smin = (int) dol_print_date($object->datep, "%M", 'tzuserrel');
 
 	$newdate = GETPOST('newdate', 'alpha');
 	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
@@ -1075,7 +1080,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 		exit;
 	}
 
-	$datep = dol_mktime($shour, $smin, 0, substr($newdate, 13, 2), substr($newdate, 15, 2), substr($newdate, 9, 4), 'tzuserrel');
+	$datep = dol_mktime($shour, $smin, 0, (int) substr($newdate, 13, 2), (int) substr($newdate, 15, 2), (int) substr($newdate, 9, 4), 'tzuserrel');
 	//print dol_print_date($datep, 'dayhour');exit;
 
 	if ($datep != $object->datep) {
@@ -1225,7 +1230,29 @@ if ($action == 'create') {
 						console.log("setdatefields");
                         setdatefields();
                     });
-
+					var old_startdate = null;
+					$("#ap").focus(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").next(".ui-datepicker-trigger").click(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").change(function() {
+						setTimeout(function() {
+							if ($("#p2").val() !== "") {
+								var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+								var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+								if (new_startdate > old_enddate) {
+									var timeDiff = old_enddate - old_startdate;
+									var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+									$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+									$("#p2day").val(new_enddate.getDate());
+									$("#p2month").val(new_enddate.getMonth() + 1);
+									$("#p2year").val(new_enddate.getFullYear());
+								}
+							}
+						}, 0);
+					});
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
@@ -1268,7 +1295,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent nobottom">';
 
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -1286,12 +1313,41 @@ if ($action == 'create') {
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
 	print '<td class="valignmiddle height30"><input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '</td></tr>';
 
+	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
+	if (GETPOST('datep', 'alpha', 1)) {
+		$datep = dol_stringtotime(GETPOST('datep', 'alpha', 1), 'tzuserrel');
+	}
+	$datef = ($datef ? $datef : $object->datef);
+	if (GETPOST('datef', 'alpha', 1)) {
+		$datef = dol_stringtotime(GETPOST('datef', 'alpha', 1), 'tzuserrel');
+	}
+	if (empty($datef) && !empty($datep)) {
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || (!getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') || getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') == '-1')) {
+			$datef = dol_time_plus_duree($datep, getDolGlobalInt('AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS', 1), 'h');
+		}
+	}
+
+	// Date start
+	print '<tr><td class="nowrap">';
+	print '</td><td>';
+	if (GETPOST("afaire") == 1) {
+		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
+	} else {
+		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
+	}
+	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span><br class="showonsmartphone"> ';
+	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
+	print '</td></tr>';
+
+	print '<tr><td></td><td>';
 	// Recurring event
 	$userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0);
 	if ($userepeatevent) {
 		// Repeat
-		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block small">';
+		//print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
+		print '<div class="opacitymedium inline-block small">';
 		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 6px" class="paddingright2"');
 		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
 
@@ -1371,33 +1427,6 @@ if ($action == 'create') {
 		print '</div>';
 		//print '</td></tr>';
 	}
-
-	print '</td></tr>';
-
-	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
-	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime(GETPOSTINT('datep', 1), 'tzuserrel');
-	}
-	$datef = ($datef ? $datef : $object->datef);
-	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime(GETPOSTINT('datef', 1), 'tzuserrel');
-	}
-	if (empty($datef) && !empty($datep)) {
-		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
-			$datef = dol_time_plus_duree($datep, getDolGlobalInt('AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS', 1), 'h');
-		}
-	}
-
-	// Date start
-	print '<tr><td class="nowrap">';
-	print '</td><td>';
-	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
-	} else {
-		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
-	}
-	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span><br class="showonsmartphone"> ';
-	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	print '</td></tr>';
 
 	print '<tr><td class="">&nbsp;</td><td></td></tr>';
@@ -1493,7 +1522,7 @@ if ($action == 'create') {
 	print '<br><hr><br>';
 
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent nobottom">';
 
 	if (isModEnabled("societe")) {
 		// Related company
@@ -1510,7 +1539,7 @@ if ($action == 'create') {
 			if (!empty($user->socid)) {
 				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			} else {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', $langs->trans('SelectThirdParty'), 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			}
 		}
 		print '</td></tr>';
@@ -1680,6 +1709,41 @@ if ($action == 'create') {
 		print '</table>';
 		print '</div>';
 
+		$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
+		$reminderDefaultOffset = getDolGlobalInt('AGENDA_DEFAULT_REMINDER_OFFSET', 30);
+		$reminderDefaultUnit = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT');
+		$reminderDefaultEmailModel = getDolGlobalInt('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL');
+
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+				const reminderDefaultEventTypes = 	'.$reminderDefaultEventTypes.';
+				$("#actioncode").change(function(){
+					var selected_event_type = $("#actioncode option:selected").val();
+
+					if (reminderDefaultEventTypes.includes(selected_event_type)) {
+						$(".reminderparameters").show();
+						$("#addreminder").prop("checked", true);
+
+						// Set period with default reminder period
+						$("[name=\"offsetvalue\"]").val("' . $reminderDefaultOffset . '");
+						$("#select_offsetunittype_duration").select2("destroy");
+						$("#select_offsetunittype_duration").val("'.$reminderDefaultUnit.'");
+						$("#select_offsetunittype_duration").select2();
+
+						$("#selectremindertype").select2("destroy");
+						$("#selectremindertype").val("email");
+						$("#selectremindertype").select2();
+
+						// Set default reminder mail model
+						$("#select_actioncommsendmodel_mail").closest("tr").show();
+						$("#select_actioncommsendmodel_mail").select2("destroy");
+						$("#select_actioncommsendmodel_mail").val("'.$reminderDefaultEmailModel.'");
+						$("#select_actioncommsendmodel_mail").select2();
+					}
+				});
+		   })';
+		print '</script>'."\n";
+
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
@@ -1741,8 +1805,8 @@ if ($id > 0) {
 	if ($listUserAssignedUpdated || $donotclearsession) {
 		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+		$datep = dol_mktime($fulldayevent ? 0 : $aphour, $fulldayevent ? 0 : $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+		$datef = dol_mktime($fulldayevent ? 23 : $p2hour, $fulldayevent ? 59 : $p2min, $fulldayevent ? 59 : 0, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -1817,6 +1881,29 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+						var old_startdate = null;
+						$("#ap").focus(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").next(".ui-datepicker-trigger").click(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").change(function() {
+							setTimeout(function() {
+								if ($("#p2").val() !== "") {
+									var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+									var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+									if (new_startdate > old_enddate) {
+										var timeDiff = old_enddate - old_startdate;
+										var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+										$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+										$("#p2day").val(new_enddate.getDate());
+										$("#p2month").val(new_enddate.getMonth() + 1);
+										$("#p2year").val(new_enddate.getFullYear());
+									}
+								}
+							}, 0);
+						});
 	            		$("#actioncode").change(function() {
                         	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         	else $("#dateend").removeClass("fieldrequired");
@@ -2194,7 +2281,7 @@ if ($id > 0) {
 			// Mail Model
 			if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 				print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-				print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+				print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, $actionCommReminder->fk_email_template);
 				print '</td></tr>';
 			}
 
@@ -2204,9 +2291,9 @@ if ($id > 0) {
 			print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
 	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
+	            		      	$(".reminderparameters").show();
                             } else {
-                            $(".reminderparameters").hide();
+                            	$(".reminderparameters").hide();
                             }
 	            		 });
 
@@ -2222,6 +2309,40 @@ if ($id > 0) {
                    })';
 			print '</script>'."\n";
 
+			$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
+			$reminderDefaultOffset = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET', 30);
+			$reminderDefaultUnit = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT');
+			$reminderDefaultEmailModel = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL');
+
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
+					const reminderDefaultEventTypes = 	'.$reminderDefaultEventTypes.';
+					$("#actioncode").change(function(){
+						var selected_event_type = $("#actioncode option:selected").val();
+
+						if (reminderDefaultEventTypes.includes(selected_event_type)) {
+							$(".reminderparameters").show();
+							$("#addreminder").prop("checked", true);
+
+							// Set period with default reminder period
+							$("#offsetvalue").val('.$reminderDefaultOffset.');
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").val("'.$reminderDefaultUnit.'");
+							$("#select_offsetunittype_duration").select2();
+
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").val("email");
+							$("#selectremindertype").select2();
+
+							// Set default reminder mail model
+							$("#select_actioncommsendmodel_mail").closest("tr").show();
+							$("#select_actioncommsendmodel_mail").select2("destroy");
+							$("#select_actioncommsendmodel_mail").val("'.$reminderDefaultEmailModel.'");
+							$("#select_actioncommsendmodel_mail").select2();
+						}
+					});
+			   })';
+			print '</script>'."\n";
 			print '</div>';		// End of div for reminderparameters
 		}
 
@@ -2334,12 +2455,13 @@ if ($id > 0) {
 		// Type
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			$labeltoshow = $langs->trans("Action".$object->type_code);
+			$labeltype = ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code) ? $langs->transnoentities("Action".$object->type_code) : $object->type_label;
+			$labeltoshow = $labeltype;
 			if ($object->code) {
 				$labeltoshow .= ' ('.$object->code.')';
 			}
 			print $object->getTypePicto('pictofixedwidth paddingright', $labeltoshow);
-			print $langs->trans("Action".$object->type_code);
+			print $labeltype;
 			print '</td></tr>';
 		}
 

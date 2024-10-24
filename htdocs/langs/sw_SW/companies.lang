@@ -255,7 +255,7 @@ CustomerRelativeDiscount=Punguzo la jamaa kwa wateja
 SupplierRelativeDiscount=Punguzo la jamaa la muuzaji
 CustomerRelativeDiscountShort=Punguzo la jamaa
 CustomerAbsoluteDiscountShort=Punguzo kabisa
-CompanyHasRelativeDiscount=Mteja huyu ana punguzo chaguomsingi la <b> %s%% </b>
+CompanyHasRelativeDiscount=Mteja huyu ana punguzo chaguomsingi la <b> %s%% </b> 
 CompanyHasNoRelativeDiscount=Mteja huyu hana punguzo la jamaa kwa chaguomsingi
 HasRelativeDiscountFromSupplier=Una punguzo chaguomsingi la <b> %s%% </b>  na muuzaji huyu
 HasNoRelativeDiscountFromSupplier=Hakuna punguzo chaguo-msingi la jamaa na mchuuzi huyu
@@ -337,7 +337,7 @@ VATIntraCheck=Angalia
 VATIntraCheckDesc=Kitambulisho cha VAT lazima kijumuishe kiambishi awali cha nchi. Kiungo <b> %s </b>  hutumia huduma ya Ulaya ya kukagua VAT (VIES) ambayo inahitaji ufikiaji wa mtandao kutoka kwa seva ya Dolibarr.
 VATIntraCheckURL=https://ec.europa.eu/taxation_customs/vies/#/vat-validation
 VATIntraCheckableOnEUSite=Angalia Kitambulisho cha VAT ya ndani ya Jumuiya kwenye tovuti ya Tume ya Ulaya
-VATIntraManualCheck=Unaweza pia kuangalia mwenyewe kwenye tovuti ya Tume ya Ulaya <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>
+VATIntraManualCheck=Unaweza pia kuangalia mwenyewe kwenye tovuti ya Tume ya Ulaya <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> 
 ErrorVATCheckMS_UNAVAILABLE=Angalia haiwezekani. Huduma ya hundi haitolewi na nchi mwanachama (%s)
 NorProspectNorCustomer=Si matarajio, wala mteja
 JuridicalStatus=Aina ya chombo cha biashara

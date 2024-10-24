@@ -132,5 +132,7 @@ ShowAllPerms=Vis alle tilladelsesrækker
 HideAllPerms=Skjul alle tilladelsesrækker
 UserPublicPageDesc=Du kan aktivere et virtuelt kort for denne bruger. En url med brugerprofilen og en stregkode vil være tilgængelig, så alle med en smartphone kan scanne den og tilføje din kontakt til dens adressebog.
 EnablePublicVirtualCard=Aktiver brugerens virtuelle visitkort
+ExcludedByFilter=Ikke kvalificeret af filtre, men vist for at se dets hierarki
 UserEnabledDisabled=Brugerstatus ændret: %s
 AlternativeEmailForOAuth2=Alternativ e-mail til OAuth2-login
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Fejl, opdateringen blev annulleret, fordi et af datastykkerne, der burde være unikke, allerede eksisterer

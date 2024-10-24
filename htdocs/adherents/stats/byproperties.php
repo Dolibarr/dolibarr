@@ -1,6 +1,7 @@
 <?php
-/* Copyright (c) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2012		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +56,10 @@ $langs->loadLangs(array("companies", "members"));
 
 $memberstatic = new Adherent($db);
 
-llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, array('https://www.google.com/jsapi'));
-
 $title = $langs->trans("MembersStatisticsByProperties");
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, array('https://www.google.com/jsapi'), '', '', 'mod-member page-stats_byproperties');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 

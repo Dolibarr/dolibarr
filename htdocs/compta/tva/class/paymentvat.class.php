@@ -121,7 +121,7 @@ class PaymentVAT extends CommonObject
 	public $lib;
 
 	/**
-	 * @var integer|string datepaye
+	 * @var int|string datepaye
 	 */
 	public $datepaye;
 
@@ -146,7 +146,7 @@ class PaymentVAT extends CommonObject
 	public $bank_line;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 
@@ -400,7 +400,7 @@ class PaymentVAT extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET";
 		$sql .= " fk_tva=".(isset($this->fk_tva) ? ((int) $this->fk_tva) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? (float) price2num($this->amount) : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";

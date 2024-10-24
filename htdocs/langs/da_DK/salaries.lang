@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra kontoplanen) bruges som standard til "bruger" tredjeparter
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerede konto, der er defineret på brugerkortet, vil kun blive brugt til underreskontering. Denne vil blive brugt til hovedbog og som standardværdi for underreskontering, hvis dedikeret brugerkonti på bruger ikke er defineret.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra kontoplanen) bruges som standard til "brugere" på lønninger
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerede konto, der er defineret på brugerkortet, vil kun blive brugt til underreskontering. Denne vil blive brugt til Hovedbog, men også som standardværdien for Subreskontro, hvis der ikke er defineret en dedikeret brugerkonti på brugeren.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskabskonto som standard for lønudbetalinger
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lad som standard tomt være indstillingen "Opret automatisk en samlet betaling", når du opretter en løn
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lad som standard muligheden "Opret automatisk en samlet betaling" stå tom, når du opretter en Løn
 Salary=Løn
 Salaries=Løn
 NewSalary=Ny løn
@@ -25,3 +25,9 @@ SalariesAndPayments=Løn og betalinger
 ConfirmDeleteSalaryPayment=Vil du slette denne lønudbetaling?
 FillFieldFirst=Udfyld medarbejderfeltet først
 UpdateAmountWithLastSalary=Sæt beløb for sidste løn
+MakeTransferRequest=Foretag overførselsanmodning
+VirementOrder=Kreditoverførselsanmodning
+BankTransferAmount=Kreditoverførselsbeløb
+WithdrawalReceipt=Kredit overførsels ordre
+OrderWaiting=Afventende ordre
+FillEndOfMonth=Fyld med slutningen af måneden

@@ -354,7 +354,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('user', 'user', 'lire')
 			|| ($fuser->hasRight('user', 'self', 'creer') && $id && $id == $fuser->id)
@@ -517,7 +517,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('societe', 'creer')) {
 			$thirdparty = new Societe($db);
@@ -716,11 +716,11 @@ function setUserPassword($authentication, $shortuser)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
 			$userstat = new User($db);
-			$res = $userstat->fetch('', $shortuser['login']);
+			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
 				if (is_int($res) && $res < 0) {

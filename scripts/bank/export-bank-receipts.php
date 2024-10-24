@@ -2,6 +2,7 @@
 <?php
 /*
  * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -260,7 +262,7 @@ if ($resql) {
 		}
 
 		/*
-		 * Ajout les liens (societe, company...)
+		 * Add links (societe, company...)
 		 */
 		$links = $acct->get_url($objp->rowid);
 		foreach ($links as $key => $val) {

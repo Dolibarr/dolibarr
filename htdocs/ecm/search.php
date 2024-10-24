@@ -40,7 +40,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'ecm', '');
 
 // Load permissions
-$user->getrights('ecm');
+$user->loadRights('ecm');
 
 // Get parameters
 $socid = GETPOSTINT('socid');
@@ -104,7 +104,7 @@ if (!$permissiontoread) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-search');
 
 $form = new Form($db);
 $ecmdirstatic = new EcmDirectory($db);

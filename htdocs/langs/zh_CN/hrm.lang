@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=电子邮件以防止HRM外部服务
 Establishments=机构
@@ -24,7 +23,7 @@ SkillsManagement=技能管理
 HRM_MAXRANK=对技能进行排名的最大级别数
 HRM_DEFAULT_SKILL_DESCRIPTION=创建技能时默认的等级描述
 deplacement=转移
-DateEval=评价日期
+DateEval=Competency assessment date
 JobCard=工作卡
 NewJobProfile=New Job Profile
 JobProfile=职位描述
@@ -41,12 +40,12 @@ Skill=Skill
 Skills=技能
 SkillCard=技能
 EmployeeSkillsUpdated=员工技能已更新（参见员工表单视图的“技能”标签页）
-Eval=评价
-Evals=评价
-NewEval=新建评价
-ValidateEvaluation=验证评价
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=评价卡
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=职位描述所需的级别
 RequiredRankShort=Required rank
 PositionsWithThisProfile=Positions with this job profiles
@@ -90,8 +89,9 @@ SaveAddSkill = 技能(一个或多个)已添加
 SaveLevelSkill = 技能(一个或多个)等级已保存
 DeleteSkill = 技能已移除
 SkillsExtraFields=Complementary attributes (Skills)
-JobsExtraFields=Complementary attributes (Job profile)
-EvaluationsExtraFields=Complementary attributes (Evaluations)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=需要商务出差
 NoDescription=没有描述
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

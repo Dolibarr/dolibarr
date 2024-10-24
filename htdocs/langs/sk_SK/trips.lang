@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Zaznamenal
 AUTHORPAIEMENT=Zaplatené
 AddTrip=Vytvorte správu o výdavkoch
@@ -13,6 +13,8 @@ byEX_EXP=po riadku (obmedzenie na %s)
 byEX_MON=podľa mesiaca (obmedzenie na %s)
 byEX_YEA=podľa roku (obmedzenie na %s)
 CANCEL_USER=Odstránené používateľom
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Kategória vozidla
 ClassifyRefunded=Klasifikovať ako „vrátené“
 CompanyVisited=Navštívená spoločnosť/organizácia
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=podľa roku (bez obmedzenia)
 NoTripsToExportCSV=Za toto obdobie nie je možné exportovať žiadne hlásenie o výdavkoch.
 NOT_AUTHOR=Nie ste autorom tejto správy o výdavkoch. Operácia zrušená.
 OnExpense=Výdajový riadok
-PDFStandardExpenseReports=Štandardná šablóna na generovanie dokumentu PDF pre správu o výdavkoch
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Zaplatiť správu o výdavkoch
 REFUSEUR=Odmietnuté
 RangeIk=Rozsah najazdených kilometrov
@@ -106,7 +108,7 @@ TripId=Id výdavková správa
 TripNDF=Správa o výdavkoch na informácie
 TripSociete=Informačná spoločnosť
 Trips=Prehľady výdavkov
-TripsAndExpenses=Prehľady výdavkov
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=Štatistiky výkazov výdavkov
 TypeFees=Poplatky
 UploadANewFileNow=Teraz nahrajte nový dokument
@@ -115,6 +117,10 @@ VALIDOR=Schválil
 ValidateAndSubmit=Overte a odošlite na schválenie
 ValidatedWaitingApproval=Overené (čaká sa na schválenie)
 ValideTrip=Schváľte správu o výdavkoch
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Raňajky

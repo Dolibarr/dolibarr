@@ -206,3 +206,4 @@ StatusSupplierOrderReceivedPartially=Partially received
 StatusSupplierOrderReceivedAll=All products received
 NeedAtLeastOneInvoice = There has to be at least one Invoice
 LineAlreadyDispatched = The order line is already received.
+OrderStatusMakeOperationForbidden = Order status forbidden for this operation.

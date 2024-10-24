@@ -39,6 +39,16 @@ abstract class CommonHookActions
 	public $results = array();
 
 	/**
+	 * @var string
+	 */
+	public $error;
+
+	/**
+	 * @var string[]
+	 */
+	public $errors = array();
+
+	/**
 	 * Check context of hook
 	 * @param array $parameters Hook parameters.
 	 * @param array|string $allContexts Context to check

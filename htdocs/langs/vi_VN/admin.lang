@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Show the swiss QR-Bill code on invoices (with a bank a
 INVOICE_ADD_SWISS_QR_CODEMore=Tiêu chuẩn hóa đơn của Thụy Sĩ; đảm bảo ZIP & Thành phố được điền đầy đủ và các tài khoản có IBAN Thụy Sĩ/Liechtenstein hợp lệ.
 INVOICE_ADD_EPC_QR_CODE=Show the EPC QR code on invoices (with a bank account defined for credit transfer)
 INVOICE_ADD_EPC_QR_CODEMore=This feature allows you to add or remove an EPC QR Code on your invoices, which facilitates automatic SEPA credit transfers. Enabling this option helps your clients make payments easily by scanning the QR code, reducing manual entry errors. Use this feature if you have clients in countries like Austria, Belgium, Finland, Germany, and the Netherlands where this system is supported. Disable it if it's not required for your business operations or client base.
-INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
 INVOICE_SHOW_SHIPPING_ADDRESS=Hiển thị địa chỉ giao hàng
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Chỉ định bắt buộc ở một số nước (Pháp,...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Show billing contact on proposal

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019 Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin      <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@ class box_fournisseurs extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
+		$this->urltoaddentry = DOL_URL_ROOT.'/societe/card.php?action=create&type=f';
+		$this->msgNoRecords = 'NoRecordedSuppliers';
 	}
 
 	/**
@@ -137,19 +140,19 @@ class box_fournisseurs extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$langs->load("suppliers");
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedSuppliers").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$langs->load("suppliers");
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedSuppliers").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -161,12 +164,14 @@ class box_fournisseurs extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

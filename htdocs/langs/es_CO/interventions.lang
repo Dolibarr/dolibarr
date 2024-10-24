@@ -32,7 +32,6 @@ UseServicesDurationOnFichinter=Utilizar la duración de los servicios para inter
 UseDateWithoutHourOnFichinter=Oculta las horas y los minutos del campo de fecha para los registros de intervención
 NbOfinterventions=No. de tarjetas de intervención
 NumberOfInterventionsByMonth=No. de tarjetas de intervención por mes (fecha de validación)
-AmountOfInteventionNotIncludedByDefault=La cantidad de intervención no se incluye de forma predeterminada en las ganancias (en la mayoría de los casos, las hojas de tiempo se utilizan para contar el tiempo invertido). Agregue la opción PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT a 1 en home-setup-other para incluirlos.
 InterId=Id de intervención
 InterRef=Intervención ref.
 InterDateCreation=Intervención de creación de fecha

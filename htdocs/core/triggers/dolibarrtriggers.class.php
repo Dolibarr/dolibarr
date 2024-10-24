@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ abstract class DolibarrTriggers
 
 	/**
 	 * Version of the trigger
-	 * @var string
+	 * @var ''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version;
 

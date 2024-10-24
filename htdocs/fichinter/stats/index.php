@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ $objectstatic = new Fichinter($db);
 $title = $langs->trans("InterventionStatistics");
 $dir = $conf->ficheinter->dir_temp;
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-fichinter page-stats_index');
 
 print load_fiche_titre($title, '', 'intervention');
 
@@ -271,7 +272,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) {
+	while (!empty($year) && $oldyear > (int) $year + 1) {
 		// If we have empty year
 		$oldyear--;
 

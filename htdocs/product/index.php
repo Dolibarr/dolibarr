@@ -47,7 +47,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -68,8 +68,8 @@ $resultboxes = FormOther::getBoxesArea($user, "4");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -723,7 +723,7 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";

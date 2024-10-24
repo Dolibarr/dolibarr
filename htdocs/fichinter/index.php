@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('interventionindex'));
 
 // Load translation files required by the page
@@ -63,7 +64,7 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
-llxHeader("", $langs->trans("Interventions"), $help_url);
+llxHeader("", $langs->trans("Interventions"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-index');
 
 print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
@@ -195,7 +196,7 @@ if (isModEnabled('intervention')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
-		$langs->load("fichinter");
+		$langs->load("interventions");
 		$num = $db->num_rows($resql);
 		if ($num) {
 			$i = 0;

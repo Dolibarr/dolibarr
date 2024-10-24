@@ -114,7 +114,7 @@ if (!$sortorder) {
 
 $pdluoid = GETPOSTINT('pdluoid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new MouvementStock($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
@@ -270,7 +270,7 @@ if (empty($reshook)) {
 		foreach ($listofobjectref as $tmppdf) {
 			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$'; // To include PDF generated from ODX files
 		}
-		$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+		$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
 
 		// Define output language (Here it is not used because we do only merging existing PDF)
 		$outputlangs = $langs;

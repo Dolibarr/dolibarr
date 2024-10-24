@@ -73,7 +73,7 @@ $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object-
 $modulepart = 'trip';
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Security check
 if ($user->socid) {

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formObjectOptions. Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf

@@ -369,7 +369,7 @@ class FormWebsite
 
 		// We disable some not ready templates
 		unset($arrayofsamples['dynamiccontent']);
-		unset($arrayofsamples['news']);
+		//unset($arrayofsamples['news']);
 
 		$templates = $arrayofsamples;
 

@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Набір на роботу
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Керуйте та слідкуйте за кампаніями з підбору персоналу на нові вакансії
-
-#
 # Admin page
-#
 RecruitmentSetup = Налаштування набору
 RecruitmentSetupPage = Введіть тут налаштування основних параметрів для модуля найму
 RecruitmentArea=Зона набору
 PublicInterfaceRecruitmentDesc=Загальнодоступні сторінки вакансії – це загальнодоступні URL-адреси, які показують і відповідають на відкриті вакансії. Для кожного відкритого робочого місця є одне інше посилання, яке можна знайти в кожному записі про роботу.
 EnablePublicRecruitmentPages=Увімкнути загальнодоступні сторінки відкритих вакансій
 
-#
-# About page
-#
-RecruitmentAbout = Про найм
-RecruitmentAboutPage = Набір про сторінку
 NbOfEmployeesExpected=Очікувана кількість працівників
 JobLabel=Етикетка посади
 WorkPlace=Місце роботи
@@ -47,7 +34,6 @@ PositionToBeFilled=Місце роботи
 PositionsToBeFilled=Посади
 ListOfPositionsToBeFilled=Перелік посад
 NewPositionToBeFilled=Нові посади
-
 JobOfferToBeFilled=Посада, яку потрібно заповнити
 ThisIsInformationOnJobPosition=Інформація про вакансію, яку потрібно заповнити
 ContactForRecruitment=Звертайтесь для прийому на роботу

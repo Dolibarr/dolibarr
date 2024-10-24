@@ -4,7 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2024	     MDW					        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 /**
  *  Return an array with timezone values
  *
- *  @return     array<int,string>   Array with timezone values
+ *  @return     array<int<-11,13>,string>   Array with timezone values
  */
 function get_tz_array()
 {
@@ -275,7 +275,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay) {
 				if ($sDay >= $lengthOfWeek) {
 					$sWeek = (int) (($sDay - $sDay % $lengthOfWeek) / $lengthOfWeek);
-					$sDay = $sDay % $lengthOfWeek;
+					$sDay %= $lengthOfWeek;
 					$weekTranslate = $langs->trans("DurationWeek");
 					if ($sWeek >= 2) {
 						$weekTranslate = $langs->trans("DurationWeeks");
@@ -307,7 +307,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 		$sTime = dol_print_date($iSecond, '%H', true);
 	} elseif ($format == 'fullhour') {
 		if (!empty($iSecond)) {
-			$iSecond = $iSecond / 3600;
+			$iSecond /= 3600;
 		} else {
 			$iSecond = 0;
 		}
@@ -467,7 +467,8 @@ function dol_stringtotime($string, $gm = 1)
 		$gm = 'tzserver';
 	}
 
-	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
+	$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+
 	return $date;
 }
 
@@ -478,7 +479,7 @@ function dol_stringtotime($string, $gm = 1)
  *  @param      int			$day     	Day
  *  @param      int			$month   	Month
  *  @param      int			$year    	Year
- *  @return     array   				Previous year,month,day
+ *  @return     array{year:int,month:int,day:int}	Previous year,month,day
  */
 function dol_get_prev_day($day, $month, $year)
 {
@@ -494,7 +495,7 @@ function dol_get_prev_day($day, $month, $year)
  *  @param      int			$day    	Day
  *  @param      int			$month  	Month
  *  @param      int			$year   	Year
- *  @return     array   				Next year,month,day
+ *  @return     array{year:int,month:int,day:int}	Next year,month,day
  */
 function dol_get_next_day($day, $month, $year)
 {
@@ -509,7 +510,7 @@ function dol_get_next_day($day, $month, $year)
  *
  *	@param		int			$month		Month
  *	@param		int			$year		Year
- *	@return		array					Previous year,month
+ *	@return		array{year:int,month:int}	Previous year,month
  */
 function dol_get_prev_month($month, $year)
 {
@@ -528,7 +529,7 @@ function dol_get_prev_month($month, $year)
  *
  *	@param		int			$month		Month
  *	@param		int			$year		Year
- *	@return		array					Next year,month
+ *	@return		array{year:int,month:int}	Next year,month
  */
 function dol_get_next_month($month, $year)
 {
@@ -549,7 +550,7 @@ function dol_get_next_month($month, $year)
  *  @param      int			$week    	Week
  *  @param      int			$month   	Month
  *	@param		int			$year		Year
- *	@return		array					Previous year,month,day
+ *	@return		array{year:int,month:int,day:int}	Previous year,month,day
  */
 function dol_get_prev_week($day, $week, $month, $year)
 {
@@ -568,7 +569,7 @@ function dol_get_prev_week($day, $week, $month, $year)
  *  @param      int			$week    	Week
  *  @param      int			$month   	Month
  *	@param		int			$year		Year
- *	@return		array					Next year,month,day
+ *	@return		array{year:int,month:int,day:int}		Next year,month,day
  */
 function dol_get_next_week($day, $week, $month, $year)
 {
@@ -663,9 +664,9 @@ function dol_get_first_hour($date, $gm = 'tzserver')
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		bool|int|string	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 									True or 1 or 'gmt' to compare with GMT date.
- *	@return		array				year,month,week,first_day,first_month,first_year,prev_day,prev_month,prev_year
+ * 	@param		bool|int|'tzserver'	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                      True or 1 or 'gmt' to compare with GMT date.
+ *	@return	array{year:int,month:int,week:string,first_day:int,first_month:int,first_year:int,prev_year:int,prev_month:int,prev_day:int}
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)
 {
@@ -821,14 +822,14 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$i = 0;
 	while ((($lastday == 0 && $timestampStart < $timestampEnd) || ($lastday && $timestampStart <= $timestampEnd))
 		&& ($i < 50000)) {		// Loop end when equals (Test on i is a security loop to avoid infinite loop)
-			$ferie = false;
-			$specialdayrule = array();
+		$ferie = false;
+		$specialdayrule = array();
 
-			$jour  = (int) gmdate("d", $timestampStart);
-			$mois  = (int) gmdate("m", $timestampStart);
-			$annee = (int) gmdate("Y", $timestampStart);
+		$jour  = (int) gmdate("d", $timestampStart);
+		$mois  = (int) gmdate("m", $timestampStart);
+		$annee = (int) gmdate("Y", $timestampStart);
 
-			//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
+		//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
 		foreach ($arrayOfPublicHolidays as $entrypublicholiday) {
 			if (!empty($entrypublicholiday['dayrule']) && $entrypublicholiday['dayrule'] != 'date') {		// For example 'easter', '...'
 				$specialdayrule[$entrypublicholiday['dayrule']] = $entrypublicholiday['dayrule'];
@@ -851,8 +852,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 			$i++;
 		}
-			//var_dump($specialdayrule)."\n";
-			//print "ferie=".$ferie."\n";
+		//var_dump($specialdayrule)."\n";
+		//print "ferie=".$ferie."\n";
 
 		if (!$ferie) {
 			// Special dayrules
@@ -966,9 +967,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Geneva fast in Switzerland
 			}
 		}
-			//print "ferie=".$ferie."\n";
+		//print "ferie=".$ferie."\n";
 
-			// If we have to include Friday, Saturday and Sunday
+		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
 			if ($includefriday || $includesaturday || $includesunday) {
 				$jour_julien = unixtojd($timestampStart);
@@ -990,18 +991,18 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				}
 			}
 		}
-			//print "ferie=".$ferie."\n";
+		//print "ferie=".$ferie."\n";
 
-			// We increase the counter of non working day
+		// We increase the counter of non working day
 		if ($ferie) {
 			$nbFerie++;
 		}
 
-			// Increase number of days (on go up into loop)
-			$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
-			//var_dump($jour.' '.$mois.' '.$annee.' '.$timestampStart);
+		// Increase number of days (on go up into loop)
+		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
+		//var_dump($jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
-			$i++;
+		$i++;
 	}
 
 	//print "nbFerie=".$nbFerie."\n";
@@ -1071,7 +1072,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = ($numdays - $numholidays);
 		if ($inhour == 1 && $nbOpenDay <= 3) {
-			$nbOpenDay = ($nbOpenDay * 24);
+			$nbOpenDay *= 24;
 		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} elseif ($timestampStart == $timestampEnd) {
@@ -1086,7 +1087,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$nbOpenDay = $lastday;
 
 		if ($inhour == 1) {
-			$nbOpenDay = ($nbOpenDay * 24);
+			$nbOpenDay *= 24;
 		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} else {

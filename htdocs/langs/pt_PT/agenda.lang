@@ -21,7 +21,6 @@ MenuDoneMyActions=Os meus eventos terminados
 ListOfEvents=Lista de eventos (calendário predefinido)
 ActionsAskedBy=Eventos reportados por
 ActionsToDoBy=Eventos atribuídos a
-ActionsDoneBy=Eventos realizados por
 ActionAssignedTo=Evento atribuído a
 ViewCal=Vista mensal
 ViewDay=Vista diária
@@ -135,12 +134,14 @@ AgendaModelModule=Modelos de documento para o evento
 DateActionStart=Data de início
 DateActionEnd=Data de fim
 AgendaUrlOptions1=Também pode adicionar os seguintes parâmetros de filtro de saída:
-AgendaUrlOptions3=<b>logina=%s</b> para restringir a produção para as acções criadas pelo utilizador <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina =!%s</b> para restringir a saída às ações que não pertencem ao utilizador <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint =%s</b> para restringir a saída às ações atribuídas ao utilizador <b>%s</b> (proprietário e outros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para que apenas obtenha eventos vinculados ao projeto <b>__PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> para excluir eventos automáticos.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> para incluir eventos de feriados.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Aniversários dos contactos
 AgendaHideBirthdayEvents=Ocultar aniversários dos contactos
 Busy=Ocupado
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Sua reserva foi salva
 BookingReservationHourAfter=Confirmamos a reserva da nossa reunião no data %s
 BookcalBookingTitle=Consulta on-line
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

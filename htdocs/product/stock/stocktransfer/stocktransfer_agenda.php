@@ -69,7 +69,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new StockTransfer($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stocktransfer->dir_output.'/temp/massgeneration/'.$user->id;
@@ -78,17 +78,28 @@ $hookmanager->initHooks(array('stocktransferagenda', 'globalcard')); // Note tha
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->stocktransfer->multidir_output[$object->entity]."/".$object->id;
 }
 
+$permissiontoread = $user->hasRight('stocktransfer', 'stocktransfer', 'read');
+$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status < $object::STATUS_TRANSFERED);
+$permissiondellink = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
+//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
 
-$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*

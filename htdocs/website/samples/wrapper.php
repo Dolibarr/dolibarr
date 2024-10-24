@@ -1,4 +1,19 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 // BEGIN PHP File wrapper.php used to download rss, logo, shared files - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
@@ -14,6 +29,7 @@ $encoding = '';
 
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
+$extname = GETPOST('extname', 'alpha', 1);
 $modulepart = GETPOST('modulepart', 'aZ09');
 $entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
@@ -29,6 +45,7 @@ if ($rss) {
 // If we have a hash public (hashp), we guess the original_file.
 if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
 	$result = $ecmfile->fetch(0, '', '', '', $hashp);
 	if ($result > 0) {
@@ -50,6 +67,10 @@ if (!empty($hashp)) {
 		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
+		}
+
+		if ($extname) {
+			$original_file = getImageFileNameForSize($original_file, $extname);
 		}
 	} else {
 		print "ErrorFileNotFoundWithSharedLink";
@@ -166,7 +187,7 @@ if ($rss) {
 		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1'.($l ? '&l='.$l : ''), $l);
 
 		if ($result >= 0) {
-			if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
+			if (dol_move($outputfiletmp, $outputfile, '0', 1, 0, 0)) {
 				$result = 1;
 			} else {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;

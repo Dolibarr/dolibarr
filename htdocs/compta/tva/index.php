@@ -119,11 +119,11 @@ function pt($db, $sql, $date)
 
 			if ($obj->mode == 'claimed') {
 				$amountclaimed = $obj->mm;
-				$totalclaimed = $totalclaimed + $amountclaimed;
+				$totalclaimed += $amountclaimed;
 			}
 			if ($obj->mode == 'paid') {
 				$amountpaid = $obj->mm;
-				$totalpaid = $totalpaid + $amountpaid;
+				$totalpaid += $amountpaid;
 			}
 
 			if ($obj->mode == 'paid') {
@@ -285,6 +285,12 @@ if ($refresh === true) {
 		$x_both = array();
 		//now, from these two arrays, get another array with one rate per line
 		foreach (array_keys($x_coll) as $my_coll_rate) {
+			$x_both[$my_coll_rate] = array(
+				'coll' => array(),
+				'paye' => array(),
+				'detail' => array(),
+				'ptype' => array(),
+			);
 			$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 			$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 			$x_both[$my_coll_rate]['paye']['totalht'] = 0;
@@ -391,7 +397,7 @@ if ($refresh === true) {
 		$parameters["month"] = $m;
 		$parameters["type"] = 'vat';
 
-		// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+		// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -430,7 +436,7 @@ if ($refresh === true) {
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_coll_total_ht += $temp_ht;
 				$subtot_coll_vat += $temp_vat;
@@ -479,11 +485,11 @@ if ($refresh === true) {
 		}
 		print '<td class="nowrap right"><span class="amount">' . price(price2num($x_paye_sum, 'MT')) . '</span></td>';
 
-		$subtotalcoll = $subtotalcoll + $x_coll_sum;
-		$subtotalpaid = $subtotalpaid + $x_paye_sum;
+		$subtotalcoll += $x_coll_sum;
+		$subtotalpaid += $x_paye_sum;
 
 		$diff = $x_coll_sum - $x_paye_sum;
-		$total = $total + $diff;
+		$total += $diff;
 		$subtotal = price2num($subtotal + $diff, 'MT');
 
 		print '<td class="nowrap right"><span class="amount">' . price(price2num($diff, 'MT')) . '</span></td>' . "\n";

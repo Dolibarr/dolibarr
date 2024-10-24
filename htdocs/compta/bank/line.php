@@ -74,12 +74,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('bankline'));
+
 $result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
 if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidate')) {
 	accessforbidden();
 }
 
-$hookmanager->initHooks(array('bankline'));
 $object = new AccountLine($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
@@ -118,7 +120,7 @@ if ($user->hasRight('banque', 'consolidate') && $action == 'donext') {
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('banque', 'modifier')) {
 	$cat1 = GETPOSTINT("cat1");
 	if (!empty($rowid) && !empty($cat1)) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
 			dol_print_error($db);
 		}
@@ -201,14 +203,14 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 
 		if (!$error) {
 			$arrayofcategs = GETPOST('custcats', 'array');
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid);
 			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
 			if (count($arrayofcategs)) {
 				foreach ($arrayofcategs as $val) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
 					if (!$db->query($sql)) {
 						$error++;
 						dol_print_error($db);
@@ -338,7 +340,7 @@ if ($result) {
 	if ($db->num_rows($result)) {
 		$objp = $db->fetch_object($result);
 
-		$total = $total + $objp->amount;
+		$total += $objp->amount;
 
 		$acct = new Account($db);
 		$acct->fetch($objp->fk_account);

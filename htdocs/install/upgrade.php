@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +260,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Les contraintes indesirables ont un nom qui commence par 0_ ou se determine par ibfk_999
 			$listtables = array(
 								MAIN_DB_PREFIX.'adherent_options',
-								MAIN_DB_PREFIX.'bank_class',
+								MAIN_DB_PREFIX.'category_bankline',
 								MAIN_DB_PREFIX.'c_ecotaxe',
 								MAIN_DB_PREFIX.'c_methode_commande_fournisseur', // table renamed
 								MAIN_DB_PREFIX.'c_input_method'
@@ -358,7 +359,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 				// Run sql script
-				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2, 0, $db->database_name);
+				$ok = run_sql($dir.$file, 0, 0, 1, '', 'default', 32768, 0, 0, 2, 0, $db->database_name);
 				$listoffileprocessed[$dir.$file] = $dir.$file;
 
 
@@ -394,7 +395,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
 
 						// Run sql script
-						$okmodule = run_sql($modulefilelong, 0, '', 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+						$okmodule = run_sql($modulefilelong, 0, 0, 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
 						$listoffileprocessed[$modulefilelong] = $modulefilelong;
 					}
 				}

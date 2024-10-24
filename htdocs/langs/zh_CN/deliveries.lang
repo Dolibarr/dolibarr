@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=交货
 DeliveryRef=交货回执编号
-DeliveryCard=库存收据
+DeliveryCard=交货回执
 DeliveryOrder=交货回执
 DeliveryDate=交货日期
 CreateDeliveryOrder=生成交货回执

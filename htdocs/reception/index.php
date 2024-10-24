@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('receptionindex'));
 
 $langs->loadLangs(array("orders", "receptions"));

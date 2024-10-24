@@ -2,6 +2,7 @@
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020	Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function loan_prepare_head($object)
 {
@@ -118,18 +119,18 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 		$int = 0;
 		$cap_rest = $capital;
 	} else {
-		$int = ($capital * ($rate / 12));
+		$int = ((float) $capital * ((float) $rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
-		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
+		$cap_rest = round((float) $capital - ((float) $mens - $int), 2, PHP_ROUND_HALF_UP);
 	}
-	$output[$numactualloadterm] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
+	$output[$numactualloadterm] = array('cap_rest' => $cap_rest, 'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet' => $int, 'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency), 'mens' => $mens);
 
 	$numactualloadterm++;
 	$capital = $cap_rest;
 	while ($numactualloadterm <= $nbterm) {
 		$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
 
-		$int = ($capital * ($rate / 12));
+		$int = ($capital * ((float) $rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
 

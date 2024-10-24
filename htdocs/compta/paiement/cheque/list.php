@@ -96,7 +96,7 @@ $arrayfields = array(
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));
 $object = new RemiseCheque($db);
 
@@ -141,7 +141,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ChequeDeposits"), '', 0, 0, '', '', '', 'bodyforlist');
+$title = $langs->trans("ChequeDeposits");
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
 $sql .= " bc.nbcheque, bc.amount, bc.statut, bc.type,";
@@ -370,6 +372,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['bc.ref']['checked'])) {
+		// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['bc.ref']['label'], $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
