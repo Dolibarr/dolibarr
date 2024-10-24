@@ -2501,10 +2501,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
-				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+					foreach ($objects as $elementobject) {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+					}
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
@@ -2563,7 +2565,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					}
 				}
 
-				$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+					$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
+				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$order = null;
@@ -2600,6 +2604,8 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			}
 		}
 	}
+
+	$object->context['DolPublicNoteAppendedGetLinkedObjects'] = 1;
 
 	// For add external linked objects
 	if (is_object($hookmanager)) {
