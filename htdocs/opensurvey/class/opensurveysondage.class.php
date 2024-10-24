@@ -158,10 +158,14 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $date_fin = '';
 	public $status;
+
+	/**
+	 * @var string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 */
 	public $format;
 
 	/**
-	 * @var string mail
+	 * @var int to allow send mail
 	 */
 	public $mailsonde;
 
