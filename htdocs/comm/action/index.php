@@ -947,6 +947,7 @@ if ($resql) {
 		$event->location = $obj->location;
 		$event->transparency = $obj->transparency;
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		$event->fk_project = $obj->fk_project;

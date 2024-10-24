@@ -85,7 +85,6 @@ parameters:
 		- '#(?:convertSecondToTime) expects int, float\|string given#'
 		- '#(?:Comm(?:(?:ande::updateline|on(?:Invoice::getLibStatut|StickerGenerator::(?:Set_Char_Size|_Croix|convertMetric)))\(\))|Facture(?:(?:::update|FournisseurRec::add)line\(\))|(?:Holiday::addLogCP|Loan::getLibStatut|SupplierProposal::updateline)\(\)|c(?:alcul_price_total|onvert(?:DurationtoHour|SecondToTime))|dol_time_plus_duree|pdf_(?:azur::_tableau_(?:(?:info|tot)\(\))|ban(?:::_tableau\(\)|k)|c(?:anelle::_tableau_(?:(?:tot|versements)\(\))|ornas::_tableau_(?:(?:info|tot)\(\))|rabe::_tableau_(?:(?:info|tot|versements)\(\))|yan::draw(?:(?:Info|Total)Table\(\)))|e(?:agle(?:(?:::_tableau_tot|_proforma::drawTotalTable)\(\))|instein::_tableau_(?:(?:info|tot)\(\))|ratosthene::draw(?:(?:Info|Total)Table\(\))|spadon::_tableau_tot\(\))|muscadet::_tableau_(?:(?:info|tot)\(\))|octopus::(?:_table(?:(?:FirstPage|au)\(\))|draw(?:(?:Info|Total)Table\(\)))|page(?:foot|head)|(?:rouget::_tableau_tot|s(?:epamandate::_tableau(?:_info)?|ponge::draw(?:(?:Info|Total)Table)|quille::_tableau_tot|t(?:andard_(?:e(?:(?:valuation|xpensereport)::_tableau|xpensereport::tablePayments)|(?:myobjec|supplierpaymen)t::_tableau|supplierpayment::_tableau_cheque)|orm::_tableau_info|rato::tabSignature))|t(?:cpdflabel::writeBarcode|yphon::_tableau_info)|vinci::_tableau_info)\(\)|w(?:atermark|rite(?:LinkedObjects|linedesc))|zenith::_tableau_tot\(\))|usleep) expects int, float given\.#'
 
-		- '#::saveboxorder\(\) expects int, array#'
 		- '#(?:dol_(?:mktime|remove_file_process)|fetchObjectByElement|print_actions_filter) expects int, array\|string given\.#'
 
 		- '# (CSMSFile) constructor expects int, array\|string given.#'
@@ -93,10 +92,8 @@ parameters:
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|dol_convertToWord|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'
 		- '#EvalMath::trigger\(\) expects string\|null,#'
 		- '#(?:F(?:acture(?:(?:Fournisseur)?Rec::addline\(\))|ichinterRec::addLineRec\(\))|dolMd2Html|setEventMessages) expects string\|null,#'
-		- '# (envoi_mail|sendEmailTo) expects string, \(float\|int\) given.#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
-		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
@@ -114,7 +111,6 @@ parameters:
 		- '#(?:ldap_(?:(?:ad|bin)d|delete|err(?:no|or)|first_entry|get_(?:(?:attribut|entri)es|(?:optio|values_le)n)|mod_(?:add|del|replace)|rename|set_option|unbind)) expects LDAP\\Connection#'
 		- '#(?:MultiCurrencies::_cleanObjectDatasRate\(\)) expects MultiCurrency#'
 		- '# (?:pdf_(?:(?:eagle_proforma::drawTotalTable|muscadet::_tableau_tot)\(\))) expects Facture#'
-		- '# (?:salaries_prepare_head) expects Paiement#'
 		- '# (?:pg_(?:affected_rows|f(?:etch_(?:array|object|row)|ree_result)|num_rows)) expects PgSql\\Result#'
 		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot|societe_prepare_head) expects Societe#'
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
@@ -122,6 +118,7 @@ parameters:
 		- '#Call to function array_key_exists.. with .error. .* will always evaluate to false.#'
 		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
 		- '#(?:make_substitutions expects array<string, string>,) string given\.#'
+		- '# (Workstation|WorkstationResource|WorkstationUserGroup|Zapier)::.* has no value type specified in iterable type array\.#'
 
 	internalErrorsCountLimit: 50
 	cache:
