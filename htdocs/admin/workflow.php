@@ -234,6 +234,12 @@ $workflowcodes = array_filter(
 	}
 );
 
+if ($action == 'setvarworkflow') {	// Test on permission already done
+	if (GETPOSTISSET('product_category_id')) {
+		$param_ticket_product_category = GETPOSTINT('product_category_id');
+		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
+	}
+}
 
 
 /*
@@ -261,22 +267,30 @@ if (count($workflowcodes) < 1) {
 // Sort on position
 $workflowcodes = dol_sort_array($workflowcodes, 'position');
 
-print '<table class="noborder centpercent">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setvarworkflow">';
+print '<input type="hidden" name="page_y" value="">';
 
 $oldfamily = '';
+$tableopen = 0;
+$atleastoneline = 0;
 
 foreach ($workflowcodes as $key => $params) {
 	if ($params['family'] == 'separator') {
-		print '</table>';
-		print '<br>';
+		if ($atleastoneline) {
+			print '</table>';
+			print '<br>';
 
-		print '<table class="noborder centpercent">';
-
+			$oldfamily = '';
+			$atleastoneline = 0;
+		}
 		continue;
 	}
 
 	$reg = array();
 	if ($oldfamily != $params['family']) {
+		// New group
 		if ($params['family'] == 'create') {
 			$header = $langs->trans("AutomaticCreation");
 		} elseif (preg_match('/classify_(.*)/', $params['family'], $reg)) {
@@ -308,6 +322,9 @@ foreach ($workflowcodes as $key => $params) {
 			$header = $langs->trans("Description");
 		}
 
+		print '<table class="noborder centpercent">';
+		$tableopen = 1;
+
 		print '<tr class="liste_titre">';
 		print '<th>'.$header.'</th>';
 		print '<th class="right">'.$langs->trans("Status").'</th>';
@@ -315,6 +332,8 @@ foreach ($workflowcodes as $key => $params) {
 
 		$oldfamily = $params['family'];
 	}
+
+	$atleastoneline = 1;
 
 	print '<tr class="oddeven">';
 	print '<td>';
@@ -326,6 +345,26 @@ foreach ($workflowcodes as $key => $params) {
 	}
 	if (!empty($params['deprecated'])) {
 		print ' '.img_warning($langs->transnoentitiesnoconv("Deprecated"));
+	}
+
+	if ($key == 'WORKFLOW_TICKET_LINK_CONTRACT' && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT')) {
+		require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
+
+		$formcategory = new FormCategory($db);
+
+		$htmlname = "product_category_id";
+		print '<br>';
+		print $formcategory->textwithpicto($langs->trans("TicketChooseProductCategory"), $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
+		if (isModEnabled('category')) {
+			print ' &nbsp; '.img_picto('', 'category', 'class="pictofixedwidth"');
+			$formcategory->selectProductCategory(getDolGlobalInt('TICKET_PRODUCT_CATEGORY'), $htmlname, 1);
+			if ($conf->use_javascript_ajax) {
+				print ajax_combobox('select_'.$htmlname);
+			}
+			print '<input class="button smallpaddingimp" type="submit" value="'.$langs->trans("Save").'">';
+		} else {
+			print 'Module category must be enabled';
+		}
 	}
 
 	print '</td>';
@@ -354,7 +393,12 @@ foreach ($workflowcodes as $key => $params) {
 	print '</tr>';
 }
 
-print '</table>';
+if ($tableopen) {
+	print '</table>';
+}
+
+print '</form>';
+
 
 // End of page
 llxFooter();

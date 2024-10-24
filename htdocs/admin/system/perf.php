@@ -59,11 +59,11 @@ print '</a>';
 print '<br>';
 print '<br>';
 
-// Recupere la version de PHP
+// Get PHP version
 $phpversion = version_php();
 print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."\n";
 
-// Recupere la version du serveur web
+// Get version web server
 print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
 
 print '<hr>';
@@ -637,9 +637,20 @@ if ($resql) {
 	print '<br>';
 	$db->free($resql);
 }
+
+// Perf advice on max size on list
+$MAXRECOMMENDED = 20;
+if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > $MAXRECOMMENDED) {
+	print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveALargeAmountOfRecordOnLists", getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT'), $MAXRECOMMENDED);
+} else {
+	print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("MaxNbOfRecordOnListIsOk", getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT'), $MAXRECOMMENDED);
+}
+
 print '</div>';
 
+
 // Browser
+
 print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong><br>';
 print '<div class="divsection">';
@@ -660,7 +671,7 @@ if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print ' '.$form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
+print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
 print ': '.yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
 print '<br>';
 
@@ -669,7 +680,7 @@ if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print ' MAIN_ENABLE_AJAX_TOOLTIP : ';
+print 'MAIN_ENABLE_AJAX_TOOLTIP : ';
 print yn(getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP'));
 print '<br>';
 
@@ -683,6 +694,7 @@ print 'MAIN_CACHE_COUNT : ';
 print yn(getDolGlobalInt('MAIN_CACHE_COUNT'));
 //.' '.img_picto('', 'warning.png');
 print '<br>';
+
 
 print '</div>';
 

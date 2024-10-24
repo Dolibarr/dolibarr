@@ -74,7 +74,7 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array<string,array{found:bool,label:string,code_formatted1:string,label_formatted_1:string,label_formatted_2:string}> 	Accounting account cached
+	 * @var array<string,array{found:bool,label:string,code_formatted_1:string,label_formatted_1:string,label_formatted_2:string}> 	Accounting account cached
 	 */
 	public static $accounting_account_cached = array();
 
@@ -462,7 +462,7 @@ class AccountingJournal extends CommonObject
 
 			$element = array(
 				'ref' => dol_trunc($element_static->ref, 16, 'right', 'UTF-8', 1),
-				'error' => $pre_data_info['error'],
+				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',
 				'blocks' => array(),
 			);
 
@@ -583,7 +583,7 @@ class AccountingJournal extends CommonObject
 
 							$lines = array();
 							$lines[0][$accountancy_code_value_asset_sold] = -((float) $element_static->acquisition_value_ht - $last_cumulative_amount_ht);
-							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
+							$lines[0][$accountancy_code_depreciation_asset] = - (float) $last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
 							$disposal_amount_vat = $disposal_subject_to_vat ? (float) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
@@ -928,7 +928,7 @@ class AccountingJournal extends CommonObject
 	 *  Get accounting account info
 	 *
 	 * @param	string	$account	Accounting account number
-	 * @return	array{found:bool,label:string,code_formatted1:string,label_formatted_1:string,label_formatted_2:string}		Accounting account info
+	 * @return	array{found:bool,label:string,code_formatted_1:string,label_formatted_1:string,label_formatted_2:string}		Accounting account info
 	 */
 	public function getAccountingAccountInfos($account)
 	{

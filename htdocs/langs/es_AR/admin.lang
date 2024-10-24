@@ -558,7 +558,6 @@ WarningInstallationMayBecomeNotCompliantWithLaw=Está intentando instalar el mó
 NothingToSetup=No se requiere ninguna configuración específica para este módulo.
 SetToYesIfGroupIsComputationOfOtherGroups=Establézcalo en sí si este grupo es un cálculo de otros grupos
 COMPANY_AQUARIUM_CLEAN_REGEX=Filtro de expresiones regulares para limpiar el valor (COMPANY_AQUARIUM_CLEAN_REGEX)
-GDPRContact=Oficial de protección de datos (DPO, privacidad de datos o contacto GDPR)
 HelpOnTooltip=Texto de ayuda para mostrar en información sobre herramientas
 HelpOnTooltipDesc=Coloque texto o una clave de traducción aquí para que el texto se muestre en una información sobre herramientas cuando este campo aparezca en un formulario
 YouCanDeleteFileOnServerWith=Puede eliminar este archivo en el servidor con la línea de comandos: <br> %s

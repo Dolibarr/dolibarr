@@ -109,6 +109,7 @@ $parameters = array('type' => $type, 'id' => $id, 'label' => $label);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission not required here. Done later according to type of object.
+	$tmpobject = null;
 	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
@@ -185,6 +186,7 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer'))
 	) {
+		$newobject = null;
 		if ($type == Categorie::TYPE_PRODUCT) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$newobject = new Product($db);
@@ -224,7 +226,9 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		} else {
 			dol_print_error(null, "Not supported value of type = ".$type);
 		}
-		$result = $newobject->fetch($elemid);
+		if ($newobject !== null) {
+			$result = $newobject->fetch($elemid);
+		}
 
 		// Add into category
 		$result = $object->add_type($newobject, $elementtype);
@@ -568,7 +572,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					if ($permission) {
 						print '<a class="reposition" href= "'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".((int) $object->id)."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".$prod->id.'">';
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -655,7 +659,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -741,9 +745,9 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id.($limit?'&limit='.$limit:'').'">';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id.($limit ? '&limit='.$limit : '').'">';
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -812,7 +816,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
-			print '<table class="noborder centpecent">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Name").'</td></tr>'."\n";
 
 			if (count($members) > 0) {
@@ -835,7 +839,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$member->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -928,7 +932,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$contact->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -996,7 +1000,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
-			print '<table class="noborder centpecent">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($accounts) > 0) {
@@ -1018,7 +1022,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$account->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -1086,7 +1090,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Project"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
-			print '<table class="noborder centpecent">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($objects) > 0) {
@@ -1108,7 +1112,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$project->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -1175,7 +1179,7 @@ if ($type == Categorie::TYPE_USER) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, '', '', $limit);
 
-			print '<table class="noborder centpecent">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Users").' <span class="badge">'.$num.'</span></td></tr>'."\n";
 
 			if (count($users) > 0) {
@@ -1192,7 +1196,7 @@ if ($type == Categorie::TYPE_USER) {
 					if ($user->hasRight('user', 'user', 'creer')) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -1241,7 +1245,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Warehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, $newcardbutton, '', $limit);
 
-			print '<table class="noborder centpecent">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($objects) > 0) {
@@ -1263,7 +1267,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$warehouse->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';
@@ -1351,7 +1355,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$ticket->id."'>";
 						print $langs->trans("DeleteFromCat");
-						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
 					print '</td>';

@@ -47,6 +47,9 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 */
 	protected $childtablesoncascade = array();
 
 	/**
@@ -1318,7 +1321,7 @@ class Website extends CommonObject
 		}
 
 		// Load sql record
-		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
+		$runsql = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
 		if ($runsql <= 0) {
 			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
 			$error++;

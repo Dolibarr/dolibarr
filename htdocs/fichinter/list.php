@@ -142,7 +142,7 @@ $arrayfields = array(
 	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_statut' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
-	'f.signed_status' =>array('label' => 'SignedStatus', 'checked' => 0, 'position' => 1001),
+	'f.signed_status' => array('label' => 'SignedStatus', 'checked' => 0, 'position' => 1001),
 	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
 	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
 	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
@@ -567,9 +567,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -709,6 +706,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -978,7 +976,8 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['f.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print dolPrintHTML($obj->note_public);
-			print '</td>';if (!$i) {
+			print '</td>';
+			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
@@ -1009,7 +1008,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['fd.description']['checked'])) {
 			$text = dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1));
 			print '<td>';
-			print '<div class="classfortooltip tdoverflowmax250" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
+			print '<div class="classfortooltip tdoverflowmax250 small" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
 			print dol_escape_htmltag($text);
 			print '</div>';
 			print '</td>';

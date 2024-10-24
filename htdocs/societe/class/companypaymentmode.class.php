@@ -131,46 +131,145 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var ?string
+	 */
 	public $bank;
+	/**
+	 * @var string
+	 */
 	public $code_banque;
+	/**
+	 * @var string
+	 */
 	public $code_guichet;
+	/**
+	 * @var string
+	 */
 	public $number;
+	/**
+	 * @var string
+	 */
 	public $cle_rib;
+	/**
+	 * @var string
+	 */
 	public $bic;
 
 	/**
 	 * @var string iban
-	 * @deprecated
+	 * @deprecated Use $iban_prefix, or wait the field in database is renamed into iban.
 	 * @see $iban_prefix
 	 */
 	public $iban;
 
 	/**
-	 * iban_prefix
-	 * @var string
+	 * @var string IBAN prefix
 	 */
 	public $iban_prefix;
+
+	/**
+	 * @var string
+	 * @deprecated Use address
+	 */
 	public $domiciliation;
+
+	/**
+	 * @var string
+	 */
+	public $address;
+
+	/**
+	 * @var string
+	 * @deprecated Use owner_name
+	 */
 	public $proprio;
+
+	/**
+	 * @var string
+	 */
+	public $owner_name;
+
+	/**
+	 * @var string
+	 */
 	public $owner_address;
+
+	/**
+	 * @var int
+	 */
 	public $default_rib;
+	/**
+	 * @var string
+	 */
 	public $rum;
+	/**
+	 * @var int
+	 */
 	public $date_rum;
+	/**
+	 * @var string
+	 */
 	public $frstrecur;
+	/**
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * @var string
+	 */
 	public $last_four;
+	/**
+	 * @var string
+	 */
 	public $card_type;
+	/**
+	 * @var ?string
+	 */
 	public $cvn;
+	/**
+	 * @var int
+	 */
 	public $exp_date_month;
+	/**
+	 * @var int
+	 */
 	public $exp_date_year;
+	/**
+	 * @var string
+	 */
 	public $country_code;
+	/**
+	 * @var int
+	 */
 	public $approved;
+	/**
+	 * @var string
+	 */
 	public $email;
+	/**
+	 * @var float
+	 */
 	public $max_total_amount_of_all_payments;
+	/**
+	 * @var string
+	 */
 	public $preapproval_key;
+	/**
+	 * @var float
+	 */
 	public $total_amount_of_all_payments;
+	/**
+	 * @var string
+	 */
 	public $stripe_card_ref;	// External system payment mode ID
+	/**
+	 * @var string
+	 */
 	public $stripe_account;		// External system customer ID
+	/**
+	 * @var string
+	 */
 	public $ext_payment_site;	// External system 'StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...
 
 	/**
@@ -178,16 +277,25 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var int
+	 */
 	public $starting_date;
+	/**
+	 * @var int
+	 */
 	public $ending_date;
 
 	/**
 	 * Date creation record (datec)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datec;
 
+	/**
+	 * @var string
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -348,11 +456,11 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to ('nolink', ...)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int<0,2>	$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string		$option						On what the link point to ('nolink', ...)
+	 *  @param	int<0,1>  	$notooltip					1=Disable tooltip
+	 *  @param  string		$morecss            		Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -417,14 +525,14 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Set a Payment mode as Default
 	 *
-	 * @param   int     $id    		Payment mode ID
-	 * @param	int 	$alltypes	1=The default is for all payment types instead of per type
-	 * @return  int             	0 if KO, 1 if OK
+	 * @param   int     	$id    		Payment mode ID
+	 * @param	int<0,1> 	$alltypes	1=The default is for all payment types instead of per type
+	 * @return  int						0 if KO, 1 if OK
 	 */
 	public function setAsDefault($id = 0, $alltypes = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".($id ? $id : $this->id);
+		$sql1 .= " WHERE rowid = ".((int) ($id ? $id : $this->id));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);
@@ -475,8 +583,8 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 *  Return label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 				       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -487,8 +595,8 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int			$status        	Id status
+	 *  @param  int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
 	public function LibStatut($status, $mode = 0)

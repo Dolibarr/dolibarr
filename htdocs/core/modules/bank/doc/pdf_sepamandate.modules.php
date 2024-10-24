@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France		 <frederic.france@free.fr>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,15 +90,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-
-		// Retrieves transmitter
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
 
 		// Define column position
 		$this->posxref = $this->marge_gauche;
@@ -111,6 +106,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->heightforfreetext = (getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') > 0 ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
 
 		$this->heightforfooter = $this->marge_basse + 8;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+		// Retrieves issuer
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -238,7 +243,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 3, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 3, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2, $this->corner_radius, '1234', 'D');
 
 					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
@@ -385,7 +390,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$txt = $outputlangs->transnoentitiesnoconv("SEPAFrstOrRecur").' * : ';
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
-				$pdf->Rect(80, $posY, 5, 5);
+				$pdf->RoundedRect(80, $posY, 5, 5, $this->corner_radius, '1234', 'D');
 				$pdf->SetXY(80, $posY);
 				if ($object->frstrecur == 'RCUR') {
 					$pdf->MultiCell(5, 3, 'X', 0, 'L');
@@ -394,7 +399,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$txt = $langs->transnoentitiesnoconv("ModeRECUR").'  '.$langs->transnoentitiesnoconv("or");
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$posY += 6;
-				$pdf->Rect(80, $posY, 5, 5);
+				$pdf->RoundedRect(80, $posY, 5, 5, $this->corner_radius, '1234', 'D');
 				$pdf->SetXY(80, $posY);
 				if ($object->frstrecur == 'FRST') {
 					$pdf->MultiCell(5, 3, 'X', 0, 'L');

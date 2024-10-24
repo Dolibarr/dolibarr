@@ -252,7 +252,7 @@ $first_year  = $prev['first_year'];
 $week = $prev['week'];
 
 $day = (int) $day;
-$next = dol_get_next_week($day, $week, $month, $year);
+$next = dol_get_next_week($day, (int) $week, $month, $year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
@@ -292,7 +292,7 @@ if ($filter) {
 	$param .= "&search_filter=".urlencode($filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -344,7 +344,7 @@ $first_year = $prev['first_year'];
 $week = $prev['week'];
 
 $day = (int) $day;
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next = dol_get_next_week($first_day, (int) $week, $first_month, $first_year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
@@ -731,6 +731,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -831,6 +832,8 @@ echo '<input type="hidden" name="newdate" id="newdate">';
 $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 //print dol_print_date($currentdaytoshow, 'dayhour', 'gmt');
+
+$colorsbytype = array();
 
 while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table class="centpercent noborder nocellnopadd cal_month">';
@@ -988,7 +991,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Load array of colors by type
-	$colorsbytype = array();
 	$labelbytype = array();
 	$sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql = $db->query($sql);
@@ -998,7 +1000,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Loop on each user to show calendar
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$sav = $tmpday;
 	$showheader = true;
 	$var = false;

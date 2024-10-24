@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,13 +80,14 @@ class PaymentSalary extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount
 	 * @see $amount
+	 * @var float|string
 	 */
 	public $total;
 
 	/**
-	 * @var float			Total amount of payment
+	 * @var float	Total amount of payment
 	 */
 	public $amount;
 
@@ -102,7 +103,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $num_payment
 	 */
 	public $num_paiement;
 
@@ -295,7 +296,7 @@ class PaymentSalary extends CommonObject
 						//$deposits=$tmpsalary->getSumDepositsUsed();
 						$deposits = 0;
 						$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-						$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
+						$remaintopay = price2num((float) $tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 						if ($remaintopay == 0) {
 							$result = $tmpsalary->setPaid($user);
 						} else {
@@ -365,6 +366,7 @@ class PaymentSalary extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datepaye = $this->db->jdate($obj->datep);
+				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_paiement = $obj->num_payment;
@@ -952,9 +954,9 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params params to construct tooltip data
-	 * @return array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

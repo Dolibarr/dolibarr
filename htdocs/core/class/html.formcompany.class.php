@@ -45,9 +45,9 @@ class FormCompany extends Form
 	/**
 	 *    	Return list of labels (translated) of third parties type
 	 *
-	 *		@param	int		$mode		0=Return id+label, 1=Return code+label
-	 *      @param  string	$filter     Add a SQL filter to select. Data must not come from user input.
-	 *    	@return array      			Array of types
+	 *		@param	int<0,1>	$mode		0=Return id+label, 1=Return code+label
+	 *      @param  string		$filter		Add a SQL filter to select. Data must not come from user input.
+	 *    	@return array<string,string>	Array of types
 	 */
 	public function typent_array($mode = 0, $filter = '')
 	{
@@ -96,9 +96,9 @@ class FormCompany extends Form
 	/**
 	 *	Return the list of entries for staff (no translation, it is number ranges)
 	 *
-	 *	@param	int		$mode		0=return id+label, 1=return code+Label
-	 *	@param  string	$filter     Add a SQL filter to select. Data must not come from user input.
-	 *  @return array				Array of types d'effectifs
+	 *	@param	int<0,1>	$mode		0=return id+label, 1=return code+Label
+	 *	@param  string		$filter     Add a SQL filter to select. Data must not come from user input.
+	 *  @return array<string,string>	Array of types d'effectifs
 	 */
 	public function effectif_array($mode = 0, $filter = '')
 	{
@@ -126,13 +126,14 @@ class FormCompany extends Form
 					$key = $objp->code;
 				}
 
-				$effs[$key] = $objp->label != '-' ? $objp->label : '';
+				$effs[$key] = $objp->label != '-' ? (string) $objp->label : '';
 				$i++;
 			}
 			$this->db->free($resql);
 		}
 		//return natural sorted list
 		natsort($effs);
+		'@phan-var-force array<string,string> $effs';
 		return $effs;
 	}
 
@@ -266,8 +267,8 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	int		$selected        	Code state preselected (mus be state id)
-	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param	int		$selected        	Code state preselected (must be state id)
+	 *    @param    int		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 *    @param	string	$morecss			Add more css
 	 * 	  @return	string						String with HTML select
@@ -378,9 +379,9 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	string		$parent_field_id        Parent select name to monitor
-	 *    @param	integer		$selected        	Code state preselected (mus be state id)
-	 *    @param    integer		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param	string		$parent_field_id	Parent select name to monitor
+	 *    @param	int			$selected        	Code state preselected (must be state id)
+	 *    @param    int			$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
 	 *    @param	string		$morecss			Add more css
 	 * 	  @return	string						String with HTML select
@@ -522,14 +523,14 @@ class FormCompany extends Form
 	 *    Return the list of all juridical entity types for all countries or a specific country.
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
-	 *    @param	string		$selected        	Preselected code for juridical type
-	 *    @param    mixed		$country_codeid		0=All countries, else the code of the country to display
+	 *    @param	int			$selected        	Preselected code for juridical type
+	 *    @param    int			$country_codeid		0=All countries, else the code of the country to display
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
 	 *    @see select_juridicalstatus()
 	 */
-	public function select_forme_juridique($selected = '', $country_codeid = 0, $filter = '')
+	public function select_forme_juridique($selected = 0, $country_codeid = 0, $filter = '')
 	{
 		// phpcs:enable
 		print $this->select_juridicalstatus($selected, $country_codeid, $filter);
@@ -540,14 +541,14 @@ class FormCompany extends Form
 	 *    Return the list of all juridical entity types for all countries or a specific country.
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
-	 *    @param	string		$selected        	Preselected code of juridical type
+	 *    @param	int			$selected        	Preselected code of juridical type
 	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
 	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
 	 *    @return	string							String with HTML select
 	 */
-	public function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code', $morecss = '')
+	public function select_juridicalstatus($selected = 0, $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code', $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -642,7 +643,7 @@ class FormCompany extends Form
 	 *  @param  string		$var_id         Name of id field
 	 *  @param  int 		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
-	 * 	@param	array		$limitto		Disable answers that are not id in this array list
+	 * 	@param	int[]		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
 	 *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
 	 *  @param	string		$morecss		More CSS on select component
@@ -768,6 +769,7 @@ class FormCompany extends Form
 
 				$num = $this->db->num_rows($resql);
 				$i = 0;
+				$firstCompany = 0;  // For static analysis
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
@@ -808,15 +810,15 @@ class FormCompany extends Form
 	/**
 	 *  Return a select list with types of contacts
 	 *
-	 *  @param	object		$object         	Object to use to find type of contact
+	 *  @param	Object		$object         	Object to use to find type of contact
 	 *  @param  string		$selected       	Default selected value
 	 *  @param  string		$htmlname			HTML select name
 	 *  @param  string		$source				Source ('internal' or 'external')
 	 *  @param  string		$sortorder			Sort criteria ('position', 'code', ...)
 	 *  @param  int			$showempty      	1=Add en empty line
 	 *  @param  string      $morecss        	Add more css to select component
-	 *  @param  int      	$output         	0=return HTML, 1= direct print
-	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
+	 *  @param  int<0,1>  	$output         	0=return HTML, 1= direct print
+	 *  @param	int<0,1>	$forcehidetooltip	Force hide tooltip for admin
 	 *  @return	string|void						Depending on $output param, return the HTML select list (recommended method) or nothing
 	 */
 	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
@@ -825,6 +827,7 @@ class FormCompany extends Form
 
 		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact')) {
+			'@phan-var-force CommonObject $object';  // CommonObject has the method.
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);	// List of types into c_type_contact for element=$object->element
 
 			$out .= '<select class="flat valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
@@ -860,7 +863,7 @@ class FormCompany extends Form
 	 * @param 	string 		$htmlname 		Html component name and id
 	 * @param 	Contact 	$contact 		Contact Object
 	 * @param 	string 		$rendermode 	view, edit
-	 * @param 	array		$selected 		$key=>$val $val is selected Roles for input mode
+	 * @param 	array<array{id:int}>	$selected 	$key=>$val $val is selected Roles for input mode
 	 * @param	string		$morecss		More css
 	 * @param	string		$placeholder	Placeholder text (used when $rendermode is 'edit')
 	 * @return 	string   					String with contacts roles
@@ -876,7 +879,7 @@ class FormCompany extends Form
 		}
 
 		if ($rendermode === 'edit') {	// A multiselect combo list
-			$contactType = $contact->listeTypeContacts('external', '', 1, '', '', 'agenda'); // We exclude agenda as there is no contact on such element
+			$contactType = $contact->listeTypeContacts('external', 0, 1, '', '', 'agenda'); // We exclude agenda as there is no contact on such element
 			if (count($selected) > 0) {
 				$newselected = array();
 				foreach ($selected as $key => $val) {
@@ -934,12 +937,12 @@ class FormCompany extends Form
 	/**
 	 *  Return HTML string to use as input of professional id into a HTML page (siren, siret, etc...)
 	 *
-	 *  @param	int		$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
-	 *  @param  string	$htmlname       Name of HTML select
-	 *  @param  string	$preselected    Default value to show
-	 *  @param  string	$country_code   FR, IT, ...
-	 *  @param  string  $morecss        More css
-	 *  @return	string					HTML string with prof id
+	 *  @param	int<1,4>	$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *  @param  string		$htmlname       Name of HTML select
+	 *  @param  string		$preselected    Default value to show
+	 *  @param  string		$country_code   FR, IT, ...
+	 *  @param  string		$morecss        More css
+	 *  @return	string						HTML string with prof id
 	 */
 	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth200')
 	{
@@ -1155,7 +1158,7 @@ class FormCompany extends Form
 	 *  Output html select to select prospect status
 	 *
 	 *  @param  string			$htmlname		Name of HTML select
-	 *  @param	Societe|null	$prospectstatic Prospect object
+	 *  @param	Contact|null	$prospectstatic Prospect object
 	 *  @param  int				$statusprospect	status of prospect
 	 *  @param  int				$idprospect     id of prospect
 	 *  @param  string  		$mode      		select if we want activate de html part or js

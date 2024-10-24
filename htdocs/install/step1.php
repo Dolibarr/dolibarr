@@ -513,7 +513,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					$dest = $dirodt.'/template_'.$cursorfile.'.odt';
 
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile', $src, $dest).'</td></tr>';
 					}

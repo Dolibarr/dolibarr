@@ -46,11 +46,6 @@ class FichinterRec extends Fichinter
 	public $table_element_line = 'fichinterdet_rec';
 
 	/**
-	 * @var string Fieldname with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
-
-	/**
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'title';
@@ -255,7 +250,7 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->remise_percent,
 						'HT',
 						0,
-						'',
+						0,
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,

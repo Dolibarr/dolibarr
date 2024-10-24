@@ -698,7 +698,7 @@ class Account extends CommonObject
 	 *  @param  int     $notrigger  1=Disable triggers
 	 *  @return int        			Return integer < 0 if KO, > 0 if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -736,10 +736,6 @@ class Account extends CommonObject
 		}
 		if (empty($balance)) {
 			$balance = 0;
-		}
-		if (empty($this->address && !empty($this->domiciliation))) {
-			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
-			$this->address = $this->domiciliation;
 		}
 		if (empty($this->status && !empty($this->clos))) {
 			dol_syslog(get_class($this)."::create clos is deprecated use status", LOG_NOTICE);
@@ -799,7 +795,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
-		$sql .= ", '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ", '".$this->db->escape($this->owner_name)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ", '".$this->db->escape($this->owner_town)."'";
@@ -878,11 +874,11 @@ class Account extends CommonObject
 	/**
 	 *    	Update bank account card
 	 *
-	 *    	@param	User	$user       Object user making action
-	 *      @param  int     $notrigger  1=Disable triggers
-	 *		@return	int					Return integer <0 if KO, >0 if OK
+	 *    	@param	User		$user       Object user making action
+	 *      @param  int<0,1>	$notrigger  1=Disable triggers
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -923,7 +919,7 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
-		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1003,10 +999,10 @@ class Account extends CommonObject
 	/**
 	 *  Update BBAN (RIB) account fields
 	 *
-	 *  @param	User|null	$user       Object user making update
-	 *  @return	int						Return integer <0 if KO, >0 if OK
+	 *  @param	?User	$user       Object user making update
+	 *  @return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function update_bban(User $user = null)
+	public function update_bban($user = null)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -1030,8 +1026,8 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1103,7 +1099,7 @@ class Account extends CommonObject
 				$this->courant       = $obj->type;
 				$this->bank          = $obj->bank;
 				$this->clos          = $obj->status;
-				$this->status = $obj->status;
+				$this->status        = $obj->status;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1113,15 +1109,16 @@ class Account extends CommonObject
 				$this->cle_rib       = $obj->cle_rib;
 				$this->bic           = $obj->bic;
 				$this->iban          = $obj->iban;
-				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
-				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->owner_name;
+
 				$this->owner_name    = $obj->owner_name;
+				$this->proprio       = $this->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;
 				$this->owner_country_id = $obj->owner_country_id;
+
+				$this->pti_in_ctti   = $obj->pti_in_ctti;
 
 				$this->state_id        = $obj->state_id;
 				$this->state_code      = $obj->state_code;
@@ -1181,11 +1178,11 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *  @param	User|null	$user		User deleting
-	 *	@param  int			$notrigger	1=Disable triggers
+	 *  @param	?User		$user		User deleting
+	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -1482,10 +1479,9 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1747,7 +1743,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 * Return 1 if IBAN / BIC is mandatory (otherwise option)
+	 * Return 1 if IBAN is mandatory (otherwise option)
 	 *
 	 * @return		int        1 = mandatory / 0 = Not mandatory
 	 */
@@ -1799,6 +1795,37 @@ class Account extends CommonObject
 
 		if (in_array($country_code, $country_code_in_EEC)) {
 			return 1; // France, Spain, ...
+		}
+		return 0;
+	}
+
+	/**
+	 * Return 1 if BIC is mandatory (otherwise option)
+	 *
+	 * @return		int        1 = mandatory / 0 = Not mandatory
+	 */
+	public function needBIC()
+	{
+		if (getDolGlobalString('MAIN_IBAN_IS_NEVER_MANDATORY')) {
+			return 0;
+		}
+
+		$country_code = $this->getCountryCode();
+
+		$country_code_in_EEC = array(
+			'AD', // Andorra
+			'BH', // Bahrein
+			'DK', // Denmark
+			'FR', // France
+			'GH', // Ghana
+			'HU', // Hungary
+			'JP', // Japan
+			'LV', // Latvia
+			'SE', // Sweden
+		);
+
+		if (in_array($country_code, $country_code_in_EEC)) {
+			return 1; // Andorra, Bahrein, ...
 		}
 		return 0;
 	}
@@ -1926,7 +1953,6 @@ class Account extends CommonObject
 
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
-		$this->proprio         = 'Owner';
 		$this->owner_name      = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
@@ -2309,11 +2335,11 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * Delete bank transaction record
 	 *
-	 * @param	User|null	$user		User object that delete
-	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * @param	?User		$user		User object that delete
+	 * @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$nbko = 0;
 
@@ -2393,10 +2419,10 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * 	Delete bank line records
 	 *
-	 *	@param	User|null	$user	User object that delete
+	 *	@param	?User		$user	User object that delete
 	 *  @return	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete_urls(User $user = null)
+	public function delete_urls($user = null)
 	{
 		// phpcs:enable
 		$nbko = 0;

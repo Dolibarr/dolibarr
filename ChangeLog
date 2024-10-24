@@ -2,7 +2,6 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-
 ***** ChangeLog for 21.0.0 compared to 20.0 *****
 
 For users:
@@ -12,7 +11,7 @@ NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to 
 
 For developers:
 ---------------
-
+QUAL line classes for various business object classes have been moved to individual files.
 
 
 WARNING:
@@ -23,8 +22,61 @@ The following changes may create regressions for some external modules, but were
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
 * The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
+* The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
+  be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
+* The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
+* The trigger code CATEGORY_LINK and CATEGORY_UNLINK has been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff' to detect we want to make a link or unlink.
+* The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name
 
+***** ChangeLog for 20.0.1 compared to 20.0.0 *****
 
+FIX: #30960 show and search extrafields (#31026)
+FIX: #31076 Bad position of hooks
+FIX: #31152
+FIX: #31237 (#31239)
+FIX: #31241 (#31245)
+FIX: accounting transfer when nb of lines is not zero but amount is zero
+FIX: Add same security test when nuploading files from API than from GUI (#31114)
+FIX: allow "class" into search string in website module
+FIX: autoselect the fiscal period by default
+FIX: avoid odt errors (#31126)
+FIX: Backport fix fatal error on price with some truncating setup
+FIX: better compatibility with some old extrafield syntax filter
+FIX: box_actions.php still uses fk_user_done which no longer exists (#31190)
+FIX: Browser Notification ko with firefox
+FIX: custom CSS for WebPortal (#31022)
+FIX: Debug calculation of the delay of purchase order
+FIX: Debug option WORKFLOW_TICKET_LINK_CONTRACT. Bad id stored. Bad
+FIX: dolFICalculatePaymentReference for Finland in functions_fi.lib.php (#31281)
+FIX: Duplicate trigger printFieldPreListTitle
+FIX: edit contract of intervention broken by CSRF protection
+FIX: error return missing in mo creation when qty to consume is <= 0 (#31134)
+FIX: Extrafields does not appear on form
+FIX: FATAL ERROR abusively triggered due to incomplete regex (#31052)
+FIX: if you call fetchLines several times, your $object->lines contains duplicates (#31167)
+FIX: late order search option (v18+) (#30692)
+FIX: late propal search option (v18+) (#30687)
+FIX: Maxi debug edit/delete accounting transaction
+FIX: member must be found to search the linked partnership (WebPortal) (#30977)
+FIX: Missing picto on user link
+FIX: mysql error during dump for enable sandbox M999999 (#31116)
+FIX: OAuth generation of token for Microsoft, Stripe and Generic
+FIX: param id in website account list from third-party card (#30975)
+FIX: Position of box for shipping address in PDF
+FIX: Protection to avoid an extrafield to be mandatory if computed
+FIX: removed unreachable code (#31141)
+FIX: Remove wrong button
+FIX: retrieving user specific constant
+FIX: Revert storing of ticket files into event dir, too many troubles.
+FIX: Selection of country - state in resource
+FIX: State dropdown is not working on User card #31198 (#31205)
+FIX: Tool to convert into utf8 or utf8mb4
+FIX: use price() to display qty on a product's stats tab to avoid showing too many decimals when rounding errors are possible (#31165)
+FIX: Warning visible when it should not
+FIX: webhook must send POST in body. Add WEBHOOK_POST_SEND_DATA_IN_BODY
+FIX: when qty is not an integer, apply price() (#31138)
+FIX: Wrong price for BOM with workstation (#31142)
+FIX: determine multi-currency price on object line create tpl (#28021)
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
 
@@ -44,6 +96,10 @@ NEW: Accountancy - Add possibility for specific format FEC to sort with the FEC 
 NEW: Accountancy - Expense report - Add an option to use end period for transfer (#26706)
 NEW: Accountancy - Show accounting result on balance
 NEW: Accountancy - Show import key if exist (#29265)
+NEW: Accountancy - Auto-determine piece number in FEC import (#29672)
+NEW: Accountancy - Option to transfer only reconciled lines from bank (#29408)
+NEW: Accountancy - Separation of accounting default account for salary and expense report
+NEW: Various payment - Use list of accounting account when edit (#27992)
 NEW: Add option to change all service dates at once
 NEW: Add a default limit in nb to agenda export
 NEW: Add a Feedback-ID into email headers
@@ -96,7 +152,6 @@ NEW: Allow smileys into emailing html content
 NEW: Allow to set a default project for POS sales (#27042)
 NEW: animation for display spinner when waiting response
 NEW: Asset Module - make asset model creation in a single step (#26982)
-NEW: auto-determine piece number in FEC import (#29672)
 NEW: auto fill infos in template email
 NEW: Automatically fill matching extra fields of object on line creation. (#27240)
 NEW: Can add documents on a payment (#29660)
@@ -133,7 +188,7 @@ NEW: fetch object by element for website account card
 NEW: filter on sale representative in contact list
 NEW: Filter shipments by selecting multiple shipping methods (#28376)
 NEW: Font param Look and Feel (#29302)
-NEW: fuctionnality for stock configuration prompt in AI module (#28030)
+NEW: functionality for stock configuration prompt in AI module (#28030)
 NEW: functionality to delete contact of company list
 NEW: functionality to display codebar on pdf files  (#29623)
 NEW: functionality to list event for user
@@ -160,12 +215,11 @@ NEW: Module Website: Can link/unlink translation between web pages
 NEW: Move dir of cache for widgets
 NEW: multiselect with checkbox in categories/tags search for thirdparty list (#28335)
 NEW: new consts to redirect from massaction createbills (#29436)
-NEW: new global string to preselect yes for one bill per thirparty in orderlist massaction (#29359)
+NEW: new global string to preselect yes for one bill per third party in orderlist massaction (#29359)
 NEW: notification action triggers for cancelling orders and invoices
 NEW: now button when editing an event
 NEW: online signature of shipments (#29559)
 NEW: On OAuth Google login, no prompt at all if already logged in Google
-NEW: Option to transfer only reconciliated lines from bank (#29408)
 NEW: Param to show main menu logo in color look and feel (#29305)
 NEW: Payment page received from donations
 NEW: possibility to define a completely inactive module (#29289)
@@ -178,7 +232,6 @@ NEW: resource address, phone, email & maxusers (#28185)
 NEW: Script for fast identification of missing/unused/duplicate translations
 NEW: search member by date
 NEW: See the documents of my subordinates  (#28318)
-NEW: separation of expense report from salary accounting code
 NEW: Show error on ical parse
 NEW: Show the profit per attendee on events
 NEW: signed status CRUD to contract and fichinter
@@ -205,7 +258,6 @@ NEW: Update expense report card.php to allow pdf preview even without thumbnail 
 NEW: update price with auto to use const for rounding prices (#29350)
 NEW: Use a nicer combo list to select the export accounting format
 NEW: users can set their own length for short lists
-NEW: Various payment - Use list of account when edit (#27992)
 NEW: warning message when cloning a product whose status is not to sell (#28374)
 PERF: Performance enhancement on Invoice/Paiement area page
 PERF: Use cache for loaded users/contact on project list
@@ -218,6 +270,7 @@ SEC: Reduce nb of var without WAF used when using the website module
 
 For developers or integrators:
 ------------------------------
+NEW: Situation invoice - Add new official progressive mode - (constant INVOICE_USE_SITUATION = 2)
 NEW: $noescapetags param of dol_escape_html works if attributes
 NEW: Add createInvoiceFromContract to API invoice (#27277)
 NEW: add debugging info to api/status if non-production
@@ -3300,7 +3353,7 @@ FIX: fix checkbox displayed according to module project setup parameters - work 
 FIX: inconsistency in margin recording with option "Force to sale price"
 FIX: invoice PDF generation after payment
 FIX: mask selector fournisseur if module not activate
-FIX: merge thirparty also work for bank URL entry
+FIX: merge third party also works for bank URL entry
 FIX: Missing extrafields into export of agenda record
 FIX: missing parameter in select for POP
 FIX: missing return edit if update error

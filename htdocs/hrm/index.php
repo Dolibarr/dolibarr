@@ -166,7 +166,7 @@ if (isModEnabled('holiday')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
 		print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven nohover">';
 		print '<td>';
 
 		$out = '';
@@ -195,7 +195,7 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
 
 // Latest modified leave requests
 if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.gender, u.statut as user_status,";
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
@@ -216,7 +216,13 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$holidaystatic = new Holiday($db);
 		$userstatic = new User($db);
 
-		$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+		$listhalfday = array(
+			'morning'=>$langs->trans("Morning"),
+			'morningshort'=>$langs->trans("Morning"),
+			"afternoon"=>$langs->trans("Afternoon"),
+			"afternoonshort"=>$langs->trans("Afternoon")
+		);
+
 		$typeleaves = $holidaystatic->getTypes(1, -1);
 
 		$i = 0;
@@ -242,7 +248,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 
 				$holidaystatic->id = $obj->rowid;
 				$holidaystatic->ref = $obj->ref;
-				$holidaystatic->statut = $obj->status;
+				$holidaystatic->status = $obj->status;
 				$holidaystatic->date_debut = $db->jdate($obj->date_start);
 
 				$userstatic->id = $obj->uid;
@@ -251,7 +257,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$userstatic->login = $obj->login;
 				$userstatic->photo = $obj->photo;
 				$userstatic->email = $obj->email;
-				$userstatic->statut = $obj->user_status;
+				$userstatic->gender = $obj->gender;
 				$userstatic->status = $obj->user_status;
 
 				print '<tr class="oddeven">';
@@ -264,9 +270,17 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_start), 'dayreduceformat').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_end), 'dayreduceformat').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
+				print '<td class="tdoverflowmax125 center lineheightsmall">'.dol_print_date($db->jdate($obj->date_start), 'dayreduceformat');
+				print '<br><span class="opacitymedium small" title="'.dolPrintHTML($langs->trans($listhalfday[$starthalfday])).'">';
+				$labelshort = $langs->trans($listhalfday[$starthalfday.'short']) != $listhalfday[$starthalfday.'short'] ? $langs->trans($listhalfday[$starthalfday.'short']) : $langs->trans($listhalfday[$starthalfday]);
+				print $labelshort;
+				print '</span>';
+				print '<td class="tdoverflowmax125 center lineheightsmall">'.dol_print_date($db->jdate($obj->date_end), 'dayreduceformat');
+				print '<br><span class="opacitymedium small" title="'.dolPrintHTML($langs->trans($listhalfday[$endhalfday])).'">';
+				$labelshort = $langs->trans($listhalfday[$endhalfday.'short']) != $listhalfday[$endhalfday.'short'] ? $langs->trans($listhalfday[$endhalfday.'short']) : $langs->trans($listhalfday[$starthalfday]);
+				print $labelshort;
+				print '</span>';
+				print '<td class="right" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($obj->dm), 'dayhourreduceformat').'">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
@@ -286,7 +300,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 
 // Latest modified expense report
 if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo, u.gender,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ht, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -339,6 +353,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				$userstatic->email = $obj->email;
 				$userstatic->login = $obj->login;
 				$userstatic->status = $obj->user_status;
+				$userstatic->gender = $obj->gender;
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';

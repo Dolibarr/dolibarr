@@ -61,7 +61,7 @@ class Fichinter extends CommonObject
 		'dateo' => array('type' => 'date', 'label' => 'Dateo', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'duree' => array('type' => 'double', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'duree' => array('type' => 'integer', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'showoncombobox' => 2),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
@@ -82,11 +82,6 @@ class Fichinter extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'fichinter';
-
-	/**
-	 * @var string Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
 
 	/**
 	 * @var string    Name of subtable line
@@ -139,7 +134,7 @@ class Fichinter extends CommonObject
 	/**
 	 * Date modification record (tms)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datem;
 
@@ -788,13 +783,13 @@ class Fichinter extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param      string                  $modele         Force model to use ('' to not force)
-	 *  @param      Translate               $outputlangs    Object langs to use for output
-	 *  @param      int                     $hidedetails    Hide details of lines
-	 *  @param      int                     $hidedesc       Hide description
-	 *  @param      int                     $hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int                                     0 if KO, 1 if OK
+	 *  @param	string                  $modele         Force model to use ('' to not force)
+	 *  @param	Translate               $outputlangs    Object langs to use for output
+	 *  @param	int<0,1>				$hidedetails    Hide details of lines
+	 *  @param	int<0,1>				$hidedesc       Hide description
+	 *  @param	int<0,1>				$hideref        Hide ref
+	 *  @param	?array<string,mixed>	$moreparams     Array to provide more information
+	 *  @return	int                                     0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -869,14 +864,13 @@ class Fichinter extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load('interventions');
 
@@ -1123,7 +1117,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'fichinterdet';
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_fichinter = ".((int) $this->id).")";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1385,9 +1379,9 @@ class Fichinter extends CommonObject
 	 *  @param      user	$user					User that do the action
 	 *	@param    	int		$fichinterid			Id of intervention
 	 *	@param    	string	$desc					Line description
-	 *	@param      integer	$date_intervention  	Intervention date
+	 *	@param      int		$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
-	 *  @param		array	$array_options			Array option
+	 *  @param		array<string,?mixed>	$array_options	Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
 	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [])
@@ -1616,6 +1610,7 @@ class Fichinter extends CommonObject
 		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
+			'@phan-var-force Societe $tmpthirdparty';
 			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'duration')) {
