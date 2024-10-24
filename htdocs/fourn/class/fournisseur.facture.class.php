@@ -497,7 +497,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->ref_supplier = trim($this->ref_supplier . '_' . ($_facrec->nb_gen_done + 1));
 				dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
 				if (empty($_facrec->date_when)) {
-					$_facrec->date_when = $this->db->jdate($now);
+					$_facrec->date_when = $now;
 				}
 				$next_date = $_facrec->getNextDate(); // Calculate next date
 				$result = $_facrec->setValueFrom('date_last_gen', $now, '', 0, 'date', '', $user, '');
