@@ -442,7 +442,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
 		$attributekey = GETPOST('attrname', 'aZ09');
 
-                // Load $extrafields->attributes
+		// Load $extrafields->attributes
 		$extrafields->fetch_name_optionals_label($elementtype);
 		$result = $extrafields->delete($attributekey, $extrafields->attributes[$elementtype]['elementtype_org'] ?? $elementtype);
 		if ($result >= 0) {
