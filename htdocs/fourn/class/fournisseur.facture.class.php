@@ -3551,7 +3551,7 @@ class FactureFournisseur extends CommonInvoice
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $tmpinvoice);
 
 						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
 
