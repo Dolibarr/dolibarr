@@ -53,9 +53,15 @@ if (GETPOSTISSET('infologin')) {
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');
 }
-
+$element_ref = '';
+if (is_numeric($id)) {
+	$id = (int) $id;
+} else {
+	$element_ref = $id;
+	$id = 0;
+}
 // Load object according to $element
-$object = fetchObjectByElement($id, $objecttype);
+$object = fetchObjectByElement($id, $objecttype, $element_ref);
 if (empty($object->element)) {
 	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
 }

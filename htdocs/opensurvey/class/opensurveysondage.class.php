@@ -126,20 +126,49 @@ class Opensurveysondage extends CommonObject
 	 * @var string Id sondage not an int
 	 */
 	public $id_sondage;
+
 	/**
 	 * @var string		Description
 	 * @deprecated 		Use $description instead
 	 */
 	public $commentaires;
+
+	/**
+	 * @var string admin mail
+	 */
 	public $mail_admin;
+
+	/**
+	 * @var string admin name
+	 */
 	public $nom_admin;
+
+	/**
+	 * @var int ID of user
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var string title of survey
+	 */
 	public $title;
+
+	/**
+	 * @var int|'' end date of survey
+	 */
 	public $date_fin = '';
 	public $status;
+
+	/**
+	 * @var string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 */
 	public $format;
+
+	/**
+	 * @var int to allow send mail
+	 */
 	public $mailsonde;
-	public $entity;
+
 	/**
 	 * @var int		Allow comments on this poll
 	 */
@@ -274,7 +303,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Load object in memory from the database
 	 *
-	 *  @param	int		$id    				Id object
+	 *  @param	string	$id    				Id object
 	 *  @param	string	$numsurvey			Ref of survey (admin or not)
 	 *  @return int          				Return integer <0 if KO, >0 if OK
 	 */
