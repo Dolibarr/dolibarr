@@ -63,9 +63,9 @@ create table llx_actioncomm
   email_msgid		varchar(255),					-- when event was an email, we store here the msgid
   email_from		varchar(255),					-- when event was an email, we store here the from
   email_sender		varchar(255),					-- when event was an email, we store here the sender
-  email_to			varchar(255),					-- when event was an email, we store here the email_to
-  email_tocc		varchar(255),					-- when event was an email, we store here the email_tocc
-  email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
+  email_to			TEXT,					-- when event was an email, we store here the email_to
+  email_tocc		TEXT,					-- when event was an email, we store here the email_tocc
+  email_tobcc		TEXT,					-- when event was an email, we store here the email_tobcc
   errors_to			varchar(255),					-- when event was an email, we store here the erros_to
   reply_to			varchar(255),					-- when event was an email, we store here the reply_to
   
