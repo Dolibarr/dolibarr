@@ -211,8 +211,9 @@ foreach ($object->fields as $key => $val) {
 
 
 print '<div class="fichehalfright">';
-print '<div class="underbanner clearboth"></div>';
-
+if (empty($nounderbanner)) {
+	print '<div class="underbanner clearboth"></div>';
+}
 print '<table class="border centpercent tableforfield">';
 
 print $rightpart;

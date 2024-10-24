@@ -2779,36 +2779,36 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 
 			print '<!-- List of log prices -->'."\n";
 			print '<div class="div-table-responsive">'."\n";
-			print '<table class="liste centpercent">'."\n";
+			print '<table class="liste centpercent noborder">'."\n";
 
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
+			print '<th>'.$langs->trans("AppliedPricesFrom").'</tg>';
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-				print '<td class="center">'.$langs->trans("PriceLevel").'</td>';
+				print '<th class="center">'.$langs->trans("PriceLevel").'</th>';
 			}
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-				print '<td class="center">'.$langs->trans("Type").'</td>';
+				print '<th class="center">'.$langs->trans("Type").'</th>';
 			}
 
-			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
+			print '<th class="center">'.$langs->trans("PriceBase").'</th>';
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-				print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
+				print '<th class="right">'.$langs->trans("DefaultTaxRate").'</th>';
 			}
-			print '<td class="right">'.$langs->trans("HT").'</td>';
-			print '<td class="right">'.$langs->trans("TTC").'</td>';
+			print '<th class="right">'.$langs->trans("HT").'</th>';
+			print '<th class="right">'.$langs->trans("TTC").'</th>';
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
-				print '<td class="right">'.$langs->trans("INCT").'</td>';
+				print '<th class="right">'.$langs->trans("INCT").'</th>';
 			}
 			if (isModEnabled('dynamicprices')) {
-				print '<td class="right">'.$langs->trans("PriceExpressionSelected").'</td>';
+				print '<th class="right">'.$langs->trans("PriceExpressionSelected").'</th>';
 			}
-			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
-			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
-			print '<td class="right">'.$langs->trans("Label").'</td>';
-			print '<td>'.$langs->trans("ChangedBy").'</td>';
+			print '<th class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</th>';
+			print '<th class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</th>';
+			print '<th class="right">'.$langs->trans("Label").'</th>';
+			print '<th>'.$langs->trans("ChangedBy").'</th>';
 			if ($user->hasRight('produit', 'supprimer')) {
-				print '<td class="right">&nbsp;</td>';
+				print '<th class="right">&nbsp;</th>';
 			}
 			print '</tr>';
 

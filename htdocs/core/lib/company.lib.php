@@ -1283,7 +1283,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print "\n";
 
 	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
-	print load_fiche_titre($title, $newcardbutton, '');
+	print load_fiche_titre($title, $newcardbutton, 'contact');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

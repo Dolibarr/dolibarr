@@ -2209,11 +2209,10 @@ class FormFile
 		if ($nboflinks > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		}
-
 		foreach ($links as $link) {
 			print '<tr class="oddeven">';
 			//edit mode
-			if ($action == 'update' && $selected === $link->id && $permissiontoedit) {
+			if ($action == 'update' && $selected === (int) $link->id && $permissiontoedit) {
 				print '<td>';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="linkid" value="'.$link->id.'">';

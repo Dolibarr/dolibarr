@@ -6,7 +6,7 @@
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
@@ -28,7 +28,7 @@
 
 /**
  *    \file       htdocs/fourn/facture/card-rec.php
- *    \ingroup    invoice fournisseurs
+ *    \ingroup    supplier invoice
  *    \brief      Page to show predefined invoice
  */
 
@@ -480,7 +480,7 @@ if (empty($reshook)) {
 		}
 		if ($qty < 0) {
 			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
+			setEventMessages($langs->trans('ErrorQtyForSupplierInvoiceCantBeNegative'), null, 'errors');
 			$error++;
 		}
 
@@ -821,7 +821,7 @@ if (empty($reshook)) {
 		}
 		if ($qty < 0) {
 			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
+			setEventMessages($langs->trans('ErrorQtyForSupplierInvoiceCantBeNegative'), null, 'errors');
 			$error++;
 		}
 
@@ -933,7 +933,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Third party
-		print '<tr><td class="titlefieldcreate">' . $langs->trans("Customer") . '</td><td>' . $object->thirdparty->getNomUrl(1, 'customer') . '</td>';
+		print '<tr><td class="titlefieldcreate">' . $langs->trans("Supplier") . '</td><td>' . $object->thirdparty->getNomUrl(1, 'supplier') . '</td>';
 		print '</tr>';
 
 		// Invoice subtype
@@ -946,7 +946,7 @@ if ($action == 'create') {
 		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
 		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
-		// Help of substitution key
+		// Help for substitution key
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
 
 		$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%m') . ')';
