@@ -145,9 +145,7 @@ if (empty($reshook)) {
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
-		$object->domiciliation = $object->address;	// deprecated
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -263,7 +261,6 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));

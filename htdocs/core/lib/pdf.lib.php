@@ -951,9 +951,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 
-	if (empty($onlynumber) && (!empty($account->domiciliation) || !empty($account->address))) {
+	if (empty($onlynumber) && !empty($account->address)) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset(empty($account->address) ? $account->domiciliation : $account->address);
+		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->address);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;

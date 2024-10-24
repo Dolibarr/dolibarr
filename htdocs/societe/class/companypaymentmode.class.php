@@ -150,9 +150,16 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string
 	 */
 	public $iban_prefix;
+
+	/** @deprecated Use address */
 	public $domiciliation;
+	public $address;
+	/** @deprecated Use owner_name*/
 	public $proprio;
+	public $owner_name;
+
 	public $owner_address;
+
 	public $default_rib;
 	public $rum;
 	public $date_rum;

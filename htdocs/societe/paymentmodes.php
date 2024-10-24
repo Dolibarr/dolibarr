@@ -184,7 +184,6 @@ if (empty($reshook)) {
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
 			$companybankaccount->address         = GETPOST('address', 'alpha');
-			$companybankaccount->domiciliation   = $companybankaccount->address;
 
 			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
 			$companybankaccount->proprio         = $companybankaccount->owner_name;
@@ -254,7 +253,8 @@ if (empty($reshook)) {
 			$companypaymentmode->label           = GETPOST('label', 'alpha');
 			$companypaymentmode->number          = GETPOST('cardnumber', 'alpha');
 			$companypaymentmode->last_four       = substr(GETPOST('cardnumber', 'alpha'), -4);
-			$companypaymentmode->proprio         = GETPOST('proprio', 'alpha');
+			$companypaymentmode->owner_name      = GETPOST('proprio', 'alpha');
+			$companypaymentmode->proprio         = $companypaymentmode->owner_name;
 			$companypaymentmode->exp_date_month  = GETPOSTINT('exp_date_month');
 			$companypaymentmode->exp_date_year   = GETPOSTINT('exp_date_year');
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
@@ -315,10 +315,10 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
-			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
 
-			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
+			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio         = $companybankaccount->owner_name;
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
@@ -1276,8 +1276,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '</td>';
 							// Information (Owner, ...)
 							print '<td class="minwidth100">';
-							if ($companypaymentmodetemp->proprio) {
-								print '<span class="opacitymedium">'.$companypaymentmodetemp->proprio.'</span><br>';
+							if ($companypaymentmodetemp->owner_name) {
+								print '<span class="opacitymedium">'.$companypaymentmodetemp->owner_name.'</span><br>';
 							}
 							if ($companypaymentmodetemp->last_four) {
 								print '....'.$companypaymentmodetemp->last_four;
@@ -1819,28 +1819,28 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td>';
 			print'</td>';
 			// Account number
-			print '<td valign="middle">';
+			print '<td>';
 			print '</td>';
 			// IBAN
-			print '<td valign="middle">';
+			print '<td>';
 			//var_dump($src);
 			print '</td>';
 			// BIC
-			print '<td valign="middle">';
+			print '<td>';
 			//var_dump($src);
 			print '</td>';
 
 			if (isModEnabled('prelevement')) {
 				// RUM
-				print '<td valign="middle">';
+				print '<td>';
 				//var_dump($src);
 				print '</td>';
 				// Date
-				print '<td valign="middle">';
+				print '<td>';
 				//var_dump($src);
 				print '</td>';
 				// Mode mandate
-				print '<td valign="middle">';
+				print '<td>';
 				//var_dump($src);
 				print '</td>';
 			}
@@ -1888,6 +1888,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$colspan = 10;
 			if (isModEnabled('prelevement')) {
 				$colspan += 3;
+			}
+			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
+				$colspan++;
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 		}
@@ -2111,7 +2114,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<td><input class="minwidth300" type="text" id="label" name="label" value="'.$companypaymentmode->label.'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
-	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->proprio.'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->owner_name.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("CardNumber").'</td>';
 	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.$companypaymentmode->number.'"></td></tr>';

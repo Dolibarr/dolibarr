@@ -390,9 +390,6 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		if (!empty($this->domiciliation) && dol_strlen($this->domiciliation) > 255) {
-			$this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
-		}
 		if (!empty($this->address) && dol_strlen($this->address) > 255) {
 			$this->address = dol_trunc($this->address, 254, 'right', 'UTF-8', 1);
 		}
@@ -413,9 +410,9 @@ class CompanyBankAccount extends Account
 		$sql .= ",number='".$this->db->escape($this->number)."'";
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
-		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation = '".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
+		$sql .= ",domiciliation = '".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
 		if (isModEnabled('prelevement')) {
@@ -517,11 +514,10 @@ class CompanyBankAccount extends Account
 				$this->bic             = $obj->bic;
 				$this->iban = $obj->iban;
 
-				$this->domiciliation   = $obj->address;
 				$this->address         = $obj->address;
 
+				$this->owner_name      = $obj->owner_name;
 				$this->proprio = $obj->owner_name;
-				$this->owner_name = $obj->owner_name;
 				$this->owner_address   = $obj->owner_address;
 				$this->label           = $obj->label;
 				$this->default_rib     = $obj->default_rib;

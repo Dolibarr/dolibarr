@@ -34,7 +34,7 @@
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
- *  @see dol_decode()
+ *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -65,7 +65,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode()
+ *  @see dol_encode(), dolDecrypt
  */
 function dol_decode($chain, $key = '1')
 {

@@ -737,18 +737,9 @@ class Account extends CommonObject
 		if (empty($balance)) {
 			$balance = 0;
 		}
-		if (empty($this->address && !empty($this->domiciliation))) {
-			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
-			$this->address = $this->domiciliation;
-		}
 		if (empty($this->status && !empty($this->clos))) {
 			dol_syslog(get_class($this)."::create clos is deprecated use status", LOG_NOTICE);
 			$this->status = $this->clos;
-		}
-
-		if (empty($this->address && !empty($this->domiciliation))) {
-			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
-			$this->address = $this->domiciliation;
 		}
 
 		// Load the library to validate/check a BAN account
@@ -804,7 +795,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
-		$sql .= ", '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ", '".$this->db->escape($this->owner_name)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ", '".$this->db->escape($this->owner_town)."'";
@@ -928,7 +919,7 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
-		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1035,8 +1026,8 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1108,7 +1099,7 @@ class Account extends CommonObject
 				$this->courant       = $obj->type;
 				$this->bank          = $obj->bank;
 				$this->clos          = $obj->status;
-				$this->status = $obj->status;
+				$this->status        = $obj->status;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1118,15 +1109,16 @@ class Account extends CommonObject
 				$this->cle_rib       = $obj->cle_rib;
 				$this->bic           = $obj->bic;
 				$this->iban          = $obj->iban;
-				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
-				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->owner_name;
+
 				$this->owner_name    = $obj->owner_name;
+				$this->proprio       = $this->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;
 				$this->owner_country_id = $obj->owner_country_id;
+
+				$this->pti_in_ctti   = $obj->pti_in_ctti;
 
 				$this->state_id        = $obj->state_id;
 				$this->state_code      = $obj->state_code;
@@ -1961,7 +1953,6 @@ class Account extends CommonObject
 
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
-		$this->proprio         = 'Owner';
 		$this->owner_name      = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
