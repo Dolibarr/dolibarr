@@ -107,6 +107,9 @@ function dolGetRandomBytes($length)
 	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
 }
 
+
+define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
+
 /**
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
@@ -120,7 +123,7 @@ function dolGetRandomBytes($length)
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -139,7 +142,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
-		$ciphering = 'AES-256-CTR';
+		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
 	}
 
 	$newchain = $chain;
