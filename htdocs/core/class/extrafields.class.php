@@ -1009,7 +1009,7 @@ class ExtraFields
 						$array_name_label[$tab->name] = $tab->label;
 					}
 					$db_elementtype = $tab->elementtype;	// Keep original element type from database record
-					foreach ($elist as $elementtype) {		// Create attriutes for each search element types
+					foreach ($elist as $elementtype) {		// Create attributes for each search element types
 						// keep original database element type field for GUI update
 						$this->attributes[$elementtype]['elementtype_org'] = $db_elementtype;
 						$tab->elementtype = $elementtype;
