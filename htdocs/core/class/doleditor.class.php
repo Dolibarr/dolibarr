@@ -166,7 +166,12 @@ class DolEditor
 			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
 			// TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
 			//print $this->content;
-			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"').' '.($moreparam ? $moreparam : '').' class="flat '.$morecss.'">';
+			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'"';
+			$out .= ' rows="'.$this->rows.'"';
+			//$out .= ' style="height: 700px; min-height: 700px;"';
+			$out .= (preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"');
+			$out .= ' '.($moreparam ? $moreparam : '');
+			$out .= ' class="flat '.$morecss.'">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
@@ -204,6 +209,7 @@ class DolEditor
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
 				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
+				//$out .= '<style>#cke_1_top { height: 34px !important; }</style>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
             			$(document).ready(function () {
 							/* console.log("Run ckeditor"); */
@@ -293,7 +299,7 @@ class DolEditor
 			$found = 1;
 			$format = $option;
 
-			$out .= "\n".'<!-- Output Ace editor -->'."\n";
+			$out .= "\n".'<!-- Output Ace editor '.dol_string_nohtmltag($this->htmlname).' -->'."\n";
 
 			if ($titlecontent) {
 				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;

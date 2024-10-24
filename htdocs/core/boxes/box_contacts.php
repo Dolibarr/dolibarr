@@ -54,6 +54,9 @@ class box_contacts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contact/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedContacts';
 	}
 
 	/**
@@ -106,6 +109,7 @@ class box_contacts extends ModeleBoxes
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
+			$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
 			// Add where from hooks
 			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $contactstatic); // Note that $action and $object may have been modified by hook
@@ -183,13 +187,13 @@ class box_contacts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
-						'asis' => 1
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+				// 		'asis' => 1
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
@@ -207,11 +211,13 @@ class box_contacts extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

@@ -586,7 +586,7 @@ if ($id > 0 || !empty($ref)) {
 				print "</tr>\n";
 			}
 
-			$nbfreeproduct = 0; // Nb of lins of free products/services
+			$nbfreeproduct = 0; // Nb of lines of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 

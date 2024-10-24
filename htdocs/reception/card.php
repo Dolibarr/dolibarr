@@ -462,7 +462,7 @@ if (empty($reshook)) {
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
-							dol_print_error($db, $result);
+							dol_print_error($db, $object->error, $object->errors);
 						}
 					}
 				}
@@ -509,7 +509,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 				}
 			}
 		}
@@ -990,7 +990,7 @@ if ($action == 'create') {
 			$numAsked = 0;
 
 			/**
-			 * @var array $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
+			 * @var array<string,int> $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
 			 *                             extrafields from HTTP query can be assigned to the correct dispatch line
 			*/
 			$suffix2numAsked = array();

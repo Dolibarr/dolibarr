@@ -539,7 +539,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut as status";
+	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -1082,6 +1082,7 @@ if (!empty($arrayfields['t.budget_amount']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.tobill']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -1459,7 +1460,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.progress_summary']['checked'])) {
 				print '<td class="center">';
 				//if ($obj->progress != '') {
-					print getTaskProgressView($object, false, false);
+				print getTaskProgressView($object, false, false);
 				//}
 				print '</td>';
 				if (!$i) {
@@ -1633,6 +1634,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.price((float) $totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
 				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {

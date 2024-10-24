@@ -100,6 +100,7 @@ if ($action == 'updateMask') {
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFContract $module';
 
+		/** @var ModelePDFContract $module */
 		if ($module->write_file($contract, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=contract&file=SPECIMEN.pdf");
 			return;

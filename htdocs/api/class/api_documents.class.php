@@ -662,6 +662,9 @@ class Documents extends DolibarrApi
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
+	 * @param   int     $position               Position
+	 * @param   string  $cover                  Cover info
+	 * @param   array   $array_options          array of options
 	 * @return  string
 	 *
 	 * @url POST /upload
@@ -669,15 +672,11 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Object not found
-	 * @throws	RestException	500		Error on file operationw
+	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [])
 	{
 		global $conf;
-
-		//var_dump($modulepart);
-		//var_dump($filename);
-		//var_dump($filecontent);exit;
 
 		$modulepartorig = $modulepart;
 
@@ -939,11 +938,20 @@ class Documents extends DolibarrApi
 			$moreinfo['src_object_type'] = $object->table_element;
 			$moreinfo['src_object_id'] = $object->id;
 		}
+		if (!empty($array_options)) {
+			$moreinfo = array_merge($moreinfo, ["array_options" => $array_options]);
+		}
+		if (!empty($position)) {
+			$moreinfo = array_merge($moreinfo, ["position" => $position]);
+		}
+		if (!empty($cover)) {
+			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
+		}
 
 		// Move the temporary file at its final emplacement
 		$result = dol_move($destfiletmp, $dest_file, '0', $overwriteifexists, 1, 1, $moreinfo);
 		if (!$result) {
-			throw new RestException(500, "Failed to move file into '".$destfile."'");
+			throw new RestException(500, "Failed to move file into '".$dest_file."'");
 		}
 
 		return dol_basename($destfile);

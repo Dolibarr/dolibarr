@@ -98,6 +98,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$savemethod = GETPOST('savemethod', 'alpha', 2);
 	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
 	$newelement = $element;
+	$subelement = null;
 
 	$view = '';
 	$format = 'text';
@@ -203,6 +204,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
+				'@phan-var-force CommonHookActions $object';
 				$ret = $object->$loadmethodname();
 				if ($ret > 0) {
 					$loadcache = $object->$loadcachename;

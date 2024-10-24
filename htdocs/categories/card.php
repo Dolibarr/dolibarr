@@ -58,6 +58,14 @@ $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
 
+$idProdOrigin = 0;
+$idSupplierOrigin = 0;
+$idCompanyOrigin = 0;
+$idMemberOrigin = 0;
+$idContactOrigin = 0;
+$idProjectOrigin = 0;
+$idProdOrigin = 0;
+
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {
 		$idProdOrigin     = $origin;

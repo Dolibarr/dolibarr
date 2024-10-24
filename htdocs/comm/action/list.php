@@ -761,6 +761,8 @@ print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
+$moreforfilter = 1;
+
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -856,6 +858,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.id']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

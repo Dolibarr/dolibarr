@@ -420,9 +420,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -539,6 +536,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['b.ref']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['b.ref']['label'], $_SERVER["PHP_SELF"], 'b.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

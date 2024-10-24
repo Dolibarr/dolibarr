@@ -203,7 +203,7 @@ class Commande extends CommonOrder
 	public $date_commande;
 
 	/**
-	 * @var null|int|''	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
+	 * @var null|int|''	Expected shipment date (date of start of shipment, not the reception that occurs some days after)
 	 */
 	public $delivery_date;
 
@@ -213,10 +213,14 @@ class Commande extends CommonOrder
 	public $fk_remise_except;
 
 	/**
-	 * @deprecated
+	 * @var string
+	 * @deprecated See $fk_remise_except
 	 */
 	public $remise_percent;
 
+	/**
+	 * @var int
+	 */
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
 	/**
@@ -253,13 +257,17 @@ class Commande extends CommonOrder
 	public $lines = array();
 
 
-	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	/**
+	 * @var string key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	 */
 	public $module_source;
-	//! key of pos source ('0', '1', ...)
+	/**
+	 * @var string key of pos source ('0', '1', ...)
+	 */
 	public $pos_source;
 
 	/**
-	 * @var array	Array with line of all shipments
+	 * @var array<int,float>	Array with lines of all shipments (qty)
 	 */
 	public $expeditions;
 
@@ -520,7 +528,7 @@ class Commande extends CommonOrder
 		$this->newref = dol_sanitizeFileName($num);
 
 		// Validate
-		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
@@ -663,7 +671,7 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT.",";
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -741,7 +749,7 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED.', facture=0,';
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -852,7 +860,7 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".self::STATUS_CANCELED.",";
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -970,7 +978,7 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
 		$sql .= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client";
 		$sql .= ", model_pdf, fk_cond_reglement, deposit_percent, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
 		$sql .= ", fk_shipping_method";
@@ -1108,7 +1116,7 @@ class Commande extends CommonOrder
 					$initialref = $this->ref;
 				}
 
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
 
@@ -1169,7 +1177,7 @@ class Commande extends CommonOrder
 								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 							}
 						} else {
-							dol_print_error($this->db, $resqlcontact);
+							dol_print_error($this->db);
 						}
 					}
 
@@ -1325,7 +1333,7 @@ class Commande extends CommonOrder
 	/**
 	 *  Load an object from a proposal and create a new order into database
 	 *
-	 *  @param      Object			$object 	        Object source
+	 *  @param      Propal			$object 	        Object source
 	 *  @param		User			$user				User making creation
 	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
@@ -1413,7 +1421,7 @@ class Commande extends CommonOrder
 		$this->origin_id = $object->id;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			if (!empty($object->multicurrency_code)) {
 				$this->multicurrency_code = $object->multicurrency_code;
 			}
@@ -1506,11 +1514,11 @@ class Commande extends CommonOrder
 	 *  @param		int				$fk_fournprice		Id supplier price
 	 *  @param		int				$pa_ht				Buying price (without tax)
 	 *  @param		string			$label				Label
-	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
+	 *  @param		array<string,mixed>	$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 * 	@param 		?int			$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
-	 * 	@param		double			$pu_ht_devise		Unit price in currency
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		string			$ref_ext		    line external reference
 	 *  @param		int				$noupdateafterinsertline	No update after insert of line
 	 *	@return     int             					>0 if OK, <0 if KO
@@ -1890,7 +1898,7 @@ class Commande extends CommonOrder
 		$sql .= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', ca.code as availability_code, ca.label as availability_label';
 		$sql .= ', dr.code as demand_reason_code';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as c';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
@@ -2105,7 +2113,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql .= ' WHERE l.fk_commande = '.((int) $this->id);
 		if ($only_product) {
@@ -2260,7 +2268,7 @@ class Commande extends CommonOrder
 
 		$sql = 'SELECT COUNT(DISTINCT ed.fk_expedition) as nb';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
-		$sql .= ' '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql .= ' '.MAIN_DB_PREFIX.$this->table_element_line.' as cd';
 		$sql .= ' WHERE';
 		$sql .= ' ed.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
@@ -2300,7 +2308,7 @@ class Commande extends CommonOrder
 		if ($filtre_statut >= 0) {
 			$sql .= ' '.MAIN_DB_PREFIX.'expedition as e,';
 		}
-		$sql .= ' '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql .= ' '.MAIN_DB_PREFIX.$this->table_element_line.' as cd';
 		$sql .= ' WHERE';
 		if ($filtre_statut >= 0) {
 			$sql .= ' ed.fk_expedition = e.rowid AND';
@@ -2489,7 +2497,7 @@ class Commande extends CommonOrder
 
 			$remise = price2num($remise, 2);
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET remise_percent = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.((int) $this->id).' AND fk_statut = '.((int) self::STATUS_DRAFT);
 
@@ -2556,7 +2564,7 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET remise_absolue = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.((int) $this->id).' AND fk_statut = '.self::STATUS_DRAFT;
 
@@ -2616,7 +2624,7 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET date_commande = ".($date ? "'".$this->db->idate($date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".((int) self::STATUS_DRAFT);
 
@@ -2688,7 +2696,7 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2733,15 +2741,15 @@ class Commande extends CommonOrder
 	/**
 	 *  Return list of orders (eventuelly filtered on a user) into an array
 	 *
-	 *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
-	 *  @param      int		$draft      	0=not draft, 1=draft
-	 *  @param      User	$excluser      	Object user to exclude
-	 *  @param    	int		$socid			Id third party
-	 *  @param    	int		$limit			For pagination
-	 *  @param    	int		$offset			For pagination
-	 *  @param    	string	$sortfield		Sort criteria
-	 *  @param    	string	$sortorder		Sort order
-	 *  @return     int|array             		-1 if KO, array with result if OK
+	 *  @param		int<0,1>	$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
+	 *  @param      int<0,1>	$draft      	0=not draft, 1=draft
+	 *  @param      ?User		$excluser      	Object user to exclude
+	 *  @param    	int			$socid			Id third party
+	 *  @param    	int			$limit			For pagination
+	 *  @param    	int			$offset			For pagination
+	 *  @param    	string		$sortfield		Sort criteria
+	 *  @param    	string		$sortorder		Sort order
+	 *  @return     array<int,string>|array<int,array{id:int,ref:string,name:string}>|int<-1,-1>	-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $excluser = null, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
 	{
@@ -2755,7 +2763,7 @@ class Commande extends CommonOrder
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX.$this->table_element." as c";
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
@@ -2820,7 +2828,7 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_availability = '.((int) $availability_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
@@ -2884,7 +2892,7 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
@@ -2946,7 +2954,7 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
@@ -3004,7 +3012,7 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET facture = 1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
@@ -3054,7 +3062,7 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 0';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET facture = 0';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
@@ -3116,12 +3124,12 @@ class Commande extends CommonOrder
 	 *  @param		int				$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string			$label				Label
 	 *  @param		int				$special_code		Special code (also used by externals modules!)
-	 *  @param		array			$array_options		extrafields array
-	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @param		double			$pu_ht_devise		Amount in currency
+	 *  @param		array<string,mixed>	$array_options	extrafields array
+	 * 	@param 		?int			$fk_unit 			Code of the unit to use. Null to use the default one
+	 *  @param		float			$pu_ht_devise		Amount in currency
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
-	 * @param       integer $rang   line rank
+	 *	@param		int				$rang				line rank
 	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
@@ -3222,7 +3230,7 @@ class Commande extends CommonOrder
 				$price = ((float) $pu - $remise);
 			}
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();
@@ -3370,7 +3378,7 @@ class Commande extends CommonOrder
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
@@ -3587,7 +3595,7 @@ class Commande extends CommonOrder
 		$clause = " WHERE";
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
@@ -3763,9 +3771,9 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params params to construct tooltip data
-	 * @return array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -3957,7 +3965,7 @@ class Commande extends CommonOrder
 		$sql .= ' date_valid as datev,';
 		$sql .= ' date_cloture as datecloture,';
 		$sql .= ' fk_user_author, fk_user_valid, fk_user_cloture';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -4094,7 +4102,7 @@ class Commande extends CommonOrder
 		$clause = "WHERE";
 
 		$sql = "SELECT count(co.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande as co";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as co";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
@@ -4132,11 +4140,11 @@ class Commande extends CommonOrder
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      array<string,mixed>  $moreparams     Array to provide more information
+	 *  @return     int<0,1>       				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -4235,10 +4243,10 @@ class Commande extends CommonOrder
 	/**
 	 * Set signed status
 	 *
-	 * @param  User   $user        Object user that modify
-	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
-	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
-	 * @param  string $triggercode Trigger code to use
+	 * @param  User		$user        Object user that modify
+	 * @param  int		$status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int<0,1>	$notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string	$triggercode Trigger code to use
 	 * @return int                 0 < if KO, > 0 if OK
 	 */
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int

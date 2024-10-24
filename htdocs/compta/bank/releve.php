@@ -190,7 +190,7 @@ $sqlrequestforbankline = $sql;
  * Actions
  */
 
-if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt)) {
+if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt) && $user->hasRight('banque', 'consolidate')) {
 	// Test to check newbankreceipt does not exists yet
 	$sqltest = "SELECT b.rowid FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
 	$sqltest .= " WHERE b.fk_account = ba.rowid AND ba.entity = ".((int) $conf->entity);
@@ -664,7 +664,7 @@ if (empty($numref)) {
 			// Categories
 			if ($ve) {
 				$sql = "SELECT label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as ct";
+				$sql .= " FROM ".MAIN_DB_PREFIX."categorie as ct";
 				$sql .= ", ".MAIN_DB_PREFIX."category_bankline as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".((int) $conf->entity);

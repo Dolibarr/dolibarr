@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
 class Categories extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
@@ -278,8 +278,8 @@ class Categories extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->category->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'error when delete category');
+		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
 		}
 
 		return array(

@@ -55,6 +55,9 @@ class box_actions extends ModeleBoxes
 		$this->enabled = isModEnabled('agenda');
 
 		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		$this->msgNoRecords = 'NoActionsToDo';
 	}
 
 	/**
@@ -98,7 +101,7 @@ class box_actions extends ModeleBoxes
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!$user->hasRight('agenda', 'allactions', 'read')) {
-				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
+				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id).")";
 			}
 			$sql .= " ORDER BY a.datep ASC";
 			$sql .= $this->db->plimit($max, 0);
@@ -126,7 +129,6 @@ class box_actions extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
 					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
@@ -174,12 +176,12 @@ class box_actions extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
@@ -197,11 +199,13 @@ class box_actions extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

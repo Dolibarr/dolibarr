@@ -320,6 +320,9 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
+$objectclass = null;
+$search_code_client = '';
+
 $parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -506,7 +509,7 @@ if ($action == "nosign" && $permissiontoclose) {
 }
 
 // Closed records
-if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+if (!$error && $massaction === 'setbilled' && $permissiontoclose && $objectclass !== null) {
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
@@ -561,7 +564,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($search_all > 0) {
+if ($search_all !== '') {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
@@ -988,7 +991,7 @@ if ($search_user > 0) {
 	$param .= '&search_user='.urlencode((string) ($search_user));
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) $search_sale);
 }
 if ($search_montant_ht) {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
@@ -1727,9 +1730,9 @@ if (isModEnabled('margin') && (
 	|| !empty($arrayfields['total_margin']['checked'])
 	|| !empty($arrayfields['total_margin_rate']['checked'])
 	|| !empty($arrayfields['total_mark_rate']['checked'])
-	)
-	) {
-		$with_margin_info = true;
+)
+) {
+	$with_margin_info = true;
 }
 
 $total_ht = 0;

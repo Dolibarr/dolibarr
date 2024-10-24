@@ -87,7 +87,9 @@ if ($type == 'conf') {
 }
 
 $conference = new ConferenceOrBooth($db);
+$confattendee = new ConferenceOrBoothAttendee($db);
 $project = new Project($db);
+$object = $confattendee;
 
 if ($type == 'conf') {
 	$resultconf = $conference->fetch($id);
@@ -152,6 +154,8 @@ if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
+
 
 /**
  * Show header for new member
@@ -160,8 +164,8 @@ if (empty($conf->eventorganization->enabled)) {
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
@@ -263,10 +267,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
 	}
 
+	$thirdparty = null;
+
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
-		$confattendee = new ConferenceOrBoothAttendee($db);
-
 		$filter = array();
 
 		if ($type == 'global') {
@@ -293,6 +297,15 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->firstname = $firstname;
 			$confattendee->lastname = $lastname;
 
+			// Fill array 'array_options' with data from add form
+			$extrafields->fetch_name_optionals_label($confattendee->table_element);
+			$ret = $extrafields->setOptionalsFromPost(null, $confattendee);
+			if ($ret < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+			}
+
+			// Count recent already posted event
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 			$now = dol_now();
@@ -316,7 +329,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				}
 			}
 
-			$resultconforbooth = -1;
+			$resultconfattendee = -1;
 
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
@@ -364,7 +377,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if (!getDolGlobalString('EVENTORGANIZATION_DISABLE_RETREIVE_THIRDPARTY_FROM_NAME')) {
 				// Fetch using the field input by end user if we have just created the attendee
 				if ($resultfetchthirdparty <= 0 && !empty($societe) && !empty($emailcompany)) {
-					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $emailcompany);
+					$resultfetchthirdparty = $thirdparty->fetch(0, $societe, '', '', '', '', '', '', '', '', $emailcompany);
 					if ($resultfetchthirdparty > 0) {
 						// We found a unique result with the name + emailcompany, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
@@ -375,7 +388,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				}
 				// Fetch using the field input by end user if we have just created the attendee
 				if ($resultfetchthirdparty <= 0 && !empty($societe) && !empty($email) && $email != $emailcompany) {
-					$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', $email);
+					$resultfetchthirdparty = $thirdparty->fetch(0, $societe, '', '', '', '', '', '', '', '', $email);
 					if ($resultfetchthirdparty > 0) {
 						// We found a unique result with the name + email, so we set the fk_soc of attendee
 						$confattendee->fk_soc = $thirdparty->id;
@@ -387,7 +400,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			}
 			if ($resultfetchthirdparty <= 0 && !empty($emailcompany)) {
 				// Try to find thirdparty from the email only
-				$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $emailcompany);
+				$resultfetchthirdparty = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $emailcompany);
 				if ($resultfetchthirdparty > 0) {
 					// We found a unique result with that email only, so we set the fk_soc of attendee
 					$confattendee->fk_soc = $thirdparty->id;
@@ -398,7 +411,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			}
 			if ($resultfetchthirdparty <= 0 && !empty($email) && $email != $emailcompany) {
 				// Try to find thirdparty from the email only
-				$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+				$resultfetchthirdparty = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $email);
 				if ($resultfetchthirdparty > 0) {
 					// We found a unique result with that email only, so we set the fk_soc of attendee
 					$confattendee->fk_soc = $thirdparty->id;
@@ -409,7 +422,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			}
 			if ($resultfetchthirdparty <= 0 && !empty($genericcompanyname)) {
 				// Try to find thirdparty from the generic mail only
-				$resultfetchthirdparty = $thirdparty->fetch('', $genericcompanyname, '', '', '', '', '', '', '', '', '');
+				$resultfetchthirdparty = $thirdparty->fetch(0, $genericcompanyname, '', '', '', '', '', '', '', '', '');
 				if ($resultfetchthirdparty > 0) {
 					// We found a unique result with that name + email, so we set the fk_soc of attendee
 					$confattendee->fk_soc = $thirdparty->id;
@@ -423,7 +436,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			if ($resultfetchthirdparty <= 0 && !empty($email)) {
 				// Try to find the thirdparty from the contact
-				$resultfetchcontact = $contact->fetch('', null, '', $email);
+				$resultfetchcontact = $contact->fetch(0, null, '', $email);
 				if ($resultfetchcontact > 0 && $contact->fk_soc > 0) {
 					$thirdparty->fetch($contact->fk_soc);
 					$confattendee->fk_soc = $thirdparty->id;
@@ -434,7 +447,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			if ($resultfetchthirdparty <= 0 && !empty($societe)) {
 				// Try to find thirdparty from the company name only
-				$resultfetchthirdparty = $thirdparty->fetch('', $societe, '', '', '', '', '', '', '', '', '');
+				$resultfetchthirdparty = $thirdparty->fetch(0, $societe, '', '', '', '', '', '', '', '', '');
 				if ($resultfetchthirdparty > 0) {
 					// We found a unique result with that name only, so we set the fk_soc of attendee
 					$confattendee->fk_soc = $thirdparty->id;
@@ -484,11 +497,13 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				}
 			}
 			$modCodeClient = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
 			}
 			$thirdparty->code_client = $tmpcode;
+
 			$readythirdparty = $thirdparty->create($user);
 			if ($readythirdparty < 0) {
 				$error++;
@@ -505,7 +520,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 	}
 
-	if (!$error) {
+	if (!$error && is_object($thirdparty)) {
 		// If the registration needs a payment
 		if (!empty((float) $project->price_registration)) {
 			$outputlangs = $langs;
@@ -523,6 +538,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'));
 			}
 
+			$facture = null;
 			// Create the draft invoice for the payment
 			if ($resultprod < 0) {
 				$error++;
@@ -584,7 +600,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					$pu_ht = 0;
 					$price_base_type = 'TTC';
 
-					$result = $facture->addline($labelforproduct, $pu_ht, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', $price_base_type, $pu_ttc, 1);
+					$result = $facture->addline($labelforproduct, $pu_ht, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, 0, $price_base_type, $pu_ttc, 1);
 					if ($result <= 0) {
 						$confattendee->error = $facture->error;
 						$confattendee->errors = $facture->errors;
@@ -593,7 +609,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				}
 			}
 
-			if (!$error) {
+			if (!$error && is_object($facture)) {
 				$db->commit();
 
 				// Registration was recorded and invoice was generated, but payment not yet done.
@@ -645,6 +661,9 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
 				$msg     = $arraydefaultmessage->content;
+			} else {
+				$subject = null;
+				$msg = null;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
@@ -892,13 +911,19 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 			print '</td></tr>';
 		}
 
+		// Other attributes
+		$parameters['tpl_context'] = 'public';	// define template context to public
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 		$notetoshow = $note_public;
 		print '<tr><td>' . $langs->trans('Note') . '</td><td>';
 		if (getDolGlobalString('EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION')) {
-			$notetoshow = str_replace('\n', "\n", $conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION);
+			$notetoshow = str_replace('\n', "\n", getDolGlobalString('EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION'));
 		}
 		print '<textarea name="note_public" class="centpercent" rows="'.ROWS_9.'">'.dol_escape_htmltag($notetoshow, 0, 1).'</textarea>';
 		print '</td></tr>';
+
+
 
 		print "</table>\n";
 

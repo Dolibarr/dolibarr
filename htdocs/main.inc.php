@@ -511,7 +511,7 @@ if (GETPOST('theme', 'aZ09')) {
 }
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
-if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
+if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
 }
 
@@ -630,7 +630,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions (except the listed exceptions that are usually post for pre-actions and not real action) and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen'))) {	// We exclude some action that are not sensitive so legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editcontract', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen'))) {	// We exclude some action that are not sensitive so legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -1639,7 +1639,7 @@ if (!function_exists("llxHeader")) {
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
 
 		// top menu and left menu area
-		if ((empty($conf->dol_hide_topmenu) || GETPOSTINT('dol_invisible_topmenu')) && !GETPOSTINT('dol_openinpopup')) {
+		if ((empty($conf->dol_hide_topmenu) || GETPOSTINT('dol_invisible_topmenu')) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
 
@@ -1928,6 +1928,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('dol_hide_leftmenu')) {
 			$themeparam .= '&amp;dol_hide_leftmenu='.GETPOSTINT('dol_hide_leftmenu');
 		}
+		if (GETPOSTISSET('dol_openinpopup')) {
+			$themeparam .= '&amp;dol_openinpopup='.GETPOST('dol_openinpopup', 'aZ09');
+		}
 		if (GETPOSTISSET('dol_optimize_smallscreen')) {
 			$themeparam .= '&amp;dol_optimize_smallscreen='.GETPOSTINT('dol_optimize_smallscreen');
 		}
@@ -2148,7 +2151,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 				if ($enablebrowsernotif) {
 					print '<!-- Includes JS of Dolibarr (browser layout = '.$conf->browser->layout.')-->'."\n";
-					print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 				}
 			}
 
@@ -2309,17 +2312,49 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
-				$logouttext .= img_picto($langs->trans('Logout').' ('.$stringforfirstkey.' l)', 'sign-out', '', false, 0, 0, '', 'atoplogin valignmiddle');
+				$logouttext .= img_picto($langs->trans('Logout').' ('.$stringforfirstkey.' l)', 'sign-out', '', 0, 0, 0, '', 'atoplogin valignmiddle');
 				$logouttext .= '</a>';
 			} else {
 				$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
-				$logouttext .= img_picto($langs->trans('Logout').' ('.$stringforfirstkey.' l)', 'sign-out', '', false, 0, 0, '', 'atoplogin valignmiddle opacitymedium');
+				$logouttext .= img_picto($langs->trans('Logout').' ('.$stringforfirstkey.' l)', 'sign-out', '', 0, 0, 0, '', 'atoplogin valignmiddle opacitymedium');
 			}
 		}
 
+
 		print '<div class="login_block usedropdown">'."\n";
 
-		$toprightmenu .= '<div class="login_block_other">';
+
+		// Add block for tools
+		$toprightmenu .= '<div class="login_block_tools valignmiddle">';
+
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap" style="padding: 0px;">';
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
+			// Add the quick add object dropdown
+			$toprightmenu .= top_menu_quickadd();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
+		}
+
+		$toprightmenu .= '</div>';
+
+		$toprightmenu .= '</div>'."\n";		 // end div class="login_block_tools"
+
+
+		// Add block for other tools
+		$toprightmenu .= '<div class="login_block_other valignmiddle">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
 		$parameters = array();
@@ -2432,6 +2467,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
+		// Version
 		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolGlobalInt('MAIN_HIDE_VERSION') == 0) {
 			$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -2439,30 +2475,18 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		// Logout link
-		$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
+		}
 
 		$toprightmenu .= '</div>'; // end div class="login_block_other"
 
 
-		// Add login user link
+		// Add block for user photo and name
 		$toprightmenu .= '<div class="login_block_user">';
 
-		// Login name with photo and tooltip
 		$mode = -1;
 		$toprightmenu .= '<div class="inline-block login_block_elem login_block_elem_name nowrap centpercent" style="padding: 0px;">';
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-			// Add search dropdown
-			$toprightmenu .= top_menu_search();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-			// Add search dropdown
-			$toprightmenu .= top_menu_quickadd();
-		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
 
 		// Add user dropdown
 		$toprightmenu .= top_menu_user();
@@ -2501,6 +2525,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
+
+	// Return empty in some case
+	if ($conf->browser->name == 'textbrowser') {
+		return '';
+	}
 
 	$langs->load('companies');
 
@@ -2639,7 +2668,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$profilLink = '<a accesskey="u" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("YourUserFile").' ('.$stringforfirstkey.' u)').'"><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $user->id);
 	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").(is_object($user) ? ' - '.$user->getFullName($langs) : '').' ('.$stringforfirstkey.' v)', img_picto($langs->trans("PublicVirtualCardUrl").' ('.$stringforfirstkey.' v)', 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', "closeTopMenuLoginDropdown()", '', 'v');
-	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("Logout").' ('.$stringforfirstkey.' l)').'"><i class="fa fa-sign-out-alt padingright"></i><span class="hideonsmartphone">'.$langs->trans("Logout").'</span></a>';
+	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("Logout").' ('.$stringforfirstkey.' l)').'"><i class="fa fa-sign-out-alt pictofixedwidth"></i><span class="hideonsmartphone">'.$langs->trans("Logout").'</span></a>';
 
 	$profilName = $user->getFullName($langs).' ('.$user->login.')';
 	if (!empty($user->admin)) {
@@ -2723,14 +2752,14 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
         <!-- Code to show/hide the user drop-down -->
         <script>
 		function closeTopMenuLoginDropdown() {
-			//console.log("close login dropdown");	// This is call at each click on page, so we disable the log
+			console.log("close login dropdown");	// This is called at each click on page, so we disable the log
 			// Hide the menus.
             jQuery("#topmenu-login-dropdown").removeClass("open");
 		}
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
-				// console.log("Click somewhere on screen");
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+					/* console.log("click close login - we click outside"); */
 					closeTopMenuLoginDropdown();
                 }
             });
@@ -2766,7 +2795,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 }
 
 /**
- * Build the tooltip on top menu quick add
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
  *
  * @return  string                  HTML content
  */
@@ -2809,7 +2839,8 @@ function top_menu_quickadd()
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
-                    // Hide the menus.
+                    /* console.log("click close quick add - we click outside"); */
+					// Hide the menus.
                     $("#topmenu-quickadd-dropdown").removeClass("open");
                 }
             });
@@ -2847,6 +2878,50 @@ function top_menu_quickadd()
 
 	return $html;
 }
+
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set.
+ *
+ * @return  string                  HTML content
+ */
+function top_menu_importfile()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}
+
+	$html = '';
+
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + key for all browsers
+	$stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->os === 'macintosh') {
+		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
+	}
+
+	if (!empty($conf->use_javascript_ajax)) {
+		$html .= '<!-- div for upload file link -->
+    <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
+        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
+    </div>';
+	}
+
+	return $html;
+}
+
 
 /**
  * Generate list of quickadd items
@@ -3034,14 +3109,19 @@ function printDropdownQuickadd()
  */
 function top_menu_bookmark()
 {
-	global $langs, $conf, $db, $user;
+	global $langs, $conf, $user;
 
 	$html = '';
 
-	// Define $bookmarks
+	// Return empty in some case
 	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire')) {
+		return '';
+	}
+	/*
+	if ($conf->browser->name == 'textbrowser') {
 		return $html;
 	}
+	*/
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
@@ -3081,7 +3161,7 @@ function top_menu_bookmark()
 	        jQuery(document).ready(function() {
 	            jQuery(document).on("click", function(event) {
 	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-						//console.log("close bookmark dropdown - we click outside");
+						/* console.log("close bookmark dropdown - we click outside"); */
 	                    // Hide the menus.
 	                    $("#topmenu-bookmark-dropdown").removeClass("open");
 	                }
@@ -3350,7 +3430,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 				//$textsearch = $langs->trans("Search");
 				$textsearch = '<span class="fa fa-search paddingright pictofixedwidth"></span>'.$langs->trans("Search");
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					// @phan-suppress-next-line PhanEmptyForeach // array is really empty in else case.
@@ -3570,7 +3650,7 @@ function main_area($title = '')
 {
 	global $conf, $langs, $hookmanager;
 
-	if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup')) {
+	if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 		print '<div id="id-right">';
 	}
 
@@ -3700,7 +3780,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 		$ret .= '<div class="tagtd left">'.$title.'</div> ';
 	}
 	$ret .= '<div class="tagtd">';
-	$ret .= img_picto('', $img, '', false, 0, 0, '', 'paddingright width20');
+	$ret .= img_picto('', $img, '', 0, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat '.$htmlmorecss.'"';
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ($accesskey ? ' accesskey="'.$accesskey.'"' : '');
@@ -3825,7 +3905,7 @@ if (!function_exists("llxFooter")) {
 
 		print '</div> <!-- End div class="fiche" -->'."\n"; // End div fiche
 
-		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup')) {
+		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			print '</div> <!-- End div id-right -->'."\n"; // End div id-right
 		}
 

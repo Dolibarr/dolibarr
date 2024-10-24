@@ -77,6 +77,9 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 
 
 $datecontrat = '';
+$moreparam = '';
+$note_public = '';
+$note_private = '';
 $usehm = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : 0);
 
 // Security check
@@ -90,6 +93,8 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 $ret = 0;
+$pu_ht = null;  // Init for static analysis
+$pu_ttc = null;  // Init for static analysis
 
 // Load object
 if ($id > 0 || !empty($ref) && $action != 'add') {
@@ -318,6 +323,7 @@ if (empty($reshook)) {
 
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
+					'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
 
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 					$result = $srcobject->fetch($object->origin_id);
@@ -519,6 +525,8 @@ if (empty($reshook)) {
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
+			$price_base_type = '';
+			$price_min = '';
 			// Ecrase $tva_tx par celui du produit. TODO Remove this once vat selection is open
 			// Get and check minimum price
 			if ($idprod > 0) {
@@ -588,7 +596,7 @@ if (empty($reshook)) {
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
+					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				}
 
 				$fk_unit = $prod->fk_unit;
@@ -737,7 +745,9 @@ if (empty($reshook)) {
 			}
 			$objectline->fetch_optionals();
 
-			$objectline->oldcopy = dol_clone($objectline, 2);
+			$objectline->oldcopy = dol_clone($objectline, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		} else {
+			$objectline = null;
 		}
 
 		$db->begin();
@@ -1117,8 +1127,10 @@ if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 	$module = substr($module, 0, dol_strlen($module) - 4);
 }
 $result = dol_include_once('/core/modules/contract/'.$module.'.php');
+$modCodeContract = null;
 if ($result > 0) {
 	$modCodeContract = new $module();
+	'@phan-var-force ModelNumRefContracts $modCodeContract';
 }
 
 // Create
@@ -1160,6 +1172,7 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Propal|Facture $objectsrc';
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -1182,8 +1195,8 @@ if ($action == 'create') {
 		}
 	} else {
 		$projectid = GETPOSTINT('projectid');
-		$note_private = GETPOST("note_private");
-		$note_public = GETPOST("note_public");
+		$note_private = GETPOST("note_private", "alpha");
+		$note_public = GETPOST("note_public", "alpha");
 	}
 
 	$object->date_contrat = dol_now();
@@ -1228,7 +1241,7 @@ if ($action == 'create') {
 	} else {
 		print '<td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1444,7 +1457,7 @@ if ($action == 'create') {
 			$morehtmlref .= $object->ref;
 		} else {
 			$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
-			$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 2);
+			$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', null, 2);
 		}
 
 		$morehtmlref .= '<div class="refidno">';
@@ -1458,7 +1471,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
+			$morehtmlref .= ' <span class="otherlink">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -1672,7 +1685,7 @@ if ($action == 'create') {
 							$description = ''; // Already added into main visible desc
 						}
 
-						print $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 3, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+						print $form->textwithtooltip($text, $description, 3, 0, 0, $cursorline, 3, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 
 						print '</td>';
 					} else {
@@ -1680,7 +1693,7 @@ if ($action == 'create') {
 					}
 					// VAT
 					print '<td class="center">';
-					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), '%', $objp->info_bits);
+					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), true, $objp->info_bits);
 					print '</td>';
 					// Price
 					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
@@ -1776,7 +1789,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'view', array('class' => 'oddeven', 'style' => $moreparam, 'colspan' => $colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'view', array('class' => 'oddeven', 'style' => $moreparam, 'colspan' => $colspan, 'tdclass' => 'notitlefieldcreate'), '', '', 1);
 					}
 				} else {
 					// Line in mode update
@@ -1882,7 +1895,8 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'edit', array('style' => 'class="oddeven"', 'colspan' => $colspan), '', '', 1);
+
+						print $line->showOptionals($extrafields, 'edit', array('style' => 'class="oddeven"', 'colspan' => $colspan, 'tdclass' => 'notitlefieldcreate'), '', '', 1);
 					}
 				}
 
@@ -1962,7 +1976,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Disable");
 						}
 						if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'&token='.newToken().'">';
 							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
@@ -2257,31 +2271,29 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
+				$arrayforbutaction = array();
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
-					if ($user->hasRight('contrat', 'activer')) {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(), '', true, $params);
-					} else {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
-					}
+					$arrayforbutaction[] = array(
+						'url' => '/contrat/card.php?id='.$object->id.'&action=activate&token='.newToken(),
+						'label' => $langs->trans('ActivateAllContracts'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('contrat', 'activer'),
+						'enabled' => true,
+					);
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
-					if ($user->hasRight('contrat', 'desactiver')) {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', true, $params);
-					} else {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
-					}
+					$arrayforbutaction[] = array(
+						'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
+						'label' => $langs->trans('CloseAllContracts'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('contrat', 'desactiver'),
+						'enabled' => true,
+					);
+				}
 
-					//if (! $numactive)
-					//{
-					//}
-					//else
-					//{
-					//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
-					//}
+				if (count($arrayforbutaction)) {
+					unset($params['attr']['title']);
+					print dolGetButtonAction('', $langs->trans("Services"), 'default', $arrayforbutaction, '', true, $params);
 				}
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {

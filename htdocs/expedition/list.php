@@ -141,12 +141,12 @@ $arrayfields = array(
 	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'e.signed_status' =>array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
+	'e.signed_status' => array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
-	'e.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
-	'e.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position' => 135),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position' => 140),
 );
 
 // Extra fields
@@ -237,7 +237,7 @@ if (empty($reshook)) {
 		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
-		$lastid= 0;
+		$lastid = 0;
 		$lastref = '';
 
 		$db->begin();
@@ -348,7 +348,7 @@ if (empty($reshook)) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day'):''));
+							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
 						}
 
 						if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
@@ -446,8 +446,9 @@ if (empty($reshook)) {
 							);
 							if ($result > 0) {
 								$lineid = $result;
-								if (!empty($createbills_onebythird)) //increment rang to keep sending
+								if (!empty($createbills_onebythird)) { //increment rang to keep sending
 									$TFactThirdNbLines[$expd->socid]++;
+								}
 							} else {
 								$lineid = 0;
 								$error++;
@@ -557,7 +558,7 @@ if (empty($reshook)) {
 			if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 				$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 			}
-			if ($search_datedelivery_start)	{
+			if ($search_datedelivery_start) {
 				$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
 			}
 			if ($search_datedelivery_end) {
@@ -1335,6 +1336,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1571,11 +1573,11 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if (empty($object->trueWeight)) {
 				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
-				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
 			}
 			print '</td>';
 			if (!$i) {

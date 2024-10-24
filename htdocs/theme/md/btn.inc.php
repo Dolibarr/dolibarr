@@ -291,8 +291,10 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 TITLE BUTTON
  */
 
-div.pagination li:first-child a.btnTitle {
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle,
+table.table-fiche-title tr.titre td.col-center div.nowraponall a.btnTitle,
+table.table-fiche-title tr.titre td.col-right a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .btnTitle, a.btnTitle {
@@ -315,13 +317,16 @@ div.pagination li:first-child a.btnTitle {
 	text-decoration: none;
 	position: relative;
 	margin: 0 0 0 10px;
-	min-width: 80px;
 	text-align: center;
 	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: #fbfbfb; */
+}
+/* *:not(.paginationafterarrows) > .btnTitle, *:not(.paginationafterarrows) > a.btnTitle { */
+.btnTitle, a.btnTitle {
+	min-width: 60px;
 }
 
 a.btnTitle.btnTitleSelected {
