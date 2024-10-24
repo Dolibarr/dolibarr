@@ -536,6 +536,22 @@ if ($conf->use_javascript_ajax) {
 print "</td>";
 print "</tr>";
 
+// Set holiday decrease at the end of month
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt")."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_OF_MONTH', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	if (getDolGlobalString('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_OF_MONTH=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_OF_MONTH=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+}
+print "</td>";
+print "</tr>";
+
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");

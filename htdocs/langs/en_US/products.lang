@@ -349,6 +349,10 @@ QtyRecalculatedWithPackaging=The quantity of the line were recalculated accordin
 
 #Attributes
 Attributes=Attributes
+ProductAttributeExtrafields=Variant attributes extrafields
+ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
+ProductAttributeValueExtrafields=Variant attributes values extrafields
+ProductAttributeValueExtrafieldsSetup=Setup of Variant attributes values extrafields
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products
 ProductAttributeName=Variant attribute %s
@@ -396,6 +400,8 @@ ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
 ProductsPricePerCustomer=Product prices per customers
+ProductLevelExtraFields=Additional Attributes (Level price)
+ProductCustomerExtraFields=Additional Attributes (Customer price)
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
 AmountUsedToUpdateWAP=Unit amount to use to update the Weighted Average Price
@@ -439,3 +445,4 @@ WarningLineProductNotToSell=Product or service "%s" is not to sell and was clone
 PriceLabel=Price label
 GenerateImage=Generate image
 GenerateWithAI=Generate with AI
+PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)

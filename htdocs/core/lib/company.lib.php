@@ -10,7 +10,7 @@
  * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@
  * Return array of tabs to used on pages for third parties cards.
  *
  * @param 	Societe	$object		Object company shown
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_prepare_head(Societe $object)
 {
@@ -121,7 +121,7 @@ function societe_prepare_head(Societe $object)
 		$head[$h][2] = 'customer';
 		$h++;
 
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$langs->load("products");
 			// price
 			$head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
@@ -477,7 +477,7 @@ function societe_prepare_head(Societe $object)
  * Return array of tabs to used on page
  *
  * @param	Object	$object		Object for tabs
- * @return	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_prepare_head2($object)
 {
@@ -503,7 +503,7 @@ function societe_prepare_head2($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function societe_admin_prepare_head()
 {
@@ -556,13 +556,13 @@ function societe_admin_prepare_head()
  *    Return country label, code or id from an id, code or label
  *
  *    @param	int|string	$searchkey      Id or code of country to search
- *    @param    string		$withcode   	'' or '0' = Return label,
- *    										'1'=Return code + label,
- *    										'2'=Return code from id,
- *    										'3'=Return id from code,
- * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param	DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param	Translate	$outputlangs	Langs object for output translation
+ *    @param    ''|'0'|'1'|'2'|'3'|'all'	$withcode   	'' or '0' = Return label,
+ *                                                          '1'=Return code + label,
+ *                                                          '2'=Return code from id,
+ *                                                          '3'=Return id from code,
+ *                                                          'all'=Return array('id'=>,'code'=>,'label'=>)
+ *    @param	?DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param	?Translate	$outputlangs	Langs object for output translation
  *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return	int|string|array{id:int,code:string,label:string}	Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
@@ -1026,7 +1026,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc on ec.fk_c_type_contact = tc.rowid";
 			$sql .= " WHERE sc.fk_soc = ".((int) $object->id);
 			$sql .= " AND p.entity IN (".getEntity('project').")";
-			$sql .= " AND tc.element = 'project'";
+			$sql .= " AND tc.element = 'project' AND tc.source = 'external'";
 			$sql .= " ORDER BY p.dateo DESC";
 
 			$result = $db->query($sql);
@@ -1567,7 +1567,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -1668,7 +1668,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -1737,19 +1737,19 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  *    	Show html area with actions (done or not, ignore the name of function).
  *      Note: Global parameter $param must be defined.
  *
- * 		@param	Conf		       $conf		   Object conf
- * 		@param	Translate	       $langs		   Object langs
- * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
- * 		@param	?Contact		       $objcon		   Filter on object contact to filter events on a contact
- *      @param  int			       $noprint        Return string but does not output it
- *      @param  string|string[]    $actioncode     Filter on actioncode
- *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
- *      @param  array              $filters        Filter on other fields
- *      @param  string             $sortfield      Sort field
- *      @param  string             $sortorder      Sort order
- *      @param	string			   $module		   You can add module name here if elementtype in table llx_actioncomm is objectkey@module
- *      @return	?string							   Return html part or void if noprint is 1
+ * 		@param	Conf				$conf			Object conf
+ * 		@param	Translate			$langs			Object langs
+ * 		@param	DoliDB				$db				Object db
+ * 		@param	?CommonObject		$filterobj		Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
+ * 		@param	?Contact			$objcon			Filter on object contact to filter events on a contact
+ *      @param  int<0,1>			$noprint		Return string but does not output it
+ *      @param  string|string[]		$actioncode		Filter on actioncode
+ *      @param  'done'|'todo'|''	$donetodo		Filter on event 'done' or 'todo' or ''=nofilter (all).
+ *      @param  array				$filters		Filter on other fields
+ *      @param  string				$sortfield		Sort field
+ *      @param  string				$sortorder		Sort order
+ *      @param	string				$module			You can add module name here if elementtype in table llx_actioncomm is objectkey@module
+ *      @return	?string								Return html part or void if noprint is 1
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
@@ -1922,6 +1922,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'invoice_supplier'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
 				if ($filterobj->id) {
@@ -1977,6 +1982,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		if (is_array($actioncode) && !empty($actioncode)) {
 			$sql .= ' AND (';
 			foreach ($actioncode as $key => $code) {
+				if ((string) $code == '-1') {
+					continue;
+				}
 				if ($key != 0) {
 					$sql .= " OR ";
 				}
@@ -1985,7 +1993,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				}
 			}
 			$sql .= ')';
-		} elseif (!empty($actioncode)) {
+		} elseif (!empty($actioncode) && $actioncode != '-1') {
 			addEventTypeSQL($sql, $actioncode);
 		}
 
@@ -2173,8 +2181,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '<td class="liste_titre"></td>';
 		// Type
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'combolargeelem minwidth100 maxwidth150');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth100 maxwidth150', 1);
 		$out .= '</td>';
+		// Label
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
@@ -2193,7 +2202,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 		}
-		if ($donetodo) {
+		if ($donetodo && $filterobj !== null) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
 				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
@@ -2517,8 +2526,13 @@ function show_subsidiaries($conf, $langs, $db, $object)
  */
 function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 {
-	global $conf, $db;
+	global $db;
+
 	// Condition on actioncode
+
+	if ((string) $actioncode == '-1') {
+		return $sql;
+	}
 
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {

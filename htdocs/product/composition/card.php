@@ -8,6 +8,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -314,7 +315,7 @@ if ($id > 0 || !empty($ref)) {
 		$tmpid = $id;
 		if (!empty($conf->use_javascript_ajax)) {
 			$nboflines = $prods_arbo;
-			$table_element_line='product_association';
+			$table_element_line = 'product_association';
 
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
@@ -474,7 +475,7 @@ if ($id > 0 || !empty($ref)) {
 
 					// Hook fields
 					$parameters = array();
-					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
 					// Qty + IncDec
@@ -529,7 +530,7 @@ if ($id > 0 || !empty($ref)) {
 
 					// Hook fields
 					$parameters = array();
-					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
 					// Qty in kit
@@ -693,6 +694,7 @@ if ($id > 0 || !empty($ref)) {
 								$prods_arbo = $prod_arbo->get_arbo_each_prod();
 								if (count($prods_arbo) > 0) {
 									foreach ($prods_arbo as $key => $value) {
+										// @phan-suppress-next-line PhanTypeInvalidDimOffset
 										if ($value[1] == $id) {
 											$is_pere = 1;
 										}

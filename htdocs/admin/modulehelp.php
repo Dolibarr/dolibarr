@@ -93,6 +93,7 @@ $dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
+$familyinfo = array();
 
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -163,9 +164,6 @@ foreach ($modulesdir as $dir) {
 
 									// Gives the possibility to the module, to provide his own family info and position of this family
 									if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
-										if (!is_array($familyinfo)) {
-											$familyinfo = array();
-										}
 										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 										$familykey = key($objMod->familyinfo);
 									} else {
@@ -352,8 +350,6 @@ if ($mode == 'desc') {
 
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("IdModule").':</span> '.$objMod->numero;
 
-	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
-
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
 		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
@@ -383,8 +379,10 @@ if ($mode == 'desc') {
 		} elseif (!empty($objMod->enabled_bydefault)) {
 			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("EnabledByDefaultAtInstall").')</span>';
 		}
-		$text .= '<br>';
 	}
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
+
 	$text .= '<br>';
 
 	$moduledesclong = $objMod->getDescLong();

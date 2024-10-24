@@ -54,13 +54,17 @@ if ($id > 0) {
 	}
 }
 
+$permissiontoread = $user->hasRight('don', 'lire');
+$permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
+
 
 /*
  * Actions
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', 'supprimer')) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -79,6 +83,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', '
 /*
  * View
  */
+
 $title = $langs->trans("Payment");
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card');
 

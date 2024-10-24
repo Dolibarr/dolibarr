@@ -7,6 +7,7 @@
  * Copyright (C) 2009       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,7 +305,7 @@ class MailmanSpip
 	/**
 	 *  Subscribe an email to all mailing-lists
 	 *
-	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
+	 *	@param	Adherent|stdClass	$object		Object with data (->email, ->pass, ->element, ->type)
 	 *  @param	string		$listes    	To force mailing-list (string separated with ,)
 	 *  @return	int		  				Return integer <0 if KO, >=0 if OK
 	 */
@@ -374,7 +375,7 @@ class MailmanSpip
 	 *  Unsubscribe an email from all mailing-lists
 	 *  Used when a user is resiliated
 	 *
-	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
+	 *	@param	Adherent|stdClass	$object		Object with data (->email, ->pass, ->element, ->type)
 	 *  @param	string	    $listes     To force mailing-list (string separated with ,)
 	 *  @return int         		    Return integer <0 if KO, >=0 if OK
 	 */

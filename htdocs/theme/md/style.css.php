@@ -60,6 +60,41 @@ require __DIR__.'/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) {
 	return;
 }
+// Types from theme_vars
+'
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeWarning
+@phan-var-force string $butactionbg
+@phan-var-force string $colorbackbody
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinebreak
+@phan-var-force string $colorbacklineimpair1
+@phan-var-force string $colorbacklineimpair2
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colorbacklinepair2
+@phan-var-force string $colorbacklinepairchecked
+@phan-var-force string $colorbacklinepairhover
+@phan-var-force string $colorbacktabactive
+@phan-var-force string $colorbacktabcard1
+@phan-var-force string $colorbacktitle1
+@phan-var-force string $colorbackvmenu1
+@phan-var-force string $colorblind_deuteranopes_textSuccess
+@phan-var-force string $colorblind_deuteranopes_textWarning
+@phan-var-force string $colortext
+@phan-var-force string $colortextlink
+@phan-var-force string $colortexttitle
+@phan-var-force string $colortexttitlelink
+@phan-var-force string $colortexttitlenotab
+@phan-var-force string $colortexttitlenotab2
+@phan-var-force string $colortopbordertitle1
+@phan-var-force string $fontsize
+@phan-var-force string $textDanger
+@phan-var-force string $textSuccess
+@phan-var-force string $textWarning
+@phan-var-force string $textbutaction
+@phan-var-force string $toolTipBgColor
+@phan-var-force string $toolTipFontColor
+';
 
 session_cache_limiter('public');
 
@@ -70,7 +105,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
-	$user->fetch('', $_SESSION['dol_login'], '', 1);
+	$user->fetch(0, $_SESSION['dol_login'], '', 1);
 	$user->loadRights();
 	//$user->loadPersonalConf();
 
@@ -131,7 +166,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-$useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
+$useboldtitle = getDolGlobalInt('THEME_ELDY_USEBOLDTITLE');
 $borderwidth = 2;
 $userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 
@@ -1073,6 +1108,9 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.lineheightsmall {
+	line-height: 1.2em;
+}
 .large {
 	font-size: 125%;
 }
@@ -1190,11 +1228,23 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingright {
 	padding-<?php print $right; ?>: 0;
 }
+.nopaddingtop {
+	padding-top: 0;
+}
+.nopaddingbottom {
+	padding-bottom: 0;
+}
 .nopaddingleftimp {
 	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
 	padding-<?php print $right; ?>: 0 !important;
+}
+.nopaddingtopimp {
+	padding-top: 0 !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -1862,6 +1912,11 @@ select.flat.selectlimit {
 .fa-15 {
 	font-size: 1.5em;
 }
+
+.fa-map-marked-alt:before {
+	font-size: 0.85em;
+}
+
 .text-security {
 	-webkit-text-security: disc;
 }
@@ -1907,6 +1962,20 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 }
 .flex-item {
 	flex:1;
+}
+.flex-item-uploadfile {
+	border: 2px solid #888;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center;
+	min-height: 40px;
+	background: #eee;
+	padding: 20px 10px 20px 10px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
+	width: 280px;
+	margin: 20px 20px 20px 20px;
 }
 
 .flexcontainer {
@@ -2051,6 +2120,7 @@ tr.nobottom td {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -2088,6 +2158,7 @@ tr.nobottom td {
 /* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
+	.titlefieldmax45 { min-width: 100px; }
 	.maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
@@ -2259,6 +2330,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.maxwidth250onsmartphone { max-width: 250px; }
 	.maxwidth300onsmartphone { max-width: 300px; }
 	.maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth150 { min-width: 110px !important; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
@@ -2380,7 +2452,7 @@ td.showDragHandle {
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
-	padding-top: 16px;
+	padding-top: 12px;
 <?php } ?>
 }
 .bodyforlist #id-right {
@@ -2562,7 +2634,7 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;';
 	} ?>
 	margin-bottom: 15px;
@@ -2709,12 +2781,11 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.col-picto {
-	color: #bbb;
+	color: var(--colortexttitlenotab);
 	opacity: 0.9;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
-	margin-bottom: 4px;
 }
 .pictoobjectwidth {
 	width: 14px;
@@ -2766,6 +2837,10 @@ img.hideonsmartphone.pictoactionview {
 	text-align: start;
 	width: 20px;
 	/* padding-right: 0; */
+}
+img.pictofixedwidth {
+	width: 18px;
+	padding-right: 2px;
 }
 
 .colorthumb {
@@ -3162,78 +3237,78 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
-								// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+										// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-								$moduletomainmenu = array(
-									'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
-									'produit' => 'products', 'service' => 'products', 'stock' => 'products',
-									'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
-									'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
-									'fournisseur' => 'companies',
-									'barcode' => '', 'fckeditor' => '', 'categorie' => '',
-								);
-								$mainmenuused = 'home';
-								foreach ($conf->modules as $val) {
-									$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-								}
-								$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
-
-								$generic = 1;
-								// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-								$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-								// Put here list of menu entries we are sure we don't want
-								$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-								foreach ($mainmenuusedarray as $val) {
-									if (empty($val) || in_array($val, $divalreadydefined)) {
-										continue;
-									}
-									if (in_array($val, $divnotrequired)) {
-										continue;
-									}
-									//print "XXX".$val;
-
-									$found = 0;
-									$url = '';
-									$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
-									$iconformodule = getDolGlobalString($constformoduleicon);
-									if ($iconformodule) {
-										if (preg_match('/^fa\-/', $iconformodule)) {
-											// This is a fa icon
-										} else {
-											$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+										$moduletomainmenu = array(
+											'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
+											'produit' => 'products', 'service' => 'products', 'stock' => 'products',
+											'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
+											'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
+											'fournisseur' => 'companies',
+											'barcode' => '', 'fckeditor' => '', 'categorie' => '',
+										);
+										$mainmenuused = 'home';
+										foreach ($conf->modules as $val) {
+											$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
 										}
-										$found = 1;
-									} else {
-										// Search img file in module dir
-										foreach ($conf->file->dol_document_root as $dirroot) {
-											if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-												$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+										$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
+
+										$generic = 1;
+										// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+										$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+										// Put here list of menu entries we are sure we don't want
+										$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+										foreach ($mainmenuusedarray as $val) {
+											if (empty($val) || in_array($val, $divalreadydefined)) {
+												continue;
+											}
+											if (in_array($val, $divnotrequired)) {
+												continue;
+											}
+											//print "XXX".$val;
+
+											$found = 0;
+											$url = '';
+											$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+											$iconformodule = getDolGlobalString($constformoduleicon);
+											if ($iconformodule) {
+												if (preg_match('/^fa\-/', $iconformodule)) {
+													// This is a fa icon
+												} else {
+													$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+												}
 												$found = 1;
-												break;
+											} else {
+												// Search img file in module dir
+												foreach ($conf->file->dol_document_root as $dirroot) {
+													if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+														$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+														$found = 1;
+														break;
+													}
+												}
+											}
+
+											// Output entry for menu icon in CSS
+											if (!$found) {
+												print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+												print 'div.mainmenu.'.$val.' span::before {'."\n";
+												print 'content: "\f249";'."\n";
+												print '}'."\n";
+												$generic++;
+											} else {
+												if ($url) {
+													print "div.mainmenu.".$val." {\n";
+													print "	background-image: url(".$url.");\n";
+													print " background-position-y: 3px;\n";
+													print " filter: saturate(0);\n";
+													print "}\n";
+												} else {
+													print '/* icon for module '.$val.' is a fa icon */'."\n";
+												}
 											}
 										}
-									}
-
-									// Output entry for menu icon in CSS
-									if (!$found) {
-										print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-										print 'div.mainmenu.'.$val.' span::before {'."\n";
-										print 'content: "\f249";'."\n";
-										print '}'."\n";
-										$generic++;
-									} else {
-										if ($url) {
-											print "div.mainmenu.".$val." {\n";
-											print "	background-image: url(".$url.");\n";
-											print " background-position-y: 3px;\n";
-											print " filter: saturate(0);\n";
-											print "}\n";
-										} else {
-											print '/* icon for module '.$val.' is a fa icon */'."\n";
-										}
-									}
-								}
-								// End of part to add more div class css
+										// End of part to add more div class css
 }	// End test if $dol_hide_topmenu?>
 
 
@@ -3451,6 +3526,7 @@ div.login a:hover {
 }
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 15px; }
+div.login_block_tools { padding-top: 0px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -3513,10 +3589,10 @@ img.login, img.printer, img.entity {
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	/* border-radius: 8px; */
-	width: 20px;
-	height: 20px;
+	width: <?php echo $disableimages ? '26' : '30'; ?>px;
+	height: <?php echo $disableimages ? '26' : '30'; ?>px;
+	border-radius: 50%;
 	background-size: contain;
-	vertical-align: text-bottom;
 	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -3665,15 +3741,12 @@ div.blockvmenulogo
 	max-width: 100px;
 	vertical-align: middle;
 }
-.backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
-	border-radius: 5px;
-}
 .menulogocontainer img.mycompany {
 	object-fit: contain;
 	width: inherit;
 	height: inherit;
 	image-rendering: -webkit-optimize-contrast;
+	border-radius: 3px;
 }
 #mainmenutd_companylogo::after {
 	content: unset;
@@ -3859,7 +3932,7 @@ div.tabs {
 	height:100%;
 }
 div.tabsElem {
-	margin-top: 6px;
+	margin-top: 12px;
 }		/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
 	font-weight: normal !important;
@@ -3905,59 +3978,7 @@ div.tabBar table.tableforservicepart2:last-child {
 .tableforservicepart1 .tdhrthin {
 	height: unset;
 }
-/* Payment Screen : Pointer cursor in the autofill image */
-.AutoFillAmount {
-	cursor:pointer;
-}
 
-/* ============================================================================== */
-/* Buttons for actions                                                            */
-/* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-}
-div.tabsAction {
-	margin: 20px 0em 20px 0em;
-	padding: 0em 0em;
-	text-align: right;
-}
-div.tabsActionNoBottom {
-	margin-bottom: 0px;
-}
-div.tabsAction > a {
-	margin-bottom: 16px !important;
-}
-
-div.popuptabset {
-	padding: 6px;
-	background: #fff;
-	border: 1px solid #888;
-}
-div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-a.tabTitle {
-	color:rgba(0,0,0,.5);
-	margin-<?php print $right; ?>: 10px;
-	text-shadow:1px 1px 1px #ffffff;
-	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
-	padding: 4px 6px 2px 6px;
-	margin: 0px 6px;
-	text-decoration: none;
-	white-space: nowrap;
-}
-.tabTitleText {
-	display: none;
-}
-.imgTabTitle {
-	max-height: 14px;
-}
 div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
@@ -3967,7 +3988,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 13px 12px;
+	padding: 10px 13px 10px;
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
@@ -4024,6 +4045,63 @@ span.tabspan {
 	border-top: 1px solid #D8D8D8;
 }
 
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
+}
+
+
+/* ============================================================================== */
+/* Buttons for actions                                                            */
+/* ============================================================================== */
+
+div.divButAction {
+	margin-bottom: 1.4em;
+}
+div.tabsAction {
+	margin: 20px 0em 20px 0em;
+	padding: 0em 0em;
+	text-align: right;
+}
+div.tabsActionNoBottom {
+	margin-bottom: 0px;
+}
+div.tabsAction > a {
+	margin-bottom: 16px !important;
+}
+
+div.popuptabset {
+	padding: 6px;
+	background: #fff;
+	border: 1px solid #888;
+}
+div.popuptab {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+a.tabTitle {
+	color:rgba(0,0,0,.5);
+	margin-<?php print $right; ?>: 10px;
+	text-shadow:1px 1px 1px #ffffff;
+	font-family: <?php print $fontlist ?>;
+	font-weight: normal;
+	padding: 4px 6px 2px 6px;
+	margin: 0px 6px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.tabTitleText {
+	display: none;
+}
+.imgTabTitle {
+	max-height: 14px;
+}
+
+
+
 /* ============================================================================== */
 /* Buttons for actions                                                            */
 /* ============================================================================== */
@@ -4070,7 +4148,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
 }
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
+	font-size: 0.8em;
+	font-weight: normal !important;
+}
+
 input.buttonlink {
 	color: var(--colortextlink);
 	background-color: transparent;
@@ -5088,6 +5173,18 @@ img.boxhandle, img.boxclose {
 	border: 1px solid #888;
 	padding: 16px;
 }
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
+}
 
 
 
@@ -5103,16 +5200,19 @@ div.ok {
   color: #114466;
 }
 
-/* Info admin */
-div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+div.info, div.warning, div.error {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
+	border-radius: 1px;
+}
+
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
-	border-radius: 3px;
 }
 
 /* Warning message */
@@ -5120,13 +5220,7 @@ div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
 div.warning {
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
 	background: #fcf8e3;
-	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -5135,13 +5229,7 @@ div.warning a, div.info a, div.error a {
 /* Error message */
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
 	background: #EFCFCF;
-	border-radius: 3px;
 }
 
 
@@ -5255,11 +5343,14 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+table.table-fiche-title tr.toptitle {
+	height: 60px;
+}
 div.titre {
 	font-size: 14px;
 	text-decoration: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	/*padding-top: 5px;
+	padding-bottom: 5px;*/
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
@@ -5277,15 +5368,19 @@ div.titre {
 }
 
 table.notopnoleftnoright.table-fiche-title {
-	margin-bottom: 14px;
+	margin-bottom: 15px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
 }
 
-
+/*
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
+}
+*/
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
 }
 
 div.backgreypublicpayment {
@@ -6178,6 +6273,16 @@ div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
 }
 
+/* CSS To hide the picto menu on smartphone, except when maximize */
+@media only screen and (max-width: 768px)
+{
+	.cke_inner:not(.cke_maximized) .cke_toolbar_separator,
+	.cke_inner:not(.cke_maximized) .cke_combo,
+	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
+		display: none;
+	}
+}
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
@@ -6660,10 +6765,6 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
-span#select2-taskid-container[title^='--'] {
-	opacity: 0.3;
-}
-
 input.select2-input {
 	border-bottom: none ! important;
 }
@@ -6874,7 +6975,17 @@ a span.select2-chosen
 	max-height: 400px;
 }
 
+/* special case for some select2 component */
+
+.selecttype span.select2-dropdown.ui-dialog {
+	min-width: 200px;
+}
+span#select2-taskid-container[title^='--'] {
+	opacity: 0.3;
+}
+
 /* Special case for the select2 add widget */
+
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
 	text-align: <?php echo $left; ?>;
 	opacity: 0.3;
@@ -6890,7 +7001,9 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 .select2-container .select2-selection--single .select2-selection__rendered {
 	padding-left: 6px;
 }
+
 /* Style used before the select2 js is executed on boxcombo */
+
 #boxbookmark.boxcombo, #boxcombo.boxcombo {
 	text-align: left;
 	opacity: 0.3;
@@ -8181,7 +8294,7 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2', round($nbtopmenuentries * 69, 0) + 130); ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2', round($nbtopmenuentries * 66, 0) + 220); ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -8205,12 +8318,32 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: 570px)
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 44, 0) + 320); ?>px)	/* reduction 2 */
 {
+	div.login_block_tools > div {
+		position: unset;
+	}
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-login-dropdown {
+		position: unset;
+	}
+
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown {
+		line-height: unset;
+	}
+
+	/*
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 		top: auto;
 	}
+	*/
 
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
@@ -8228,9 +8361,15 @@ table.jPicker {
 		padding-right: 1px;
 	}
 
+	/*
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	*/
+	div.login_block_other, div.login_block_tools {
+		display: inline-block;
+	}
+
 	.loginbuttonexternal {
 		width: 260px;
 	}

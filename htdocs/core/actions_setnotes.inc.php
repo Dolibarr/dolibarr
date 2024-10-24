@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 			}
 
 			if ($result < 0) {
-				dol_print_error($db, $result);
+				dol_print_error($db, $object->error, $object->errors);
 			}
 		}
 	}

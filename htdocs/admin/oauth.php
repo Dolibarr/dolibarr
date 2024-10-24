@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Frederic France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  *
@@ -178,9 +178,9 @@ if ($action == 'confirm_delete') {
 			$callbacktodel .= '/core/modules/oauth/google_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_GITHUB') {
 			$callbacktodel .= '/core/modules/oauth/github_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
-		} elseif ($label == 'OAUTH_STRIPE_LIVE') {
+		} elseif ($label == 'OAUTH_STRIPELIVE') {
 			$callbacktodel .= '/core/modules/oauth/stripelive_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
-		} elseif ($label == 'OAUTH_STRIPE_TEST') {
+		} elseif ($label == 'OAUTH_STRIPETEST') {
 			$callbacktodel .= '/core/modules/oauth/stripetest_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_MICROSOFT') {
 			$callbacktodel .= '/core/modules/oauth/microsoft_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
@@ -249,9 +249,11 @@ print dol_get_fiche_head($head, 'services', '', -1, '');
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
 
+$list = getAllOauth2Array();
+
+
 print '<select name="provider" id="provider" class="minwidth150">';
 print '<option name="-1" value="-1">'.$langs->trans("OAuthProvider").'</option>';
-$list = getAllOauth2Array();
 // TODO Make a loop directly on getSupportedOauth2Array() and remove getAllOauth2Array()
 foreach ($list as $key) {
 	$supported = 0;

@@ -8,7 +8,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,9 +145,7 @@ if (empty($reshook)) {
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
-		$object->domiciliation = $object->address;	// deprecated
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -263,7 +261,6 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -406,7 +403,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="clos" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -532,7 +529,8 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td>';
-	print $form->selectDate('', 're', 0, 0, 0, 'formsoc');
+	$startdate = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT('reday'), GETPOSTINT("reyear"));
+	print $form->selectDate($startdate, 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -657,7 +655,7 @@ if ($action == 'create') {
 
 	// Accountancy journal
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';

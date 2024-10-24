@@ -118,17 +118,25 @@ class mod_syslog_file extends LogHandler
 			$tmp = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
 		}
 
+		// Deprecated, use instead the constant 'SYSLOG_FILE_ADDSUFFIX' and/or 'SYSLOG_FILE_ONEPERIP'
 		if (getDolGlobalString('SYSLOG_FILE_ONEPERSESSION')) {
 			if (is_numeric(getDolGlobalString('SYSLOG_FILE_ONEPERSESSION'))) {
 				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
 					$suffixinfilename .= '_'.session_name();
 				}
 				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 2) {	// file depend on instance session key name + ip so nearly per user
-					$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+					$suffixinfilename .= '_'.session_name().'_'.getUserRemoteIP();
 				}
 			} else {
 				$suffixinfilename .= '_' . getDolGlobalString('SYSLOG_FILE_ONEPERSESSION');
 			}
+		}
+
+		if (defined('SYSLOG_FILE_ADDSUFFIX')) {
+			$suffixinfilename .= '_' . constant('SYSLOG_FILE_ADDSUFFIX');
+		}
+		if (defined('SYSLOG_FILE_ADDIP')) {
+			$suffixinfilename .= '_'.getUserRemoteIP();
 		}
 
 		return $suffixinfilename ? preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;

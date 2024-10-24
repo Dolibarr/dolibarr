@@ -149,7 +149,7 @@ function fetchConnectionToken() {
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
 $invoice = new Facture($db);
@@ -606,7 +606,7 @@ array(
 $numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
-	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
 }
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').')">'.($numpad == 0 ? '7' : '10').'</button>';

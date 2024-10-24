@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +214,7 @@ if ($massaction == 'presend') {
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	print dol_get_fiche_head(null, '', '');
+	print dol_get_fiche_head([], '', '');
 
 	// Create mail form
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -414,8 +415,11 @@ if ($massaction == 'preapproveleave') {
 }
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
+if (empty($toselect)) {
+	$toselect=[];
+}
 $parameters = array(
-	'toselect' => isset($toselect) ? $toselect : array(),
+	'toselect' => &$toselect,
 	'uploaddir' => isset($uploaddir) ? $uploaddir : null,
 	'massaction' => $massaction
 );

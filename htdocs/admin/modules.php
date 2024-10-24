@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Juanjo Menent			<jmenent@2byte.es>
@@ -42,6 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
+'
+@phan-var-force string $dolibarr_main_url_root_alt
+';
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
@@ -52,7 +56,7 @@ if (GETPOSTISSET('mode')) {
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 	}
 } else {
-	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
+	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -161,7 +165,7 @@ if (GETPOST('buttonreset', 'alpha')) {
 
 if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
-
+	$modulenameval = '';
 	// $original_file should match format module_modulename-x.y[.z].zip
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
@@ -225,13 +229,68 @@ if ($action == 'install' && $allowonlineinstall) {
 					}
 				}
 
-				if (!$error) {
-					// TODO Make more test
-				}
-
 				dol_syslog("Uncompress of module file is a success.");
 
-				// We check if this is a metapackage
+				// Load module into $objMod
+				/*
+				$modulesdir = array($modulenamedir.'/core/modules/');
+				foreach ($modulesdir as $dir) {
+					// Load modules attributes in arrays (name, numero, orders) from dir directory
+					//print $dir."\n<br>";
+					dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+					$handle = @opendir($dir);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							print $dir." ".$file."\n<br>";
+							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = substr($file, 0, dol_strlen($file) - 10);
+								if ($modName) {
+									try {
+										$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+										$modName = substr($file, 0, dol_strlen($file) - 10);
+										if ($modName) {
+											if (class_exists($modName)) {
+												$objMod = new $modName($db);
+												'@phan-var-force DolibarrModules $objMod';
+
+												//var_dump($objMod);
+											}
+										}
+									} catch(Exception $e) {
+										// Nothing done
+									}
+								}
+							}
+						}
+					}
+				}
+				*/
+
+				// Check if module is in the remote malware list
+				if (!$error) {
+					if (GETPOST('checkforcompliance') == 'on') {
+						try {
+							$res = include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+							$dolibarrmodule = new DolibarrModules($db);
+							$checkRes = $dolibarrmodule->checkForcompliance($modulename);
+
+							if (!is_numeric($checkRes) && $checkRes != '') {
+								$langs->load("errors");
+								setEventMessages($modulename.' : '.$langs->trans($checkRes), null, 'errors');
+							}
+
+							$error++;
+						} catch (Exception $e) {
+							// Nothing done
+						}
+					}
+				}
+
+				if (!$error) {
+					// TODO Make more test ???
+				}
+
+				// We check if this is a metapackage (and wecomplete with child packages)
 				$modulenamearrays = array();
 				if (dol_is_file($modulenamedir.'/metapackage.conf')) {
 					// This is a meta package
@@ -241,32 +300,34 @@ if ($action == 'install' && $allowonlineinstall) {
 				$modulenamearrays[$modulename] = $modulename;
 				//var_dump($modulenamearrays);exit;
 
-				// Lop on each package of the metapackage
-				foreach ($modulenamearrays as $modulenameval) {
-					if (strpos($modulenameval, '#') === 0) {
-						continue; // Discard comments
-					}
-					if (strpos($modulenameval, '//') === 0) {
-						continue; // Discard comments
-					}
-					if (!trim($modulenameval)) {
-						continue;
-					}
-
-					// Now we install the module
-					if (!$error) {
-						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
-						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
-						if (!dol_is_dir($submodulenamedir)) {
-							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+				// Lop on each packages (can have several if package is a metapackage)
+				if (! $error) {
+					foreach ($modulenamearrays as $modulenameval) {
+						if (strpos($modulenameval, '#') === 0) {
+							continue; // Discard comments
 						}
-						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
-						$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
-						if ($result <= 0) {
-							dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
-							$error++;
+						if (strpos($modulenameval, '//') === 0) {
+							continue; // Discard comments
+						}
+						if (!trim($modulenameval)) {
+							continue;
+						}
+
+						// Now we install the module
+						if (!$error) {
+							@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
+							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
+							if (!dol_is_dir($submodulenamedir)) {
+								$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+							}
+							dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
+							$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+							if ($result <= 0) {
+								dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
+								$error++;
+							}
 						}
 					}
 				}
@@ -278,7 +339,17 @@ if ($action == 'install' && $allowonlineinstall) {
 	}
 
 	if (!$error) {
-		$message = $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+		$searchParams = array(
+			'search_keyword' => $modulenameval,
+			'search_status' => '-1',
+			'search_nature' => '-1',
+			'search_version' => '-1'
+		);
+		$queryString = http_build_query($searchParams);
+		$redirectUrl = DOL_URL_ROOT . '/admin/modules.php?' . $queryString;
+
+		$message = $langs->trans("SetupIsReadyForUse", $redirectUrl, $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+
 		setEventMessages($message, null, 'warnings');
 	}
 } elseif ($action == 'install' && !$allowonlineinstall) {
@@ -534,6 +605,8 @@ foreach ($modulesdir as $dir) {
 	}
 }
 
+'@phan-var-force array<string,DolibarrModules> $modules';
+
 if ($action == 'reset_confirm' && $user->admin) {
 	if (!empty($modules[$value])) {
 		$objMod = $modules[$value];
@@ -597,9 +670,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$deschelp .= '<br>';
 	}
 }
-if ($mode == 'marketplace') {
-	//$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
-}
+//if ($mode == 'marketplace') {
+//	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
+//}
 if ($mode == 'deploy') {
 	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></div><br>\n";
 }
@@ -636,7 +709,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
@@ -684,7 +757,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	if (!empty($moreforfilter)) {
 		print $moreforfilter;
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 	}
 
@@ -721,6 +794,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 		/** @var DolibarrModules $objMod */
 		$objMod = $modules[$modName];
+
+		if (!is_object($objMod)) {
+			continue;
+		}
 
 		//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
 		if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') {
@@ -865,6 +942,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 
+		if ($objMod->isCoreOrExternalModule() == 'external' && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
+			if (!is_numeric($checkRes) && $checkRes != '') {
+				$langs->load("errors");
+				setEventMessages($objMod->getName().' : '.$langs->trans($checkRes), null, 'errors');
+			}
+		}
+
 		// Define imginfo
 		$imginfo = "info";
 		if ($objMod->isCoreOrExternalModule() == 'external') {
@@ -889,12 +974,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
-			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
+			} elseif (is_object($objMod)
+				&& (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1)))) {
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
-					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium valignmiddle');
+					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium valignmiddle');
 					//print $langs->trans("Required");
 				}
 				if (isModEnabled('multicompany') && $user->entity) {
@@ -902,7 +988,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 			} else {
 				// @phan-suppress-next-line PhanUndeclaredMethod
-				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
+				if (is_object($objMod) && !empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
@@ -953,20 +1039,20 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						} else {
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 							} else {
 								$urltouse = $urlpage;
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 							}
 						}
 					}
 				} elseif (preg_match('/^([^@]+)@([^@]+)$/i', (string) $objMod->config_page_url, $regs)) {
-					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 				} else {
-					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 				}
 			} else {
-				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
+				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', 0, 0, 0, '', 'fa-15');
 			}
 		} else { // Module not yet activated
 			// Set $codeenabledisable
@@ -1090,7 +1176,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	if ($action == 'checklastversion') {
 		if ($foundoneexternalmodulewithupdate) {
-			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'warnings');
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'warnings', '', 0, 1);
 		} else {
 			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}
@@ -1201,7 +1287,7 @@ if ($mode == 'marketplace') {
 }
 
 
-// Install external module
+// Form to install an external module
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
@@ -1248,13 +1334,13 @@ if ($mode == 'deploy') {
 		print '<br>';
 	}
 
-	print '<br>';
-
 	// $allowfromweb = -1 if installation or setup not correct, 0 if not allowed, 1 if allowed
 	if ($allowfromweb >= 0) {
 		if ($allowfromweb == 1) {
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
 		} else {
+			print '<br>';
+
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
 			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
@@ -1269,7 +1355,11 @@ if ($mode == 'deploy') {
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
 
-			print $langs->trans("YouCanSubmitFile").'<br><br>';
+			print $langs->trans("YouCanSubmitFile").'<br><br><br>';
+
+			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance"'.(getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES') ? ' disabled="disabled"' : 'checked="checked"').'>';
+			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp")).'</label>';
+			print '</span><br><br>';
 
 			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
@@ -1337,7 +1427,7 @@ if ($mode == 'deploy') {
 				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';
 			}
 
-			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
+			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall">';
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button small">';
 

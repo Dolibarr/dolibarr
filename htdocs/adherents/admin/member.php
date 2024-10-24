@@ -505,6 +505,7 @@ print "</td></tr>\n";
 $startpoint = array();
 $startpoint[0] = $langs->trans("NoCorrection");
 $startpoint["m"] = $langs->trans("Month");
+$startpoint["3m"] = $langs->trans("Quarter");
 $startpoint["Y"] = $langs->trans("Year");
 print '<tr class="oddeven drag" id="startfirstdayof"><td>';
 print $langs->trans("MemberSubscriptionStartFirstDayOf");

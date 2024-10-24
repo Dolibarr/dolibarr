@@ -19,7 +19,7 @@
  * $conf
  * $formmail
  * $formwebsite (optional)
- * $showlinktolayout=0|1
+ * $showlinktolayout='emailing', 'email', 'websitepage', ...
  * $showlinktolayoutlabel='...'
  * $showlinktoai ('' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...)
  * $showlinktoailabel='...'
@@ -42,8 +42,10 @@ if (empty($htmlname)) {
 <?php
 
 '
-@phan-var-force ?FormWebSite $formwebsite
-@phan-var-force ?FormMail $formmail
+@phan-var-force ?FormWebSite 	$formwebsite
+@phan-var-force ?FormMail 		$formmail
+@phan-var-force string 			$showlinktolayout
+@phan-var-force string			$showlinktolayoutlabel
 ';
 
 if (!isset($out)) {
@@ -51,7 +53,7 @@ if (!isset($out)) {
 }
 // Add link to add layout
 if ($showlinktolayout) {
-	$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktolayoutlabel, 'layout', 'class="paddingrightonly"');
 	$out .= $showlinktolayoutlabel.'...';
 	$out .= '</a> &nbsp; &nbsp; ';
@@ -62,7 +64,7 @@ if ($showlinktolayout) {
 								console.log("We click on linkforlayouttemplates");
 								event.preventDefault();
 								jQuery("#template-selector").toggle();
-								jQuery("#ai_input").hide();
+								jQuery("#ai_input'.$htmlname.'").hide();
 								jQuery("#pageContent").show();	// May exists for website page only
 							});
 						});
@@ -71,7 +73,7 @@ if ($showlinktolayout) {
 }
 // Add link to add AI content
 if ($showlinktoai) {
-	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="reposition notasortlink inline-block alink marginrightonly">';
+	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
 	$out .= $showlinktoailabel.'...';
 	$out .= '</a>';
@@ -83,9 +85,10 @@ if ($showlinktoai) {
 								event.preventDefault();
 								jQuery("#ai_input'.$htmlname.'").toggle();
 								jQuery("#template-selector").hide();
+								jQuery(".email-layout-container").hide();
 								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
-									console.log("Set focus on input field");
-									jQuery("#ai_instructions").focus();
+									console.log("Set focus on input field #ai_instructions'.$htmlname.'");
+									jQuery("#ai_instructions'.$htmlname.'").focus();
 									if (!jQuery("pageContent").is(":hidden")) {		// May exists for website page only
 										jQuery("#pageContent").show();
 									}
@@ -99,10 +102,10 @@ if ($showlinktolayout) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
 	} else {
-		$out .= $formmail->getModelEmailTemplate($htmlname);
+		$out .= $formmail->getModelEmailTemplate($htmlname, $showlinktolayout);
 	}
 } else {
-	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to 1, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
+	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
 	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);

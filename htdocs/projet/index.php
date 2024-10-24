@@ -73,7 +73,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	if ($action == 'refresh_search_project_user') {
+	if ($action == 'refresh_search_project_user' && $user->hasRight('projet', 'lire')) {
 		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 

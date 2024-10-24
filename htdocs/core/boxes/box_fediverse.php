@@ -50,6 +50,8 @@ class box_fediverse extends ModeleBoxes
 	{
 		$this->db = $db;
 		$this->paramdef = $param;
+		$this->urltoaddentry = DOL_URL_ROOT.'/admin/fediverse.php';
+		$this->msgNoRecords = 'NoRecordFound';
 	}
 
 	/**
@@ -61,7 +63,8 @@ class box_fediverse extends ModeleBoxes
 	 */
 	public function loadBox($max = 5, $cachedelay = 3600)
 	{
-		global $langs, $conf;
+		global $langs;
+
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -115,6 +118,7 @@ class box_fediverse extends ModeleBoxes
 		}
 
 		$posts = $fediverseParser->getPosts();
+
 		$nbitems = count($posts);
 
 		for ($line = 0; $line < $max && $line < $nbitems; $line++) {
@@ -146,13 +150,23 @@ class box_fediverse extends ModeleBoxes
 				'text' => $date,
 			);
 		}
+
+
+		// if ($nbitems == 0) {
+		// 	$this->info_box_contents[$line][0] = array(
+		// 		'td' => 'class="center"',
+		// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>'
+		// 	);
+		// }
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

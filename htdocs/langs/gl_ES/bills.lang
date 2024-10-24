@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Procurar facturas de provedores sen paga
 SendEmailsRemindersOnSupplierInvoiceDueDate=Enviar lem,branza por correo electrónico para facturas de provedores validadas e non pagadas
 PaymentMadeForSeveralInvoices=Pagamento de varias facturas
 SituationInvoiceProgressCurrent=Progreso da factura
+INVOICE_ADD_EPC_QR_CODEPay=Escanee este código QR para pagar cun teléfono intelixente que admita o pagamento co código QR EPC.

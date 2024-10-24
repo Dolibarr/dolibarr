@@ -295,7 +295,7 @@ if ($filter) {
 	$param .= "&search_filter=".urlencode($filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -697,6 +697,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -832,7 +833,7 @@ while ($obj = $db->fetch_object($resql)) {
 }
 
 // Loop on each user to show calendar
-$todayarray = dol_getdate($now, 'fast');
+$todayarray = dol_getdate($now, true);
 $sav = $tmpday;
 $showheader = true;
 $var = false;

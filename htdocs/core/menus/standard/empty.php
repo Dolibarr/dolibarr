@@ -288,6 +288,7 @@ class MenuManager
 						if ($val2['level'] > 0) {
 							$levelcursor = $val2['level'] - 1;
 							while ($levelcursor >= 0) {
+								// @phan-suppress-next-line PhanTypeInvalidDimOffset
 								if ($lastlevel2[$levelcursor] != 'enabled') {
 									$showmenu = false;
 								}

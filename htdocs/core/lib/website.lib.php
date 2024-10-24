@@ -512,8 +512,8 @@ function dolWebsiteSaveContent($content)
  * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
  * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
  * @param 	int		$containerid		Id of container.
- * @param	int		$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
- * @param 	array	$parameters			Array of parameters to append to the URL.
+ * @param	int<0,1>	$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
+ * @param 	array<string,mixed>	$parameters			Array of parameters to append to the URL.
  * @return  void
  */
 function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
@@ -654,7 +654,7 @@ function includeContainer($containerref)
  * <?php getStructureData('software', array('name'=>'Name', 'os'=>'Windows', 'price'=>10)); ?>
  *
  * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
- * @param	array		$data				Array of data parameters for structured data
+ * @param	array<string,mixed>	$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
 function getStructuredData($type, $data = array())
@@ -862,7 +862,7 @@ function getStructuredData($type, $data = array())
 /**
  * Return HTML content to add as header card for an article, news or Blog Post or home page.
  *
- * @param	array	$params					Array of parameters
+ * @param	?array<string,mixed>	$params	Array of parameters
  * @return  string							HTML content
  */
 function getSocialNetworkHeaderCards($params = null)
@@ -1033,7 +1033,7 @@ function getNbOfImagePublicURLOfObject($object)
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject()
+ * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject(), getImageFromHtmlContent()
  */
 function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
@@ -1106,7 +1106,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  * Return array with list of all public files of a given object.
  *
  * @param	Object	$object			Object
- * @return  array					List of public files of object
+ * @return array<array{filename:string,position:int,url:string}>	List of public files of object
  * @see getImagePublicURLOfObject()
  */
 function getPublicFilesOfObject($object)
@@ -1163,11 +1163,11 @@ function getPublicFilesOfObject($object)
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
- * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	'DESC'|'ASC'	$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
- * @param	array		$otherfilters		Other filters
- * @param	int			$status				0 or 1, or -1 for both
- * @return  array							Array with results of search
+ * @param	array<string,mixed>	$otherfilters		Other filters
+ * @param	int<-1,1>	$status				0 or 1, or -1 for both
+ * @return  array{list?:WebsitePage[],code?:string,message?:string}	Array with results of search
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
@@ -1334,6 +1334,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  * @param	string		$htmlContent	HTML content
  * @param	int			$imageNumber	The position of image. 1 by default = first image found
  * @return	string						URL of image or '' if not foud
+ * @see getImagePublicURLOfObject()
  */
 function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 {
@@ -1526,5 +1527,31 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		if ($modifylinks) {
 			$tmp = preg_replace('/'.preg_quote($regs[0][$key], '/').'/i', 'background'.$regs[1][$key].'url("'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'")', $tmp);
 		}
+	}
+}
+
+/**
+ * Retrieves the details of a news post by its ID.
+ *
+ * @param string $postId  The ID of the news post to retrieve.
+ * @return array<string,mixed>|int<-1,-1>   Return array if OK, -1 if KO
+ */
+function getNewsDetailsById($postId)
+{
+	global $db;
+
+	if (empty($postId)) {
+		return -1;
+	}
+
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image
+            FROM ".MAIN_DB_PREFIX."website_page as p
+            WHERE p.rowid = ".(intval($postId));
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		return $db->fetch_array($resql);
+	} else {
+		return -1;
 	}
 }
