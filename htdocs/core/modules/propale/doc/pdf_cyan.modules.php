@@ -643,7 +643,7 @@ class pdf_cyan extends ModelePDFPropales
 
 					// # of line
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $linePosition);
+						$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
 					}
 
 					// VAT Rate
