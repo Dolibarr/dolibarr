@@ -2110,7 +2110,7 @@ if ($resql) {
 							$productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 						} else {
 							$generic_product->stock_reel = $productstat_cache[$obj->fk_product]['stock_reel'];
-							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'];
 						}
 
 						if ($reliquat > $generic_product->stock_reel) {
