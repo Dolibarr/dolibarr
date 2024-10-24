@@ -117,7 +117,7 @@ class ExtraFields
 	/**
 	* Element list sanitizer to translate new element type names into old ones
 	* @param		string		$elementName		element type to check
- 	* @return 		string 		new element name
+	* @return 		string 		new element name
 	*/
 	private function sanitizeElementName($elementName)
 	{
@@ -722,14 +722,14 @@ class ExtraFields
 				}
 
 				if (is_object($hookmanager)) {
-						$hookmanager->initHooks(array('extrafieldsdao'));
-						$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
-						$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					$hookmanager->initHooks(array('extrafieldsdao'));
+					$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
+					$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-						if ($reshook < 0) {
-								$this->error = $this->db->lasterror();
-								return -1;
-						}
+					if ($reshook < 0) {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}
 				}
 				dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 				if ($type != 'separate') { // No table update when separate type
@@ -737,41 +737,41 @@ class ExtraFields
 				}
 			}
 			if ($result > 0 || $type == 'separate') {
-					if ($label) {
-							dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-							$result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
-					}
-					if ($result > 0) {
-						foreach ($elementtype as $etype) {
-							$table = $etype.'_extrafields';
-							if ($etype == 'categorie') {
-									$table = 'categories_extrafields';
-							}
-							$sql = '';
-							if ($unique) {
-									dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
-									$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
-							} else {
-									dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-									$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
-							}
-							dol_syslog(get_class($this).'::update', LOG_DEBUG);
-							$resql = $this->db->query($sql, 1, 'dml');
-							/*if ($resql < 0) {
-							 $this->error = $this->db->lasterror();
-							 return -1;
-							 }*/
-							// return 1;
-						}
-						return 1;
-					} else {
-							$this->error = $this->db->lasterror();
-							return -1;
-					}
-				} else {
-						$this->error = $this->db->lasterror();
-						return -1;
+				if ($label) {
+						dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
+						$result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 				}
+				if ($result > 0) {
+					foreach ($elementtype as $etype) {
+						$table = $etype.'_extrafields';
+						if ($etype == 'categorie') {
+								$table = 'categories_extrafields';
+						}
+						$sql = '';
+						if ($unique) {
+							dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
+							$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
+						} else {
+							dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
+							$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
+						}
+						dol_syslog(get_class($this).'::update', LOG_DEBUG);
+						$resql = $this->db->query($sql, 1, 'dml');
+						/*if ($resql < 0) {
+						 $this->error = $this->db->lasterror();
+						 return -1;
+						 }*/
+						// return 1;
+					}
+					return 1;
+				} else {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		} else {
 			return 0;
 		}
