@@ -1009,7 +1009,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  * 	@param	?Societe	$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
- * 	@param	int			$page_hauteur	Page height
+ * 	@param	float		$page_hauteur	Page height
  * 	@param	CommonObject	$object			Object shown in PDF
  * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
@@ -1424,8 +1424,8 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param  Translate		$outputlangs		Object lang for output
  *  @param  int				$w					Width
  *  @param  int				$h					Height
- *  @param  int				$posx				Pos x
- *  @param  int				$posy				Pos y
+ *  @param  float			$posx				Pos x
+ *  @param  float			$posy				Pos y
  *  @param  int<0,1>		$hideref       		Hide reference
  *  @param  int<0,1>		$hidedesc           Hide description
  * 	@param	int<0,1>		$issupplierline		Is it a line for a supplier object ?
@@ -2542,9 +2542,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 				$refListsTxt = '';
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$refListsTxt.= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
+					$refListsTxt .= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
 				} else {
-					$refListsTxt.=$outputlangs->transnoentities("RefSending").' :';
+					$refListsTxt .= $outputlangs->transnoentities("RefSending").' :';
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2559,12 +2559,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 							}
 						}
 					}
-					$refListsTxt.= (!empty($refListsTxt)?' ':'');
+					$refListsTxt .= (!empty($refListsTxt) ? ' ' : '');
 					if (! is_object($order)) {
-						$refListsTxt.= $outputlangs->transnoentities($elementobject->ref);
+						$refListsTxt .= $outputlangs->transnoentities($elementobject->ref);
 					} else {
-						$refListsTxt.= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
-						$refListsTxt.= ' / '.$outputlangs->transnoentities($elementobject->ref);
+						$refListsTxt .= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$refListsTxt .= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					}
 				}
 
