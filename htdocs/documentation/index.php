@@ -49,7 +49,9 @@ $documentation->showSidebar(); ?>
 		
 	<?php $documentation->showBreadCrumb(); ?>
 
-	<div class="doc-content-wrapper"></div>
+	<div class="doc-content-wrapper">
+		<?php echo $langs->trans('WelcomeToDocumentation'); ?>
+	</div>
 
 </div>
 

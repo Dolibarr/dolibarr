@@ -72,8 +72,8 @@ body.dolibarr-doc {
 .doc-wrapper .doc-content-wrapper .documentation-section h2.documentation-title {margin: 0;margin-bottom:16px;padding: 0;color: rgb(38,60,92);}
 .doc-wrapper .doc-content-wrapper .documentation-section .documentation-example {border:1px dashed #ccc;box-sizing: border-box;padding: 16px;margin-bottom: 16px;}
 .doc-wrapper .doc-content-wrapper .documentation-section .documentation-code {background: var(--colorbacklinepairchecked);border:1px dashed #ccc;box-sizing: border-box;padding: 16px;margin-bottom: 16px;overflow: auto;}
-.doc-wrapper .doc-content-wrapper .documentation-section .documentation-code pre {margin: 0;padding: 0;}
+.doc-wrapper .doc-content-wrapper .documentation-section .documentation-code pre {margin: 0;padding: 0;tab-size: 24px;}
 
 /* Documentation scroll indicator */
-#documentation-scrollwrapper {height: 5px;position: fixed;bottom: 0;left: 300px;right:0;z-index: 99;}
+#documentation-scrollwrapper {height: 5px;position: fixed;bottom: 0;left: 260px;right:0;z-index: 99;}
 #documentation-scroll {background: rgb(0, 123, 140);height: 5px;position: absolute;top: 0;left:0}

@@ -56,21 +56,48 @@ class Documentation
 	{
 		$this->db = $db;
 
-		$this->menu = array(
-		'BackToDolibarr' => array('url' => DOL_URL_ROOT, 'icon' => 'fas fa-arrow-left pictofixedwidth','submenu' => array()),
-		'DocumentationHome' => array('url' => dol_buildpath('documentation/index.php', 1), 'icon' => 'fas fa-book pictofixedwidth','submenu' => array()),
-		'Elements' => array('url' => dol_buildpath('documentation/ux/index.php', 1), 'icon' => 'fas fa-th-large pictofixedwidth','submenu' => array(
-		'Badges' => array('url' => dol_buildpath('documentation/ux/badges.php', 1), 'icon' => 'fas fa-certificate pictofixedwidth','submenu' => array()),
-		'Progress' => array('url' => dol_buildpath('documentation/ux/progress-bars.php', 1), 'icon' => 'fas fa-battery-half pictofixedwidth','submenu' => array()),
-		'Buttons' => array('url' => dol_buildpath('documentation/ux/buttons.php', 1), 'icon' => 'fas fa-mouse pictofixedwidth','submenu' => array()),
-		)),
+		// Go back to Dolibarr
+		$this->menu['BackToDolibarr'] = array(
+			'url' => DOL_URL_ROOT, 
+			'icon' => 'fas fa-arrow-left pictofixedwidth',
+			'submenu' => array()
+		);
+
+		// Home for Ui documentation
+		$this->menu['DocumentationHome'] = array(
+			'url' => dol_buildpath('documentation/index.php', 1),
+			'icon' => 'fas fa-book',
+			'submenu' => array()
+		);
+
+		// Elements
+		$this->menu['Elements'] = array(
+			'url' => dol_buildpath('documentation/ux/index.php', 1), 
+			'icon' => 'fas fa-th-large',
+			'submenu' => array(
+				'Badges' => array(
+					'url' => dol_buildpath('documentation/ux/badges.php', 1),
+					'icon' => 'fas fa-certificate',
+					'submenu' => array()
+				),
+				'Buttons' => array(
+					'url' => dol_buildpath('documentation/ux/buttons.php', 1),
+					'icon' => 'fas fa-mouse',
+					'submenu' => array()
+				),
+				'Progress' => array(
+					'url' => dol_buildpath('documentation/ux/progress-bars.php', 1),
+					'icon' => 'fas fa-battery-half pictofixedwidth',
+					'submenu' => array()
+				),
+			)
 		);
 	}
 
 	/**
 	 *    Output header + body
 	 *
-	 * @param string $title Title of page
+	 * @param string	$title 		Title of page
 	 * @return void
 	 */
 	public function docHeader($title = '')
@@ -86,9 +113,19 @@ class Documentation
 		print '<meta name="viewport" content="width=device-width, initial-scale=1">';
 		print '<meta name="author" content="Dolibarr Development Team">';
 		print '<title>'.$title.'</title>';
+
+		// CSS
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('documentation/css/documentation.css', 1).'">';
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css">';
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
+		$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME') ? getDolGlobalString('MAIN_USE_JQUERY_THEME') : 'base';		
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui.css">';
+
+		// JS
+		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js"></script>';
+		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js"></script>';
+		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.'"></script>';
+
 		print '</head>';
 		print '<body class="dolibarr-doc">';
 	}
@@ -99,10 +136,17 @@ class Documentation
 	 */
 	public function docFooter()
 	{
+		global $conf, $langs;
+
+		// DIV FOR SCROLL ANIMATION
 		print '<div id="documentation-scrollwrapper">';
 		print '<div id="documentation-scroll"></div>';
-		print '</div>';
+		print '</div>';		
+
+		// JS
 		print '<script src="'.dol_buildpath('documentation/js/documentation.js', 1).'"></script>';
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>';
+
 		print '</body>';
 		print '</html>';
 	}

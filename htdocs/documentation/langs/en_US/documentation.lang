@@ -1,6 +1,7 @@
 BackToDolibarr=Go back to Dolibarr
-WelcomeToDocumentation=Documentation
-DocBasicUsage=Basic Usage
+WelcomeToDocumentation=Welcome to UI Documentation. This section is under developpement,
+DocumentationHome=UI Documentation
+DocBasicUsage=Basic usage
 
 # Badges
 DocBadgeTitle=Badges
@@ -29,6 +30,14 @@ DocBadgeHelperDescription=Using the dolGetBadge function provide in core/lib/fun
 DocButtonsTitle=Buttons for action
 DocButtonsMainDescription=Documentation and examples for buttons.
 DocButtonBasicUsageDescription=Display a button depending on the action to be performed and user rights
+DocButtonModal=Buttons with confirm dialog
+DocButtonModalDescription=You can add a confirm dialog on all types of buttons but it will not work if user has no rights
+DocButtonSubmenu=Dropdown Buttons
+DocButtonSubmenuDescription=Fill the $url parameter with an array of url in order to create a dropdown button.
+
+#Tables
+DocTableTitle=Tables
+DocTableMainDescription=
 
 #Progress bars
 DocProgressBarsTitle = Progress bars

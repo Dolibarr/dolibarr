@@ -1,23 +1,8 @@
 <?php
-//define("NOLOGIN",1);        // This means this output page does not require to be logged.
-//if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-//if (!defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-//if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (!defined('NOSTYLECHECK')) {
-	define('NOSTYLECHECK', '1'); // Do not check style html tag into posted data
-}
-//if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
-//if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-//if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
-}
+
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+@include '../../main.inc.php';
 
 // Security
 if ($dolibarr_main_prod) {
@@ -72,19 +57,19 @@ if (empty($usedolheader)) {
 	$arrayjs = array();
 	/*
 	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-	'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-	'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
 	);
 	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-	'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-	'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-	'/includes/jszip/jszip.min.js',
-	'/includes/pdfmake/pdfmake.min.js',
-	'/includes/pdfmake/vfs_fonts.js'
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+			'/includes/jszip/jszip.min.js',
+			'/includes/pdfmake/pdfmake.min.js',
+			'/includes/pdfmake/vfs_fonts.js'
 	);
 	*/
 
@@ -171,10 +156,18 @@ $(document).ready(function() {
 
 
 <?php
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $productspecimen = new Product($db);
 $productspecimen->initAsSpecimen();
 $object = $productspecimen;
+$param = '';
+$actioncode = '';
+$status = '';
+$filter = '';
+$filtert = '';
+$socid = 0;
+$type = 0;
+$usergroup = 0;
 
 $sortfield = 'aaa';
 $sortorder = 'ASC';
@@ -362,7 +355,7 @@ if (!empty($conf->use_javascript_ajax)) {
 		<div class="tagtd tdlineupdown">lll</div>
 	</div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
-<!--    <form class="liste_titre" method="POST" action="1.php">
+<!--	<form class="liste_titre" method="POST" action="1.php">
 		<div>line1<input type="hidden" name="cartitem" value="1"></div>
 		<div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
 		<div><input name="count" value="4"></div>
