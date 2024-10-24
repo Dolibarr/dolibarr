@@ -850,7 +850,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Add number of pages in footer
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
