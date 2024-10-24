@@ -2651,11 +2651,11 @@ function pdf_getSizeForImage($realpath)
 /**
  *	Return line total amount discount
  *
- *	@param	Facture			$object				Object
- *	@param	int				$i					Current line number
- *  @param  Translate		$outputlangs		Object langs for output
- *  @param	int<0,2>		$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	float|string						Return total of line excl tax
+ *	@param	Commande|Facture|Propal			$object				Object
+ *	@param	int								$i					Current line number
+ *  @param  Translate						$outputlangs		Object langs for output
+ *  @param	int<0,2>						$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ * 	@return	float|string										Return total of line excl tax
  */
 function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
 {

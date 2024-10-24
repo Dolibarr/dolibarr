@@ -1663,25 +1663,22 @@ class pdf_sponge extends ModelePDFFactures
 			}
 		}
 		if ($total_line_remise > 0) {
-			if (getDolGlobalString('MAIN_SHOW_AMOUNT_DISCOUNT')) {
-				$pdf->SetFillColor(255, 255, 255);
-				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', 1);
-				$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', 1);
+			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', 1);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', 1);
 
-				$index++;
-			}
+			$index++;
+
 			// Show total NET before discount
-			if (getDolGlobalString('MAIN_SHOW_AMOUNT_BEFORE_DISCOUNT')) {
-				$pdf->SetFillColor(255, 255, 255);
-				$pdf->SetXY($col1x, $tab2_top);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', 1);
-				$pdf->SetXY($col2x, $tab2_top);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
+			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetXY($col1x, $tab2_top);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', 1);
+			$pdf->SetXY($col2x, $tab2_top);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
 
-				$index++;
-			}
+			$index++;
 		}
 
 		// Total HT
