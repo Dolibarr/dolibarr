@@ -444,4 +444,16 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 
 	$printer = new dolReceiptPrinter($db);
 	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
+} elseif ($action == 'createNewInvoice') {
+	top_httphead('application/json');
+
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+	$invoice = new Facture($db);
+	$result = $invoice->create($user);
+	if ($result > 0) {
+		echo json_encode(array('invoiceid' => $invoice->id));
+	} else {
+		echo json_encode(array('error' => 'Failed to create invoice'));
+	}
 }

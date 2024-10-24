@@ -635,6 +635,7 @@ if (empty($reshook)) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
 
+
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
 

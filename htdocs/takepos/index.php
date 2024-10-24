@@ -543,14 +543,41 @@ function ClickProduct(position, qty = 1) {
 			return;
 		}
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
-			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-				echo "CustomerDisplay();";
-			}?>
-		});
+		if (invoiceid == "") {
+				createNewInvoice(idproduct, qty);
+			} else {
+				$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken(); ?>&id=' + invoiceid, function (data) {
+					if (data['paye'] == 1 && data['status'] == <?php echo Facture::STATUS_CLOSED; ?>) {
+						console.log("Creating new invoice");
+						createNewInvoice(idproduct, qty);
+					} else if (data['paye'] == 0 && data['status'] == <?php echo Facture::STATUS_DRAFT; ?>) {
+						console.log("Adding product to invoice");
+						addProductToInvoice(idproduct, qty, invoiceid);
+					} else if (data['paye'] == 0 && data['status'] == <?php echo Facture::STATUS_VALIDATED; ?>) {
+						console.log("Invoice not completely paid!");
+						alert('Invoice not completely paid !');
+					}
+				});
+			}
 	}
 
 	ClearSearch(false);
+}
+
+function createNewInvoice(idproduct, qty) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=createNewInvoice&token=<?php echo newToken();?>', function (data) {
+		invoiceid = data['invoiceid'];
+		$("#invoiceid").val(invoiceid);
+		addProductToInvoice(idproduct, qty, invoiceid);
+	});
+}
+
+function addProductToInvoice(idproduct, qty, invoiceid) {
+	$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+		<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
+			echo "CustomerDisplay();";
+		}?>
+	});
 }
 
 function ChangeThirdparty(idcustomer) {
