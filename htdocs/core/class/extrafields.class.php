@@ -739,7 +739,7 @@ class ExtraFields
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
 						dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-						$result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+						$result = $this->update_label($attrname, $label, $type, $length, implode(",", $elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 				}
 				if ($result > 0) {
 					foreach ($elementtype as $etype) {
