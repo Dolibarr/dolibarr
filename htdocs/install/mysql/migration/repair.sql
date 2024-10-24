@@ -307,15 +307,6 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
--- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
-drop table tmp_accounting_account_double;
---select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
-create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
---select * from tmp_accounting_account_double;
-delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
-drop table tmp_accounting_account_double;
-
-
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
 
 
@@ -416,10 +407,33 @@ drop table tmp_bank_url_expense_user;
 
 
 -- Delete duplicate accounting account, but only if not used
-DROP TABLE tmp_llx_accouting_account;
-CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
---SELECT * from tmp_llx_accouting_account;
-DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS
+SELECT
+    aa.rowid,
+    aad.min
+FROM llx_accounting_account AS aa
+         INNER JOIN (
+    SELECT
+        account_number,
+        entity,
+        fk_pcg_version,
+        MIN(rowid) AS min
+    FROM llx_accounting_account
+    GROUP BY account_number, entity, fk_pcg_version
+    HAVING COUNT(*) >= 2
+) AS aad ON
+            aa.account_number = aad.account_number
+        AND aa.entity = aad.entity
+        AND aa.fk_pcg_version = aad.fk_pcg_version
+        AND aa.rowid != aad.min;
+-- SELECT * from tmp_llx_accouting_account;
+-- If there is record in tmp_llx_accouting_account, make a look on each line to do
+UPDATE llx_facturedet        AS t LEFT JOIN tmp_llx_accouting_account AS taa ON taa.rowid = t.fk_code_ventilation SET t.fk_code_ventilation = taa.min WHERE taa.rowid IS NOT NULL;
+UPDATE llx_facture_fourn_det AS t LEFT JOIN tmp_llx_accouting_account AS taa ON taa.rowid = t.fk_code_ventilation SET t.fk_code_ventilation = taa.min WHERE taa.rowid IS NOT NULL;
+UPDATE llx_expensereport_det AS t LEFT JOIN tmp_llx_accouting_account AS taa ON taa.rowid = t.fk_code_ventilation SET t.fk_code_ventilation = taa.min WHERE taa.rowid IS NOT NULL;
+DELETE FROM llx_accounting_account WHERE rowid IN (SELECT rowid FROM tmp_llx_accouting_account);
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
