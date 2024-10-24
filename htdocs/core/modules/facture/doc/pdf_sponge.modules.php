@@ -785,7 +785,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					// Line position
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $linePosition);
+						$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
 					}
 
 					// VAT Rate
