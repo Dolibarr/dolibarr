@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013	Florian Henry	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ECMAutoTree").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('ECM_AUTO_TREE_HIDEN', null, null, 1);
+	print ajax_constantonoff('ECM_AUTO_TREE_HIDEN', array(), null, 1);
 } else {
 	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_HIDEN&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

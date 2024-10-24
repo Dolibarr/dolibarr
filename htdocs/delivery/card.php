@@ -6,6 +6,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOSTINT('id');
 
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
 
@@ -71,10 +76,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 $error = 0;
 
@@ -100,7 +102,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);       // Note that $action and $object may have been modified by some hooks
 // Delete Link
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'supprimer'); // Used by the include of actions_dellink.inc.php
-include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be 'include', not 'include_once'
 
 if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
@@ -163,7 +165,7 @@ if ($action == 'add' && $permissiontoadd) {
 
 		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result < 0) {
-			dol_print_error($db, $result);
+			dol_print_error($db, $object->error, $object->errors);
 		}
 	}
 }

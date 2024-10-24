@@ -102,7 +102,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('donationlist'));
 
 // Security check
@@ -443,6 +443,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.rowid']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pd.rowid']['label'], $_SERVER["PHP_SELF"], "pd.rowid", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

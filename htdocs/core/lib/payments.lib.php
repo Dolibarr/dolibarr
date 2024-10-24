@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * It loads tabs from modules looking for the entity payment
  *
  * @param Paiement $object Current payment object
- * @return array Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs for the payment section
  */
 function payment_prepare_head(Paiement $object)
 {
@@ -73,7 +74,7 @@ function payment_prepare_head(Paiement $object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param 	int		$id		ID of bank line
- * @return 	array 			Tabs for the Bankline section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs for the Banline section
  */
 function bankline_prepare_head($id)
 {
@@ -108,7 +109,7 @@ function bankline_prepare_head($id)
  * It loads tabs from modules looking for the entity payment_supplier
  *
  * @param Paiement $object Current payment object
- * @return array Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the payment section
  */
 function payment_supplier_prepare_head(Paiement $object)
 {
@@ -216,10 +217,10 @@ function showOnlinePaymentUrl($type, $ref, $amount = 0)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
-	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercentminusx" value="'.$url.'">';
+	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
-	$out .= ajax_autoselect("onlinepaymenturl", 0);
+	$out .= ajax_autoselect("onlinepaymenturl", '');
 	return $out;
 }
 
@@ -275,7 +276,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
-				$out .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2));
+				$out .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2'));
 			}
 		}
 		//if ($mode) $out.='&noidempotency=1';
@@ -297,7 +298,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + order_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -320,7 +321,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -343,7 +344,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + contractline_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -369,7 +370,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $newtype.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $newtype.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -392,7 +393,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + donation_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -415,7 +416,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}

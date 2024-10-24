@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Надіслати електронну пошту, щоб запобігти зовнішнім службам HRM
 Establishments=Заклади
@@ -24,7 +23,7 @@ SkillsManagement=Управління навичками
 HRM_MAXRANK=Максимальна кількість рівнів для ранжування навику
 HRM_DEFAULT_SKILL_DESCRIPTION=Опис звань за замовчуванням під час створення навику
 deplacement=Зміна
-DateEval=Дата оцінки
+DateEval=Competency assessment date
 JobCard=Картка роботи
 NewJobProfile=Новий профіль роботи
 JobProfile=Профіль роботи
@@ -41,12 +40,12 @@ Skill=Майстерність
 Skills=Навички
 SkillCard=Карта навичок
 EmployeeSkillsUpdated=Оновлено навички співробітників (див. вкладку «Навички» картки співробітника)
-Eval=Оцінка
-Evals=Оцінки
-NewEval=Нова оцінка
-ValidateEvaluation=Підтвердити оцінку
-ConfirmValidateEvaluation=Ви впевнені, що хочете підтвердити цю оцінку за посиланням <b>%s</b>?
-EvaluationCard=Оціночна картка
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Обов'язковий ранг за професією
 RequiredRankShort=Необхідний ранг
 PositionsWithThisProfile=Посади з цими профілями вакансій
@@ -90,8 +89,9 @@ SaveAddSkill = Навички додані
 SaveLevelSkill = Рівень навичок(ів) збережено
 DeleteSkill = Навик видалено
 SkillsExtraFields=Додаткові атрибути (Навички)
-JobsExtraFields=Додаткові атрибути (профіль роботи)
-EvaluationsExtraFields=Додаткові атрибути (оцінки)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Потрібні відрядження
 NoDescription=без опису
 TheJobProfileHasNoSkillsDefinedFixBefore=Оцінений профіль роботи цього працівника не містить навичок. Будь ласка, додайте навички, потім видаліть і перезапустіть оцінювання.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

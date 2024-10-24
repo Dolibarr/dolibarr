@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -96,8 +96,6 @@ llxHeader('', $title);
 $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
-
 if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 	if (getDolGlobalString('MAIN_MOTD')) {
@@ -155,8 +153,9 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		$message .= $hookmanager->resPrint;
 	}
 	if ($message) {	// $message is an HTML string.
+		print '<!-- show security warning -->';
 		print dol_string_onlythesehtmltags($message, 1, 0, 0, 0, array('div', 'span', 'b'));
-		print '<br>';
+		//print '<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}
 }
@@ -166,8 +165,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
  * Hidden for external users
  */
 
-$boxstatItems = array();
-$boxstatFromHook = '';
+print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
@@ -176,7 +174,7 @@ $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
 	$showweather = (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') == 2) ? 1 : 0;
 
-	//Array that contains all WorkboardResponse classes to process them
+	// Array that contains all WorkboardResponse classes to process them
 	$dashboardlines = array();
 
 	// Do not include sections without management permission
@@ -492,6 +490,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$totallate = $totallatePercentage;
 	}
 
+	// Fill the content to show the tasks to do as a widget box (old version). Now this is no more used. Tasks to do ar in dedicated thumbs.
 	$boxwork = '';
 	$boxwork .= '<div class="box">';
 	$boxwork .= '<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard centpercent">'."\n";
@@ -517,9 +516,8 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	// Show dashboard
 	$nbworkboardempty = 0;
 	$isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
+	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
-		$openedDashBoard = '';
-
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
 
 		foreach ($dashboardgroup as $groupKey => $groupElement) {

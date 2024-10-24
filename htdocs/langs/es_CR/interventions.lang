@@ -44,3 +44,4 @@ InterLineId=ID de línea de la intervención
 InterLineDate=Fecha de línea de la intervención
 InterLineDuration=Duración de la línea de la intervención
 InterLineDesc=Descripción de la línea de la intervención
+TypeContact_fichinter_external_CUSTOMER=Contacto para seguimiento del cliente

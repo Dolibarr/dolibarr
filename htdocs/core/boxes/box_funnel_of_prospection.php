@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,8 +134,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->info_box_head = array(
 			'text' => $langs->trans("Statistics").' - '.$langs->trans("BoxTitleFunnelOfProspection"),
-			'nbcol' => '2',
-			'graph' => '1'
+			'nbcol' => 2,
+			'graph' => 1
 		);
 
 		if ($user->hasRight('projet', 'lire') || getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
@@ -177,7 +178,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$i++;
 				}
 				$this->db->free($resql);
-				$ponderated_opp_amount = $ponderated_opp_amount / 100;
+				$ponderated_opp_amount /= 100;
 
 				$stringtoprint = '';
 				$stringtoprint .= '<div class="div-table-responsive-no-min ">';
@@ -308,12 +309,14 @@ class box_funnel_of_prospection extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No $stringtoprint .=, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

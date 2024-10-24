@@ -7,8 +7,9 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024 Alexandre Spangaro <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France		  <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -35,7 +36,6 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
@@ -46,9 +46,15 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object
- @phan-var-force 0|1 $forceall
+'
+@phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
+@phan-var-force CommonObject $this
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
+@phan-var-force 0|1 $forceall
+@phan-var-force int $num
+@phan-var-force ?Product $product_static
+@phan-var-force string $text
+@phan-var-force string $description
 ';
 
 global $mysoc;
@@ -330,7 +336,7 @@ if (empty($positiverates)) {
 	$positiverates = '0';
 }
 print $tooltiponprice;
-print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), '%', $line->info_bits);
+print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true, $line->info_bits);
 print $tooltiponpriceend;
 ?></td>
 
@@ -387,7 +393,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-		$previous_progress = $line->get_allprev_progress($object->id);
+		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + floatval($line->situation_percent);
 		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
 		$coldisplay++;
@@ -445,7 +451,11 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
+// TODO Replace this with $permissiontoedit ?
+$objectRights = $this->getRights();
+$tmppermtoedit = $objectRights->creer;
+
+if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
@@ -459,9 +469,14 @@ if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
-		if (!empty($product_static->accountancy_code_buy) ||
-			!empty($product_static->accountancy_code_buy_intra) ||
-			!empty($product_static->accountancy_code_buy_export)
+		if (
+			$product_static !== null
+			&&
+			(
+				!empty($product_static->accountancy_code_buy) ||
+				!empty($product_static->accountancy_code_buy_intra) ||
+				!empty($product_static->accountancy_code_buy_export)
+			)
 		) {
 			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$filters = array();
@@ -536,7 +551,7 @@ if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$colspan++;
 	}
 	print '<td colspan="'.$colspan.'"></td>';
-	$coldisplay = $coldisplay + $colspan;
+	$coldisplay += $colspan;
 }
 
 if ($action == 'selectlines') { ?>

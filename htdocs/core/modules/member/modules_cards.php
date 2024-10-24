@@ -43,11 +43,11 @@ class ModelePDFCards
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return list of active generation modules
+	 *  Return list of active generation modules
 	 *
-	 *	@param	DoliDB	$db					Database handler
-	 *	@param	integer	$maxfilenamelength	Max length of value to show
-	 *	@return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -142,6 +142,8 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		require_once $file;
 
 		$obj = new $classname($db);
+
+		'@phan-var-force ModelePDFMember $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

@@ -31,7 +31,6 @@ UseDurationOnFichinter=Oculta el campo de duración para los registros de interv
 UseDateWithoutHourOnFichinter=Oculta horas y minutos del campo de fecha para registros de intervención
 NbOfinterventions=Cantidad de fichas de intervención
 NumberOfInterventionsByMonth=Cantidad de fichas de intervención por mes (fecha de validación)
-AmountOfInteventionNotIncludedByDefault=El monto de la intervención no se incluye por defecto en las ganancias (en la mayoría de los casos, las hojas de tiempo se utilizan para contar el tiempo dedicado). Agregue la clave PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT con valor 1 en Inicio - Configuración - Otros, para incluirlos.
 InterId=ID de intervención
 InterRef=Ref. de Intervención
 InterDateCreation=Fecha de creación de la intervención

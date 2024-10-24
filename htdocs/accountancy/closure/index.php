@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019-2023  Open-DSI    	    <support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancyclosure'));
 
 $object = new BookKeeping($db);
@@ -126,8 +127,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($current_fiscal_period) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
-		if ($action == 'confirm_step_1' && $confirm == "yes") {
+	if (isset($current_fiscal_period)) {
+		if ($action == 'confirm_step_1' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
@@ -142,7 +143,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
-		} elseif ($action == 'confirm_step_2' && $confirm == "yes") {
+		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
 			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
@@ -169,7 +170,7 @@ if (empty($reshook)) {
 					exit;
 				}
 			}
-		} elseif ($action == 'confirm_step_3' && $confirm == "yes") {
+		} elseif ($action == 'confirm_step_3' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$inventory_journal_id = GETPOSTINT('inventory_journal_id');
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
@@ -200,7 +201,7 @@ $title = $langs->trans('Closure');
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-closure-index');
 
 $formconfirm = '';
 
@@ -292,7 +293,7 @@ if (isset($current_fiscal_period)) {
 			'name' => 'date_start',
 			'type' => 'date',
 			'label' => $langs->trans('DateStart'),
-			'value' => dol_time_plus_duree($current_fiscal_period['date_end'], -1, 'm')
+			'value' => dol_time_plus_duree((int) $current_fiscal_period['date_end'], -1, 'm')
 		);
 		$form_question['date_end'] = array(
 			'name' => 'date_end',

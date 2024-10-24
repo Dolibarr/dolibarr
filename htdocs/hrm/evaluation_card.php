@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Evaluation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
@@ -78,13 +79,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
 $permissiontoadd = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontovalidate = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('hrm', 'evaluation_advance', 'validate')) || (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd);
-$permissiontoClose = $user->hasRight('hrm', 'evaluation', 'write');
+$permissiontoclose = $user->hasRight('hrm', 'evaluation', 'write');
 $permissiontodelete = $user->hasRight('hrm', 'evaluation', 'delete')/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
 $permissiondellink = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation';
@@ -143,7 +144,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -166,10 +167,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'close') {
+	if ($action == 'close' && $permissiontoadd) {
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
 		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')", 'AND');
+		'@phan-var-force SkillRank[] $SkillrecordsForActiveUser';
 
 		$errors = 0;
 		// we go through the evaldets of the eval
@@ -181,7 +183,7 @@ if (empty($reshook)) {
 
 				if ($resCreate <= 0) {
 					$errors++;
-					setEventMessage($langs->trans('ErrorCreateUserSkill'), $line->fk_skill);
+					setEventMessage($langs->trans('ErrorCreateUserSkill', $line->fk_skill));
 				}
 			} else {
 				//check if the skill is present to use it
@@ -212,7 +214,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen') {
+	if ($action == 'reopen' && $permissiontoadd) {
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
 	}
@@ -221,7 +223,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// action to remove file
-	if ($action == 'remove_file_comfirm') {
+	if ($action == 'remove_file_comfirm' && $permissiontoadd) {
 		// Delete file in doc form
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -441,9 +443,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
 
-	$object->fields['label']['visible']=0; // Already in banner
-	$object->fields['fk_user']['visible']=0; // Already in banner
-	$object->fields['fk_job']['visible']=0; // Already in banner
+	$object->fields['label']['visible'] = 0; // Already in banner
+	$object->fields['fk_user']['visible'] = 0; // Already in banner
+	$object->fields['fk_job']['visible'] = 0; // Already in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -481,7 +483,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		$conf->modules_parts['tpl']['hrm']='/hrm/core/tpl/'; // Pour utilisation du tpl hrm sur cet écran
+		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // Pour utilisation du tpl hrm sur cet écran
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
@@ -569,13 +571,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$Tab[$num]->required_rank = '<span title="'.$obj->required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $obj->required_rank . '</span>';
 
 				if ($obj->userRankForSkill > $obj->required_rank) {
-					$title=$langs->trans('MaxlevelGreaterThanShort');
+					$title = $langs->trans('MaxlevelGreaterThanShort');
 					$class .= 'veryhappy diffnote';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
-					$title=$langs->trans('MaxLevelEqualToShort');
+					$title = $langs->trans('MaxLevelEqualToShort');
 					$class .= 'happy diffnote';
 				} elseif ($obj->userRankForSkill < $obj->required_rank) {
-					$title=$langs->trans('MaxLevelLowerThanShort');
+					$title = $langs->trans('MaxLevelLowerThanShort');
 					$class .= 'sad';
 				}
 
@@ -603,11 +605,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$sk->fetch($t->skill_id);
 
 				print '<tr>';
-				print ' <td>' . Skill::typeCodeToLabel($t->skill_type) . '</td>';
-				print ' <td>' . $sk->getNomUrl(1) . '</td>';
-				print ' <td>' . $t->description . '</td>';
-				print ' <td align="center">' . $t->userRankForSkill . '</td>';
-				print ' <td align="center">' . $t->required_rank . '</td>';
+				print ' <td>' . dolPrintHTML(Skill::typeCodeToLabel($t->skill_type)) . '</td>';
+				print ' <td class="tdoverflowmax200">' . $sk->getNomUrl(1) . '</td>';
+				print ' <td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($t->description).'">' . dolPrintHTML($t->description) . '</td>';
+				print ' <td class="center">' . $t->userRankForSkill . '</td>';
+				print ' <td class="center">' . $t->required_rank . '</td>';
 				print ' <td>' . $t->result . '</td>';
 				print '</tr>';
 			}

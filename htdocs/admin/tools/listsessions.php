@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +143,7 @@ if ($savehandler == 'files') {
 	print_liste_field_titre('');
 	print "</tr>\n";
 
+	$i = 0;
 	foreach ($listofsessions as $key => $sessionentry) {
 		print '<tr class="oddeven">';
 

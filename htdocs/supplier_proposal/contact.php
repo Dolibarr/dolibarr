@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2018 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
- * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
+/* Copyright (C) 2005		Patrick Rouillon			<patrick@rouillon.net>
+ * Copyright (C) 2005-2018	Destailleur Laurent			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2023		Christian Foellmann			<christian@foellmann.de>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,13 +47,14 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('supplier_proposalcontactcard', 'globalcard'));
+
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
 
 $object = new SupplierProposal($db);
 
 $permissiontoedit = $user->hasRight('supplier_proposal', 'creer');
-
-$hookmanager->initHooks(array('supplier_proposalcontactcard', 'globalcard'));
 
 
 /*
@@ -122,7 +124,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Card view and edit mode                                                       */
+/* Card view and edit mode                                                     */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -134,7 +136,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-		llxHeader('', $title, $help_url);
+
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_contact');
 
 		$head = supplier_proposal_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("CommRequest"), -1, 'supplier_proposal');

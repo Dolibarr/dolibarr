@@ -126,7 +126,7 @@ $h++;
 print dol_get_fiche_head($head, 'popularity', '', -1);
 
 
-// Array of liens to show
+// Array of lines to show
 $infoprod = array();
 
 

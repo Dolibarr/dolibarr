@@ -198,7 +198,7 @@ class PaymentVarious extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		// TODO: fill this array
@@ -683,7 +683,7 @@ class PaymentVarious extends CommonObject
 
 
 	/**
-	 *	Send name clicable (with possibly the picto)
+	 *	Send name clickable (with possibly the picto)
 	 *
 	 *	@param  int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param  string	$option						link option
@@ -822,11 +822,11 @@ class PaymentVarious extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -878,7 +878,7 @@ class PaymentVarious extends CommonObject
 		/*
 		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $valuetoshow, 1);
+			$accountingaccount->fetch(0, $valuetoshow, 1);
 		}*/
 
 		return length_accountg($account);

@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Hệ thống quản lý tri thức
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Quản lý cơ sở Quản lý kiến thức (KM) hoặc Bộ phận trợ giúp
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Thiết lập hệ thống quản lý tri thức
 KnowledgeManagementSetupPage = Trang thiết lập Hệ thống quản lý kiến thức
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Giới thiệu về Quản lý tri thức
 KnowledgeManagementAboutPage = Quản lý kiến thức về trang
-
 KnowledgeManagementArea = Quản lý kiến thức
 MenuKnowledgeRecord = Kiến thức cơ bản
 MenuKnowledgeRecordShort = Kiến thức cơ bản
@@ -46,8 +33,7 @@ KnowledgeRecord = Điều
 KnowledgeRecordExtraFields = Trường ngoại lệ cho bài viết
 GroupOfTicket=Nhóm vé
 YouCanLinkArticleToATicketCategory=Bạn có thể liên kết bài viết với một nhóm yêu cầu (vì vậy bài viết sẽ được đánh dấu trên bất kỳ yêu cầu nào trong nhóm này)
-SuggestedForTicketsInGroup=Đề xuất tạo vé
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Đặt là lỗi thời
 ConfirmCloseKM=Bạn có xác nhận việc đóng bài viết này là lỗi thời không?
 ConfirmReopenKM=Bạn có muốn khôi phục bài viết này về trạng thái "Đã xác thực" không?

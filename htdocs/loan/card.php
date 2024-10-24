@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +59,12 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);
 
-$hookmanager->initHooks(array('loancard', 'globalcard'));
+$permissiontoadd = $user->hasRight('loan', 'write');
 
 $error = 0;
 
@@ -78,7 +80,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
 		if ($result > 0) {
@@ -89,7 +91,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -102,7 +104,7 @@ if (empty($reshook)) {
 	}
 
 	// Add loan
-	if ($action == 'add' && $user->hasRight('loan', 'write')) {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
@@ -174,7 +176,7 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit();
 		}
-	} elseif ($action == 'update' && $user->hasRight('loan', 'write')) {
+	} elseif ($action == 'update' && $permissiontoadd) {
 		// Update record
 		if (!$cancel) {
 			$result = $object->fetch($id);
@@ -231,7 +233,7 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->hasRight('loan', 'write')) {
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
@@ -239,9 +241,9 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setlabel' && $user->hasRight('loan', 'write')) {
+	if ($action == 'setlabel' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
+		$result = $object->setValueFrom('label', GETPOST('label'), '', null, 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -266,7 +268,8 @@ if (isModEnabled('accounting')) {
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card');
 
 
 // Create mode

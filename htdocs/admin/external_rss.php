@@ -8,6 +8,7 @@
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +104,7 @@ if ($action == 'add' || GETPOST("modify")) {
 		}
 
 		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOST($external_rss_title), 'chaine', 0, '', $conf->entity);
+		$result2 = 0;
 		if ($result1) {
 			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss");
 			$urltosave = GETPOST($external_rss_urlrss, 'alpha');
@@ -163,6 +165,7 @@ if (GETPOST("delete")) {
 
 
 		$result1 = dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), $conf->entity);
+		$result2 = 0;
 		if ($result1) {
 			$result2 = dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss"), $conf->entity);
 		}
@@ -211,7 +214,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss + 1).'" value=""></td>';
-print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
+print '<td>https://news.google.com/news?ned=us&topic=h&output=rss<br>https://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
 
@@ -297,7 +300,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Logo
-		if ($result > 0 && empty($rss->error)) {
+		if ($result > 0 && empty($rssparser->error)) {
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
@@ -320,7 +323,7 @@ if ($resql) {
 		}
 
 		// Active
-		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
+		$active = _isInBoxList((int) $idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
 		print '<td>'.yn($active);
@@ -347,9 +350,9 @@ $db->close();
 /**
  * Check if the given RSS feed if inside the list of boxes/widgets
  *
- * @param	int		$idrss		The id of the RSS feed
- * @param	array	$boxlist	A list with boxes/widgets
- * @return	bool				true if the rss feed is inside the box/widget list, otherwise false
+ * @param	int				$idrss		The id of the RSS feed
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
+ * @return	bool						true if the rss feed is inside the box/widget list, otherwise false
  */
 function _isInBoxList($idrss, array $boxlist)
 {

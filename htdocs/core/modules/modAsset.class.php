@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,8 +106,8 @@ class modAsset extends DolibarrModules
 		$this->const[1] = array(
 			"ASSET_DEPRECIATION_DURATION_PER_YEAR",
 			"chaine",
-			"365",
-			"Duration per year to calculate depreciation. In some case, can be 360 days",
+			"360",
+			"Duration per year to calculate depreciation. In some case, can be 365 days",
 			0,
 			'current',
 			1
@@ -232,7 +232,7 @@ class modAsset extends DolibarrModules
 
 	/**
 	 *  Function called when module is enabled.
-	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
 	 *  @param      string	$options    Options when enabling module ('', 'noboxes')

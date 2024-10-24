@@ -3,6 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2016  Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ $id     = GETPOSTINT('id');
 $label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$langtodelete = GETPOST('langtodelete', 'alpha');
 
 if ($id == '' && $label == '') {
 	dol_print_error(null, 'Missing parameter id');
@@ -75,6 +77,17 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
+// delete a translation
+if ($action == 'delete' && $langtodelete && $user->hasRight('categorie', 'creer')) {
+	$res = $object->delMultiLangs($langtodelete, $user);
+	if ($res < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	} else {
+		unset($object->multilangs[$langtodelete]);
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	}
+	$action = '';
+}
 
 // validation of addition
 if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
@@ -287,7 +300,7 @@ if ($action == 'edit') {
 
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print '<table class="border centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';

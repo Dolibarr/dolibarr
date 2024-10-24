@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = 讀取預定工作
 Permission23102 = 建立/更新預定工作
 Permission23103 = 刪除預定工作
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=命令列檢查並啟動合格的cron作業
 CronExplainHowToRunUnix=在Unix環境中，您應該使用以下crontab條目以每隔5分鐘執行命令行
 CronExplainHowToRunWin=在Microsoft（tm）Windows環境中，您可以使用“計劃任務”工具每5分鐘執行命令行
 CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=類別%s中的方法%s在禁止方法的黑名單中
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=Cron工作設定文件定義在模組描述符檔案中。啟動模組後，它們將被載入使用，因此您可以從管理員工具選單%s管理作業。
 CronJobProfiles=預定義cron工作配置文件清單
 # Menu
@@ -30,7 +29,8 @@ CronExecute=立即啟動
 CronConfirmExecute=您確定要立即執行這些計劃的工作嗎？
 CronInfo=計劃工作模組允許自動執行計劃工作。工作也可以手動啟動。
 CronTask=工作
-CronNone=無
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=啟動時間
 CronDtEnd=結束時間
 CronDtNextLaunch=下次執行時間
@@ -49,8 +49,8 @@ CronEach=每一個
 JobFinished=工作已啟動並完成
 Scheduled=已預定工作
 #Page card
-CronAdd= 新增工作
-CronEvery=執行每個工作
+CronAdd=新增工作
+CronEvery=Run job every
 CronObject=要建立的實例/項目
 CronArgs=參數
 CronSaveSucess=儲存成功
@@ -67,7 +67,7 @@ CronModuleHelp=Dolibarr模組資料夾名稱（也適用於外部Dolibarr模組�
 CronClassFileHelp=要載入的相對路徑和檔案名稱（路徑相對於Web伺服器根目錄）。 <BR>例如，調用Dolibarr產品項目htdocs / product / class / <u>product.class.php</u>的提取方法，類別檔案名稱的值為<br> <i>product / class / product.class.php</i>
 CronObjectHelp=要載入的項目名稱。 <BR>例如，調用Dolibarr產品項目/htdocs/product/class/product.class.php的提取方法，類別檔案名稱的值為<br> <i>Product</i>
 CronMethodHelp=要啟動的項目方法。 <BR>例如，調用Dolibarr產品項目/htdocs/product/class/product.class.php的提取方法，該方法的值為<br> <i>fetch</i>
-CronArgsHelp=方法參數。 <BR>例如，調用Dolibarr產品項目/htdocs/product/class/product.class.php的提取方法，參數值可以為<br> <i>0，ProductRef</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=要執行的系統命令列。
 CronCreateJob=建立新的計劃工作
 CronFrom=從
@@ -91,6 +91,7 @@ WarningCronDelayed=請注意，出於性能目的，無論下一次執行已啟�
 DATAPOLICYJob=資料清理器和匿名器
 JobXMustBeEnabled=必須啟用工作%s
 EmailIfError=錯誤警告電子郵件
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=執行 %s時出現的錯誤
 
 # Cron Boxes

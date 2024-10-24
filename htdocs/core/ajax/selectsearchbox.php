@@ -60,7 +60,6 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	}
 }
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
 $hookmanager->initHooks(array('searchform'));
 

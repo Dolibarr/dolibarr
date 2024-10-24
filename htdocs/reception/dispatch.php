@@ -170,7 +170,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOSTINT("dto_".$reg[1].'_'.$reg[2]);
 					if (!empty($dto)) {
-						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
+						$unit_price = (float) price2num(GETPOSTFLOAT("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
 					}
 					$saveprice = "saveprice_".$reg[1].'_'.$reg[2];
 				}
@@ -586,7 +586,7 @@ if ($id > 0 || !empty($ref)) {
 				print "</tr>\n";
 			}
 
-			$nbfreeproduct = 0; // Nb of lins of free products/services
+			$nbfreeproduct = 0; // Nb of lines of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 

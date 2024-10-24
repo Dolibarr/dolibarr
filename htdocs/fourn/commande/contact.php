@@ -46,8 +46,8 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 $hookmanager->initHooks(array('ordersuppliercardcontact', 'ordersuppliercontactcard', 'globalcard'));
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 

@@ -1,6 +1,9 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+/* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +56,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOSTINT('withproject');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
@@ -83,7 +86,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('eventorganization', 'read');
@@ -148,7 +151,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -171,8 +174,9 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans("ConferenceOrBooth");
-$help_url = '';
-llxHeader('', $title, $help_url);
+$help_url = 'EN:Module_Event_Organization';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card');
 
 if ($action == 'create') {
 	$result = $projectstatic->fetch(GETPOST('fk_project'));
@@ -653,10 +657,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$sourcetouse = 'boothlocation';
 					$reftouse = $fac->id;
 
-					$url = getOnlinePaymentUrl(0, $sourcetouse, $reftouse);
+					$url = getOnlinePaymentUrl(0, $sourcetouse, (string) $reftouse);
 					$url .= '&booth='.$object->id;
 
-					print '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
+					print '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercent" value="'.$url.'">';
 					print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
 				}
 			}

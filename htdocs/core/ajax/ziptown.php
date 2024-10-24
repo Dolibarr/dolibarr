@@ -132,7 +132,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 			$row_array['state_id'] = $row['state_id'];
 
 			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
-			$row_array['states'] = $formcompany->select_state('', $row['country_id'], '');
+			$row_array['states'] = $formcompany->select_state(0, $row['country_id'], '');
 
 			array_push($return_arr, $row_array);
 		}

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('contractindex'));
 
 // Load translation files required by the page
@@ -75,9 +76,9 @@ $productstatic = new Product($db);
 $now = dol_now();
 
 $title = $langs->trans("ContractsArea");
-$help_url = '';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-index');
 
 print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 
@@ -249,7 +250,7 @@ print "</table></div><br>";
 
 if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
-	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -288,14 +289,14 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 				$staticcompany->logo = $obj->logo;
 				$staticcompany->code_client = $obj->code_client;
 				$staticcompany->code_fournisseur = $obj->code_fournisseur;
-				$staticcompany->code_compta = $obj->code_compta;
-				$staticcompany->code_compta_client = $obj->code_compta;
+				$staticcompany->code_compta = $obj->code_compta_client;
+				$staticcompany->code_compta_client = $obj->code_compta_client;
 				$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 				$staticcompany->client = $obj->client;
 				$staticcompany->fournisseur = $obj->fournisseur;
 
 				print '<tr class="oddeven"><td class="nowrap">';
-				print $staticcontrat->getNomUrl(1, '');
+				print $staticcontrat->getNomUrl(1, 0);
 				print '</td>';
 				print '<td>';
 				print $staticcompany->getNomUrl(1, '', 16);
@@ -343,7 +344,7 @@ if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.statut,";
-$sql .= " s.nom, s.name_alias, s.logo, s.rowid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " s.nom, s.name_alias, s.logo, s.rowid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max);
 
@@ -375,7 +376,8 @@ if ($result) {
 		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
-		$staticcompany->code_compta = $obj->code_compta;
+		$staticcompany->code_compta = $obj->code_compta_client;
+		$staticcompany->code_compta_client = $obj->code_compta_client;
 		$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 		$staticcompany->client = $obj->client;
 		$staticcompany->fournisseur = $obj->fournisseur;
@@ -414,7 +416,7 @@ print '<br>';
 // Last modified services
 $sql = "SELECT c.ref, c.fk_soc as socid,";
 $sql .= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -460,7 +462,8 @@ if ($resql) {
 		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
-		$staticcompany->code_compta = $obj->code_compta;
+		$staticcompany->code_compta = $obj->code_compta_client;
+		$staticcompany->code_compta_client = $obj->code_compta_client;
 		$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 		$staticcompany->client = $obj->client;
 		$staticcompany->fournisseur = $obj->fournisseur;
@@ -506,7 +509,7 @@ print '<br>';
 
 // Not activated services
 $sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -548,7 +551,8 @@ if ($resql) {
 		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
-		$staticcompany->code_compta = $obj->code_compta;
+		$staticcompany->code_compta = $obj->code_compta_client;
+		$staticcompany->code_compta_client = $obj->code_compta_client;
 		$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 		$staticcompany->client = $obj->client;
 		$staticcompany->fournisseur = $obj->fournisseur;
@@ -599,7 +603,7 @@ print '<br>';
 
 // Expired services
 $sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -642,7 +646,8 @@ if ($resql) {
 		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
-		$staticcompany->code_compta = $obj->code_compta;
+		$staticcompany->code_compta = $obj->code_compta_client;
+		$staticcompany->code_compta_client = $obj->code_compta_client;
 		$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 		$staticcompany->client = $obj->client;
 		$staticcompany->fournisseur = $obj->fournisseur;

@@ -72,7 +72,7 @@ $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id', 'int');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -408,7 +408,7 @@ $formadmin = new FormAdmin($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url);
+llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_categories_list');
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -617,7 +617,7 @@ if ($resql) {
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(2 + count($fieldlist)).'">';
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 		print '</td></tr>';
 	}
 
@@ -947,7 +947,7 @@ $db->close();
  *	Show fields in insert/edit mode
  *
  * 	@param		string[]	$fieldlist		Array of fields
- * 	@param		stdClass	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		?stdClass	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void

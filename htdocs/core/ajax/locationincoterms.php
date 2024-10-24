@@ -47,7 +47,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 if (!isModEnabled('incoterm')) {
 	httponly_accessforbidden("Module incoterm not enabled");	// This includes the exit.
 }
-// There is no other permission on this component. Everybody connected can read content of the incoterm table
+
+// There is no other permission on this component. Everybody connected can read content of the incoterm dictionary table
 
 
 /*
@@ -77,7 +78,7 @@ if (GETPOST('location_incoterms')) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_location_incoterms as z";
 		$sql .= " WHERE z.active = 1 AND z.location LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";
 		$sql .= " ORDER BY z.location";
-		$sql .= $db->plimit(100); // Avoid pb with bad criteria
+		$sql .= $db->plimit(1000); // Avoid pb with bad criteria
 	} else { // Use table of sale orders
 		$sql = "SELECT DISTINCT s.location_incoterms FROM ".MAIN_DB_PREFIX.'commande as s';
 		$sql .= " WHERE s.location_incoterms LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";

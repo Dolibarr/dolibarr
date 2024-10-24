@@ -622,7 +622,7 @@ if ($object->id > 0) {
 	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 	if (!empty($bac->iban)) {
 		if ($bac->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$bac->error);
+			print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
 		}
 	} else {
 		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {

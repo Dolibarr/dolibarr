@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
- * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
+ * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
 
 // Security check
 if (!$user->admin) {
@@ -259,11 +259,12 @@ print '</form>';
 print '<br><br>';
 
 
+// Emails templates for notification
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
-// Notification per contacts
 $title = $langs->trans("TemplatesForNotifications");
 
 print load_fiche_titre($title, '', 'email');
@@ -294,6 +295,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$elementLabel = $langs->trans('Shipping');
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementLabel = $langs->trans('ExpenseReport');
+	} elseif ($notifiedevent['elementtype'] == 'contrat') {
+		$elementLabel = $langs->trans('Contract');
 	}
 
 	if ($notifiedevent['elementtype'] == 'propal') {
@@ -310,15 +313,18 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'expensereport_send';
 	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
 		$model = 'order_supplier_send';
-		// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
+	} elseif ($notifiedevent['elementtype'] == 'invoice_supplier') {
+		$model = 'invoice_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
+	} elseif ($notifiedevent['elementtype'] == 'contrat') {
+		$model = 'contract_send';
 	}
 
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
 }
 
-$helptext = '';
+$helptext = $langs->trans("EmailTemplateHelp", $langs->transnoentitiesnoconv("Tools"), $langs->transnoentitiesnoconv("EMailTemplates"));
 form_constantes($constantes, 3, $helptext, 'EmailTemplate');
 
 print $form->buttonsSaveCancel("Save", '');
@@ -433,11 +439,14 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');
+	} elseif ($notifiedevent['elementtype'] == 'contrat') {
+		$elementPicto = 'contract';
+		$elementLabel = $langs->trans('Contract');
 	} elseif ($notifiedevent['elementtype'] == 'agenda') {
 		$elementPicto = 'action';
 	}
 
-	$labelfortrigger = 'AmountHT';
+		$labelfortrigger = 'AmountHT';
 	$codehasnotrigger = 0;
 	if (preg_match('/^(ACTION|HOLIDAY)/', $notifiedevent['code'])) {
 		$codehasnotrigger++;

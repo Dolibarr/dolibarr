@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ $hookmanager = new HookManager($db);
 
 $socid = GETPOSTINT('socid');
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('sendingindex'));
 
 // Load translation files required by the page
@@ -49,7 +50,7 @@ $companystatic = new Societe($db);
 $shipment = new Expedition($db);
 
 $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('', $langs->trans("Shipment"), $helpurl);
+llxHeader('', $langs->trans("Shipment"), $helpurl, '', 0, 0, '', '', '', 'mod-expedition page-index');
 
 print load_fiche_titre($langs->trans("SendingsArea"), '', 'dolly');
 
@@ -216,7 +217,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('order').")";
-$sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_ACCEPTED.")";
+$sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_SHIPMENTONPROCESS.")";
 if ($socid > 0) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
@@ -236,7 +237,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print '<th colspan="3">'.$langs->trans("OrdersToProcess").' ';
-	print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.','.Commande::STATUS_ACCEPTED.'">';
+	print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.','.Commande::STATUS_SHIPMENTONPROCESS.'">';
 	print '<span class="badge">'.$num.'</span>';
 	print '</a>';
 	print '</th>';

@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = גיוס
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = ניהול ומעקב אחר קמפיינים לגיוס למשרות חדשות
-
-#
 # Admin page
-#
 RecruitmentSetup = הגדרת גיוס
 RecruitmentSetupPage = היכנס כאן להגדרת האפשרויות העיקריות למודול הגיוס
 RecruitmentArea=תחום הגיוס
 PublicInterfaceRecruitmentDesc=דפים ציבוריים של משרות הם כתובות URL ציבוריות להצגה ותשובות למשרות פתוחות. יש קישור אחד אחר לכל משרה פתוחה, שנמצא בכל רשומת משרה.
 EnablePublicRecruitmentPages=אפשר דפים ציבוריים של משרות פתוחות
 
-#
-# About page
-#
-RecruitmentAbout = לגבי גיוס עובדים
-RecruitmentAboutPage = גיוס אודות עמוד
 NbOfEmployeesExpected=מספר עובדים צפוי
 JobLabel=תווית משרת העבודה
 WorkPlace=מקום עבודה
@@ -47,7 +34,6 @@ PositionToBeFilled=עמדת עבודה
 PositionsToBeFilled=תפקידי עבודה
 ListOfPositionsToBeFilled=רשימת משרות עבודה
 NewPositionToBeFilled=משרות חדשות
-
 JobOfferToBeFilled=משרה למילוי
 ThisIsInformationOnJobPosition=מידע על תפקיד המשרה למילוי
 ContactForRecruitment=צרו קשר לגיוס

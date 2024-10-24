@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,20 +48,20 @@ class RejetPrelevement
 	public $date_rejet;
 
 	/**
-	 * @var array	Reason of error
+	 * @var string	Reason of error
 	 */
 	public $motif;
 	/**
-	 * @var array	Label status of invoicing
+	 * @var string	Label status of invoicing
 	 */
 	public $invoicing;
 
 	/**
-	 * @var array	Labels of reason
+	 * @var string[]	Labels of reason
 	 */
 	public $motifs;
 	/**
-	 * @var array	Labels of invoicing status
+	 * @var string[]	Labels of invoicing status
 	 */
 	public $labelsofinvoicing;
 

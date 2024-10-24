@@ -83,7 +83,7 @@ if ($sortfield == "") {
 	$sortfield = "t.numero_compte";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules contains array
 
@@ -103,7 +103,7 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
 		$search_date_end = strtotime($fiscalYear->date_end);
 	} else {
 		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
+		$year_start = (int) dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}
@@ -127,6 +127,7 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
+
 
 /*
  * Action
@@ -169,10 +170,6 @@ if (empty($reshook)) {
 		$filter['t.doc_date<='] = $search_date_end;
 		$param .= '&date_endmonth=' . GETPOSTINT('date_endmonth') . '&date_endday=' . GETPOSTINT('date_endday') . '&date_endyear=' . GETPOSTINT('date_endyear');
 	}
-	if (!empty($search_doc_date)) {
-		$filter['t.doc_date'] = $search_doc_date;
-		$param .= '&doc_datemonth=' . GETPOSTINT('doc_datemonth') . '&doc_dateday=' . GETPOSTINT('doc_dateday') . '&doc_dateyear=' . GETPOSTINT('doc_dateyear');
-	}
 	if (!empty($search_accountancy_code_start)) {
 		if ($type == 'sub') {
 			$filter['t.subledger_account>='] = $search_accountancy_code_start;
@@ -207,7 +204,7 @@ if (empty($reshook)) {
 	}
 }
 
-if ($action == 'export_csv') {
+if ($action == 'export_csv' && $user->hasRight('accounting', 'mouvements', 'lire')) {
 	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'balance';

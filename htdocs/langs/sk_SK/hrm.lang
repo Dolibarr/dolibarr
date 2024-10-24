@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-mail na zabránenie externej službe HRM
 Establishments=Prevádzkarne
@@ -24,7 +23,7 @@ SkillsManagement=Manažment zručností
 HRM_MAXRANK=Maximálny počet úrovní na hodnotenie zručnosti
 HRM_DEFAULT_SKILL_DESCRIPTION=Predvolený popis hodností pri vytváraní zručnosti
 deplacement=Shift
-DateEval=Dátum hodnotenia
+DateEval=Competency assessment date
 JobCard=Pracovná karta
 NewJobProfile=Nový pracovný profil
 JobProfile=Pracovný profil
@@ -41,12 +40,12 @@ Skill=Zručnosť
 Skills=Zručnosti
 SkillCard=Karta zručnosti
 EmployeeSkillsUpdated=Zručnosti zamestnanca boli aktualizované (pozri kartu „Zručnosti“ na karte zamestnanca)
-Eval=Hodnotenie
-Evals=hodnotenia
-NewEval=Nové hodnotenie
-ValidateEvaluation=Overiť hodnotenie
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Hodnotiaca karta
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Požadovaná hodnosť pre pracovný profil
 RequiredRankShort=Požadovaná hodnosť
 PositionsWithThisProfile=Pozície s týmto pracovným profilom
@@ -90,8 +89,9 @@ SaveAddSkill = Pridané zručnosti
 SaveLevelSkill = Úroveň zručností bola uložená
 DeleteSkill = Zručnosť odstránená
 SkillsExtraFields=Doplnkové atribúty (zručnosti)
-JobsExtraFields=Doplnkové atribúty (Profil úlohy)
-EvaluationsExtraFields=Doplnkové atribúty (hodnotenia)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Potrebujete služobné cesty
 NoDescription=žiadny popis
 TheJobProfileHasNoSkillsDefinedFixBefore=Hodnotený pracovný profil tohto zamestnanca nemá definovanú žiadnu zručnosť. Pridajte zručnosti, potom odstráňte a reštartujte hodnotenie.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

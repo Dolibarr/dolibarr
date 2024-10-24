@@ -1,0 +1,35 @@
+JOURNALCODE	JOURNALLIB	ECRITURENUM	ECRITUREDATE	COMPTENUM	COMPTELIB	COMPAUXNUM	COMPAUXLIB	PIECEREF	PIECEDATE	ECRITURELIB	DEBIT	CREDIT	ECRITURELET	DATELET	VALIDDATE	MONTANTDEVISE	IDEVISE
+Banque	Banque	17293	20170109	401PPRO	PUBLI-PROV			L08	20170109	PPRO domiciliation 1TR	       187,20	         0,00			20170109
+Banque	Banque	17293	20170109	5121CRA	CR AGRICOLE			L08	20170109	PPRO domiciliation 1TR	         0,00	       187,20			20170109
+Banque	Banque	17295	20170109	401ORPA	ORANGE PARIS			Report	20170109	ORPA adsl par 12	        96,00	         0,00			20170109
+Banque	Banque	17295	20170109	5121CRA	CR AGRICOLE			Report	20170109	ORPA adsl par 12	         0,00	        96,00			20170109
+Banque	Banque	17302	20170105	401ORVI	ORANGE VEBRON INTERNET			Report	20170105	ORVI adsl veb 12	        26,00	         0,00			20170109
+Banque	Banque	17302	20170105	5121CRA	CR AGRICOLE			Report	20170105	ORVI adsl veb 12	         0,00	        26,00			20170109
+Fournisseurs	Fournisseurs	17305	20170119	401ZDAV	SANDRA DAVILA			A01	20170119	ZDAV courtage s/ ventes	         0,00	       508,00			20170119
+Fournisseurs	Fournisseurs	17305	20170119	622200	Courtages s/ ventes			A01	20170119	ZDAV courtage s/ ventes	       508,00	         0,00			20170119
+Banque	Banque	17306	20170119	5121CRA	CR AGRICOLE			A01	20170119	ZDAV courtage s/ ventes	         0,00	       508,00			20170119
+Banque	Banque	17306	20170119	401ZDAV	SANDRA DAVILA			A01	20170119	ZDAV courtage s/ ventes	       508,00	         0,00			20170119
+Banque	Banque	17307	20170119	401ZDAV	SANDRA DAVILA			A01	20170119	ZDAV courtage s/ ventes	       508,00	         0,00			20170131
+Banque	Banque	17307	20170119	5121CRA	CR AGRICOLE			A01	20170119	ZDAV courtage s/ ventes	         0,00	       508,00			20170131
+
+
+
+
+
+
+Other example
+JournalCode	JournalLib	EcritureNum	EcritureDate	CompteNum	CompteLib	CompAuxNum	CompAuxLib	PieceRef	PieceDate	EcritureLib	Debit	Credit	EcritureLet	DateLet	ValidDate	Montantdevise	Idevise
+FAC	Factures clients	AB6/FAC/2017/0045	20171120	41110000	Clients - Ventes de biens ou de prestations de services	ID 2892	2 Et 3 Dimensions	-	20171120	/	1	0	0	0			20171120
+FAC	Factures clients	AB6/FAC/2017/0052	20171120	70710000	Marchandises (ou groupe) A	ID 2892	2 Et 3 Dimensions	-	20171120	[AX] Activités Annexes	0	0	1	0			20171120
+FAC	Factures clients	AB6/FAC/2017/0052	20171120	70710000	Marchandises (ou groupe) A	ID 2892	2 Et 3 Dimensions	-	20171120	[AX] Activités Annexes	0	0	1	0			20171120
+FAC	Factures clients	AB6/FAC/2017/0052	20171120	41110000	Clients - Ventes de biens ou de prestations de services	ID 2892	2 Et 3 Dimensions	-	20171120	/	2	0	0	0			20171120
+OUV	Balance initiale	Balance initiale BRED	20171101	51215000	BRED			-	20171101	/	6201	0	0	0			20171101
+OUV	Balance initiale	Balance initiale Crédit Coopératif Nation	20171101	51211000	Crédit Coopératif Nation			-	20171101	/	1364	20	0	0			20171101
+OUV	Balance initiale	Balance initiale TVA collectée (Taux Intermédiaire)	20171101	44571200	TVA collectée (Taux Intermédiaire)			-	20171101	/	0	0	147	4			20171101
+OUV	Balance initiale	Balance initiale TVA déductible intracommunautaire	20171101	44566200	TVA déductible intracommunautaire			-	20171101	/	18	0	0	0			20171101
+OUV	Balance initiale	Balance initiale Capital souscrit - non appelé	20171101	10110000	Capital souscrit - non appelé			-	20171101	/	10	0	0	0			20171101
+OUV	Balance initiale	Balance initiale Réserves statutaires ou contractuelles	20171101	10630000	Réserves statutaires ou contractuelles			-	20171101	/	0	0	10	0			20171101
+OUV	Balance initiale	Balance initiale Frais entrepreneurs	20171101	46750000	Frais entrepreneurs			-	20171101	/	0	0	100	0			20171101
+OUV	Balance initiale	Balance initiale Fournissseurs réglés par Coopaname	20171101	40100000	Fournissseurs réglés par Coopaname			-	20171101	/	0	0	4123	20			20171101
+OUV	Balance initiale	Balance initiale TVA sur autres biens et services	20171101	44566000	TVA sur autres biens et services			-	20171101	/	507	70	0	0			20171101
+OUV	Balance initiale	Balance initiale TVA en attente à 20%	20171101	44572200	TVA en attente à 20%			-	20171101	/	200	0	0	0			20171101

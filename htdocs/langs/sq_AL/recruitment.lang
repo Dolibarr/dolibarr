@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekrutimi
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Menaxhoni dhe ndiqni fushatat e rekrutimit për pozicione të reja pune
-
-#
 # Admin page
-#
 RecruitmentSetup = Konfigurimi i rekrutimit
 RecruitmentSetupPage = Vendosni këtu konfigurimin e opsioneve kryesore për modulin e rekrutimit
 RecruitmentArea=Zona e rekrutimit
 PublicInterfaceRecruitmentDesc=Faqet publike të punëve janë URL publike për t'u shfaqur dhe për t'iu përgjigjur punëve të hapura. Ekziston një lidhje e ndryshme për çdo punë të hapur, që gjendet në çdo regjistrim pune.
 EnablePublicRecruitmentPages=Aktivizo faqet publike të punëve të hapura
 
-#
-# About page
-#
-RecruitmentAbout = Rreth Rekrutimit
-RecruitmentAboutPage = Rekrutimi rreth faqes
 NbOfEmployeesExpected=Nb e pritur e punonjësve
 JobLabel=Etiketa e pozicionit të punës
 WorkPlace=Vendi i punës
@@ -47,7 +34,6 @@ PositionToBeFilled=Pozicioni i punës
 PositionsToBeFilled=Pozicionet e punës
 ListOfPositionsToBeFilled=Lista e pozicioneve të punës
 NewPositionToBeFilled=Pozicione të reja pune
-
 JobOfferToBeFilled=Vendi i punës që duhet plotësuar
 ThisIsInformationOnJobPosition=Informacion për pozicionin e punës që do të plotësohet
 ContactForRecruitment=Kontaktoni për rekrutim

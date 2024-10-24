@@ -1,7 +1,7 @@
 <?php
-/* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
- * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
- * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
+/* Copyright (c) 2013 		Florian Henry  				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015 		Marcos García  				<marcosgdf@gmail.com>
+ * Copyright (C) 2018 		Charlene Benke 				<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -391,7 +391,7 @@ class FormProjets extends Form
 			// Use select2 selector
 			if (empty($option_only) && !empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, [], 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss .= ' minwidth150imp';
 			}
@@ -402,7 +402,7 @@ class FormProjets extends Form
 			if (!empty($show_empty)) {
 				$out .= '<option value="0" class="optiongrey">';
 				if (!is_numeric($show_empty)) {
-					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">aaa';
+					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">';
 					$out .= $show_empty;
 					//if (!empty($conf->use_javascript_ajax)) $out .= '</span>';
 				} else {
@@ -546,7 +546,7 @@ class FormProjets extends Form
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') {
-			return ''; // Special cas of element we never link to a project (already always done)
+			return ''; // Special case of element we never link to a project (already always done)
 		}
 
 		$linkedtothirdparty = false;
@@ -877,7 +877,7 @@ class FormProjets extends Form
 				}
 				$out .= '</select>';
 			} else {
-				dol_print_error($this->db->lasterror);
+				dol_print_error($this->db, $this->db->lasterror);
 				return '';
 			}
 		}
@@ -906,7 +906,7 @@ class FormProjets extends Form
 			if (empty($lineOnly)) {
 				if (!empty($conf->use_javascript_ajax)) {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, '', 0, 0);
+					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, [], 0, 0);
 					$out .= $comboenhancement;
 					$morecss = 'minwidth200imp maxwidth500';
 				}
@@ -929,7 +929,7 @@ class FormProjets extends Form
 				$out .= '</select>';
 			}
 		} else {
-			dol_print_error($this->db->lasterror);
+			dol_print_error($this->db, $this->db->lasterror);
 			return '';
 		}
 

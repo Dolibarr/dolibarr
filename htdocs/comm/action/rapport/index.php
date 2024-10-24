@@ -70,7 +70,7 @@ if ($action == 'builddoc' && $user->hasRight("agenda", "allactions", "read")) {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
 
 	$cat = new pdf_standard_actions($db, $month, $year);
-	$result = $cat->write_file(0, $langs);
+	$result = $cat->write_file(null, $langs);
 	if ($result < 0) {
 		setEventMessages($cat->error, $cat->errors, 'errors');
 	}

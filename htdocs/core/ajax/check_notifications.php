@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
- * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2023      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016	    Sergio Sanchis			<sergiosanchis@hotmail.com>
+ * Copyright (C) 2017	    Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,9 @@ if (!defined('NOREQUIRETRAN')) {
 require '../../main.inc.php';
 
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
-$time = dol_now();
 $action = GETPOST('action', 'aZ09');
+
+$time = dol_now();
 $listofreminderids = GETPOST('listofreminderids', 'aZ09');
 
 // Security check
@@ -53,7 +54,7 @@ $listofreminderids = GETPOST('listofreminderids', 'aZ09');
  * Actions
  */
 
-if ($action == 'stopreminder') {
+if ($action == 'stopreminder') {	// Test on permission not required here. Endpoint can be called
 	dol_syslog("Clear notification for listofreminderids=".$listofreminderids);
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 
@@ -65,7 +66,6 @@ if ($action == 'stopreminder') {
 	if (!$resql) {
 		dol_print_error($db);
 	}
-	//}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Info");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 

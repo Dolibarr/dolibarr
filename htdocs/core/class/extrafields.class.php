@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -101,6 +101,7 @@ class ExtraFields
 		'linestrg' => 'ExtrafieldLinestringGeo',
 		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
+		'stars' => 'ExtrafieldStars',
 	);
 
 	/**
@@ -337,6 +338,9 @@ class ExtraFields
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
+			} elseif ($type == 'stars') {
+				$typedb = 'int';
+				$lengthdb = $length;
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;
@@ -570,10 +574,17 @@ class ExtraFields
 							$error++;
 						}
 					}
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->db->lasterror();
+					$error++;
 				}
 			}
-
-			return $result;
+			if (empty($error)) {
+				return $result;
+			} else {
+				return $error*-1;
+			}
 		} else {
 			return 0;
 		}
@@ -624,7 +635,7 @@ class ExtraFields
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
 	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime','price','phone','mail','password','url','select','checkbox', ...)
-	 *  @param	int		$length				Length of attribute
+	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
@@ -707,6 +718,9 @@ class ExtraFields
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
+			} elseif ($type == 'stars') {
+				$typedb = 'int';
+				$lengthdb = $length;
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;
@@ -776,7 +790,7 @@ class ExtraFields
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
 	 *  @param  string	$type               Type of attribute
-	 *  @param  int		$size		        Length of attribute
+	 *  @param  string	$size		        Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype		Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
@@ -949,7 +963,8 @@ class ExtraFields
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 *  @param  string		$attrname           The name of the attribute.
-	 *  @return array{}|array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int}		Array of attributes keys+label for all extra fields.  Note: count set as present to avoid static analysis notices
+	 *  @return array<string,string>					Array of attributes keys+label for all extra fields.
+	 * in addition $this->attributes will be completed with array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int} Note: count set as present to avoid static analysis notices
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
@@ -1074,7 +1089,7 @@ class ExtraFields
 		$out = '';
 
 		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
-			$keyprefix = $keyprefix.'options_';
+			$keyprefix .= 'options_';
 		}
 
 		if (empty($extrafieldsobjectkey)) {
@@ -1250,7 +1265,7 @@ class ExtraFields
 				}
 				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
-				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1, 1, 'width75 yesno');
 			}
 			$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
 		} elseif ($type == 'price') {
@@ -1406,7 +1421,7 @@ class ExtraFields
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -1631,7 +1646,7 @@ class ExtraFields
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -1864,6 +1879,45 @@ class ExtraFields
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
 			$out .= '<input autocomplete="new-password" type="'.($keyprefix == 'search_' ? 'text' : 'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'stars') {
+			$out = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$out .= '<div class="star-selection" id="'.$keyprefix.$key.$keysuffix.'_selection">';
+			$i = 1;
+			while ($i <= $size) {
+				$out .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$i++;
+			}
+			$out .= '</div>';
+			$out .= '<script>
+				jQuery(function($) {
+					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
+					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});
+					container.find(".star").on("mouseover", function() {
+						let selectedStar = $(this).data("value");
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+						});
+					});
+					container.on("mouseout", function() {
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+					container.find(".star").off("click").on("click", function() {
+						selectedStars = $(this).data("value");
+						if (selectedStars === 1 && $("#'.$keyprefix.$key.$keysuffix.'").val() == 1) {
+							selectedStars = 0;
+						}
+						$("#'.$keyprefix.$key.$keysuffix.'").val(selectedStars);
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+				});
+			</script>';
 		}
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
@@ -1882,14 +1936,15 @@ class ExtraFields
 	/**
 	 * Return HTML string to put an output field into a page
 	 *
-	 * @param   string	$key            		Key of attribute
-	 * @param   string	$value          		Value to show
-	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
-	 * @param 	Translate $outputlangs 			Output language
-	 * @return	string							Formatted value
+	 * @param   string		$key            		Key of attribute
+	 * @param   string		$value          		Value to show
+	 * @param	string		$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
+	 * @param	string		$extrafieldsobjectkey	Required (for example $object->table_element).
+	 * @param 	Translate 	$outputlangs 			Output
+	 * @param	object		$object					The parent object of field to show
+	 * @return	string								Formatted value
 	 */
-	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null)
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
 	{
 		global $conf, $langs;
 
@@ -2038,8 +2093,8 @@ class ExtraFields
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 
 					$obj = $this->db->fetch_object($resql);
 
@@ -2148,8 +2203,8 @@ class ExtraFields
 			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|label:rowid)
@@ -2217,9 +2272,10 @@ class ExtraFields
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
-						$object = new $classname($this->db);
-						$object->fetch($value);
-						$value = $object->getNomUrl(3);
+						$tmpobject = new $classname($this->db);
+						'@phan-var-force CommonObject $tmpobject';
+						$tmpobject->fetch($value);
+						$value = $tmpobject->getNomUrl(3);
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -2248,6 +2304,64 @@ class ExtraFields
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
+		} elseif ($type == 'stars') {
+			$objectid = (int) $object->id;
+			$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$value .= '<div class="star-selection" id="'.$key.$objectid.'_selection">';
+			$i = 1;
+			while ($i <= $size) {
+				$value .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$i++;
+			}
+			$value .= '</div>';
+			$value .= '<script>
+				$(document).ready(function() {
+						let container = $("#'.$key.$objectid.'_selection");
+						let selectedStars = parseInt($("#'.$key.$objectid.'").val()) || 0;
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+						container.find(".star").on("mouseover", function() {
+							let selectedStar = $(this).data("value");
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+							});
+						});
+						container.on("mouseout", function() {
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+							});
+						});
+						container.find(".star").off("click").on("click", function() {
+							selectedStars = $(this).data("value");
+							if (selectedStars == 1 && $("#'.$key.$objectid.'").val() == 1) {
+								selectedStars = 0;
+							}
+							container.find("#'.$key.$objectid.'").val(selectedStars);
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+							});
+							$.ajax({
+								url: "'.DOL_URL_ROOT.'/core/ajax/editextrafield.php",
+								method: "POST",
+								data: {
+									objectType: \''.dol_escape_js($extrafieldsobjectkey).'\',
+									objectId: '.((int) $objectid).',
+									field: \''.dol_escape_js($key).'\',
+									value: selectedStars,
+									token: "'.newToken().'"
+								},
+								success: function(response) {
+									var res = JSON.parse(response);
+									console[res.status === "success" ? "log" : "error"](res.message);
+								},
+								error: function(xhr, status, error) {
+									console.log("Ajax request failed while updating '.$key.':", error);
+								}
+							});
+						});
+				});
+			</script>';
 		} else {
 			$showsize = round((float) $size);
 			if ($showsize > 48) {
@@ -2330,7 +2444,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (!empty($_COOKIE['DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key])) : !($extrafield_collapse_display_value == 2));
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
@@ -2364,12 +2478,12 @@ class ExtraFields
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function(){'."\n";
 				if (empty($disabledcookiewrite)) {
-					if ($expand_display === false) {
+					if (!$expand_display) {
 						$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
 					} else {
 						$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
-						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+						$out .= '   document.cookie = "DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 				}
 				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'").click(function(){'."\n";
@@ -2377,10 +2491,10 @@ class ExtraFields
 				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
 				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
 				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '               document.cookie = "DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           } else {'."\n";
 				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '               document.cookie = "DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           }'."\n";
 				$out .= '       });'."\n";
 				$out .= '   });'."\n";
@@ -2435,7 +2549,7 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = (int) dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
 				$visibility = 1;

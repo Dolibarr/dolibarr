@@ -7,8 +7,8 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +136,9 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 } else {
 	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
+if (is_scalar($actioncode) && $actioncode == '-1') {
+	$actioncode = '';
+}
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
 	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
@@ -168,7 +171,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
@@ -286,7 +289,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 }
 
 // Define list of external calendars (user setup)
-if (empty($user->conf->AGENDA_DISABLE_EXT)) {
+if (!getDolUserString('AGENDA_DISABLE_EXT')) {
 	$i = 0;
 	while ($i < $MAXAGENDA) {
 		$i++;
@@ -313,7 +316,22 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		}
 	}
 }
-
+$firstdaytoshow = 0;
+$max_day_in_month = 0;
+$lastdaytoshow = 0;
+$tmpday = 0;
+$datestart = 0;
+$dateend = 0;
+$first_day = 0;
+$first_month = 0;
+$first_year = 0;
+$prev_day = 0;
+$prev_month = 0;
+$prev_year = 0;
+$max_day_in_prev_month = 0;
+$next_day = 0;
+$next_month = 0;
+$next_year = 0;
 if (empty($mode) || $mode == 'show_month') {
 	$prev = dol_get_prev_month($month, $year);
 	$prev_year  = $prev['year'];
@@ -350,7 +368,7 @@ if ($mode == 'show_week') {
 	$week = $prev['week'];
 
 	$day = (int) $day;
-	$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+	$next = dol_get_next_week($first_day, (int) $week, $first_month, $first_year);
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 	$next_day   = $next['day'];
@@ -929,6 +947,7 @@ if ($resql) {
 		$event->location = $obj->location;
 		$event->transparency = $obj->transparency;
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		$event->fk_project = $obj->fk_project;
@@ -962,14 +981,14 @@ if ($resql) {
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			$daycursorend = $event->date_end_in_calendar;
-			$anneeend = dol_print_date($daycursorend, '%Y', 'tzuserrel');
-			$moisend = dol_print_date($daycursorend, '%m', 'tzuserrel');
-			$jourend = dol_print_date($daycursorend, '%d', 'tzuserrel');
+			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
+			$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
+			$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
 
 			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
 			//var_dump($annee.'-'.$mois.'-'.$jour);
@@ -1074,9 +1093,9 @@ if ($showbirthday) {
 
 			// Add an entry in eventarray for each day
 			$daycursor = $event->datep;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 
@@ -1160,9 +1179,9 @@ if ($user->hasRight("holiday", "read")) {
 			}
 
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
@@ -1445,9 +1464,9 @@ if (count($listofextcals)) {
 
 						// Add an entry in actionarray for each day
 						$daycursor = $event->date_start_in_calendar;
-						$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-						$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-						$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+						$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+						$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+						$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 						// Loop on each day covered by action to prepare an index to show on calendar
 						$loop = true;
@@ -1525,7 +1544,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
@@ -1548,7 +1567,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 	echo ' </tr>'."\n";
 
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
 	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
@@ -1636,7 +1655,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewweek=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
@@ -1654,9 +1673,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');		// $firstdaytoshow is in timezone of server
-		$tmpday = dol_print_date($curtime, '%d', 'tzuserrel');
-		$tmpmonth = dol_print_date($curtime, '%m', 'tzuserrel');
-		$tmpyear = dol_print_date($curtime, '%Y', 'tzuserrel');
+		$tmpday = (int) dol_print_date($curtime, '%d', 'tzuserrel');
+		$tmpmonth = (int) dol_print_date($curtime, '%m', 'tzuserrel');
+		$tmpyear = (int) dol_print_date($curtime, '%Y', 'tzuserrel');
 
 		$style = 'cal_current_month';
 		if ($iter_day == 6) {
@@ -1664,7 +1683,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		}
 
 		$today = 0;
-		$todayarray = dol_getdate($now, 'fast');
+		$todayarray = dol_getdate($now, true);
 		if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $tmpmonth && $todayarray['year'] == $tmpyear) {
 			$today = 1;
 		}
@@ -1694,7 +1713,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	// Code to show just one day
 	$style = 'cal_current_month cal_current_month_oneday';
 	$today = 0;
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	if ($todayarray['mday'] == $day && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
 		$today = 1;
 	}
@@ -1704,15 +1723,15 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
-	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
+	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month" style="margin-bottom: 10px !important;">';
 
 	echo ' <tr class="tagtr liste_titre">';
 	echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
-	echo " </td>\n";
+	echo " </tr>\n";
 
 	/*
 	 echo ' <div class="tagtr">';
@@ -1723,13 +1742,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	 echo " </div>\n";
 	 */
 
-	echo '</table>';
-	print '</div>';
+	print '<tr><td>';
 
 	/* WIP View per hour */
 	$useviewhour = 0;
 	if ($useviewhour) {
-		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 		$maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500) ? ($_SESSION["dol_screenheight"] - 200) : 660; // Also into index.php file
 
@@ -1769,13 +1787,19 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		print '</div>';
 	} else {
-		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 
 		print '</div>';
 	}
+
+
+	print '</td></tr>';
+
+	echo '</table>';
+	print '</div>';
 }
 
 print "\n".'</form>';
@@ -1883,9 +1907,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$tmpholiday = new Holiday($db);
 
 	foreach ($eventarray as $daykey => $notused) {		// daykey is the 'YYYYMMDD' to show according to user
-		$annee = dol_print_date($daykey, '%Y', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
-		$mois =  dol_print_date($daykey, '%m', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
-		$jour =  dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$annee = (int) dol_print_date($daykey, '%Y', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$mois =  (int) dol_print_date($daykey, '%m', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$jour =  (int) dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
 
 		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' jour='.$jour.' mois='.$mois.' annee='.$annee."<br>\n";
 		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' day='.$day.' month='.$month.' year='.$year."<br>\n";
