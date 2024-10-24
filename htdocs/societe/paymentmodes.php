@@ -816,6 +816,7 @@ if (empty($reshook)) {
 							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib as sr ";
 							$sql .= " SET stripe_card_ref = null";
 							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
+
 							$resql = $db->query($sql);
 						} else {
 							$card->delete($user);
@@ -2157,10 +2158,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $langs->trans("Bank").' '.$object->name).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {

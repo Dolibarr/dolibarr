@@ -1034,7 +1034,7 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 					$ipaddress = getUserRemoteIP();
 					$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 					if (is_object($object)) {

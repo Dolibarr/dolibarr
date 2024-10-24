@@ -302,7 +302,7 @@ class CompanyBankAccount extends Account
 	/**
 	 * Create bank information record.
 	 *
-	 * @param     	$user		User
+	 * @param   ?User		$user		User
 	 * @param   int<0,1>   	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
@@ -325,7 +325,8 @@ class CompanyBankAccount extends Account
 
 		// Correct ->default_rib to not set the new account as default, if there is already 1. We want to be sure to have always 1 default for type = 'ban'.
 		// If we really want the new bank account to be the default, we must set it by calling setDefault() after creation.
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".((int) $this->socid)." AND default_rib = 1 AND type = 'ban'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql .= " WHERE fk_soc = ".((int) $this->socid)." AND default_rib = 1 AND type = 'ban'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$numrows = $this->db->num_rows($result);
@@ -512,7 +513,7 @@ class CompanyBankAccount extends Account
 				$this->number          = $obj->number;
 				$this->cle_rib         = $obj->cle_rib;
 				$this->bic             = $obj->bic;
-				$this->iban = $obj->iban;
+				$this->iban            = dolDecrypt($obj->iban);
 
 				$this->address         = $obj->address;
 
@@ -615,7 +616,7 @@ class CompanyBankAccount extends Account
 	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
 		$sql1 = "SELECT rowid as id, fk_soc as socid FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
+		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : $this->id));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);
@@ -679,8 +680,7 @@ class CompanyBankAccount extends Account
 		$this->address         = 'Rue de Paris';
 		$this->country_id      = 1;
 
-		$this->proprio         = 'Owner';
-		$this->owner_name = 'Owner';
+		$this->owner_name      = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_country_id = 1;
 

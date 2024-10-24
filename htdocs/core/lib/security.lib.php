@@ -110,7 +110,7 @@ function dolGetRandomBytes($length)
 /**
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
- *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
  *	@param   string		$chain		String to encode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)

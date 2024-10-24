@@ -431,7 +431,7 @@ class CompanyPaymentMode extends CommonObject
 	public function setAsDefault($id = 0, $alltypes = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".($id ? $id : $this->id);
+		$sql1 .= " WHERE rowid = ".((int) ($id ? $id : $this->id));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);
