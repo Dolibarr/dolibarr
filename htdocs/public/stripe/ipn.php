@@ -715,10 +715,12 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->number          = $event->data->object->id;
 		$companypaymentmode->last_four       = $event->data->object->card->last4;
 		$companypaymentmode->card_type       = $event->data->object->card->branding;
+
 		$companypaymentmode->owner_name      = $event->data->object->billing_details->name;
-		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We still need this formodulebuilder because name of field is "proprio"
-		$companypaymentmode->exp_date_month  = $event->data->object->card->exp_month;
-		$companypaymentmode->exp_date_year   = $event->data->object->card->exp_year;
+		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We may still need this formodulebuilder because name of field is "proprio"
+
+		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
+		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
 		$companypaymentmode->datec           = $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
@@ -755,8 +757,8 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
 		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
+		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
 		$companypaymentmode->datec           = $db->escape($event->data->object->created);
 		$companypaymentmode->default_rib     = 0;

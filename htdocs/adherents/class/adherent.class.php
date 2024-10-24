@@ -3179,6 +3179,7 @@ class Adherent extends CommonObject
 								$actioncomm->errors_to = '';
 
 								$actioncomm->fk_element = $adherent->id;
+								$actioncomm->elementid = $adherent->id;
 								$actioncomm->elementtype = $adherent->element;
 
 								$actioncomm->extraparams = $extraparams;
