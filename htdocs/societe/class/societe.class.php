@@ -2136,7 +2136,12 @@ class Societe extends CommonObject
 		$tmpthirdparty = new Societe($this->db);
 		$result = $tmpthirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
 
-		return $result;
+		//If the row is found by previous operation return it
+		if ($result == 1) {
+			return $tmpthirdparty->id;
+		} else {
+			return $result;
+		}
 	}
 
 	/**
