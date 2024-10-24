@@ -388,7 +388,11 @@ if ($action == 'update') {
 
 				// Load $extrafields->attributes
 				$extrafields->fetch_name_optionals_label($elementtype);
-                $attrname = GETPOST('attrname', 'aZ09');
+				$attrname = GETPOST('attrname', 'aZ09');
+				$perms = $extrafields->attributes[$elementtype]['perms'][$attrname] ?? '';
+				if ((isset($_GET['perms'])) || (isset($_POST['perms']))) {
+					$perms = (GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : '';
+				}
 				$result = $extrafields->update(
 					$attrname,
 					GETPOST('label', 'alpha'),
@@ -400,7 +404,7 @@ if ($action == 'update') {
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ($extrafields->attributes[$elementtype]['perms'][$attrname] ?? '')),
+					$perms,
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),
