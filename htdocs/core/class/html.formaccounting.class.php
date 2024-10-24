@@ -376,6 +376,7 @@ class FormAccounting extends Form
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 		$out = '';
+		$selected = '';
 
 		$options = array();
 

@@ -57,8 +57,8 @@ class FormMargin
 	 *  TODO Move this in common class.
 	 *
 	 * 	@param	CommonObject	$object			Object we want to get margin information for
-	 * 	@param 	boolean			$force_price	True of not
-	 * 	@return array							Array with info
+	 * 	@param 	bool			$force_price	True of not
+	 *	@return	array{pa_products:float,pv_products:float, margin_on_products:float, margin_rate_products :string, mark_rate_products :string, pa_services:float, pv_services:float, margin_on_services:float, margin_rate_services :string, mark_rate_services :string, pa_total:float, pv_total:float, total_margin:float, total_margin_rate :string, total_mark_rate :string}		Array with info
 	 */
 	public function getMarginInfosArray($object, $force_price = false)
 	{
@@ -99,13 +99,16 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			// We chose to have line->pa_ht always positive in database, so we guess the correct sign
-			// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+
+			// $line->pa_ht is always positive in database, so we guess the correct sign
+
+			'@phan-var-force Facture|FactureFournisseur $object';
 			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
+			'@phan-var-force CommonObject $object';
+
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
-				// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+				'@phan-var-force Facture $object';
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
-					// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
 					// We need a compensation relative to $line->situation_percent
 					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);

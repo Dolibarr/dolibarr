@@ -1731,15 +1731,15 @@ class Form
 	 * Note: you must use the select_contact() to get the component to select a contact. This function must only be called by select_contact.
 	 *
 	 * @param 	int 				$socid 				Id of third party or 0 for all or -1 for empty list
-	 * @param 	array|int|string	$selected 			Array of ID of preselected contact id
+	 * @param 	string[]|int|string	$selected 			Array of ID of preselected contact id
 	 * @param 	string 				$htmlname 			Name of HTML field ('none' for a not editable field)
 	 * @param 	int<0,3>|string		$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param 	string 				$exclude 			List of contacts id to exclude
 	 * @param 	string 				$limitto 			Disable answers that are not id in this array list
-	 * @param 	integer 			$showfunction 		Add function into label
+	 * @param 	int<0,1>			$showfunction 		Add function into label
 	 * @param 	string 				$morecss 			Add more class to class style
 	 * @param 	int 				$options_only 		1=Return options only (for ajax treatment), 2=Return array
-	 * @param 	integer 			$showsoc 			Add company into label
+	 * @param 	int<0,1>			$showsoc 			Add company into label
 	 * @param 	int 				$forcecombo 		Force to use combo box (so no ajax beautify effect)
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param 	string 				$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
@@ -2881,21 +2881,21 @@ class Form
 	 * @param 	int 		$limit 					Limit on number of returned lines
 	 * @param 	int 		$price_level 			Level of price to show
 	 * @param 	string 		$filterkey 				Filter on product
-	 * @param 	int 		$status 				-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 * @param 	int<-1,1>	$status 				-1=Return all products, 0=Products not on sell, 1=Products on sell
 	 * @param 	int 		$finished 				Filter on finished field: 2=No filter
 	 * @param 	int 		$outputmode 			0=HTML select string, 1=Array
 	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
 	 * @param 	string|int<0,1>	$showempty 			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int 		$forcecombo 			Force to use combo box
 	 * @param 	string 		$morecss 				Add more css on select
-	 * @param 	int 		$hidepriceinlabel	 	1=Hide prices in label
-	 * @param 	string 		$warehouseStatus 		Warehouse status filter to group/count stock. Following comma separated filter options can be used.
-	 *                      	          			'warehouseopen' = count products from open warehouses,
-	 *                          	      			'warehouseclosed' = count products from closed warehouses,
-	 *                              		  		'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param 	int 		$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
+	 * @param 	int<0,1>	$hidepriceinlabel	 	1=Hide prices in label
+	 * @param 	''|'warehouseopen'|'warehouseclosed'|'warehouseinternal' 		$warehouseStatus 		Warehouse status filter to group/count stock. Following comma separated filter options can be used.
+	 *                                                                                                  'warehouseopen' = count products from open warehouses,
+	 *                                                                                                  'warehouseclosed' = count products from closed warehouses,
+	 *                                                                                                  'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 * @param 	int<-1,1>	$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 * @param 	int 		$warehouseId	 		Filter by Warehouses Id where there is real stock
-	 * @return  array|string    			        Array of keys for json
+	 * @return	string|array<array{key:string,value:string,label:string,label2:string,desc:string,type:string,price_ht:string,price_ttc:string,price_ht_locale:string,price_ttc_locale:string,pricebasetype:string,tva_tx:string,default_vat_code:string,qty:string,discount:string,duration_value:string,duration_unit:string,pbq:string,labeltrans:string,desctrans:string,ref_customer:string}>		Array of keys for json
 	 */
 	public function select_produits_list($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = 'maxwidth500', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1, $warehouseId = 0)
 	{
@@ -3201,7 +3201,7 @@ class Form
 							//$objp->default_vat_code is not overwritten by $objp2 value
 
 							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel, $filterkey);
-
+							'@phan-var-force array{key:string,value:string,label:string,label2:string,desc:string,type:string,price_ht:string,price_ttc:string,price_ht_locale:string,price_ttc_locale:string,pricebasetype:string,tva_tx:string,default_vat_code:string,qty:string,discount:string,duration_value:string,duration_unit:string,pbq:string,labeltrans:string,desctrans:string,ref_customer:string} $optJson';
 							$j++;
 
 							// Add new entry
@@ -3264,7 +3264,7 @@ class Form
 	 *
 	 * @param stdClass 	$objp 			Resultset of fetch
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
-	 * @param array{key:string,value:string,label:string,label2:string,desc:string,type:string,price_ht:string,price_ttc:string,price_ht_locale:string,price_ttc_locale:string,pricebasetype:string,tva_tx:string,default_vat_code:string,qty:string,discount:string,duration_value:string,duration_unit:string,pbq:string,labeltrans:string,desctrans:string,ref_customer:string}	$optJson 		Option (var used for returned value in json format)
+	 * @param array{key?:string,value?:string,label?:string,label2?:string,desc?:string,type?:string,price_ht?:string,price_ttc?:string,price_ht_locale?:string,price_ttc_locale?:string,pricebasetype?:string,tva_tx?:string,default_vat_code?:string,qty?:string,discount?:string,duration_value?:string,duration_unit?:string,pbq?:string,labeltrans?:string,desctrans?:string,ref_customer?:string}	$optJson 		Option (var used for returned value in json format)
 	 * @param int 		$price_level 	Price level
 	 * @param int 		$selected 		Preselected value
 	 * @param int<0,1> 	$hidepriceinlabel Hide price in label
@@ -3696,7 +3696,7 @@ class Form
 	 * @param string 	$morecss 			Add more CSS
 	 * @param int 		$showstockinlist 	Show stock information (slower).
 	 * @param string 	$placeholder 		Placeholder
-	 * @return array|string                	Array of keys for json or HTML component
+	 * @return array<array<string,mixed>>|string                	Array of keys for json or HTML component
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
@@ -7022,12 +7022,12 @@ class Form
 	 * @param int<0,1> 				$disabled 		Disable input fields
 	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
-	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof' => ..., 'labeladddateof' => ...))
+	 * @param int|string|array<string,mixed>      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof' => ..., 'labeladddateof' => ...))
 	 * @param string 				$openinghours 	Specify hour start and hour end for the select ex 8,20
 	 * @param int 					$stepminutes 	Specify step for minutes between 1 and 30
 	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.
 	 * @param string 				$placeholder 	Placeholder
-	 * @param mixed 				$gm 			'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
+	 * @param 'auto'|'gmt'|'tzserver'|'tzuserrel'	$gm 	'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
 	 * @return string               	         	Html for selectDate
 	 * @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -7679,7 +7679,7 @@ class Form
 	 * @param	string|int<0,1> $showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param	string $morecss Add more css on select
-	 * @return	array|string				Array of keys for json or HTML component
+	 * @return	array<array{key:string,value:mixed,type:int}>|string	Array of keys for json or HTML component
 	 */
 	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7764,6 +7764,7 @@ class Form
 				$objp = $this->db->fetch_object($result);
 
 				$this->constructTicketListOption($objp, $opt, $optJson, $selected, $filterkey);
+				'@phan-var-force array{key:string,value:mixed,type:int} $optJson';
 				// Add new entry
 				// "key" value of json key array is used by jQuery automatically as selected value
 				// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -7794,7 +7795,7 @@ class Form
 	 *
 	 * @param object 	$objp 		Result set of fetch
 	 * @param string 	$opt 		Option (var used for returned value in string option format)
-	 * @param mixed[] 	$optJson 	Option (var used for returned value in json format)
+	 * @param array{key?:string,value?:mixed,type?:int} 	$optJson 	Option (var used for returned value in json format)
 	 * @param string 	$selected 	Preselected value
 	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
@@ -7903,7 +7904,7 @@ class Form
 	 * @param 	string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int 		$forcecombo 	Force to use combo box
 	 * @param 	string 		$morecss 		Add more css on select
-	 * @return  array|string                Array of keys for json or HTML component
+	 * @return  mixed[]|string              Array of keys for json or HTML component
 	 */
 	public function selectProjectsList($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -8135,7 +8136,7 @@ class Form
 	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
-	 * @return     array|string                Array of keys for json or HTML string component
+	 * @return mixed[]|string      Array of keys for json or HTML string component
 	 */
 	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -8253,7 +8254,7 @@ class Form
 	 *
 	 * @param object 	$objp 			Result set of fetch
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
-	 * @param mixed[] 	$optJson 		Option (var used for returned value in json format)
+	 * @param array{key?:string,value?:mixed,type?:int} 	$optJson 		Option (var used for returned value in json format)
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$filterkey 		Filter key to highlight
 	 * @return    void
@@ -8482,7 +8483,7 @@ class Form
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
 	 * @param string 		$filter 			Add more filter (Universal Search Filter)
-	 * @return string|array                     Return HTML string
+	 * @return string|array<array{key:string,value:mixed,label:string}> Return HTML string
 	 * @see selectForForms()
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')

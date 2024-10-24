@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,8 @@ if (empty($reshook)) {
 				}
 			}
 			// Discard if extrafield is a hidden field on form
-			if (abs($field_info['visible']) != 1 && abs($field_info['visible']) != 3 && abs($field_info['visible']) != 4 && abs($field_info['visible']) != 5) {
+			$isVisibleAbs = array_key_exists('visible', $field_info) ? abs((int) $field_info['visible']) : 0;
+			if (!in_array($isVisibleAbs, array(1, 3, 4, 5))) {
 				continue;
 			}
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {

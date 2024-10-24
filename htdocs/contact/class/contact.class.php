@@ -129,8 +129,17 @@ class Contact extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 	);
 
+	/**
+	 * @var string
+	 */
 	public $civility_id; // In fact we store civility_code
+	/**
+	 * @var string
+	 */
 	public $civility_code;
+	/**
+	 * @var string
+	 */
 	public $civility;
 
 	/**
@@ -150,7 +159,7 @@ class Contact extends CommonObject
 
 	/**
 	 * @var string The civilite code, not an integer
-	 * @deprecated
+	 * @deprecated Use $civility_code
 	 * @see $civility_code
 	 */
 	public $civilite;
@@ -204,6 +213,9 @@ class Contact extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $socid;		// both socid and fk_soc are used
+	/**
+	 * @var int
+	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
@@ -216,6 +228,9 @@ class Contact extends CommonObject
 	 */
 	public $statut;
 
+	/**
+	 * @var string
+	 */
 	public $code;
 
 	/**
@@ -227,7 +242,7 @@ class Contact extends CommonObject
 	/**
 	 * Email
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $email
 	 * @see $email
 	 */
 	public $mail;
@@ -247,7 +262,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Array of social-networks
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $socialnetworks;
 
@@ -333,13 +348,16 @@ class Contact extends CommonObject
 	 * Old copy
 	 * @var static
 	 */
-	public $oldcopy; // To contains a clone of this when we need to save old properties of object
+	public $oldcopy; // To contain a clone of this when we need to save old properties of object
 
 	/**
-	 * @var array roles
+	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
 	 */
 	public $roles;
 
+	/**
+	 * @var array<int,array{id:int,code:string,label:string,picto:string}>
+	 */
 	public $cacheprospectstatus = array();
 
 	/**
@@ -347,8 +365,14 @@ class Contact extends CommonObject
 	 */
 	public $fk_prospectlevel;
 
+	/**
+	 * @var int
+	 */
 	public $stcomm_id;
 
+	/**
+	 * @var string
+	 */
 	public $statut_commercial;
 
 	/**
@@ -755,11 +779,11 @@ class Contact extends CommonObject
 	/**
 	 *	Return DN string complete in the LDAP directory for the object
 	 *
-	 *	@param		array	$info		Info string loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>			$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *										1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *										2=Return key only (uid=qqq)
+	 *	@return	string						DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{
@@ -782,7 +806,7 @@ class Contact extends CommonObject
 	/**
 	 *	Initialize info table (LDAP attributes table)
 	 *
-	 *	@return		array		Attributes info table
+	 *	@return		array<string,mixed>		Attributes info table
 	 */
 	public function _load_ldap_info()
 	{
@@ -1867,7 +1891,7 @@ class Contact extends CommonObject
 	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
-	 * @return array|int			Array of contact roles or -1
+	 * @return array<array{fk_socpeople:int,type_contact:int}>|int<-1,-1>	Array of contact roles or -1
 	 * @throws Exception
 	 */
 	public function getContactRoles($element = '')

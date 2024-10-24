@@ -91,7 +91,7 @@ class FormFile
 	 *  @param	int<0,1>	$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
 	 *  @param	int<0,1>	$disablemulti	0=Default, 1=Disable multiple file upload
 	 *  @param	int<0,1>	$nooutput		0=Output result with print, 1=Return result
-	 * 	@return	int|string|array			Return integer <0 if KO, >0 if OK, or string if $noouput=1 or array if $nooutput=2
+	 * 	@return	int|string|array{formToUploadAFile:string,formToAddALink:string}	Return integer <0 if KO, >0 if OK, or string if $nooutput=1 or array if $nooutput=2
 	 */
 	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = null, $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
 	{
@@ -425,7 +425,7 @@ class FormFile
 		$hookmanager->initHooks(array('formfile'));
 
 		// Get list of files
-		$file_list = null;
+		$file_list = array();
 		if (!empty($filedir)) {
 			$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 		}
@@ -802,7 +802,7 @@ class FormFile
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
-				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, null, 0, 0, 0, $morecss);
+				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, array(), 0, 0, 0, $morecss);
 			} else {
 				$out .= '&nbsp;';
 			}
@@ -851,7 +851,7 @@ class FormFile
 			if (is_object($object)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 				$link = new Link($this->db);
-				$sortfield = $sortorder = null;
+				$sortfield = $sortorder = '';
 				$res = $link->fetchAll($link_list, $object->element, $object->id, $sortfield, $sortorder);
 			}
 
@@ -868,6 +868,7 @@ class FormFile
 
 			// Loop on each file found
 			if (is_array($file_list)) {
+				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> $file_list';  // phan limitations loose typing information with empty() tests, etc.  Force again.
 				// Defined relative dir to DOL_DATA_ROOT
 				$relativedir = '';
 				if ($filedir) {
@@ -887,12 +888,12 @@ class FormFile
 
 				foreach ($file_list as $file) {
 					// Define relative path for download link (depends on module)
-					$relativepath = $file["name"]; // Cas general
+					$relativepath = (string) $file["name"]; // Cas general
 					if ($modulesubdir) {
-						$relativepath = $modulesubdir."/".$file["name"]; // Cas propal, facture...
+						$relativepath = (string) $modulesubdir."/".$file["name"]; // Cas propal, facture...
 					}
 					if ($modulepart == 'export') {
-						$relativepath = $file["name"]; // Other case
+						$relativepath = (string) $file["name"]; // Other case
 					}
 
 					$out .= '<tr class="oddeven">';
@@ -1123,20 +1124,20 @@ class FormFile
 				// Define relative path for download link (depends on module)
 				$relativepath = $file["name"]; // Cas general
 				if ($modulesubdir) {
-					$relativepath = $modulesubdir."/".$file["name"]; // Cas propal, facture...
+					$relativepath = (string) $modulesubdir."/".$file["name"]; // Cas propal, facture...
 				}
 				// Autre cas
 				if ($modulepart == 'donation') {
-					$relativepath = get_exdir($modulesubdir, 2, 0, 0, null, 'donation').$file["name"];
+					$relativepath = (string) get_exdir($modulesubdir, 2, 0, 0, null, 'donation').$file["name"];
 				}
 				if ($modulepart == 'export') {
-					$relativepath = $file["name"];
+					$relativepath = (string) $file["name"];
 				}
 
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
-				$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-				if (empty($this->infofiles['extensions'][$ext])) {
+				$ext = (string) pathinfo($file['name'], PATHINFO_EXTENSION);  // pathinfo returns a string here (cast for static analysis)
+				if (!array_key_exists($ext, $this->infofiles['extensions'])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
 					$this->infofiles['extensions'][$ext]++;
@@ -1189,14 +1190,14 @@ class FormFile
 	 *  Show list of documents in $filearray (may be they are all in same directory but may not)
 	 *  This also sync database if $upload_dir is defined.
 	 *
-	 *  @param	 array			$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
-	 * 	@param	 Object|null	$object				Object on which document is linked to.
+	 *	@param array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>	$filearray Array of files loaded by dol_dir_list('files') function before calling this.
+	 * 	@param	 ?CommonObject	$object				Object on which document is linked to.
 	 * 	@param	 string			$modulepart			Value for modulepart used by download or viewimage wrapper.
 	 * 	@param	 string			$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
-	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
+	 * 	@param	 int<0,1>		$forcedownload		Force to open dialog box "Save As" when clicking on file.
 	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
-	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int			$useinecm			Change output to add more information:
+	 * 	@param	 int<0,1>		$permonobject		Permission on object (so permission to delete or crop document)
+	 * 	@param	 int<0,6>		$useinecm			Change output to add more information:
 	 * 												0, 4, 5, 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 												1: Add link to edit ECM entry
 	 * 												2: Add rename and crop link
@@ -1205,16 +1206,16 @@ class FormFile
 	 *  @param   int			$maxlength          Maximum length of file name shown.
 	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
 	 *  @param	 string 		$url				Full url to use for click links ('' = autodetect)
-	 *  @param	 int			$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
-	 *  @param   int    		$permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
+	 *  @param	 int<0,1>		$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
+	 *  @param   int<-1,1> 		$permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
 	 *  @param   string 		$upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this to complete file data with database indexes.
 	 *  @param   string 		$sortfield          Sort field ('name', 'size', 'position', ...)
 	 *  @param   string 		$sortorder          Sort order ('ASC' or 'DESC')
-	 *  @param   int    		$disablemove        1=Disable move button, 0=Position move is possible.
-	 *  @param	 int			$addfilterfields	Add the line with filters
-	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitly to 0 or 1)
+	 *  @param   int<0,1>  		$disablemove        1=Disable move button, 0=Position move is possible.
+	 *  @param	 int<0,1>		$addfilterfields	Add the line with filters
+	 *  @param	 int<-1,1>		$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitly to 0 or 1)
 	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
-	 *  @param	 array			$moreoptions		Add more options like array('afteruploadtitle', ...)
+	 *  @param	 array<string,mixed>	$moreoptions	Add more options like array('afteruploadtitle', ...)
 	 * 	@return	 int								Return integer <0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
@@ -1716,7 +1717,7 @@ class FormFile
 	 *	Show list of documents in a directory of ECM module.
 	 *
 	 *  @param	string	$upload_dir         Directory that was scanned. This directory will contains files into subdirs REF/files
-	 *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
+	 *	@param array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>	$filearray Array of files loaded by dol_dir_list('files') function before calling this.
 	 *  @param  string	$modulepart         Value for modulepart used by download wrapper. Value can be $object->table_name (that is 'myobject' or 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 	 *  @param  string	$param              Parameters on sort links
 	 *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
@@ -2109,13 +2110,13 @@ class FormFile
 	/**
 	 * Show array with linked files
 	 *
-	 * @param 	Object		$object			Object
-	 * @param 	int			$permissiontodelete	Deletion is allowed
-	 * @param 	string		$action			Action
-	 * @param 	string		$selected		???
-	 * @param	string		$param			More param to add into URL
-	 * @param	string		$htmlname		Html name of component
-	 * @param	array		$moreoptions	Add more options like array('afterlinktitle', ...)
+	 * @param 	CommonObject	$object			Object
+	 * @param 	int<0,1>		$permissiontodelete	Deletion is allowed
+	 * @param 	?string			$action			Action
+	 * @param 	?string			$selected		???
+	 * @param	string			$param			More param to add into URL
+	 * @param	string			$htmlname		Html name of component
+	 * @param	array<string,mixed>	$moreoptions	Add more options like array('afterlinktitle', ...)
 	 * @return 	int							Number of links
 	 */
 	public function listOfLinks($object, $permissiontodelete = 1, $action = null, $selected = null, $param = '', $htmlname = 'formaddlink', $moreoptions = array())
@@ -2265,7 +2266,7 @@ class FormFile
 	/**
 	 * Show detail icon with link for preview
 	 *
-	 * @param   array     $file           Array with data of file. Example: array('name'=>...)
+	 * @param   array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}     $file           Array with data of file. Example: array('name'=>...)
 	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
 	 * @param   string    $relativepath   Relative path of docs
 	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.

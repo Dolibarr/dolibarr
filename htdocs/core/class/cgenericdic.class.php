@@ -48,6 +48,9 @@ class CGenericDic extends CommonDict
 	 */
 	public $lines = array();
 
+	/**
+	 * @var string
+	 */
 	public $code;
 
 	/**
@@ -55,6 +58,9 @@ class CGenericDic extends CommonDict
 	 */
 	public $label;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $active;
 
 

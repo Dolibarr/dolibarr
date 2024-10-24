@@ -70,8 +70,8 @@ class AssetDepreciationOptions extends CommonObject
 	public $fields = array();
 
 	/**
-	 * @var array  Array with all deprecation options info by mode.
-	 *  Note : economic mode is mandatory and is the primary options
+	 * @var array<string,array{label:string,table:string,fields:array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>}>
+	 *  Note : economic mode is mandatory and is the primary option
 	 */
 	public $deprecation_options_fields = array(
 		'economic' => array(
@@ -119,7 +119,7 @@ class AssetDepreciationOptions extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var array  Array with all deprecation options by mode.
+	 * @var array<string,array<string,null|int|float|string>>  Array with all deprecation options by mode.
 	 */
 	public $deprecation_options = array();
 
@@ -174,7 +174,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  Set object infos for a mode
 	 *
 	 * @param	string		$mode			Depreciation mode (economic, accelerated_depreciation, ...)
-	 * @param	int			$class_type		Type (0:asset, 1:asset model)
+	 * @param	int<0,1>	$class_type		Type (0:asset, 1:asset model)
 	 * @param	bool		$all_field		Get all fields
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */

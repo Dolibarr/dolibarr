@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,8 +248,9 @@ class pdf_standardlabel extends CommonStickerGenerator
 		}
 		$this->type = 'pdf';
 		// standard format or custom
-		if ($this->Tformat['paper-size'] != 'custom') {
-			$this->format = $this->Tformat['paper-size'];
+		$paper_size = $this->Tformat['paper-size'];
+		if (!is_string($paper_size) || $paper_size != 'custom') {
+			$this->format = $paper_size;
 		} else {
 			//custom
 			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
@@ -337,7 +339,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		return 1;
 	}

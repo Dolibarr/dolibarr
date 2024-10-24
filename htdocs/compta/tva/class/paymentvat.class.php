@@ -597,7 +597,7 @@ class PaymentVAT extends CommonObject
 				$label,
 				$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

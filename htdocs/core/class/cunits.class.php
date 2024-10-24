@@ -31,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
  */
 class CUnits extends CommonDict
 {
+	/**
+	 * @var CUnits[]
+	 */
 	public $records = array();
 
 	//var $element='ctypent';			//!< Id that identify managed objects
@@ -38,14 +41,26 @@ class CUnits extends CommonDict
 
 	/**
 	 * @var string label
-	 * @deprecated
+	 * @deprecated Use $label
 	 * @see $label
 	 */
 	public $libelle;
 
+	/**
+	 * @var string
+	 */
 	public $sortorder;
+	/**
+	 * @var string
+	 */
 	public $short_label;
+	/**
+	 * @var string
+	 */
 	public $unit_type;
+	/**
+	 * @var string
+	 */
 	public $scale;
 
 
@@ -63,9 +78,9 @@ class CUnits extends CommonDict
 	/**
 	 *  Create object into database
 	 *
-	 *  @param      User	$user        User that create
-	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
+	 *  @param	User		$user        User that create
+	 *  @param	int<0,1>	$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return	int					   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -212,9 +227,9 @@ class CUnits extends CommonDict
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	Limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array $filter       	Filter USF
+	 * @param  string|array<string,mixed> $filter  	Filter USF
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return CUnits[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -306,9 +321,9 @@ class CUnits extends CommonDict
 	/**
 	 *  Update object into database
 	 *
-	 *  @param      User	$user        User that modify
-	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
+	 *  @param      User		$user        User that modify
+	 *  @param      int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return     int					   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -378,8 +393,8 @@ class CUnits extends CommonDict
 	/**
 	 *  Delete object in database
 	 *
-	 *	@param  User	$user        User that delete
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *	@param  User		$user        User that delete
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
@@ -430,10 +445,10 @@ class CUnits extends CommonDict
 
 	/**
 	 * Unit converter
-	 * @param double $value value to convert
+	 * @param float $value value to convert
 	 * @param int $fk_unit current unit id of value
 	 * @param int $fk_new_unit the id of unit to convert in
-	 * @return double
+	 * @return float
 	 */
 	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
 	{

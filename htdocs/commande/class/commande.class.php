@@ -2056,17 +2056,17 @@ class Commande extends CommonOrder
 			$line->desc = $remise->description; // Description ligne
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
-			$line->subprice = -$remise->amount_ht;
-			$line->price = -$remise->amount_ht;
+			$line->subprice = -(float) $remise->amount_ht;
+			$line->price = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefini
 			$line->qty = 1;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
 
-			$line->total_ht  = -$remise->amount_ht;
-			$line->total_tva = -$remise->amount_tva;
-			$line->total_ttc = -$remise->amount_ttc;
+			$line->total_ht  = -(float) $remise->amount_ht;
+			$line->total_tva = -(float) $remise->amount_tva;
+			$line->total_ttc = -(float) $remise->amount_ttc;
 
 			$result = $line->insert();
 			if ($result > 0) {

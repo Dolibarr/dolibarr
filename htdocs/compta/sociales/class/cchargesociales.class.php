@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +36,14 @@
  */
 class Cchargesociales
 {
+	/**
+	 * @var DoliDB
+	 */
 	public $db;
 
+	/**
+	 * @var int
+	 */
 	public $id;
 
 	/**
@@ -51,7 +58,7 @@ class Cchargesociales
 
 	/**
 	 * @var string Label
-	 * @deprecated
+	 * @deprecated Use $label
 	 */
 	public $libelle;
 
@@ -60,8 +67,17 @@ class Cchargesociales
 	 */
 	public $label;
 
+	/**
+	 * @var string
+	 */
 	public $deductible;
+	/**
+	 * @var string
+	 */
 	public $active;
+	/**
+	 * @var string
+	 */
 	public $code;
 
 	/**
@@ -73,10 +89,13 @@ class Cchargesociales
 	 * @var string module
 	 */
 	public $module;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code;
 
 	/**
-	 * @var array array of errors
+	 * @var string[] array of errors
 	 */
 	public $errors = array();
 
@@ -151,13 +170,13 @@ class Cchargesociales
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+			//// Call triggers
+			//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//if ($result < 0) $error++;
+			//// End call triggers
 			//}
 		}
 
