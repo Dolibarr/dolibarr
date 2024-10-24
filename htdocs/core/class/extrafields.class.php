@@ -113,19 +113,24 @@ class ExtraFields
 	{
 		$this->db = $db;
 	}
-        
-        private function sanitizeElementName($elementName) {
-            if ($elementName == 'thirdparty') {
-                    return 'societe';
-            }
-            if ($elementName == 'contact') {
-                    return 'socpeople';
-            }
-            if ($elementName == 'order_supplier') {
-                    return 'commande_fournisseur';
-            }
-            return $elementName;
-        }
+
+	/**
+	* Element list sanitizer to translate new element type names into old ones
+	* @param		string		$elementName		element type to check
+	*/
+	private function sanitizeElementName($elementName)
+	{
+		if ($elementName == 'thirdparty') {
+			return 'societe';
+		}
+		if ($elementName == 'contact') {
+			return 'socpeople';
+		}
+		if ($elementName == 'order_supplier') {
+			return 'commande_fournisseur';
+		}
+		return $elementName;
+	}
 
 	/**
 	 *  Add a new extra field parameter
@@ -165,12 +170,12 @@ class ExtraFields
 		$result = 0;
 
 		// Clean properties
-                if ($type == 'separator' || $type == 'separate') {
-                        $type = 'separate';
-                        $unique = 0;
-                        $required = 0;
-                }	// Force unique and not required if this is a separator field to avoid troubles.
-                $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+		if ($type == 'separator' || $type == 'separate') {
+				$type = 'separate';
+				$unique = 0;
+				$required = 0;
+		}	// Force unique and not required if this is a separator field to avoid troubles.
+		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 		// If property has a computed formula, it must not be a required or unique field
 		if (!empty($computed)) {
 			$required = 0;
@@ -179,12 +184,12 @@ class ExtraFields
 
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate') {
-			$result = $this->create($attrname, $type, $size, implode(",",$elementtype), $unique, $required, $default_value, $param, $perms, $list, $computed, $help, $moreparams);
+			$result = $this->create($attrname, $type, $size, implode(",", $elementtype), $unique, $required, $default_value, $param, $perms, $list, $computed, $help, $moreparams);
 		}
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, implode(",",$elementtype), $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, implode(",", $elementtype), $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -240,19 +245,19 @@ class ExtraFields
 			$unique = 0;
 			$required = 0;
 		}	// Force unique and not required if this is a separator field to avoid troubles.
-                
-                $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+		
+		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate') {
 			dol_syslog(get_class($this).'::thisupdate', LOG_DEBUG);
-			$result = $this->update($attrname, $label, $type, $size, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$result = $this->update($attrname, $label, $type, $size, implode(",", $elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 		}
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
 			dol_syslog(get_class($this).'::thislabel', LOG_DEBUG);
-			$result2 = $this->update_label($attrname, $label, $type, $size, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$result2 = $this->update_label($attrname, $label, $type, $size, implode(",", $elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -348,27 +353,26 @@ class ExtraFields
 				'default' => $default_value
 			);
 
-                        $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
-                        foreach($elementtype as $etype) {
-                        
-                            $table = $etype.'_extrafields';
-                            if ($etype == 'categorie') {
-                                    $table = 'categories_extrafields';
-                            }
-                            $result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
-                            if ($result > 0) {
-                                    if ($unique) {
-                                            $sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
-                                            $resql = $this->db->query($sql, 1, 'dml');
-                                    }
+			$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+			foreach ($elementtype as $etype) {
+				$table = $etype.'_extrafields';
+				if ($etype == 'categorie') {
+					$table = 'categories_extrafields';
+				}
+				$result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
+				if ($result > 0) {
+					if ($unique) {
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$resql = $this->db->query($sql, 1, 'dml');
+					}
 //                                    return 1;
-                            } else {
-                                    $this->error = $this->db->lasterror();
-                                    $this->errno = $this->db->lasterrno();
-                                    return -1;
-                            }
-                        }
-                        return 1;
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->errno = $this->db->lasterrno();
+					return -1;
+				}
+			}
+			return 1;
 		} else {
 			return 0;
 		}
@@ -451,7 +455,8 @@ class ExtraFields
 			} else {
 				$params = '';
 			}
-                        $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+
+			$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
 			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,";
@@ -487,7 +492,7 @@ class ExtraFields
 			$sql .= " ".((int) $pos).",";
 			$sql .= " '".$this->db->escape($size)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
-			$sql .= " '".$this->db->escape(implode(",",$elementtype))."',";
+			$sql .= " '".$this->db->escape(implode(",", $elementtype))."',";
 			$sql .= " ".((int) $unique).",";
 			$sql .= " ".((int) $required).",";
 			$sql .= " '".$this->db->escape($params)."',";
@@ -546,25 +551,25 @@ class ExtraFields
 			if (!$error) {
 				$sql = "SELECT COUNT(rowid) as nb";
 				$sql .= " FROM ".$this->db->prefix()."extrafields";
-				$sql .= " WHERE elementtype = '".$this->db->escape(implode(",",$elementtype))."'";
+				$sql .= " WHERE elementtype = '".$this->db->escape(implode(",", $elementtype))."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaining in other entities before deleting field in table
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->nb <= 0) {
-                                            foreach($elementtype as $etype) {
-                                                $table = $etype.'_extrafields';
-                                                if ($etype == 'categorie') {
-                                                        $table = 'categories_extrafields';
-                                                }
-						$result = $this->db->DDLDropField($this->db->prefix().$table, $attrname); // This also drop the unique key
-						if ($result < 0) {
-							$this->error = $this->db->lasterror();
-							$this->errors[] = $this->db->lasterror();
-							$error++;
+						foreach ($elementtype as $etype) {
+							$table = $etype.'_extrafields';
+							if ($etype == 'categorie') {
+									$table = 'categories_extrafields';
+							}
+							$result = $this->db->DDLDropField($this->db->prefix().$table, $attrname); // This also drop the unique key
+							if ($result < 0) {
+								$this->error = $this->db->lasterror();
+								$this->errors[] = $this->db->lasterror();
+								$error++;
+							}
 						}
-                                            }
 					}
 				} else {
 					$this->error = $this->db->lasterror();
@@ -595,13 +600,13 @@ class ExtraFields
 		// phpcs:enable
 		global $conf;
 
-                $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
-			$sql .= " AND elementtype = '".$this->db->escape(implode(",",$elementtype))."'";
+			$sql .= " AND elementtype = '".$this->db->escape(implode(",", $elementtype))."'";
 
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -707,65 +712,65 @@ class ExtraFields
 				$required = 0;
 				$unique = 0;
 			}
-                        $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+				$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
 
-                        foreach($elementtype as $etype) {
-                            $table = $etype.'_extrafields';
-                            if ($etype == 'categorie') {
-                                    $table = 'categories_extrafields';
-                            }
+				foreach ($elementtype as $etype) {
+					$table = $etype.'_extrafields';
+					if ($etype == 'categorie') {
+							$table = 'categories_extrafields';
+					}
 
-                            if (is_object($hookmanager)) {
-                                    $hookmanager->initHooks(array('extrafieldsdao'));
-                                    $parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
-                                    $reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					if (is_object($hookmanager)) {
+							$hookmanager->initHooks(array('extrafieldsdao'));
+							$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
+							$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-                                    if ($reshook < 0) {
-                                            $this->error = $this->db->lasterror();
-                                            return -1;
-                                    }
-                            }
-                            dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
-                            if ($type != 'separate') { // No table update when separate type
-                                    $result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
-                            }
-                        }
-                        if ($result > 0 || $type == 'separate') {
-                                if ($label) {
-                                        dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-                                        $result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
-                                }
-                                if ($result > 0) {
-                                    foreach($elementtype as $etype) {
-                                        $table = $etype.'_extrafields';
-                                        if ($etype == 'categorie') {
-                                                $table = 'categories_extrafields';
-                                        }
-                                        $sql = '';
-                                        if ($unique) {
-                                                dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
-                                                $sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
-                                        } else {
-                                                dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-                                                $sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
-                                        }
-                                        dol_syslog(get_class($this).'::update', LOG_DEBUG);
-                                        $resql = $this->db->query($sql, 1, 'dml');
-                                        /*if ($resql < 0) {
-                                         $this->error = $this->db->lasterror();
-                                         return -1;
-                                         }*/
+							if ($reshook < 0) {
+									$this->error = $this->db->lasterror();
+									return -1;
+							}
+					}
+					dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
+					if ($type != 'separate') { // No table update when separate type
+							$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
+					}
+				}
+				if ($result > 0 || $type == 'separate') {
+						if ($label) {
+								dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
+								$result = $this->update_label($attrname, $label, $type, $length, implode(",",$elementtype), $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+						}
+						if ($result > 0) {
+							foreach ($elementtype as $etype) {
+								$table = $etype.'_extrafields';
+								if ($etype == 'categorie') {
+										$table = 'categories_extrafields';
+								}
+								$sql = '';
+								if ($unique) {
+										dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
+										$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
+								} else {
+										dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
+										$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
+								}
+								dol_syslog(get_class($this).'::update', LOG_DEBUG);
+								$resql = $this->db->query($sql, 1, 'dml');
+								/*if ($resql < 0) {
+								 $this->error = $this->db->lasterror();
+								 return -1;
+								 }*/
 //                                        return 1;
-                                    }
-                                    return 1;
-                                } else {
-                                        $this->error = $this->db->lasterror();
-                                        return -1;
-                                }
-                        } else {
-                                $this->error = $this->db->lasterror();
-                                return -1;
-                        }
+							}
+							return 1;
+						} else {
+								$this->error = $this->db->lasterror();
+								return -1;
+						}
+				} else {
+						$this->error = $this->db->lasterror();
+						return -1;
+				}
 		} else {
 			return 0;
 		}
@@ -806,7 +811,7 @@ class ExtraFields
 		global $conf, $user;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable);
 
-                $elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
+		$elementtype = array_map([$this, 'sanitizeElementName'], explode(",", $elementtype));
                 
 		if (empty($pos)) {
 			$pos = 0;
@@ -858,13 +863,13 @@ class ExtraFields
 				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
-				$sql_del .= " AND elementtype = '".$this->db->escape(implode(",",$elementtype))."'";
+				$sql_del .= " AND elementtype = '".$this->db->escape(implode(",", $elementtype))."'";
 			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
 				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity = 0";
-				$sql_del .= " AND elementtype = '".$this->db->escape(implode(",",$elementtype))."'";
+				$sql_del .= " AND elementtype = '".$this->db->escape(implode(",", $elementtype))."'";
 			}
 			$resql1 = $this->db->query($sql_del);
 
@@ -901,7 +906,7 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " '".$this->db->escape($type)."',";
 			$sql .= " '".$this->db->escape($size)."',";
-			$sql .= " '".$this->db->escape(implode(",",$elementtype))."',";
+			$sql .= " '".$this->db->escape(implode(",", $elementtype))."',";
 			$sql .= " ".$unique.",";
 			$sql .= " ".$required.",";
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
@@ -968,7 +973,7 @@ class ExtraFields
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
-			$sql .= " WHERE FIND_IN_SET('".$this->db->escape($elementtype)."',elementtype) > 0"; // Filed with object->table_element
+			$sql .= " WHERE FIND_IN_SET('".$this->db->escape($elementtype)."', elementtype) > 0"; // Filed with object->table_element
 		}
 		if ($attrname && $elementtype && $elementtype != 'all') {
 			$sql .= " AND name = '".$this->db->escape($attrname)."'";
@@ -980,8 +985,8 @@ class ExtraFields
 			$count = 0;
 			if ($this->db->num_rows($resql)) {
 				while ($tab = $this->db->fetch_object($resql)) {
-                                    $this->attributes[$elementtype]['elementtype_org'] = $tab->elementtype;
-                                    $tab->elementtype = $elementtype;
+					$this->attributes[$elementtype]['elementtype_org'] = $tab->elementtype;
+					$tab->elementtype = $elementtype;
 					if ($tab->entity != 0 && $tab->entity != $conf->entity) {
 						// This field is not in current entity. We discard but before we save it into the array of mandatory fields if it is a mandatory field without default value
 						if ($tab->fieldrequired && is_null($tab->fielddefault)) {
@@ -994,7 +999,6 @@ class ExtraFields
 					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
 					}
-
 
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
 					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
