@@ -8409,7 +8409,7 @@ class Form
 			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc;
 		}
 		'@phan-var-force CommonObject $objecttmp';
-
+		/** @var CommonObject $objecttmp */
 		//var_dump($filter);
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') {
