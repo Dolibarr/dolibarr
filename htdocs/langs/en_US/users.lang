@@ -137,3 +137,4 @@ ExcludedByFilter=Non qualified by filters but shown to see its hierarchy
 UserEnabledDisabled=User status changed: %s
 AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
 ErrorUpdateCanceledDueToDuplicatedUniqueValue=Error, The update was canceled because one of the pieces of data, that should be unique, already exists
+SocialNetworksUser=Social networks for user

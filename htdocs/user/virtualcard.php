@@ -24,6 +24,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -70,20 +71,9 @@ $permissiontoedit = ((($object->id == $user->id) && $user->hasRight('user', 'sel
 
 if ($action == 'update' && $permissiontoedit) {
 	$tmparray = array();
-	$tmparray['USER_PUBLIC_HIDE_PHOTO'] = (GETPOST('USER_PUBLIC_HIDE_PHOTO') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_EMAIL'] = (GETPOST('USER_PUBLIC_HIDE_EMAIL') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
-	$tmparray['USER_PUBLIC_SHOW_BIRTH'] = (GETPOST('USER_PUBLIC_SHOW_BIRTH') ? 1 : 0);
-	$tmparray['USER_PUBLIC_SHOW_ADDRESS'] = (GETPOST('USER_PUBLIC_SHOW_ADDRESS') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (GETPOST('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (GETPOST('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_OFFICE_FAX'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_FAX') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_MORE'] = (GETPOST('USER_PUBLIC_MORE') ? GETPOST('USER_PUBLIC_MORE') : '');
 
-	dol_set_user_param($db, $conf, $object, $tmparray);
+	dolibarr_set_const($db, 'USER_PUBLIC_MORE', $tmparray['USER_PUBLIC_MORE'], 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'setUSER_ENABLE_PUBLIC' && $permissiontoedit) {
@@ -153,6 +143,9 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'external');
 	$fullinternalurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'internal');
 
+	$showUserSocialNetworks = getDolGlobalString('USER_PUBLIC_HIDE_SOCIALNETWORKS');
+	$showSocieteSocialNetworks = getDolGlobalString('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS');
+
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurluser" class="quatrevingtpercentminusx" value="'.$fullexternaleurltovirtualcard.'">';
 	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">'.img_picto('', 'globe', 'class="paddingleft marginrightonly paddingright"').$langs->trans("GoTo").'...</a>';
@@ -204,63 +197,85 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Photo"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_PHOTO", (getDolUserInt('USER_PUBLIC_HIDE_PHOTO', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_PHOTO', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_PHOTO", array(), null, 0, 0, 0);
 	print "</td></tr>\n";
 
 	// Job position
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PostOrFunction"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_JOBPOSITION", (getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_JOBPOSITION");
 	print "</td></tr>\n";
 
 	// Email
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Email"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_EMAIL", (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_EMAIL");
 	print "</td></tr>\n";
 
 	// Office phone
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhonePro"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_PHONE", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_PHONE");
 	print "</td></tr>\n";
 
 	// Office fax
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Fax"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_FAX", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_FAX");
 	print "</td></tr>\n";
 
 	// User mobile
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhoneMobile"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_USER_MOBILE", (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_USER_MOBILE");
 	print "</td></tr>\n";
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS");
 	print "</td></tr>\n";
+
+	//Show list of socialnetworks for user
+	if (empty($showUserSocialNetworks)) {
+		print '<tr class="liste_titre" id="tramount">';
+		print '<td>'.$langs->trans("SocialNetworksUser").'</td>';
+		print '<td></td>';
+		print "</tr>\n";
+		$socialnetworks = $object->socialnetworks;
+		if (!empty($socialnetworks)) {
+			foreach ($socialnetworks as $key => $networkVal) {
+				print '<tr class="oddeven">';
+				print '<td>'.dol_escape_htmltag($key).'</td><td>';
+				print ajax_constantonoff('USER_SOCIALNETWORK_'.strtoupper($key));
+				print '</td>';
+				print "</tr>";
+			}
+		}
+		print '<tr class="liste_titre" id="tramount">';
+		print '<td></td>';
+		print '<td></td>';
+		print "</tr>\n";
+	}
 
 	// Birth date
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_SHOW_BIRTH", (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) ? getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_SHOW_BIRTH");
 	print "</td></tr>\n";
 
 	// Address
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Address"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_SHOW_ADDRESS", (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) ? getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_SHOW_ADDRESS");
 	print "</td></tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -272,16 +287,35 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("CompanySection"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_COMPANY", (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_COMPANY");
 	print "</td></tr>\n";
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object) : 0), 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS");
 	print "</td></tr>\n";
 
+	// show list of social networks for company
+
+	if (empty($showSocieteSocialNetworks)) {
+		print '<tr class="liste_titre" id="tramount">';
+		print '<td>'.$langs->trans("SocialNetworksBusiness").'</td>';
+		print '<td></td>';
+		print "</tr>\n";
+		$listofnetworks = $mysoc->socialnetworks;
+
+		if (!empty($listofnetworks)) {
+			foreach ($listofnetworks as $key => $networkVal) {
+				print '<tr class="oddeven">';
+				print '<td>'.dol_escape_htmltag($key).'</td><td>';
+				print ajax_constantonoff('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key));
+				print '</td>';
+				print "</tr>";
+			}
+		}
+	}
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Other").'</td>';
