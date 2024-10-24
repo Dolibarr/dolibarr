@@ -1429,7 +1429,11 @@ class Thirdparties extends DolibarrApi
 			$object = array();
 			foreach ($account as $key => $value) {
 				if (in_array($key, $fields)) {
-					$object[$key] = $value;
+					if ($key == 'iban') {
+						$object[$key] = dolDecrypt($value);
+					} else {
+						$object[$key] = $value;
+					}
 				}
 			}
 			$returnAccounts[] = $object;

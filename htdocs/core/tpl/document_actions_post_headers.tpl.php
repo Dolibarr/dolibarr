@@ -124,8 +124,8 @@ if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
 
-// Show upload form (document and links)
-$formfile->form_attach_new_file(
+// Get the form to add files (upload and links)
+$tmparray = $formfile->form_attach_new_file(
 	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
 	'',
 	0,
@@ -135,10 +135,20 @@ $formfile->form_attach_new_file(
 	$object,
 	'',
 	1,
-	$savingdocmask
+	$savingdocmask,
+	1,
+	'formuserfile',
+	'',
+	'',
+	0,
+	0,
+	0,
+	2
 );
 
-//var_dump($modulepart);var_dump($upload_dir);
+$formToUploadAFile = $tmparray['formToUploadAFile'];
+$formToAddALink = $tmparray['formToAddALink'];
+
 
 // List of document
 $formfile->list_of_documents(
@@ -159,11 +169,26 @@ $formfile->list_of_documents(
 	$upload_dir,
 	$sortfield,
 	$sortorder,
-	$disablemove
+	$disablemove,
+	0,
+	-1,
+	'',
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
 
-print "<br>";
+
+print "<br><br>";
+
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOSTINT('linkid'), $param);
+$formfile->listOfLinks(
+	$object,
+	$permission,
+	$action,
+	GETPOSTINT('linkid'),
+	$param,
+	'formaddlink',
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+);
+
 print "<br>";

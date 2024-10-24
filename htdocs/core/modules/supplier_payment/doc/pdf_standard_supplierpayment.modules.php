@@ -800,7 +800,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 				}
 			}
 

@@ -53,6 +53,8 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 DROP TABLE llx_contratdet_log;
 
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
+
 
 -- add billable attribute to project task
 ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
