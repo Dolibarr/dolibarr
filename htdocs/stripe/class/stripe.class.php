@@ -845,7 +845,7 @@ class Stripe extends CommonObject
 
 		$card = null;
 
-		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn"; // stripe_card_ref is card_....
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio as owner_name, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn"; // stripe_card_ref is card_....
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'card'";
@@ -885,7 +885,7 @@ class Stripe extends CommonObject
 					$exp_date_year = $obj->exp_date_year;
 					$number = $obj->number;
 					$cvc = $obj->cvn; // cvn in database, cvc for stripe
-					$cardholdername = $obj->proprio;
+					$cardholdername = $obj->owner_name;
 
 					$ipaddress = getUserRemoteIP();
 
@@ -1034,7 +1034,7 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 					$ipaddress = getUserRemoteIP();
 					$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 					if (is_object($object)) {

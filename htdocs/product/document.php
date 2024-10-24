@@ -25,7 +25,7 @@
 /**
  *       \file       htdocs/product/document.php
  *       \ingroup    product
- *       \brief      Page des documents joints sur les produits
+ *       \brief      Page of documents attached to products/services
  */
 
 
@@ -211,7 +211,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_document');
 
 
-if ($object->id) {
+if ($object->id > 0) {
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -317,14 +317,15 @@ if ($object->id) {
 				print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					print  '<input type="submit" class="button" name="refresh" value="'.$langs->trans('Refresh').'">';
+					print  '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans('Refresh').'">';
 				}
 
 				print  '</td></tr>';
 			}
 
 			foreach ($filearray as $filetoadd) {
-				if ($ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION) == 'pdf') {
+				$ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION);
+				if ($ext == 'pdf') {
 					$checked = '';
 					$filename = $filetoadd['name'];
 
