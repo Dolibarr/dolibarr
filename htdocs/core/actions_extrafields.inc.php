@@ -386,18 +386,25 @@ if ($action == 'update') {
 				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
 				$computedvalue = GETPOST('computed_value', 'nohtml');
 
+				// Load $extrafields->attributes
+				$extrafields->fetch_name_optionals_label($elementtype);
+				$attrname = GETPOST('attrname', 'aZ09');
+				$perms = $extrafields->attributes[$elementtype]['perms'][$attrname] ?? '';
+				if ((isset($_GET['perms'])) || (isset($_POST['perms']))) {
+					$perms = (GETPOST('perms', 'alpha')) ? GETPOST('perms', 'alpha') : '';
+				}
 				$result = $extrafields->update(
-					GETPOST('attrname', 'aZ09'),
+					$attrname,
 					GETPOST('label', 'alpha'),
 					$type,
 					$extrasize,
-					$elementtype,
+					$extrafields->attributes[$elementtype]['elementtype_org'] ?? $elementtype,
 					(GETPOST('unique', 'alpha') ? 1 : 0),
 					(GETPOST('required', 'alpha') ? 1 : 0),
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
+					$perms,
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),
@@ -435,7 +442,9 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
 		$attributekey = GETPOST('attrname', 'aZ09');
 
-		$result = $extrafields->delete($attributekey, $elementtype);
+		// Load $extrafields->attributes
+		$extrafields->fetch_name_optionals_label($elementtype);
+		$result = $extrafields->delete($attributekey, $extrafields->attributes[$elementtype]['elementtype_org'] ?? $elementtype);
 		if ($result >= 0) {
 			setEventMessages($langs->trans("ExtrafieldsDeleted", $attributekey), null, 'mesgs');
 
