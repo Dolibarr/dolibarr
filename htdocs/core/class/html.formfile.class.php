@@ -108,203 +108,193 @@ class FormFile
 			$useajax = 0;
 		}
 
-		if ((getDolGlobalString('MAIN_USE_JQUERY_FILEUPLOAD') && $useajax) || ($useajax == 2)) {
-			// TODO: Check this works with 2 forms on same page
-			// TODO: Check this works with GED module, otherwise, force useajax to 0
-			// TODO: This does not support option savingdocmask
-			// TODO: This break feature to upload links too
-			// TODO: Thisdoes not work when param nooutput=1
-			//return $this->_formAjaxFileUpload($object);
-			return 'Feature too bugged so removed';
+		//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
+		if (!$perm && getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED')) {
+			if ($nooutput) {
+				return '';
+			} else {
+				return 1;
+			}
+		}
+
+		// Section to generate the form to upload a new file
+		$out = "\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
+
+		if ($nooutput != 2) {
+			if (empty($title)) {
+				$title = $langs->trans("AttachANewFile");
+			}
+			if ($title != 'none') {
+				$out .= load_fiche_titre($title, '', '');
+			}
+		}
+
+		if (empty($usewithoutform)) {		// Try to avoid this and set instead the form by the caller.
+			// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
+			$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
+
+			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">'."\n";
+		}
+		if (empty($usewithoutform) || $usewithoutform == 2) {
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">'."\n";
+			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">'."\n";
+			$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">'."\n";
+			$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09comma').'">'."\n";
+			$out .= '<input type="hidden" name="page_y" value="">'."\n";
+		}
+
+		$out .= '<table class="nobordernopadding centpercent">';
+		$out .= '<tr>';
+
+		if (!empty($options)) {
+			$out .= '<td>'.$options.'</td>';
+		}
+
+		$out .= '<td class="valignmiddle nowrap">';
+
+		$maxfilesizearray = getMaxFileSizeArray();
+		$max = $maxfilesizearray['max'];
+		$maxmin = $maxfilesizearray['maxmin'];
+		$maxphptoshow = $maxfilesizearray['maxphptoshow'];
+		$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
+		if ($maxmin > 0) {
+			$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
+		$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
+		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
+		$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
+		$out .= (!empty($capture) ? ' capture="capture"' : '');
+		$out .= '>';
+		$out .= ' ';
+		if ($sectionid) {	// Show overwrite if exists for ECM module only
+			$langs->load('link');
+			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
+			$out .= '<label for="overwritefile" class="opacitylow paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
+			$out .= '</span>';
+		}
+		$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
+		$out .= '>';
+
+		if ($addcancel) {
+			$out .= ' &nbsp; ';
+			$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
+
+		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
+			if ($perm) {
+				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
+				$langs->load('other');
+				$out .= ' ';
+				$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1, 0, '1', 'classfortooltip');
+			}
 		} else {
-			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
-			if (!$perm && getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED')) {
-				if ($nooutput) {
-					return '';
-				} else {
-					return 1;
-				}
-			}
+			$out .= ' ('.$langs->trans("UploadDisabled").')';
+		}
+		$out .= "</td></tr>";
 
-			// Section to generate the form to upload a new file
-			$out = "\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
+		if ($savingdocmask) {
+			//add a global variable for disable the auto renaming on upload
+			$rename = (!getDolGlobalString('MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT') ? 'checked' : '');
 
-			if ($nooutput != 2) {
-				if (empty($title)) {
-					$title = $langs->trans("AttachANewFile");
-				}
-				if ($title != 'none') {
-					$out .= load_fiche_titre($title, '', '');
-				}
-			}
-
-			if (empty($usewithoutform)) {		// Try to avoid this and set instead the form by the caller.
-				// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
-				$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
-
-				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">'."\n";
-			}
-			if (empty($usewithoutform) || $usewithoutform == 2) {
-				$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
-				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">'."\n";
-				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">'."\n";
-				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">'."\n";
-				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09comma').'">'."\n";
-				$out .= '<input type="hidden" name="page_y" value="">'."\n";
-			}
-
-			$out .= '<table class="nobordernopadding centpercent">';
 			$out .= '<tr>';
-
 			if (!empty($options)) {
 				$out .= '<td>'.$options.'</td>';
 			}
+			$out .= '<td valign="middle" class="nowrap">';
+			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+			$out .= '<label class="opacitymedium small" for="savingdocmask">';
+			$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
+			$out .= '</label>';
+			$out .= '</td>';
+			$out .= '</tr>';
+		}
 
-			$out .= '<td class="valignmiddle nowrap">';
+		$out .= "</table>";
 
-			$maxfilesizearray = getMaxFileSizeArray();
-			$max = $maxfilesizearray['max'];
-			$maxmin = $maxfilesizearray['maxmin'];
-			$maxphptoshow = $maxfilesizearray['maxphptoshow'];
-			$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
-			if ($maxmin > 0) {
-				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		if (empty($usewithoutform)) {
+			$out .= '</form>';
+			if (empty($sectionid)) {
+				$out .= '<br>';
 			}
-			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
-			$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
-			$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
-			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
-			$out .= (!empty($capture) ? ' capture="capture"' : '');
-			$out .= '>';
-			$out .= ' ';
-			if ($sectionid) {	// Show overwrite if exists for ECM module only
-				$langs->load('link');
-				$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
-				$out .= '<label for="overwritefile" class="opacitylow paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
-				$out .= '</span>';
+		}
+
+		$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
+		$res = $hookmanager->executeHooks('formattachOptionsUpload', $parameters, $object);
+		if (empty($res)) {
+			$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').'attacharea'.$htmlname)).'">'.$out.'</div>';
+		}
+		$out .= $hookmanager->resPrint;
+
+		$out .= "\n</div><!-- End form class=formattachnewfile -->\n";
+
+
+		$out2 = "";
+
+		// Section to generate the form to upload a new file
+		if ($linkfiles) {
+			$out2 .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
+			$langs->load('link');
+
+			if ($nooutput != 2) {
+				$title = $langs->trans("LinkANewFile");
+				$out2 .= load_fiche_titre($title, '', '');
 			}
-			$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
-			$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
-			$out .= '>';
-
-			if ($addcancel) {
-				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			}
-
-			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-				if ($perm) {
-					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
-					$langs->load('other');
-					$out .= ' ';
-					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1, 0, '1', 'classfortooltip');
-				}
-			} else {
-				$out .= ' ('.$langs->trans("UploadDisabled").')';
-			}
-			$out .= "</td></tr>";
-
-			if ($savingdocmask) {
-				//add a global variable for disable the auto renaming on upload
-				$rename = (!getDolGlobalString('MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT') ? 'checked' : '');
-
-				$out .= '<tr>';
-				if (!empty($options)) {
-					$out .= '<td>'.$options.'</td>';
-				}
-				$out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
-				$out .= '<label class="opacitymedium small" for="savingdocmask">';
-				$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
-				$out .= '</label>';
-				$out .= '</td>';
-				$out .= '</tr>';
-			}
-
-			$out .= "</table>";
 
 			if (empty($usewithoutform)) {
-				$out .= '</form>';
-				if (empty($sectionid)) {
-					$out .= '<br>';
-				}
+				$out2 .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
+				$out2 .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+				$out2 .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
+				$out2 .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
+				$out2 .= '<input type="hidden" name="page_y" value="">'."\n";
+			}
+
+			$out2 .= '<div class="valignmiddle">';
+			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
+			if (getDolGlobalString('OPTIMIZEFORTEXTBROWSER')) {
+				$out2 .= '<label for="link">'.$langs->trans("URLToLink").':</label> ';
+			}
+			$out2 .= '<input type="text" name="link" class="flat minwidth400imp" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
+			$out2 .= '</div>';
+			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
+			if (getDolGlobalString('OPTIMIZEFORTEXTBROWSER')) {
+				$out2 .= '<label for="label">'.$langs->trans("Label").':</label> ';
+			}
+			$out2 .= '<input type="text" class="flat" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
+			$out2 .= '<input type="hidden" name="objecttype" value="'.$object->element.'">';
+			$out2 .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
+			$out2 .= '</div>';
+			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
+			$out2 .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
+			$out2 .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
+			$out2 .= '>';
+			$out2 .= '</div>';
+			$out2 .= '</div>';
+			if (empty($usewithoutform)) {
+				$out2 .= '<div class="clearboth"></div>';
+				$out2 .= '</form><br>';
 			}
 
 			$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
-			$res = $hookmanager->executeHooks('formattachOptionsUpload', $parameters, $object);
+			$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
 			if (empty($res)) {
-				$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').'attacharea'.$htmlname)).'">'.$out.'</div>';
+				$out2 = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').$htmlname)).'">'.$out2.'</div>';
 			}
-			$out .= $hookmanager->resPrint;
+			$out2 .= $hookmanager->resPrint;
 
-			$out .= "\n</div><!-- End form class=formattachnewfile -->\n";
-
-
-			$out2 = "";
-
-			// Section to generate the form to upload a new file
-			if ($linkfiles) {
-				$out2 .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
-				$langs->load('link');
-
-				if ($nooutput != 2) {
-					$title = $langs->trans("LinkANewFile");
-					$out2 .= load_fiche_titre($title, '', '');
-				}
-
-				if (empty($usewithoutform)) {
-					$out2 .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
-					$out2 .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
-					$out2 .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
-					$out2 .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
-					$out2 .= '<input type="hidden" name="page_y" value="">'."\n";
-				}
-
-				$out2 .= '<div class="valignmiddle">';
-				$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-				if (getDolGlobalString('OPTIMIZEFORTEXTBROWSER')) {
-					$out2 .= '<label for="link">'.$langs->trans("URLToLink").':</label> ';
-				}
-				$out2 .= '<input type="text" name="link" class="flat minwidth400imp" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
-				$out2 .= '</div>';
-				$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-				if (getDolGlobalString('OPTIMIZEFORTEXTBROWSER')) {
-					$out2 .= '<label for="label">'.$langs->trans("Label").':</label> ';
-				}
-				$out2 .= '<input type="text" class="flat" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
-				$out2 .= '<input type="hidden" name="objecttype" value="'.$object->element.'">';
-				$out2 .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
-				$out2 .= '</div>';
-				$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-				$out2 .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
-				$out2 .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
-				$out2 .= '>';
-				$out2 .= '</div>';
-				$out2 .= '</div>';
-				if (empty($usewithoutform)) {
-					$out2 .= '<div class="clearboth"></div>';
-					$out2 .= '</form><br>';
-				}
-
-				$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
-				$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
-				if (empty($res)) {
-					$out2 = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').$htmlname)).'">'.$out2.'</div>';
-				}
-				$out2 .= $hookmanager->resPrint;
-
-				$out2 .= "\n</div><!-- End form class=formlinknewurl -->\n";
-			}
+			$out2 .= "\n</div><!-- End form class=formlinknewurl -->\n";
+		}
 
 
-			if ($nooutput == 2) {
-				return array('formToUploadAFile' => $out, 'formToAddALink' => $out2);
-			} elseif ($nooutput) {
-				return $out.$out2;
-			} else {
-				print $out.$out2;
-				return 1;
-			}
+		if ($nooutput == 2) {
+			return array('formToUploadAFile' => $out, 'formToAddALink' => $out2);
+		} elseif ($nooutput) {
+			return $out.$out2;
+		} else {
+			print $out.$out2;
+			return 1;
 		}
 	}
 
@@ -1322,11 +1312,16 @@ class FormFile
 
 
 			// Show title of list of existing files
+			$morehtmlright = '';
+			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
+				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); }', '', $permtoeditline);
+			}
+
 			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
-				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
+				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), $morehtmlright, 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (!empty($moreoptions) && $moreoptions['afteruploadtitle']) {
-				print $moreoptions['afteruploadtitle'];
+				print '<div class="divattachnewfile'.((!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) ? ' hidden' : '').'">'.$moreoptions['afteruploadtitle'].'</div>';
 			}
 
 			// Show the table
@@ -2119,12 +2114,13 @@ class FormFile
 	 * @param 	string		$action			Action
 	 * @param 	string		$selected		???
 	 * @param	string		$param			More param to add into URL
+	 * @param	string		$htmlname		Html name of component
 	 * @param	array		$moreoptions	Add more options like array('afterlinktitle', ...)
 	 * @return 	int							Number of links
 	 */
-	public function listOfLinks($object, $permissiontodelete = 1, $action = null, $selected = null, $param = '', $moreoptions = array())
+	public function listOfLinks($object, $permissiontodelete = 1, $action = null, $selected = null, $param = '', $htmlname = 'formaddlink', $moreoptions = array())
 	{
-		global $user, $conf, $langs, $user;
+		global $conf, $langs;
 		global $sortfield, $sortorder;
 
 		$langs->load("link");
@@ -2142,16 +2138,23 @@ class FormFile
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
 		$param .= (isset($object->id) ? '&id='.$object->id : '');
 
+		$permissiontoedit = $permissiontodelete;
+
 		print '<!-- listOfLinks -->'."\n";
 
-		// Show list of associated links
-		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'link', 0, '', 'table-list-of-links');
-
-		if (!empty($moreoptions['afterlinktitle'])) {
-			print $moreoptions['afterlinktitle'];
+		$morehtmlright = '';
+		if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
+			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle();', '', $permissiontoedit);
 		}
 
-		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
+		// Show list of associated links
+		print load_fiche_titre($langs->trans("LinkedFiles"), $morehtmlright, 'link', 0, '', 'table-list-of-links');
+
+		if (!empty($moreoptions) && $moreoptions['afterlinktitle']) {
+			print '<div class="divlinkfile'.((!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) ? ' hidden' : '').'">'.$moreoptions['afterlinktitle'].'</div>';
+		}
+
+		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" id="'.$htmlname.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print '<table class="liste noborder nobottom centpercent">';
@@ -2210,7 +2213,7 @@ class FormFile
 		foreach ($links as $link) {
 			print '<tr class="oddeven">';
 			//edit mode
-			if ($action == 'update' && $selected === $link->id) {
+			if ($action == 'update' && $selected === $link->id && $permissiontoedit) {
 				print '<td>';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="linkid" value="'.$link->id.'">';

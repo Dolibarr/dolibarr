@@ -124,7 +124,7 @@ if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
 
-// Show upload form (document and links)
+// Get the form to add files (upload and links)
 $tmparray = $formfile->form_attach_new_file(
 	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
 	'',
@@ -173,13 +173,22 @@ $formfile->list_of_documents(
 	0,
 	-1,
 	'',
-	array('afteruploadtitle' => $formToUploadAFile)
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
+
 
 print "<br><br>";
 
-//print $formToAddALink;
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOSTINT('linkid'), $param, array('afterlinktitle' => $formToAddALink));
+$formfile->listOfLinks(
+	$object,
+	$permission,
+	$action,
+	GETPOSTINT('linkid'),
+	$param,
+	'formaddlink',
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+);
+
 print "<br>";
