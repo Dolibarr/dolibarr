@@ -731,7 +731,8 @@ class pdf_sponge extends ModelePDFFactures
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY+ 1 + $imglinesize['height']) > ($this->page_hauteur - $this->heightforfooter)) {    // If photo too high, we moved completely on new page
+						$imageTopMargin = 1;
+						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imageTopMargin + $imglinesize['height']) > ($this->page_hauteur - $this->heightforfooter)) {    // If photo too high, we moved completely on new page
 							$pdf->AddPage('', '', true);
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
@@ -744,7 +745,7 @@ class pdf_sponge extends ModelePDFFactures
 
 						$pdf->setPageOrientation('', 0, $this->heightforfooter + $this->heightforfreetext); // The only function to edit the bottom margin of current page to set it.
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
 
