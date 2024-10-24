@@ -633,7 +633,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 					// Line position
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $linePosition);
+						$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
 					}
 
 					// VAT Rate
