@@ -1936,7 +1936,7 @@ class FactureFournisseurRec extends CommonInvoice
 		dol_syslog(get_class($this).'::setNextDate', LOG_DEBUG);
 
 		if ($this->db->query($sql)) {
-			$this->date_when = $this->db->jdate($this->db->idate($date));
+			$this->date_when = $date;
 			if ($increment_nb_gen_done > 0) {
 				$this->nb_gen_done++;
 			}
