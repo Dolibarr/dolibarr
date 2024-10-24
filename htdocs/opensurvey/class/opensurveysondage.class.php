@@ -274,7 +274,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Load object in memory from the database
 	 *
-	 *  @param	int		$id    				Id object
+	 *  @param	string	$id    				Id object
 	 *  @param	string	$numsurvey			Ref of survey (admin or not)
 	 *  @return int          				Return integer <0 if KO, >0 if OK
 	 */
