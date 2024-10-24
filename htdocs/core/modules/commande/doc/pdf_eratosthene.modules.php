@@ -817,7 +817,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$drawTabHeight = $drawTabBottom - $drawTabTop;
 					$this->_tableau($pdf, $drawTabTop, $drawTabHeight, 0, $outputlangs, $drawTabHideTop, $hideBottom, $object->multicurrency_code, $outputlangsbis);
 
-					$hideFreeText = $i != $pdf->getNumPages(); // Display free text only in last page
+					$hideFreeText = $i != $pdf->getNumPages() ? 1 : 0; // Display free text only in last page
 					$this->_pagefoot($pdf, $object, $outputlangs, $hideFreeText);
 
 					$pdf->setPage($i); // in case of _pagefoot or _tableau change it
