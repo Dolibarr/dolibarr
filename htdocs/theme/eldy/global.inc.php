@@ -4256,7 +4256,7 @@ table.nointerlines tr:not(:last-child) td {
 }
 
 
-/* Experimental code to manage rounding */
+/* Management of border radius */
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
@@ -5444,6 +5444,9 @@ table.table-fiche-title .col-title div.titre > span:not(.print-barre-liste) {
 
 table.table-fiche-title, div.fiche>table.table-fiche-title {
 	margin-bottom: 18px;
+}
+.table-list-of-attached-files, .table-list-of-links {
+	margin-bottom: 0 !important;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;

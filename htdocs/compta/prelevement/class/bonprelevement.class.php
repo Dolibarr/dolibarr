@@ -1458,7 +1458,7 @@ class BonPrelevement extends CommonObject
 
 						$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);	// Example "FR78ZZZ123456"
 
-						$this->raison_sociale = $account->proprio;
+						$this->raison_sociale = $account->owner_name;
 					}
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
@@ -2533,7 +2533,7 @@ class BonPrelevement extends CommonObject
 
 			$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);  // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
-			$this->raison_sociale = $account->proprio;
+			$this->raison_sociale = $account->owner_name;
 		}
 
 		// Get pending payments

@@ -2165,7 +2165,7 @@ class Societe extends CommonObject
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
-				$result = 1;
+				$result = $this->id;
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -3498,7 +3498,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".((int) $this->id);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type = 'ban' AND fk_soc = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error = $this->db->lasterror();

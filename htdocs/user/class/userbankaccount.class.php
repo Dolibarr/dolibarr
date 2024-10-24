@@ -137,8 +137,8 @@ class UserBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
@@ -227,12 +227,12 @@ class UserBankAccount extends Account
 				$this->courant = self::TYPE_CURRENT;
 				$this->type = self::TYPE_CURRENT;
 
-				$this->domiciliation = $obj->address;
 				$this->address = $obj->address;
 
-				$this->proprio = $obj->owner_name;
 				$this->owner_name = $obj->owner_name;
+				$this->proprio = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
+
 				$this->label = $obj->label;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);

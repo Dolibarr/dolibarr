@@ -1491,7 +1491,7 @@ class pdf_octopus extends ModelePDFFactures
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-						$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->proprio), 0, 'L', 0);
+						$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->owner_name), 0, 'L', 0);
 						$posy = $pdf->GetY() + 1;
 
 						if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {

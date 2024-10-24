@@ -188,12 +188,13 @@ if ($object->id > 0) {
 	print '</tr>';
 
 
-	$sql = "SELECT ac.id, ac.ref, ac.datep as date_start, ac.datep2 as date_end, ac.label, acr.fk_element";
+	$sql = "SELECT ac.id, ac.ref, ac.datep as date_start, ac.datep2 as date_end, ac.label, acr.fk_element as elementid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as ac";
 	$sql .= " JOIN ".MAIN_DB_PREFIX."actioncomm_resources as acr on acr.fk_actioncomm = ac.id";
 	$sql .= " WHERE ac.fk_bookcal_calendar = ".((int) $object->id);
 	$sql .= " AND ac.code = 'AC_RDV'";
 	$sql .= " AND acr.element_type = 'socpeople'";
+
 	$resql = $db->query($sql);
 
 	$num = 0;
@@ -203,10 +204,10 @@ if ($object->id > 0) {
 		$tmpcontact = new Contact($db);
 		$tmpactioncomm = new ActionComm($db);
 
-		$num = $db->num_rows($result);
+		$num = $db->num_rows($resql);
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			$tmpcontact->fetch($obj->fk_element);
+			$tmpcontact->fetch($obj->elementid);
 			$tmpactioncomm->fetch($obj->id);
 
 			print '<tr class="oddeven">';
@@ -229,7 +230,6 @@ if ($object->id > 0) {
 			print '<td class="minwidth75">';
 			print $tmpcontact->getNomUrl(1, -1);
 			print '</td>';
-
 
 			print "</tr>\n";
 			$i++;

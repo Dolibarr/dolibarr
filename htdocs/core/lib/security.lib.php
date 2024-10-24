@@ -34,7 +34,7 @@
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
- *  @see dol_decode()
+ *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -65,7 +65,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode()
+ *  @see dol_encode(), dolDecrypt
  */
 function dol_decode($chain, $key = '1')
 {
@@ -107,10 +107,13 @@ function dolGetRandomBytes($length)
 	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
 }
 
+
+define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
+
 /**
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
- *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
  *	@param   string		$chain		String to encode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
@@ -120,7 +123,7 @@ function dolGetRandomBytes($length)
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -139,7 +142,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
-		$ciphering = 'AES-256-CTR';
+		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
 	}
 
 	$newchain = $chain;

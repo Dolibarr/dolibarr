@@ -1589,7 +1589,7 @@ if ($action == 'create') {
 		if ($origin == "commande") {
 			$cond_reglement_id = 0;
 			$mode_reglement_id = 0;
-			$delivery_date = '';
+			$datelivraison = '';
 			$objectsrc->note_private = '';
 			$objectsrc->note_public = '';
 			if ($societe = $object->thirdparty) {
@@ -1613,9 +1613,9 @@ if ($action == 'create') {
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 			//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
 			//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateinvoice		= !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '';
+			$dateinvoice		= getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1;
 
-			$datedelivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
+			$datelivraison = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 
 			if (isModEnabled("multicurrency")) {
 				if (!empty($objectsrc->multicurrency_code)) {
@@ -1748,7 +1748,9 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
+
 		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set");
+
 		print '</td></tr>';
 
 		// Bank Account
