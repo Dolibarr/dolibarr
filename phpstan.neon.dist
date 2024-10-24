@@ -117,6 +117,8 @@ parameters:
 		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
 		- '#(?:make_substitutions expects array<string, string>,) string given\.#'
 		- '# (DolibarrApiAccess|Documents|Login|Setup|Workstation|WorkstationResource|WorkstationUserGroup|Zapier)::.* has no value type specified in iterable type array\.#'
+		- '#Property RemiseCheque::\$account_id \(int\) does not accept string\.#'
+		- '#Property Contact::\$roles \(array<int, array\{id: int, socid: int, element: string, source: string, code: string, label: string\}>\) does not accept non-empty-array<int, string>\.#'
 
 	internalErrorsCountLimit: 50
 	cache:

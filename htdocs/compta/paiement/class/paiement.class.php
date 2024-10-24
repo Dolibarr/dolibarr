@@ -79,14 +79,16 @@ class Paiement extends CommonObject
 	public $date;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $montant;
 
@@ -101,7 +103,7 @@ class Paiement extends CommonObject
 	public $multicurrency_amount;
 
 	/**
-	 * @var float[] array: invoice ID => amount for that invoice (in the main currency)
+	 * @var array<float|string> array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
@@ -125,6 +127,9 @@ class Paiement extends CommonObject
 	 */
 	public $pos_change = 0.0;
 
+	/**
+	 * @var int
+	 */
 	public $author;
 
 	/**
@@ -774,12 +779,12 @@ class Paiement extends CommonObject
 				$label,
 				$totalamount, // Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
 				$accountancycode,
-				null,
+				0,
 				'',
 				$totalamount_main_currency
 			);
@@ -970,9 +975,6 @@ class Paiement extends CommonObject
 			}
 
 			if (!$error) {
-			}
-
-			if (!$error) {
 				$this->datepaye = $date;
 				$this->date = $date;
 
@@ -1104,7 +1106,7 @@ class Paiement extends CommonObject
 	 *  Return list of invoices the payment is related to.
 	 *
 	 *  @param	string		$filter         Filter
-	 *  @return int|array					Return integer <0 if KO or array of invoice id
+	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
@@ -1138,7 +1140,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of amounts of payments.
 	 *
-	 *  @return int|array					Array of amount of payments
+	 *  @return int|array<int,float>			Array of amount of payments
 	 *  @see getBillsArray()
 	 */
 	public function getAmountsArray()

@@ -2027,7 +2027,7 @@ while ($i < $imaxinloop) {
 		// Availability
 		if (!empty($arrayfields['ava.rowid']['checked'])) {
 			print '<td class="center">';
-			$form->form_availability('', $obj->availability, 'none', 1);
+			$form->form_availability(0, $obj->availability, 'none', 1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
