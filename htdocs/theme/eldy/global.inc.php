@@ -4256,7 +4256,7 @@ table.nointerlines tr:not(:last-child) td {
 }
 
 
-/* Experimental code to manage rounding */
+/* Management of border radius */
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
