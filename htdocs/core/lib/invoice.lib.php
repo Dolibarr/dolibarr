@@ -315,7 +315,7 @@ function invoice_rec_prepare_head($object)
 /**
  * Return array head with list of tabs to view object information.
  *
- * @param   FactureFournisseurRec     $object     Invoice object
+ * @param   Facture|FactureFournisseurRec     $object     Invoice object
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function supplier_invoice_rec_prepare_head($object)
@@ -330,6 +330,22 @@ function supplier_invoice_rec_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note-rec.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
 	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/list.php?search_fk_fac_rec_source=' . $object->id;
 	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
 	$head[$h][2] = 'generated';
