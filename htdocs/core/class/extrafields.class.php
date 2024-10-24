@@ -1035,7 +1035,7 @@ class ExtraFields
 						$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
 						$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
 						$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
-	
+
 						$this->attributes[$tab->elementtype]['loaded'] = 1;
 						$count++;
 					}
