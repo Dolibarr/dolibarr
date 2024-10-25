@@ -1958,6 +1958,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<!-- Includes CSS for font awesome -->'."\n";
 			$fontawesome_directory = getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', '/theme/common/fontawesome-5');
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/v4-shims.min.css'.($ext ? '?'.$ext : '').'">'."\n";
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
