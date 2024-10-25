@@ -93,14 +93,24 @@ class UserGroup extends CommonObject
 	public $note;
 
 	/**
-	 * @var User[]
+	 * @var User[]  Array of users
 	 */
-	public $members = array(); // Array of users
+	public $members = array();
 
-	public $nb_rights; // Number of rights granted to the user
-	public $nb_users;  // Number of users in the group
+	/**
+	 * @var int Number of rights granted to the user
+	 */
+	public $nb_rights;
 
-	public $rights;	// Permissions of the group
+	/**
+	 * @var int Number of users in the group
+	 */
+	public $nb_users;
+
+	/**
+	 * @var stdClass Permissions of the group
+	 */
+	public $rights;
 
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
