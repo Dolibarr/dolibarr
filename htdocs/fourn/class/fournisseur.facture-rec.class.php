@@ -190,11 +190,11 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $unit_frequency;
 	/**
-	 * @var int|string
+	 * @var ?int
 	 */
 	public $date_when;
 	/**
-	 * @var int|string
+	 * @var ?int
 	 */
 	public $date_last_gen;
 
@@ -355,7 +355,7 @@ class FactureFournisseurRec extends CommonInvoice
 		// No frequency defined then no next date to execution
 		if (empty($this->frequency)) {
 			$this->frequency = 0;
-			$this->date_when = '';
+			$this->date_when = null;
 		}
 		$this->frequency = abs($this->frequency);
 		$this->nb_gen_done = 0;
@@ -1466,9 +1466,9 @@ class FactureFournisseurRec extends CommonInvoice
 
 				if (!$error && $invoiceidgenerated >= 0) {
 					$facturerec->nb_gen_done++;
-					$facturerec->date_last_gen = $this->db->jdate(dol_now());
+					$facturerec->date_last_gen = dol_now();
 					$nextDate = $facturerec->getNextDate();
-					$facturerec->date_when = (($nextDate === false) ? '' : $nextDate);
+					$facturerec->date_when = (($nextDate === false) ? null : $nextDate);
 					$facturerec->update($user);
 					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->title);
 					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->title. ' is finished with a success generation');
@@ -1526,8 +1526,8 @@ class FactureFournisseurRec extends CommonInvoice
 		if ($this->frequency > 0) {
 			$label .= '<br><b>'.$langs->trans('Frequency').':</b> '.$langs->trans('FrequencyPer_'.$this->unit_frequency, $this->frequency);
 		}
-		if (!empty($this->date_last_gen)) {
-			$label .= '<br><b>'.$langs->trans('DateLastGeneration').':</b> '.dol_print_date($this->date_last_gen, 'dayhour');
+		if (!empty($this->)) {
+			$label .= '<br><b>'.$langs->trans('DateLastGeneration').':</b> '.dol_print_date($this->, 'dayhour');
 		}
 		if ($this->frequency > 0) {
 			if (!empty($this->date_when)) {
