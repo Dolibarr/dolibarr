@@ -78,7 +78,7 @@ class RedditHandler
 	/**
 	 * Constructor to initialize RedditHandler.
 	 *
-	 * @param array $authParams Array containing 'client_id', 'client_secret', 'username', and 'password'.
+	 * @param array{client_id?:string,client_secret?:string,username?:string,password?:string,name_app?:string} $authParams Array containing 'client_id', 'client_secret', 'username', and 'password'.
 	 */
 	public function __construct(array $authParams)
 	{
@@ -134,8 +134,8 @@ class RedditHandler
 	 * @param int $maxNb Maximum number of posts to retrieve (default is 5).
 	 * @param int $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string $cacheDir Directory to store cached data.
-	 * @param array $authParams Authentication parameters (not used in this context).
-	 * @return array|false Array of posts if successful, false otherwise.
+	 * @param array{client_id?:string,client_secret?:string,username?:string,password?:string,name_app?:string} $authParams Authentication parameters (not used in this context).
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name?:string,author_avatar?:string,media_url?:string}|array{}>|false Array of posts if successful, false otherwise.
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
@@ -205,8 +205,8 @@ class RedditHandler
 	/**
 	 * Normalize the data fetched from the Reddit API.
 	 *
-	 * @param array $postData Data of a single post.
-	 * @return array Normalized post data.
+	 * @param array{id?:string,title?:string,created?:string,permalink?:string,thumbnail?:string} $postData Data of a single post.
+	 * @return array{}|array{id:string,content:string,created_at:string,url:string,media_url:string} Normalized post data.
 	 */
 	public function normalizeData($postData)
 	{
