@@ -230,6 +230,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$proj = null;
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -648,6 +649,7 @@ if ($arrayfields['entry']['checked']) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['account']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	$totalarray['nbfield']++;
 }
@@ -782,7 +784,7 @@ while ($i < $imaxinloop) {
 		// Project
 		if ($arrayfields['project']['checked']) {
 			print '<td class="nowraponall">';
-			if ($obj->fk_project > 0) {
+			if ($obj->fk_project > 0 && is_object($proj)) {
 				$proj->fetch($obj->fk_project);
 				print $proj->getNomUrl(1);
 			}

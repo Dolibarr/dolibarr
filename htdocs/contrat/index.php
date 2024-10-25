@@ -296,7 +296,7 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 				$staticcompany->fournisseur = $obj->fournisseur;
 
 				print '<tr class="oddeven"><td class="nowrap">';
-				print $staticcontrat->getNomUrl(1, '');
+				print $staticcontrat->getNomUrl(1, 0);
 				print '</td>';
 				print '<td>';
 				print $staticcompany->getNomUrl(1, '', 16);

@@ -85,13 +85,11 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	 *  Return description of module parameters
 	 *
 	 *  @param	Translate	$langs      Output language
-	 *  @param	Societe		$soc		Third party object
+	 *  @param	?Societe	$soc		Third party object
 	 *  @return	string					HTML translated description
 	 */
 	public function getToolTip($langs, $soc)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';
@@ -110,7 +108,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 
 		$s .= $langs->trans("Required").': '.$strikestart;
-		$s .= yn(!$this->code_null, 1, 2).$strikeend;
+		$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 		$s .= '<br>';
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';
 		$s .= yn($this->code_modifiable, 1, 2);
@@ -130,7 +128,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe		$objsoc		Object third party
+	 *  @param  ?Societe	$objsoc		Object third party
 	 *  @param  ?Adherent	$object		Object we need next value for
 	 *  @return	string|int<-1,0>		next value
 	 */
@@ -138,4 +136,11 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	{
 		return '';
 	}
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

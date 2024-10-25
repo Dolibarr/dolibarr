@@ -1,6 +1,7 @@
 <!-- file menu.tpl.php -->
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@ if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'@phan-var-force Context $context';
 
 global $conf, $hookmanager, $langs;
 
@@ -209,7 +211,7 @@ if (empty($reshook)) {
 	</ul>
 	<ul class="menu-entries-alt">
 	<?php
-		// show menu
+	// show menu
 	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
 	?>
 	</ul>

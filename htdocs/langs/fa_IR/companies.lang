@@ -384,6 +384,7 @@ DolibarrLogin=ورود Dolibarr
 NoDolibarrAccess=دسترسی Dolibarr مقدور نیست
 ExportDataset_company_1=شخص‌سوم‌ها (شرکت‌ها/سازمان‌ها/مردم فیزیکی) و مشخصات آن‌ها
 ExportDataset_company_2=طرف‌های تماس و مشخصات آن‌ها
+ExportDataset_company_3=حساب‌های بانکی شخص‌سوم‌ها
 ImportDataset_company_1=شخص‌سوم‌ها و مشخصات آن‌ها
 ImportDataset_company_2=سایر طرف‌های تماس/نشانی‌های شخص‌سوم و ویژگی‌های آن‌ها
 ImportDataset_company_3=حساب‌های بانکی شخص‌سوم‌ها

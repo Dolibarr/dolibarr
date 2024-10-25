@@ -221,7 +221,7 @@ class modMyModule extends DolibarrModules
 		/* Example:
 		 $this->dictionaries=array(
 		 'langs' => 'mymodule@mymodule',
-		 // List of tables we want to see into dictonnary editor
+		 // List of tables we want to see into dictionary editor
 		 'tabname' => array("table1", "table2", "table3"),
 		 // Label of tables
 		 'tablib' => array("Table1", "Table2", "Table3"),
@@ -501,7 +501,7 @@ class modMyModule extends DolibarrModules
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

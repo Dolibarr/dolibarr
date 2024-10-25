@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Eric Seigne					<erics@rycks.com>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2015	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Jean Heimburger				<jean@tiaris.info>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -44,8 +46,9 @@ if (isModEnabled('member')) {
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
 // Load translation files required by page
@@ -105,7 +108,18 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
-	// Set supplier accounting account
+	// set general supplier accounting account
+	if ($action == 'setsupplieraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+		$result = $object->fetch($id);
+		$object->accountancy_code_supplier_general = GETPOST("supplieraccountancycodegeneral");
+		$result = $object->update($object->id, $user, 1, 0, 1);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$_GET['action'] = 'editsupplieraccountancycode';
+		}
+	}
+
+	// Set auxiliary supplier accounting account
 	if ($action == 'setsupplieraccountancycode' && $user->hasRight('societe', 'creer')) {
 		$result = $object->fetch($id);
 		$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
@@ -246,6 +260,27 @@ if ($object->id > 0) {
 		}
 		print '</td>';
 		print '</tr>';
+
+		if (isModEnabled('accounting')) {
+			$formaccounting = new FormAccounting($db);
+
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->hasRight('societe', 'creer'));
+			print '</td><td>';
+			if ($action == 'editsupplieraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_supplier_general, 'supplieraccountancycodegeneral', 0, 1, '', 1);
+			} else {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->accountancy_code_supplier_general, 1);
+
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) . ")";
+			print (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') ? $accountingAccountByDefault : '');
+			print '</td>';
+			print '</tr>';
+		}
 
 		$langs->load('compta');
 		print '<tr>';
@@ -808,6 +843,112 @@ if ($object->id > 0) {
 			dol_print_error($db);
 		}
 	}
+
+
+	/*
+	 * Latest invoices templates
+	 */
+	if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
+		$sql = 'SELECT f.rowid as id, f.titre as ref';
+		$sql .= ', f.total_ht';
+		$sql .= ', f.total_tva';
+		$sql .= ', f.total_ttc';
+		$sql .= ', f.datec as dc';
+		$sql .= ', f.date_last_gen, f.date_when';
+		$sql .= ', f.frequency';
+		$sql .= ', f.unit_frequency';
+		$sql .= ', f.suspended as suspended';
+		$sql .= ', s.nom, s.rowid as socid';
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn_rec as f";
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= ' GROUP BY f.rowid, f.titre, f.total_ht, f.total_tva, f.total_ttc,';
+		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
+		$sql .= ' f.suspended, f.date_when,';
+		$sql .= ' s.nom, s.rowid';
+		$sql .= $db->order("f.date_last_gen, f.datec", "DESC");
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$invoicetemplate = new FactureFournisseurRec($db);
+
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent lastrecordtable">';
+				print '<tr class="liste_titre">';
+				$colspan = 4;
+				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
+					$colspan++;
+				}
+				print '<td colspan="'.$colspan.'">';
+				print '<table class="centpercent nobordernopadding"><tr>';
+				print '<td>'.$langs->trans("LatestSupplierTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td class="right">';
+				print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list-rec.php?socid='.$object->id.'">';
+				print '<span class="hideonsmartphone">'.$langs->trans("AllSupplierTemplateInvoices").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '</tr></table>';
+				print '</td>';
+				print '</tr>';
+			}
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST) {
+				$objp = $db->fetch_object($resql);
+
+				$invoicetemplate->id = $objp->id;
+				$invoicetemplate->ref = $objp->ref;
+				$invoicetemplate->suspended = $objp->suspended;
+				$invoicetemplate->frequency = $objp->frequency;
+				$invoicetemplate->unit_frequency = $objp->unit_frequency;
+				$invoicetemplate->total_ht = $objp->total_ht;
+				$invoicetemplate->total_tva = $objp->total_tva;
+				$invoicetemplate->total_ttc = $objp->total_ttc;
+				$invoicetemplate->date_last_gen = $objp->date_last_gen;
+				$invoicetemplate->date_when = $objp->date_when;
+
+				print '<tr class="oddeven">';
+				print '<td class="tdoverflowmax250">';
+				print $invoicetemplate->getNomUrl(1);
+				print '</td>';
+
+				if ($objp->frequency && $objp->date_last_gen > 0) {
+					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
+				} else {
+					if ($objp->dc > 0) {
+						print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day').'</td>';
+					} else {
+						print '<td class="right"><b>!!!</b></td>';
+					}
+				}
+				print '<td class="right nowraponall">';
+				print price($objp->total_ht);
+				print '</td>';
+
+				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
+					print '<td class="right nowraponall">';
+					print price($objp->total_ttc);
+					print '</td>';
+				}
+
+				print '<td class="nowrap right" style="min-width: 60px">';
+				print $langs->trans('FrequencyPer_'.$invoicetemplate->unit_frequency, $invoicetemplate->frequency).' - ';
+				print($invoicetemplate->LibStatut($invoicetemplate->frequency, $invoicetemplate->suspended, 5, 0));
+				print '</td>';
+				print "</tr>\n";
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num > 0) {
+				print "</table>";
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
 
 	/*
 	 * Latest supplier invoices

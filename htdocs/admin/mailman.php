@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,6 @@ if (!$user->admin) {
 }
 
 
-$type = array('yesno', 'texte', 'chaine');
 
 $action = GETPOST('action', 'aZ09');
 $testsubscribeemail = GETPOST("testsubscribeemail");
@@ -57,13 +57,14 @@ $error = 0;
 // Action updated or added a constant
 if ($action == 'update' || $action == 'add') {
 	$tmparray = GETPOST('constname', 'array');
+	$tmpvalue = GETPOST('constvalue', 'array');
+	$tmpnote = GETPOST('constnote', 'array');
 	if (is_array($tmparray)) {
 		foreach ($tmparray as $key => $val) {
 			$constname = $tmparray[$key];
-			$constvalue = $tmparray[$key];
-			$consttype = $tmparray[$key];
-			$constnote = $tmparray[$key];
-			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+			$constvalue = $tmpvalue[$key];
+			$constnote = $tmpnote[$key];
+			$res = dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, $constnote, $conf->entity);
 
 			if (!($res > 0)) {
 				$error++;

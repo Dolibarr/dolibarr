@@ -3,6 +3,7 @@
  * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
  * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,7 +243,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setlabel' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
+		$result = $object->setValueFrom('label', GETPOST('label'), '', null, 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

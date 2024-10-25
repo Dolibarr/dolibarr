@@ -62,6 +62,9 @@ $error = 0;
 if ($action == 'updateMask') {
 	$maskconstpropal = GETPOST('maskconstpropal', 'aZ09');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstpropal && preg_match('/_MASK$/', $maskconstpropal)) {
 		$res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 	}
@@ -99,6 +102,7 @@ if ($action == 'updateMask') {
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFPropales $module';
 
+		/** @var ModelePDFPropales $module */
 		if ($module->write_file($propal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;

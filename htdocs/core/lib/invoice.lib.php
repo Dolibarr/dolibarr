@@ -33,7 +33,7 @@
  * Initialize the array of tabs for customer invoice
  *
  * @param	Facture		$object		Invoice object
- * @return	array					Array of head tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function facture_prepare_head($object)
 {
@@ -164,7 +164,7 @@ function facture_prepare_head($object)
 /**
  * Return array head with list of tabs to view object information.
  *
- * @return array head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function invoice_admin_prepare_head()
 {
@@ -248,7 +248,7 @@ function invoice_admin_prepare_head()
  * Return array head with list of tabs to view object information.
  *
  * @param   FactureRec  $object     Invoice model object
- * @return array                    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function invoice_rec_prepare_head($object)
 {
@@ -260,6 +260,11 @@ function invoice_rec_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/card-rec.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("RepeatableInvoice");
 	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+	$head[$h][2] = 'generated';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda-rec.php?id='.$object->id;
@@ -296,6 +301,23 @@ function invoice_rec_prepare_head($object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note-rec.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -310,8 +332,8 @@ function invoice_rec_prepare_head($object)
 /**
  * Return array head with list of tabs to view object information.
  *
- * @param   Facture     $object     Invoice object
- * @return array                    head array with tabs
+ * @param   FactureFournisseurRec     $object     Invoice object
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function supplier_invoice_rec_prepare_head($object)
 {
@@ -323,6 +345,11 @@ function supplier_invoice_rec_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/card-rec.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("RepeatableSupplierInvoice");
 	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+	$head[$h][2] = 'generated';
 	$h++;
 
 	// Show more tabs from modules
@@ -366,7 +393,7 @@ function getNumberInvoicesPieChart($mode)
 
 		$amount_mode = (getDolGlobalInt('FACTURE_VALIDATED_IN_AMOUNT') == 1);
 
-				$sql = "SELECT";
+		$sql = "SELECT";
 		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late30";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as latenow";

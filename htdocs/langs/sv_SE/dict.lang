@@ -295,8 +295,8 @@ CurrencyXPF=Fiskeripolitiken franc
 CurrencySingXPF=CFP-franc
 CurrencyCentEUR=cent
 CurrencyCentSingEUR=cent
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=tusendel
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

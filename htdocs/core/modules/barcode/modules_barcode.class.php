@@ -74,6 +74,14 @@ abstract class ModeleBarCode
 	{
 		return -1;	// Error by default, this method must be implemented by the driver
 	}
+
+	/**
+	 *  Return true if encoding is supported
+	 *
+	 *  @param  string  $encoding       Encoding norm
+	 *  @return int                     >0 if supported, 0 if not
+	 */
+	abstract public function encodingIsSupported($encoding);
 }
 
 
@@ -137,7 +145,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
-			$s .= yn(!$this->code_null, 1, 2);
+			$s .= yn($this->code_null ? 0 : 1, 1, 2);
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
@@ -148,7 +156,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
-			$s .= yn(!$this->code_null, 1, 2);
+			$s .= yn($this->code_null ? 0 : 1, 1, 2);
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
@@ -159,7 +167,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
-			$s .= yn(!$this->code_null, 1, 2);
+			$s .= yn($this->code_null ? 0 : 1, 1, 2);
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}

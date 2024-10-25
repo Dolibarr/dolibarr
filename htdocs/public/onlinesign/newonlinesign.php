@@ -24,6 +24,8 @@
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  *					Example of URL: https://localhost/public/onlinesign/newonlinesign.php?ref=PR...
+ *
+ *					The signature is added by calling the file /htdocs/core/ajax/onlinSign.php
  */
 
 if (!defined('NOLOGIN')) {
@@ -178,7 +180,7 @@ $error = 0;
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
+if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemrission not required here. Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -739,6 +741,7 @@ if ($action == "dosign" && empty($cancel)) {
 	print '</div>';
 
 	// Add js code managed into the div #signature
+	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -756,22 +759,22 @@ if ($action == "dosign" && empty($cancel)) {
 				var name = document.getElementById("name").value;
 				$.ajax({
 					type: "POST",
-					url: "'.DOL_URL_ROOT.'/core/ajax/onlineSign.php",
+					url: \''.DOL_URL_ROOT.'/core/ajax/onlineSign.php\',
 					dataType: "text",
 					data: {
-						"action" : "importSignature",
+						"action" : \'importSignature\',
 						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
 						"onlinesignname" : name,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
-						"mode" : \''.dol_escape_htmltag($source).'\',
-						"entity" : \''.dol_escape_htmltag($entity).'\',
+						"mode" : \''.dol_escape_js($source).'\',
+						"entity" : \''.dol_escape_js((string) $entity).'\',
 					},
 					success: function(response) {
-						if (response == "success"){
+						if (response.trim() === "success") {
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
+							window.location.replace(\''.dol_escape_js($urltogo).'\');
 						} else {
 							document.body.style.cursor = \'auto\';
 							console.error(response);
@@ -802,19 +805,19 @@ if ($action == "dosign" && empty($cancel)) {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
 			if ($message == 'signed') {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'check', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalSigned").'</span>';
 			} else {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'check', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
 			}
 		} elseif ($object->status == $object::STATUS_NOTSIGNED) {
 			print '<br>';
 			if ($message == 'refused') {
-				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'cross', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
 			} else {
-				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'cross', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 			}
 		} else {
@@ -834,7 +837,7 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
 		}
 	} elseif ($source == 'expedition') {
-		if ($message == 'signed' || $object->signed_status == Expedition::STATUS_SIGNED) {
+		if ($message == 'signed' || $object->signed_status == Expedition::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']) {
 			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignExpedition").'">';

@@ -44,4 +44,11 @@ abstract class ModeleNumRefTakepos extends CommonNumRefGenerator
 	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
 	 */
 	abstract public function getNextValue($objsoc = null, $invoice = null, $mode = 'next');
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

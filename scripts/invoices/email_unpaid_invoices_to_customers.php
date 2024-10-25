@@ -55,6 +55,7 @@ $mode = $argv[1];
 $targettype = $argv[2];
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
 $langs->load('main');

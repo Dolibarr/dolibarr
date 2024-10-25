@@ -5,6 +5,7 @@
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +173,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 	// Set fields
 	$dated = dol_mktime(GETPOSTINT('datedhour'), GETPOSTINT('datedmin'), GETPOSTINT('datedsec'), GETPOSTINT('datedmonth'), GETPOSTINT('datedday'), GETPOSTINT('datedyear'));
 	$object->fetch($id);
-	$result = $object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
+	$result = $object->setValueFrom('dated', $dated, '', null, 'date', '', $user, 'DEPLACEMENT_MODIFY');
 	if ($result < 0) {
 		dol_print_error($db, $object->error);
 	}

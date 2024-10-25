@@ -75,7 +75,7 @@ top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (!empty($action) && $action == 'fetch' && !empty($id)) {
+if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('societe', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$outjson = array();

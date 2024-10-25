@@ -740,7 +740,7 @@ IMG;
 			// Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
 			$this->addImageToManifest($imageValue);
 		}
-		if (! $this->file->addFromString('./META-INF/manifest.xml', $this->manifestXml)) {
+		if (! $this->file->addFromString('META-INF/manifest.xml', $this->manifestXml)) {
 			throw new OdfException('Error during file export: manifest.xml');
 		}
 		$this->file->close();

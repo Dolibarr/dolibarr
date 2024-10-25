@@ -316,7 +316,7 @@ class FormAdvTargetEmailing extends Form
 				// We have to join on extrafield table
 				if (strpos($InfoFieldList[3], 'extra') !== false) {
 					$sql .= ' as main, '.$this->db->sanitize(MAIN_DB_PREFIX.$InfoFieldList[0]).'_extrafields as extra';
-					$sql .= " WHERE extra.fk_object=main.".$this->db->sanitize(empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2]);
+					$sql .= " WHERE extra.fk_object = main.".$this->db->sanitize(empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2]);
 					$sql .= " AND ".forgeSQLFromUniversalSearchCriteria($InfoFieldList[3], $errorstr, 1);
 				} else {
 					$sql .= " WHERE ".forgeSQLFromUniversalSearchCriteria($InfoFieldList[3], $errorstr, 1);
@@ -417,11 +417,9 @@ class FormAdvTargetEmailing extends Form
 	 */
 	public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
 	{
-		global $conf, $user, $langs;
-
 		$out = '';
 
-		$sql = "SELECT c.rowid, c.name, c.fk_element";
+		$sql = "SELECT c.rowid, c.name, c.fk_element as elementid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_advtarget as c";
 		$sql .= " WHERE type_element = '".$this->db->escape($type_element)."'";
 		$sql .= " ORDER BY c.name";
@@ -440,7 +438,7 @@ class FormAdvTargetEmailing extends Form
 					$obj = $this->db->fetch_object($resql);
 					$label = $obj->name;
 					if (empty($label)) {
-						$label = $obj->fk_element;
+						$label = (string) $obj->elementid;
 					}
 
 					if ($selected > 0 && $selected == $obj->rowid) {
@@ -455,7 +453,9 @@ class FormAdvTargetEmailing extends Form
 		} else {
 			dol_print_error($this->db);
 		}
+
 		$this->db->free($resql);
+
 		return $out;
 	}
 }

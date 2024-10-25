@@ -72,6 +72,7 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 }
 
+
 /**
  * Class template for classes of numbering product
  */
@@ -129,8 +130,6 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $product, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';
@@ -155,15 +154,15 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		if ($type == 0) {
 			$s .= $langs->trans("RequiredIfProduct").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		} elseif ($type == 1) {
 			$s .= $langs->trans("RequiredIfService").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		} elseif ($type == -1) {
 			$s .= $langs->trans("Required").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		}
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';
@@ -210,5 +209,8 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	abstract public function getExample($langs = null, $objproduct = '', $type = -1);
+	public function getExample($langs = null, $objproduct = '', $type = -1)
+	{
+		return '';
+	}
 }

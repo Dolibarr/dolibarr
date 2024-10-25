@@ -22,7 +22,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=為合同行提供 %s 線上付款頁
 ToOfferALinkForOnlinePaymentOnFreeAmount=提供無現有對象的任何金額 %s 線上付款頁面的網址
 ToOfferALinkForOnlinePaymentOnMemberSubscription=為會員訂閱提供 %s 線上付款頁面的網址
 ToOfferALinkForOnlinePaymentOnDonation=為捐款提供 %s 線上付款頁面的網址
-YouCanAddTagOnUrl=還可以添加url參數<b>&tag=<i>value</i></b> 到任何這些 URL（僅適用於未連結到物件的付款）以新增您自己的付款評論標籤。<br>對於沒有物件的付款URL，您也可以新增參數<strong>&noidempotency=1</strong>，這樣同一個標籤的同一個連結可以多次使用（某些付款方式可能會限制付款次數 1對於每個不帶此參數的不同連結）
+YouCanAddTagOnUrl=您也可以將 url 參數 <b>&tag=value</b> 新增至任何這些 URL（僅對於未連結到物件的付款是必需的），以新增您自己的付款評論標籤。<br>對於沒有現有物件的付款網址，您也可以新增參數<strong>&noidempotency=1</strong>，這樣同一個標籤的同一個連結可以多次使用（有些支付方式如果不加此參數可能會限制每個不同連結的支付次數為1次）
 YouCanEmbedOnWebsite=如果您想將付款頁面整合到Dolibarr網站中，您可以包含以下參數：<b>&ws=website_ref</b>。<br>此外，還有兩個頁面名為<b>付款確定</b>和必須在網站中建立<b> paymentko</b>才能接收線上付款成功或失敗後的重定向。
 SetupStripeToHavePaymentCreatedAutomatically=使用 url 設定 Stripe<b>%s</b>在 Stripe 驗證後自動建立付款。
 AccountParameter=帳戶參數

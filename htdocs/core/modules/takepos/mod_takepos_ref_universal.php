@@ -103,7 +103,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';

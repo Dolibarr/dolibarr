@@ -101,13 +101,14 @@ $formaccounting = new FormAccounting($db);
 
 if (!empty($id)) {
 	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
-	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
+	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.fk_code_ventilation,";
+	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label,";
 	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " ppe.accountancy_code_sell as code_sell,";
 	} else {
 		$sql .= " p.accountancy_code_sell as code_sell,";
 	}
-	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
+	$sql .= " aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -139,18 +140,23 @@ if (!empty($id)) {
 
 			print '<table class="border centpercent">';
 
-			// Ref facture
+			// Ref invoice
 			print '<tr><td>'.$langs->trans("Invoice").'</td>';
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			print '<td>'.$facture_static->getNomUrl(1).'</td>';
 			print '</tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("Line").'</td>';
-			print '<td>'.nl2br($objp->description).'</td></tr>';
-			print '<tr><td width="20%">'.$langs->trans("Account").'</td><td>';
+			print '<tr><td>'.$langs->trans("Description").'</td>';
+			print '<td>'.dolPrintHTML($objp->description).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("ProductLabel").'</td>';
+			print '<td>'.dol_trunc($objp->product_label, 24).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("Account").'</td><td>';
 			print $formaccounting->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
+
 			print '</table>';
 
 			print dol_get_fiche_end();

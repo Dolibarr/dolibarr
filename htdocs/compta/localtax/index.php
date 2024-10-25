@@ -480,7 +480,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				}
 			}
 			//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-			$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+			$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 			$temp_vat = $fields['localtax'.$localTaxType] * $ratiopaymentinvoice;
 			$subtot_coll_total_ht += $temp_ht;
 			$subtot_coll_vat      += $temp_vat;

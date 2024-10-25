@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 # `codespell` can be run as a standalone program from the CLI
 # with the appropriate default options.
 
-skip = "*/.*/*,*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*.svg,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*dev/trans*/ignore_translation_keys.lst,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css,*dev/tools/phan/stubs/*,*/documents"
+skip = "*/.*/*,*/langs/*,*/build/exe/*,**.log,*.pdf,*.PDF,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*.svg,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*dev/trans*/ignore_translation_keys.lst,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css,*dev/tools/phan/stubs/*,*/documents"
 
 check-hidden = true
 quiet-level=2

@@ -154,7 +154,7 @@ class FactureStats extends Stats
 	/**
 	 * 	Return invoices number per year
 	 *
-	 *	@return		array	Array with number by year
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
@@ -228,7 +228,7 @@ class FactureStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array<array{year:string,nb:string,nb_diff:float,total_diff:float,avg_diff:float,avg_weighted:float}>	Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{

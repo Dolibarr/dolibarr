@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Nem található szállítandó termék a(z) <b>%s<
 WeightVolShort=Súly/térfogat.
 ValidateOrderFirstBeforeShipment=Elõször érvényesítenie kell a rendelést, mielõtt kiszállítást végezhet.
 NoLineGoOnTabToAddSome=Nincs sor, lépjen a „%s” lapra a hozzáadáshoz
-CreateInvoiceForThisCustomerFromSendings=Számlaküldések
+CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=Ha a számla ellenőrzése „Nem”, akkor a küldés „Nem számlázva” állapotú marad mindaddig, amíg a számla nem érvényesül.
 OptionToSetSendingBilledNotEnabled=A Munkafolyamat modul opciója, hogy a küldést automatikusan "Számlázva" értékre állítsa, amikor a számla érvényesítve van, nincs engedélyezve, ezért manuálisan kell a küldések állapotát "Számlázva"-ra állítania. a számla létrejött.
 

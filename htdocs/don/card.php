@@ -387,7 +387,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -946,8 +946,8 @@ if (!empty($id) && $action != 'edit') {
 	/*
 	 * Generated documents
 	 */
-	$filename = dol_sanitizeFileName($object->id);
-	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
+	$filename = dol_sanitizeFileName((string) $object->id);
+	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName((string) $object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
 	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
 	$delallowed	= $user->hasRight('don', 'creer');

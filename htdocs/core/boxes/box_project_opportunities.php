@@ -55,6 +55,8 @@ class box_project_opportunities extends ModeleBoxes
 
 		$this->enabled = getDolGlobalInt('PROJECT_USE_OPPORTUNITIES');
 		$this->hidden = !$user->hasRight('projet', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/projet/card.php?action=create';
+		$this->msgNoRecords = 'NoOpenedProjectsOpportunities';
 	}
 
 	/**
@@ -160,40 +162,43 @@ class box_project_opportunities extends ModeleBoxes
 			}
 		}
 
-
-		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][] = array(
-			'tr' => 'class="liste_total_wrap"',
-			'td' => 'class="liste_total"',
-			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
+		if ($num > 0) {
+			// Add the sum à the bottom of the boxes
+			$this->info_box_contents[$i][] = array(
+				'tr' => 'class="liste_total_wrap"',
+				'td' => 'class="liste_total"',
+				'text' => $langs->trans("Total")."&nbsp;".$textHead,
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

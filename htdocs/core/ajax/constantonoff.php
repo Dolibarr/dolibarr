@@ -59,23 +59,28 @@ if (empty($user->admin)) {
 
 
 /*
- * View
+ * Actions
  */
-
-top_httphead();
-
-//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the new value of constant
 if (!empty($action) && !empty($name)) {
-	if ($action == 'set') {
+	if ($action == 'set') {			// Test on permission not required here. Already done into test on user->admin in header.
 		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
-	} elseif ($action == 'del') {
+	} elseif ($action == 'del') {	// Test on permission not required here. Already done into test on user->admin in header.
 		dolibarr_del_const($db, $name, $entity);
 		if ($entity == 1) {	// Sometimes the param was saved in both entity 0 and 1. When we work on master entity, we should clean also if entity is 0
 			dolibarr_del_const($db, $name, 0);
 		}
 	}
 } else {
-	http_response_code(403);
+	httponly_accessforbidden('Param action and name is required', 403);
 }
+
+
+/*
+ * View
+ */
+
+top_httphead();
+
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";

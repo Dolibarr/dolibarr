@@ -27,7 +27,7 @@
 /**
  *  Define head array for tabs of marges tools setup pages
  *
- *  @return			Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function marges_admin_prepare_head()
 {
@@ -55,7 +55,7 @@ function marges_admin_prepare_head()
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function marges_prepare_head()
 {

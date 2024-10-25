@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,9 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrOther', $ns);
+
+// $server->wsdl is expected to be a nusoap_xmlschema (default = \wsdl)
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -80,11 +84,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 // Define WSDL Return object
@@ -95,8 +99,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
@@ -108,10 +112,10 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'filename' => array('name'=>'filename', 'type'=>'xsd:string'),
-		'mimetype' => array('name'=>'mimetype', 'type'=>'xsd:string'),
-		'content' => array('name'=>'content', 'type'=>'xsd:string'),
-		'length' => array('name'=>'length', 'type'=>'xsd:string')
+		'filename' => array('name' => 'filename', 'type' => 'xsd:string'),
+		'mimetype' => array('name' => 'mimetype', 'type' => 'xsd:string'),
+		'content' => array('name' => 'content', 'type' => 'xsd:string'),
+		'length' => array('name' => 'length', 'type' => 'xsd:string')
 	)
 );
 
@@ -130,9 +134,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getVersions',
 	// Entry values
-	array('authentication'=>'tns:authentication'),
+	array('authentication' => 'tns:authentication'),
 	// Exit values
-	array('result'=>'tns:result', 'dolibarr'=>'xsd:string', 'os'=>'xsd:string', 'php'=>'xsd:string', 'webserver'=>'xsd:string'),
+	array('result' => 'tns:result', 'dolibarr' => 'xsd:string', 'os' => 'xsd:string', 'php' => 'xsd:string', 'webserver' => 'xsd:string'),
 	$ns,
 	$ns.'#getVersions',
 	$styledoc,
@@ -144,9 +148,9 @@ $server->register(
 $server->register(
 	'getDocument',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'modulepart'=>'xsd:string', 'file'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'modulepart' => 'xsd:string', 'file' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'document'=>'tns:document'),
+	array('result' => 'tns:result', 'document' => 'tns:document'),
 	$ns,
 	$ns.'#getDocument',
 	$styledoc,
@@ -159,8 +163,8 @@ $server->register(
 /**
  * Full methods code
  *
- * @param	string		$authentication		Authentication string
- * @return	array							Array of data
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array with authentication information
+ * @return	array{result:array{result_code:string,result_label:string},dolibarr?:string,os?:string,php?:string,webserver?:string}	Array of data
  */
 function getVersions($authentication)
 {
@@ -182,7 +186,7 @@ function getVersions($authentication)
 
 
 	if (!$error) {
-		$objectresp['result'] = array('result_code'=>'OK', 'result_label'=>'');
+		$objectresp['result'] = array('result_code' => 'OK', 'result_label' => '');
 		$objectresp['dolibarr'] = version_dolibarr();
 		$objectresp['os'] = version_os();
 		$objectresp['php'] = version_php();
@@ -190,8 +194,9 @@ function getVersions($authentication)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
+
 
 	return $objectresp;
 }
@@ -200,11 +205,11 @@ function getVersions($authentication)
 /**
  * Method to get a document by webservice
  *
- * @param 	array	$authentication		Array with permissions
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array with authentication information
  * @param 	string	$modulepart		 	Properties of document
  * @param	string	$file				Relative path
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
- * @return	array
+ * @return	array{result:array{result_code:string,result_label:string},document?:array{filename:string,mimetype:string,content:string,length:int}}	Array of data
  */
 function getDocument($authentication, $modulepart, $file, $refname = '')
 {
@@ -314,8 +319,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 
 				// Create return object
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'document'=>$objectret
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'document' => $objectret
 				);
 			} else {
 				dol_syslog("File doesn't exist ".$original_file);
@@ -328,7 +333,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 
 	if ($error) {
 		$objectresp = array(
-		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
+		'result' => array('result_code' => $errorcode, 'result_label' => $errorlabel)
 		);
 	}
 

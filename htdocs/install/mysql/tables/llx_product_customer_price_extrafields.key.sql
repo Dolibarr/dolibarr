@@ -1,5 +1,6 @@
--- ============================================================================
--- Copyright (C) 2020      John BOTELLA         <john.botella@atm-consulting.fr>
+-- ===================================================================
+-- Copyright (C) 2011 Laurent Destailleur       <eldy@users.sourceforge.net>
+-- Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,10 +13,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <https://www.gnu.org/licenses/>.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ============================================================================
+-- ===================================================================
 
 
-ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
-
+ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);

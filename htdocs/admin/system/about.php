@@ -58,27 +58,30 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_about');
 
 print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');
 
-print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png', 'height="120"').'</div>';
-
-
 
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
+print '<div class="divsection wordwrap">';
+print '<div class="float paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
-print '<a href="https://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '<a href="https://www.gnu.org/copyleft/gpl.html" target="_blank">GNU-GPL v3+</a></li>';
 print '</li></ul>';
+print'</div>';
 
 //print "<br>\n";
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("Developpers").':';
 print '<ul>';
 print '<li>'.$langs->trans("SourcesRepository").': <a href="https://www.github.com/Dolibarr/dolibarr" target="_blank" rel="noopener noreferrer external">https://www.github.com/Dolibarr/dolibarr</a></li>';
 print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="https://wiki.dolibarr.org/index.php/Dolibarr_Project" target="_blank" rel="noopener noreferrer external">https://wiki.dolibarr.org/index.php/Dolibarr_Project</a></li>';
 print '</ul>';
+print '</div>';
 
 //print "<br>\n";
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("OtherInformations").':';
 
 print '<ul>';
@@ -121,25 +124,29 @@ print '<li>';
 print '<a target="_blank" href="https://wiki.dolibarr.org/" rel="noopener noreferrer external">'.$langs->trans("OfficialWiki").'</a>';
 print '</li>';
 print '</ul>';
+print '</div>';
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("Demo").':';
 print '<ul>';
 print '<li>';
 print '<a target="_blank" href="https://www.dolibarr.org/onlinedemo/" rel="noopener noreferrer external">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
 print '</ul>';
+print '</div>';
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("ModulesMarketPlaces").':';
 print '<ul>';
 print '<li>';
 print '<a target="_blank" href="https://www.dolistore.com" rel="noopener noreferrer external">'.$langs->trans("OfficialMarketPlace").'</a>';
 print '</li>';
 print '</ul>';
-
+print '</div>';
 
 print '</div><div class="fichehalfright">';
 
-
+print '<div class="divsection wordwrap">';
 print $langs->trans("HelpCenter").':';
 print '<ul>';
 print '<li>';
@@ -147,8 +154,9 @@ print '<li>';
 print '<a target="_blank" rel="noopener noreferrer external" href="'.DOL_URL_ROOT.'/support/index.php" data-ajax="false">'.$langs->trans("HelpCenter").'</a>';
 print '</li>';
 print '</ul>';
+print '</div>';
 
-
+print '<div class="divsection wordwrap">';
 print $langs->trans("Foundation").':';
 
 print '<ul>';
@@ -161,17 +169,19 @@ if (preg_match('/^es_/i', $langs->getDefaultLang())) {
 }
 print '<li><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SubscribeToFoundation").'</a></li>';
 print '</ul>';
+print '</div>';
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("SocialNetworks").':';
 
 print '<ul>';
 
-print '<li><a href="https://facebook.com/dolibarr" target="_blank" rel="noopener noreferrer external">FaceBook</a></li>';
-print '<li><a href="https://twitter.com/dolibarr" target="_blank" rel="noopener noreferrer external">Twitter</a></li>';
+print '<li><a href="https://wiki.dolibarr.org/index.php?title=Social_Networksr" target="_blank" rel="noopener noreferrer external">See wiki</a></li>';
 
 print '</ul>';
+print '</div>';
 
-
+print '<div class="divsection wordwrap">';
 print $langs->trans("OtherResources").':';
 print '<ul>';
 
@@ -191,6 +201,7 @@ print '<a target="_blank" rel="noopener noreferrer external" href="'.$url.'">'.$
 print '</li>';
 
 print '</ul>';
+print '</div>';
 
 print '</div>';
 print '</div>';

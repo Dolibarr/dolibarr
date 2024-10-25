@@ -617,7 +617,7 @@ if (!function_exists('ftp_connect')) {
 		print "</form>";
 
 		if ($user->hasRight('ftp', 'write')) {
-			print load_fiche_titre($langs->trans("AttachANewFile"), null, null);
+			print load_fiche_titre($langs->trans("AttachANewFile"), '', '');
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
@@ -630,7 +630,7 @@ if (!function_exists('ftp_connect')) {
 
 			print '<br><br>';
 
-			print load_fiche_titre($langs->trans("AddFolder"), null, null);
+			print load_fiche_titre($langs->trans("AddFolder"), '', '');
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';

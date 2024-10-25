@@ -540,6 +540,7 @@ if ($sql_select) {
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
+			$documentstaticline->status = $objp->status;
 		}
 
 		print '<tr class="oddeven">';

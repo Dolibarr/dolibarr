@@ -5,6 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +83,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'inc
 $permissiontoread   = $user->hasRight('hrm', 'all', 'read');
 $permissiontoadd    = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
+
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1] . '/skill';
 
 // Security check (enable the most restrictive one)
@@ -126,18 +128,40 @@ if (empty($reshook)) {
 
 	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	// action update on Skilldet must be done before real update action in core/actions_addupdatedelete.inc.php
+	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
+	if (!$error) {
+		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
+			if ($action == 'update' && $permissiontoadd) {
+				foreach ($skilldetArray as $key => $SkValueToUpdate) {
+					$skilldetObj = new Skilldet($object->db);
+					$res = $skilldetObj->fetch($key);
+					if ($res > 0) {
+						$skilldetObj->description = $SkValueToUpdate;
+						$resupd = $skilldetObj->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							$error++;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	$noback = 1;
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	if (in_array($action, array("confirm_delete", "update"))) {
+		$noback = 0;
+	}
 
-	// action update on Skilldet
-	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
-			if ($action == 'add') {
+			if ($action == 'add' && $permissiontoadd) {
 				$arraySkill = $object->fetchLines();
+				'@phan-var-force Skilldet[] $arraySkill';
 				$index = 0;
 				foreach ($arraySkill as $skilldet) {
 					if (isset($skilldetArray[$index])) {
@@ -150,18 +174,8 @@ if (empty($reshook)) {
 					}
 					$index++;
 				}
-			} else {
-				foreach ($skilldetArray as $key => $SkValueToUpdate) {
-					$skilldetObj = new Skilldet($object->db);
-					$res = $skilldetObj->fetch($key);
-					if ($res > 0) {
-						$skilldetObj->description = $SkValueToUpdate;
-						$resupd = $skilldetObj->update($user);
-						if ($resupd <= 0) {
-							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
-						}
-					}
-				}
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+				exit;
 			}
 		}
 	}
@@ -182,7 +196,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -304,6 +318,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	// SKILLDET
 	$SkilldetRecords = $object->fetchLines();
+	'@phan-var-force Skilldet[] $SkilldetRecords';
 
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) == 0) {
 		$object->createSkills(1);
@@ -344,7 +359,7 @@ if (($id || $ref) && $action == 'edit') {
 				print '</td>';
 				print '<td class="valuefieldcreate">';
 				//              if (!empty($val['picto'])) {
-				//                  print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+				//                  print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 				//              }
 				//              if (in_array($val['type'], array('int', 'integer'))) {
 				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $sk->$key;
@@ -362,7 +377,7 @@ if (($id || $ref) && $action == 'edit') {
 				if (empty($skilldetArray)) {
 					$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
 				} else {
-					$value=$skilldetArray[$sk->id];
+					$value = $skilldetArray[$sk->id];
 				}
 				//
 				//              } elseif ($val['type'] == 'price') {
@@ -455,7 +470,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	$morehtmlref = '<div class="refid">';
-	$morehtmlref.= $object->label;
+	$morehtmlref .= $object->label;
 	$morehtmlref .= '</div>';
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
 
@@ -465,7 +480,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">' . "\n";
 
-	$object->fields['label']['visible']=0; // Already in banner
+	$object->fields['label']['visible'] = 0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -591,7 +606,7 @@ if ($action != "create" && $action != "edit") {
 	foreach ($objectline->fields as $key => $val) {
 		// If $val['visible']==0, then we never show the field
 		if (!empty($val['visible'])) {
-			$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+			$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
@@ -606,9 +621,7 @@ if ($action != "create" && $action != "edit") {
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-	/*
-	 * View
-	 */
+	// View
 
 	$form = new Form($db);
 

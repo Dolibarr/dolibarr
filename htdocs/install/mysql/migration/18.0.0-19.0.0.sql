@@ -219,6 +219,6 @@ UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTr
 
 UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
 
-UPDATE llx_c_tva SET taux = 3, note = 'Νήσων υπερμειωμένος Φ.Π.Α.' WHERE fk_pays = 102 AND taux = 16;
+UPDATE llx_c_tva SET taux = 3 WHERE fk_pays = 102 AND taux = 16;
 
 UPDATE llx_menu SET url = CONCAT(url, '&mode=init') WHERE fk_mainmenu = 'ticket' AND titre = 'NewTicket' AND url LIKE '/ticket/card.php?action=create%' AND url NOT LIKE '%mode=init%';

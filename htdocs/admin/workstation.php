@@ -72,6 +72,8 @@ if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstWorkstation', 'aZ09');
 	$maskorder = GETPOST('maskWorkstation', 'alpha');
 
+	$res = 0;
+
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
 	}
@@ -90,6 +92,7 @@ if ($action == 'updateMask') {
 
 	$nameofclass = ucfirst($tmpobjectkey);
 	$tmpobject = new $nameofclass($db);
+	'@phan-var-force Workstation $tmpobject';
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -187,6 +190,7 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($arrayofparameters as $key => $val) {
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');

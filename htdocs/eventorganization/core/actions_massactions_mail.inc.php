@@ -43,6 +43,15 @@ if (empty($objectclass) || empty($uploaddir)) {
 	exit;
 }
 
+'
+@phan-var-force string $massaction
+@phan-var-force string $objectclass
+@phan-var-force ?string $diroutputmassaction
+@phan-var-force ?string $uploaddir
+@phan-var-force string[] $toselect
+@phan-var-force array<string,mixed> $parameters
+';
+
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
@@ -57,6 +66,7 @@ if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
 if (!$error && $massaction == 'confirm_presend_attendees' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend_attendees';
 }
+
 if (!$error && $massaction == 'confirm_presend_attendees') {
 	$resaction = '';
 	$nbsent = 0;
@@ -69,12 +79,13 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectref = array();
 	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
+	$listofselectedid = array();
+	$listofselectedref = array();
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendee = new ConferenceOrBoothAttendee($db);
-		$listofselectedid = array();
-		$listofselectedref = array();
 		$objecttmp = new $objectclass($db);
+		'@phan-var-force CommonObject $objecttmp';
 
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
@@ -93,6 +104,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		}
 	}
 	'@phan-var-force CommonObject $objecttmp';
+	'@phan-var-force array<string,CommonObject> $listofselectedref';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {
@@ -121,7 +133,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		$massaction = 'presend_attendees';
 	}
 
-	if (!$error) {
+	if (!$error && !empty($listofselectedid)) {
 		$objecttmp->fetch_thirdparty();
 		foreach ($listofselectedid as $email => $attendees) {
 			$sendto = '';
@@ -182,6 +194,8 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $attendees);
+			$url_link = null;
+			$html_link = null;
 
 			if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
@@ -269,7 +283,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					}
 				}
 			}
-		}
+		}  // foreach ($listofselectedid as $email => $attendees)
 	}
 	$resaction .= ($resaction ? '<br>' : $resaction);
 	$resaction .= '<strong>' . $langs->trans("ResultOfMailSending") . ':</strong><br>' . "\n";

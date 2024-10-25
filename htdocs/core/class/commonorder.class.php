@@ -162,7 +162,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Product use lot
-	 * @var string
+	 * @var int
 	 */
 	public $product_tobatch;
 

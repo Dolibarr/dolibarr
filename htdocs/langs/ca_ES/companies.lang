@@ -384,6 +384,7 @@ DolibarrLogin=Nom d'usuari de Dolibarr
 NoDolibarrAccess=Sense accés d'usuari
 ExportDataset_company_1=Tercers (empreses/entitats/persones físiques) i propietats
 ExportDataset_company_2=Contactes i propietats
+ExportDataset_company_3=Comptes Bancaris de tercers
 ImportDataset_company_1=Tercers i les seves propietats
 ImportDataset_company_2=Contactes/Adreces i atributs addicionals de tercers
 ImportDataset_company_3=Comptes Bancaris de tercers

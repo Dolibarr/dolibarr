@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr 登入
 NoDolibarrAccess=無Dolibarr存取
 ExportDataset_company_1=合作方（公司/基金會/自然人）及屬性
 ExportDataset_company_2=聯絡人及其屬性
+ExportDataset_company_3=合作方銀行帳戶
 ImportDataset_company_1=合作方及其屬性
 ImportDataset_company_2=合作方其他聯絡人/地址和屬性
 ImportDataset_company_3=合作方銀行帳戶

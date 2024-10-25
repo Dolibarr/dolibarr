@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,24 +29,27 @@
 
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
-$addlinkid = GETPOSTINT('idtolinkto');
+$addlinkids = GETPOST('idtolinkto', 'array:int');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
 // Link object to another object
-if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
+if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkids)) {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$result = $object->add_object_linked($addlink, $addlinkid);
+	foreach ($addlinkids as $addlinkid) {
+		$result = $object->add_object_linked($addlink, $addlinkid);
+	}
 }
 
 // Link by reference
-if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
+if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 	$element_prop = getElementProperties($addlink);
 	if (is_array($element_prop)) {
 		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
 
 		$objecttmp = new $element_prop['classname']($db);
+		'@phan-var-force CommonObject $objecttmp';
 		$ret = $objecttmp->fetch(0, $addlinkref);
 		if ($ret > 0) {
 			$object->fetch($id);

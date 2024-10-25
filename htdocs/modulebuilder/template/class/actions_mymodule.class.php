@@ -362,12 +362,12 @@ class ActionsMyModule extends CommonHookActions
 				$parameters['head'][$counter][2] = 'mymoduleemails';
 				$counter++;
 			}
-			if ($counter > 0 && (int) DOL_VERSION < 14) {
+			if ($counter > 0 && (int) DOL_VERSION < 14) {  // @phpstan-ignore-line
 				$this->results = $parameters['head'];
 				// return 1 to replace standard code
 				return 1;
 			} else {
-				// From V14 onwards, $parameters['head'] is modifiable by referende
+				// From V14 onwards, $parameters['head'] is modifiable by reference
 				return 0;
 			}
 		} else {

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2010  Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2013  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +260,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 
 <?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
-	<?php dol_htmloutput_mesg($message, '', '', 1); ?>
+	<?php dol_htmloutput_mesg($message, [], '', 1); ?>
 	</div>
 <?php } ?>
 

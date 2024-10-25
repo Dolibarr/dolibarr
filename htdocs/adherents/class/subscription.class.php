@@ -344,9 +344,9 @@ class Subscription extends CommonObject
 	/**
 	 *	Delete a subscription
 	 *
-	 *	@param	User	$user		User that delete
-	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
+	 *	@param	User		$user		User that delete
+	 *	@param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -357,6 +357,8 @@ class Subscription extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accountline = new AccountLine($this->db);
 			$result = $accountline->fetch($this->fk_bank);
+		} else {
+			$accountline = null;
 		}
 
 		$this->db->begin();

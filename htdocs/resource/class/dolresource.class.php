@@ -51,17 +51,17 @@ class Dolresource extends CommonObject
 	public $picto = 'resource';
 
 	/**
-	 * @var string description
+	 * @var string 		Description
 	 */
 	public $description;
 
 	/**
-	 * @var string telephone number
+	 * @var string		Phone number
 	 */
 	public $phone;
 
 	/**
-	 * @var int Maximum users
+	 * @var int|null 	Maximum users
 	 */
 	public $max_users;
 
@@ -124,7 +124,7 @@ class Dolresource extends CommonObject
 	public $objelement;
 
 	/**
-	 * @var array	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
+	 * @var array<int,array{code:string,label:string,active:int}>	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
 	 */
 	public $cache_code_type_resource;
 
@@ -337,11 +337,11 @@ class Dolresource extends CommonObject
 	/**
 	 * Update object in database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update(User $user = null, int $notrigger = 0)
+	public function update($user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -374,9 +374,6 @@ class Dolresource extends CommonObject
 		}
 		if (isset($this->email)) {
 			$this->email = trim($this->email);
-		}
-		if (!is_numeric($this->max_users)) {
-			$this->max_users = 0;
 		}
 		if (isset($this->url)) {
 			$this->url = trim($this->url);
@@ -605,7 +602,7 @@ class Dolresource extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset page
-	 * @param	string|array	$filter			Filter USF.
+	 * @param	string|array<string,mixed>	$filter	Filter USF.
 	 * @return	int								If KO: <0 || if OK number of lines loaded
 	 */
 	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, $filter = '')
@@ -715,11 +712,11 @@ class Dolresource extends CommonObject
 	/**
 	 * Update element resource in database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function updateElementResource(User $user = null, int $notrigger = 0)
+	public function updateElementResource($user = null, int $notrigger = 0)
 	{
 		$error = 0;
 		$this->date_modification = dol_now();
@@ -752,7 +749,7 @@ class Dolresource extends CommonObject
 		$sql .= " element_type = ".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
 		$sql .= " busy = ".(isset($this->busy) ? (int) $this->busy : "null").",";
 		$sql .= " mandatory = ".(isset($this->mandatory) ? (int) $this->mandatory : "null").",";
-		$sql .= " tms = ".(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null');
+		$sql .= " tms = ".(dol_strlen((string) $this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -796,7 +793,7 @@ class Dolresource extends CommonObject
 	 * @param	string		$element			Element
 	 * @param	int			$element_id			Id
 	 * @param	string		$resource_type		Type
-	 * @return	array							Array of resources
+	 * @return	array<array{rowid:int,resource_id:int,resource_type:string,busy:int<0,1>,mandatory:int<0,1>}>	Array of resources
 	 */
 	public function getElementResources(string $element, int $element_id, string $resource_type = '')
 	{
@@ -891,9 +888,9 @@ class Dolresource extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @since	v18
-	 * @param	array	$params		ex option, infologin
-	 * @return	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-loan');
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
+} else {
+	$formaccounting = null;
 }
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -105,8 +108,8 @@ foreach ($list as $key) {
 
 	// Value
 	print '<td>';
-	if (isModEnabled('accounting')) {
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+	if ($formaccounting instanceof FormAccounting) {
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, array(), 1, 1);
 	} else {
 		print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . getDolGlobalString($key) . '">';
 	}

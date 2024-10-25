@@ -2,17 +2,14 @@
 							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 						$object->date_ech = $object->periode;
-						$object->periode = $object->date_ech;
 						$reponsesadd = str_split($obj->reponses);
 						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
 						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
 						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
 						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
-					$object->periode = $newdateperiod;
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';
 					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 					GETPOSTINT("mouvement"),
@@ -25,8 +22,6 @@
 				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 				$newfiletmp = preg_replace('/\.od(s|t)/i', '', $newfile);
 				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
-				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
-				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 				$this->category->childs[] = $this->_cleanObjectDatas($cat);
 				$this->periode = $this->db->jdate($obj->period);
 				$tmp = array('id_users' => $obj->id_users, 'nom' => $obj->name, 'reponses' => $obj->reponses);
@@ -58,12 +53,9 @@
 			if (empty($reyear) || empty($remonth) || empty($reday)) {
 			jQuery("#mouvement").change(function() {
 			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
-			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
-			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-			print dol_print_date($object->periode, "day");
 		"sme",
 		$action = 'transfert';
 		$cle_rib = strtolower(checkES($rib, $CCC));
@@ -81,7 +73,7 @@
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ", '".$this->db->idate($this->periode)."'";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
-		$sql .= ", periode='".$this->db->idate($this->periode)."'";
+		$sql .= ", periode = '".$this->db->idate($this->period ? $this->period : $this->periode)."'";
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
 		$sql = "SELECT id_users, nom as name, id_sondage, reponses";
 		$sql = "SELECT id_users, nom as name, reponses";
@@ -97,9 +89,7 @@
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
-		print '<input type="hidden" name="action" value="addin">';
-		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	 *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
 	$date = $obj->periode;
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
@@ -132,14 +122,12 @@
 	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 	<strong>TaskItem(<em>pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt</em>)</strong></p>
 	if ($action == "transfert") {
-	if ($object->id > 0 && $action == 'addin') {
 	if (GETPOST('reday')) {
 	if (GETPOSTINT("reyear") && GETPOSTINT("remonth") && GETPOSTINT("reday")) {
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
 	print ajax_combobox("mouvement");
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
@@ -158,7 +146,6 @@
           - informations,medias,uptodate,reenable,crypted,developpers
           - ned
  * Copyright (C) 2019   	Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
 $permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
 $permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
 $permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
@@ -174,10 +161,10 @@ $usercandelete = $user->hasRight('stock', 'mouvement', 'creer');
 $usercandelete = (($user->hasRight('stock', 'mouvement', 'supprimer')));
 $usercanread = $user->hasRight('stock', 'mouvement', 'lire');
 $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
+$usercanupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
 * The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 - Fix: [ bug #485 ] Configurated amount for public auto-subscription form is not taken into account
 - New: Add proposals into referer page of thirdparty.
-AmountIn
 NEW: ModuleBuilder: Checkin comments begin and end before each actions
 Vous pouvez voir la progression du ticket en cliquant sur le lien
 for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV /NH') do (
