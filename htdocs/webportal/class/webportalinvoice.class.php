@@ -113,6 +113,9 @@ class WebPortalInvoice extends Facture
 	);
 	//public $rowid;
 	//public $ref;
+	/**
+	 * @var int date invoice
+	 */
 	public $datef;
 	//public $date_lim_reglement;
 	//public $total_ht;

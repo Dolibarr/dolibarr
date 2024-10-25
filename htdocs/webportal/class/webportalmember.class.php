@@ -142,6 +142,9 @@ class WebPortalMember extends Adherent
 
 		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL, 'showonheader' => 1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
 	//public $ref;
 	//public $lastname;
@@ -159,6 +162,9 @@ class WebPortalMember extends Adherent
 	//public $url;
 	//public $socialnetworks;
 	//public $login;
+	/**
+	 * @var int
+	 */
 	public $fk_adherent_type;
 	//public $morphy;
 	//public $societe;
