@@ -748,7 +748,7 @@ if (count($tasksarray) > 0) {
     	</tr>';
 	}
 
-	$totalholidayarray = array();
+	$THolidays = array();
 	$totaldayholiday = 0;
 	foreach ($TWeek as $weekNb) {
 		$weekstart = dol_stringtotime($year.$month.($TFirstDays[$weekNb]));
@@ -757,12 +757,11 @@ if (count($tasksarray) > 0) {
 		$filter .= " AND ('".$db->idate($weekstart)."' BETWEEN cp.date_debut AND cp.date_fin";
 		$filter .= " OR '".$db->idate($weekend)."' BETWEEN cp.date_debut AND cp.date_fin)";
 		$holiday->fetchByUser($usertoprocess->id, '', $filter);
-		$THolidays[$weekNb] = $holiday->holiday;
-		$totalholidayarray[$weekNb] = array();
-		$totalholidayarray[$weekNb]["ids"] = array();
-		$totalholidayarray[$weekNb]["days"] = 0;
+		$THolidays[$weekNb] = array();
+		$THolidays[$weekNb]["ids"] = array();
+		$THolidays[$weekNb]["days"] = 0;
 		foreach ($holiday->holiday as $key => $h) {
-			if (!empty($totalholidayarray[$weekNb]["ids"]) && in_array($h->rowid, $totalholidayarray[$weekNb]["ids"])) {
+			if (!empty($THolidays[$weekNb]["ids"]) && in_array($h->rowid, $THolidays[$weekNb]["ids"])) {
 				continue;
 			}
 			$startweekholiday =(int) (($h["date_debut"] <= $weekstart) ? $weekstart : $h["date_debut"] );
@@ -770,8 +769,8 @@ if (count($tasksarray) > 0) {
 			$halfdays = (int) $h["halfday"];
 			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays);
 
-			$totalholidayarray[$weekNb]["ids"][] = $h->rowid;
-			$totalholidayarray[$weekNb]["days"] += $nbdays;
+			$THolidays[$weekNb]["ids"][] = $h->rowid;
+			$THolidays[$weekNb]["days"] += $nbdays;
 			$totaldayholiday += $nbdays;
 		}
 	}
@@ -789,7 +788,7 @@ if (count($tasksarray) > 0) {
 	$j = 0;
 	foreach ($TWeek as $weekNb) {
 		$j++;
-		print '<td class="liste_total_holidays '.($totalholidayarray[$weekNb]["days"] > 0 ? "onholidayallday" : "").' hide'.$weekNb.' center'.($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$weekNb.'holidays">'.$totalholidayarray[$weekNb]["days"].'</div></td>';
+		print '<td class="liste_total_holidays '.($THolidays[$weekNb]["days"] > 0 ? "onholidayallday" : "").' hide'.$weekNb.' center'.($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$weekNb.'holidays">'.$THolidays[$weekNb]["days"].'</div></td>';
 	}
 	print '<td class="liste_total_holidays center"><div class="totalDayAllHolidays">&nbsp;</div></td>
 	</tr>';
