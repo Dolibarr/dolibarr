@@ -61,7 +61,7 @@ class Fichinter extends CommonObject
 		'dateo' => array('type' => 'date', 'label' => 'Dateo', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'duree' => array('type' => 'double', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'duree' => array('type' => 'integer', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'showoncombobox' => 2),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
@@ -82,11 +82,6 @@ class Fichinter extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'fichinter';
-
-	/**
-	 * @var string Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
 
 	/**
 	 * @var string    Name of subtable line
@@ -139,7 +134,7 @@ class Fichinter extends CommonObject
 	/**
 	 * Date modification record (tms)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datem;
 
@@ -1122,7 +1117,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'fichinterdet';
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_fichinter = ".((int) $this->id).")";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

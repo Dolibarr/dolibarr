@@ -154,14 +154,15 @@ if (!count($data)) {
 
 // Print array
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="liste centpercent">';
+
+print '<table class="liste centpercent noborder">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("MemberNature").'</td>';
-print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-print '<td class="right">'.$langs->trans("NbOfActiveMembers").'</td>';
-print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
-print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
-print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+print '<th>'.$langs->trans("MemberNature").'</th>';
+print '<th class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></th>';
+print '<th class="right">'.$langs->trans("NbOfActiveMembers").'</th>';
+print '<th class="center">'.$langs->trans("LastMemberDate").'</th>';
+print '<th class="right">'.$langs->trans("NbOfSubscriptions").'</th>';
+print '<th class="center">'.$langs->trans("LatestSubscriptionDate").'</th>';
 print '</tr>';
 
 if (!$foundphy) {

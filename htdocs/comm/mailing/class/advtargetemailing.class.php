@@ -151,7 +151,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 
 		// Clean parameters

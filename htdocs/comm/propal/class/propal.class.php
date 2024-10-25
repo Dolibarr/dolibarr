@@ -483,7 +483,7 @@ class Propal extends CommonObject
 
 			$productdesc = $prod->description;
 
-			$tva_tx = get_default_tva($mysoc, $this->thirdparty, $prod->id);
+			$tva_tx = (string) get_default_tva($mysoc, $this->thirdparty, $prod->id);
 			$tva_npr = get_default_npr($mysoc, $this->thirdparty, $prod->id);
 			if (empty($tva_tx)) {
 				$tva_npr = 0;
@@ -1488,14 +1488,14 @@ class Propal extends CommonObject
 						if ($res > 0) {
 							if ($update_prices === true) {
 								$pu_ht = $prod->price;
-								$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
+								$tva_tx = (string) get_default_tva($mysoc, $objsoc, $prod->id);
 								$remise_percent = $objsoc->remise_percent;
 
 								if (getDolGlobalString('PRODUIT_MULTIPRICES') && $objsoc->price_level > 0) {
 									$pu_ht = $prod->multiprices[$objsoc->price_level];
 									if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 										if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
-											$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+											$tva_tx = (string) $prod->multiprices_tva_tx[$objsoc->price_level];
 										}
 									}
 								} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
