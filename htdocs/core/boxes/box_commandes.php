@@ -121,7 +121,7 @@ class box_commandes extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-
+				$num=0;
 				$line = 0;
 
 				while ($line < $num) {

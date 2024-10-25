@@ -333,7 +333,7 @@ if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
+print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FingerprintsDesc")."<br></div>\n";
 
 print '<br>';
 

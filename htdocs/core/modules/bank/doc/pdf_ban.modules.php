@@ -83,18 +83,22 @@ class pdf_ban extends ModeleBankAccountDoc
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 
-		// Retrieves transmitter
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
-
 		// Define column position
 		$this->posxref = $this->marge_gauche + 1;
 		$this->posxlabel = $this->marge_gauche + 25;
 		$this->posxworkload = $this->marge_gauche + 100;
 		$this->posxdatestart = $this->marge_gauche + 150;
 		$this->posxdateend = $this->marge_gauche + 170;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+		// Retrieves issuer
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 	}
 
 

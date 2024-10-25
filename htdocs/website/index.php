@@ -4664,7 +4664,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	$formmail = new FormMail($db);
 	$formmail->withaiprompt = 'html';
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'websitepage';
 	$showlinktolayout = $formmail->withlayout;
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
 	if (($action == 'createcontainer' && $showlinktolayout) || ($action == 'createcontainer' && $showlinktoai)) {
