@@ -4397,9 +4397,13 @@ table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
-table.liste tr.liste_titre_filter:first-child td:first-child,
-table.liste tr.liste_titre_filter:first-child th:first-child {
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:last-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 div.liste_titre_bydiv {
 	border-top-left-radius: <?php echo $borderradius; ?>px;

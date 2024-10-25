@@ -2139,6 +2139,7 @@ MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN=Hide the total price
 MAIN_PDF_NO_SENDER_FRAME=Hide borders on sender address frame
 MAIN_PDF_NO_RECIPENT_FRAME=Hide borders on recipient address frame
 MAIN_PDF_HIDE_CUSTOMER_CODE=Hide customer code
+MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE=Hide customer accounting code
 MAIN_PDF_HIDE_SENDER_NAME=Hide sender/company name in address block
 PROPOSAL_PDF_HIDE_PAYMENTTERM=Hide payments conditions
 PROPOSAL_PDF_HIDE_PAYMENTMODE=Hide payment mode
