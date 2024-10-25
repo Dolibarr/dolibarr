@@ -173,7 +173,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $cond_reglement_id;
 
 	/**
-	 * @var int Deadline for payment
+	 * @var int 	Deadline for payment
 	 */
 	public $date_lim_reglement;
 
@@ -190,11 +190,11 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $unit_frequency;
 	/**
-	 * @var string
+	 * @var int|string
 	 */
 	public $date_when;
 	/**
-	 * @var string
+	 * @var int|string
 	 */
 	public $date_last_gen;
 
