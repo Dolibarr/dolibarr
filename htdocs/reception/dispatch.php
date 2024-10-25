@@ -840,9 +840,9 @@ if ($id > 0 || !empty($ref)) {
 								// Warehouse
 								print '<td class="right">';
 								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 								} else {
 									$langs->load("errors");
 									print $langs->trans("ErrorNoWarehouseDefined");
@@ -1013,9 +1013,9 @@ if ($id > 0 || !empty($ref)) {
 							// Warehouse
 							print '<td class="right">';
 							if (count($listwarehouses) > 1) {
-								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 							} elseif (count($listwarehouses) == 1) {
-								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 							} else {
 								$langs->load("errors");
 								print $langs->trans("ErrorNoWarehouseDefined");

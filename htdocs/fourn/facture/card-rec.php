@@ -204,7 +204,7 @@ if (empty($reshook)) {
 			$object->note_private          = GETPOST('note_private', 'restricthtml');
 			$object->note_public           = GETPOST('note_public', 'restricthtml');
 			$object->model_pdf             = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice           = GETPOST('usenewprice', 'alpha');
+			$object->usenewprice           = GETPOSTINT('usenewprice');
 
 			$object->frequency             = $frequency;
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');

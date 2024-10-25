@@ -47,6 +47,7 @@ parameters:
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
+		- '#Unable to resolve the template type T#'
 		- '#Offset .* (?:isset\(\)) always exists and is not nullable#'
 		- '#(?:Variable \$(?:_(?:FILES|POST|SERVER)|array_propal_object|baseUri|current_fiscal_period|d(?:b_create_(?:database|user)|olibarr_main_(?:db_prefix|url_root)|raftchecked)|erreur_ajout_date|isImageValid|keyforstripeterminalbank|(?:lo|mar)gin|max|n(?:ewProperty|um)|p(?:ermsgroupbyentitypluszero|ro(?:gressCalculated|parrayofkeyval)|ublic)|t(?:(?:itl|otal_tim)e|va_tx)|var)) in isset\(\) always exists and is not nullable#'
 		- '#(?:Property CommonOrderLine::\$multicurrency_subprice \(float\) on left side of \?\?|isset\(\)) is not nullable#'
@@ -84,7 +85,7 @@ parameters:
 		- '# EmailCollector::getpart\(\) expects string#'
 		- '#(?:(?:CommonStickerGenerator::_Croix|pdf_(?:azur::_tableau_(?:info|tot)|ban::_tableau))\(\)|pdf_(?:bank|c(?:anelle::_tableau_(?:(?:tot|versements)\(\))|ornas::_tableau_(?:(?:info|tot)\(\))|rabe::_tableau_(?:(?:info|tot|versements)\(\))|yan::draw(?:(?:Info|Total)Table\(\)))|e(?:agle(?:(?:::_tableau_tot|_proforma::drawTotalTable)\(\))|instein::_tableau_(?:(?:info|tot)\(\))|ratosthene::draw(?:(?:Info|Total)Table\(\))|spadon::_tableau_tot\(\))|muscadet::_tableau_(?:(?:info|tot)\(\))|octopus::(?:_table(?:(?:FirstPage|au)\(\))|draw(?:(?:Info|Total)Table\(\)))|page(?:foot|head)|(?:rouget::_tableau_tot|s(?:epamandate::_tableau(?:_info)?|ponge::draw(?:(?:Info|Total)Table)|quille::_tableau_tot|t(?:andard_(?:e(?:(?:valuation|xpensereport)::_tableau|xpensereport::tablePayments)|(?:myobjec|supplierpaymen)t::_tableau|supplierpayment::_tableau_cheque)|orm::_tableau_info|rato::tabSignature))|t(?:cpdflabel::writeBarcode|yphon::_tableau_info)|vinci::_tableau_info)\(\)|w(?:atermark|rite(?:LinkedObjects|linedesc))|zenith::_tableau_tot\(\))) expects int, float given\.#'
 		- '#(?:Comm(?:(?:ande::updateline|on(?:Invoice::getLibStatut|StickerGenerator::Set_Char_Size))\(\))|Facture(?:(?:::update|FournisseurRec::add)line\(\))|(?:Holiday::addLogCP|Loan::getLibStatut|SupplierProposal::updateline)\(\)|calcul_price_total) expects int, float given\.#'
-		- '#(?:dol_(?:mktime|remove_file_process)|fetchObjectByElement|print_actions_filter) expects int, array\|string given\.#'
+		- '#(?:dol_(?:mktime|remove_file_process)|print_actions_filter) expects int, array\|string given\.#'
 		- '# (CSMSFile) constructor expects int, array\|string given.#'
 		- '#(?:ProductFournisseur::logPrice\(\)) expects float\|null#'
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|dol_convertToWord|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'
@@ -97,7 +98,6 @@ parameters:
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
 		- '# (reWriteAllMenus|check_authentication) expects array#'
 		- '#::(_validateMyObject|select_company)\(\) expects array<string#'
-		- '# getCommonSubstitutionArray expects array#'
 		- '# ldap_search expects array\|LDAP#'
 		- '# FormWebPortal::selectForForms\(\) expects int, array#'
 		- '# Lettering::getBankLinesFromFkDocAndDocType\(\) expects array#'
@@ -116,7 +116,7 @@ parameters:
 		- '#Call to function array_key_exists.. with .error. .* will always evaluate to false.#'
 		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
 		- '#(?:make_substitutions expects array<string, string>,) string given\.#'
-		- '# (DolibarrApiAccess|Documents|Login|Setup|Workstation|WorkstationResource|WorkstationUserGroup|Zapier)::.* has no value type specified in iterable type array\.#'
+		- '# (DolibarrApiAccess|Documents|Login|Setup|Status|Boms|Categories|AgendaEvents|Proposals|Orders|BankAccounts|Invoices|Contracts|Donations|Shipments|KnowledgeManagement|Mos|MultiCurrencies|Partnerships|Products|Tasks|Warehouses|Tickets|Workstation|WorkstationResource|WorkstationUserGroup|Zapier)::.* has no value type specified in iterable type array\.#'
 
 	internalErrorsCountLimit: 50
 	cache:

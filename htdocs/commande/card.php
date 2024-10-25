@@ -859,7 +859,7 @@ if (empty($reshook)) {
 							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
 							$price_base_type = $prodcustprice->lines[0]->price_base_type;
 							$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', (string) $tva_tx)) {
 								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
 							}
 							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
@@ -871,7 +871,7 @@ if (empty($reshook)) {
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
 
-					if ( !$pricebycustomerexist && !empty($object->thirdparty->price_level)) { //// If price per segment
+					if (!$pricebycustomerexist && !empty($object->thirdparty->price_level)) { //// If price per segment
 						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
