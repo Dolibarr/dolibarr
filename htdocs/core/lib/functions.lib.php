@@ -69,15 +69,17 @@ function getDolGlobalString($key, $default = '')
 // Easya 2022 - PR19649 - Fin
 
 /**
-* Return dolibarr global constant int value
-* @param string $key key to return value, return 0 if not set
-* @return int
-*/
-function getDolGlobalInt($key)
+ * Return dolibarr global constant int value
+ *
+ * @param string 	$key 		key to return value, return 0 if not set
+ * @param int 		$default 	value to return
+ * @return int
+ */
+function getDolGlobalInt($key, $default = 0)
 {
 	global $conf;
-	// return $conf->global->$key ?? 0;
-	return (int) (isset($conf->global->$key) ? $conf->global->$key : 0);
+	// return $conf->global->$key ?? $default;
+	return (int) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
 /**
