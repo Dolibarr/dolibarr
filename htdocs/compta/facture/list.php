@@ -1252,10 +1252,10 @@ $newcardbutton = '';
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
 	if (!empty($object->socid)) {
-		$url .= '&socid='.$object->socid;
+		$url .= '&socid='.urlencode((string) $object->socid);
 	}
 	if (!empty($object->id)) {
-		$url .= '&fac_rec='.$object->id;
+		$url .= '&fac_rec='.urlencode((string) $object->id);
 	}
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
