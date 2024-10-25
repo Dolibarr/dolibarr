@@ -72,7 +72,7 @@ parameters:
 		- '#Dead catch - Exception is never thrown in the try block#'
 		- '#.*phan-var#'
 		- '#(?:(?:s(?:(?:et_error_handl|pl_autoload_regist)er)|array_filter)) expects \(callable#'
-		- '# (vatrate|DolEditor constructor) expects bool, int#'
+		- '# vatrate expects bool, int#'
 		- '# getLocalTaxesFromRate expects int\|string#'
 		- '#(?:mysqli::options\(\)) expects int\|string#'
 		- '# print_barre_liste expects int\|null#'
