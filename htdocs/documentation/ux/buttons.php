@@ -47,7 +47,7 @@ $documentation->view = array('Elements','Buttons');
 $documentation->showSidebar(); ?>
 
 <div class="doc-wrapper">
-		
+
 	<?php $documentation->showBreadCrumb(); ?>
 
 	<div class="doc-content-wrapper">
@@ -153,11 +153,11 @@ $documentation->showSidebar(); ?>
 				$html = '<span class="fa fa-clone" paddingright" aria-hidden="true"></span> My default action';
 				$actionType = 'default';
 				$id = 'button-id-7';
-				$url = '#'.$id;				
+				$url = '#'.$id;
 				$params = array(
 					'confirm' => true
 				);
-				print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params); 
+				print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
 
 				$html = '<span class="fa fa-trash-alt paddingright" aria-hidden="true"></span> My delete action';
 				$actionType = 'delete';
@@ -179,7 +179,7 @@ $documentation->showSidebar(); ?>
 				$html = '<span class="fa fa-clone" ></span> My default action';
 				$actionType = 'delete';
 				$id = 'button-id-9';
-				$url = '#'.$id;				
+				$url = '#'.$id;
 				$params = array(
 					'confirm' => true
 				);
@@ -263,6 +263,106 @@ $documentation->showSidebar(); ?>
 			);
 			echo $documentation->showCode($lines); ?>
 		</div>
+
+
+		<!-- Example of subbutton usage -->
+		<div class="documentation-section" id="buttonsection-icon-btn">
+			<h2 class="documentation-title"><?php echo $langs->trans('DocButtonIconsLowEmphasis'); ?></h2>
+			<p class="documentation-text"><?php echo $langs->trans('DocButtonIconsDescriptionLowEmphasis'); ?></p>
+			<div class="documentation-example">
+				<?php
+					$btnLabel = $langs->trans('Label');
+					print ' <button class="btn-low-emphasis --btn-icon" title="'.dol_escape_htmltag($btnLabel).'" aria-label="'.dol_escape_htmltag($btnLabel).'" >'.img_picto($btnLabel, 'fa-arrow-right', 'aria-hidden="true"', 0, 0, 1).'</button>';
+
+					$btnLabel = $langs->trans('Reset');
+					print ' <button class="btn-low-emphasis --btn-icon"  title="'.dol_escape_htmltag($btnLabel).'" aria-label="'.dol_escape_htmltag($btnLabel).'" >'.img_picto($btnLabel, 'eraser', 'aria-hidden="true"', 0, 0, 1).'</button>';
+				?>
+			</div>
+			<?php
+			$lines = array(
+				'<?php',
+				'$btnLabel = $langs->trans(\'Label\');',
+				'print \' <button class="btn-low-emphasis --btn-icon" title="\'.dol_escape_htmltag($btnLabel).\'" aria-label="\'.dol_escape_htmltag($btnLabel).\'" >\'.img_picto($btnLabel, \'fa-arrow-right\', \'aria-hidden="true"\', 0, 0, 1).\'</button>\';',
+				'',
+				'$btnLabel = $langs->trans(\'Reset\');',
+				'print \' <button class="btn-low-emphasis --btn-icon" title="\'.dol_escape_htmltag($btnLabel).\'" aria-label="\'.dol_escape_htmltag($btnLabel).\'" >\'.img_picto($btnLabel, \'eraser\', \'aria-hidden="true"\', 0, 0, 1).\'</button>\';',
+
+			);
+			echo $documentation->showCode($lines); ?>
+		</div>
+
+		<!-- Example of subbutton usage -->
+		<div class="documentation-section" id="buttonsection-icon-btn">
+			<h2 class="documentation-title"><?php echo $langs->trans('DocButtonIconsForTitle'); ?></h2>
+			<p class="documentation-text"><?php echo $langs->trans('DocButtonIconsForTitleLowEmphasis'); ?></p>
+			<div class="documentation-example">
+				<?php
+
+
+				$btnLabel = $langs->trans('Label');
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-file', '#', '', 0); // Not Enough Permissions
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-file', '#', '', 1); // Active
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-file', '#', '', 2); // Active and selected
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-file', '#', '', -1); // Functionality is disabled
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-file', '#', '', -2); // Disabled without info
+
+
+				?>
+			</div>
+			<?php
+			$lines = array(
+				'<?php',
+				'$btnLabel = $langs->trans(\'Label\');',
+				'$status = 0; // Not Enough Permissions',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
+				'$status = 1; // Active',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
+				'$status = 2; // Active and selected',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
+				'$status = -1; // Functionality is disabled',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
+				'$status = -2; // Disabled without info',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
+			);
+
+			echo $documentation->showCode($lines); ?><div class="documentation-example">
+				<?php
+
+
+				$btnLabel = $langs->trans('Label');
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', 0, ['forcenohideoftext'=>1]); // Not Enough Permissions
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', 1, ['forcenohideoftext'=>1]); // Active
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', 2, ['forcenohideoftext'=>1]); // Active and selected
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', -1, ['forcenohideoftext'=>1]); // Functionality is disabled
+				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', -2, ['forcenohideoftext'=>1]); // Disabled without info
+
+
+				?>
+			</div>
+
+			<?php
+			$lines = array(
+				'<?php',
+				'$btnLabel = $langs->trans(\'Label\');',
+				'$status = 0; // Not Enough Permissions',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
+				'$status = 1; // Active',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
+				'$status = 2; // Active and selected',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
+				'$status = -1; // Functionality is disabled',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
+				'$status = -2; // Disabled without info',
+				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
+			);
+			echo $documentation->showCode($lines); ?>
+		</div>
+
+
+
+
+
+
 
 	</div>
 
