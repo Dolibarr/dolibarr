@@ -113,7 +113,7 @@ TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will 
 TicketsActivatePublicInterface=Activate public interface
 TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
-TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
 TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
 TicketAutoChangeStatusOnAnswerHelp=When a user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=Tickets numbering module

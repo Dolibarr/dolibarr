@@ -706,7 +706,7 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, $object->id, '');
 				} elseif ($key == 'label') {
-					print $object->getNomUrl(1);
+					print $object->showOutputField($val, $key, $object->label, '');
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}

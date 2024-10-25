@@ -273,7 +273,7 @@ class Delivery extends CommonObject
 	 *	Create a line
 	 *
 	 *	@param	int 	$origin_id				Id of order
-	 *	@param	string	$qty					Quantity
+	 *	@param	float	$qty					Quantity
 	 *	@param	int 	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array<string,?mixed>	$array_options	Array options
@@ -637,8 +637,6 @@ class Delivery extends CommonObject
 	 */
 	public function addline($origin_id, $qty, $array_options = [])
 	{
-		global $conf;
-
 		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
@@ -763,8 +761,8 @@ class Delivery extends CommonObject
 
 		$datas = [];
 
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
-		$datas['picto'] .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly').' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$datas['ref'] = '<b>'.$langs->trans("Ref").'</b>: '.$this->ref;
 
 		return $datas;
 	}
