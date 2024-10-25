@@ -24,6 +24,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 
@@ -41,6 +42,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'action';
 
+$form = new Form($db);
 
 /*
  *	Actions
@@ -73,6 +75,10 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_REMINDER_OFFSET', GETPOSTINT('AGENDA_DEFAULT_REMINDER_OFFSET'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_REMINDER_OFFSET_UNIT', GETPOST('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_type_duration'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', GETPOSTINT('AGENDA_DEFAULT_REMINDER_EMAIL_MODELmodel_mail'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_REMINDER_EVENT_TYPES', json_encode(GETPOST('AGENDA_DEFAULT_REMINDER_EVENT_TYPES')), 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
@@ -234,13 +240,70 @@ if (empty($conf->cron->enabled)) {
 		}
 	}
 }
+
+// AGENDA DEFAULT REMINDER EVENT TYPE
+if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+	print '<tr class="oddeven">'."\n";
+	print '<td>';
+	print $langs->trans('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', $langs->transnoentities("Module2300Name"));
+	print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_DEFAULT_REMINDER_EVENT_TYPES_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
+	print '</td>'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
+	print '<td class="right nowraponall">'."\n";
+	if (!isModEnabled('cron')) {
+		print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
+	} else {
+		if (GETPOSTISSET('AGENDA_DEFAULT_REMINDER_EVENT_TYPES')) {
+			$selected = GETPOST('AGENDA_DEFAULT_REMINDER_EVENT_TYPES');
+		} else {
+			$selected = json_decode(getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', ''));
+		}
+		print $formactions->select_type_actions($selected, "AGENDA_DEFAULT_REMINDER_EVENT_TYPES", "systemauto", 0, -1, 1, 1);
+		print '</td></tr>';
+	}
+}
+
+// AGENDA DEFAULT REMINDER OFFSET
+if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+	print '<tr class="oddeven">'."\n";
+	print '<td>';
+	print $langs->trans('AGENDA_DEFAULT_REMINDER_OFFSET', $langs->transnoentities("Module2300Name"));
+	print '</td>'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
+	print '<td class="right nowraponall">'."\n";
+	if (!isModEnabled('cron')) {
+		print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
+	} else {
+		print '<input class="width50" type="number" name="AGENDA_DEFAULT_REMINDER_OFFSET" value="'.(GETPOSTISSET('AGENDA_DEFAULT_REMINDER_OFFSET') ? GETPOSTINT('AGENDA_DEFAULT_REMINDER_OFFSET') : getDolGlobalInt('AGENDA_DEFAULT_REMINDER_OFFSET', 30)).'"> ';
+		$selected = (GETPOSTISSET('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_type_duration') ? GETPOST('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_type_duration') : getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT', 'i'));
+		print $form->selectTypeDuration('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_', $selected, array('y', 'm'));
+	}
+}
+
+// AGENDA DEFAULT EMAIL MODEL
+if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+	print '<tr class="oddeven">'."\n";
+	print '<td>';
+	print $langs->trans('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', $langs->transnoentities("Module2300Name"));
+	print '</td>'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
+	print '<td class="right nowraponall">'."\n";
+	if (!isModEnabled('cron')) {
+		print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
+	} else {
+		$selected = (GETPOSTISSET('AGENDA_DEFAULT_REMINDER_EMAIL_MODELmodel_mail') ? GETPOST('AGENDA_DEFAULT_REMINDER_EMAIL_MODELmodel_mail') : getDolGlobalInt('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', 0));
+		print $form->selectModelMail('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', 'actioncomm_send', 1, 1, $selected);
+	}
+}
 print '</td></tr>'."\n";
 
 print '</table>';
 
 print dol_get_fiche_end();
 
-//print '<div class="center"><input class="button button-save" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+print '<div class="center">';
+print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print '</form>';
 
