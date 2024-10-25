@@ -365,6 +365,22 @@ function supplier_invoice_rec_prepare_head($object)
 	}
 	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/list.php?search_fk_fac_rec_source=' . $object->id;
 	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+
+	//count facture rec
+	$nbFactureFourn = 0;
+	$sql = "SELECT COUNT(rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+	$sql .= " WHERE fk_fac_rec_source = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		$nbFactureFourn = $obj->nb;
+	} else {
+		dol_syslog('Failed to count facture with facture fournisseur model '.$db->lasterror(), LOG_ERR);
+	}
+	if ($nbFactureFourn > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFactureFourn.'</span>';
+	}
 	$head[$h][2] = 'generated';
 	$h++;
 
