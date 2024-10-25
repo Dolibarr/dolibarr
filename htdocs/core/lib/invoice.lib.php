@@ -274,7 +274,7 @@ function invoice_rec_prepare_head($object)
 		$obj = $db->fetch_object($resql);
 		$nbFacture = $obj->nb;
 	} else {
-		dol_syslog('Failed to count facture with facture_rec '.$db->lasterror(), LOG_ERR);
+		dol_syslog('Failed to count invoices with invoice model '.$db->lasterror(), LOG_ERR);
 	}
 	if ($nbFacture > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFacture.'</span>';
@@ -391,7 +391,7 @@ function supplier_invoice_rec_prepare_head($object)
 		$obj = $db->fetch_object($resql);
 		$nbFactureFourn = $obj->nb;
 	} else {
-		dol_syslog('Failed to count facture with facture fournisseur model '.$db->lasterror(), LOG_ERR);
+		dol_syslog('Failed to count invoices with supplier invoice model '.$db->lasterror(), LOG_ERR);
 	}
 	if ($nbFactureFourn > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFactureFourn.'</span>';
