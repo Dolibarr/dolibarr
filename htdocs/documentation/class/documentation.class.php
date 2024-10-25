@@ -56,6 +56,7 @@ class Documentation
 	{
 		$this->db = $db;
 
+
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
 			'url' => DOL_URL_ROOT, 
@@ -90,6 +91,11 @@ class Documentation
 					'icon' => 'fas fa-battery-half pictofixedwidth',
 					'submenu' => array()
 				),
+        'Event Message' => array(
+          'url' => dol_buildpath('documentation/ux/event-message.php', 1),
+          'icon' => 'fas fa-comments pictofixedwidth',
+          'submenu' => array()
+        ),
 			)
 		);
 	}
@@ -128,6 +134,8 @@ class Documentation
 
 		print '</head>';
 		print '<body class="dolibarr-doc">';
+
+		top_htmlhead('');
 	}
 
 	/**
@@ -149,6 +157,8 @@ class Documentation
 
 		print '</body>';
 		print '</html>';
+
+		dol_htmloutput_events(0);
 	}
 
 	/**
