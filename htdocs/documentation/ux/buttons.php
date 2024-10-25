@@ -294,7 +294,6 @@ $documentation->showSidebar(); ?>
 		<!-- Example of subbutton usage -->
 		<div class="documentation-section" id="buttonsection-icon-btn">
 			<h2 class="documentation-title"><?php echo $langs->trans('DocButtonIconsForTitle'); ?></h2>
-			<p class="documentation-text"><?php echo $langs->trans('DocButtonIconsForTitleLowEmphasis'); ?></p>
 			<div class="documentation-example">
 				<?php
 
