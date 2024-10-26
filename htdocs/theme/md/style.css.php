@@ -4372,14 +4372,6 @@ table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.liste:not(.listwithfilterbefore) {
-	border-top-left-radius: <?php echo $borderradius; ?>px;
-	border-top-right-radius: <?php echo $borderradius; ?>px;
-}
-table.liste {
-	border-bottom-left-radius: <?php echo $borderradius; ?>px;
-	border-bottom-right-radius: <?php echo $borderradius; ?>px;
-}
 table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
 table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
@@ -4396,7 +4388,23 @@ table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
 table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
+table.noborder thead tr:last-child td:first-child,
+table.noborder thead tr:last-child th:first-child {
+	border-bottom-left-radius: unset !important;
+}
+table.noborder thead tr:last-child td:last-child,
+table.noborder thead tr:last-child th:last-child {
+	border-bottom-right-radius: unset !important;
+}
 
+table.liste:not(.listwithfilterbefore) {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;

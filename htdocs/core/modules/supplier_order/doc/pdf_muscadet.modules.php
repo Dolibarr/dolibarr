@@ -729,7 +729,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		CommandeFournisseur		$object			Object to show
+	 *   @param		CommandeFournisseur	$object	Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	integer
@@ -793,8 +793,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *  Show total to pay
 	 *
 	 *  @param	TCPDF		$pdf            Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param  CommandeFournisseur	$object Object CommandeFournisseur
+	 *	@param  int			$deja_regle     Amount already paid
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return int							Position pour suite

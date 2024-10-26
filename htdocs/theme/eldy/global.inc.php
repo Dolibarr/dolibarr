@@ -89,6 +89,8 @@ $leftmenuwidth = 240;
 @phan-var-force array{h:int,l:int,s:int,a:int} $colortextlinkHsla
 ';
 
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 /* <style type="text/css" > */
 
@@ -1150,7 +1152,7 @@ div.urllink input {
 .divsection {
 	padding: 10px;
 	border: 2px solid #DFDFDF;
-	border-radius: 10px;
+	border-radius: <?php echo $borderradius; ?>px;
 	margin-top: 5px;
 	margin-bottom: 20px;
 	/* background-color: rgba(0, 0, 0, 0.02); */
@@ -4227,17 +4229,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 	margin: 0px 0px 20px 0px;
-
-	/*border-radius: 2px;
-	width: calc(100% - 7px);
-	border-collapse: separate !important;
-	border-spacing: 0px;
-	border-top-width: 0px;
-	border-top-color: rgb(215,215,215);
-	border-top-style: solid;
-	margin: 0px 0px 5px 2px;
-	box-shadow: 1px 1px 5px #ddd;
-	*/
 }
 #tablelines, #tablelinesservice {
 	border-bottom-width: 1px;
@@ -4257,19 +4248,10 @@ table.nointerlines tr:not(:last-child) td {
 
 
 /* Management of border radius */
-<?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder.cal_month {
-	border-bottom-left-radius: <?php echo $borderradius; ?>px;
-	border-bottom-right-radius: <?php echo $borderradius; ?>px;
-}
-table.liste:not(.listwithfilterbefore) {
-	border-top-left-radius: <?php echo $borderradius; ?>px;
-	border-top-right-radius: <?php echo $borderradius; ?>px;
-}
-table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -4291,7 +4273,23 @@ table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
 table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
+table.noborder thead tr:last-child td:first-child,
+table.noborder thead tr:last-child th:first-child {
+	border-bottom-left-radius: unset !important;
+}
+table.noborder thead tr:last-child td:last-child,
+table.noborder thead tr:last-child th:last-child {
+	border-bottom-right-radius: unset !important;
+}
 
+table.liste:not(.listwithfilterbefore) {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
@@ -4809,6 +4807,7 @@ input.liste_titre {
 	line-height: 24px;
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	background: var(--colorbacktitle1);
 	color: var(--listetotal);
 	font-weight: normal;
 }
@@ -4885,9 +4884,9 @@ div.tabBar .noborder {
 
 /* Prepare to remove class pair - impair */
 
-.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
+.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4900,9 +4899,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	border-bottom: 1px solid #f0f0f0;
 }
 
-.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
+.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);

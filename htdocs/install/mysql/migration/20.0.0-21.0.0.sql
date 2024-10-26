@@ -282,3 +282,5 @@ CREATE TABLE llx_product_customer_price_extrafields (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);
+ALTER TABLE llx_facture ADD COLUMN payment_reference varchar(25) AFTER date_lim_reglement;
+ALTER TABLE llx_societe ADD COLUMN tp_payment_reference varchar(25) AFTER code_fournisseur;
