@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006-2016 	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012	 	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ $server->register(
 /**
  * Get ActionComm
  *
- * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @return	mixed
  */
