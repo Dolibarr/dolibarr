@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
- * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -424,7 +425,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	$resteapayer = $object->amount - $totalpaid;
+	$resteapayer = (float) $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";

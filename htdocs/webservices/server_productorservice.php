@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -613,7 +613,7 @@ function createProductOrService($authentication, $product)
 
 		if (!$error) {
 			// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled)) {
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && isModEnabled('stock')) {
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal = $newobject->stock_reel;
@@ -766,7 +766,7 @@ function updateProductOrService($authentication, $product)
 			$error++;
 		} else {
 			// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled)) {
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && isModEnabled('stock')) {
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal = $newobject->stock_reel;

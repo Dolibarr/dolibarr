@@ -50,6 +50,8 @@ class box_contracts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('contrat', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedContracts';
 	}
 
 	/**
@@ -162,12 +164,12 @@ class box_contracts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContracts").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContracts").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($resql);
 			} else {

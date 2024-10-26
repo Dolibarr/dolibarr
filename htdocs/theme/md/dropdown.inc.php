@@ -26,30 +26,25 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-global-search-dropdown a.login-dropdown-a, #topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
+#topmenu-global-search-dropdown a.login-dropdown-a,
+#topmenu-quickadd-dropdown a.login-dropdown-a,
+#topmenu-bookmark-dropdown a.login-dropdown-a,
+#topmenu-uploadfile-dropdown a.login-dropdown-a {
 	color: var(--colortextbackhmenu);
 }
 
-div#topmenu-global-search-dropdown {
-	position: fixed;
-	<?php echo $right; ?>: <?php echo (125 + $atoploginusername); ?>px;
-	top: 0px;
-}
-div#topmenu-quickadd-dropdown {
-	position: fixed;
-	<?php echo $right; ?>: <?php echo (90 + $atoploginusername); ?>px;
-	top: 0px;
-}
-div#topmenu-bookmark-dropdown {
+div.login_block_tools > div {
 	position: fixed;
 	<?php echo $right; ?>: <?php print !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? (55 + $atoploginusername) : 85; ?>px;
 	top: 0px;
 }
+
 div#topmenu-login-dropdown {
 	position: fixed;
 	<?php echo $right; ?>: 20px;
 	top: 0px;
 }
+
 
 #topmenu-login-dropdown .dropdown-toggle:after {
 	display: none;
@@ -226,7 +221,11 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-login-dropdown {
+div#topmenu-global-search-dropdown,
+div#topmenu-quickadd-dropdown,
+div#topmenu-bookmark-dropdown,
+div#topmenu-uploadfile-dropdown,
+div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
 	<?php } else { ?>
@@ -315,7 +314,11 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-login-dropdown,
+#topmenu-quickadd-dropdown,
+#topmenu-bookmark-dropdown,
+#topmenu-global-search-dropdown,
+#topmenu-uploadfile-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -435,9 +438,26 @@ a.dropdown-item {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
+/*
+ * SELECT FIELDS
+ */
+
+li.liinputsearch {
+	position: sticky;
+	display: block;
+	top: 0;
+	background: var(--colorbackbody);
+}
+
+
 /*
  * SEARCH
  */
+
+#topmenu-global-search-dropdown .dropdown-menu {
+	width: 310px !important;
+}
 
 .dropdown-search-input {
 	width: 100%;
@@ -468,9 +488,9 @@ a.dropdown-item {
 }
 
 .global-search-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	font-size: 1.1em;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }
 
 .global-search-item:before {
@@ -487,7 +507,7 @@ a.dropdown-item {
  */
 
 #topmenu-quickadd-dropdown .dropdown-menu {
-	width: 310px !important;
+	width: 310px;
 	color: #444;
 }
 
@@ -660,41 +680,66 @@ div.quickaddblock:focus {
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
-	#topmenu-quickadd-dropdown .dropdown-menu {
-		min-width: 220px;
-		max-width: 235px;
+	div.login_block {
+		top: unset;
 	}
-	#topmenu-bookmark-dropdown .dropdown-menu {
-		min-width: 220px;
-		max-width: 360px;
+
+	.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {
+		width: 16px;
+		height: 16px;
 	}
+	div#topmenu-login-dropdown {
+		height: 20px;
+		line-height: 20px;
+	}
+
 	#topmenu-login-dropdown .dropdown-menu {
 		min-width: 220px;
 		max-width: 360px;
 	}
 
+	div.login_block a .atoploginusername {
+		color: var(--colortextbackvmenu);
+	}
+
+
+	#topmenu-global-search-dropdown a.login-dropdown-a,
 	#topmenu-quickadd-dropdown a.login-dropdown-a,
 	#topmenu-bookmark-dropdown a.login-dropdown-a,
-	#topmenu-login-dropdown a.login-dropdown-a {
-		color: #000;
-	}
-	#topmenu-quickadd-dropdown .dropdown-menu,
-	#topmenu-bookmark-dropdown .dropdown-menu,
-	#topmenu-login-dropdown .dropdown-menu {
-		width: 230px;
+	#topmenu-login-dropdown a.login-dropdown-a,
+	#topmenu-uploadfile-dropdown a.login-dropdown-a {
+		color: var(--colortextbackvmenu);
 	}
 
+	#topmenu-global-search-dropdown .dropdown-menu,
+	#topmenu-quickadd-dropdown .dropdown-menu,
+	#topmenu-bookmark-dropdown .dropdown-menu,
+	#topmenu-login-dropdown .dropdown-menu,
+	#topmenu-uploadfile-dropdown .dropdown-menu {
+		width: 100%;
+		min-width: unset;
+	}
+
+	div.login_block_tools > div {
+		position: unset;
+	}
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown,
 	div#topmenu-login-dropdown {
 		position: unset;
 	}
 
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
-	div#topmenu-bookmark-dropdown {
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown {
 		line-height: unset;
+	}
+
+	div.login_block_other {
+		padding-top: 2px;
 	}
 
 	ul.tmenu {

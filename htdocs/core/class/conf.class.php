@@ -1071,6 +1071,10 @@ class Conf extends stdClass
 				$this->global->MAIN_JS_GRAPH = 'chart'; // Use chart.js library
 			}
 
+			if (!isset($this->global->THEME_ELDY_USEBORDERONTABLE)) {
+				$this->global->THEME_ELDY_USEBORDERONTABLE = 1;
+			}
+
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) {
 				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
 			}

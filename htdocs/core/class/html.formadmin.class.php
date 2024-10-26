@@ -224,7 +224,8 @@ class FormAdmin
 									continue; // We exclude all menu manager files
 								}
 
-								$filelib = preg_replace('/\.php$/i', '', $file);
+								$filetoshow = preg_replace('/\.php$/i', '', $file);
+								$filetoshow = ucfirst(preg_replace('/_menu$/i', '', $filetoshow));
 								$prefix = '';
 								// 0=Recommended, 1=Experimental, 2=Development, 3=Other
 								if (preg_match('/^eldy/i', $file)) {
@@ -240,10 +241,12 @@ class FormAdmin
 									$morelabel .= ' <span class="opacitymedium">('.$langs->trans("Unstable").')</span>';
 								}
 								if ($file == $selected) {
-									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected data-html="'.dol_escape_htmltag($filelib.$morelabel).'">'.$filelib.$morelabel;
+									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected data-html="'.dol_escape_htmltag($filetoshow.$morelabel).'">';
+									$menuarray[$prefix.'_'.$file] .= $filetoshow.$morelabel;
 									$menuarray[$prefix.'_'.$file] .= '</option>';
 								} else {
-									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" data-html="'.dol_escape_htmltag($filelib.$morelabel).'">'.$filelib.$morelabel;
+									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" data-html="'.dol_escape_htmltag($filetoshow.$morelabel).'">';
+									$menuarray[$prefix.'_'.$file] .= $filetoshow.$morelabel;
 									$menuarray[$prefix.'_'.$file] .= '</option>';
 								}
 							}
@@ -256,7 +259,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Output combo list of menus
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		print '<select class="flat minwidth150" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 		$oldprefix = '';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
@@ -287,7 +290,7 @@ class FormAdmin
 				$oldprefix = $newprefix;
 			}
 
-			print $val."\n"; // Show menu entry ($val contains the <option> tags
+			print $val."\n"; // Show menu entry ($val contains the <option> tags)
 		}
 		print '</select>';
 
@@ -522,7 +525,6 @@ class FormAdmin
 			// Set $valhtml with the picto for the type
 			$valhtml = ($key ? getPictoForType($key) : '').$val;
 
-			// @phpstan-ignore-next-line
 			if (empty($typewecanchangeinto) || in_array($key, $typewecanchangeinto[$type])) {
 				$out .= '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
 			} else {

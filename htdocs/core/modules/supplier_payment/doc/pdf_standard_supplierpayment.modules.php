@@ -138,6 +138,11 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -519,7 +524,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord(price2num($object->amount, 'MT'), $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord((float) price2num($object->amount, 'MT'), $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
@@ -795,7 +800,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 				}
 			}
 

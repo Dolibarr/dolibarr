@@ -547,7 +547,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendMyObjectRef";
@@ -595,7 +595,7 @@ $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -637,7 +637,7 @@ foreach ($object->fields as $key => $val) {
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
@@ -808,7 +808,7 @@ while ($i < $imaxinloop) {
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
+				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key) && !in_array($key, array('ref'))) {
 					print ' title="'.dol_escape_htmltag($object->$key).'"';
 				}
 				print '>';

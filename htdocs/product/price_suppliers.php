@@ -507,7 +507,7 @@ if ($id > 0 || $ref) {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
 					$filter = '(fournisseur:=:1) AND (status:=:1)';
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, 'SelectThirdParty', 0, 0, $events);
+					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, $langs->transnoentitiesnoconv('SelectThirdParty'), 0, 0, $events);
 
 					$parameters = array('filter'=>$filter, 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
@@ -975,9 +975,9 @@ if ($id > 0 || $ref) {
 							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
 								$extratitle = $langs->trans($value);
 								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => 0,
-																   'position' => (end($arrayfields)['position'] + 1),
-																   'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
-																   'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
+								'position' => (end($arrayfields)['position'] + 1),
+								'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
+								'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
 							}
 						}
 					}
@@ -997,8 +997,9 @@ if ($id > 0 || $ref) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 				// Suppliers list title
+				print '<!-- List of supplier prices -->'."\n";
 				print '<div class="div-table-responsive">';
-				print '<table class="liste centpercent">';
+				print '<table class="liste centpercent noborder">';
 
 				$param = "&id=".$object->id;
 

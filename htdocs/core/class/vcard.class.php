@@ -148,7 +148,15 @@ class vCard
 	 */
 	public function setFormattedName($name)
 	{
-		$this->properties["FN;".$this->encoding] = encode($name);
+		$stringencoded = encode($name);
+		$stringnotencoded = $name;
+
+		$key = "FN";
+		if ($stringencoded != $stringnotencoded) {
+			$key .= ";".$this->encoding;
+		}
+
+		$this->properties[$key] = $stringencoded;
 	}
 
 	/**
@@ -166,7 +174,9 @@ class vCard
 	{
 		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+
 		$this->filename = "$first%20$family.vcf";
+
 		if (empty($this->properties["FN"])) {
 			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
 		}
@@ -209,8 +219,15 @@ class vCard
 		if ($label != "") {
 			$key .= ';LABEL="'.encode($label).'"';
 		}
-		$key .= ";".$this->encoding;
-		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+
+		$stringencoded = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+		$stringnotencoded = $postoffice.";".$extended.";".$street.";".$city.";".$region.";".$zip.";".$country;
+
+		if ($stringencoded != $stringnotencoded) {
+			$key .= ";".$this->encoding;
+		}
+
+		$this->properties[$key] = $stringencoded;
 
 		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
 		//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
@@ -269,10 +286,14 @@ class vCard
 	public function setEmail($address, $type = "")
 	{
 		$key = "EMAIL";
-		if ($type == "PREF") {
+		if ($type === "PREF") {
 			$key .= ";PREF=1";
 		} elseif (!empty($type)) {
-			$key .= ";TYPE=".dol_strtolower($type);
+			if (stripos($type, 'TYPE=') === 0) {
+				$key .= ";".$type;
+			} else {
+				$key .= ";TYPE=".dol_strtolower($type);
+			}
 		}
 		$this->properties[$key] = $address;
 	}
@@ -401,7 +422,7 @@ class vCard
 
 		$this->setProdId('Dolibarr '.DOL_VERSION);
 
-		$this->setUID('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
+		$this->setUID('DOL-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
 		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
 		$this->setFormattedName($object->getFullName($langs, 1));
 
@@ -415,15 +436,15 @@ class vCard
 		if ($object->office_phone) {
 			$this->setPhoneNumber($object->office_phone, "TYPE=WORK,VOICE");
 		}
+		if ($object->office_fax) {
+			$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
+		}
 		/* disabled
 		if ($object->personal_mobile) {
 			$this->setPhoneNumber($object->personal_mobile, "TYPE=CELL,VOICE");
 		}*/
 		if ($object->user_mobile) {
 			$this->setPhoneNumber($object->user_mobile, "TYPE=CELL,VOICE");
-		}
-		if ($object->office_fax) {
-			$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
 		}
 
 		if (!empty($object->socialnetworks)) {
@@ -460,10 +481,11 @@ class vCard
 		$country = $object->country_code ? $object->country : '';
 
 		// User address
+		$addressalreadyset = 0;
 		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 			if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
 				$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
-				//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+				$addressalreadyset = 1;
 			}
 		}
 
@@ -474,9 +496,9 @@ class vCard
 		if ($object->personal_email) {
 			$this->setEmail($object->personal_email, "TYPE=HOME");
 		} */
-		if ($object->note_public) {
+		/*if ($object->note_public) {
 			$this->setNote($object->note_public);
-		}
+		}*/
 		if ($object->job) {
 			$this->setTitle($object->job);
 		}
@@ -495,17 +517,17 @@ class vCard
 
 			$this->setURL($company->url, "");
 
-			if ($company->phone && $company->phone != $object->office_phone) {
+			if ($company->phone && empty($object->office_phone)) {		// If we already set the type TYPE=WORK,VOICE with office_phone
 				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
 			}
-			if ($company->fax && $company->fax != $object->office_fax) {
+			if ($company->fax && empty($object->office_fax)) {			// If we already set the type TYPE=WORK,FAX with office_phone
 				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
 			}
-			if ($company->address || $company->town || $company->state || $company->zip || $company->country) {
+			if (($company->address || $company->town || $company->state || $company->zip || $company->country) && !$addressalreadyset) {
 				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
 			}
 
-			if ($company->email && $company->email != $object->email) {
+			if ($company->email && empty($object->email)) {
 				$this->setEmail($company->email, "TYPE=WORK");
 			}
 

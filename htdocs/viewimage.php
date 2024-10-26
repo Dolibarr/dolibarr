@@ -388,6 +388,7 @@ if ($modulepart == 'barcode') {
 	$classname = "mod".ucfirst($generator);
 
 	$module = new $classname($db);
+	'@phan-var-force ModeleBarCode $module';
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}

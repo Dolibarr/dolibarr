@@ -858,7 +858,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('mo'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, false);
 
 

@@ -130,6 +130,11 @@ if ($action == 'update') {
 			}
 		}
 
+		if (GETPOSTISSET('THEME_ELDY_BORDER_RADIUS')) {
+			$val = GETPOST('THEME_ELDY_BORDER_RADIUS');
+			dolibarr_set_const($db, 'THEME_ELDY_BORDER_RADIUS', GETPOSTINT('THEME_ELDY_BORDER_RADIUS'), 'chaine', 0, '', $conf->entity);
+		}
+
 		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
 		if ($val == '') {
 			dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);

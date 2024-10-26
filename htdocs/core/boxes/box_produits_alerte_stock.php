@@ -57,6 +57,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 		$tmpentry = array('enabled' => ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
+		$this->urltoaddentry = DOL_URL_ROOT.'/product/card.php?action=create';
+		$this->msgNoRecords = 'NoTooLowStockProducts';
 	}
 
 	/**
@@ -202,12 +204,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$line++;
 				}
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoTooLowStockProducts"),
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => $langs->trans("NoTooLowStockProducts"),
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

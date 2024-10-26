@@ -180,7 +180,7 @@ class InfoBox
 								$tmpenabled = 0; // $tmpenabled is used for the '|' test (OR)
 								foreach ($arrayelem as $module) {
 									$tmpmodule = preg_replace('/@[^@]+/', '', $module);
-									if (!empty($conf->$tmpmodule->enabled)) {
+									if (!empty($tmpmodule) && isModEnabled($tmpmodule)) {
 										$tmpenabled = 1;
 									}
 									//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
@@ -218,7 +218,7 @@ class InfoBox
 	 *  Save order of boxes for area and user
 	 *
 	 *  @param	DoliDB	$dbs			Database handler
-	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
+	 *  @param	int		$zone       	Key of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
 	 *  @return int                   	Return integer <0 if KO, 0=Nothing done, > 0 if OK

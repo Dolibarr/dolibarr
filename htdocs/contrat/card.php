@@ -1295,13 +1295,13 @@ if ($action == 'create') {
 	}
 
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
-	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
-		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -2274,7 +2274,7 @@ if ($action == 'create') {
 				$arrayforbutaction = array();
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
 					$arrayforbutaction[] = array(
-						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(),
+						'url' => '/contrat/card.php?id='.$object->id.'&action=activate&token='.newToken(),
 						'label' => $langs->trans('ActivateAllContracts'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'activer'),
@@ -2283,7 +2283,7 @@ if ($action == 'create') {
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
 					$arrayforbutaction[] = array(
-						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(),
+						'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
 						'label' => $langs->trans('CloseAllContracts'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'desactiver'),
@@ -2344,7 +2344,11 @@ if ($action == 'create') {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('contrat'));
+			$tmparray = $form->showLinkToObjectBlock($object, array(), array('contrat'), 1);
+			$linktoelem = $tmparray['linktoelem'];
+			$htmltoenteralink = $tmparray['htmltoenteralink'];
+			print $htmltoenteralink;
+
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link

@@ -1421,7 +1421,7 @@ class Commande extends CommonOrder
 		$this->origin_id = $object->id;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			if (!empty($object->multicurrency_code)) {
 				$this->multicurrency_code = $object->multicurrency_code;
 			}
@@ -2056,17 +2056,17 @@ class Commande extends CommonOrder
 			$line->desc = $remise->description; // Description ligne
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
-			$line->subprice = -$remise->amount_ht;
-			$line->price = -$remise->amount_ht;
+			$line->subprice = -(float) $remise->amount_ht;
+			$line->price = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefini
 			$line->qty = 1;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
 
-			$line->total_ht  = -$remise->amount_ht;
-			$line->total_tva = -$remise->amount_tva;
-			$line->total_ttc = -$remise->amount_ttc;
+			$line->total_ht  = -(float) $remise->amount_ht;
+			$line->total_tva = -(float) $remise->amount_tva;
+			$line->total_ttc = -(float) $remise->amount_ttc;
 
 			$result = $line->insert();
 			if ($result > 0) {
@@ -3230,7 +3230,7 @@ class Commande extends CommonOrder
 				$price = ((float) $pu - $remise);
 			}
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();

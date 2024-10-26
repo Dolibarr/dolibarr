@@ -58,12 +58,12 @@ class BankCateg // extends CommonObject
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors;
 
 	/**
-	 * @var array context
+	 * @var array<string,string> context
 	 */
 	public $context;
 
@@ -90,6 +90,10 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
+		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$cats = new Categorie($this->db);
+		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
+
 		$error = 0;
 
 		// Clean parameters
@@ -98,12 +102,14 @@ class BankCateg // extends CommonObject
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bank (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql .= "label";
 		$sql .= ", entity";
+		$sql .= ", type";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $catTypeID);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -116,7 +122,7 @@ class BankCateg // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."category_bank");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."categorie");
 		}
 
 		// Commit or rollback
@@ -144,12 +150,16 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
+		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$cats = new Categorie($this->db);
+		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
-		$sql .= " AND t.entity = ".$conf->entity;
+		$sql .= " AND t.entity = ".$conf->entity." AND t.type = " . ((int) $catTypeID);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -190,7 +200,7 @@ class BankCateg // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."category_bank SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie SET";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
@@ -258,7 +268,7 @@ class BankCateg // extends CommonObject
 
 		// Delete bank categ
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bank";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
@@ -333,9 +343,13 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
+		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$cats = new Categorie($this->db);
+		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
+
 		$return = array();
 
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."category_bank WHERE entity = ".$conf->entity." ORDER BY label";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".$conf->entity." AND type = ".((int) $catTypeID)." ORDER BY label";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

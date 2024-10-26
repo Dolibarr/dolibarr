@@ -887,6 +887,7 @@ class Workstation extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefWorkstation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -909,13 +910,13 @@ class Workstation extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param	int			$hidedetails    Hide details of lines
+	 *  @param	int			$hidedesc       Hide description
+	 *  @param	int			$hideref        Hide ref
+	 *  @param	?array<string,mixed>  $moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{

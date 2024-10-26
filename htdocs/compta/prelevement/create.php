@@ -245,11 +245,11 @@ if ($type) {
 
 
 if ($sourcetype != 'salary') {
-	$nb = $bprev->nbOfInvoiceToPay($type);
-	$pricetowithdraw = $bprev->SommeAPrelever($type);
+	$nb = $bprev->nbOfInvoiceToPay($type);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	$pricetowithdraw = $bprev->SommeAPrelever($type);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 } else {
-	$nb = $bprev->nbOfInvoiceToPay($type, 'salary');
-	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');
+	$nb = $bprev->nbOfInvoiceToPay($type, 'salary');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 }
 if ($nb < 0) {
 	dol_print_error($db, $bprev->error);
@@ -558,6 +558,7 @@ if ($resql) {
 				if ($type == 'bank-transfer') {
 					$invoicestatic->ref_supplier = $obj->ref_supplier;
 				}
+				$salary = null;
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch(0, '', $obj->uid);
@@ -582,7 +583,7 @@ if ($resql) {
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
-			if ($sourcetype != 'salary') {
+			if ($sourcetype != 'salary' || $salary === null) {
 				print $invoicestatic->getNomUrl(1, 'withdraw');
 			} else {
 				print $salary->getNomUrl(1, 'withdraw');

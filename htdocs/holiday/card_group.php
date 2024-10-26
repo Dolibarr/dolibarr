@@ -633,7 +633,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 

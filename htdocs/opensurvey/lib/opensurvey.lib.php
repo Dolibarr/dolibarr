@@ -29,7 +29,7 @@
  * It loads tabs from modules looking for the entity Opensurveyso
  *
  * @param Opensurveysondage $object Current viewing poll
- * @return array Tabs for the opensurvey section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the opensurvey section
  */
 function opensurvey_prepare_head(Opensurveysondage $object)
 {

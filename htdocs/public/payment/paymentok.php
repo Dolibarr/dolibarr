@@ -1904,6 +1904,10 @@ if (empty($doactionsthenredirect)) {
 			print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
 		}
 
+		print '<center>';
+		print img_picto('', 'tick', 'class="green fa-2x"');
+		print '</center>';
+
 		// Show a custom message
 		$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 		if (getDolGlobalString($key)) {

@@ -72,7 +72,7 @@ class CashControl extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-	'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 10),
+	'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 	'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 15),
 	'ref' => array('type' => 'varchar(64)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 18),
 	'posmodule' => array('type' => 'varchar(30)', 'label' => 'Module', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 19),
@@ -82,9 +82,9 @@ class CashControl extends CommonObject
 	'cash' => array('type' => 'price', 'label' => 'Cash', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'csslist' => 'amount'),
 	'cheque' => array('type' => 'price', 'label' => 'Cheque', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'csslist' => 'amount'),
 	'card' => array('type' => 'price', 'label' => 'CreditCard', 'enabled' => 1, 'visible' => 1, 'position' => 36, 'csslist' => 'amount'),
-	'year_close' => array('type' => 'integer', 'label' => 'Year close', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
-	'month_close' => array('type' => 'integer', 'label' => 'Month close', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
-	'day_close' => array('type' => 'integer', 'label' => 'Day close', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
+	'year_close' => array('type' => 'integer', 'label' => 'Year', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
+	'month_close' => array('type' => 'integer', 'label' => 'Month', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
+	'day_close' => array('type' => 'integer', 'label' => 'Day', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
 	'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 	'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 505),

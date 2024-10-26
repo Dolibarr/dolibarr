@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro@open-dsi.fr>
+-- Copyright (C) 2011 Laurent Destailleur       <eldy@users.sourceforge.net>
+-- Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,10 +13,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <https://www.gnu.org/licenses/>.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table with category for accounting account
 -- ===================================================================
 
-ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code,entity);
 
+ALTER TABLE llx_product_price_extrafields ADD UNIQUE INDEX uk_product_price_extrafields (fk_object);

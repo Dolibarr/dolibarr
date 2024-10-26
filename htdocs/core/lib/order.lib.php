@@ -174,7 +174,7 @@ function commande_prepare_head(Commande $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function order_admin_prepare_head()
 {
@@ -317,7 +317,7 @@ function getCustomerOrderPieChart($socid = 0)
 			}
 		}
 		if (!empty($conf->use_javascript_ajax)) {
-			$result .= '<tr class="impair"><td align="center" colspan="2">';
+			$result .= '<tr class="oddeven"><td align="center" colspan="2">';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();

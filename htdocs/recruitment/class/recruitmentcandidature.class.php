@@ -126,27 +126,93 @@ class RecruitmentCandidature extends CommonObject
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Received', '3' => 'ContractProposed', '5' => 'ContractSigned', '8' => 'Refused', '9' => 'Canceled')),
 		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 700, 'notnull' => 0, "visible" => "0", "comment" => "ip used to create record (for public submission page)"),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $entity;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $fk_recruitmentjobposition;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var string
+	 */
 	public $lastname;
+	/**
+	 * @var string
+	 */
 	public $firstname;
+	/**
+	 * @var string
+	 */
 	public $email;
+	/**
+	 * @var string
+	 */
 	public $phone;
+	/**
+	 * @var int|string
+	 */
 	public $date_birth;
+	/**
+	 * @var string
+	 */
 	public $email_msgid;
+	/**
+	 * @var int
+	 */
 	public $email_date;
+	/**
+	 * @var string
+	 */
 	public $remuneration_requested;
+	/**
+	 * @var string
+	 */
 	public $remuneration_proposed;
+	/**
+	 * @var int
+	 */
 	public $fk_recruitment_origin;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
+	/**
+	 * @var int
+	 */
 	public $status;
+	/**
+	 * @var string
+	 */
 	public $ip;
 	// END MODULEBUILDER PROPERTIES
 
@@ -355,7 +421,7 @@ class RecruitmentCandidature extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return self[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -641,9 +707,9 @@ class RecruitmentCandidature extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int							Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -665,9 +731,9 @@ class RecruitmentCandidature extends CommonObject
 	/**
 	 *	Return full name ('name+' '+lastname)
 	 *
-	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
+	 *	@param	?Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 * 	@param	int<-1,5>	$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */
@@ -899,7 +965,7 @@ class RecruitmentCandidature extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return RecruitmentCandidatureLine[]|int	array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -914,7 +980,8 @@ class RecruitmentCandidature extends CommonObject
 			return $result;
 		} else {
 			$this->lines = $result;
-			return $this->lines;
+			// @phpstan-ignore-next-line
+			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
 		}
 	}
 
@@ -954,6 +1021,7 @@ class RecruitmentCandidature extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefRecruitmentCandidature $module';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -978,10 +1046,10 @@ class RecruitmentCandidature extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

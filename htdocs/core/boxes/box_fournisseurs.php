@@ -51,6 +51,8 @@ class box_fournisseurs extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
+		$this->urltoaddentry = DOL_URL_ROOT.'/societe/card.php?action=create&type=f';
+		$this->msgNoRecords = 'NoRecordedSuppliers';
 	}
 
 	/**
@@ -138,13 +140,13 @@ class box_fournisseurs extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$langs->load("suppliers");
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedSuppliers").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$langs->load("suppliers");
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedSuppliers").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

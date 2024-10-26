@@ -114,7 +114,7 @@ function reception_prepare_head(Reception $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function reception_admin_prepare_head()
 {

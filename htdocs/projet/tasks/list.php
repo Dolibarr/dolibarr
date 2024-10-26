@@ -539,7 +539,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut as status";
+	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {

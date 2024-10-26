@@ -149,13 +149,18 @@ print '<input type="hidden" name="action" value="update">';
 
 print dol_get_fiche_head($head, 'handler', '', -1);
 
-print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
-print "<br><br>\n";
+print '<div class="opacitymedium justify hideonsmartphone">'.$langs->trans("MenusDesc")."</div>\n";
+print '<br class="hideonsmartphone">';
+print "<br>\n";
 
 
 clearstatcache();
 
-// Gestionnaires de menu
+// Menu manager choice
+
+print "\n";
+print '<div class="div-table-responsive-no-min">';
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Menu").'</td>';
 print '<td>';
@@ -182,7 +187,7 @@ print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENU_SMARTPHONE')), 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
 
 if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
-	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE))) {
+	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE')))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
 
@@ -191,7 +196,7 @@ print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')), 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
 
 if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
-	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE))) {
+	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
 
@@ -199,6 +204,7 @@ print '</td>';
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 print dol_get_fiche_end();
 

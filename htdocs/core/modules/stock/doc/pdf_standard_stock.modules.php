@@ -85,12 +85,6 @@ class pdf_standard_stock extends ModelePDFStock
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
-
 		// Define position of columns
 		$this->wref = 35;
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -117,6 +111,17 @@ class pdf_standard_stock extends ModelePDFStock
 		}
 
 		$this->tabTitleHeight = 11;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 	}
 
 

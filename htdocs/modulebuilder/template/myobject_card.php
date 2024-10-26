@@ -268,7 +268,7 @@ if ($action == 'create') {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}
 
-	print load_fiche_titre($title, '', 'object_'.$object->picto);
+	print load_fiche_titre($title, '', $object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -310,7 +310,7 @@ if ($action == 'create') {
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit') {
-	print load_fiche_titre($langs->trans("MyObject"), '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("MyObject"), '', $object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -618,7 +618,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('myobject'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('myobject'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

@@ -285,6 +285,9 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int Date of the purchase order payment deadline
 	 */
 	public $date_lim_reglement;
+	/**
+	 * @var array<int,float>
+	 */
 	public $receptions = array();
 
 	// Multicurrency
@@ -3018,7 +3021,7 @@ class CommandeFournisseur extends CommonOrder
 			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$this->line = new CommandeFournisseurLigne($this->db);
 			$this->line->fetch($rowid);
 

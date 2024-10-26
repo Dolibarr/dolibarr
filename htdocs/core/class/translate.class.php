@@ -213,7 +213,7 @@ class Translate
 	/**
 	 *  Load translation files.
 	 *
-	 *  @param	array	$domains      		Array of lang files to load
+	 *  @param	string[]	$domains      		Array of lang files to load
 	 *	@return	int							Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadLangs($domains)
@@ -243,12 +243,12 @@ class Translate
 	 *												If $domain is "file@module" instead of "file" then we look for module lang file
 	 *												in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
 	 *												then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
-	 *  @param	integer	$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
+	 *  @param	int		$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection			Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	string	$forcelangdir				To force a different lang directory
 	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
 	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
-	 *  @param  array   $tabtranslatedomain			Store translations to be stored in cache
+	 *  @param  array<string,string>   $tabtranslatedomain			Store translations to be stored in cache
 	 *  @param  string  $langkey                    To create key for cachekey in recursivity
 	 *	@return	int									Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs()
@@ -867,11 +867,11 @@ class Translate
 	/**
 	 *  Return list of all available languages
 	 *
-	 * 	@param	string	$langdir		Directory to scan
-	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
-	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
-	 *  @param	int		$mainlangonly   1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
-	 *  @return array     				List of languages
+	 * 	@param	string		$langdir		Directory to scan
+	 *  @param  int			$maxlength   	Max length for each value in combo box (will be truncated)
+	 *  @param	int<0,1>	$usecode		1=Show code instead of country name for language variant, 2=Show only code
+	 *  @param	int<0,1>	$mainlangonly   1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
+	 *  @return array<string,string> 		List of languages
 	 */
 	public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0, $mainlangonly = 0)
 	{
@@ -1195,7 +1195,7 @@ class Translate
 	 * Return an array with content of all loaded translation keys (found into this->tab_translate) so
 	 * we get a substitution array we can use for substitutions (for mail or ODT generation for example)
 	 *
-	 * @return array	Array of translation keys lang_key => string_translation_loaded
+	 * @return array<string,string>	Array of translation keys lang_key => string_translation_loaded
 	 */
 	public function get_translations_for_substitutions()
 	{

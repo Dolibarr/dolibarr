@@ -112,8 +112,12 @@ function user_prepare_head(User $object)
 	if ($user->socid == 0 && isModEnabled('notification')) {
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+		// Make a join with c_action_trigger to exclude orphelin of notify_def and be consistent with page /usr/notify_def
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."c_action_trigger as a";
 		$sql .= " WHERE fk_user = ".((int) $object->id);
+		$sql .= " AND a.rowid = n.fk_action AND n.fk_user = ".((int) $object->id);
+		$sql .= " AND entity IN (".getEntity('notify_def').')';
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -556,11 +560,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			//print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
-			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? $conf->global->THEME_TOPMENU_DISABLE_IMAGE : 0, 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth500');
+			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth500');
 		} else {
 			print $listoftopmenumodes[getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')];
-			//print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"));
 		print '</td>';
@@ -609,8 +611,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("UseBorderOnTable").'</td>';
 		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
 		if ($edit) {
-			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1);
-			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
+			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1, 2, 0, 1);
 		} else {
 			print yn(getDolGlobalString('THEME_ELDY_USEBORDERONTABLE'));
 		}
@@ -619,6 +620,31 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
+	if ($foruserprofile) {
+	} else {
+		if (getDolGlobalString('THEME_ELDY_USEBORDERONTABLE')) {
+			$listofborderradius = array(
+				0 => $langs->transnoentitiesnoconv("No"),
+				4 => $langs->transnoentitiesnoconv("Size").' 4',
+				6 => $langs->transnoentitiesnoconv("Size").' 6',
+				8 => $langs->transnoentitiesnoconv("Size").' 8',
+				10 => $langs->transnoentitiesnoconv("Size").' 10',
+				20 => $langs->transnoentitiesnoconv("Size").' 20',
+			);
+
+			print '<tr class="oddeven">';
+			print '<td>'.$langs->trans("RoundBorders").'</td>';
+			print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+			if ($edit) {
+				print $form->selectarray('THEME_ELDY_BORDER_RADIUS', $listofborderradius, getDolGlobalInt('THEME_ELDY_BORDER_RADIUS'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth100');
+			} else {
+				print $listofborderradius[getDolGlobalInt('THEME_ELDY_BORDER_RADIUS')];
+			}
+			print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+			print '</td>';
+			print '</tr>';
+		}
+	}
 	// Table line height
 	/* removed. height of column must use padding of td and not lineheight that has bad side effect
 	if ($foruserprofile) {

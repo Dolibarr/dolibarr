@@ -51,6 +51,10 @@ class box_commandes extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('commande', 'lire');
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/commande/card.php?action=create';
+
+		$this->msgNoRecords = 'NoRecordedOrders';
 	}
 
 	/**
@@ -117,7 +121,7 @@ class box_commandes extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-
+				$num=0;
 				$line = 0;
 
 				while ($line < $num) {
@@ -186,12 +190,6 @@ class box_commandes extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
-					);
-				}
 
 				$this->db->free($result);
 			} else {

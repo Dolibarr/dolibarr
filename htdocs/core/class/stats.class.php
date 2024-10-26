@@ -424,7 +424,7 @@ abstract class Stats
 	 * 	Return nb of elements, total amount and avg amount each year
 	 *
 	 *	@param	string	$sql	SQL request
-	 * 	@return	array<array{year:string,nb:string,nb_diff:float,total_diff:float,avg_diff:float,avg_weighted:float}>	Array with nb, total amount, average for each year
+	 * 	@return	array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>	Array with nb, total amount, average for each year
 	 */
 	protected function _getAllByYear($sql)
 	{

@@ -27,7 +27,7 @@
  * Prepare array of tabs for EmailCollector
  *
  * @param	EmailCollector	$object		EmailCollector
- * @return 	array						Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function emailcollectorPrepareHead($object)
 {

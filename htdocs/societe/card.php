@@ -362,17 +362,17 @@ if (empty($reshook)) {
 			$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
-			$object->capital				= GETPOST('capital', 'alphanohtml');
+			$object->capital				= GETPOSTFLOAT('capital');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
-			$object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
+			$object->tva_assuj				= GETPOSTINT('assujtva_value');
 			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
-			$object->status = GETPOST('status', 'alpha');
+			$object->status = GETPOSTINT('status');
 
 			// Local Taxes
-			$object->localtax1_assuj		= GETPOST('localtax1assuj_value', 'alpha');
-			$object->localtax2_assuj		= GETPOST('localtax2assuj_value', 'alpha');
+			$object->localtax1_assuj		= GETPOSTINT('localtax1assuj_value');
+			$object->localtax2_assuj		= GETPOSTINT('localtax2assuj_value');
 
 			$object->localtax1_value		= GETPOST('lt1', 'alpha');
 			$object->localtax2_value		= GETPOST('lt2', 'alpha');
@@ -1040,8 +1040,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		// Prospect / Customer
 		if (GETPOST("type", 'aZ') == 'c') {
-			if (getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
-				$object->client = getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT');
+			if (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
+				$object->client = getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT');
 			} else {
 				$object->client = 3;
 			}
@@ -1092,7 +1092,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->fax				= GETPOST('fax', 'alpha');
 		$object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 		$object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-		$object->capital			= GETPOST('capital', 'alphanohtml');
+		$object->capital			= GETPOSTFLOAT('capital');
 		$paymentTermId = GETPOSTINT('cond_reglement_id'); // can be set by default values on create page and not already in get or post variables
 		if (empty($paymentTermId) && !GETPOSTISSET('cond_reglement_id')) {
 			$paymentTermId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
@@ -1122,8 +1122,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->localtax1_assuj	= GETPOSTINT('localtax1assuj_value');
 		$object->localtax2_assuj	= GETPOSTINT('localtax2assuj_value');
 
-		$object->localtax1_value	= GETPOSTINT('lt1');
-		$object->localtax2_value	= GETPOSTINT('lt2');
+		$object->localtax1_value	= GETPOST('lt1', 'alpha');
+		$object->localtax2_value	= GETPOST('lt2', 'alpha');
 
 		$object->tva_intra = GETPOST('tva_intra', 'alphanohtml');
 
@@ -2089,7 +2089,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 				$object->no_email				= GETPOSTINT("no_email");
 				$object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-				$object->capital				= GETPOST('capital', 'alphanohtml');
+				$object->capital				= GETPOSTFLOAT('capital');
 				$object->idprof1				= GETPOST('idprof1', 'alphanohtml');
 				$object->idprof2				= GETPOST('idprof2', 'alphanohtml');
 				$object->idprof3				= GETPOST('idprof3', 'alphanohtml');
@@ -2137,8 +2137,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				//Local Taxes
-				$object->localtax1_assuj		= GETPOST('localtax1assuj_value');
-				$object->localtax2_assuj		= GETPOST('localtax2assuj_value');
+				$object->localtax1_assuj		= GETPOSTINT('localtax1assuj_value');
+				$object->localtax2_assuj		= GETPOSTINT('localtax2assuj_value');
 
 				$object->localtax1_value		= GETPOST('lt1');
 				$object->localtax2_value		= GETPOST('lt2');
@@ -2690,7 +2690,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Capital
 				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 				print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-				print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
+				print $object->capital != '' && $object->capital != 0 ? dol_escape_htmltag(price($object->capital)) : '';
 				if (isModEnabled("multicurrency")) {
 					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
 				} else {

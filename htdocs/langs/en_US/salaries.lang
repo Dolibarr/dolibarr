@@ -31,3 +31,4 @@ BankTransferAmount=Amount of credit transfer
 WithdrawalReceipt=Credit transfer order
 OrderWaiting=Pending order
 FillEndOfMonth=Fill with end of month
+UserPaySlip=Pay Slip

@@ -33,7 +33,7 @@
  * Initialize the array of tabs for customer invoice
  *
  * @param	Facture		$object		Invoice object
- * @return	array					Array of head tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function facture_prepare_head($object)
 {
@@ -164,7 +164,7 @@ function facture_prepare_head($object)
 /**
  * Return array head with list of tabs to view object information.
  *
- * @return array head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function invoice_admin_prepare_head()
 {
@@ -248,7 +248,7 @@ function invoice_admin_prepare_head()
  * Return array head with list of tabs to view object information.
  *
  * @param   FactureRec  $object     Invoice model object
- * @return array                    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function invoice_rec_prepare_head($object)
 {
@@ -261,6 +261,43 @@ function invoice_rec_prepare_head($object)
 	$head[$h][1] = $langs->trans("RepeatableInvoice");
 	$head[$h][2] = 'card';
 	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+	//count facture rec
+	$nbFacture = 0;
+	$sql = "SELECT COUNT(rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE fk_fac_rec_source = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		$nbFacture = $obj->nb;
+	} else {
+		dol_syslog('Failed to count invoices with invoice model '.$db->lasterror(), LOG_ERR);
+	}
+	if ($nbFacture > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFacture.'</span>';
+	}
+	$head[$h][2] = 'generated';
+	$h++;
+
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note-rec.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda-rec.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
@@ -310,8 +347,8 @@ function invoice_rec_prepare_head($object)
 /**
  * Return array head with list of tabs to view object information.
  *
- * @param   Facture     $object     Invoice object
- * @return array                    head array with tabs
+ * @param   Facture|FactureFournisseurRec     $object     Invoice object
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function supplier_invoice_rec_prepare_head($object)
 {
@@ -323,6 +360,43 @@ function supplier_invoice_rec_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/card-rec.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("RepeatableSupplierInvoice");
 	$head[$h][2] = 'card';
+	$h++;
+
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note-rec.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
+	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
+
+	//count facture rec
+	$nbFactureFourn = 0;
+	$sql = "SELECT COUNT(rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+	$sql .= " WHERE fk_fac_rec_source = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		$nbFactureFourn = $obj->nb;
+	} else {
+		dol_syslog('Failed to count invoices with supplier invoice model '.$db->lasterror(), LOG_ERR);
+	}
+	if ($nbFactureFourn > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFactureFourn.'</span>';
+	}
+	$head[$h][2] = 'generated';
 	$h++;
 
 	// Show more tabs from modules
@@ -366,7 +440,7 @@ function getNumberInvoicesPieChart($mode)
 
 		$amount_mode = (getDolGlobalInt('FACTURE_VALIDATED_IN_AMOUNT') == 1);
 
-				$sql = "SELECT";
+		$sql = "SELECT";
 		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late30";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as latenow";

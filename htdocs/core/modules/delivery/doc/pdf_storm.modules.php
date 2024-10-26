@@ -105,6 +105,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (empty($this->emetteur->country_code)) {
@@ -524,7 +529,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {

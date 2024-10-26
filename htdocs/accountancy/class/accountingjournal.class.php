@@ -462,7 +462,7 @@ class AccountingJournal extends CommonObject
 
 			$element = array(
 				'ref' => dol_trunc($element_static->ref, 16, 'right', 'UTF-8', 1),
-				'error' => $pre_data_info['error'],
+				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',
 				'blocks' => array(),
 			);
 

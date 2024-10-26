@@ -27,7 +27,7 @@
 /**
  * Build tabs for admin page
  *
- * @return array
+ * @return array<array{0:string,1:string,2:string}>
  */
 function ticketAdminPrepareHead()
 {
@@ -79,7 +79,7 @@ function ticketAdminPrepareHead()
  *  Build tabs for a Ticket object
  *
  *  @param	Ticket	  $object		Object Ticket
- *  @return array				          Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ticket_prepare_head($object)
 {
@@ -218,12 +218,12 @@ function generate_random_id($car = 16)
 /**
  * Show http header, open body tag and show HTML header banner for public pages for tickets
  *
- * @param  string $title       Title
- * @param  string $head        Head array
- * @param  int    $disablejs   More content into html header
- * @param  int    $disablehead More content into html header
- * @param  array  $arrayofjs   Array of complementary js files
- * @param  array  $arrayofcss  Array of complementary css files
+ * @param  string		$title       Title
+ * @param  string		$head        Head array
+ * @param  int<0,1>		$disablejs   More content into html header
+ * @param  int<0,1>		$disablehead More content into html header
+ * @param  string[]		$arrayofjs   Array of complementary js files
+ * @param  string[]		$arrayofcss  Array of complementary css files
  * @return void
  */
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])

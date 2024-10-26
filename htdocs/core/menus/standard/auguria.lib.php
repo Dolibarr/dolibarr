@@ -70,7 +70,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
 
-		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname, '<span class="fas fa-bars size12x"></span>');
 	}
 
 	$num = count($newTabMenu);
@@ -239,7 +239,7 @@ function print_start_menu_entry_auguria($idsel, $classname, $showmode)
  */
 function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
 {
-	global $langs, $conf;
+	global $langs;
 
 	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
 	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
@@ -247,7 +247,6 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
-
 		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
 			print $menuval['prefix'];
 		} elseif (!empty($menuval['prefix']) && strpos($menuval['prefix'], 'fa-') === 0) {

@@ -31,23 +31,65 @@
  */
 class DolEditor
 {
+	/**
+	 * @var string
+	 */
 	public $tool; // Store the selected tool
 
 	// If using fckeditor
+	/**
+	 * @var Object - Note: seems to be unused
+	 */
 	public $editor;
 
 	// If not using fckeditor
+	/**
+	 * @var string
+	 */
 	public $content;
+	/**
+	 * @var string
+	 */
 	public $htmlname;
+	/**
+	 * @var string
+	 */
 	public $toolbarname;
+	/**
+	 * @var bool
+	 */
 	public $toolbarstartexpanded;
+	/**
+	 * @var int
+	 */
 	public $rows;
+	/**
+	 * @var string
+	 */
 	public $cols;
+	/**
+	 * @var int
+	 */
 	public $height;
+	/**
+	 * @var string
+	 */
 	public $width;
+	/**
+	 * @var int<0,1>|bool
+	 */
 	public $uselocalbrowser;
+	/**
+	 * @var int<0,1>
+	 */
 	public $readonly;
+	/**
+	 * @var int
+	 */
 	public $posx;
+	/**
+	 * @var int
+	 */
 	public $posy;
 
 
@@ -60,14 +102,14 @@ class DolEditor
 	 *  @param 	int					$height			       		 	Height in pixel of edit area (200px by default)
 	 *  @param 	string				$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
 	 *  @param  string				$toolbarlocation       			Deprecated. Not used
-	 *  @param  boolean				$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	boolean|int			$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *  @param  boolean|int|string	$okforextendededitor    		1 or True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
+	 *  @param  bool				$toolbarstartexpanded  			Bar is visible or not at start
+	 *  @param	bool|int			$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param  bool|int|string		$okforextendededitor    		1 or True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                          	                        		Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
 	 *  @param  int					$rows                   		Size of rows for textarea tool
 	 *  @param  string				$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
-	 *  @param	int					$readonly						0=Read/Edit, 1=Read only
-	 *  @param	array				$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y).
+	 *  @param	int<0,1>			$readonly						0=Read/Edit, 1=Read only
+	 *  @param	array{x?:string,y?:string,find?:string}	$poscursor	Array for initial cursor position array('x'=>x, 'y'=>y).
 	 *                      	                       				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
 	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
@@ -102,7 +144,7 @@ class DolEditor
 			$this->tool = 'textarea';
 		}
 
-		if ( isset($poscursor['find']) ) {
+		if (isset($poscursor['find'])) {
 			$posy = 0;
 			$lines = explode("\n", $content);
 			$nblines = count($lines);
@@ -112,7 +154,9 @@ class DolEditor
 					break;
 				}
 			}
-			if ($posy != 0 ) $poscursor['y'] = $posy;
+			if ($posy != 0) {
+				$poscursor['y'] = $posy;
+			}
 		}
 
 		// Define some properties
@@ -230,7 +274,7 @@ class DolEditor
                             		toolbar: \''.dol_escape_js($this->toolbarname).'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.dol_escape_js($this->width).'\'' : '\'\'').',
-            						height: '.dol_escape_js($this->height).',
+            						height: '.dol_escape_js((string) $this->height).',
                                     skin: \''.dol_escape_js($skin).'\',
                                     '.$scaytautostartup.'
                                     language: \''.dol_escape_js($langs->defaultlang).'\',
@@ -299,7 +343,7 @@ class DolEditor
 			$found = 1;
 			$format = $option;
 
-			$out .= "\n".'<!-- Output Ace editor -->'."\n";
+			$out .= "\n".'<!-- Output Ace editor '.dol_string_nohtmltag($this->htmlname).' -->'."\n";
 
 			if ($titlecontent) {
 				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;

@@ -148,6 +148,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
+$search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $search_option = GETPOST('search_option');
 if ($search_option == 'late') {
@@ -442,6 +443,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$paiementAmount = $facture->getSommePaiement();
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
+
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
 						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
 
@@ -870,6 +872,9 @@ if ($search_option == 'late') {
 if (!empty($search_fac_rec_source_title)) {
 	$sql .= natural_search('facrec.titre', $search_fac_rec_source_title);
 }
+if ($search_fk_fac_rec_source) {
+	$sql .= ' AND f.fk_fac_rec_source = ' . (int) $search_fk_fac_rec_source;
+}
 // Search on user
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
@@ -1013,6 +1018,16 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+
+if ($search_fk_fac_rec_source) {
+	$object = new FactureRec($db);
+	$object->fetch((int) $search_fk_fac_rec_source);
+
+	$head = invoice_rec_prepare_head($object);
+
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+}
+
 
 $param = '&socid='.urlencode((string) ($socid));
 if (!empty($mode)) {
@@ -1195,6 +1210,9 @@ if ($search_categ_cus > 0) {
 if (!empty($search_fac_rec_source_title)) {
 	$param .= '&search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
 }
+if ($search_fk_fac_rec_source) {
+	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1233,8 +1251,11 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton = '';
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+	if (!empty($object->socid)) {
+		$url .= '&socid='.urlencode((string) $object->socid);
+	}
+	if (!empty($object->id)) {
+		$url .= '&fac_rec='.urlencode((string) $object->id);
 	}
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));

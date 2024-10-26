@@ -285,7 +285,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
-			if (!empty($conf->productbatch->enabled))
+			if (isModEnabled('productbatch'))
 			{
 				print '<td>';
 				print '</td>';
@@ -411,7 +411,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Batch number management
 				/*TODO Add link to expeditiondet_batch
-				if (!empty($conf->productbatch->enabled))
+				if (isModEnabled('productbatch'))
 				{
 					//var_dump($objp->edrowid);
 					$lines[$i]->detail_batch

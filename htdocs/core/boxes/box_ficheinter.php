@@ -50,6 +50,8 @@ class box_ficheinter extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('ficheinter', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/fichinter/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedInterventions';
 	}
 
 	/**
@@ -151,12 +153,12 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedInterventions").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$i][0] = array(
+				// 	'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedInterventions").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($resql);
 			} else {

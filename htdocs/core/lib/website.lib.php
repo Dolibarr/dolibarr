@@ -512,8 +512,8 @@ function dolWebsiteSaveContent($content)
  * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
  * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
  * @param 	int		$containerid		Id of container.
- * @param	int		$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
- * @param 	array	$parameters			Array of parameters to append to the URL.
+ * @param	int<0,1>	$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
+ * @param 	array<string,mixed>	$parameters			Array of parameters to append to the URL.
  * @return  void
  */
 function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
@@ -654,7 +654,7 @@ function includeContainer($containerref)
  * <?php getStructureData('software', array('name'=>'Name', 'os'=>'Windows', 'price'=>10)); ?>
  *
  * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
- * @param	array		$data				Array of data parameters for structured data
+ * @param	array<string,mixed>	$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
 function getStructuredData($type, $data = array())
@@ -862,7 +862,7 @@ function getStructuredData($type, $data = array())
 /**
  * Return HTML content to add as header card for an article, news or Blog Post or home page.
  *
- * @param	array	$params					Array of parameters
+ * @param	?array<string,mixed>	$params	Array of parameters
  * @return  string							HTML content
  */
 function getSocialNetworkHeaderCards($params = null)
@@ -1106,7 +1106,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  * Return array with list of all public files of a given object.
  *
  * @param	Object	$object			Object
- * @return  array					List of public files of object
+ * @return array<array{filename:string,position:int,url:string}>	List of public files of object
  * @see getImagePublicURLOfObject()
  */
 function getPublicFilesOfObject($object)
@@ -1163,11 +1163,11 @@ function getPublicFilesOfObject($object)
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
- * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	'DESC'|'ASC'	$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
- * @param	array		$otherfilters		Other filters
- * @param	int			$status				0 or 1, or -1 for both
- * @return  array							Array with results of search
+ * @param	array<string,mixed>	$otherfilters		Other filters
+ * @param	int<-1,1>	$status				0 or 1, or -1 for both
+ * @return  array{list?:WebsitePage[],code?:string,message?:string}	Array with results of search
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
@@ -1534,7 +1534,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
  * Retrieves the details of a news post by its ID.
  *
  * @param string $postId  The ID of the news post to retrieve.
- * @return array|int   Return array if OK, -1 if KO
+ * @return array<string,mixed>|int<-1,-1>   Return array if OK, -1 if KO
  */
 function getNewsDetailsById($postId)
 {
