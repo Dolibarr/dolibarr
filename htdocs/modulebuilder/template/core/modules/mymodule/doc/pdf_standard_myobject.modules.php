@@ -939,7 +939,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('MYMODULE_DRAFT_WATERMARK') && $object->statut == $object::STATUS_DRAFT) {
+		if (getDolGlobalString('MYMODULE_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag(getDolGlobalString('MYMODULE_DRAFT_WATERMARK')));
 		}
 
@@ -996,7 +996,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
