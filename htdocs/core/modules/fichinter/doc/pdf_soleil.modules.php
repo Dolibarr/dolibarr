@@ -149,7 +149,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies", "compta"));
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
