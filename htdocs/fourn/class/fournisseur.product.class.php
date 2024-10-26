@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur	  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2014	Regis Houssin		  <regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent		  <jmenent@2byte.es>
- * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
- * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005		Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2011	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2014	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -456,8 +456,8 @@ class ProductFournisseur extends Product
 				$ttx = $tva_tx;
 				$multicurrency_buyprice /= (1 + ($ttx / 100));
 			}
-			$multicurrency_buyprice = price2num($multicurrency_buyprice, 'MU');
-			$multicurrency_unitBuyPrice = price2num((float) $multicurrency_buyprice / $qty, 'MU');
+			$multicurrency_buyprice = (float) price2num($multicurrency_buyprice, 'MU');
+			$multicurrency_unitBuyPrice = (float) price2num((float) $multicurrency_buyprice / $qty, 'MU');
 
 			$buyprice = (float) $multicurrency_buyprice / $multicurrency_tx;
 			$fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $multicurrency_code);
