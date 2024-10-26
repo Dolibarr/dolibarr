@@ -269,7 +269,7 @@ $server->register(
 /**
  * Get ActionComm
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @return	mixed
  */
@@ -372,7 +372,7 @@ function getActionComm($authentication, $id)
 /**
  * Get getListActionCommType
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @return	mixed
  */
 function getListActionCommType($authentication)
@@ -430,7 +430,7 @@ function getListActionCommType($authentication)
 /**
  * Create ActionComm
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
@@ -514,7 +514,7 @@ function createActionComm($authentication, $actioncomm)
 /**
  * Create ActionComm
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
