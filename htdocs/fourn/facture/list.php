@@ -825,7 +825,8 @@ if ($search_fk_fac_rec_source) {
 	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 	$object = new FactureFournisseurRec($db);
-	$object->id = (int) $search_fk_fac_rec_source;
+	$object->fetch((int) $search_fk_fac_rec_source);
+
 	$head = supplier_invoice_rec_prepare_head($object);
 	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
 }
@@ -994,10 +995,12 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
-if (!empty($socid)) {
-	$url .= '&socid='.urlencode((string) ($socid));
+if (!empty($object->socid)) {
+	$url .= '&socid='.urlencode((string) ($object->socid));
 }
-
+if (!empty($object->id)) {
+	$url .= '&fac_rec='.urlencode((string) $object->id);
+}
 $i = 0;
 print '<form method="POST" id="searchFormList" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {

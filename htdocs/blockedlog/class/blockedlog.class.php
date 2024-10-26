@@ -350,6 +350,8 @@ class BlockedLog
 			} else {
 				$this->error = (string) (((int) $this->error) + 1);
 			}
+		} elseif ($this->action == 'BLOCKEDLOG_EXPORT') {
+			return '<i class="opacitymedium">'.$langs->trans("logBLOCKEDLOG_EXPORT").'</i>';
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -975,7 +977,7 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->signature_line)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
-		$sql .= $this->fk_object.",";
+		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";

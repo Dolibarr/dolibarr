@@ -89,6 +89,8 @@ $leftmenuwidth = 240;
 @phan-var-force array{h:int,l:int,s:int,a:int} $colortextlinkHsla
 ';
 
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 /* <style type="text/css" > */
 
@@ -1150,7 +1152,7 @@ div.urllink input {
 .divsection {
 	padding: 10px;
 	border: 2px solid #DFDFDF;
-	border-radius: 10px;
+	border-radius: <?php echo $borderradius; ?>px;
 	margin-top: 5px;
 	margin-bottom: 20px;
 	/* background-color: rgba(0, 0, 0, 0.02); */
@@ -4257,7 +4259,6 @@ table.nointerlines tr:not(:last-child) td {
 
 
 /* Management of border radius */
-<?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
@@ -4274,11 +4275,13 @@ table.liste {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
+table.tagtable.liste:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.tagtable.liste:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
