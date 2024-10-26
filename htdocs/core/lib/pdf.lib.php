@@ -813,18 +813,25 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$watermark_x = $w / 2;
 	$watermark_y = $h / 3;
 	$pdf->SetFont('', 'B', 40);
-	$pdf->SetTextColor(255, 192, 203);
+	$pdf->SetTextColor(255, 0, 0);
 
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
 	//print watermark
 	$pdf->SetAlpha(0.5);
 	$pdf->SetXY($watermark_x_pos, $watermark_y_pos);
+
+	// set alpha to semi-transparency
+	$pdf->SetAlpha(0.3);
 	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", 0);
+
 	//antirotate
 	$pdf->_out('Q');
 
 	$pdf->SetXY($savx, $savy);
+
+	// Restore alpha
+	$pdf->SetAlpha(1);
 }
 
 
@@ -949,9 +956,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 
-	if (empty($onlynumber) && (!empty($account->domiciliation) || !empty($account->address))) {
+	if (empty($onlynumber) && !empty($account->address)) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset(empty($account->address) ? $account->domiciliation : $account->address);
+		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->address);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;
@@ -1009,7 +1016,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  * 	@param	?Societe	$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
- * 	@param	int			$page_hauteur	Page height
+ * 	@param	float		$page_hauteur	Page height
  * 	@param	CommonObject	$object			Object shown in PDF
  * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
@@ -1424,8 +1431,8 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param  Translate		$outputlangs		Object lang for output
  *  @param  int				$w					Width
  *  @param  int				$h					Height
- *  @param  int				$posx				Pos x
- *  @param  int				$posy				Pos y
+ *  @param  float			$posx				Pos x
+ *  @param  float			$posy				Pos y
  *  @param  int<0,1>		$hideref       		Hide reference
  *  @param  int<0,1>		$hidedesc           Hide description
  * 	@param	int<0,1>		$issupplierline		Is it a line for a supplier object ?
@@ -2508,7 +2515,15 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
-			if (count($objects) == 1) {
+			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+					foreach ($objects as $elementobject) {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+					}
+				}
+			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
@@ -2542,9 +2557,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 				$refListsTxt = '';
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$refListsTxt.= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
+					$refListsTxt .= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
 				} else {
-					$refListsTxt.=$outputlangs->transnoentities("RefSending").' :';
+					$refListsTxt .= $outputlangs->transnoentities("RefSending").' :';
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2559,16 +2574,18 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 							}
 						}
 					}
-					$refListsTxt.= (!empty($refListsTxt)?' ':'');
+					$refListsTxt .= (!empty($refListsTxt) ? ' ' : '');
 					if (! is_object($order)) {
-						$refListsTxt.= $outputlangs->transnoentities($elementobject->ref);
+						$refListsTxt .= $outputlangs->transnoentities($elementobject->ref);
 					} else {
-						$refListsTxt.= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
-						$refListsTxt.= ' / '.$outputlangs->transnoentities($elementobject->ref);
+						$refListsTxt .= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$refListsTxt .= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					}
 				}
 
-				$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+					$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
+				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$order = null;
@@ -2605,6 +2622,8 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			}
 		}
 	}
+
+	$object->context['DolPublicNoteAppendedGetLinkedObjects'] = 1;
 
 	// For add external linked objects
 	if (is_object($hookmanager)) {

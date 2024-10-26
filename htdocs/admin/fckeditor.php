@@ -152,7 +152,7 @@ print load_fiche_titre($langs->trans("AdvancedEditor"), $linkback, 'title_setup'
 print '<br>';
 
 if (empty($conf->use_javascript_ajax)) {
-	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
+	setEventMessages(null, array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

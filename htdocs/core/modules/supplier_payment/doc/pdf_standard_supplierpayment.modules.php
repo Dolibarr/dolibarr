@@ -524,7 +524,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord(price2num($object->amount, 'MT'), $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord((float) price2num($object->amount, 'MT'), $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
@@ -800,7 +800,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 				}
 			}
 

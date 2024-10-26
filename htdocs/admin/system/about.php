@@ -62,7 +62,7 @@ print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
 print '<div class="divsection wordwrap">';
-print '<div class="float paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
+print '<div class="floatright paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
 print '<a href="https://www.gnu.org/copyleft/gpl.html" target="_blank">GNU-GPL v3+</a></li>';

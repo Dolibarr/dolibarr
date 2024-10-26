@@ -1,14 +1,14 @@
 <?php
-/* Copyright (c) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
- * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
- * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
+/* Copyright (c) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud			<alexis@atm-consulting.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
- * Copyright (C) 2023-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,15 +93,28 @@ class UserGroup extends CommonObject
 	public $note;
 
 	/**
-	 * @var User[]
+	 * @var User[]  Array of users
 	 */
-	public $members = array(); // Array of users
+	public $members = array();
 
-	public $nb_rights; // Number of rights granted to the user
-	public $nb_users;  // Number of users in the group
+	/**
+	 * @var int Number of rights granted to the user
+	 */
+	public $nb_rights;
 
-	public $rights;	// Permissions of the group
+	/**
+	 * @var int Number of users in the group
+	 */
+	public $nb_users;
 
+	/**
+	 * @var stdClass Permissions of the group
+	 */
+	public $rights;
+
+	/**
+	 * @var array<string,int> Cache array of already loaded permissions
+	 */
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
 	/**
