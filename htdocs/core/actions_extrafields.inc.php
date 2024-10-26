@@ -243,7 +243,7 @@ if ($action == 'add') {
 				$action = 'create';
 			}
 		} else {
-			setEventMessages($mesg, null, 'errors');
+			setEventMessages(null, $mesg, 'errors');
 		}
 	}
 }
