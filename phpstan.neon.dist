@@ -87,7 +87,6 @@ parameters:
 		- '#(?:Comm(?:(?:ande::updateline|on(?:Invoice::getLibStatut|StickerGenerator::Set_Char_Size))\(\))|Facture(?:(?:::update|FournisseurRec::add)line\(\))|(?:Holiday::addLogCP|Loan::getLibStatut|SupplierProposal::updateline)\(\)|calcul_price_total) expects int, float given\.#'
 		- '#(?:dol_(?:mktime|remove_file_process)|print_actions_filter) expects int, array\|string given\.#'
 		- '# (CSMSFile) constructor expects int, array\|string given.#'
-		- '#(?:ProductFournisseur::logPrice\(\)) expects float\|null#'
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|dol_convertToWord|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'
 		- '#EvalMath::trigger\(\) expects string\|null,#'
 		- '#(?:F(?:acture(?:(?:Fournisseur)?Rec::addline\(\))|ichinterRec::addLineRec\(\))|dolMd2Html|setEventMessages) expects string\|null,#'
