@@ -1988,27 +1988,13 @@ abstract class CommonObject
 		return 0;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the project with id $this->fk_project into this->project
+	 *  Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int<-1,1>		Return integer <0 if KO, >=0 if OK
+	 *  @return		int<-1,1>		Return integer <0 if KO, >=0 if OK
 	 */
-	public function fetch_project()
+	public function fetchProject()
 	{
-		// phpcs:enable
-		return $this->fetch_projet();
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *		Load the project with id $this->fk_project into this->project
-	 *
-	 *		@return		int			Return integer <0 if KO, >=0 if OK
-	 */
-	public function fetch_projet()
-	{
-		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
@@ -2023,7 +2009,36 @@ abstract class CommonObject
 
 		$this->projet = $project; // deprecated
 		$this->project = $project;
+
 		return $result;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load the project with id $this->fk_project into this->project
+	 *
+	 *  @return		int<-1,1>		Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  @see fetchProject()
+	 */
+	public function fetch_project()
+	{
+		// phpcs:enable
+		return $this->fetchProject();
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load the project with id $this->fk_project into this->project
+	 *
+	 *  @return		int			Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  @see fetchProject()
+	 */
+	public function fetch_projet()
+	{
+		// phpcs:enable
+		return $this->fetchProject();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -11237,7 +11252,7 @@ abstract class CommonObject
 				case 'project_task':
 					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-					$project_result = $this->fetch_projet();
+					$project_result = $this->fetchProject();
 					if ($project_result >= 0) {
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}

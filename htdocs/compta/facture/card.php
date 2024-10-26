@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$ret = $object->fetch($id, $ref, '', 0, $fetch_situation);
 		if ($ret > 0 && isset($object->fk_project)) {
-			$ret = $object->fetch_project();
+			$ret = $object->fetchProject();
 		}
 	}
 }
