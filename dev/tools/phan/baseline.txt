@@ -10,24 +10,24 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 560+ occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 550+ occurrences
-    // PhanPluginUnknownPropertyType : 420+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 360+ occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 540+ occurrences
+    // PhanPluginUnknownPropertyType : 410+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 350+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
-    // PhanPluginUnknownArrayMethodReturnType : 280+ occurrences
-    // PhanPluginUnknownArrayMethodParamType : 190+ occurrences
-    // PhanPossiblyUndeclaredVariable : 190+ occurrences
-    // PhanTypeMismatchProperty : 160+ occurrences
-    // PhanPluginUnknownArrayFunctionParamType : 95+ occurrences
+    // PhanPluginUnknownArrayMethodReturnType : 230+ occurrences
+    // PhanPossiblyUndeclaredVariable : 180+ occurrences
+    // PhanTypeMismatchProperty : 170+ occurrences
+    // PhanPluginUnknownArrayMethodParamType : 160+ occurrences
+    // PhanPluginUnknownArrayFunctionParamType : 90+ occurrences
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 60+ occurrences
+    // PhanTypeMismatchDimFetch : 60+ occurrences
     // PhanPluginUnknownArrayFunctionReturnType : 50+ occurrences
     // PhanRedefineFunction : 50+ occurrences
     // PhanPluginEmptyStatementIf : 45+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
     // PhanTypeInvalidDimOffset : 35+ occurrences
-    // PhanPluginUnknownArrayPropertyType : 30+ occurrences
-    // PhanTypeMismatchDimFetch : 30+ occurrences
+    // PhanPluginUnknownArrayPropertyType : 20+ occurrences
     // PhanPluginUnknownObjectMethodCall : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanEmptyForeach : 10+ occurrences
@@ -37,9 +37,9 @@ return [
     // PhanUndeclaredMethod : 10+ occurrences
     // PhanPluginSuspiciousParamPosition : 9 occurrences
     // PhanPluginBothLiteralsBinaryOp : 8 occurrences
-    // PhanPluginConstantVariableNull : 8 occurrences
     // PhanPossiblyNullTypeMismatchProperty : 8 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 7 occurrences
+    // PhanPluginConstantVariableNull : 6 occurrences
     // PhanParamTooMany : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanEmptyFQSENInClasslike : 3 occurrences
@@ -48,6 +48,7 @@ return [
     // PhanAccessMethodProtected : 1 occurrence
     // PhanParamTooFew : 1 occurrence
     // PhanTypeConversionFromArray : 1 occurrence
+    // PhanTypeMismatchReturn : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
@@ -535,7 +536,7 @@ return [
         'htdocs/install/fileconf.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/install/inc.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanRedefineFunction'],
         'htdocs/install/index.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/install/repair.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable'],
+        'htdocs/install/repair.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchDimFetch'],
         'htdocs/install/step2.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredProperty'],
         'htdocs/install/step5.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/install/upgrade.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal'],
