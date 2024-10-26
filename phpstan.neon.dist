@@ -90,7 +90,7 @@ parameters:
 		- '#(?:ProductFournisseur::logPrice\(\)) expects float\|null#'
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|dol_convertToWord|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'
 		- '#EvalMath::trigger\(\) expects string\|null,#'
-		- '#(?:F(?:acture(?:(?:Fournisseur)?Rec::addline\(\))|ichinterRec::addLineRec\(\))|dolMd2Html|setEventMessages) expects string\|null,#'
+		- '#(?:F(?:acture(?:(?:Fournisseur)?Rec::addline\(\))|ichinterRec::addLineRec\(\))|dolMd2Html) expects string\|null,#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
