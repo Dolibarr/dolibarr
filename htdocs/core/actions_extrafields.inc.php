@@ -24,7 +24,7 @@
  *  \brief			Code for actions on extrafields admin pages
  */
 
- /** @var Extrafields $extrafields */
+ /** @var ExtraFields $extrafields */
 $maxsizestring = 255;
 $maxsizeint = 10;
 $mesg = '';
@@ -242,11 +242,11 @@ if ($action == 'add') {
 				$error++;
 				$langs->load("errors");
 				$mesg = $langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters", $langs->transnoentities("AttributeCode"));
-				setEventMessages($mesg, null, 'errors');
+				setEventMessages($mesg, $mesgs, 'errors');
 				$action = 'create';
 			}
 		} else {
-			setEventMessages(null, $mesgs, 'errors');
+			setEventMessages($mesg, $mesgs, 'errors');
 		}
 	}
 }
