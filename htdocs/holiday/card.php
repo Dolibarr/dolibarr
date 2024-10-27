@@ -1654,7 +1654,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

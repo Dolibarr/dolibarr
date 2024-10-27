@@ -890,7 +890,11 @@ if ($action != "create" && $action != "edit") {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('skill'));
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('skill'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright">';

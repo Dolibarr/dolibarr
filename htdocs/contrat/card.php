@@ -2344,7 +2344,11 @@ if ($action == 'create') {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('contrat'));
+			$tmparray = $form->showLinkToObjectBlock($object, array(), array('contrat'), 1);
+			$linktoelem = $tmparray['linktoelem'];
+			$htmltoenteralink = $tmparray['htmltoenteralink'];
+			print $htmltoenteralink;
+
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link

@@ -183,10 +183,11 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+		$langfiles = array("main", "bills", "products", "dict", "companies", "compta");
+		$outputlangs->loadLangs($langfiles);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('MYOBJECT_DRAFT_WATERMARK') && $object->statut == $object::STATUS_DRAFT) {
+		if (getDolGlobalString('MYOBJECT_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
 			$this->watermark = getDolGlobalString('MYOBJECT_DRAFT_WATERMARK');
 		}
 
@@ -195,7 +196,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
+			$outputlangsbis->loadLangs($langfiles);
 		}
 
 		$nblines = (is_array($object->lines) ? count($object->lines) : 0);
@@ -938,7 +939,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('MYMODULE_DRAFT_WATERMARK') && $object->statut == $object::STATUS_DRAFT) {
+		if (getDolGlobalString('MYMODULE_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag(getDolGlobalString('MYMODULE_DRAFT_WATERMARK')));
 		}
 
@@ -995,7 +996,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -1014,7 +1015,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		}
 
 		if (getDolGlobalInt('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -1024,7 +1025,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		}
 
 		if (getDolGlobalInt('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
 				$posy += 3;

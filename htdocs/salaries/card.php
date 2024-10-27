@@ -1180,7 +1180,11 @@ if ($id > 0) {
 
 		// Show links to link elements
 		/*
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('salaries'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('salaries'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 		*/
 

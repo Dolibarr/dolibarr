@@ -3161,7 +3161,10 @@ if ($action == 'create' && $usercancreate) {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('order'));
+			$tmparray = $form->showLinkToObjectBlock($object, array(), array('order'), 1);
+			$linktoelem = $tmparray['linktoelem'];
+			$htmltoenteralink = $tmparray['htmltoenteralink'];
+			print $htmltoenteralink;
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate

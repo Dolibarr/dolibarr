@@ -339,7 +339,7 @@ if (!empty($arrayfields['cpl.rowid']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month ? (string) $search_month : '').'">';
 	print $formother->selectyear($search_year, 'search_year', 1, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 	print '</td>';
 }
@@ -562,8 +562,8 @@ while ($i < min($num, $limit)) {
 }
 
 if ($log_holiday == '2') {
-	print '<tr class="opacitymedium">';
-	print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
+	print '<tr>';
+	print '<td colspan="10"><span class="opacitymedium">'.$langs->trans('NoRecordFound').'</span></td>';
 	print '</tr>';
 }
 

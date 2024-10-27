@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$ret = $object->fetch($id, $ref, '', 0, $fetch_situation);
 		if ($ret > 0 && isset($object->fk_project)) {
-			$ret = $object->fetch_project();
+			$ret = $object->fetchProject();
 		}
 	}
 }
@@ -6098,7 +6098,10 @@ if ($action == 'create') {
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('invoice'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('invoice'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
 
 		$compatibleImportElementsList = false;
 		if ($usercancreate

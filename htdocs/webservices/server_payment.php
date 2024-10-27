@@ -153,7 +153,7 @@ $server->register(
 /**
  * Create a payment
  *
- * @param      array           $authentication         Array of authentication information
+ * @param      array{login:string,password:string,entity:?int,dolibarrkey:string}           $authentication         Array of authentication information
  * @param      array{id:int,thirdparty_id:int|string,amount:float|string,num_payment:string,bank_account:int|string,payment_mode_id?:int|string,invoice_id?:int|string,int_label?:string,emitter:string,bank_source:string} $payment	Payment
  * @return     array{result:array{result_code:string,result_label:string},id?:int}	Array result
  */

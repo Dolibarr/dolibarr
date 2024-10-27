@@ -119,7 +119,7 @@ class WebPortalTheme
 		// If custom color is valid, w e use it
 		if (!empty($outColor) && colorValidateHex($outColor)) {
 			$this->primaryColorHex = $outColor;
-			$this->primaryColorHsl = colorHexToHsl($outColor, true, true);
+			$this->primaryColorHsl = colorHexToHsl($outColor, 1, true);
 		}
 	}
 }

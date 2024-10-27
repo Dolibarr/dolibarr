@@ -364,7 +364,18 @@ if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
-print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FingerprintsDesc")."<br></div>\n";
+print '<div class="opacitymedium hideonsmartphone justify">';
+
+print $langs->trans("FingerprintsDesc")."<br>";
+
+print '<br>';
+
+$s = $langs->trans("FilesIntegrityDesc", '{s}');
+$s = str_replace('{s}', DOL_URL_ROOT.'/admin/system/filecheck.php', $s);
+print $s;
+print "<br>\n";
+
+print "</div>\n";
 
 print '<br>';
 
