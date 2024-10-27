@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -108,8 +108,8 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = price2num(GETPOST('capital'));
-			$rate = price2num(GETPOST('rate'));
+			$capital = (float) price2num(GETPOST('capital'));
+			$rate = (float) price2num(GETPOST('rate'));
 
 			if (!$capital) {
 				$error++;

@@ -666,8 +666,6 @@ class Loan extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 
 		// Initialise parameters
@@ -675,13 +673,13 @@ class Loan extends CommonObject
 		$this->fk_bank = 1;
 		$this->label = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->account_capital = 16;
-		$this->account_insurance = 616;
-		$this->account_interest = 518;
+		$this->account_capital = '16';
+		$this->account_insurance = '616';
+		$this->account_interest = '518';
 		$this->datestart = $now;
 		$this->dateend = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->capital = 20000;
+		$this->capital = 20000.80;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
 
