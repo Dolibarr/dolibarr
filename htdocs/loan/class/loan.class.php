@@ -92,12 +92,34 @@ class Loan extends CommonObject
 	 */
 	public $paid;
 
+	/**
+	 * @var string account_capital
+	 */
 	public $account_capital;
+
+	/**
+	 * @var string account_insurance
+	 */
 	public $account_insurance;
+
+	/**
+	 * @var string account_interest
+	 */
 	public $account_interest;
 
+	/**
+	 * @var string accountancy_account_capital
+	 */
 	public $accountancy_account_capital;
+
+	/**
+	 * @var string accountancy_account_insurance
+	 */
 	public $accountancy_account_insurance;
+
+	/**
+	 * @var string accountancy_account_interest
+	 */
 	public $accountancy_account_interest;
 
 	/**
