@@ -1548,7 +1548,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
-	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
@@ -1659,7 +1659,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
-	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
 	$i = 0;
 	while ($i < 7) {
@@ -1727,7 +1727,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
-	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month" style="margin-bottom: 10px !important;">';
+	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore" style="margin-bottom: 10px !important;">';
 
 	echo ' <tr class="tagtr liste_titre">';
 	echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";

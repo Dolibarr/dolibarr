@@ -4255,22 +4255,24 @@ table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
-table.tagtable.liste:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
-table.tagtable.liste:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder thead tr:last-child td:first-child,
@@ -5432,10 +5434,15 @@ div.fiche > table.table-fiche-title:first-of-type div {
 	/* text-transform: uppercase; */
 	/* font-weight: 600; */
 }
-
 div.titre {
 	color: var(--colortexttitlenotab);
 }
+/*
+div.subtitle {
+
+}
+*/
+
 .secondary {
 	color: var(--colortexttitlenotab);
 }

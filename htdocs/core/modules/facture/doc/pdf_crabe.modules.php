@@ -215,7 +215,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "compta"));
 
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
@@ -227,7 +227,7 @@ class pdf_crabe extends ModelePDFFactures
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
+			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies", "compta"));
 		}
 
 		$nblines = count($object->lines);

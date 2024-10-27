@@ -886,7 +886,10 @@ class FormFile
 					}
 				}
 
+				$i = 0;
 				foreach ($file_list as $file) {
+					$i++;
+
 					// Define relative path for download link (depends on module)
 					$relativepath = (string) $file["name"]; // Cas general
 					if ($modulesubdir) {
@@ -896,7 +899,7 @@ class FormFile
 						$relativepath = (string) $file["name"]; // Other case
 					}
 
-					$out .= '<tr class="oddeven">';
+					$out .= '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
 
 					$documenturl = DOL_URL_ROOT.'/document.php';
 					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {

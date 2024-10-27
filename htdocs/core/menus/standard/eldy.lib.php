@@ -1701,7 +1701,6 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_product', 110);
 				$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_closure', 120);
 				$newmenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 125);
-				$newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_export', 130);
 			}
 
 			// Transfer in accounting

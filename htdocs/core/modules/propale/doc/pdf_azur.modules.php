@@ -198,14 +198,15 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "propal", "products"));
+		$langfiles = array("main", "dict", "companies", "bills", "propal", "products", "compta");
+		$outputlangs->loadLangs($langfiles);
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
+			$outputlangsbis->loadLangs($langfiles);
 		}
 
 		//  Show Draft Watermark

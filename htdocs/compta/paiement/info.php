@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+$socid = GETPOSTINT('socid');
 
 $object = new Paiement($db);
 

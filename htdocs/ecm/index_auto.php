@@ -453,7 +453,7 @@ if ($action == 'delete_section') {
 
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'deletefile') {
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	print '<!-- Title for auto directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

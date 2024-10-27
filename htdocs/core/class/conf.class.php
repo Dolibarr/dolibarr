@@ -160,19 +160,32 @@ class Conf extends stdClass
 	public $product;
 
 	/**
+	 * @var stdClass
 	 * @deprecated Use product
 	 */
 	public $produit;
-	public $service;
+
 	/**
+	 * @var stdClass  	service
+	 */
+	public $service;
+
+	/**
+	 * @var stdClass
 	 * @deprecated Use contract
 	 */
 	public $contrat;
+
+	/**
+	 * @var stdClass Contract
+	 */
 	public $contract;
 	public $actions;
 	public $agenda;
 	public $propal;
+
 	/**
+	 * @var stdClass
 	 * @deprecated Use order
 	 */
 	public $commande;

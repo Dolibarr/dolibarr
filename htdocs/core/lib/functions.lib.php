@@ -6389,7 +6389,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	string	    $title				Title to show (required)
+ *	@param	string	    $title				Title to show (required). Can be a string with a <br> as a substring.
  *	@param	int|null    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
@@ -6419,6 +6419,14 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 		$totalnboflines = abs($totalnboflines);
 	}
 
+	// Detect if there is a subtitle
+	$subtitle = '';
+	$tmparray = preg_split('/<br>/i', $title, 2);
+	if (!empty($tmparray[1])) {
+		$title = $tmparray[0];
+		$subtitle = $tmparray[1];
+	}
+
 	$page = (int) $page;
 
 	if ($picto == 'setup') {
@@ -6446,7 +6454,9 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	// Left
 
 	if ($picto && $title) {
-		print '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
+		print '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">';
+		print img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath);
+		print '</td>';
 	}
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
@@ -6455,7 +6465,11 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
-	print '</div></td>';
+	print '</div>';
+	if (!empty($subtitle)) {
+		print '<br><div class="subtitle inline-block hideonsmartphone">'.$subtitle.'</div>';
+	}
+	print '</td>';
 
 	// Center
 	if ($morehtmlcenter && empty($conf->dol_optimize_smallscreen)) {

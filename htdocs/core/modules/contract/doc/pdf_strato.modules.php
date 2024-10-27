@@ -159,7 +159,7 @@ class pdf_strato extends ModelePDFContract
 		}
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts", "compta"));
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('CONTRACT_DRAFT_WATERMARK'))) {
@@ -171,7 +171,7 @@ class pdf_strato extends ModelePDFContract
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "contracts", "compta"));
 		}
 
 		$nblines = count($object->lines);
