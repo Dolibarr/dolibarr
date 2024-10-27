@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,11 @@ class Loan extends CommonObject
 	 */
 	public $element = 'loan';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 * @deprecated
+	 * @see $table_element
+	 */
 	public $table = 'loan';
 
 	/**
@@ -52,7 +57,14 @@ class Loan extends CommonObject
 	 */
 	public $rowid;
 
+	/**
+	 * @var int|'' date start
+	 */
 	public $datestart;
+
+	/**
+	 * @var int|''
+	 */
 	public $dateend;
 
 	/**
@@ -63,6 +75,10 @@ class Loan extends CommonObject
 	public $capital;
 	public $nbterm;
 	public $rate;
+
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
 	public $account_capital;
 	public $account_insurance;
@@ -98,8 +114,19 @@ class Loan extends CommonObject
 	 */
 	public $totalpaid;
 
+	/**
+	 * @var int
+	 */
 	const STATUS_UNPAID = 0;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_PAID = 1;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_STARTED = 2;
 
 
