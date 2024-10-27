@@ -138,7 +138,7 @@ if (empty($reshook)) {
 				$object->capital = $capital;
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
-				$object->nbterm = GETPOST('nbterm');
+				$object->nbterm = (float) price2num(GETPOST('nbterm'));
 				$object->rate = $rate;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -183,7 +183,7 @@ if (empty($reshook)) {
 
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = price2num(GETPOST('capital'));
+			$capital = (float) price2num(GETPOST('capital'));
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
@@ -192,9 +192,9 @@ if (empty($reshook)) {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
 				$object->capital = $capital;
-				$object->nbterm = GETPOSTINT("nbterm");
-				$object->rate = price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = price2num(GETPOSTINT('insurance_amount'));
+				$object->nbterm = (float) price2num(GETPOSTINT("nbterm"));
+				$object->rate = (float) price2num(GETPOST("rate", 'alpha'));
+				$object->insurance_amount = (float) price2num(GETPOSTINT('insurance_amount'));
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
