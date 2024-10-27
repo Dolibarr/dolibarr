@@ -37,7 +37,7 @@ class Loan extends CommonObject
 
 	/**
 	 * @var string Name of table without prefix where object is stored
-	 * @deprecated
+	 * @deprecated Use $table_element
 	 * @see $table_element
 	 */
 	public $table = 'loan';
