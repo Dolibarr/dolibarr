@@ -589,7 +589,7 @@ class FormProduct
 
 		$result = $measuringUnits->fetchAll(
 			'',
-			'',
+			'scale',
 			0,
 			0,
 			$filter
