@@ -709,7 +709,6 @@ return [
         'htdocs/societe/checkvat/checkVatPopup.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/societe/class/api_contacts.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
         'htdocs/societe/class/api_thirdparties.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
-        'htdocs/societe/class/client.class.php' => ['PhanPluginUnknownArrayPropertyType'],
         'htdocs/societe/class/societe.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/societe/class/societeaccount.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/societe/consumption.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
