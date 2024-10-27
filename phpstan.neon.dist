@@ -101,7 +101,7 @@ parameters:
 		- '# (Odf) constructor expects #'
 		- '# Stripe[^ ]+::all\(\) expects #'
 		- '#expects resource#'
-		- '# (?:(?:BordereauChequeBlochet::_pagefoot|(?:Order|Product|SupplierOrder)s::_cleanObjectDatas)\(\)|ecm_prepare_dasboard_head|formatObject) expects object#'
+		- '# (?:(?:BordereauChequeBlochet::_pagefoot|(?:Order|Product|SupplierOrder)s::_cleanObjectDatas)\(\)|formatObject) expects object#'
 		- '#(?:ftp_(?:c(?:dup|hdir|lose)|delete|get|mkdir|put|rmdir)) expects FTP\\Connection#'
 		- '#(?:ldap_(?:(?:ad|bin)d|delete|err(?:no|or)|first_entry|get_(?:(?:attribut|entri)es|(?:optio|values_le)n)|mod_(?:add|del|replace)|rename|set_option|unbind)) expects LDAP\\Connection#'
 		- '#(?:MultiCurrencies::_cleanObjectDatasRate\(\)) expects MultiCurrency#'
