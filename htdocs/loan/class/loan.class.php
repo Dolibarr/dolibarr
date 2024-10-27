@@ -72,21 +72,37 @@ class Loan extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var float capital
+	 */
 	public $capital;
+
+	/**
+	 * @var float nb terms
+	 */
 	public $nbterm;
+
+	/**
+	 * @var float rate
+	 */
 	public $rate;
 
 	/**
 	 * @var int<0,1> paid
 	 */
 	public $paid;
+
 	public $account_capital;
 	public $account_insurance;
 	public $account_interest;
+
 	public $accountancy_account_capital;
 	public $accountancy_account_insurance;
 	public $accountancy_account_interest;
 
+	/**
+	 * @var float insurance amount
+	 */
 	public $insurance_amount;
 
 	/**
@@ -162,11 +178,11 @@ class Loan extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				$this->datestart = $this->db->jdate($obj->datestart);
-				$this->dateend				= $this->db->jdate($obj->dateend);
-				$this->label				= $obj->label;
-				$this->capital				= $obj->capital;
+				$this->dateend = $this->db->jdate($obj->dateend);
+				$this->label = $obj->label;
+				$this->capital = $obj->capital;
 				$this->nbterm = $obj->nbterm;
-				$this->rate					= $obj->rate;
+				$this->rate = $obj->rate;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->insurance_amount = $obj->insurance_amount;
@@ -174,8 +190,8 @@ class Loan extends CommonObject
 				$this->fk_bank = $obj->fk_bank;
 
 				$this->account_capital = $obj->accountancy_account_capital;
-				$this->account_insurance	= $obj->accountancy_account_insurance;
-				$this->account_interest		= $obj->accountancy_account_interest;
+				$this->account_insurance = $obj->accountancy_account_insurance;
+				$this->account_interest = $obj->accountancy_account_interest;
 				$this->fk_project = $obj->fk_project;
 
 				$this->db->free($resql);
