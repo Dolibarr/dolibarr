@@ -34,7 +34,7 @@ endif;
 dol_include_once('admin/tools/ui/class/documentation.class.php');
 
 // Load documentation translations
-$langs->load('documentation@documentation');
+$langs->load('uxdocumentation');
 
 $action = GETPOST('action', 'alpha');
 
