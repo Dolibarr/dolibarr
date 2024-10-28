@@ -272,7 +272,6 @@ return [
         'htdocs/core/lib/project.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/xcal.lib.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/menus/standard/auguria.lib.php' => ['PhanTypeInvalidDimOffset'],
-        'htdocs/core/modules/action/doc/pdf_standard_actions.class.php' => ['PhanPluginUnknownArrayPropertyType'],
         'htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/asset/mod_asset_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/barcode/doc/phpbarcode.modules.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable'],

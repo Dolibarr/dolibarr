@@ -78,7 +78,7 @@ class PaymentLoan extends CommonObject
 	public $amount_insurance;
 
 	/**
-	 * @var float|int
+	 * @var null|float|int
 	 */
 	public $amount_interest;
 

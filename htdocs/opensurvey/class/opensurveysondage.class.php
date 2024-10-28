@@ -158,7 +158,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $date_fin = '';
 	/**
-	 * @var ?int
+	 * @var int
 	 */
 	public $status;
 
@@ -396,7 +396,7 @@ class Opensurveysondage extends CommonObject
 		$sql .= " nom_admin=".(isset($this->nom_admin) ? "'".$this->db->escape($this->nom_admin)."'" : "null").",";
 		$sql .= " titre=".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "null").",";
 		$sql .= " date_fin=".(dol_strlen($this->date_fin) != 0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
-		$sql .= " status=".(isset($this->status) ? "'".$this->db->escape($this->status)."'" : "null").",";
+		$sql .= " status=".(!empty($this->status) ? (int) $this->status : "null").",";
 		$sql .= " format=".(isset($this->format) ? "'".$this->db->escape($this->format)."'" : "null").",";
 		$sql .= " mailsonde=".(isset($this->mailsonde) ? ((int) $this->mailsonde) : "null").",";
 		$sql .= " allow_comments=".((int) $this->allow_comments).",";
