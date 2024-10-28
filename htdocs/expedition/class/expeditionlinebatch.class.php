@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,9 @@ class ExpeditionLineBatch extends CommonObject
 	 * @var null|int|string
 	 */
 	public $eatby;
+	/**
+	 * @var ?string
+	 */
 	public $batch;
 
 	/**
@@ -61,8 +65,17 @@ class ExpeditionLineBatch extends CommonObject
 	 * @var int
 	 */
 	public $entrepot_id;
+	/**
+	 * @var int
+	 */
 	public $fk_origin_stock;		// rowid in llx_product_batch table (not useful)
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;			// warehouse ID
+	/**
+	 * @var int
+	 */
 	public $fk_expeditiondet;
 
 
@@ -208,9 +221,9 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Retrieve all batch number detailed information of a shipment line
 	 *
-	 * @param	int			$id_line_expdet		id of shipment line
-	 * @param	int			$fk_product			If provided, load also detailed information of lot
-	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
+	 * @param	int			$id_line_expdet			id of shipment line
+	 * @param	int			$fk_product				If provided, load also detailed information of lot
+	 * @return	int<-1,-1>|ExpeditionLineBatch[]	-1 if KO, array of ExpeditionLineBatch if OK
 	 */
 	public function fetchAll($id_line_expdet, $fk_product = 0)
 	{

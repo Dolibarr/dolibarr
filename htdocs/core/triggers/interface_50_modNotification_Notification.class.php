@@ -33,6 +33,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
  */
 class InterfaceNotification extends DolibarrTriggers
 {
+	/**
+	 * @var string[]
+	 */
 	public $listofmanagedevents = array();
 
 	/**

@@ -54,7 +54,10 @@ class PaiementFourn extends Paiement
 	 */
 	public $picto = 'payment';
 
-	public $statut; //Status of payment. 0 = unvalidated; 1 = validated
+	/**
+	 * @var int	Status of payment. 0 = unvalidated; 1 = validated
+	 */
+	public $statut;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
@@ -239,6 +242,8 @@ class PaiementFourn extends Paiement
 
 		$totalamount = (float) price2num($totalamount);
 		$totalamount_converted = (float) price2num($totalamount_converted);
+		$mtotal = 0;
+		$total = 0;
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
@@ -302,7 +307,7 @@ class PaiementFourn extends Paiement
 										// Insert one discount by VAT rate category
 										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 										$discount = new DiscountAbsolute($this->db);
-										$discount->fetch('', 0, $invoice->id);
+										$discount->fetch(0, 0, $invoice->id);
 										if (empty($discount->id)) {    // If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
@@ -565,7 +570,7 @@ class PaiementFourn extends Paiement
 	 *	Return list of supplier invoices the payment point to
 	 *
 	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
-	 *	@return     array|int           		Array of supplier invoice id | <0 si ko
+	 *	@return     array<int,int>|int<-1,-1>	Array of supplier invoice id | <0 si ko
 	 */
 	public function getBillsArray($filter = '')
 	{
@@ -848,13 +853,13 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Create a document onto disk according to template model.
 	 *
-	 *	@param	    string		$modele			Force template to use ('' to not force)
-	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int         				Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 *	@param	string		$modele			Force template to use ('' to not force)
+	 *	@param	Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param	int<0,1>	$hidedetails    Hide details of lines
+	 *  @param	int<0,1>	$hidedesc       Hide description
+	 *  @param	int<0,1>	$hideref        Hide ref
+	 *  @param	?array<string,mixed>  $moreparams     Array to provide more information
+	 *  @return	int			       			Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{

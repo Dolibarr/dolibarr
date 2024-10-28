@@ -876,7 +876,7 @@ class Paiement extends CommonObject
 							$fac = new Facture($this->db);
 							$fac->fetch($key);
 							$fac->fetch_thirdparty();
-							if (!in_array($fac->thirdparty->id, $linkaddedforthirdparty)) { // Not yet done for this thirdparty
+							if (!in_array($fac->thirdparty->id, $linkaddedforthirdparty)) { // Not yet done for this thirdparty  @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 								$result = $acc->add_url_line(
 									$bank_line_id,
 									$fac->thirdparty->id,

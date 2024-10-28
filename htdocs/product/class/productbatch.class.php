@@ -44,6 +44,9 @@ class Productbatch extends CommonObject
 	 */
 	public $element = 'productbatch';
 
+	/**
+	 * @var string
+	 */
 	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
 	/**
@@ -225,8 +228,10 @@ class Productbatch extends CommonObject
 		$this->cleanParam();
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
+		/*
 		if ($this->qty < 0) {
 		}
+		*/
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().self::$_table_element." SET";
@@ -363,7 +368,7 @@ class Productbatch extends CommonObject
 		$this->id = 0;
 
 		$this->tms = dol_now();
-		$this->fk_product_stock = '';
+		$this->fk_product_stock = 0;
 		$this->sellby = '';
 		$this->eatby = '';
 		$this->batch = '';
@@ -380,7 +385,7 @@ class Productbatch extends CommonObject
 	private function cleanParam()
 	{
 		if (isset($this->fk_product_stock)) {
-			$this->fk_product_stock = (int) trim($this->fk_product_stock);
+			$this->fk_product_stock = (int) trim((string) $this->fk_product_stock);
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -469,7 +474,7 @@ class Productbatch extends CommonObject
 	 * @param	int			$fk_product_stock	id product_stock for object
 	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 * @return 	array|int         				Return integer <0 if KO, array of batch
+	 * @return 	Productbatch[]|int         				Return integer <0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
@@ -572,7 +577,7 @@ class Productbatch extends CommonObject
 	 * @param	int			$qty_min            [=NULL] Minimum quantity
 	 * @param	string		$sortfield		    [=NULL] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 * @param	string		$sortorder		    [=NULL] Sort order, separated by comma. Example: 'ASC,DESC';
-	 * @return  int|array   Return integer <0 if KO, array of batch
+	 * @return  int<-1,-1>|Productbatch[]   Return integer <0 if KO, array of batch
 	 *
 	 * @throws  Exception
 	 */
