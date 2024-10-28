@@ -234,9 +234,9 @@ if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/log
 }
 
 // Security graphical code
-if (function_exists("imagecreatefrompng") && !$disabled) {
-	$captcha = 1;
-	$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+$captcha = '';
+if (!$disabled) {
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)

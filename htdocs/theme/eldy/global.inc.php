@@ -896,6 +896,10 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.smallincombo {
+	font-size: 95%;
+	font-weight: bold;
+}
 .lineheightsmall {
 	line-height: 1.2em;
 }
@@ -7273,11 +7277,11 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 230px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 230px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -7285,7 +7289,7 @@ select.multiselectononeline {
 		min-width: 140px !important;
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
-		min-width: 300px !important;
+		min-width: 320px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {

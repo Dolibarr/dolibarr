@@ -147,16 +147,6 @@ print '</div>';
 print '</div><div class="fichehalfright">';
 
 print '<div class="divsection wordwrap">';
-print $langs->trans("HelpCenter").':';
-print '<ul>';
-print '<li>';
-//print $langs->trans("SeeWikiPage",'http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers');
-print '<a target="_blank" rel="noopener noreferrer external" href="'.DOL_URL_ROOT.'/support/index.php" data-ajax="false">'.$langs->trans("HelpCenter").'</a>';
-print '</li>';
-print '</ul>';
-print '</div>';
-
-print '<div class="divsection wordwrap">';
 print $langs->trans("Foundation").':';
 
 print '<ul>';
@@ -176,7 +166,7 @@ print $langs->trans("SocialNetworks").':';
 
 print '<ul>';
 
-print '<li><a href="https://wiki.dolibarr.org/index.php?title=Social_Networksr" target="_blank" rel="noopener noreferrer external">See wiki</a></li>';
+print '<li><a href="https://wiki.dolibarr.org/index.php?title=Social_Networks" target="_blank" rel="noopener noreferrer external">See wiki</a></li>';
 
 print '</ul>';
 print '</div>';

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021  Open-Dsi       	<support@open-dsi.fr>
+ * Copyright (C) 2024  MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024  Jose   			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,9 +85,9 @@ class AssetDepreciationOptions extends CommonObject
 				'duration_type' => array('type' => 'smallint', 'label' => 'AssetDepreciationOptionDurationType', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'AssetDepreciationOptionDurationTypeAnnual', 1 => 'AssetDepreciationOptionDurationTypeMonthly'/*, '2'=>'AssetDepreciationOptionDurationTypeDaily'*/), 'validate' => 1,),
 				'rate' => array('type' => 'double(24,8)', 'label' => 'AssetDepreciationOptionRate', 'enabled' => 1, 'position' => 50, 'visible' => 3, 'default' => '0', 'isameasure' => 1, 'validate' => 1, 'computed' => '$object->asset_depreciation_options->getRate("economic")',),
 				'accelerated_depreciation_option' => array('type' => 'boolean', 'label' => 'AssetDepreciationOptionAcceleratedDepreciation', 'enabled' => 1, 'position' => 60, 'column_break' => true, 'notnull' => 0, 'default' => '0', 'visible' => 1, 'validate' => 1,),
-				'amount_base_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 90, 'notnull' => 0, 'required' => 1, 'visible' => 1, 'default' => '$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure' => 1, 'validate' => 1,),
-				'amount_base_deductible_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
-				'total_amount_last_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 110, 'noteditable' => 1, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'amount_base_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled' => 'isset($object) && get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 90, 'notnull' => 0, 'required' => 1, 'visible' => 1, 'default' => '$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure' => 1, 'validate' => 1,),
+				'amount_base_deductible_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled' => 'isset($object) && get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'total_amount_last_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled' => 'isset($object) && get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 110, 'noteditable' => 1, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
 			),
 		),
 		'accelerated_depreciation' => array(
@@ -99,9 +100,9 @@ class AssetDepreciationOptions extends CommonObject
 				'duration' => array('type' => 'integer', 'label' => 'AssetDepreciationOptionDuration', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
 				'duration_type' => array('type' => 'smallint', 'label' => 'AssetDepreciationOptionDurationType', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'AssetDepreciationOptionDurationTypeAnnual', 1 => 'AssetDepreciationOptionDurationTypeMonthly'/*, '2'=>'AssetDepreciationOptionDurationTypeDaily'*/), 'validate' => 1,),
 				'rate' => array('type' => 'double(24,8)', 'label' => 'AssetDepreciationOptionRate', 'enabled' => 1, 'position' => 50, 'visible' => 3, 'default' => '0', 'isameasure' => 1, 'validate' => 1, 'computed' => '$object->asset_depreciation_options->getRate("accelerated_depreciation")',),
-				'amount_base_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 80, 'column_break' => true, 'notnull' => 0, 'required' => 1, 'visible' => 1, 'default' => '$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure' => 1, 'validate' => 1,),
-				'amount_base_deductible_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 90, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
-				'total_amount_last_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled' => 'isset($object)&&get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 100, 'noteditable' => 1, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'amount_base_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDepreciationHT', 'enabled' => 'isset($object) && get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 80, 'column_break' => true, 'notnull' => 0, 'required' => 1, 'visible' => 1, 'default' => '$object->reversal_amount_ht > 0 ? $object->reversal_amount_ht : $object->acquisition_value_ht', 'isameasure' => 1, 'validate' => 1,),
+				'amount_base_deductible_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionAmountBaseDeductibleHT', 'enabled' => 'isset($object) && get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 90, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+				'total_amount_last_depreciation_ht' => array('type' => 'price', 'label' => 'AssetDepreciationOptionTotalAmountLastDepreciationHT', 'enabled' => 'isset($object) && get_class($object)=="Asset"', 'only_on_asset' => 1, 'position' => 100, 'noteditable' => 1, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
 			),
 		),
 	);

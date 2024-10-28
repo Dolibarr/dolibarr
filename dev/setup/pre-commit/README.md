@@ -75,14 +75,16 @@ git commit -a -m "My message" --no-verify
 ```
 
 If you want to skip certain checks for whatever reason, you can set the SKIP
-environment variable:
+environment variable into the .git/hooks/pre-commit file:
 
 ```bash
-SKIP=no-commit-to-branch git commit -a -m "My message"
+export SKIP=no-commit-to-branch
+```
 
-or
+You can also switch output to text only, by setting the PRE_COMMIT_COLOR in .git/hooks/pre-commit file:
 
-export SKIP=no-commit-to-branch   # In your .bashrc or session.
+```bash
+export PRE_COMMIT_COLOR=never
 ```
 
 There is much more you can do with pre-commit, check out its

@@ -55,6 +55,7 @@ DROP TABLE llx_contratdet_log;
 
 ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
 
+ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
 -- add billable attribute to project task
 ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
