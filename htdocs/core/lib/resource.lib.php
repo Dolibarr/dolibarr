@@ -175,10 +175,10 @@ function get_busy_resource_during($dateStart, $dateEnd, $resource_ids = array())
 	$sql .= " AND (";
 
 	// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-	$sql .= "(ac.datep <= '".$db->idate($dateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($dateStart)."'))";
+	$sql .= "(ac.datep <= '".$db->idate($dateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 > '".$db->idate($dateStart)."'))";
 
 	// event date end between ac.datep and ac.datep2
-	$sql .= " OR (ac.datep <= '".$db->idate($dateEnd)."' AND (ac.datep2 >= '".$db->idate($dateEnd)."'))";
+	$sql .= " OR (ac.datep < '".$db->idate($dateEnd)."' AND (ac.datep2 >= '".$db->idate($dateEnd)."'))";
 
 	// event date start before ac.datep and event date end after ac.datep2
 	$sql .= " OR (ac.datep >= '".$db->idate($dateStart). "' AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($dateEnd)."'))";
