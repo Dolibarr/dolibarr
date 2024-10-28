@@ -63,9 +63,15 @@ body.dolibarr-doc {
 .doc-wrapper .doc-content-wrapper .warning p.documentation-text:last-child {margin-bottom:6px;}
 
 /* Documentation summary */
-.doc-wrapper .doc-content-wrapper ul.documentation-summary {margin: 0 0 32px 0;padding: 0 0 0 16px;color: rgba(0, 0, 0, .25);}
-.doc-wrapper .doc-content-wrapper ul.documentation-summary li a {color: rgb(38, 60, 92); text-decoration: none;font-weight: 500}
+.doc-wrapper .doc-content-wrapper .summary-wrapper {margin-bottom: 32px;}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary {margin: 0;padding: 0;color: rgba(0, 0, 0, .25);}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li {list-style: disc;margin-left: 16px;}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li ul {margin: 0;padding: 0 ;color: rgba(0, 0, 0, .25);}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li a {color: rgb(38, 60, 92); text-decoration: none;font-weight: 500;}
 .doc-wrapper .doc-content-wrapper ul.documentation-summary li a:hover {color: rgb(0, 123, 140);}
+
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li.summary-title {margin: 0;padding: 0;list-style: none;}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li.summary-title h3 {color: rgb(38,60,92);margin: 12px 0 6px 0;padding: 0;font-size: 1.2em;text-decoration: underline;}
 
 /* Documentation section */
 .doc-wrapper .doc-content-wrapper .documentation-section {background: #fff;padding: 16px;border-radius: 4px;margin-bottom: 24px;}

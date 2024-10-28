@@ -22,13 +22,15 @@ if (! $res && file_exists("../main.inc.php")) : $res=@include '../main.inc.php';
 endif;
 if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
 endif;
+if (! $res && file_exists("../../../main.inc.php")) : $res=@include '../../../main.inc.php';
+endif;
 
 // Protection if external user
 if ($user->socid > 0) : accessforbidden();
 endif;
 
 // Includes
-dol_include_once('documentation/class/documentation.class.php');
+dol_include_once('admin/tools/ui/class/documentation.class.php');
 
 // Load documentation translations
 $langs->load('documentation@documentation');
@@ -40,7 +42,7 @@ $documentation = new Documentation($db);
 $documentation->docHeader();
 
 // Set view for menu and breadcrumb
-$documentation->view = array('Elements');
+$documentation->view = array('DocumentationHome');
 
 // Output sidebar
 $documentation->showSidebar(); ?>
@@ -50,10 +52,12 @@ $documentation->showSidebar(); ?>
 	<?php $documentation->showBreadCrumb(); ?>
 
 	<div class="doc-content-wrapper">
-		
+		<?php echo $langs->trans('WelcomeToDocumentation'); ?>
+		<?php $documentation->showSummary(1, 1); ?>
 	</div>
 
 </div>
+
 <?php
 // Output close body + html
 $documentation->docFooter();

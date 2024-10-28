@@ -3,6 +3,10 @@ WelcomeToDocumentation=Welcome to UI Documentation. This section is under develo
 DocumentationHome=UI Documentation
 DocBasicUsage=Basic usage
 
+# Components
+DocComponentsTitle=Components
+DocComponentsMainDescription=Components section description is under developpment
+
 # Badges
 DocBadgeTitle=Badges
 DocBadgeMainDescription=Documentation and examples for badges, our small count and labeling component.
@@ -50,20 +54,3 @@ DocStripedVariants = Striped
 DocStripedVariantsDesc = Add .progress-bar-striped to any .progress-bar to apply a stripe via CSS gradient over the progress bar’s background color.
 DocOtherVariants = Other
 DocOtherVariantsDesc =
-
-# Set Event Message
-DocSetEventMessageTitle = Event Message
-DocSetEventMessageMainDescription = Documentation and examples for event message
-DocSetEventMessageContextualVariationsDescription = Fill the parameter "style" of function to change color of event message
-DocSetEventMessageContextualVariations = Contextual variations
-DocSetEventMessageDescription = Display one message or several messages
-DocSetEventMessageDisplayMessage = Display message
-DocSetEventMessageDisplayMessages = Display messages
-DocSetEventMessageDisplayOKMessage = Display "OK" message
-DocSetEventMessageDisplayWarningMessage = Display "Warning" message
-DocSetEventMessageDisplayErrorMessage = Display "Error" message
-DocSetEventMessageOK = OK Message
-DocSetEventMessageWarning = Warning Message
-DocSetEventMessageError = Error Message
-DocSetEventMessageUnique = Unique Message
-DocSetEventMessage = Message #%s
