@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Søk ubetalte leverandørfakturaer med e
 SendEmailsRemindersOnSupplierInvoiceDueDate=Send påminnelse på epost for validerte og ubetalte leverandørfakturaer
 PaymentMadeForSeveralInvoices=Betaling utført for flere fakturaer
 SituationInvoiceProgressCurrent=Faktura fremdrift
+INVOICE_ADD_EPC_QR_CODEPay=Skann denne QR-koden for å betale med en smarttelefon som støtter betaling med EPC QR-kode.

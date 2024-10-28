@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
  */
 class FileUpload
 {
+	/**
+	 * @var array{script_url:string,upload_dir:string,upload_url:string,param_name:string,delete_type:string,max_file_size:?int,min_file_size:int,accept_file_types:string,max_number_of_files:?int,max_width:?int,max_height:?int,min_width:int,min_height:int,discard_aborted_uploads:bool,image_versions:array<string,array{upload_dir:string,upload_url:string,max_width:int,max_height:int,jpeg_quality?:int}>}
+	 */
 	public $options;
+	/**
+	 * @var int
+	 */
 	protected $fk_element;
 
 	/**
@@ -45,7 +52,7 @@ class FileUpload
 	 * Constructor.
 	 * This set ->$options
 	 *
-	 * @param array		$options		Options array
+	 * @param ?array{script_url?:string,upload_dir?:string,upload_url?:string,param_name?:string,delete_type?:string,max_file_size?:?int,min_file_size?:int,accept_file_types?:string,max_number_of_files?:?int,max_width?:?int,max_height?:?int,min_width?:int,min_height?:int,discard_aborted_uploads?:bool,image_versions?:array<string,array{upload_dir?:string,upload_url?:string,max_width?:int,max_height?:int,jpeg_quality?:int}>}	$options		Options array
 	 * @param int		$fk_element		ID of element
 	 * @param string	$element		Code of element
 	 */
@@ -73,6 +80,7 @@ class FileUpload
 			throw new Exception('The element '.$element.' is not supported for uploading file. dir_output is unknown.');
 		}
 
+		$object_ref = 'UndefinedReference';
 		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
 		if ($pathname !== null && $filename !== null) {
 			// Get object from its id and type
@@ -196,7 +204,7 @@ class FileUpload
 	/**
 	 * Set delete url
 	 *
-	 * @param 	object	$file		Filename
+	 * @param 	stdClass	$file		File object (see getFileObject)
 	 * @return	void
 	 */
 	protected function setFileDeleteUrl($file)
@@ -212,7 +220,7 @@ class FileUpload
 	 * getFileObject
 	 *
 	 * @param	string		$file_name		Filename
-	 * @return 	stdClass|null
+	 * @return 	?stdClass
 	 */
 	protected function getFileObject($file_name)
 	{
@@ -243,7 +251,7 @@ class FileUpload
 	/**
 	 * getFileObjects
 	 *
-	 * @return	array	Array of objects
+	 * @return	array<?stdClass>	Array of objects
 	 */
 	protected function getFileObjects()
 	{
@@ -253,9 +261,9 @@ class FileUpload
 	/**
 	 *  Create thumbs of a file uploaded.
 	 *
-	 *  @param	string	$file_name		Filename
-	 *  @param	string	$options 		is array('max_width', 'max_height')
-	 *  @return	boolean
+	 *  @param	string	$file_name			Filename
+	 *  @param	array{upload_dir:string}	$options 	is array('max_width', 'max_height')
+	 *  @return	bool
 	 */
 	protected function createScaledImage($file_name, $options)
 	{

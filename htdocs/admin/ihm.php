@@ -130,6 +130,11 @@ if ($action == 'update') {
 			}
 		}
 
+		if (GETPOSTISSET('THEME_ELDY_BORDER_RADIUS')) {
+			$val = GETPOST('THEME_ELDY_BORDER_RADIUS');
+			dolibarr_set_const($db, 'THEME_ELDY_BORDER_RADIUS', GETPOSTINT('THEME_ELDY_BORDER_RADIUS'), 'chaine', 0, '', $conf->entity);
+		}
+
 		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
 		if ($val == '') {
 			dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
@@ -661,10 +666,12 @@ if ($mode == 'login') {
 	print '</td></tr>';
 
 	// Hide helpcenter link on login page
+	/*
 	print '<tr class="oddeven"><td>' . $langs->trans("DisableLinkToHelpCenter") . '</td><td>';
 	print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '', 'login');
 	print '</td>';
 	print '</tr>';
+	*/
 
 	// Message on login page
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount', 'user'));

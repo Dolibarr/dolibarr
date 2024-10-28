@@ -233,37 +233,56 @@ trait CommonPeople
 		if (!empty($this->phone) || !empty($this->phone_pro) || !empty($this->phone_mobile) || !empty($this->phone_perso) || !empty($this->fax) || !empty($this->office_phone) || !empty($this->user_mobile) || !empty($this->office_fax)) {
 			$out .= ($outdone ? '<br>' : '');
 		}
+
+		// Phones
+		$outphonedone = 0;
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->phone_pro)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->phone_mobile)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->phone_perso)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->office_phone)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->user_mobile)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->fax)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
 			$outdone++;
+			$outphonedone++;
 		}
 		if (!empty($this->office_fax)) {
+			$out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
 			$outdone++;
+			$outphonedone++;
 		}
 
 		if ($out) {

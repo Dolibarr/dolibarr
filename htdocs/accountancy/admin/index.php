@@ -35,6 +35,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "other"));
@@ -58,6 +59,37 @@ $list_binding = array(
 	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER',
 	'ACCOUNTING_DATE_START_BINDING',
 	'ACCOUNTING_LABEL_OPERATION_ON_TRANSFER'
+);
+
+// Parameters for export options
+$main_option = array(
+	'ACCOUNTING_EXPORT_PREFIX_SPEC',
+);
+
+$accountancyexport = new AccountancyExport($db);
+$configuration = $accountancyexport->getTypeConfig();
+
+$listparam = $configuration['param'];
+$listformat = $configuration['format'];
+$listcr = $configuration['cr'];
+
+$model_option = array(
+	'1' => array(
+		'label' => 'ACCOUNTING_EXPORT_FORMAT',
+		'param' => $listformat,
+	),
+	'2' => array(
+		'label' => 'ACCOUNTING_EXPORT_SEPARATORCSV',
+		'param' => '',
+	),
+	'3' => array(
+		'label' => 'ACCOUNTING_EXPORT_ENDLINE',
+		'param' => $listcr,
+	),
+	'4' => array(
+		'label' => 'ACCOUNTING_EXPORT_DATE',
+		'param' => '',
+	),
 );
 
 $error = 0;
@@ -116,13 +148,50 @@ if ($action == 'update') {
 			}
 		}
 
-		if ($error) {
-			setEventMessages($langs->trans("Error"), null, 'errors');
+		// Export options
+		$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
+
+		if (!empty($modelcsv)) {
+			if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+			//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+			//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
+			//}
+		} else {
+			$error++;
+		}
+
+		foreach ($main_option as $constname) {
+			$constvalue = GETPOST($constname, 'alpha');
+
+			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+
+		foreach ($listparam[$modelcsv] as $key => $value) {
+			$constante = $key;
+
+			if (strpos($constante, 'ACCOUNTING') !== false) {
+				$constvalue = GETPOST($key, 'alpha');
+				if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			}
+		}
+
+		if (!$error) {
+			// reload
+			$configuration = $accountancyexport->getTypeConfig();
+			$listparam = $configuration['param'];
 		}
 	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -268,7 +337,6 @@ $linkback = '';
 //$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($title, $linkback, 'accountancy');
 
-print '<br>';
 
 // Show message if accountancy hidden options are activated to help to resolve some problems
 if (!$user->admin) {
@@ -292,6 +360,7 @@ if (!$user->admin) {
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="page_y" value="">';
 
 // Params
 print '<div class="div-table-responsive-no-min">';
@@ -379,9 +448,12 @@ foreach ($list as $key) {
 }
 
 print '</table>';
+
+print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
+
 print '</div>';
 
-print '<br>';
+print '<br><br>';
 
 // Binding params
 print '<div class="div-table-responsive-no-min">';
@@ -489,10 +561,12 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
+print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
+
 
 
 // Show advanced options
-print '<br>';
+print '<br><br>';
 
 
 // Advanced params
@@ -568,7 +642,120 @@ print '</table>';
 print '</div>';
 
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
+print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
+
+print '<br><br>';
+
+
+// Export options
+
+print "\n".'<script type="text/javascript">'."\n";
+print 'jQuery(document).ready(function () {'."\n";
+print '    function initfields()'."\n";
+print '    {'."\n";
+foreach ($listparam as $key => $param) {
+	print '        if (jQuery("#ACCOUNTING_EXPORT_MODELCSV").val()=="'.$key.'")'."\n";
+	print '        {'."\n";
+	print '            //console.log("'.$param['label'].'");'."\n";
+	if (empty($param['ACCOUNTING_EXPORT_FORMAT'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param['ACCOUNTING_EXPORT_FORMAT'].'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").removeAttr("disabled");'."\n";
+	}
+	if (empty($param['ACCOUNTING_EXPORT_SEPARATORCSV'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV').'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").removeAttr("disabled");'."\n";
+	}
+	if (empty($param['ACCOUNTING_EXPORT_ENDLINE'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").removeAttr("disabled");'."\n";
+	}
+	if (empty($param['ACCOUNTING_EXPORT_DATE'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.getDolGlobalString('ACCOUNTING_EXPORT_DATE').'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").removeAttr("disabled");'."\n";
+	}
+	print '        }'."\n";
+}
+print '    }'."\n";
+print '    initfields();'."\n";
+print '    jQuery("#ACCOUNTING_EXPORT_MODELCSV").change(function() {'."\n";
+print '        initfields();'."\n";
+print '    });'."\n";
+print '})'."\n";
+print '</script>'."\n";
+
+// Main Options
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans('ExportOptions').'</td>';
+print "</tr>\n";
+
+$num = count($main_option);
+if ($num) {
+	foreach ($main_option as $key) {
+		print '<tr class="oddeven value">';
+
+		// Param
+		$label = $langs->trans($key);
+		print '<td>'.dol_escape_htmltag($label).'</td>';
+
+		// Value
+		print '<td>';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
+		print '</td></tr>';
+	}
+}
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("Selectmodelcsv").'</td>';
+if (!$conf->use_javascript_ajax) {
+	print '<td class="nowrap">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+} else {
+	print '<td>';
+	$listofexporttemplates = $accountancyexport->getType(1);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listofexporttemplates, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td>';
+}
+print "</tr>";
+
+
+$num2 = count($model_option);
+if ($num2) {
+	foreach ($model_option as $key) {
+		print '<tr class="oddeven value">';
+
+		// Param
+		$label = $key['label'];
+		print '<td>'.$langs->trans($label).'</td>';
+
+		// Value
+		print '<td>';
+		if (is_array($key['param'])) {
+			print $form->selectarray($label, $key['param'], getDolGlobalString($label), 0);
+		} else {
+			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.getDolGlobalString($label).'">';
+		}
+
+		print '</td></tr>';
+	}
+
+	print "</table>\n";
+}
+
+print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
+
 
 print '</form>';
 

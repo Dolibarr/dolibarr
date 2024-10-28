@@ -45,11 +45,17 @@ ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
 
+ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+
+
 
 -- V21 migration
 
 DROP TABLE llx_contratdet_log;
 
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
+
+ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
 -- add billable attribute to project task
 ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
@@ -157,6 +163,7 @@ ALTER TABLE llx_multicurrency ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP
 
 ALTER TABLE llx_multicurrency_rate ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_extrafields ADD COLUMN module varchar(64);
 
 
 -- Copy categories from llx_category_bank into llx_categorie
@@ -276,3 +283,5 @@ CREATE TABLE llx_product_customer_price_extrafields (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);
+ALTER TABLE llx_facture ADD COLUMN payment_reference varchar(25) AFTER date_lim_reglement;
+ALTER TABLE llx_societe ADD COLUMN tp_payment_reference varchar(25) AFTER code_fournisseur;

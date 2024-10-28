@@ -89,12 +89,6 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
-
 		// Define position of columns
 		$this->wref = 15;
 		$this->posxidref = $this->marge_gauche;
@@ -120,6 +114,17 @@ class pdf_standard_movementstock extends ModelePDFMovement
 			$this->posxunit -= 20;
 			$this->posxdiscount -= 20;
 			$this->postotalht -= 20;
+		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 	}
 

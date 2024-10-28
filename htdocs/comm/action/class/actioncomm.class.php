@@ -273,6 +273,7 @@ class ActionComm extends CommonObject
 	// Properties for links to other objects
 	/**
 	 * @var int 		Id of linked object
+	 * @deprecated		Use $elementid
 	 */
 	public $fk_element; // Id of record
 
@@ -479,6 +480,9 @@ class ActionComm extends CommonObject
 		}
 		if (empty($this->fk_element) && !empty($this->elementid)) {
 			$this->fk_element = $this->elementid;
+		}
+		if (empty($this->elementid) && !empty($this->fk_element)) {
+			$this->elementid = $this->fk_element;
 		}
 
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
