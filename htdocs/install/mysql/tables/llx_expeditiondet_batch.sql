@@ -14,7 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Similar for supplier with llx_commande_fournisseur_dispatch=llx_receptiondet_batch
+-- Similar for supplier with llx_receptiondet_batch
 -- ============================================================================
 
 CREATE TABLE llx_expeditiondet_batch (

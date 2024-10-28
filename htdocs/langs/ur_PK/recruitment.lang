@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = بھرتی
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = نئی ملازمت کے عہدوں کے لیے بھرتی مہم کا نظم کریں اور ان کی پیروی کریں۔
-
-#
 # Admin page
-#
 RecruitmentSetup = بھرتی سیٹ اپ
 RecruitmentSetupPage = ریکروٹمنٹ ماڈیول کے لیے مین آپشنز کا سیٹ اپ یہاں درج کریں۔
 RecruitmentArea=بھرتی کا علاقہ
 PublicInterfaceRecruitmentDesc=نوکریوں کے عوامی صفحات عوامی یو آر ایل ہیں جو نوکریوں کو دکھانے اور جواب دینے کے لیے ہیں۔ ہر اوپن جاب کے لیے ایک مختلف لنک ہوتا ہے، جو ہر جاب ریکارڈ پر پایا جاتا ہے۔
 EnablePublicRecruitmentPages=کھلی ملازمتوں کے عوامی صفحات کو فعال کریں۔
 
-#
-# About page
-#
-RecruitmentAbout = بھرتی کے بارے میں
-RecruitmentAboutPage = صفحہ کے بارے میں بھرتی
 NbOfEmployeesExpected=ملازمین کی متوقع تعداد
 JobLabel=ملازمت کی پوزیشن کا لیبل
 WorkPlace=کام کی جگہ
@@ -47,7 +34,6 @@ PositionToBeFilled=عہدہ
 PositionsToBeFilled=ملازمت کے عہدے
 ListOfPositionsToBeFilled=ملازمت کے عہدوں کی فہرست
 NewPositionToBeFilled=نوکری کی نئی پوزیشنیں
-
 JobOfferToBeFilled=ملازمت کی پوزیشن کو پُر کرنا ہے۔
 ThisIsInformationOnJobPosition=پُر کی جانے والی ملازمت کی پوزیشن کی معلومات
 ContactForRecruitment=بھرتی کے لیے رابطہ کریں۔
@@ -77,4 +63,4 @@ WeAreRecruiting=ہم بھرتی کر رہے ہیں۔ یہ پُر کیے جانے
 NoPositionOpen=اس وقت کوئی عہدہ نہیں کھلا ہے۔
 ConfirmClose=منسوخی کی تصدیق کریں۔
 ConfirmCloseAsk=کیا آپ واقعی اس بھرتی کی امیدواری کو منسوخ کرنا چاہتے ہیں؟
-recruitment=Recruitment
+Recruitment=Recruitment

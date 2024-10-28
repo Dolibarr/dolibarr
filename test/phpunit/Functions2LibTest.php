@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +92,8 @@ class Functions2LibTest extends CommonClassTest
 	 */
 	public function testIsValidMailDomain()
 	{
+		print __METHOD__."\n";
+
 		$mail = 'bidon@invalid.invalid';
 		$result = isValidMailDomain($mail);
 		$this->assertEquals(0, $result, 'Email isValidMailDomain('.$mail.') should return 0 (not valid) but returned '.$result);
@@ -108,6 +110,8 @@ class Functions2LibTest extends CommonClassTest
 	 */
 	public function testIsValidUrl()
 	{
+		print __METHOD__."\n";
+
 		//Simple check
 		$result = isValidUrl('http://google.com');
 		$this->assertEquals(1, $result);
@@ -243,5 +247,70 @@ class Functions2LibTest extends CommonClassTest
 	public function testGetStringBetween($string, $start, $end, $expected)
 	{
 		$this->assertEquals($expected, get_string_between($string, $start, $end));
+	}
+
+
+	/**
+	 * Dataprovider for numero_semaine
+	 *
+	 * @return array<string,array{0:string,1:string}
+	 */
+	public function numeroSemaineDataProvider()
+	{
+		return [
+			// time_str, expected week
+			'day 1 - 1977' => [ "1977/1/1 10:10:10", '53'],
+			'day 2 - 1977' => [ "1977/1/1 10:10:10", '53'],
+			'last day - 1977' => [ "1977/12/31 10:10:10", '52'],
+			'day 1 - 1978' => [ "1978/1/1 10:10:10", '52'],
+			'day 2 - 1978' => [ "1978/1/2 10:10:10", '01'],
+			'day 1 - 1981' => [ "1981/1/1 10:10:10", '01'],
+			'last day - 1981' => [ "1981/12/31 10:10:10", '53'],
+			'day 1 - 1982' => [ "1982/1/1 10:10:10", '53'],
+			'day 3 - 1982' => [ "1982/1/3 10:10:10", '53'],
+			'day 4 - 1982' => [ "1982/1/4 10:10:10", '01'],
+		];
+	}
+
+
+	/**
+	 * Test numero_semaine()
+	 *
+	 * @param string $time_str Time (string) to test
+	 * @param int    $expected_week Week expected
+	 *
+	 * @return void
+	 *
+	 * @dataProvider numeroSemaineDataProvider
+	 */
+	public function testNumeroSemaine($time_str, $expected_week)
+	{
+		$time = strtotime($time_str);
+		$str = date(DATE_ATOM, $time).PHP_EOL;
+		print __METHOD__." time=".$time."\n";
+		$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+	}
+
+
+	/**
+	 * Test testRemoveEmoji
+	 *
+	 * @return void
+	 */
+	public function testRemoveEmoji()
+	{
+		print __METHOD__."\n";
+
+		$text = 'abc ✅ def';
+		$result = removeEmoji($text, 0);
+		$this->assertEquals('abc  def', $result, 'testRemoveEmoji 0');
+
+		$text = 'abc ✅ def';
+		$result = removeEmoji($text, 1);
+		$this->assertEquals('abc  def', $result, 'testRemoveEmoji 1');
+
+		$text = 'abc ✅ def';
+		$result = removeEmoji($text, 2);
+		$this->assertEquals($text, $result, 'testRemoveEmoji 2');
 	}
 }

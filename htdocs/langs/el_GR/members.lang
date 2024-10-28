@@ -239,10 +239,11 @@ MemberLastname=Επώνυμο μέλους
 MemberCodeDesc=Κωδικός μέλους, μοναδικός για όλα τα μέλη
 MemberSubscriptionStartFirstDayOf=Η ημερομηνία έναρξης μιας συνδρομής αντιστοιχεί στην πρώτη ημέρα μιας
 MemberSubscriptionStartAfter=Ελάχιστη περίοδος πριν από την είσοδο σε ισχύ της ημερομηνίας έναρξης μιας συνδρομής εκτός ανανεώσεων (παράδειγμα +3m = +3 μήνες, -5d = -5 ημέρες, +1Y = +1 έτος)
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
+SubscriptionLinkedToConciliatedTransaction=Η συνδρομή συνδέεται με μια συμβιβασμένη συναλλαγή, οπότε αυτή η τροποποίηση δεν επιτρέπεται.
 ConfirmMassSubsriptionCreation=Επιβεβαίωση δημιουργίας συνδρομής(ων)
 ConfirmMassSubsriptionCreationQuestion=Είστε σίγουροι ότι θέλετε για να δημιουργήσετε τις %s επιλεγμένες συνδρομές;
 XSubsriptionCreated=Δημιουργήθηκαν %s συνδρομές
 XSubsriptionErrors=%s συνδρομή(ες) όπου έγινε λάθος
 CreateSubscription=Δημιουργία εγγραφής
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=Δεν θα εκτελεστεί καμία συμπληρωματική ενέργεια καταγραφής με αυτήν τη μαζική ενέργεια
+NewMembership=Νέα συνδρομή

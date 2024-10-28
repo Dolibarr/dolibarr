@@ -1,22 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Configuración del módulo PayBox
 PayBoxDesc=Este módulo ofrece páginas para permitir el pago en <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> por parte de los clientes. Esto se puede utilizar para un pago gratuito o para un pago en un objeto particular de Dolibarr (factura, pedido, ...)
-FollowingUrlAreAvailableToMakePayments=Las siguientes URL están disponibles para ofrecer una página a un cliente para realizar un pago en objetos Dolibarr
-WelcomeOnPaymentPage=Bienvenido a nuestro servicio de pago en línea
-ThisScreenAllowsYouToPay=Esta pantalla le permite realizar un pago en línea a %s.
-ThisIsInformationOnPayment=Esta es la información sobre el pago a hacer
-ToComplete=Completar
-YourEMail=Email para recibir confirmación de pago
-Creditor=Acreedor
 PayBoxDoPayment=Paga con Pay Box
 YouWillBeRedirectedOnPayBox=Será redirigido a la página segura de Paybox para ingresar la información de su tarjeta de crédito
-Continue=Próximo
 SetupPayBoxToHavePaymentCreatedAutomatically=Configure su Paybox con la url <b> %s </b> para que el pago se cree automáticamente cuando lo valide Paybox.
 YourPaymentHasBeenRecorded=Esta página confirma que su pago ha sido registrado. Gracias.
 YourPaymentHasNotBeenRecorded=Su pago NO ha sido registrado y la transacción ha sido cancelada. Gracias.
-InformationToFindParameters=Ayuda para encontrar la información de su cuenta %s
 PAYBOX_CGI_URL_V2=URL del módulo CGI de Paybox para pago
-CSSUrlForPaymentForm=URL de hoja de estilo CSS para formulario de pago
 NewPayboxPaymentReceived=Nuevo pago de Paybox recibido
 NewPayboxPaymentFailed=Nuevo pago de Paybox intentado pero fallido
 PAYBOX_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después del intento de pago (éxito o falla)

@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 nedēļa
 AvailabilityTypeAV_2W=2 nedēļas
 AvailabilityTypeAV_3W=3 nedēļas
 AvailabilityTypeAV_1M=1 mēnesis
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Pārstāvis turpinot darboties priekšlikums
 TypeContact_propal_external_BILLING=Klientu rēķinu kontakts
 TypeContact_propal_external_CUSTOMER=Klientu kontaktu turpinot darboties priekšlikums
 TypeContact_propal_external_SHIPPING=Klienta kontaktpersona piegādei
-
 # Document models
 CantBeNoSign=nevar iestatīt neparakstīts
 CaseFollowedBy=Lieta seko
@@ -122,3 +120,5 @@ SignSociete_rib=Parakstīt mandātu
 SignPropal=Pieņemt priekšlikumu
 Signed=parakstīts
 SignedOnly=Tikai parakstīts
+ExpeditionSigned=Sūtījums parakstīts
+SignExpedition=Parakstīt sūtījumu

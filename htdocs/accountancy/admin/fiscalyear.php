@@ -58,7 +58,7 @@ static $tmpstatut2label = array(
 		'1' => 'CloseFiscalYear'
 );
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fiscalyear($db);
 $hookmanager->initHooks(array('fiscalyearlist'));
 
@@ -89,7 +89,7 @@ $title = $langs->trans('AccountingPeriods');
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_fiscalyear');
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut as status, f.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";
@@ -130,7 +130,7 @@ if ($result) {
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'calendar', 0, $newcardbutton, '', $limit, 1);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste centpercent">';
+	print '<table class="tagtable liste centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Ref").'</td>';
 	print '<td>'.$langs->trans("Label").'</td>';

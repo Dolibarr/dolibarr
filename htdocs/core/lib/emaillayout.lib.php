@@ -30,126 +30,33 @@
  */
 function getHtmlOfLayout($name)
 {
-	if ($name == 'basic') {
-		$out = '
-            <div >
-            <div >
-            <img alt="Gray rectangle" width="800px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-            <h3>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</h3>
-            <h3>Lorem, ipsum dolor sit amet consectetur</h3>
-            <!-- Les paragraphes de texte -->
-            <div class="email-template-text">
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam non blanditiis delectus accusamus reprehenderit voluptates repellat.<br> Excepturi illo delectus nisi labore, iste voluptatibus dignissimos explicabo, corrupti voluptatum et facere cum?</p>
-            </div>
-            <div class="email-template-text">
-            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-            <div class="email-template-text">
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-            </div>
+	global $conf, $mysoc, $user, $langs;
 
-            <img alt="Gray rectangle" width="15%" height="50px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+	$commonSubstitutionArray = getCommonSubstitutionArray($langs);
 
-        </div>';
-	} elseif ($name == 'news') {
-		$out = '
-        <h1 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur</h1>
-        <h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
+	$specificSubstitutionArray = array(
+		'__LOGO_URL__' => !empty($mysoc->logo) && dol_is_file($conf->mycompany->dir_output.'/logos/'.$mysoc->logo) ? DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo) : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC',
+		'__TITLEOFMAILHOLDER__' => $langs->trans('TitleOfMailHolder'),
+		'__CONTENOFMAILHOLDER__' => $langs->trans('ContentOfMailHolder'),
+		'__USERSIGNATURE__' => !empty($user->signature) ? dol_htmlentities($user->signature) : '',
+		'__GRAY_RECTANGLE__' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC',
+		'__LAST_NEWS__'   => $langs->trans('LastNews'),
+		'__LIST_PRODUCTS___' => $langs->trans('ListProducts'),
 
-        <div style="display: flex; align-items: center; justify-content: start; width: 100%; max-width: 600px;margin-top:0">
-            <div style="flex-grow: 1; margin-right: 10px; margin-left:120px;width:200px">
-            <h2>Lorem ipsum dolor sit amet, consectetur Lorem ipsum dolor sit amet, consectetur</h2>
+	);
 
-                Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Sed do eiusmod temxwshslkdsdsslpor incididunt ut labore et dolore magna <br>aliqua. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam sit<br> autem nihil omnis! Odit ipsum repellat, voluptas accusantium dolores adipisci ut voluptates eius cumque dicta obcaecati
-                <img alt="Gray rectangle" style="margin-top:10px"   width="15%" height="20px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
+	$substitutionarray = array_merge($commonSubstitutionArray, $specificSubstitutionArray);
 
-            </div>
-            <div style="flex-shrink: 0;">
-                <!-- Ici, ajoutez votre image -->
-                <img alt="Gray rectangle" style="" width="130px" height="130px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-        </div>
+	$templatePath = DOL_DOCUMENT_ROOT . '/install/doctemplates/maillayout/';
 
-        <div style="display: flex; align-items: center; justify-content: start; width: 100%; max-width: 600px;margin-top:40px">
-            <div style="flex-grow: 1; margin-right: 10px; margin-left:120px;width:200px">
-            <h2>Lorem ipsum dolor sit amet, consectetur Lorem ipsum dolor sit amet, consectetur</h2>
-
-                Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Sed do eiusmod temxwshslkdsdsslpor incididunt ut labore et dolore magna <br>aliqua. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam sit<br> autem nihil omnis! Odit ipsum repellat, voluptas accusantium dolores adipisci ut voluptates eius cumque dicta obcaecati
-                <img alt="Gray rectangle" style="margin-top:10px"   width="15%" height="20px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-
-            </div>
-            <div style="flex-shrink: 0;">
-                <!-- Ici, ajoutez votre image -->
-                <img alt="Gray rectangle" style="" width="130px" height="130px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-            </div>
-        </div>';
-	} elseif ($name == 'commerce') {
-		$out = '
-		    <h1 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur</h1>
-		    <h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
-
-		    <div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 16px; max-width: 600px; margin: 0 auto; box-sizing: border-box;">
-		    <div style="display: flex;">
-		        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
-		            <div>
-		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-		            </div>
-		            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-		            </div>
-		        </div>
-
-		            <br><br>
-		        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
-		            <div>
-		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-		            </div>
-		                <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-		            </div>
-		        </div>
-		    </div>
-		    <div style="display: flex;">
-		        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
-		            <div>
-		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-		            </div>
-		            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-		            </div>
-		        </div>
-
-		            <br><br>
-		        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
-		            <div>
-		                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />
-		            </div>
-		                <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-		                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-		            </div>
-		        </div>
-		    </div>
-		  </div>
-		  ';
-	} elseif ($name == 'text') {
-		$out = '
-        <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h1>
-        <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur adipisicing elit.</h2>
-        <p style="text-align: justify">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi impedit molestias voluptatibus. Natus nulla sint totam illo? Hic name consequuntur id harum pariatur, quo illo quaerat minima tempore.
-        </p>';
+	$templateFile = $templatePath . $name . '.html';
+	if (file_exists($templateFile)) {
+		$out = file_get_contents($templateFile);
 	} else {
 		$out = '';
 	}
+
+	$out = make_substitutions($out, $substitutionarray);
 
 	return $out;
 }

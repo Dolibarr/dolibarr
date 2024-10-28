@@ -5,6 +5,7 @@
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,9 +105,9 @@ if (!empty($hookmanager->resPrint)) {
 }
 </style>
 <center>
-<font size="4">
+<div style="font-size: 1.5em">
 <?php echo '<b>'.$mysoc->name.'</b>'; ?>
-</font>
+</div>
 </center>
 <br>
 <p class="left">
@@ -227,23 +228,23 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
-<?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
-		$vat_groups = array();
+<?php if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
+	$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {
 			$vat_groups[$line->tva_tx] = 0;
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
-		// Loop on each VAT group
+	// Loop on each VAT group
 	foreach ($vat_groups as $key => $val) {
 		?>
 	<tr>
 		<th align="right"><?php if ($gift != 1) {
-				echo $langs->trans("VAT").' '.vatrate($key, 1);
+			echo $langs->trans("VAT").' '.vatrate($key, 1);
 						  } ?></th>
 		<td align="right"><?php if ($gift != 1) {
-				echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+			echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 						  } ?></td>
 	</tr>
 		<?php
@@ -328,7 +329,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 				$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 				//print "xx ".$row->multicurrency_amount." - ".$row->amount." - ".$amount_payment." - ".$object->multicurrency_tx;
 				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
-					$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if it's cash payment
+					$amount_payment += $row->pos_change; // Show amount with excess received if it's cash payment
 					$currency = $conf->currency;
 				} else {
 					// We do not show change if payment into a different currency because not yet supported

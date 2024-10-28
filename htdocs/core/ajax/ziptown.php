@@ -57,7 +57,6 @@ if (!getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY')) {
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog('ziptown call with MAIN_USE_ZIPTOWN_DICTIONNARY='.getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY'));
-//var_dump($_GET);
 
 // Generation of list of zip-town
 if (GETPOST('zipcode') || GETPOST('town')) {
@@ -133,7 +132,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 			$row_array['state_id'] = $row['state_id'];
 
 			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
-			$row_array['states'] = $formcompany->select_state('', $row['country_id'], '');
+			$row_array['states'] = $formcompany->select_state(0, $row['country_id'], '');
 
 			array_push($return_arr, $row_array);
 		}
@@ -144,7 +143,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	top_httphead('text/html');
 
 	$formcompany = new FormCompany($db);
-	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOSTINT('htmlname', 1), GETPOSTINT('morecss', 1));
+	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOST('htmlname', 'alpha', 1), GETPOST('morecss', 'alpha', 1));
 }
 
 $db->close();

@@ -43,13 +43,30 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+$res = 0;
+if (!$res && file_exists("../../main.inc.php")) {
+	$res = @include "../../main.inc.php";
+}
+if (!$res && file_exists("../../../main.inc.php")) {
+	$res = @include "../../../main.inc.php";
+}
+if (!$res) {
+	die("Include of main fails");
+}
+dol_include_once('/mymodule/class/myobject.class.php');
 
 $mode = GETPOST('mode', 'aZ09');
+$objectId = GETPOST('objectId', 'aZ09');
+$field = GETPOST('field', 'aZ09');
+$value = GETPOST('value', 'aZ09');
+
+// @phan-suppress-next-line PhanUndeclaredClass
+$object = new MyObject($db);
 
 // Security check
-restrictedArea($user, 'mymodule', 0, 'myobject');
-
+if (!$user->hasRight('mymodule', 'myobject', 'write')) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -57,12 +74,21 @@ restrictedArea($user, 'mymodule', 0, 'myobject');
 
 dol_syslog("Call ajax mymodule/ajax/myobject.php");
 
-top_httphead('application/json');
+top_httphead();
 
-$arrayresult = array();
+// Update the object field with the new value
+if ($objectId && $field && isset($value)) {
+	$object->fetch($objectId);
+	if ($object->id > 0) {
+		$object->$field = $value;
+	}
+	$result = $object->update($user);
 
-// ....
+	if ($result < 0) {
+		print json_encode(['status' => 'error', 'message' => 'Error updating '. $field]);
+	} else {
+		print json_encode(['status' => 'success', 'message' => $field . ' updated successfully']);
+	}
+}
 
 $db->close();
-
-print json_encode($arrayresult);

@@ -132,5 +132,7 @@ ShowAllPerms=すべての権限行を表示
 HideAllPerms=すべての許可行を非表示
 UserPublicPageDesc=このユーザーの仮想カードを有効化可能。ユーザー プロファイルとバーコードを含む URL が利用可能になり、スマートフォンを持っている人なら誰でもそれをスキャンしてアドレス帳に連絡先を追加できる。
 EnablePublicVirtualCard=ユーザーの仮想名刺を有効化
+ExcludedByFilter=フィルターによって不適格だが、階層を確認するために表示される
 UserEnabledDisabled=ユーザ ステータスが変更された: %s
 AlternativeEmailForOAuth2=OAuth2 ログイン用の代替メールアドレス
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=エラー: 一意であるべきデータの 1 つがすでに存在するため、更新はキャンセルされた

@@ -25,7 +25,7 @@
 /**
  *       \file       htdocs/product/document.php
  *       \ingroup    product
- *       \brief      Page des documents joints sur les produits
+ *       \brief      Page of documents attached to products/services
  */
 
 
@@ -58,7 +58,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
@@ -208,10 +208,10 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_document');
 
 
-if ($object->id) {
+if ($object->id > 0) {
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -239,7 +239,7 @@ if ($object->id) {
 	}
 
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	$shownav = 1;
@@ -317,14 +317,15 @@ if ($object->id) {
 				print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					print  '<input type="submit" class="button" name="refresh" value="'.$langs->trans('Refresh').'">';
+					print  '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans('Refresh').'">';
 				}
 
 				print  '</td></tr>';
 			}
 
 			foreach ($filearray as $filetoadd) {
-				if ($ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION) == 'pdf') {
+				$ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION);
+				if ($ext == 'pdf') {
 					$checked = '';
 					$filename = $filetoadd['name'];
 

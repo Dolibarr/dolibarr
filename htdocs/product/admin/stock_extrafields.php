@@ -36,11 +36,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->transnoentitiesnoconv($val);
-}
+$type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
@@ -65,7 +61,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Warehouses");
 
-llxHeader('', $langs->trans("StockSetup"));
+llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_stock_extrafields');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');

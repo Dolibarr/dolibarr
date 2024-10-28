@@ -65,13 +65,21 @@ if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea (module='.$object->module.' table_element='.$object->table_element.')');
 }
 
+
+/*
+ * Action
+ */
+
+// None
+
+
 /*
  * View
  */
 
 top_httphead('application/json');
 
-if ($action == "existbarcode" && !empty($barcode)) {
+if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'lire')) {
 	if (!empty($mode) && $mode == "lotserial") {
 		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";

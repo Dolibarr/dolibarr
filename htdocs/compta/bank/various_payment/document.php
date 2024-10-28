@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +69,7 @@ if (!$sortfield) {
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName((string) $object->id);
 $modulepart = 'banque';
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
@@ -128,7 +130,8 @@ if ($object->id) {
 	$morehtmlref .= '</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	$morehtmlstatus = $morehtmlright;
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

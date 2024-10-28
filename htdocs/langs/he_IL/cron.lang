@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = קרא עבודה מתוזמנת
 Permission23102 = צור/עדכן עבודה מתוזמנת
 Permission23103 = מחק עבודה מתוזמנת
@@ -30,7 +29,8 @@ CronExecute=הפעל עכשיו
 CronConfirmExecute=האם אתה בטוח שברצונך לבצע את העבודות המתוזמנות האלה עכשיו?
 CronInfo=מודול עבודה מתוזמנת מאפשר לתזמן עבודות לביצוען באופן אוטומטי. ניתן להתחיל עבודות גם באופן ידני.
 CronTask=עבודה
-CronNone=None
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=לא לפני
 CronDtEnd=לא אחרי
 CronDtNextLaunch=ההוצאה להורג הבאה
@@ -49,8 +49,8 @@ CronEach=כֹּל
 JobFinished=העבודה יצאה לדרך והסתיימה
 Scheduled=מתוזמן
 #Page card
-CronAdd= הוסף משרות
-CronEvery=בצע עבודה כל אחד
+CronAdd=הוסף משרות
+CronEvery=Run job every
 CronObject=מופע/אובייקט ליצירה
 CronArgs=פרמטרים
 CronSaveSucess=נשמר בהצלחה

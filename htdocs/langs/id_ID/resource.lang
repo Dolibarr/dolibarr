@@ -9,31 +9,30 @@ ActionsOnResource=Acara tentang sumber ini
 ResourcePageIndex=Daftar sumber daya
 ResourceSingular=Sumber
 ResourceCard=Kartu sumber daya
+NewResource=Sumber daya baru
 AddResource=Buat sumber daya
 ResourceFormLabel_ref=Nama Sumberdaya
-ResourceType=Jenis sumber daya
 ResourceFormLabel_description=Deskripsi sumber daya
-
+ResourceType=Jenis sumber daya
+ResourceTypeID=ID jenis sumber daya
+ResourceTypeLabel=Label jenis sumber daya
 ResourcesLinkedToElement=Sumber daya terkait dengan elemen
 
 ShowResource=Tampilkan sumber daya
-
 ResourceElementPage=Sumber daya elemen
 ResourceCreatedWithSuccess=Sumber daya berhasil dibuat
 RessourceLineSuccessfullyDeleted=Baris sumber daya berhasil dihapus
 RessourceLineSuccessfullyUpdated=Baris sumber daya berhasil diperbarui
 ResourceLinkedWithSuccess=Sumber daya terkait dengan kesuksesan
-
 ConfirmDeleteResource=Konfirmasikan untuk menghapus sumber ini
 RessourceSuccessfullyDeleted=Sumber daya berhasil dihapus
 DictionaryResourceType=Jenis sumber daya
-
 SelectResource=Pilih sumber daya
-
 IdResource=Sumber daya id
 AssetNumber=Nomor seri
 ResourceTypeCode=Kode jenis sumber daya
 ImportDataset_resource_1=Sumber daya
-
 ErrorResourcesAlreadyInUse=Beberapa sumber daya sedang digunakan
 ErrorResourceUseInEvent=%s digunakan dalam acara %s
+MaxUsers=Pengguna maksimum (tempat, kursi, dll.)
+MaxUsersLabel=Pengguna maksimal

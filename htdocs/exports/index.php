@@ -43,7 +43,7 @@ $form = new Form($db);
 
 $help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones|DE:Modul_DatenExporte';
 
-llxHeader('', $langs->trans("ExportsArea"), $help_url);
+llxHeader('', $langs->trans("ExportsArea"), $help_url, '', 0, 0, '', '', '', 'mod-exports page-index');
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
@@ -53,7 +53,7 @@ print '<br>';
 
 print '<div class="center">';
 if (count($export->array_export_code)) {
-	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'creer'));
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'lire'));
 }
 print '</div>';
 print '<br>';

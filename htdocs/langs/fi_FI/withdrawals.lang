@@ -39,7 +39,6 @@ WithdrawalsSetup=Suoraveloitus maksu
 CreditTransferSetup=Tilisiirron asetukset
 WithdrawStatistics=Suoraveloitus maksu
 CreditTransferStatistics=Tilisiirtotilastot
-Rejects=Hylkäykset
 LastWithdrawalReceipt=Viimeisimmät %s suoraveloituskuitit
 MakeWithdrawRequest=Tee suoraveloitus maksu
 MakeWithdrawRequestStripe=Tee suoraveloituspyyntö maksu Stripen kautta

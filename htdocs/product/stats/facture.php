@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal'));
 
+$action = GETPOST('action', 'aZ');
+
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
@@ -46,7 +49,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
 $extrafields = new ExtraFields($db);
 
@@ -74,6 +77,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "f.datef";
 }
+
+$option = '';
 
 $search_date_startday = GETPOSTINT('search_date_startday');
 if (!empty($search_date_startday)) {
@@ -150,7 +155,7 @@ if ($id > 0 || !empty($ref)) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stats_facture');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -164,7 +169,7 @@ if ($id > 0 || !empty($ref)) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
 		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -176,7 +181,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -239,6 +244,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 			// Add where from extra fields
+			$extrafieldsobjectkey = 'facture';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 			// Add where from hooks
 			$parameters = array();
@@ -274,17 +280,11 @@ if ($id > 0 || !empty($ref)) {
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.((int) $limit);
 				}
-				if (!empty($search_month)) {
-					$option .= '&search_month='.urlencode($search_month);
-				}
-				if (!empty($search_year)) {
-					$option .= '&search_year='.urlencode((string) ($search_year));
-				}
 
 				// Add $param from extra fields
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 				// Add $param from hooks
-				$parameters = array();
+				$parameters = array('param' => &$param);
 				$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				$option .= $hookmanager->resPrint;
 
@@ -314,8 +314,8 @@ if ($id > 0 || !empty($ref)) {
 				print $hookmanager->resPrint;
 
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';
@@ -362,8 +362,8 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->datef), 'dayhour')."</td>";
 						print '<td class="center">'.$objp->qty."</td>\n";
-						print '<td align="right">'.price($objp->total_ht)."</td>\n";
-						print '<td align="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
+						print '<td class="right">'.price($objp->total_ht)."</td>\n";
+						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
 						// Fields from hook
 						$parameters = array();
 						$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -373,14 +373,14 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="3"></td>';
 				print '<td class="center">'.$total_qty.'</td>';
-				print '<td align="right">'.price($total_ht).'</td>';
+				print '<td class="right">'.price($total_ht).'</td>';
 				print '<td></td>';
 				print "</table>";
 				print '</div>';

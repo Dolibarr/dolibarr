@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  * 	\file       htdocs/holiday/info.php
  * 	\ingroup    holiday
- * 	\brief      Page to show a leave information
+ * 	\brief      Page to show leave information
  */
 
 // Load Dolibarr environment
@@ -80,8 +81,9 @@ $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 $form = new Form($db);
 
 $title = $langs->trans("Leave")." - ".$langs->trans("Info");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_info');
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Holiday($db);

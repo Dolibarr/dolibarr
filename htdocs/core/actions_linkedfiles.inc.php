@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C)    2013    Cédric Salvador    <csalvador@gpcsolutions.fr>
- * Copyright (C)    2015    Marcos García      <marcosgdf@gmail.com>
- * Copyright (C)    2015    Ferran Marcet      <fmarcet@2byte.es>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,15 +112,14 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 		}
 
 		if (!$error) {
-			dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
+			dol_add_file_process($upload_dir, 0, 1, 'userfile', '', $link, '', 0);
 		}
 	}
 }
 
-
 // Delete file/link
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissiontoadd)) {
-	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
 		$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
@@ -253,6 +253,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			if ($filenamefrom && $filenameto) {
 				$srcpath = $upload_dir.'/'.$filenamefrom;
 				$destpath = $upload_dir.'/'.$filenameto;
+				/* disabled. Too many bugs. All files of an object must remain into directory of object. link with event should be done in llx_ecm_files with column agenda_id.
+				if ($modulepart == "ticket" && !dol_is_file($srcpath)) {
+					$srcbis = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenamefrom;
+					if (dol_is_file($srcbis)) {
+						$srcpath = $srcbis;
+						$destpath = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenameto;
+					}
+				}*/
 
 				$reshook = $hookmanager->initHooks(array('actionlinkedfiles'));
 				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);

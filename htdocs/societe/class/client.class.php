@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class Client extends Societe
 	public $next_prev_filter = "te.client in (1,2,3)";
 
 	/**
-	 * @var array
+	 * @var array<int,array{id:int,code:string,label:string,picto:string}>
 	 */
 	public $cacheprospectstatus = array();
 
@@ -71,11 +71,11 @@ class Client extends Societe
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
-	 * 	  @param	bool	$is_client		Is the thirdparty a client ?
-	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
+	 * 	  @param	int		$is_client		Is the thirdparty a client ?
+	 *    @param	int		$is_supplier	Is the thirdparty a supplier ?
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = true, $is_supplier = false)
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 1, $is_supplier = 0)
 	{
 		return parent::fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
 	}

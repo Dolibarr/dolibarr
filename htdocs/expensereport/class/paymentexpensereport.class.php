@@ -2,6 +2,7 @@
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,13 @@ class PaymentExpenseReport extends CommonObject
 	 * @var int|string
 	 */
 	public $datep = '';
+	/**
+	 * @var float|int
+	 */
 	public $amount; // Total amount of payment
+	/**
+	 * @var array<float|int>
+	 */
 	public $amounts = array(); // Array of amounts
 
 	/**
@@ -94,7 +101,14 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+
+	/**
+	 * @var string
+	 */
 	public $type_label;
 
 	/**
@@ -146,7 +160,7 @@ class PaymentExpenseReport extends CommonObject
 			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -175,11 +189,11 @@ class PaymentExpenseReport extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		// $totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -293,7 +307,6 @@ class PaymentExpenseReport extends CommonObject
 	public function update($user = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -302,7 +315,7 @@ class PaymentExpenseReport extends CommonObject
 			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -323,16 +336,11 @@ class PaymentExpenseReport extends CommonObject
 			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
-
 		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
@@ -341,8 +349,6 @@ class PaymentExpenseReport extends CommonObject
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null");
-
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -379,7 +385,6 @@ class PaymentExpenseReport extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -510,13 +515,14 @@ class PaymentExpenseReport extends CommonObject
 		$this->id = 0;
 
 		$this->fk_expensereport = 0;
-		$this->datec = '';
+		$this->datec = dol_now();
 		$this->tms = dol_now();
-		$this->datep = '';
-		$this->amount = '';
+		$this->datep = dol_now();
+		$this->amount = 100;
 		$this->fk_typepayment = 0;
-		$this->num_payment = '';
-		$this->note = '';
+		$this->num_payment = '123456';
+		$this->note_public = 'Public note';
+		$this->note_private = 'Private note';
 		$this->fk_bank = 0;
 		$this->fk_user_creat = 0;
 		$this->fk_user_modif = 0;
@@ -539,7 +545,7 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -651,7 +657,7 @@ class PaymentExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlen			Longueur max libelle
@@ -693,7 +699,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -736,11 +742,11 @@ class PaymentExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

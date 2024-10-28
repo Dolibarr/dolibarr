@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Nicolas ZABOURI <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,9 @@ class DataPolicy
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $error;
 
 
@@ -165,7 +169,7 @@ class DataPolicy
 	/**
 	 * sendMailDataPolicyContact
 	 *
-	 * @param 	mixed		$contact		Contact
+	 * @param 	Contact		$contact		Contact
 	 * @return	void
 	 */
 	public static function sendMailDataPolicyContact($contact)
@@ -208,7 +212,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -284,7 +288,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -359,7 +363,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);

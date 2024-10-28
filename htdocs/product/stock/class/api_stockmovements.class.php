@@ -75,7 +75,7 @@ class StockMovements extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->stockmovement);
@@ -228,7 +228,7 @@ class StockMovements extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach($request_data as $field => $value) {
@@ -260,11 +260,11 @@ class StockMovements extends DolibarrApi
 		}
 
 		if (! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (! $this->stockmovement->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401,'error when delete stock movement');
+			throw new RestException(403,'error when delete stock movement');
 		}
 
 		return array(
@@ -342,7 +342,7 @@ class StockMovements extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	private function _validate($data)
+	private function _validate($data) // @phpstan-ignore-line
 	{
 		$stockmovement = array();
 		foreach (self::$FIELDS as $field) {

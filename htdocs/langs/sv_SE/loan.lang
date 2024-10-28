@@ -23,7 +23,7 @@ AddLoan=Skapa lån
 FinancialCommitment=Finansiellt engagemang
 InterestAmount=Ränta
 CapitalRemain=Kapital kvarstår
-TermPaidAllreadyPaid = Denna period är redan betald
+TermPaidAllreadyPaid = Denna termin är redan betald
 CantUseScheduleWithLoanStartedToPaid = Det går inte att generera en tidslinje för ett lån med en påbörjad betalning
 CantModifyInterestIfScheduleIsUsed = Du kan inte ändra ränta om du använder ett schema
 # Admin

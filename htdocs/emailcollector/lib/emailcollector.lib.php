@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
  * Prepare array of tabs for EmailCollector
  *
  * @param	EmailCollector	$object		EmailCollector
- * @return 	array						Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function emailcollectorPrepareHead($object)
 {
-	global $db, $langs, $conf;
+	global $langs, $conf;
 
 	$langs->load("emailcollector@emailcollector");
 
@@ -113,17 +113,17 @@ function getDParameters($part)
  *
  * @param 	integer $jk 	Number of email
  * @param 	object 	$mbox 	object connection imap
- * @return 	array 			type, filename, pos
+ * @return 	array<array{type:int,filename:string,pos:int}> 	type, filename, pos
  */
 function getAttachments($jk, $mbox)
 {
-	$structure = imap_fetchstructure($mbox, $jk, FT_UID);
+	$structure = imap_fetchstructure($mbox, $jk, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 	$parts = getParts($structure);
 
 	$fpos = 2;
 	$attachments = array();
 	$nb = count($parts);
-	if ($parts && $nb) {
+	if ($nb && !empty($parts)) {
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -147,14 +147,14 @@ function getAttachments($jk, $mbox)
  * Get content of a joined file from its position into a given email
  *
  * @param integer $jk numéro du mail
- * @param integer $fpos position de la pièce jointe
+ * @param string $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
- * @param object $mbox object connection imaap
+ * @param object $mbox object connection imap
  * @return mixed data
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
+	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 	$data = getDecodeValue($merge, $type);
 
 	return $data;

@@ -54,6 +54,12 @@ $warehousefound = 0;
 $warehouseid = 0;
 $objectreturn = array();
 
+/*
+ * Action
+ */
+
+// None
+
 
 /*
  * View
@@ -61,7 +67,7 @@ $objectreturn = array();
 
 top_httphead('application/json');
 
-if ($action == "existbarcode" && !empty($barcode)) {
+if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'lire')) {
 	if (!empty($mode) && $mode == "lotserial") {
 		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
@@ -109,7 +115,7 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
 }
 
-if ($action == "addnewlineproduct") {
+if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
 	$inventoryline = new InventoryLine($db);
 	if (!empty($fk_inventory)) {

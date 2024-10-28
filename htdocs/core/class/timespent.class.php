@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/timespent.class.php
+ * \file        htdocs/core/class/timespent.class.php
  * \ingroup     timespent
  * \brief       This file is a CRUD class file for TimeSpent (Create/Read/Update/Delete)
  */
@@ -48,17 +48,6 @@ class TimeSpent extends CommonObject
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'element_time';
-
-	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for timespent. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'timespent@timespent' if picto is file 'img/object_timespent.png'.
@@ -112,44 +101,95 @@ class TimeSpent extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id"),
-		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 17, 'notnull' => 0, 'visible' => -2,),
-		'import_key' => array('type' => 'varchar(14)', 'label' => 'import_key', 'enabled' => '1', 'position' => 15, 'notnull' => 0, 'visible' => -1,),
-		'fk_element' => array('type' => 'integer', 'label' => 'fk_element', 'enabled' => '1', 'position' => 2, 'notnull' => 1, 'visible' => -1,),
-		'elementtype' => array('type' => 'varchar(32)', 'label' => 'elementtype', 'enabled' => '1', 'position' => 3, 'notnull' => 1, 'visible' => -1,),
-		'element_date' => array('type' => 'date', 'label' => 'element_date', 'enabled' => '1', 'position' => 4, 'notnull' => 0, 'visible' => -1,),
-		'element_datehour' => array('type' => 'datetime', 'label' => 'element_datehour', 'enabled' => '1', 'position' => 5, 'notnull' => 0, 'visible' => -1,),
-		'element_date_withhour' => array('type' => 'integer', 'label' => 'element_date_withhour', 'enabled' => '1', 'position' => 6, 'notnull' => 0, 'visible' => -1,),
-		'element_duration' => array('type' => 'double', 'label' => 'element_duration', 'enabled' => '1', 'position' => 7, 'notnull' => 0, 'visible' => -1,),
-		'fk_product' => array('type' => 'integer', 'label' => 'fk_product', 'enabled' => '1', 'position' => 8, 'notnull' => 0, 'visible' => -1,),
-		'fk_user' => array('type' => 'integer', 'label' => 'fk_user', 'enabled' => '1', 'position' => 9, 'notnull' => 0, 'visible' => -1,),
-		'thm' => array('type' => 'double(24,8)', 'label' => 'thm', 'enabled' => '1', 'position' => 10, 'notnull' => 0, 'visible' => -1,),
-		'invoice_id' => array('type' => 'integer', 'label' => 'invoice_id', 'enabled' => '1', 'position' => 11, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'invoice_line_id' => array('type' => 'integer', 'label' => 'invoice_line_id', 'enabled' => '1', 'position' => 12, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'intervention_id' => array('type' => 'integer', 'label' => 'intervention_id', 'enabled' => '1', 'position' => 13, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'intervention_line_id' => array('type' => 'integer', 'label' => 'intervention_line_id', 'enabled' => '1', 'position' => 14, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => '1', 'position' => 16, 'notnull' => 0, 'visible' => -1,),
-		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => '1', 'position' => 18, 'notnull' => 0, 'visible' => -1,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 17, 'notnull' => 0, 'visible' => -2,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'import_key', 'enabled' => 1, 'position' => 15, 'notnull' => 0, 'visible' => -1,),
+		'fk_element' => array('type' => 'integer', 'label' => 'fk_element', 'enabled' => 1, 'position' => 2, 'notnull' => 1, 'visible' => -1,),
+		'elementtype' => array('type' => 'varchar(32)', 'label' => 'elementtype', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => -1,),
+		'element_date' => array('type' => 'date', 'label' => 'element_date', 'enabled' => 1, 'position' => 4, 'notnull' => 0, 'visible' => -1,),
+		'element_datehour' => array('type' => 'datetime', 'label' => 'element_datehour', 'enabled' => 1, 'position' => 5, 'notnull' => 0, 'visible' => -1,),
+		'element_date_withhour' => array('type' => 'integer', 'label' => 'element_date_withhour', 'enabled' => 1, 'position' => 6, 'notnull' => 0, 'visible' => -1,),
+		'element_duration' => array('type' => 'double', 'label' => 'element_duration', 'enabled' => 1, 'position' => 7, 'notnull' => 0, 'visible' => -1,),
+		'fk_product' => array('type' => 'integer', 'label' => 'fk_product', 'enabled' => 1, 'position' => 8, 'notnull' => 0, 'visible' => -1,),
+		'fk_user' => array('type' => 'integer', 'label' => 'fk_user', 'enabled' => 1, 'position' => 9, 'notnull' => 0, 'visible' => -1,),
+		'thm' => array('type' => 'double(24,8)', 'label' => 'thm', 'enabled' => 1, 'position' => 10, 'notnull' => 0, 'visible' => -1,),
+		'invoice_id' => array('type' => 'integer', 'label' => 'invoice_id', 'enabled' => 1, 'position' => 11, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'invoice_line_id' => array('type' => 'integer', 'label' => 'invoice_line_id', 'enabled' => 1, 'position' => 12, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'intervention_id' => array('type' => 'integer', 'label' => 'intervention_id', 'enabled' => 1, 'position' => 13, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'intervention_line_id' => array('type' => 'integer', 'label' => 'intervention_line_id', 'enabled' => 1, 'position' => 14, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => 1, 'position' => 16, 'notnull' => 0, 'visible' => -1,),
+		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => 1, 'position' => 18, 'notnull' => 0, 'visible' => -1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $fk_element;
+	/**
+	 * @var string
+	 */
 	public $elementtype;
+	/**
+	 * @var int|string
+	 */
 	public $element_date;
+	/**
+	 * @var int
+	 */
 	public $element_datehour;
+	/**
+	 * @var int
+	 */
 	public $element_date_withhour;
+	/**
+	 * @var float
+	 */
 	public $element_duration;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var float
+	 */
 	public $thm;
+	/**
+	 * @var int
+	 */
 	public $invoice_id;
+	/**
+	 * @var int
+	 */
 	public $invoice_line_id;
+	/**
+	 * @var int
+	 */
 	public $intervention_id;
+	/**
+	 * @var int
+	 */
 	public $intervention_line_id;
+	/**
+	 * @var string
+	 */
 	public $datec;
+	/**
+	 * @var string
+	 */
 	public $note;
 	// END MODULEBUILDER PROPERTIES
 
@@ -160,11 +200,14 @@ class TimeSpent extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
-		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
+
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -243,6 +286,7 @@ class TimeSpent extends CommonObject
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -285,7 +329,7 @@ class TimeSpent extends CommonObject
 		}
 
 		if (!$error) {
-			// copy external contacts if same company
+			// copy external contacts if same company  @phan-suppress-next-line PHanUndeclaredProperty
 			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
@@ -329,7 +373,7 @@ class TimeSpent extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return self[]|int<min,-1>			int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -640,9 +684,9 @@ class TimeSpent extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -787,9 +831,9 @@ class TimeSpent extends CommonObject
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -812,6 +856,7 @@ class TimeSpent extends CommonObject
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
@@ -951,16 +996,17 @@ class TimeSpent extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/timespent/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force CommonNumRefGenerator $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -988,7 +1034,7 @@ class TimeSpent extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>  $moreparams	Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

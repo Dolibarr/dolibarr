@@ -47,7 +47,7 @@ $commandestatic = new CommandeFournisseur($db);
 $facturestatic = new FactureFournisseur($db);
 $companystatic = new Societe($db);
 
-llxHeader("", $langs->trans("SuppliersArea"));
+llxHeader("", $langs->trans("SuppliersArea"), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-index');
 
 print load_fiche_titre($langs->trans("SuppliersArea"));
 

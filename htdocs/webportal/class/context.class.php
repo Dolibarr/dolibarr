@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
- * \file       htdocs/webportal/class/context.class.php
- * \ingroup    webportal
- * \brief      File of context class for WebPortal
- */
+/**
+* \file       htdocs/webportal/class/context.class.php
+* \ingroup    webportal
+* \brief      File of context class for WebPortal
+*/
 
 require_once __DIR__ . '/controller.class.php';
 require_once __DIR__ . '/webPortalTheme.class.php';
@@ -95,7 +96,7 @@ class Context
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors = array();
 
@@ -104,16 +105,36 @@ class Context
 	 */
 	public $action;
 
+	/**
+	 * @var string tpl directory
+	 */
 	public $tplDir;
+
+	/**
+	 * @var string tpl path
+	 */
 	public $tplPath;
+
+	/**
+	 * @var stdClass
+	 */
 	public $topMenu;
 
+	/**
+	 * @var string root url
+	 */
 	public $rootUrl;
 
 	public $menu_active = array();
 
+	/**
+	 * @var array{mesgs:string[],warnings:string[],errors:string[]}|array{} event messages
+	 */
 	public $eventMessages = array();
 
+	/**
+	 * @var string token key
+	 */
 	public $tokenKey = 'token';
 
 	/**
@@ -141,7 +162,6 @@ class Context
 	 * @var CommonObject Logged partnership
 	 */
 	public $logged_partnership = null;
-
 
 	/**
 	 * @var WebPortalTheme Theme data
@@ -209,7 +229,7 @@ class Context
 	 */
 	public function initController()
 	{
-		global $db, $conf, $langs;
+		global $db;
 
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
@@ -281,7 +301,7 @@ class Context
 	 *
 	 * @return  string  Web Portal root url
 	 */
-	static public function getRootConfigUrl()
+	public static function getRootConfigUrl()
 	{
 		global $conf;
 
@@ -351,7 +371,7 @@ class Context
 	 * @param	array			$Tparams				Parameters
 	 * @return	string
 	 */
-	static public function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())
+	public static function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())
 	{
 		$url = self::getRootConfigUrl();
 
@@ -364,7 +384,9 @@ class Context
 
 		// if $moreParams is an array
 		if (!empty($moreParams) && is_array($moreParams)) {
-			if (isset($moreParams['controller'])) unset($moreParams['controller']);
+			if (isset($moreParams['controller'])) {
+				unset($moreParams['controller']);
+			}
 			if (!empty($moreParams)) {
 				foreach ($moreParams as $paramKey => $paramVal) {
 					$Tparams[$paramKey] = $paramVal;
@@ -383,8 +405,12 @@ class Context
 		// if $moreParams is a string
 		if (!empty($moreParams) && !is_array($moreParams)) {
 			if (empty($Tparams)) {
-				if ($moreParams[0] !== '?') $url .= '?';
-				if ($moreParams[0] === '&') $moreParams = substr($moreParams, 1);
+				if ($moreParams[0] !== '?') {
+					$url .= '?';
+				}
+				if ($moreParams[0] === '&') {
+					$moreParams = substr($moreParams, 1);
+				}
 			}
 			$url .= $moreParams;
 		}
@@ -399,7 +425,7 @@ class Context
 	 * @param	bool	$use_forwarded_host		Use formatted host
 	 * @return 	string
 	 */
-	static public function urlOrigin($withRequestUri = true, $use_forwarded_host = false)
+	public static function urlOrigin($withRequestUri = true, $use_forwarded_host = false)
 	{
 		$s = $_SERVER;
 
@@ -448,15 +474,21 @@ class Context
 	/**
 	 * Set errors
 	 *
-	 * @param 	array	$errors		Errors
+	 * @param 	string|string[]	$errors		Errors
 	 * @return	void
 	 */
 	public function setError($errors)
 	{
-		if (!is_array($errors)) $errors = array($errors);
-		if (!isset($_SESSION['webportal_errors'])) $_SESSION['webportal_errors'] = array();
+		if (!is_array($errors)) {
+			$errors = array($errors);
+		}
+		if (!isset($_SESSION['webportal_errors'])) {
+			$_SESSION['webportal_errors'] = array();
+		}
 		foreach ($errors as $msg) {
-			if (!in_array($msg, $_SESSION['webportal_errors'])) $_SESSION['webportal_errors'][] = $msg;
+			if (!in_array($msg, $_SESSION['webportal_errors'])) {
+				$_SESSION['webportal_errors'][] = $msg;
+			}
 		}
 	}
 
@@ -522,9 +554,9 @@ class Context
 	 * Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
 	 * Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
-	 * @param	string		$mesg	Message string
-	 * @param	array|null	$mesgs	Message array
-	 * @param	string		$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @param	string			$mesg	Message string
+	 * @param	string[]|null	$mesgs	Message array
+	 * @param	string			$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
 	 * @return	void
 	 */
 	public function setEventMessages($mesg, $mesgs, $style = 'mesgs')
@@ -533,7 +565,7 @@ class Context
 			dol_syslog(__METHOD__ . ' Try to add a message in stack, but value to add is empty message', LOG_WARNING);
 		} else {
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
-				dol_print_error('', 'Bad parameter style=' . $style . ' for setEventMessages');
+				dol_print_error(null, 'Bad parameter style=' . $style . ' for setEventMessages');
 			}
 			if (empty($mesgs)) {
 				$this->setEventMessage($mesg, $style);
@@ -593,14 +625,14 @@ class Context
 	{
 		$currentToken = $this->newToken();
 		// Creation of a token against CSRF vulnerabilities
-		if (!defined('NOTOKENRENEWAL') || empty($currentToken) ) {
+		if (!defined('NOTOKENRENEWAL') || empty($currentToken)) {
 			// Rolling token at each call ($_SESSION['token'] contains token of previous page)
 			if (isset($_SESSION['newtoken'])) {
 				$_SESSION['token'] = $_SESSION['newtoken'];
 			}
 
 			// Save what will be next token. Into forms, we will add param $context->newToken();
-			$token = dol_hash(uniqid(mt_rand(), true)); // Generate
+			$token = dol_hash(uniqid((string) mt_rand(), true)); // Generate
 			$_SESSION['newtoken'] = $token;
 
 			return $token;

@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
- * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
+/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
+ * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
 
 if ($id > 0 || !empty($ref)) {
@@ -228,7 +228,7 @@ if ($action == 'setbankaccount' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'add' && empty($cancel)) {
+if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 	$error = 0;
 
 	if (empty($datev)) {
@@ -344,7 +344,7 @@ if ($action == 'add' && empty($cancel)) {
 	$action = 'create';
 }
 
-if ($action == 'confirm_delete') {
+if ($action == 'confirm_delete' && $permissiontodelete) {
 	$result = $object->fetch($id);
 	$totalpaid = $object->getSommePaiement();
 
@@ -389,7 +389,7 @@ if ($action == 'update' && !GETPOST("cancel") && $permissiontoadd) {
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') {
+if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 	$action = '';
 }
 
@@ -402,7 +402,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 
 	if ($object->id > 0) {
 		$object->paye = 0;
-		$object->id = $object->ref = null;
+		$object->id = 0;
+		$object->ref = '';
 
 		if (GETPOST('amount', 'alphanohtml')) {
 			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
@@ -496,8 +497,8 @@ if ($id > 0) {
 
 // Create
 if ($action == 'create' && $permissiontoadd) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+	$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
 		$pastmonth = 12;
@@ -560,7 +561,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print '</script>'."\n";
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -568,7 +569,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
-	print img_picto('', 'user', 'class="paddingrighonly"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -625,7 +626,7 @@ if ($action == 'create' && $permissiontoadd) {
 	if (isModEnabled("bank")) {
 		print '<tr><td id="label_fk_account">';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		print img_picto('', 'bank_account', 'class="paddingrighonly"');
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
@@ -1067,7 +1068,7 @@ if ($id > 0) {
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-		$resteapayer = $object->amount - $totalpaid;
+		$resteapayer = (float) $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -1114,28 +1115,30 @@ if ($id > 0) {
 		}
 
 		// Reopen
-		if ($object->paye && $permissiontoadd) {
+		if ($object->status == $object::STATUS_PAID && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Edit
-		if ($object->paye == 0 && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
 		}
 
 		// Classify 'paid'
 		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
-		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Transfer request
-		print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id, '');
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT . '/salaries/virement_request.php?id=' . $object->id, '');
+		}
 
 		// Clone
 		if ($permissiontoadd) {
@@ -1177,7 +1180,11 @@ if ($id > 0) {
 
 		// Show links to link elements
 		/*
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('salaries'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('salaries'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 		*/
 
@@ -1195,7 +1202,7 @@ if ($id > 0) {
 		print '</div></div>';
 	}
 
-	//Select mail models is same action as presend
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}

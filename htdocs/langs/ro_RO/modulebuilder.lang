@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Permisiunea a fost adăugată cu succes
 MenuDeletedSuccessfuly=Meniul a fost șters cu succes
 MenuAddedSuccessfuly=Meniul a fost adăugat cu succes
 MenuUpdatedSuccessfuly=Meniul a fost actualizat cu succes
+AddAPIsForThisObject=Adăugare API-uri pentru acest obiect
 ApiObjectDeleted=API pentru obiectul %s a fost șters cu succes
 CRUDRead=Citire
 CRUDCreateWrite=Creare sau actualizare

@@ -32,6 +32,7 @@ PRINTIPP_HOST=Druckserver
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Anmeldung (Login)
 PRINTIPP_PASSWORD=Passwort
+PRINTIPP_SSL=SSL verwenden
 NoDefaultPrinterDefined=kein Standarddrucker definiert
 DefaultPrinter=Standard-Drucker
 Printer=Drucker
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Konfigurationsvariablen für Google Cloud Print
 PrintingDriverDescprintipp=Konfigurationsvariablen für das CUPS Drucksystem.
 PrintTestDescprintgcp=Druckerliste für Google-Coud Druck
 PrintTestDescprintipp=Liste der Drucker für CUPS
+Testbbbb

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +38,23 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  */
 class PartnershipUtils
 {
+	/**
+	 * @var DoliDB
+	 */
 	public $db; //!< To store db handler
+	/**
+	 * @var string
+	 */
 	public $error; //!< To return error code (or message)
+	/**
+	 * @var string[]
+	 */
 	public $errors = array(); //!< To return several error codes (or messages)
 
-	public $output;	// To store output of some cron methods
+	/**
+	 * @var string To store output of some cron methods
+	 */
+	public $output;
 
 
 	/**
@@ -91,7 +104,7 @@ class PartnershipUtils
 		dol_syslog(get_class($this)."::doCancelStatusOfMemberPartnership cancel expired partnerships with grace delay of ".$gracedelay);
 
 		$now = dol_now();
-		$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
+		$datetotest = dol_time_plus_duree($now, -1 * abs((float) $gracedelay), 'd');
 
 		$this->db->begin();
 
@@ -106,6 +119,7 @@ class PartnershipUtils
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
+		$numofexpiredmembers = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numofexpiredmembers = $this->db->num_rows($resql);
@@ -210,7 +224,7 @@ class PartnershipUtils
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-									; // Short text ($langs->transnoentities('MailSentBy')...);
+									; // Short text ($langs->transnoentities('MailSentByTo')...);
 									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
@@ -325,6 +339,7 @@ class PartnershipUtils
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
+		$numofexpiredmembers = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numofexpiredmembers = $this->db->num_rows($resql);
@@ -366,8 +381,8 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
-						$nbmaxbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', $nbminbacklinkerrorforcancel + 2);
+						$nbminbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
+						$nbmaxbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', (int) $nbminbacklinkerrorforcancel + 2);
 
 						// If $nbminbacklinkerrorforemail = 0, no autoemail
 						if ($nbminbacklinkerrorforcancel > 0) {
@@ -433,7 +448,7 @@ class PartnershipUtils
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-											; // Short text ($langs->transnoentities('MailSentBy')...);
+											; // Short text ($langs->transnoentities('MailSentByTo')...);
 											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}
@@ -540,9 +555,10 @@ class PartnershipUtils
 
 			for ($i = 0; $i < $hrefs->length; $i++) {
 				$href = $hrefs->item($i);
+				'@phan-var-force DOMElement $href';
 				$url = $href->getAttribute('href');
 				$url = filter_var($url, FILTER_SANITIZE_URL);
-				if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
+				if (!(!filter_var($url, FILTER_VALIDATE_URL))) {
 					$webcontent .= $url;
 				}
 			}

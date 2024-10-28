@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Účet (z Účtovnej osnovy) pre platbu DPH n
 MainAccountForSubscriptionPaymentNotDefined=Účet (z Účtovnej osnovy) pre platbu členstva nie je definovaný v nastavení
 MainAccountForRetainedWarrantyNotDefined=Účet (z účtovnej osnovy) pre ponechanú záruku, ktorá nie je definovaná v nastavení
 UserAccountNotDefined=Účtovný účet pre používateľa nie je definovaný v nastavení
-
 AccountancyArea=Účtovná oblasť
 AccountancyAreaDescIntro=Použitie účtovného modulu sa vykonáva v niekoľkých krokoch:
 AccountancyAreaDescActionOnce=Nasledujúce akcie sa zvyčajne vykonávajú iba raz alebo raz za rok ...
 AccountancyAreaDescActionOnceBis=Ďalšie kroky by ste mali urobiť, aby ste v budúcnosti ušetrili čas tým, že vám pri prenose údajov v účtovníctve automaticky navrhneme správny predvolený účtovný účet
 AccountancyAreaDescActionFreq=Nasledujúce akcie sa zvyčajne vykonávajú každý mesiac, týždeň alebo deň pre veľmi veľké spoločnosti ...
-
 AccountancyAreaDescJournalSetup=KROK %s: Skontrolujte obsah svojho zoznamu časopisov z ponuky %s
 AccountancyAreaDescChartModel=KROK %s: Skontrolujte, či existuje model účtovnej osnovy, alebo si ho vytvorte z ponuky %s
 AccountancyAreaDescChart=KROK %s: Vyberte a|alebo doplňte svoj účtovný rozvrh z ponuky %s
-
-AccountancyAreaDescFiscalPeriod=KROK %s: Predvolene definujte fiškálny rok, do ktorého chcete integrovať svoje účtovné položky. Na tento účel použite položku ponuky %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=KROK %s: Definujte účty účtov pre každú sadzbu DPH. Na to použite položku ponuky %s.
 AccountancyAreaDescDefault=KROK %s: Definujte predvolené účtovné účty. Na tento účel použite položku ponuky %s.
 AccountancyAreaDescExpenseReport=KROK %s: Definujte predvolené účtovné účty pre každý typ prehľadu výdavkov. Na tento účel použite položku ponuky %s.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=KROK %s: Definujte povinné predvolené účty a predvol
 AccountancyAreaDescLoan=KROK %s: Definujte predvolené účtovné účty pre pôžičky. Na tento účel použite položku ponuky %s.
 AccountancyAreaDescBank=KROK %s: Definujte účtovné účty a kód denníka pre každý bankový a finančný účet. Na tento účel použite položku ponuky %s.
 AccountancyAreaDescProd=KROK %s: Definujte účtovné účty pre svoje produkty/služby. Na tento účel použite položku ponuky %s.
-
 AccountancyAreaDescBind=KROK %s: Skontrolujte prepojenie medzi existujúcimi %s riadkami a účtovným účtom, takže aplikácia bude môcť žurnalizovať transakcie v Ledger jedným kliknutím. Doplňte chýbajúce väzby. Na tento účel použite položku ponuky %s.
 AccountancyAreaDescWriteRecords=KROK %s: Zapíšte transakcie do účtovnej knihy. Na tento účel prejdite do ponuky <strong>%s</strong> a kliknite na tlačidlo <strong>%s</strong>.
 AccountancyAreaDescAnalyze=KROK %s: Prečítajte si prehľady alebo vytvorte exportné súbory pre iných účtovníkov.
 AccountancyAreaDescClosePeriod=KROK %s: Uzavrieť obdobie, aby sme už v budúcnosti nemohli prenášať údaje v rovnakom období.
-
 TheFiscalPeriodIsNotDefined=Povinný krok nastavenia nebol dokončený (Fiškálne obdobie nie je definované)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Nevykonal sa povinný krok nastavenia (denník účtovných kódov nie je definovaný pre všetky bankové účty)
 Selectchartofaccounts=Vyberte aktívnu účtovnú schému
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Údaje použité na návrh účtu
 AccountAccountingSuggest=Navrhnutý účet
 MenuDefaultAccounts=Predvolené účty
 MenuBankAccounts=Bankové účty
-MenuVatAccounts=Účty DPH
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Daňové účty
 MenuExpenseReportAccounts=Účty prehľadu výdavkov
 MenuLoanAccounts=Úverové účty
@@ -144,8 +139,6 @@ ExpenseReportLines=Riadky výkazov výdavkov na viazanie
 ExpenseReportLinesDone=Zviazané riadky výkazov o výdavkoch
 IntoAccount=Priradiť riadok k účnovnému účtu
 TotalForAccount=Celkový účtovný účet
-
-
 Ventilate=Priradiť
 LineId=Id line
 Processing=spracovanie
@@ -158,22 +151,21 @@ VentilatedinAccount=Úspešne priradené k účtovnému účtu
 NotVentilatedinAccount=Nie je viazaný na účet
 XLineSuccessfullyBinded=%s produkty/služby úspešne naviazané na účtovný účet
 XLineFailedToBeBinded=%s produkty / služby neboli viazané na žiadny účtovný účet
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maximálny počet riadkov na stránke zoznamu a väzby (odporúčané: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Začnite triediť stránku "Väzba urobiť" najnovšími prvkami
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začnite triediť stránku "Väzba vykonaná" najnovšími prvkami
-
 ACCOUNTING_LENGTH_DESCRIPTION=Zrušte popis produktu a služieb v zoznamoch po znakoch x (Najlepší = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Zrušte opis formulára účtu produktov a služieb v zoznamoch po znakoch x (Najlepší = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Dĺžka všeobecných účtovných účtov (ak nastavíte hodnotu 6 tu, na obrazovke sa zobrazí účet '706' ako '706000')
 ACCOUNTING_LENGTH_AACCOUNT=Dĺžka účtovných účtov tretích strán (Ak tu nastavíte hodnotu na 6, účet „401“ sa na obrazovke zobrazí ako „401000“).
 ACCOUNTING_MANAGE_ZERO=Umožňuje spravovať rôzny počet núl na konci účtovného účtu. Potrebujú ho niektoré krajiny (napríklad Švajčiarsko). Ak je nastavené na vypnuté (predvolené), môžete nastaviť nasledujúce dva parametre a požiadať aplikáciu o pridanie virtuálnych núl.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Zakázať priame zaznamenávanie transakcie na bankový účet
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Povoliť export konceptu v denníku
 ACCOUNTANCY_COMBO_FOR_AUX=Povoliť kombinovaný zoznam pre dcérsky účet (môže to byť pomalé, ak máte veľa tretích strán, prerušte možnosť vyhľadávania časti hodnoty)
 ACCOUNTING_DATE_START_BINDING=Zakázať viazanie a prevod v účtovníctve, keď je dátum pod týmto dátumom (transakcie pred týmto dátumom budú štandardne vylúčené)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na stránke na prenos údajov do účtovníctva aké obdobie je predvolene zvolené
-
 ACCOUNTING_SELL_JOURNAL=Predajný denník - tržby a výnosy
 ACCOUNTING_PURCHASE_JOURNAL=Nákupný denník - nákup a vrátenie
 ACCOUNTING_BANK_JOURNAL=Peňažný denník - príjem a výdaj
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Všeobecný denník
 ACCOUNTING_HAS_NEW_JOURNAL=Má nový denník
 ACCOUNTING_INVENTORY_JOURNAL=Inventarizačný denník
 ACCOUNTING_SOCIAL_JOURNAL=Sociálny časopis
-
 ACCOUNTING_RESULT_PROFIT=Výsledok účtovného účtu (zisk)
 ACCOUNTING_RESULT_LOSS=Výsledok účtovného účtu (Strata)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Denník uzavretia
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Účtovné skupiny používané na súvahovom účte (oddelené čiarkou)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Účtovné skupiny použité pre výkaz ziskov a strát (oddelené čiarkou)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účet (z účtovnej osnovy), ktorý sa má používať ako účet pre prechodné bankové prevody
 TransitionalAccount=Prechodný účet na bankový prevod
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Účet (z účtovnej osnovy), ktorý sa má použiť ako účet pre nepridelené finančné prostriedky buď prijaté alebo zaplatené, t. j. finančné prostriedky „na čakanie“
 DONATION_ACCOUNTINGACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť na registráciu darov (modul darcovstva)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť na registráciu predplatného členstva (modul Členstvo - ak je členstvo zaznamenané bez faktúry)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet na registráciu vkladu zákazníka
 UseAuxiliaryAccountOnCustomerDeposit=Uložiť zákaznícky účet ako individuálny účet v vedľajšej knihe pre riadky záloh (ak je deaktivovaný, individuálny účet pre riadky zálohových platieb zostane prázdny)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený
 UseAuxiliaryAccountOnSupplierDeposit=Uložiť účet dodávateľa ako individuálny účet v vedľajšej účtovnej knihe pre riadky záloh (ak je deaktivovaný, individuálny účet pre riadky zálohových platieb zostane prázdny)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Účtovný účet v predvolenom nastavení na registráciu záruky zákazníka
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre produkty zakúpené v tej istej krajine (používa sa, ak nie je definovaný v produktovom liste)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre produkty zakúpené z EHS do inej krajiny EHS (používa sa, ak nie je definovaný v produktovom liste)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre produkty zakúpené a dovezené z akejkoľvek inej cudzej krajiny (používa sa, ak nie je definované v produktovom liste)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre predávané produkty (používa sa, ak nie je definovaný v produktovom liste)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre produkty predávané z EHS do inej krajiny EHS (používa sa, ak nie je definovaný v produktovom liste)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre produkty predávané a vyvážané do akejkoľvek inej cudziny (používa sa, ak nie je definované v produktovom liste)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre služby zakúpené v tej istej krajine (používa sa, ak nie je definovaný v servisnom liste)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre služby zakúpené z EHS do inej krajiny EHS (používa sa, ak nie je definovaný v servisnom liste)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre služby zakúpené a importované z inej krajiny (používa sa, ak nie je definované v servisnom liste)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre predávané služby (používa sa, ak nie je definovaný v servisnom liste)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre služby predávané z EHS do inej krajiny EHS (používa sa, ak nie je definovaný v servisnom liste)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre služby predávané a exportované do akejkoľvek inej krajiny (používa sa, ak nie je definované v servisnom liste)
-
 Doctype=Druh dokumentu
 Docdate=dátum
 Docref=referencie
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=Tu môžete definovať niektoré skupiny účtovnýc
 ByAccounts=Podľa účtov
 ByPredefinedAccountGroups=Podľa vopred definovaných skupín
 ByPersonalizedAccountGroups=Podľa personalizovaných skupín
-ByYear=Do roku
 NotMatch=Nenastavené
 DeleteMvt=Vymažte niektoré riadky z účtovníctva
 DelMonth=Mesiac na odstránenie
@@ -276,16 +260,12 @@ OpeningBalance=Počiatočný zostatok
 ShowOpeningBalance=Zobraziť počiatočný zostatok
 HideOpeningBalance=Skryť počiatočný zostatok
 ShowSubtotalByGroup=Zobraziť medzisúčet podľa úrovne
-
 Pcgtype=Skupina účtov
 PcgtypeDesc=Skupina účtov sa používa ako preddefinované kritériá „filtra“ a „zoskupenia“ pre niektoré účtovné zostavy. Napríklad „PRÍJMY“ alebo „NÁKLADY“ sa používajú ako skupiny pre účtovné účty produktov na zostavenie správy o výdavkoch/príjmoch.
 AccountingCategoriesDesc=Vlastnú skupinu účtov možno použiť na zoskupenie účtovných účtov do jedného názvu, aby sa uľahčilo používanie filtra alebo vytváranie vlastných zostáv.
-
 Reconcilable=Zlučiteľné
-
 TotalVente=Celkový obrat pred zdanením
 TotalMarge=Celkové predajné rozpätie
-
 DescVentilCustomer=Tu nájdete zoznam riadkov odberateľských faktúr viazaných (alebo nie) na produktový účet z účtovej osnovy
 DescVentilMore=Vo väčšine prípadov, ak používate preddefinované produkty alebo služby a nastavíte účet (z účtového rozvrhu) na karte výrobku/služby, aplikácia dokáže urobiť všetky väzby medzi vašimi riadkami faktúry a účtovným účtom vášho grafu. účtov, jediným kliknutím pomocou tlačidla <strong>"%s"</strong> >. Ak účet nebol nastavený na produktových/servisných kartách alebo ak máte stále nejaké riadky, ktoré nie sú viazané na účet, budete musieť vykonať ručnú väzbu z ponuky "<strong>%s</strong>“.
 DescVentilDoneCustomer=Prezrite si tu zoznam riadkov odberateľov faktúr a ich produktový účet z účtovej osnovy
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=Spojte riadky výkazu výdavkov, ktoré ešte nie s�
 DescVentilExpenseReport=Pozrite si tu zoznam riadkov výkazu výdavkov viazaných (alebo nie) na účet účtovania poplatkov
 DescVentilExpenseReportMore=Ak nastavíte účtovný účet na typ riadkov výkazu výdavkov, aplikácia bude môcť vytvoriť všetky väzby medzi riadkami výkazu výdavkov a účtovným účtom vašej účtovej osnovy jediným kliknutím pomocou tlačidla <strong>"%s"</strong>. Ak účet nebol nastavený na slovník poplatkov alebo ak máte stále nejaké riadky, ktoré nie sú viazané na žiadny účet, budete musieť vykonať ručnú väzbu z ponuky "<strong>%s</strong>“.
 DescVentilDoneExpenseReport=Tu nájdete zoznam riadkov výkazov výdavkov a ich účtovný účet poplatkov
-
 Closure=Ročná uzávierka
 AccountancyClosureStep1Desc=Tu si pozrite počet pohybov podľa mesiacov, ktoré ešte neboli overené a uzamknuté
 OverviewOfMovementsNotValidated=Prehľad pohybov neoverených a uzamknutých
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=Všetky pohyby boli zaznamenané ako overen�
 NotAllMovementsCouldBeRecordedAsValidated=Nie všetky pohyby bolo možné zaznamenať ako overené a uzamknuté
 ValidateMovements=Potvrďte a uzamknite pohyby
 DescValidateMovements=Akékoľvek úpravy alebo odstraňovanie písania, písmen a mazanie budú zakázané. Všetky prihlášky do cvičenia musia byť potvrdené, inak nebude možné uzávierku
-
 ValidateHistory=Priradzovať automaticky
 AutomaticBindingDone=Automatická väzba bola vykonaná (%s) – Automatická väzba nie je možná pre niektorý záznam (%s)
 DoManualBindingForFailedRecord=Pre riadky %s, ktoré nie sú prepojené automaticky, musíte vytvoriť manuálne prepojenie.
-
 ErrorAccountancyCodeIsAlreadyUse=Chyba, tento účet účtovnej osnovy nemôžete odstrániť ani zakázať, pretože sa používa
 MvtNotCorrectlyBalanced=Pohyb nie je správne vyvážený. Debet = %s a kredit = %s
 Balancing=Vyvažovanie
@@ -323,12 +300,12 @@ ChangeBinding=Zmeňte väzbu
 Accounted=Zaúčtované v účtovnej knihe
 NotYetAccounted=Zatiaľ neprevedené do účtovníctva
 ShowTutorial=Zobraziť návod
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Nezlúčené
 WarningRecordWithoutSubledgerAreExcluded=Upozornenie, všetky riadky bez definovaného účtu vedľajšej knihy sú filtrované a vylúčené z tohto zobrazenia
 AccountRemovedFromCurrentChartOfAccount=Účtovný účet, ktorý v aktuálnej účtovej osnove neexistuje
-
 ## Admin
-BindingOptions=Možnosti viazania
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Použiť hromadne kategórie
 AddAccountFromBookKeepingWithNoCategories=Dostupný účet ešte nie je v prispôsobenej skupine
 CategoryDeleted=Kategória pre účtovný účet bola odstránená
@@ -361,7 +338,6 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Niektoré účtovné programy akceptujú iba
 OptionsAdvanced=Pokročilé nastavenia
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivujte si správu prenesenia daňovej povinnosti pri nákupoch dodávateľov
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Keď je táto možnosť zapnutá, môžete definovať, že faktúra dodávateľa alebo daného dodávateľa sa musí preniesť do účtovníctva inak: Do účtovníctva na 2 daných účtoch sa vygeneruje dodatočný debetný a kreditný rámec z účtovej osnovy definovanej v "%s“.
-
 ## Export
 NotExportLettering=Pri generovaní súboru neexportujte písmo
 NotifiedExportDate=Označiť ešte neexportované riadky ako exportované <span class="warning">(ak chcete upraviť riadok označený ako exportovaný, budete musieť vymazať celú transakciu a znova ju preniesť do účtovníctva)<span class=' nottranslate'></span></span>
@@ -371,7 +347,7 @@ DateValidationAndLock=Overenie dátumu a uzamknutie
 ConfirmExportFile=Potvrdenie o vygenerovaní exportného súboru účtovníctva?
 ExportDraftJournal=Exportovať návrh denníka
 Modelcsv=Vzor exportu
-Selectmodelcsv=Vyberte model exportu
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Klasický export
 Modelcsv_CEGID=Export pre CEGID Expert Comptabilité
 Modelcsv_COALA=Export pre Sage Coala
@@ -393,7 +369,6 @@ Modelcsv_Gestinumv3=Export pre Gestinum (v3)
 Modelcsv_Gestinumv5=Export pre Gestinum (v5)
 Modelcsv_charlemagne=Export pre Aplima Charlemagne
 ChartofaccountsId=Účtovná osnova Id
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Načítať účtovníctvo
 InitAccountancyDesc=Túto stránku možno použiť na inicializáciu účtovného účtu pre produkty a služby, ktoré nemajú definovaný účtovný účet pre predaj a nákup.
@@ -426,14 +401,15 @@ SaleEECWithVAT=Predaj v EHS s DPH nie je nulová, takže predpokladáme, že tot
 SaleEECWithoutVATNumber=Predaj v EHS bez DPH, ale IČ DPH tretej strany nie je definované. Vraciame sa k účtu pre štandardný predaj. Môžete opraviť IČ DPH tretej strany alebo v prípade potreby zmeniť produktový účet navrhnutý na viazanie.
 ForbiddenTransactionAlreadyExported=Zakázané: Transakcia bola overená a/alebo exportovaná.
 ForbiddenTransactionAlreadyValidated=Zakázané: Transakcia bola overená.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Rozsah účtovného účtu
 Calculated=Vypočítané
 Formula=Vzorec
-
 ## Reconcile
 LetteringAuto=Zladiť auto
 LetteringManual=Príručka zosúladenia
+LetteringPartial=Reconcile partial
 Unlettering=Nezmieriť sa
 UnletteringAuto=Nezladiť auto
 UnletteringManual=Odsúhlasiť manuál
@@ -443,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s zosúladenie úspešne upravené
 AccountancyNoUnletteringModified=Nebolo upravené žiadne odsúhlasenie
 AccountancyOneUnletteringModifiedSuccessfully=Jedno neodsúhlasenie úspešne upravené
 AccountancyUnletteringModifiedSuccessfully=%s odsúhlasenie úspešne upravené
-
 ## Closure
 AccountancyClosureStep1=Krok 1: Overte a uzamknite pohyby
 AccountancyClosureStep2=Krok 2: Zatvorte fiškálne obdobie
@@ -455,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Vygenerujte položky „Nero
 AccountancyClosureSeparateAuxiliaryAccounts=Pri generovaní záznamov "Nerozdelený zisk" podrobne opíšte účty vedľajšej knihy
 AccountancyClosureCloseSuccessfully=Fiškálne obdobie bolo úspešne uzavreté
 AccountancyClosureInsertAccountingReversalSuccessfully=Účtovné záznamy pre "Nerozdelený zisk" boli úspešne vložené
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Potvrdenie hromadného automatického nesúladu
 ConfirmMassUnletteringManual=Hromadné potvrdenie manuálneho odsúhlasenia
@@ -464,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Potvrdenie hromadného vymazania
 ConfirmMassDeleteBookkeepingWritingQuestion=Tým sa transakcia vymaže z účtovníctva (vymažú sa všetky riadkové položky týkajúce sa tej istej transakcie). Naozaj chcete odstrániť vybraté položky %s?
 AccountancyClosureConfirmClose=Naozaj chcete uzavrieť aktuálne fiškálne obdobie? <span class="warning">Uvedomujete si, že uzavretie fiškálneho obdobia je nevratná akcia a natrvalo zablokuje akúkoľvek úpravu alebo vymazanie záznamov počas tohto obdobia</span> .
 AccountancyClosureConfirmAccountingReversal=Naozaj chcete zaznamenávať položky „Nerozdelený zisk“?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Niektoré povinné kroky nastavenia neboli vykonané, dokončite ich
 ErrorNoAccountingCategoryForThisCountry=Pre krajinu %s nie je k dispozícii žiadna účtovná skupina účtov (pozri %s - %s - %s)
@@ -482,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=Zostatok (%s) sa nerovná 0
 AccountancyErrorLetteringBookkeeping=V súvislosti s transakciami sa vyskytli chyby: %s
 ErrorAccountNumberAlreadyExists=Účtovné číslo %s už existuje
 ErrorArchiveAddFile=Nie je možné vložiť súbor „%s“ do archívu
-ErrorNoFiscalPeriodActiveFound=Nenašlo sa žiadne aktívne fiškálne obdobie
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Dátum účtovného dokumentu nie je v aktívnom účtovnom období
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Dátum účtovného dokumentu je v uzavretom účtovnom období
-
 ## Import
 ImportAccountingEntries=Účtovné zápisy
 ImportAccountingEntriesFECFormat=Účtovné zápisy - formát FEC
@@ -507,11 +479,9 @@ FECFormatReconcilableDate=Zosúladiteľný dátum (DateLet)
 FECFormatValidateDate=Overený dátum kusu (ValidDate)
 FECFormatMulticurrencyAmount=Suma vo viacerých menách (Montantdevise)
 FECFormatMulticurrencyCode=Kód viacerých mien (Idevise)
-
 DateExport=Export dátumu
 WarningReportNotReliable=Upozornenie, táto zostava nie je založená na účtovnej knihe, takže neobsahuje transakcie upravené manuálne v účtovnej knihe. Ak je vaša žurnalizácia aktuálna, zobrazenie účtovníctva je presnejšie.
 ExpenseReportJournal=Výdavkový denník
 DocsAlreadyExportedAreIncluded=Zahrnuté sú už exportované dokumenty
 ClickToShowAlreadyExportedLines=Kliknutím zobrazíte už exportované riadky
-
 NAccounts=%s účty

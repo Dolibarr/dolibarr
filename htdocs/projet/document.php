@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ $mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
@@ -57,7 +58,7 @@ if ($id > 0 || !empty($ref)) {
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -99,13 +100,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans('Documents').' - '.$object->ref.' '.$object->name;
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans('Document');
 }
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_document');
 
 $form = new Form($db);
 
@@ -133,7 +134,7 @@ if ($object->id > 0) {
 
 	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 		$tmpurl = $_SESSION['pageforbacktolist']['project'];
-		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	} else {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';

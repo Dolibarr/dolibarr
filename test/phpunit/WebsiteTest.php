@@ -136,13 +136,15 @@ class WebsiteTest extends CommonClassTest
 		// Force permission so this is not the permission that will affect result of checkPHPCode
 		$user->rights->website->writephp = 1;
 
+		$t = '';
 		$s = '<?php exec("eee"); ?>';
-		$result = checkPHPCode('', $s);
+		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 
+		$t = '';
 		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
-		$result = checkPHPCode('', $s);
+		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 	}
@@ -168,5 +170,24 @@ class WebsiteTest extends CommonClassTest
 		$result = dolKeepOnlyPhpCode($s);
 		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
 		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+	}
+
+	/**
+	 * testGetImageFromHtmlContent
+	 *
+	 * @return void
+	 */
+	public function testGetImageFromHtmlContent()
+	{
+		// Example of usage
+		$htmlContent = '<p>Some text before.</p><img src="image1.jpg"><p>Some text in between.</p><img src="/mydir/image2.jpg"><p>Some text after.</p>';
+
+		$firstImage = getImageFromHtmlContent($htmlContent, 1);
+		print __METHOD__." result firstImage=".$firstImage."\n";
+		$this->assertEquals('image1.jpg', $firstImage, ' failed to get firstimage');
+
+		$secondImage = getImageFromHtmlContent($htmlContent, 2);
+		print __METHOD__." result secondImage=".$secondImage."\n";
+		$this->assertEquals('/mydir/image2.jpg', $secondImage, ' failed to get second image');
 	}
 }

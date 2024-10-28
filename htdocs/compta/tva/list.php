@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2019	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,15 +58,15 @@ $search_dateend_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateend_startmont
 $search_dateend_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateend_endmonth'), GETPOSTINT('search_dateend_endday'), GETPOSTINT('search_dateend_endyear'));
 $search_datepayment_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datepayment_startmonth'), GETPOSTINT('search_datepayment_startday'), GETPOSTINT('search_datepayment_startyear'));
 $search_datepayment_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datepayment_endmonth'), GETPOSTINT('search_datepayment_endday'), GETPOSTINT('search_datepayment_endyear'));
-$search_type = GETPOSTINT('search_type');
-$search_account				= GETPOSTINT('search_account');
-$search_amount 				= GETPOST('search_amount', 'alpha');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_account	= GETPOST('search_account', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield					= GETPOST('sortfield', 'aZ09comma');
 $sortorder					= GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT('page');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -87,7 +88,8 @@ $arrayfields = array(
 	't.datev'			=> array('checked' => 1, 'position' => 30, 'label' => "PeriodEndDate"),
 	't.fk_typepayment'	=> array('checked' => 1, 'position' => 50, 'label' => "DefaultPaymentMode"),
 	't.amount'			=> array('checked' => 1, 'position' => 90, 'label' => "Amount"),
-	't.status'			=> array('checked' => 1, 'position' => 90, 'label' => "Status"),
+	't.datec'			=> array('checked' => 1, 'position' => 91, 'label' => "DateCreation"),
+	't.status'			=> array('checked' => 1, 'position' => 92, 'label' => "Status"),
 );
 
 if (isModEnabled("bank")) {
@@ -95,8 +97,9 @@ if (isModEnabled("bank")) {
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salestaxeslist'));
 $object = new Tva($db);
 
@@ -170,7 +173,7 @@ $help_url = '';
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye as status, t.fk_typepayment as type, t.fk_account,';
+$sql = 'SELECT t.rowid, t.amount, t.label, t.datec, t.datev, t.paye as status, t.fk_typepayment as type, t.fk_account,';
 $sql .= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
 $sql .= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
@@ -214,7 +217,8 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND t.paye = ".((int) $search_status);
 }
 
-$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
+$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datec, t.datev, t.paye, t.fk_typepayment, t.fk_account,";
+$sql .= " ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -255,7 +259,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -393,14 +397,12 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -482,6 +484,13 @@ if (!empty($arrayfields['t.amount']['checked'])) {
 	print '</td>';
 }
 
+// Filter: Date creation
+if (!empty($arrayfields['t.datec']['checked'])) {
+	print '<td class="liste_titre right">';
+	//print '<input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'">';
+	print '</td>';
+}
+
 // Status
 if (!empty($arrayfields['t.status']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
@@ -523,15 +532,16 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.rowid']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER['PHP_SELF'], 't.rowid', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.label']['checked'])) {
-	print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER['PHP_SELF'], 't.label', '', $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER['PHP_SELF'], 't.label', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.datev']['checked'])) {
-	print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
@@ -544,6 +554,10 @@ if (!empty($arrayfields['t.fk_account']['checked'])) {
 }
 if (!empty($arrayfields['t.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER['PHP_SELF'], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.datec']['checked'])) {
+	print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER['PHP_SELF'], 't.datec', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.status']['checked'])) {
@@ -582,6 +596,7 @@ while ($i < $imaxinloop) {
 	$tva_static->label = $obj->label;
 	$tva_static->type_payment = $obj->payment_code;
 	$tva_static->datev = $obj->datev;
+	$tva_static->date_creation = $obj->datec;
 	$tva_static->amount = $obj->amount;
 	$tva_static->paye = $obj->status;
 	$tva_static->status = $obj->status;
@@ -723,8 +738,18 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		if (!empty($arrayfields['t.datec']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		if (!empty($arrayfields['t.status']['checked'])) {
-			print '<td class="nowrap right">' . $tva_static->getLibStatut(5, $obj->alreadypayed) . '</td>';
+			$totalallpayments = $obj->alreadypayed;
+			// TODO Add deposit and credit notes
+
+			print '<td class="nowrap right">' . $tva_static->getLibStatut(5, $totalallpayments) . '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

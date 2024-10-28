@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Политика конфиденциальности данных
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = модуль для управления конфиденциальностью данных (соответствие GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = модуль Политика конфиденциальности данных настройка
 Deletion = Удаление данных
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = перспектива/клиент
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ни перспектива/Нор клиент
 DATAPOLICY_CONTACT_FOURNISSEUR = Поставщик
 DATAPOLICY_ADHERENT = Участник
-DATAPOLICY_Tooltip_SETUP = Тип контакта. Укажите варианты для каждого типа.
-DATAPOLICYMail = Электронная почта настройка
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Содержание электронного письма
-DATAPOLICYSUBSITUTION = Вы можете использовать переменные следующий в своей электронной почте (LINKACCEPT позволяет создать a ссылкафиксируя согласие человека, LINKREFUSED дает возможность зафиксировать отказ человека):
-DATAPOLICYACCEPT = Сообщение после соглашения
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Вы можете отправить электронное письмо о GDPR всем своим контактам (которые еще не получили электронное письмо и, для которого вы не зарегистрировали ничего об их соглашении GDPR). Для этого используйте кнопку следующий.
 SendAgreement = Отправить письма
 AllAgreementSend = Все письма отправлены
 TXTLINKDATAPOLICYACCEPT = Текст ссылка «соглашения»
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: обработка Личныйданных
 DATAPOLICY_consentement = Получено согласие на обработку Личныйданных.
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Анонимизировать третье лицо
-DATAPOLICY_POPUP_ANONYME_TEXTE = Вы не можете удалить этот контакт из Dolibarr, поскольку там есть элементы Связанный. В соответствии с GDPR вы сделаете все эти данные анонимными для соблюдения своих обязательств. Желаете ли вы продолжить ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Портативность GDPR
-DATAPOLICY_PORTABILITE_TITLE = Экспорт данных Личный
-DATAPOLICY_PORTABILITE_CONFIRMATION = Вы хотите экспортировать Личныйданные этого контакта. Вы уверены ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Анонимизирован %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Отправить письмо по GDPR
 MailSent = Письмо было отправлено
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

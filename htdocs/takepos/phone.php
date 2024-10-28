@@ -99,7 +99,7 @@ if (empty($mobilepage) && (empty($action) || ((getDolGlobalString('TAKEPOS_PHONE
 }
 
 
-if ($action == "productinfo") {
+if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 	$prod = new Product($db);
 	$prod->fetch($idproduct);
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.')">'.$langs->trans('Add').'</button>';
@@ -108,19 +108,19 @@ if ($action == "productinfo") {
 	print "<br>".$prod->description;
 	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 	print '<br>';
-} elseif ($action == "publicpreorder") {
+} elseif ($action == "publicpreorder" && $user->hasRight('takepos', 'run')) {
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="TakeposPrintingOrder();">'.$langs->trans('Confirm').'</button>';
 	print "<br><br>";
 	print '<div class="comment">
             <textarea class="textinput " placeholder="'.$langs->trans('Note').'"></textarea>
 			</div>';
 	print '<br>';
-} elseif ($action == "publicpayment") {
+} elseif ($action == "publicpayment" && $user->hasRight('takepos', 'run')) {
 	$langs->loadLangs(array("orders"));
 	print '<h1>'.$langs->trans('Ordered').'</h1>';
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('Payment').'</button>';
 	print '<br>';
-} elseif ($action == "checkplease") {
+} elseif ($action == "checkplease" && $user->hasRight('takepos', 'run')) {
 	if (GETPOSTISSET("payment")) {
 		print '<h1>'.$langs->trans('Ordered').'</h1>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
@@ -149,7 +149,7 @@ if ($action == "productinfo") {
 		print '<button type="button" class="publicphonebutton2 phoneblue total marginbottomonly" onclick="CheckPlease(\'CreditCard\')">'.$langs->trans('CreditCard').'</button>';
 		print '<br>';
 	}
-} elseif ($action == "editline") {
+} elseif ($action == "editline" && $user->hasRight('takepos', 'run')) {
 	$placeid = GETPOSTINT('placeid');
 	$selectedline = GETPOSTINT('selectedline');
 	$invoice = new Facture($db);
@@ -205,7 +205,7 @@ if ($action == "productinfo") {
 	$levelofrootcategory = 0;
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		foreach ($categories as $key => $categorycursor) {
-			if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
+			if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 				$levelofrootcategory = $categorycursor['level'];
 				break;
 			}

@@ -29,8 +29,6 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for Position
@@ -51,17 +49,6 @@ class Position extends CommonObject
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'hrm_job_user';
-
-	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for position. Must be the part after the 'object_' into object_position.png
@@ -102,38 +89,76 @@ class Position extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		//'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 500, 'notnull' => 1, 'visible' => -2,),
-		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
 		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'fk_contrat', 'enabled' => 'isModEnabled("contract")', 'position' => 50, 'notnull' => 0, 'visible' => 0,),
-		'fk_user' => array('type' => 'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label' => 'Employee', 'enabled' => '1', 'position' => 55, 'notnull' => 1, 'visible' => 1, 'default' => 0, 'picto' => 'user', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'fk_job' => array('type' => 'integer:Job:/hrm/class/job.class.php', 'label' => 'JobProfile', 'enabled' => '1', 'position' => 56, 'notnull' => 1, 'visible' => 1, 'picto' => 'jobprofile', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'date_start' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => '1', 'position' => 101, 'notnull' => 1, 'visible' => 1,),
-		'date_end' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => '1', 'position' => 102, 'notnull' => 0, 'visible' => 1,),
-		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => '1', 'position' => 120, 'notnull' => 0, 'visible' => 3,),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label' => 'Employee', 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'picto' => 'user', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_job' => array('type' => 'integer:Job:/hrm/class/job.class.php', 'label' => 'JobProfile', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'picto' => 'jobprofile', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'date_start' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'position' => 101, 'notnull' => 1, 'visible' => 1,),
+		'date_end' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 102, 'notnull' => 0, 'visible' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 3,),
 		'abort_comment' => array('type' => 'varchar(255)', 'label' => 'AbandonmentComment', 'enabled' => 'getDolGlobalInt("HRM_JOB_POSITON_ENDING_COMMENT")', 'position' => 502, 'notnull' => 0, 'visible' => 1,),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => '1', 'position' => 151, 'notnull' => 0, 'visible' => 0,),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => '1', 'position' => 152, 'notnull' => 0, 'visible' => 0,),
-		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 151, 'notnull' => 0, 'visible' => 0,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 152, 'notnull' => 0, 'visible' => 0,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $description;
-	public $date_creation;
+	/**
+	 * @var int
+	 */
 	public $fk_contrat;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var int
+	 */
 	public $fk_job;
+	/**
+	 * @var int|string
+	 */
 	public $date_start;
+	/**
+	 * @var int|string
+	 */
 	public $date_end;
+	/**
+	 * @var string
+	 */
 	public $abort_comment;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
 
 
@@ -186,9 +211,12 @@ class Position extends CommonObject
 
 		$this->db = $db;
 
-		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
-			//$this->fields['rowid']['visible'] = 0;
-		}
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
+
+		//if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
+		//$this->fields['rowid']['visible'] = 0;
+		//}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
@@ -301,8 +329,7 @@ class Position extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -524,7 +551,7 @@ class Position extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '" . $this->db->idate($now) . "'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = " . ((int) $user->id);
 			}
 			$sql .= " WHERE rowid = " . ((int) $this->id);
@@ -846,14 +873,14 @@ class Position extends CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   		$val	       Array of properties for field to show
+	 * @param ?array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show
 	 * @param  string  		$key           Key of attribute
 	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
-	 * @param  int			$nonewbutton   Do not show new button
+	 * @param  int<0,1>		$nonewbutton   Do not show new button
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
@@ -864,7 +891,7 @@ class Position extends CommonObject
 			$vacantId = $keyprefix.$key.'vacant'.$keysuffix;
 
 			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>'; ?>
+			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'">&nbsp;'.$langs->trans("Vacant").'</label>'; ?>
 			<script type="text/javascript">
 				$(document).ready(function () {
 					var checkbox = $('#<?php print $vacantId; ?>');
@@ -891,7 +918,7 @@ class Position extends CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param  string  $key            Key of attribute
 	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parameters on html input tag
@@ -970,8 +997,7 @@ class Position extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_position:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
+			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1005,16 +1031,17 @@ class Position extends CommonObject
 				$dir = dol_buildpath($reldir . "core/modules/hrm/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir . $file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file " . $file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1052,13 +1079,13 @@ class Position extends CommonObject
 	/**
 	 * Create a document onto disk according to template module.
 	 *
-	 * @param string $modele Force template to use ('' to not force)
-	 * @param Translate $outputlangs object lang a utiliser pour traduction
-	 * @param int $hidedetails Hide details of lines
-	 * @param int $hidedesc Hide description
-	 * @param int $hideref Hide ref
-	 * @param null|array $moreparams Array to provide more information
-	 * @return     int                        0 if KO, 1 if OK
+	 * @param string	$modele			Force template to use ('' to not force)
+	 * @param Translate	$outputlangs	object lang a utiliser pour traduction
+	 * @param int<0,1>	$hidedetails	Hide details of lines
+	 * @param int<0,1>	$hidedesc		Hide description
+	 * @param int<0,1>	$hideref		Hide ref
+	 * @param ?array<string,mixed> $moreparams Array to provide more information
+	 * @return	int						0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -1089,41 +1116,11 @@ class Position extends CommonObject
 	}
 
 	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 * @return    int            0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
-
-	/**
-	 *	Return clicable link of object (with eventually picto)
-	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1169,11 +1166,6 @@ class PositionLine extends CommonObjectLine
 	// We should have a field rowid , fk_position and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1181,5 +1173,7 @@ class PositionLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -103,7 +104,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 				$max = 0;
 			}
 		}
-		if ($max && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $max)) {
+		if ($max && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', (string) $max)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -115,9 +116,9 @@ class mod_sn_standard extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string|int      		String if OK, <0 if KO
+	 *  @param	?Societe	$objsoc		Object thirdparty
+	 *  @param  ?Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -150,7 +151,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1;
 		} else { // If counter > 9999, we do not format on 4 chars, we take number as it is
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_sn_standard::getNextValue return ".$this->prefix.$yymm."-".$num);

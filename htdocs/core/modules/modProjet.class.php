@@ -7,6 +7,7 @@
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Charles-Fr BENKE		<charles.fr@benke.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,7 +267,7 @@ class modProjet extends DolibarrModules
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// Add fields for tasks
-		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pt.rowid'=>'TaskId', 'pt.ref'=>'RefTask', 'pt.label'=>'LabelTask', 'pt.dateo'=>"TaskDateStart", 'pt.datee'=>"TaskDateEnd", 'pt.duration_effective'=>"DurationEffective", 'pt.planned_workload'=>"PlannedWorkload", 'pt.progress'=>"Progress", 'pt.description'=>"TaskDescription"));
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pt.rowid'=>'TaskId', 'pt.ref'=>'RefTask', 'pt.label'=>'LabelTask', 'pt.dateo'=>"TaskDateStart", 'pt.datee'=>"TaskDateEnd", 'pt.duration_effective'=>"DurationEffective", 'pt.planned_workload'=>"PlannedWorkload", 'pt.progress'=>"Progress", 'pt.description'=>"TaskDescription", 'pt.billable'=>"Billable"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pt.rowid'=>'projecttask', 'pt.ref'=>'projecttask', 'pt.label'=>'projecttask', 'pt.dateo'=>"projecttask", 'pt.datee'=>"projecttask", 'pt.duration_effective'=>"projecttask", 'pt.planned_workload'=>"projecttask", 'pt.progress'=>"projecttask", 'pt.description'=>"projecttask"));
 		// Add extra fields for task
 		$keyforselect = 'projet_task';
@@ -315,7 +316,7 @@ class modProjet extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
-			't.ref'=>array('rule'=>'getrefifauto', 'class'=>(!getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON), 'path'=>"/core/modules/project/".(!getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php'),
+			't.ref' => array('rule' => 'getrefifauto', 'class' => getDolGlobalString('PROJECT_ADDON', 'mod_project_simple'), 'path' => "/core/modules/project/".getDolGlobalString('PROJECT_ADDON', 'mod_project_simple').'.php'),
 			't.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',
@@ -383,7 +384,7 @@ class modProjet extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
@@ -399,7 +400,7 @@ class modProjet extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

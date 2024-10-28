@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,9 @@
  */
 
 /**
- *       \file       htdocs/adherents/ldap.php
- *       \ingroup    ldap member
- *       \brief      Page fiche LDAP adherent
+ *  \file		htdocs/adherents/ldap.php
+ *  \ingroup	ldap member
+ *  \brief		Page fiche LDAP adherent
  */
 
 // Load Dolibarr environment
@@ -104,7 +105,10 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder');
+$title = $langs->trans("Member");
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_ldap');
 
 $head = member_prepare_head($object);
 
@@ -120,12 +124,13 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Login
-print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'&nbsp;</td></tr>';
 
 // If there is a link to the unencrypted password, we show the value in database here so we can compare because it is shown nowhere else
+// This is for very old situation. Password are now encrypted and $object->pass is empty.
 if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
-	print '<td class="valeur">'.$object->pass.'</td>';
+	print '<td class="valeur">'.dol_escape_htmltag($object->pass).'</td>';
 	print "</tr>\n";
 }
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,10 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$id = GETPOSTINT('socid') || GETPOSTINT('id_fourn');
+$id = GETPOSTINT('socid');
+if ($id == 0) {
+	$id = GETPOSTINT('id_fourn');
+}
 
 $object = new Societe($db);
 if ($id > 0) {

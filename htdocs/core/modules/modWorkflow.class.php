@@ -89,13 +89,14 @@ class modWorkflow extends DolibarrModules
 			2 => array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 0, 'current', 0),
 			3 => array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED', 0, 'current', 0),
 			4 => array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 0, 'current', 0),
-			5 => array('WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 0, 'current', 0),
-			6 => array('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION', 0, 'current', 0),
-			7 => array('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED', 0, 'current', 0),
-			8 => array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 0, 'current', 0),
+			5 => array('WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 0, 'current', 0),
+			6 => array('WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 0, 'current', 0),
+			7 => array('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION', 0, 'current', 0),
+			8 => array('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED', 0, 'current', 0),
+			9 => array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 0, 'current', 0),
 			10 => array('WORKFLOW_TICKET_LINK_CONTRACT', 'chaine', '0', 'Automatically link a ticket to available contracts', 0, 'current', 0),
 			11 => array('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS', 'chaine', '0', 'Search among parent companies contracts when automatically linking a ticket to available contracts', 0, 'current', 0),
-			12 => array('WORKFLOW_TICKET_CREATE_INTERVENTION', 'chaine', '0', 'WORKFLOW_TICKET_CREATE_INTERVENTION', 0, 'current', 0)
+			12 => array('WORKFLOW_TICKET_CREATE_INTERVENTION', 'chaine', '0', 'WORKFLOW_TICKET_CREATE_INTERVENTION', 0, 'current', 0),
 		);
 
 		// Boxes
@@ -116,7 +117,7 @@ class modWorkflow extends DolibarrModules
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		/*
 		$this->menu[$r]=array('fk_menu'=>0,
 								'type'=>'top',

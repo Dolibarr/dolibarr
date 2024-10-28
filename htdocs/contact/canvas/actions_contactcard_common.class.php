@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,31 @@ abstract class ActionsContactCardCommon
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
-	//! Object container
+	//!
+	/**
+	 * @var Contact Object container
+	 */
 	public $object;
 
 	/**
@@ -156,7 +174,7 @@ abstract class ActionsContactCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -176,7 +194,7 @@ abstract class ActionsContactCardCommon
 			}
 
 			// Public or private
-			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
+			$selectarray = array('0' => $langs->trans("ContactPublic"), '1' => $langs->trans("ContactPrivate"));
 			$this->tpl['select_visibility'] = $form->selectarray('priv', $selectarray, $this->object->priv, 0);
 		}
 
@@ -294,13 +312,13 @@ abstract class ActionsContactCardCommon
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town				= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id");
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone_pro = GETPOST("phone_pro");
 		$this->object->phone_perso = GETPOST("phone_perso");
 		$this->object->phone_mobile = GETPOST("phone_mobile");
 		$this->object->fax = GETPOST("fax");
 		$this->object->email			= GETPOST("email");
-		$this->object->priv				= GETPOST("priv");
+		$this->object->priv				= GETPOSTINT("priv");
 		$this->object->note				= GETPOST("note", "restricthtml");
 		$this->object->canvas = GETPOST("canvas");
 
@@ -308,14 +326,17 @@ abstract class ActionsContactCardCommon
 		if ($this->object->country_id) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".((int) $this->object->country_id);
 			$resql = $this->db->query($sql);
+			$obj = null;
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 			} else {
 				dol_print_error($this->db);
 			}
-			$this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
-			$this->object->country_code = $obj->code;
-			$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			if ($obj !== null) {
+				$this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+				$this->object->country_code = $obj->code;
+				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			}
 		}
 	}
 }

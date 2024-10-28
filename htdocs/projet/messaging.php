@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ if (!$user->hasRight('projet', 'lire')) {
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -114,11 +115,11 @@ if ($id > 0 || !empty($ref)) {
 }
 $agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/'.$langs->trans("Agenda") : '';
 $title = $langs->trans('Events').$agenda.' - '.$object->ref.' '.$object->name;
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_messaging');
 
 $head = project_prepare_head($object);
 
@@ -129,7 +130,7 @@ print dol_get_fiche_head($head, 'agenda', $langs->trans("Project"), -1, ($object
 
 if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 	$tmpurl = $_SESSION['pageforbacktolist']['project'];
-	$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+	$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 	$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 } else {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -205,7 +206,7 @@ if (!empty($object->id)) {
 	// Show link to add event
 	if (isModEnabled('agenda')) {
 		$addActionBtnRight = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', (int) $addActionBtnRight);
 	}
 
 	$param = '&id='.$object->id;
@@ -221,6 +222,9 @@ if (!empty($object->id)) {
 	$nbEvent = dol_getcache($cachekey);
 
 	$titlelist = $langs->trans("ActionsOnProject").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	}
 
 	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 

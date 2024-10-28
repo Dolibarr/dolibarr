@@ -1,14 +1,17 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014-2019 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2019      Nicolas Zabouri      <info@inovea-conseil.com>
- * Copyright (C) 2021      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014-2019	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Claudio Aschieri			<c.aschieri@19.coop>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2016-2018	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2019		Nicolas Zabouri				<info@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,22 +57,24 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
+$socid = GETPOSTINT('socid');
+
 $search_name = GETPOST('search_name', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOSTINT("search_country");
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_all = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
-$socid = GETPOSTINT('socid');
+$search_signed_status = GETPOST('search_signed_status', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
-$search_sale = GETPOSTINT('search_sale');
-$search_product_category = GETPOSTINT('search_product_category');
+$search_sale = GETPOST('search_sale', 'intcomma');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_dfmonth = GETPOSTINT('search_dfmonth');
 $search_dfyear = GETPOSTINT('search_dfyear');
 $search_op2df = GETPOST('search_op2df', 'alpha');
@@ -131,6 +136,9 @@ $id = GETPOSTINT('id');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('contractlist'));
+
 $result = restrictedArea($user, 'contrat', $id);
 
 $diroutputmassaction = $conf->contrat->dir_output.'/temp/massgeneration/'.$user->id;
@@ -142,9 +150,8 @@ if ($search_status == '') {
 	$search_status = 1;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
-$hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -188,12 +195,14 @@ $arrayfields = array(
 	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'lower_planned_end_date' => array('label' => $langs->trans("LowerDateEndPlannedShort"), 'checked' => 1, 'position' => 900, 'help' => $langs->trans("LowerDateEndPlannedShort")),
 	'status' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'c.signed_status' => array('label' => $langs->trans('SignedStatus'), 'checked' => 0, 'position' => 1001),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -219,7 +228,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -270,6 +279,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_modif_endday = "";
 	$search_date_modif_end = "";
 	$search_status = "";
+	$search_signed_status = '';
 	$toselect = array();
 	$search_type_thirdparty = '';
 	$searchCategoryCustomerList = array();
@@ -300,11 +310,13 @@ $now = dol_now();
 $title = "";
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";
+// TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove the HAVING and then,
+// remove completely the SUM and GROUP BY (faster). Status of each service can be read into the loop that build the list.
+$sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";	// lowest expiration date among open service lines
 $sql .= " SUM(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
 $sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
 $sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
@@ -480,6 +492,9 @@ if ($search_date_modif_start) {
 if ($search_date_modif_end) {
 	$sql .= " AND c.tms <= '".$db->idate($search_date_modif_end)."'";
 }
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$sql .= ' AND c.signed_status = '.urlencode($search_signed_status);
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -487,7 +502,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
+$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
 $sql .= " typent.code,";
 $sql .= " state.code_departement, state.nom";
@@ -535,7 +550,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	} else {
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
 		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat /', '', $sqlforcount);
+
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country on (country.rowid = s.fk_pays)', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as typent on (typent.id = s.fk_typent)', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
+		//$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);	// We my need this if there is filters on extrafields
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
 		$resql = $db->query($sqlforcount);
@@ -579,8 +599,10 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 
 // Output page
 // --------------------------------------------------------------------
+$title = $langs->trans("Contracts");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $langs->trans("Contracts"));
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-list bodyforlist');
 
 $i = 0;
 
@@ -697,6 +719,9 @@ if ($search_dfyear > 0) {
 if ($search_dfmonth > 0) {
 	$param .= '&search_dfmonth='.urlencode((string) ($search_dfmonth));
 }
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$param .= '&search_signed_status='.urlencode($search_signed_status);
+}
 if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
@@ -803,7 +828,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 2);
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
@@ -812,7 +837,7 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST') && isMo
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 2);
 	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300', 0, 0, '', 'category', $tmptitle);
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
@@ -917,6 +942,13 @@ if (!empty($arrayfields['c.date_contrat']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Signed status
+if (!empty($arrayfields['c.signed_status']['checked'])) {
+	print '<td class="liste_titre center">';
+	$list_signed_status = $object->getSignedStatusLocalisedArray();
+	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -982,6 +1014,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
 }
@@ -1028,6 +1061,10 @@ if (!empty($arrayfields['sale_representative']['checked'])) {
 if (!empty($arrayfields['c.date_contrat']['checked'])) {
 	print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['c.signed_status']['checked'])) {
+	print_liste_field_titre($arrayfields['c.signed_status']['label'], $_SERVER["PHP_SELF"], "c.signed_status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1087,6 +1124,7 @@ while ($i < $imaxinloop) {
 	$contracttmp->nbofservicesopened = $obj->nb_running;
 	$contracttmp->nbofservicesexpired = $obj->nb_expired;
 	$contracttmp->nbofservicesclosed = $obj->nb_closed;
+	$contracttmp->signed_status = $obj->signed_status;
 
 	$socstatic->id = $obj->socid;
 	$socstatic->name = $obj->name;
@@ -1198,7 +1236,7 @@ while ($i < $imaxinloop) {
 		}
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="center nocellnopadd">';
 			print $obj->zip;
 			print '</td>';
 			if (!$i) {
@@ -1253,7 +1291,7 @@ while ($i < $imaxinloop) {
 						$userstatic->lastname = $val['lastname'];
 						$userstatic->firstname = $val['firstname'];
 						$userstatic->email = $val['email'];
-						$userstatic->statut = $val['statut'];
+						$userstatic->status = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
@@ -1279,6 +1317,13 @@ while ($i < $imaxinloop) {
 		// Date
 		if (!empty($arrayfields['c.date_contrat']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzserver').'</td>';
+		}
+		// Signed Status
+		if (!empty($arrayfields['c.signed_status']['checked'])) {
+			print '<td class="center">'.$contracttmp->getLibSignedStatus(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

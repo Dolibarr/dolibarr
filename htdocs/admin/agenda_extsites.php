@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,8 @@ $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 
 // List of available colors
 $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', 'A4A4A5');
+
+$reg = array();
 
 
 /*
@@ -155,7 +158,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 
 	// Save nb of agenda
 	if (!$error) {
-		$res = dolibarr_set_const($db, 'AGENDA_EXT_NB', trim(GETPOSTINT('AGENDA_EXT_NB')), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'AGENDA_EXT_NB', GETPOSTINT('AGENDA_EXT_NB'), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -188,7 +191,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-admin page-agenda-extsites');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
@@ -241,16 +244,17 @@ print "</tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print '<td class="center">';
-print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="' . getDolGlobalString('AGENDA_EXT_NB').'">';
+print '<input class="flat hideifnotset width50 center" type="text" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="' . getDolGlobalString('AGENDA_EXT_NB').'">';
 print "</td>";
 print "</tr>";
 
 print "</table>";
 print "<br>";
 
-print "<table class=\"noborder\" width=\"100%\">";
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">'."\n";
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</td>';
@@ -279,8 +283,8 @@ while ($i <= $MAXAGENDA) {
 	// Offset TZ
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ' . $key . '" value="' . (GETPOST('AGENDA_EXT_OFFSETTZ' . $key) ? GETPOST('AGENDA_EXT_OFFSETTZ' . $key) : getDolGlobalString($offsettz)) . '" size="2"></td>';
 	// Color (Possible colors are limited by Google)
-	print '<td class="nowrap right">';
-	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR" . $key) ? GETPOST("AGENDA_EXT_COLOR" . $key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR" . $key, 'extsitesconfig', 1, '', 'hideifnotset');
+	print '<td class="nowraponall right">';
+	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR" . $key) ? GETPOST("AGENDA_EXT_COLOR" . $key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR" . $key, 'extsitesconfig', 1, array(), 'hideifnotset');
 	print '</td>';
 	// Calendar active by default
 	print '<td class="nowrap right">';
@@ -300,6 +304,7 @@ while ($i <= $MAXAGENDA) {
 }
 
 print '</table>';
+print '</div>';
 
 print dol_get_fiche_end();
 

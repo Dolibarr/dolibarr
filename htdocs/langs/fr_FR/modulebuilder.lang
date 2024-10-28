@@ -92,7 +92,7 @@ ListOfDictionariesEntries=Liste des entrées de dictionnaires
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif.<br><br>Exemples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')= =2
-VisibleDesc=Le champ est-il visible ? (Exemples : 0=Jamais visible, 1=Visible sur les listes et les formulaires créer/mettre à jour/afficher, 2=Visible sur les listes uniquement, 3=Visible sur les formulaires créer/mettre à jour/afficher uniquement (pas les listes), 4=Visible sur les listes et formulaires de mise à jour/affichage uniquement (pas en création), 5=Visible sur la liste et le formulaire afficher uniquement (pas en création, pas en mise à jour).<br><br>L'utilisation d'une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour la visualisation).
+VisibleDesc=Le champ est-il visible ? (Exemples : 0=Jamais visible, 1=Visible sur les listes et les formulaires créer/mettre à jour/afficher, 2=Visible sur les listes uniquement, 3=Visible sur les formulaires créer/mettre à jour/afficher uniquement (pas les listes), 4=Visible sur les listes et formulaires de mise à jour/affichage uniquement (pas en création), 5=Visible sur la liste et le formulaire de consultation uniquement (pas en création, pas en mise à jour).<br><br>L'utilisation d'une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour la visualisation).
 ItCanBeAnExpression=Cela peut être une expression. Exemple : <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('holiday', 'define_holiday')?1:5
 DisplayOnPdfDesc=Affichez ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position". <br>  <strong> Pour le document : </strong>  <br> 0 = non affiché  <br> 1 = affiché <br> 2 = affiché uniquement si non vide <br>  <br>  <strong> Pour les lignes de document : </strong>  <br> 0 = non affiché  <br> 1 = affiché dans une colonne <br> 3 = affiché dans la colonne description après la description <br> 4 = affiché dans la colonne description après la description uniquement si non vide
 DisplayOnPdf=Sur les PDF
@@ -148,7 +148,7 @@ CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
 ForeignKeyDesc=Si la valeur de ce champ doit être garantie existe dans une autre table. Saisissez ici une valeur correspondant à la syntaxe : nomtable.champparentàvérifier
-TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>email<br>téléphone<br>ip<br>url<br> mot de passe<br>double(24,8)<br>réel<br>texte<br>html<br>date<br>dateheure<br>timestamp<br>entier<br>entier:NomDeLaClasse:cheminrelatif/du/fichierclass.class.php[:1[:filtre]]<br><br>'1' signifie que nous ajoutons un bouton + après la liste déroulante pour créer l'enregistrement<br>'filtre' est une condition qui utilise la syntaxe de filtre universel, exemple : '((status:=:1) et (fk_user:=:__USER_ID__) et (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:NomDeLaClasse:cheminrelatif/du/fichierclass.class.php[:1[:filtre]]<br><br>'1' signifie que nous ajoutons un bouton + après la liste déroulante pour créer l'enregistrement<br>'filtre' est une condition qui utilise la syntaxe de filtre universel, exemple : '((status:=:1) et (fk_user:=:__USER_ID__) et (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Il s'agit du type de champ/attribut.
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Les permissions ont été ajoutées avec succès
 MenuDeletedSuccessfuly=Le menu a été supprimé avec succès
 MenuAddedSuccessfuly=Le menu a été ajouté avec succès
 MenuUpdatedSuccessfuly=Le menu a été mis à jour avec succès
+AddAPIsForThisObject=Ajouter des APIs pour cet objet
 ApiObjectDeleted=L'API pour l'objet %s a été supprimée avec succès
 CRUDRead=Lire
 CRUDCreateWrite=Créer ou mettre à jour

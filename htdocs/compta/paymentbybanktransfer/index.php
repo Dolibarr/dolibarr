@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,6 +160,7 @@ if (isModEnabled('supplier_invoice')) {
 				$invoicestatic->status = $obj->fk_statut;
 				$invoicestatic->statut = $obj->fk_statut;	// For backward compatibility
 				$invoicestatic->paye = $obj->paye;
+				$invoicestatic->paid = $obj->paye;
 				$invoicestatic->type = $obj->type;
 				$invoicestatic->date = $db->jdate($obj->datef);
 				$invoicestatic->date_echeance = $db->jdate($obj->date_lim_reglement);

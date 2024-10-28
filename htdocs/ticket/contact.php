@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2016 Jean-François Ferry    <hello@librethic.io>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,11 @@ $lineid = GETPOSTINT('lineid');
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 
+$hookmanager->initHooks(array('contactticketcard', 'globalcard'));
 $object = new Ticket($db);
+if ($id > 0 || $ref || $track_id) {
+	$result = $object->fetch($id, $ref, $track_id);
+}
 
 // Security check
 $id = GETPOSTINT("id");
@@ -84,6 +89,11 @@ $permissiontoadd = $user->hasRight('ticket', 'write');
 /*
  * Actions
  */
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	$result = $object->fetch($id, '', $track_id);
@@ -95,21 +105,21 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 		$error = 0;
 
 		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-		if ($codecontact=='SUPPORTTEC') {
+		if ($codecontact == 'SUPPORTTEC') {
 			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 			foreach ($internal_contacts as $key => $contact) {
 				if ($contact['id'] !== $contactid) {
 					//print "user à effacer : ".$useroriginassign;
 					$result = $object->delete_contact($contact['rowid']);
-					if ($result<0) {
-						$error ++;
+					if ($result < 0) {
+						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 			}
 			$ret = $object->assignUser($user, $contactid);
 			if ($ret < 0) {
-				$error ++;
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -146,10 +156,10 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 		foreach ($internal_contacts as $key => $contact) {
-			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
-				$ret = $object->assignUser($user, null);
+			if ($contact['rowid'] == $lineid && $object->fk_user_assign == $contact['id']) {
+				$ret = $object->assignUser($user, 0);
 				if ($ret < 0) {
-					$error ++;
+					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -165,7 +175,7 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 
 // Set parent company
 if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
-	if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+	if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 		$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 		header("Location: ".$url);
@@ -179,7 +189,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
  */
 
 $help_url = 'FR:DocumentationModuleTicket';
-llxHeader('', $langs->trans("TicketContacts"), $help_url);
+llxHeader('', $langs->trans("TicketContacts"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_contacts');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

@@ -28,8 +28,8 @@ EO
 	-q, --quiet 	   & disables output
 	-i, --input [dir]  & specify input directory (current directory by default)
 	-o, --output [dir] & specify output directory ("output" by default)
-	-ns, --no-stats	& no stats at the end
 	-p, --inplace	  & optimizes files inplace
+	-ns, --no-stats	& no stats at the end
 EO
 }
 
@@ -236,4 +236,3 @@ then
 fi
 
 main
-

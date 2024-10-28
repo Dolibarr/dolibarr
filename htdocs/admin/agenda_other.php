@@ -6,6 +6,7 @@
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -114,12 +116,14 @@ if ($action == 'set') {
 	} else {
 		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	}
-} elseif ($action == 'specimen') {  // For orders
+} elseif ($action == 'specimen') {  // For actioncomm
 	$modele = GETPOST('module', 'alpha');
 
-	$commande = new CommandeFournisseur($db);
-	$commande->initAsSpecimen();
-	$commande->thirdparty = $specimenthirdparty;
+	$action = new ActionComm($db);
+	$action->initAsSpecimen();
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
+	$action->thirdparty = $specimenthirdparty;
 
 	// Search template files
 	$file = '';
@@ -136,9 +140,10 @@ if ($action == 'set') {
 	if ($classname !== '') {
 		require_once $file;
 
-		$module = new $classname($db, $commande);
+		$module = new $classname($db, $action);
+		'@phan-var-force pdf_standard_actions $module';
 
-		if ($module->write_file($commande, $langs) > 0) {
+		if ($module->write_file($action, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -180,11 +185,13 @@ if ($action == 'set') {
  * View
  */
 
+$form = new Form($db);
 $formactions = new FormActions($db);
+
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
+llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-agenda_other');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
@@ -200,7 +207,7 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
  *  Miscellaneous
  */
 
-// Define array def of models
+// Define an array def of models
 $def = array();
 
 $sql = "SELECT nom";
@@ -214,7 +221,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -236,6 +245,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 	clearstatcache();
 
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
+
 	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/action/doc");
 
@@ -246,9 +258,10 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						$name = substr($file, 4, dol_strlen($file) - 16);
 						$classname = substr($file, 0, dol_strlen($file) - 12);
-
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
+
+						'@phan-var-force ModeleAction $module';
 
 						print '<tr class="oddeven">'."\n";
 						print "<td>";
@@ -257,8 +270,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						print "<td>\n";
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, $specimenthirdparty);
+						'@phan-var-force ModeleAction $module';
 						if (method_exists($module, 'info')) {
-							print $module->info($langs);
+							print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 						} else {
 							print $module->description;
 						}
@@ -357,7 +371,7 @@ if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 	print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="right nowrap">'."\n";
-	$formactions->select_type_actions(getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT'), "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
+	print $formactions->select_type_actions(getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT'), "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1, 0, 1, 'minwidth300', 1);
 	print '</td></tr>'."\n";
 }
 
@@ -387,7 +401,7 @@ if (getDolGlobalString('MAIN_ENABLE_MULTISELECT_TYPE')) {
 	// We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 	$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 }
-$formactions->select_type_actions(getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE'), "AGENDA_DEFAULT_FILTER_TYPE", '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 1, $multiselect);
+print $formactions->select_type_actions(getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE'), "AGENDA_DEFAULT_FILTER_TYPE", '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 1, $multiselect, 1, 'minwidth300', 1);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS

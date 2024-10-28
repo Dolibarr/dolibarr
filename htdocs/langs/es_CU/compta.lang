@@ -58,7 +58,6 @@ LT2CustomerES=ventas IRPF
 LT2SupplierES=compras IRPF
 LT2SupplierIN=compras SGST
 VATCollected=IVA recaudado
-StatusToPay=Pagar
 SpecialExpensesArea=Área para todos los pagos especiales
 VATExpensesArea=Área para todos los pagos de TVA
 SocialContribution=Impuesto social o fiscal

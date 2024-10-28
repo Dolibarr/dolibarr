@@ -86,7 +86,7 @@ class modIncoterm extends DolibarrModules
 		}
 		$this->dictionaries = array(
 			'langs' => 'incoterm',
-			'tabname' => array("c_incoterms"), // List of tables we want to see into dictonnary editor
+			'tabname' => array("c_incoterms"), // List of tables we want to see into dictionary editor
 			'tablib' => array("Incoterms"), // Label of tables
 			'tabsql' => array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
 			'tabsqlsort' => array("rowid ASC"), // Sort order
@@ -103,10 +103,10 @@ class modIncoterm extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 	}
 }

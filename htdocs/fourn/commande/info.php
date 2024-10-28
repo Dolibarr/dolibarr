@@ -20,7 +20,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/info.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      Info page for Purchase Order / Supplier Order
  */
 
@@ -76,14 +76,14 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Init Hooks
+$hookmanager->initHooks(array('ordersuppliercardinfo'));
+
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (!$user->hasRight("fournisseur", "commande", "lire")) {
 	accessforbidden();
 }
-
-// Init Hooks
-$hookmanager->initHooks(array('ordersuppliercardinfo'));
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
@@ -121,7 +121,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $title = $object->ref.' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';

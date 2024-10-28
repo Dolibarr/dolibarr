@@ -46,7 +46,7 @@ if ($user->socid) {
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplier_proposalnote'));
 
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal');
@@ -69,7 +69,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -90,7 +90,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('Notes');
 		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-		llxHeader('', $title, $help_url);
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_docuemnts');
 
 		$societe = new Societe($db);
 		if ($societe->fetch($object->socid)) {

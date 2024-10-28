@@ -55,13 +55,13 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
 		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			dol_syslog('Try to connect with ssh2_connect');
-			$tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
+			$tmp_conn_id = ssh2_connect($ftp_server, (int) $ftp_port);
 		} elseif (getDolGlobalString('FTP_CONNECT_WITH_SSL')) {
 			dol_syslog('Try to connect with ftp_ssl_connect');
-			$connect_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
+			$connect_id = ftp_ssl_connect($ftp_server, (int) $ftp_port, $connecttimeout);
 		} else {
 			dol_syslog('Try to connect with ftp_connect');
-			$connect_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
+			$connect_id = ftp_connect($ftp_server, (int) $ftp_port, $connecttimeout);
 		}
 		if (!empty($connect_id) || !empty($tmp_conn_id)) {
 			if ($ftp_user) {
@@ -89,18 +89,20 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 					}
 				} else {
 					if (ftp_login($connect_id, $ftp_user, $ftp_password)) {
-						// Turn on passive mode transfers (must be after a successful login
+						// Turn on passive mode transfers (must be after a successful login)
 						if ($ftp_passive) {
 							ftp_pasv($connect_id, true);
 						}
 
 						// Change the dir
 						$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
-						ftp_chdir($connect_id, $newsectioniso);
+						if (!ftp_chdir($connect_id, $newsectioniso)) {
+							$ok = 0;
+							$mesg = $langs->transnoentitiesnoconv("FailedToChdirOnFTPServer");
+						}
 					} else {
-						$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
 						$ok = 0;
-						$error++;
+						$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
 					}
 				}
 			}

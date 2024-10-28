@@ -47,7 +47,7 @@ CREATE TABLE llx_supplier_proposaldet (
   fk_product_fournisseur_price integer DEFAULT NULL,
   special_code integer DEFAULT 0,
   rang integer DEFAULT 0,
-  ref_fourn varchar(30) DEFAULT NULL,
+  ref_fourn varchar(128) DEFAULT NULL,
   fk_multicurrency        integer,
   multicurrency_code      varchar(3),
   multicurrency_subprice  double(24,8) DEFAULT 0,

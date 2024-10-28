@@ -55,13 +55,13 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 }
 
@@ -69,8 +69,8 @@ if ($id > 0 || !empty($ref)) {
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'expedition', $object->id, '');
 $hookmanager->initHooks(array('shipmentcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 /*
  * Actions
@@ -126,7 +126,7 @@ if (empty($reshook)) {
 
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Order'), $help_url);
+llxHeader('', $langs->trans('Order'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -191,20 +191,20 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
 		print $objectsrc->getNomUrl(1, 'commande');
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
 		print $objectsrc->getNomUrl(1, 'expedition');

@@ -48,11 +48,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->trans($val);
-}
+$type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
@@ -77,7 +73,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Receptions");
 
-llxHeader('', $langs->trans("ReceptionsSetup"));
+llxHeader('', $langs->trans("ReceptionsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-reception_extrafields');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup');

@@ -64,7 +64,7 @@ $customer->fetch($invoice->socid);
  * Actions
  */
 
-if ($action == "send") {
+if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);

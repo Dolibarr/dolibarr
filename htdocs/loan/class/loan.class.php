@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,11 @@ class Loan extends CommonObject
 	 */
 	public $element = 'loan';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 * @deprecated Use $table_element
+	 * @see $table_element
+	 */
 	public $table = 'loan';
 
 	/**
@@ -51,7 +57,14 @@ class Loan extends CommonObject
 	 */
 	public $rowid;
 
+	/**
+	 * @var int|'' date start
+	 */
 	public $datestart;
+
+	/**
+	 * @var int|''
+	 */
 	public $dateend;
 
 	/**
@@ -59,32 +72,59 @@ class Loan extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var float capital
+	 */
 	public $capital;
+
+	/**
+	 * @var float nb terms
+	 */
 	public $nbterm;
+
+	/**
+	 * @var float rate
+	 */
 	public $rate;
+
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
+
+	/**
+	 * @var string account_capital
+	 */
 	public $account_capital;
+
+	/**
+	 * @var string account_insurance
+	 */
 	public $account_insurance;
+
+	/**
+	 * @var string account_interest
+	 */
 	public $account_interest;
+
+	/**
+	 * @var string accountancy_account_capital
+	 */
 	public $accountancy_account_capital;
+
+	/**
+	 * @var string accountancy_account_insurance
+	 */
 	public $accountancy_account_insurance;
+
+	/**
+	 * @var string accountancy_account_interest
+	 */
 	public $accountancy_account_interest;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var float insurance amount
 	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 	public $insurance_amount;
 
 	/**
@@ -112,8 +152,19 @@ class Loan extends CommonObject
 	 */
 	public $totalpaid;
 
+	/**
+	 * @var int
+	 */
 	const STATUS_UNPAID = 0;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_PAID = 1;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_STARTED = 2;
 
 
@@ -149,11 +200,11 @@ class Loan extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				$this->datestart = $this->db->jdate($obj->datestart);
-				$this->dateend				= $this->db->jdate($obj->dateend);
-				$this->label				= $obj->label;
-				$this->capital				= $obj->capital;
+				$this->dateend = $this->db->jdate($obj->dateend);
+				$this->label = $obj->label;
+				$this->capital = $obj->capital;
 				$this->nbterm = $obj->nbterm;
-				$this->rate					= $obj->rate;
+				$this->rate = $obj->rate;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->insurance_amount = $obj->insurance_amount;
@@ -161,8 +212,8 @@ class Loan extends CommonObject
 				$this->fk_bank = $obj->fk_bank;
 
 				$this->account_capital = $obj->accountancy_account_capital;
-				$this->account_insurance	= $obj->accountancy_account_insurance;
-				$this->account_interest		= $obj->accountancy_account_interest;
+				$this->account_insurance = $obj->accountancy_account_insurance;
+				$this->account_interest = $obj->accountancy_account_interest;
 				$this->fk_project = $obj->fk_project;
 
 				$this->db->free($resql);
@@ -532,7 +583,7 @@ class Loan extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with eventually the picto)
+	 *  Return clickable name (with eventually the picto)
 	 *
 	 *  @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlen						Label max length
@@ -615,8 +666,6 @@ class Loan extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 
 		// Initialise parameters
@@ -624,13 +673,13 @@ class Loan extends CommonObject
 		$this->fk_bank = 1;
 		$this->label = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->account_capital = 16;
-		$this->account_insurance = 616;
-		$this->account_interest = 518;
+		$this->account_capital = '16';
+		$this->account_insurance = '616';
+		$this->account_interest = '518';
 		$this->datestart = $now;
 		$this->dateend = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->capital = 20000;
+		$this->capital = 20000.80;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
 
@@ -708,11 +757,11 @@ class Loan extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -741,7 +790,7 @@ class Loan extends CommonObject
 		}
 
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

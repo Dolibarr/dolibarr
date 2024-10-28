@@ -12,8 +12,8 @@ WithdrawalsReceipts=أوامر الخصم المباشر
 WithdrawalReceipt=أمر الخصم المباشر
 BankTransferReceipts=أوامر تحويل الرصيد
 BankTransferReceipt=أمر تحويل رصيد
-LatestBankTransferReceipts=أحدث %s أوامر تحويل الرصيد 
-LastWithdrawalReceipts=أحدث %s ملفات الخصم المباشر 
+LatestBankTransferReceipts=أحدث %s أوامر تحويل الرصيد
+LastWithdrawalReceipts=أحدث %s ملفات الخصم المباشر
 WithdrawalsLine=بند أمر الخصم المباشر
 CreditTransfer=تحويل الرصيد
 CreditTransferLine=بند تحويل الرصيد
@@ -39,8 +39,7 @@ WithdrawalsSetup=إعداد دفع الخصم المباشر
 CreditTransferSetup=إعداد تحويل الرصيد
 WithdrawStatistics=إحصائيات دفع الخصم المباشر
 CreditTransferStatistics=إحصاءات تحويل الائتمان
-Rejects=ترفض
-LastWithdrawalReceipt=أحدث %s إيصالات الخصم المباشر 
+LastWithdrawalReceipt=أحدث %s إيصالات الخصم المباشر
 MakeWithdrawRequest=تقديم طلب دفع الخصم المباشر
 MakeWithdrawRequestStripe=قم بإجراء طلب دفع بالخصم المباشر عبر Stripe
 MakeBankTransferOrder=قدم طلب تحويل رصيد
@@ -137,8 +136,8 @@ ModeRECUR=السداد المتكرر
 ModeRCUR=السداد المتكرر
 ModeFRST=السداد مرة واحدة
 PleaseCheckOne=يرجى تحديد واحد فقط
-CreditTransferOrderCreated=تم إنشاء %s أمر تحويل الرصيد 
-DirectDebitOrderCreated=تم إنشاء %s أمر الخصم المباشر 
+CreditTransferOrderCreated=تم إنشاء %s أمر تحويل الرصيد
+DirectDebitOrderCreated=تم إنشاء %s أمر الخصم المباشر
 AmountRequested=المبلغ المطلوب
 SEPARCUR=SEPA CUR
 SEPAFRST=SEPA FRST
@@ -151,7 +150,7 @@ USTRD="Unstructured" SEPA XML tag
 ADDDAYS=أضف أيام إلى تاريخ التنفيذ
 NoDefaultIBANFound=لم يتم العثور على رقم IBAN افتراضي لهذا الطرف الثالث
 ### Notifications
-InfoCreditSubject=دفع البنك لأمر الدفع %s بالخصم المباشر 
+InfoCreditSubject=دفع البنك لأمر الدفع %s بالخصم المباشر
 InfoCreditMessage=تم دفع أمر الدفع بالخصم المباشر %s من قبل البنك <br> بيانات الدفع: %s
 InfoTransSubject=تحويل أمر الدفع بالخصم المباشر %s إلى البنك
 InfoTransMessage=تم إرسال أمر الدفع بالخصم المباشر %s إلى البنك عن طريق %s %s. <br> <br>
@@ -165,10 +164,9 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=يختلف المبلغ ال�
 WarningSomeDirectDebitOrdersAlreadyExists=تحذير: هناك بالفعل بعض أوامر الخصم المباشر المعلقة (%s) المطلوبة لمبلغ %s
 WarningSomeCreditTransferAlreadyExists=تحذير: هناك بالفعل بعض عمليات تحويل الرصيد المعلقة (%s) المطلوبة لمبلغ %s
 UsedFor=تستخدم ل %s
-Societe_ribSigned=تم توقيع تفويض SEPA
+Societe_ribSigned=SEPA mandate signed
 NbOfInvoiceToPayByBankTransferForSalaries=عدد رواتب المؤهلين الذين ينتظرون الدفع عن طريق تحويل الرصيد
 SalaryWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
 RefSalary=الراتب
 NoSalaryInvoiceToWithdraw=لا يوجد راتب في انتظار '%s'. انتقل إلى علامة التبويب '%s' على بطاقة راتب لتقديم طلب.
 SalaryInvoiceWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
-

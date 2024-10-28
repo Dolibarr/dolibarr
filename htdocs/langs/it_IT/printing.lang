@@ -32,6 +32,7 @@ PRINTIPP_HOST=Server di stampa
 PRINTIPP_PORT=Porta
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Password
+PRINTIPP_SSL=Utilizza SSL
 NoDefaultPrinterDefined=Non è presente una stampante predefinita
 DefaultPrinter=Stampante predefinita
 Printer=Stampante
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Credenziali per la stampa con Google Cloud Print.
 PrintingDriverDescprintipp=Variabili di configurazione per la stampa di tazze driver.
 PrintTestDescprintgcp=Lista delle stampanti Google Cloud Print.
 PrintTestDescprintipp=Elenco di stampanti per tazze.
+Testbbbb

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ if (!$sortorder) {
 	$sortorder = "asc";
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('moduleoverview'));
 $form = new Form($db);
 $object = new stdClass();
@@ -66,6 +67,8 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
+
 $param = '';
 $info_admin = '';
 
@@ -104,7 +107,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
 					if (in_array($file, $modules_files)) {
-						// File duplicate
+						// File duplicate @phan-suppress-next-line PhanTypeInvalidDimOffset
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					} else {
 						// File to load
@@ -112,6 +115,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
 
 								$modules[$objMod->numero] = $objMod;
 								$modules_files[$objMod->numero] = $file;
@@ -129,6 +133,7 @@ foreach ($modulesdir as $dir) {
 		closedir($handle);
 	}
 }
+'@phan-var-force array<string,DolibarrModules> $modules';
 
 // create pre-filtered list for modules
 foreach ($modules as $key => $module) {
@@ -202,7 +207,7 @@ foreach ($modules as $key => $module) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
@@ -225,7 +230,8 @@ $mode = '';
 $arrayofmassactions = array();
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';
@@ -308,21 +314,37 @@ print '</tr>';
 
 // sort list
 if ($sortfield == "name" && $sortorder == "asc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($a->name, $b->name);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		function (stdClass $a, stdClass $b) {
+			return strcasecmp($a->name, $b->name);
+		}
+	);
 } elseif ($sortfield == "name" && $sortorder == "desc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($b->name, $a->name);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		static function (stdClass $a, stdClass $b) {
+			return strcasecmp($b->name, $a->name);
+		}
+	);
 } elseif ($sortfield == "version" && $sortorder == "asc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($a->version, $b->version);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		static function (stdClass $a, stdClass $b) {
+			return strcasecmp($a->version, $b->version);
+		}
+	);
 } elseif ($sortfield == "version" && $sortorder == "desc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($b->version, $a->version);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		static function (stdClass $a, stdClass $b) {
+			return strcasecmp($b->version, $a->version);
+		}
+	);
 } elseif ($sortfield == "id" && $sortorder == "asc") {
 	usort($moduleList, "compareIdAsc");
 } elseif ($sortfield == "id" && $sortorder == "desc") {
@@ -368,7 +390,7 @@ foreach ($moduleList as $module) {
 
 			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
-					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
+					$tooltip = 'Missing translation (key '.$translationKey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 				}
 			}

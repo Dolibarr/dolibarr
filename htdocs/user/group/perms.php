@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,45 +52,49 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define if user can read permissions
-$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
+$permissiontoread = ($user->admin || $user->hasRight("user", "user", "read"));
 // Define if user can modify group permissions
-$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
+$permissiontoedit = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 $advancedpermsactive = false;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$advancedpermsactive = true;
-	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
-	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$permissiontoread = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
+	$permissiontoedit = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Security check
+$socid = 0;
+if (isset($user->socid) && $user->socid > 0) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'user', $id, 'usergroup', '');
-if (!$canreadperms) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
 $object = new UserGroup($db);
 $object->fetch($id);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('groupperms', 'globalcard'));
 
 
-/**
+/*
  * Actions
  */
 
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 if (empty($reshook)) {
-	if ($action == 'addrights' && $caneditperms) {
+	if ($action == 'addrights' && $permissiontoedit) {
 		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($object->id);
 		if ($result > 0) {
@@ -102,10 +107,10 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 
-	if ($action == 'delrights' && $caneditperms) {
+	if ($action == 'delrights' && $permissiontoedit) {
 		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($id);
 		if ($result > 0) {
@@ -118,7 +123,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 }
 
@@ -131,7 +136,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_perms');
 
 if ($object->id > 0) {
 	$head = group_prepare_head($object);
@@ -154,6 +159,7 @@ if ($object->id > 0) {
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 						// Load all lang files of module
 						if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
 							foreach ($objMod->langfiles as $domain) {
@@ -210,14 +216,12 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
-
-
 	print '<table class="border centpercent tableforfield">';
 
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-	if (!empty($conf->mutlicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 		print '<td class="valeur">'.dol_escape_htmltag($object->name);
 		if (empty($object->entity)) {
@@ -244,7 +248,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	print '</div>';
+
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
@@ -266,7 +270,7 @@ if ($object->id > 0) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
-	if ($caneditperms) {
+	if ($permissiontoedit) {
 		print '<td class="center nowrap">';
 		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("All")."</a>";
 		print '/';
@@ -345,12 +349,12 @@ if ($object->id > 0) {
 				// Show break line
 				print '<tr class="oddeven trforbreakperms" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
 				// Picto and label of module
-				print '<td class="maxwidthonsmartphone tdoverflowonsmartphone tdforbreakperms" data-hide-perms="'.$obj->module.'">';
+				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.$obj->module.'" title="'.dol_escape_htmltag($objMod->getName()).'">';
 				print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 				print '<a name="'.$objMod->getName().'"></a>';
 				print '</td>';
 				// Permission and tick (2 columns)
-				if ($caneditperms) {
+				if ($permissiontoedit) {
 					print '<td class="center wraponsmartphone">';
 					print '<span class="permtohide_'.$obj->module.'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
 					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
@@ -382,7 +386,7 @@ if ($object->id > 0) {
 
 
 			// Picto and label of module
-			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 			print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
 			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 			print '</td>';
@@ -391,7 +395,7 @@ if ($object->id > 0) {
 			if (!empty($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 				if (in_array($obj->id, $permsgroupbyentity[$entity])) {
 					// Own permission by group
-					if ($caneditperms) {
+					if ($permissiontoedit) {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 						//print img_edit_remove($langs->trans("Remove"));
 						print img_picto($langs->trans("Remove"), 'switch_on');
@@ -402,7 +406,7 @@ if ($object->id > 0) {
 					print '</td>';
 				} else {
 					// Do not own permission
-					if ($caneditperms) {
+					if ($permissiontoedit) {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 						//print img_edit_add($langs->trans("Add"));
 						print img_picto($langs->trans("Add"), 'switch_off');
@@ -412,7 +416,7 @@ if ($object->id > 0) {
 				}
 			} else {
 				// Do not own permission
-				if ($caneditperms) {
+				if ($permissiontoedit) {
 					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');
@@ -427,6 +431,16 @@ if ($object->id > 0) {
 			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
+			$idtouse = $obj->id;
+			if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+				$idtouse = 122;
+			}
+			if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+				print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
+			}
+			if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+				print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+			}
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (preg_match('/_advance$/', $obj->perms)) {
 					print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
@@ -438,7 +452,7 @@ if ($object->id > 0) {
 			if ($user->admin) {
 				print '<td class="right">';
 				$htmltext = $langs->trans("ID").': '.$obj->id;
-				$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRights(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
+				$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
 				print $form->textwithpicto('', $htmltext);
 				//print '<span class="opacitymedium">'.$obj->id.'</span>';
 				print '</td>';

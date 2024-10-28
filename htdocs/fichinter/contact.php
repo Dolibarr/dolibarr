@@ -105,7 +105,7 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 $formproject = new FormProjets($db);
 
-llxHeader('', $langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_contact');
 
 // Mode vue et edition
 

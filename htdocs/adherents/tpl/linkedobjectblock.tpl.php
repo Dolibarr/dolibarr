@@ -21,7 +21,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
@@ -29,7 +29,9 @@ echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force Subscription[] $linkedObjectBlock';
 $langs->load("members");
 
 $total = 0;

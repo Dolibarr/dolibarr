@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox moduulin asetukset
 PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-FollowingUrlAreAvailableToMakePayments=Seuraavat URL-osoitteet ovat käytettävissä tarjota sivu asiakas tehdä maksua Dolibarr esineitä
-PaymentForm=Maksu-muodossa
-WelcomeOnPaymentPage=Tervetuloa verkkopalveluumme maksu
-ThisScreenAllowsYouToPay=Tässä näytössä voit tehdä online-maksu %s.
-ThisIsInformationOnPayment=Tämä on informations maksua tehdä
-ToComplete=Saattamaan
-YourEMail=Sähköposti maksupyyntö vahvistus
-Creditor=Velkoja
-PaymentCode=Maksu-koodi
 PayBoxDoPayment=Maksa Payboxilla
 YouWillBeRedirectedOnPayBox=Sinut ohjataan on turvattu Paybox sivu tuloliittimeen voit luottokortin tiedot
-Continue=Seuraava
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Tämä sivu vahvistaa, että maksu on kirjattu. Kiitos.
 YourPaymentHasNotBeenRecorded=maksu EI ole tallennettu ja tapahtuma on peruutettu. Kiitos.
-AccountParameter=Tilin parametrit
-UsageParameter=Käyttöparametrien
-InformationToFindParameters=Auta löytää %s tilitiedot
 PAYBOX_CGI_URL_V2=Url on Paybox CGI moduuli maksaa
-CSSUrlForPaymentForm=CSS-tyylisivu url maksun muodossa
 NewPayboxPaymentReceived=Uusi Paybox maksu vastaanotettu
 NewPayboxPaymentFailed=Uusi Paybox maksu epäonnistui
 PAYBOX_PAYONLINE_SENDEMAIL=Sähköposti-ilmoitus maksu yrityksen jälkeen (onnistui tai epäonnistui)

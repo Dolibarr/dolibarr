@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +43,9 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	}
 
 	/**
-	 *	Return collected data
+	 * Return collected data
 	 *
-	 * @return array       Array
+	 * @return array       Array of collected data
 	 */
 	public function collect()
 	{
@@ -63,6 +64,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info  = $langs->trans('Host').': <strong>'.$conf->db->host.'</strong><br>';
 		$info .= $langs->trans('Port').': <strong>'.$conf->db->port.'</strong><br>';
 		$info .= $langs->trans('Name').': <strong>'.$conf->db->name.'</strong><br>';
+		// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 		$info .= $langs->trans('User').': <strong>'.$conf->db->user.'</strong><br>';
 		$info .= $langs->trans('Type').': <strong>'.$conf->db->type.'</strong><br>';
 		$info .= $langs->trans('Prefix').': <strong>'.$conf->db->prefix.'</strong><br>';
@@ -123,7 +125,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 * @return array       Array
+	 * 	@return array       Array
 	 */
 	public function getWidgets()
 	{
@@ -170,7 +172,8 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		return array(
 			'base_url' => dol_buildpath('/debugbar', 1),
-			'js' => 'js/widgets.js'
+			'js' => 'js/widgets.js',
+			'css' => 'css/widgets.css'
 		);
 	}
 }

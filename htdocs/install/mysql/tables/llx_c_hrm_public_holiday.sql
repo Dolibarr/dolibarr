@@ -19,7 +19,7 @@
 create table llx_c_hrm_public_holiday
 (
   id               integer AUTO_INCREMENT PRIMARY KEY,
-  entity           integer	DEFAULT 0 NOT NULL,   -- multi company id, 0 = all
+  entity           integer	DEFAULT 1 NOT NULL, 
   fk_country       integer,
   fk_departement   integer,
   code             varchar(62),

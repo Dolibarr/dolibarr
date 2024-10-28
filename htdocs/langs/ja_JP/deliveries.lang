@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=配送
 DeliveryRef=参照配送
-DeliveryCard=在庫の受取
+DeliveryCard=配送領収書
 DeliveryOrder=配送領収書
 DeliveryDate=配送日
 CreateDeliveryOrder=配送領収書を生成する

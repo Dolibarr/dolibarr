@@ -153,7 +153,7 @@ $server->register(
 /**
  * Create a payment
  *
- * @param      array           $authentication         Array of authentication information
+ * @param      array{login:string,password:string,entity:?int,dolibarrkey:string}           $authentication         Array of authentication information
  * @param      array{id:int,thirdparty_id:int|string,amount:float|string,num_payment:string,bank_account:int|string,payment_mode_id?:int|string,invoice_id?:int|string,int_label?:string,emitter:string,bank_source:string} $payment	Payment
  * @return     array{result:array{result_code:string,result_label:string},id?:int}	Array result
  */
@@ -189,17 +189,12 @@ function createPayment($authentication, $payment)
 		$soc->fetch($payment['thirdparty_id']);
 
 		$new_payment              = new Paiement($db);
-		$new_payment->amount      = (float) $payment['amount'];
 		$new_payment->num_payment = $payment['num_payment'];
 		$new_payment->fk_account  = intval($payment['bank_account']);
 		$new_payment->paiementid  = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
 		$new_payment->datepaye    = $now;
 		$new_payment->author      = $payment['thirdparty_id'];
-		$new_payment->amounts     = array();
-
-		if (intval($payment['invoice_id']) > 0) {
-			$new_payment->amounts[$payment['invoice_id']] = $new_payment->amount;
-		}
+		$new_payment->amounts     = array($payment['invoice_id'] => (float) $payment['amount']);
 
 		$db->begin();
 		$result = $new_payment->create($fuser, true);

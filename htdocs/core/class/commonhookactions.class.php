@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 abstract class CommonHookActions
 {
 	/**
-	 * @var string	String of results.
+	 * @var ?string	String of results.
 	 */
 	public $resprints;
 
@@ -38,9 +39,19 @@ abstract class CommonHookActions
 	public $results = array();
 
 	/**
+	 * @var string
+	 */
+	public $error;
+
+	/**
+	 * @var string[]
+	 */
+	public $errors = array();
+
+	/**
 	 * Check context of hook
-	 * @param array $parameters Hook parameters.
-	 * @param array|string $allContexts Context to check
+	 * @param array<string,mixed> $parameters Hook parameters.
+	 * @param string[]|string $allContexts Context to check
 	 * @return bool
 	 */
 	protected function isContext($parameters, $allContexts)

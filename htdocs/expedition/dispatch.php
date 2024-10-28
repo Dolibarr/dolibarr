@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2021 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
- * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
+/* Copyright (C) 2004-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2021  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,9 +91,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
 }
 
@@ -201,7 +202,6 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					}
 				}
-				//var_dump($key.' '.$newqty.' '.$idline.' '.$error);
 
 				if (!$error) {
 					$qtystart = 0;
@@ -272,7 +272,7 @@ if ($action == 'updatelines' && $usercancreate) {
 					} else {
 						$expeditiondispatch->fk_expedition = $object->id;
 						$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
-						$expeditiondispatch->fk_origin_line = GETPOSTINT($fk_commandedet);
+						$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
 						$expeditiondispatch->qty = $newqty;
 
 						if ($newqty > 0) {
@@ -344,7 +344,7 @@ if ($action == 'updatelines' && $usercancreate) {
 
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages($langs->trans("Error"), $errors, 'errors');
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans("ReceptionUpdated"), null);
@@ -377,11 +377,11 @@ $title = $object->ref." - ".$langs->trans('ShipmentDistribution');
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 $morejs = array('/expedition/js/lib_dispatch.js.php');
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-expedition page-card_dispatch');
 
 if ($object->id > 0 || !empty($object->ref)) {
-	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_origin_line, then each line may have sub data
-	//var_dump($lines[0]->fk_origin_line); exit;
+	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_elementdet, then each line may have sub data
+	//var_dump($lines[0]->fk_elementdet); exit;
 
 	$num_prod = count($lines);
 
@@ -389,8 +389,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 		$object->origin = 'commande';
 		$typeobject = $object->origin;
 		$origin = $object->origin;
-		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+
+		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
 	}
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -423,13 +423,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 	// Print form confirm
 	print $formconfirm;
 
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 
 	// Shipment card
@@ -474,7 +474,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -482,7 +482,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -550,10 +550,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each product id
 		$products_dispatched = array();
-		$sql = "SELECT ed.fk_origin_line as rowid, sum(ed.qty) as qty";
+		$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
-		$sql .= " GROUP BY ed.fk_origin_line";
+		$sql .= " GROUP BY ed.fk_elementdet";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -675,7 +675,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				print "</tr>\n";
 			}
 
-			$nbfreeproduct = 0; // Nb of lins of free products/services
+			$nbfreeproduct = 0; // Nb of lines of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
@@ -773,18 +773,14 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '</td>'; // Dispatch column
 						print '<td></td>'; // Warehouse column
 
-						/*$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
-
 						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot,";
 						$sql .= " eb.batch, eb.eatby, eb.sellby, cd.fk_product";
 						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
-						$sql .= " WHERE ed.fk_origin_line =".(int) $objp->rowid;
+						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_elementdet = cd.rowid";
+						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
 						$sql .= " AND ed.fk_expedition =".(int) $object->id;
-						$sql .= " ORDER BY ed.rowid, ed.fk_origin_line";
+						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
 
 						$resultsql = $db->query($sql);
 						$j = 0;
@@ -906,9 +902,9 @@ if ($object->id > 0 || !empty($object->ref)) {
 								// Warehouse
 								print '<td class="right">';
 								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 								} else {
 									$langs->load("errors");
 									print $langs->trans("ErrorNoWarehouseDefined");
@@ -1056,9 +1052,9 @@ if ($object->id > 0 || !empty($object->ref)) {
 							// Warehouse
 							print '<td class="right">';
 							if (count($listwarehouses) > 1) {
-								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 							} elseif (count($listwarehouses) == 1) {
-								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 							} else {
 								$langs->load("errors");
 								print $langs->trans("ErrorNoWarehouseDefined");

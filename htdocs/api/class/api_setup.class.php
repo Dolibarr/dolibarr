@@ -1,10 +1,12 @@
 <?php
-/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
- * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2022   Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2016       Xebax Christy           <xebax@wanadoo.fr>
+ * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
+ * Copyright (C) 2017	    Neil Orley	            <neil.orley@oeris.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
  */
 class Setup extends DolibarrApi
 {
+	/**
+	 * @var ?Translate
+	 */
 	private $translations = null;
 
 	/**
@@ -47,6 +52,76 @@ class Setup extends DolibarrApi
 	{
 		global $db;
 		$this->db = $db;
+	}
+
+	/**
+	 * Get the list of Action Triggers.
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number {@min 0}
+	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $lang       Code of the language the label of the type must be translated to
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
+	 * @return array				List of extra fields
+	 * @phan-return Object[]		List of extra fields
+	 *
+	 * @url     GET actiontriggers
+	 *
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of action triggers
+	 */
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $lang = '', $sqlfilters = '')
+	{
+		$list = array();
+
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+
+		$sql = "SELECT t.rowid as id, t.elementtype, t.code, t.contexts, t.label, t.description, t.rang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		if (!empty($elementtype)) {
+			$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+		}
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$type = $this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, 'Notify_', array('other'));
+				$list[] = $type;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of action triggers : '.$this->db->lasterror());
+		}
+
+		return $list;
 	}
 
 	/**
@@ -344,7 +419,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getRegionByCode($code)
 	{
-		return $this->_fetchCregion('', $code);
+		return $this->_fetchCregion(0, $code);
 	}
 
 	/**
@@ -453,7 +528,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getStateByCode($code)
 	{
-		return $this->_fetchCstate('', $code);
+		return $this->_fetchCstate(0, $code);
 	}
 
 	/**
@@ -562,7 +637,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getCountryByCode($code, $lang = '')
 	{
-		return $this->_fetchCcountry('', $code, '', $lang);
+		return $this->_fetchCcountry(0, $code, '', $lang);
 	}
 
 	/**
@@ -579,7 +654,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getCountryByISO($iso, $lang = '')
 	{
-		return $this->_fetchCcountry('', '', $iso, $lang);
+		return $this->_fetchCcountry(0, '', $iso, $lang);
 	}
 
 	/**
@@ -1115,7 +1190,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
-	 * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
 	 *
@@ -1124,26 +1199,29 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of extra fields
 	 */
-	public function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $type = '', $sqlfilters = '')
+	public function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $elementtype = '', $sqlfilters = '')
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(401, 'Only an admin user can get list of extrafields');
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS');
 		}
 
-		if ($type == 'thirdparty') {
-			$type = 'societe';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
 		}
-		if ($type == 'contact') {
-			$type = 'socpeople';
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
 		}
 
-		$sql = "SELECT t.rowid, t.name, t.label, t.type, t.size, t.elementtype, t.fieldunique, t.fieldrequired, t.param, t.pos, t.alwayseditable, t.perms, t.list, t.fielddefault, t.fieldcomputed";
+		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
+		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
-		if (!empty($type)) {
-			$sql .= " AND t.elementtype = '".$this->db->escape($type)."'";
+		if (!empty($elementtype)) {
+			$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -1161,6 +1239,7 @@ class Setup extends DolibarrApi
 			if ($this->db->num_rows($resql)) {
 				while ($tab = $this->db->fetch_object($resql)) {
 					// New usage
+					$list[$tab->elementtype][$tab->name]['id'] = $tab->id;
 					$list[$tab->elementtype][$tab->name]['type'] = $tab->type;
 					$list[$tab->elementtype][$tab->name]['label'] = $tab->label;
 					$list[$tab->elementtype][$tab->name]['size'] = $tab->size;
@@ -1174,6 +1253,17 @@ class Setup extends DolibarrApi
 					$list[$tab->elementtype][$tab->name]['alwayseditable'] = $tab->alwayseditable;
 					$list[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
 					$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
+					$list[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$list[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
+					$list[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
+					$list[$tab->elementtype][$tab->name]['help'] = $tab->help;
+					$list[$tab->elementtype][$tab->name]['css'] = $tab->css;
+					$list[$tab->elementtype][$tab->name]['cssview'] = $tab->cssview;
+					$list[$tab->elementtype][$tab->name]['csslist'] = $tab->csslist;
+					$list[$tab->elementtype][$tab->name]['fk_user_author'] = $tab->fk_user_author;
+					$list[$tab->elementtype][$tab->name]['fk_user_modif'] = $tab->fk_user_modif;
+					$list[$tab->elementtype][$tab->name]['datec'] = $tab->datec;
+					$list[$tab->elementtype][$tab->name]['tms'] = $tab->tms;
 				}
 			}
 		} else {
@@ -1183,6 +1273,291 @@ class Setup extends DolibarrApi
 		return $list;
 	}
 
+	/**
+	 * Delete extrafield
+	 *
+	 * @param   string     $attrname         extrafield attrname
+	 * @param   string     $elementtype      extrafield elementtype
+	 * @return  array
+	 *
+	 * @url     DELETE extrafields/{elementtype}/{attrname}
+	 *
+	 */
+	public function deleteExtrafieldsFromNames($attrname, $elementtype)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can delete an extrafield by attrname and elementtype');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if (!$result) {
+			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+		}
+
+		if (!$extrafields->delete($attrname, $elementtype)) {
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Extrafield deleted from attrname and elementtype'
+			)
+		);
+	}
+
+
+
+	/** get Extrafield object
+	 *
+	 * @param	string	$attrname		extrafield attrname
+	 * @param	string	$elementtype	extrafield elementtype
+	 * @return	array					List of extra fields
+	 *
+	 * @url     GET		extrafields/{elementtype}/{attrname}
+	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 */
+	public function getExtrafields($attrname, $elementtype)
+	{
+		$answer = array();
+
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can get list of extrafields');
+		}
+
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+
+		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
+		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
+		$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND t.name = '".$this->db->escape($attrname)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				while ($tab = $this->db->fetch_object($resql)) {
+					// New usage
+					$answer[$tab->elementtype][$tab->name]['id'] = $tab->id;
+					$answer[$tab->elementtype][$tab->name]['type'] = $tab->type;
+					$answer[$tab->elementtype][$tab->name]['label'] = $tab->label;
+					$answer[$tab->elementtype][$tab->name]['size'] = $tab->size;
+					$answer[$tab->elementtype][$tab->name]['elementtype'] = $tab->elementtype;
+					$answer[$tab->elementtype][$tab->name]['default'] = $tab->fielddefault;
+					$answer[$tab->elementtype][$tab->name]['computed'] = $tab->fieldcomputed;
+					$answer[$tab->elementtype][$tab->name]['unique'] = $tab->fieldunique;
+					$answer[$tab->elementtype][$tab->name]['required'] = $tab->fieldrequired;
+					$answer[$tab->elementtype][$tab->name]['param'] = ($tab->param ? jsonOrUnserialize($tab->param) : '');	// This may be a string encoded with serialise() or json_encode()
+					$answer[$tab->elementtype][$tab->name]['pos'] = $tab->pos;
+					$answer[$tab->elementtype][$tab->name]['alwayseditable'] = $tab->alwayseditable;
+					$answer[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
+					$answer[$tab->elementtype][$tab->name]['list'] = $tab->list;
+					$answer[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$answer[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
+					$answer[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
+					$answer[$tab->elementtype][$tab->name]['help'] = $tab->help;
+					$answer[$tab->elementtype][$tab->name]['css'] = $tab->css;
+					$answer[$tab->elementtype][$tab->name]['cssview'] = $tab->cssview;
+					$answer[$tab->elementtype][$tab->name]['csslist'] = $tab->csslist;
+					$answer[$tab->elementtype][$tab->name]['fk_user_author'] = $tab->fk_user_author;
+					$answer[$tab->elementtype][$tab->name]['fk_user_modif'] = $tab->fk_user_modif;
+					$answer[$tab->elementtype][$tab->name]['datec'] = $tab->datec;
+					$answer[$tab->elementtype][$tab->name]['tms'] = $tab->tms;
+				}
+			} else {
+				throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
+		}
+
+		return $answer;
+	}
+
+	/**
+	 * Create Extrafield object
+	 *
+	 * @param	string	$attrname		extrafield attrname
+	 * @param	string	$elementtype	extrafield elementtype
+	 * @param	array	$request_data	Request datas
+	 * @return	int						ID of extrafield
+	 *
+	 * @url     POST	extrafields/{elementtype}/{attrname}
+	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 */
+	public function postExtrafields($attrname, $elementtype, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can create an extrafield');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if ($result) {
+			throw new RestException(409, 'Duplicate extrafield already found from attrname and elementtype');
+		}
+
+		// Check mandatory fields is not working despise being a modified copy from api_thirdparties.class.php
+		// $result = $this->_validateExtrafields($request_data, $extrafields);
+
+		foreach ($request_data as $field => $value) {
+			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
+		}
+
+		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) {
+			$entity = 1;
+		}
+
+		// built in validation
+		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
+
+		if ($request_data['label']) {
+			$label = $request_data['label'];
+		} else {
+			throw new RestException(400, "label field absent in json at root level");
+		}
+
+		$alwayseditable = $request_data['alwayseditable'];
+		$default_value = $request_data['default_value'];
+		$totalizable = $request_data['totalizable'];
+		$printable = $request_data['printable'];
+		$required = $request_data['required'];
+		$langfile = $request_data['langfile'];
+		$computed = $request_data['computed'];
+		$unique = $request_data['unique'];
+		$param = $request_data['param'];
+		$perms = $request_data['perms'];
+		$size = $request_data['size'];
+		$type = $request_data['type'];
+		$list = $request_data['list'];
+		$help = $request_data['help'];
+		$pos = $request_data['pos'];
+		$moreparams = array();
+
+		if (0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
+		}
+
+		$sql = "SELECT t.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND name = '".$this->db->escape($attrname)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$tab = $this->db->fetch_object($resql);
+				$id = (int) $tab->id;
+			} else {
+				$id = (int) -1;
+			}
+		} else {
+			$id = (int) -2;
+		}
+
+		return $id;
+	}
+
+	/**
+
+	 * Update Extrafield object
+	 *
+	 * @param	string	$attrname		extrafield attrname
+	 * @param	string	$elementtype	extrafield elementtype
+	 * @param	array	$request_data	Request datas
+	 * @return	int						ID of extrafield
+	 *
+	 * @url     PUT		extrafields/{elementtype}/{attrname}
+	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 */
+	public function updateExtrafields($attrname, $elementtype, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can create an extrafield');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if (!$result) {
+			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+		}
+
+		foreach ($request_data as $field => $value) {
+			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
+		}
+
+		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) {
+			$entity = 1;
+		}
+
+		// built in validation
+		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
+		if ($request_data['label']) {
+			$label = $request_data['label'];
+		} else {
+			throw new RestException(400, "label field absent in json at root level");
+		}
+
+		$alwayseditable = $request_data['alwayseditable'];
+		$default_value = $request_data['default_value'];
+		$totalizable = $request_data['totalizable'];
+		$printable = $request_data['printable'];
+		$required = $request_data['required'];
+		$langfile = $request_data['langfile'];
+		$computed = $request_data['computed'];
+		$unique = $request_data['unique'];
+		$param = $request_data['param'];
+		$perms = $request_data['perms'];
+		$size = $request_data['size'];
+		$type = $request_data['type'];
+		$list = $request_data['list'];
+		$help = $request_data['help'];
+		$pos = $request_data['pos'];
+		$moreparams = array();
+
+		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
+		if (0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
+		}
+
+		$sql = "SELECT t.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND name = '".$this->db->escape($attrname)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$tab = $this->db->fetch_object($resql);
+				$id = (int) $tab->id;
+			} else {
+				$id = (int) -1;
+			}
+		} else {
+			$id = (int) -2;
+		}
+
+		return $id;
+	}
 
 	/**
 	 * Get the list of towns.
@@ -1805,7 +2180,7 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$type =$this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
 				$this->translateLabel($type, $lang, 'TicketTypeShort', array('ticket'));
 				$list[] = $type;
 			}
@@ -1868,7 +2243,7 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$type =$this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
 				$list[] = $type;
 			}
 		} else {
@@ -1892,7 +2267,7 @@ class Setup extends DolibarrApi
 		global $conf, $mysoc;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
@@ -2044,7 +2419,7 @@ class Setup extends DolibarrApi
 		global $langs, $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK');
 		}
 
@@ -2064,7 +2439,7 @@ class Setup extends DolibarrApi
 
 		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
-			$xmlfile = $xmlfile.'.zip';
+			$xmlfile .= '.zip';
 		}
 
 		// Remote file to compare to
@@ -2108,7 +2483,7 @@ class Setup extends DolibarrApi
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
-				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 			} else {
 				$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 				throw new RestException(500, $errormsg);
@@ -2181,7 +2556,7 @@ class Setup extends DolibarrApi
 					$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 					if (!in_array($tmprelativefilename, $file_list['insignature'])) {
 						$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-						$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+						$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
 					}
 				}
 
@@ -2344,7 +2719,7 @@ class Setup extends DolibarrApi
 			throw new RestException(404, 'No signature file known');
 		}
 
-		return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
+		return array('resultcode' => $resultcode, 'resultcomment' => $resultcomment, 'expectedchecksum' => $outexpectedchecksum, 'currentchecksum' => $outcurrentchecksum, 'out' => $out);
 	}
 
 
@@ -2362,7 +2737,7 @@ class Setup extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 

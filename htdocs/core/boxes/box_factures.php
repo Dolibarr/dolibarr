@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_factures.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Module de generation de l'affichage de la box factures
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -48,6 +49,8 @@ class box_factures extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('facture', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedInvoices';
 	}
 
 	/**
@@ -72,8 +75,8 @@ class box_factures extends ModeleBoxes
 
 		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
-			'text' => $text,
-			'limit'=> dol_strlen($text)
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/compta/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'limit' => dol_strlen($text)
 		);
 
 		if ($user->hasRight('facture', 'lire')) {
@@ -96,6 +99,7 @@ class box_factures extends ModeleBoxes
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
+			$sql .= " AND f.fk_statut > 0";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -145,6 +149,7 @@ class box_factures extends ModeleBoxes
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta_client = $objp->code_compta;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -159,13 +164,14 @@ class box_factures extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
+						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
 						'text' => $facturestatic->getNomUrl(1),
-						'text2'=> $late,
+						'text2' => $late,
 						'asis' => 1,
 					);
 
@@ -193,18 +199,18 @@ class box_factures extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedInvoices").'</span>',
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedInvoices").'</span>',
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -216,12 +222,14 @@ class box_factures extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *  Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *  @param  array   $head       Array with properties of box title
-	 *  @param  array   $contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

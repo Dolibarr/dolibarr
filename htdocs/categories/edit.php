@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
- * Copyright (C) 2020      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
-$color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
+$color = preg_replace('/^#/', '', preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml')));
 $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
@@ -53,6 +53,9 @@ if ($id == "") {
 	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
 
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');
@@ -71,9 +74,6 @@ if (is_numeric($type)) {
 
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
 
@@ -162,8 +162,9 @@ print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head([]);
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="border centpercent">';
 
 // Ref
@@ -191,13 +192,13 @@ print '</td></tr>';
 // Position
 print '<tr><td>';
 print $langs->trans("Position").'</td>';
-print '<td><input type="text" size="25" id="position" name ="position" value="'.$object->position.'" />';
+print '<td><input type="text" class="width50" id="position" name ="position" value="'.$object->position.'" />';
 print '</tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
 print img_picto('', 'category', 'class="pictofixedwidth"');
-print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
+print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id, 0, 0, 'widthcentpercentminusx maxwidth500');
 print ajax_combobox('parent');
 print '</td></tr>';
 
@@ -209,7 +210,7 @@ if (empty($reshook)) {
 }
 
 print '</table>';
-
+print '</div>';
 
 print dol_get_fiche_end();
 

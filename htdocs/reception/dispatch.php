@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -87,14 +87,14 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
-		$origin_id = $object->$typeobject->id;
+	if ($origin == 'order_supplier' && $object->origin_object->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
+		$origin_id = $object->origin_object->id;
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($origin_id);
 	}
 }
 
@@ -170,7 +170,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOSTINT("dto_".$reg[1].'_'.$reg[2]);
 					if (!empty($dto)) {
-						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
+						$unit_price = (float) price2num(GETPOSTFLOAT("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
 					}
 					$saveprice = "saveprice_".$reg[1].'_'.$reg[2];
 				}
@@ -193,7 +193,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 							$error++;
 						} else {
 							$qtystart = $supplierorderdispatch->qty;
-							$supplierorderdispatch->qty = GETPOST($qty);
+							$supplierorderdispatch->qty = (float) price2num(GETPOST($qty));
 							$supplierorderdispatch->fk_entrepot = GETPOSTINT($ent);
 							if ($modebatch == "batch") {
 								$supplierorderdispatch->eatby = $dDLUO;
@@ -280,7 +280,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 	}
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages($langs->trans("Error"), $errors, 'errors');
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans("ReceptionUpdated"), null);
@@ -307,7 +307,7 @@ $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedido
 $morejs = array('/fourn/js/lib_dispatch.js.php');
 $numline = 0;
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-reception page-card_dispatch');
 
 if ($id > 0 || !empty($ref)) {
 	if (!empty($object->origin) && $object->origin_id > 0) {
@@ -315,7 +315,7 @@ if ($id > 0 || !empty($ref)) {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
 	}
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -391,7 +391,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border tableforfield" width="100%">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -399,7 +399,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -407,7 +407,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
@@ -461,8 +461,8 @@ if ($id > 0 || !empty($ref)) {
 		// Get list of lines from the original Order into $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as l on l.rowid = cfd.fk_elementdet";
 		$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
 
@@ -586,7 +586,7 @@ if ($id > 0 || !empty($ref)) {
 				print "</tr>\n";
 			}
 
-			$nbfreeproduct = 0; // Nb of lins of free products/services
+			$nbfreeproduct = 0; // Nb of lines of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
@@ -688,10 +688,10 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
+						$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
-						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
-						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;
+						$sql .= " AND cfd.fk_element = ".((int) $objectsrc->id);
+						$sql .= " AND cfd.fk_elementdet = ".(int) $objp->rowid;
 
 						//print $sql;
 						$resultsql = $db->query($sql);
@@ -840,9 +840,9 @@ if ($id > 0 || !empty($ref)) {
 								// Warehouse
 								print '<td class="right">';
 								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 								} else {
 									$langs->load("errors");
 									print $langs->trans("ErrorNoWarehouseDefined");
@@ -1013,9 +1013,9 @@ if ($id > 0 || !empty($ref)) {
 							// Warehouse
 							print '<td class="right">';
 							if (count($listwarehouses) > 1) {
-								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 							} elseif (count($listwarehouses) == 1) {
-								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 							} else {
 								$langs->load("errors");
 								print $langs->trans("ErrorNoWarehouseDefined");

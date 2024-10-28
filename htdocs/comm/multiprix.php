@@ -47,6 +47,7 @@ if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
 }
+$hookmanager->initHooks(array('thirdpartyprice', 'globalcard'));
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 

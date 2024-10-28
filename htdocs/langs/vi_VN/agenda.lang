@@ -21,7 +21,6 @@ MenuDoneMyActions=Sự kiện đã chấm dứt của tôi
 ListOfEvents=Danh sách sự kiện (lịch mặc định)
 ActionsAskedBy=Sự kiện báo cáo bởi
 ActionsToDoBy=Sự kiện được giao
-ActionsDoneBy=Sự kiện được thực hiện bởi
 ActionAssignedTo=Sự kiện được giao cho
 ViewCal=Xem tháng
 ViewDay=Xem ngày
@@ -135,12 +134,14 @@ AgendaModelModule=Mẫu tài liệu cho sự kiện
 DateActionStart=Ngày bắt đầu
 DateActionEnd=Ngày kết thúc
 AgendaUrlOptions1=Bạn cũng có thể thêm các thông số sau đây để lọc đầu ra:
-AgendaUrlOptions3=<b>logina = %s</b> để hạn chế đầu ra cho các hành động thuộc sở hữu của người dùng <b>%s</b> .
-AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> để hạn chế đầu ra cho các hành động không thuộc sở hữu của người dùng <b>%s</b> .
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint = %s</b> để hạn chế đầu ra cho các hành động được chỉ định cho người dùng <b>%s</b> (chủ sở hữu và những người khác).
 AgendaUrlOptionsProject=<b>project = __PROJECT_ID__</b> để hạn chế đầu ra cho các hành động được liên kết với dự án <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> để loại trừ các sự kiện tự động.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> bào gồm các ngày nghỉ sự kiện
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Sinh nhật của các liên hệ
 AgendaHideBirthdayEvents=Ẩn ngày sinh của các liên lạc
 Busy=Bận
@@ -201,4 +202,6 @@ AppointmentDuration = Thời lượng cuộc hẹn: %s
 BookingSuccessfullyBooked=Đặt chỗ của bạn đã được lưu
 BookingReservationHourAfter=Chúng tôi xác nhận việc đặt trước cuộc họp của chúng tôi vào ngày %s
 BookcalBookingTitle=Cuộc hẹn trực tuyến
-Transparency = Transparency
+Transparency = Minh bạch
+ReadMore = Read more
+ReadLess = Read less

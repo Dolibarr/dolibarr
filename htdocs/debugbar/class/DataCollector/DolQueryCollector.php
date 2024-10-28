@@ -53,7 +53,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 * Return collected data
 	 *
-	 * @return array  Array
+	 * @return array  Array of collected data
 	 */
 	public function collect()
 	{

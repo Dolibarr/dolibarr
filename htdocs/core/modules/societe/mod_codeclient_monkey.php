@@ -76,12 +76,12 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	Societe		$objsoc		Object thirdparty
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
@@ -90,11 +90,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *  @return string|-1      			Value if OK, '' if module not configured, -1 if KO
+	 *  @param	Societe|string	$objsoc     Object third party
+	 *  @param  int				$type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *  @return string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
 		global $db;
 
@@ -137,7 +137,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($max >= (pow(10, 5) - 1)) {
 			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
 		} else {
-			$num = sprintf("%05s", $max + 1);
+			$num = sprintf("%05d", $max + 1);
 		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
@@ -151,12 +151,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
@@ -164,7 +166,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {
@@ -173,7 +175,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = 0;
 				}
 			} else {
 				if (dol_strlen($code) == 0) {
@@ -242,7 +244,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if (dol_strlen($code) < 11) {
 			$res = -1;
 		} else {
-			$res = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$res = 0;
 		}
 		return $res;
 	}

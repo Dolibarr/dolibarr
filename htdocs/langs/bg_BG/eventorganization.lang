@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Организация на събития
 EventOrganizationDescription = Организация на събития чрез модулен проект
 EventOrganizationDescriptionLong= Управлявайте организацията на събитие (шоу, конференции, присъстващи или лектори, с публични страници за предложения, гласуване или регистрация)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Организирани събития
 EventOrganizationConferenceOrBoothMenuLeft = Конференция или кабина
-
 PaymentEvent=плащане на събитието
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Регистрация
 EventOrganizationSetup=Настройка на организацията на събитието
 EventOrganization=Организация на събития
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон за имейл, к
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон за имейл, който да се използва при изпращане на имейли от масовото действие „Изпращане на имейли“ в списъка на участниците
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Във формуляра за създаване/добавяне на участник ограничава списъка с трети страни до трети страни в Категория
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Във формуляра за създаване/добавяне на участник ограничава списъка с трети страни до трети страни с характер
-
-#
 # Object
-#
 OrganizedEvent=Организирано събитие
 EventOrganizationConfOrBooth= Конференция или кабина
-EventOrganizationConfOrBoothes=Конференции или кабини
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Управлявайте организацията на събитие
 ConferenceOrBooth = Конференция или кабина
 ConferenceOrBoothTab = Конференция или кабина
@@ -63,10 +50,7 @@ DateOfRegistration = Дата от регистрацията
 ConferenceOrBoothAttendee = Участник на конференция или щанд
 ApplicantOrVisitor=Кандидат или посетител
 Speaker=Говорител
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Вашият Искане за конференция беше получен
 YourOrganizationEventBoothRequestWasReceived = Вашият Искане за щанд беше получен
 EventOrganizationEmailAskConf = Искане за конференция
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Регистрация за съби
 EventOrganizationMassEmailAttendees = Комуникация с присъстващите
 EventOrganizationMassEmailSpeakers = Комуникация с високоговорители
 ToSpeakers=Към високоговорителите
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Позволете на хората да предлагат конференции
 AllowUnknownPeopleSuggestConfHelp=Позволете на непознати хора да предложат конференция, която искат да направят
 AllowUnknownPeopleSuggestBooth=Позволете на хората да кандидатстват за щанд
@@ -88,29 +69,29 @@ PriceOfRegistration=Цена на регистрация
 PriceOfRegistrationHelp=Цена, която трябва да платите за регистрация или участие в събитието
 PriceOfBooth=Абонаментна цена за щанд
 PriceOfBoothHelp=Абонаментна цена за щанд
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Свържете ICS за конференции
 ConferenceOrBoothInformation=Информация за конференция или кабина
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Присъстващи
-ListOfAttendeesOfEvent=Списък на участниците в проекта за събитието
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Изтеглете ICS връзка
 EVENTORGANIZATION_SECUREKEY = Seed за осигуряване на ключа за страницата за публична регистрация, за да предложи конференция
 SERVICE_BOOTH_LOCATION = Услуга, използвана за реда на фактурата относно местоположението на щанда
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Услуга, използвана за реда на фактурата за абонамент на присъстващ за събитие
 NbVotes=Брой гласове
-
-#
 # Status
-#
 EvntOrgDraft = Чернова
 EvntOrgSuggested = Предложено
 EvntOrgConfirmed = Потвърдено
 EvntOrgNotQualified = Не квалифициран
 EvntOrgDone = Завършено
 EvntOrgCancelled = Анулирана
-
-#
 # Other
-#
 SuggestForm = Страница с предложения
 SuggestOrVoteForConfOrBooth = Страница за предложение или гласуване
 EvntOrgRegistrationHelpMessage = Тук можете да гласувате за конференция или да предложите нова за събитието. Можете също да кандидатствате за щанд по време на събитието.
@@ -133,6 +114,7 @@ EventType = Тип събитие
 LabelOfBooth=Етикет на кабината
 LabelOfconference=Етикет на конференцията
 ConferenceIsNotConfirmed=Регистрацията не е налична, конференцията все още не е потвърдена
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s трябва да е преди %s
 DateMustBeAfterThan=%s трябва да е след %s
 MaxNbOfAttendeesReached=Максималният брой участници е достигнат
@@ -174,6 +156,7 @@ DateEndEvent=Край на събитието Дата
 ModifyStatus=промени състояние
 ConfirmModifyStatus=Потвърдете промяната на състоянието
 ConfirmModifyStatusQuestion=Сигурни ли сте, че искате до промени %s избраните записи?
-RecordsUpdated = %s Записите са актуализирани
-RecordUpdated = Записът е актуализиран
-NoRecordUpdated = Няма актуализиран запис
+RecordsUpdated=%s Записите са актуализирани
+RecordUpdated=Записът е актуализиран
+NoRecordUpdated=Няма актуализиран запис
+ProfitPerValidatedAttendee=Profit per attendee

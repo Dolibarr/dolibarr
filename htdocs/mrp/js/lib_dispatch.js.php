@@ -160,7 +160,7 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
-		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>;
+		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>';
 		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched < qtyOrdered) {

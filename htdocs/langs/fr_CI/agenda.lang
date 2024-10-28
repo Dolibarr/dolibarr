@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - agenda
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not own by the user).

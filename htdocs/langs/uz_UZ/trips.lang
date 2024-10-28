@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Yozib olingan
 AUTHORPAIEMENT=To'langan
 AddTrip=Xarajatlar to'g'risida hisobot yarating
@@ -13,6 +13,8 @@ byEX_EXP=satr bo'yicha (%s chegarasi)
 byEX_MON=oy bo'yicha (%s chegarasi)
 byEX_YEA=yil bo'yicha (%s chegarasi)
 CANCEL_USER=O'chirilgan
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Avtomobillar toifasi
 ClassifyRefunded="Qaytarilgan" deb tasniflang
 CompanyVisited=Kompaniya / tashkilot tashrif buyurdi
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=yil bo'yicha (cheklovsiz)
 NoTripsToExportCSV=Ushbu davr uchun eksport uchun xarajatlar hisoboti yo'q.
 NOT_AUTHOR=Siz ushbu xarajatlar hisobotining muallifi emassiz. Operatsiya bekor qilindi.
 OnExpense=Xarajatlar liniyasi
-PDFStandardExpenseReports=Xarajatlar hisoboti uchun PDF hujjatini yaratish uchun standart shablon
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Xarajatlar to'g'risidagi hisobotni to'lash
 REFUSEUR=Rad etilgan
 RangeIk=Kilometr oralig'i
@@ -106,7 +108,7 @@ TripId=Id xarajatlari to'g'risidagi hisobot
 TripNDF=Axborot xarajatlari to'g'risidagi hisobot
 TripSociete=Axborot kompaniyasi
 Trips=Xarajatlar bo'yicha hisobotlar
-TripsAndExpenses=Xarajatlar to'g'risida hisobotlar
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=Xarajatlar bo'yicha hisobotlar
 TypeFees=To'lov turlari
 UploadANewFileNow=Hozir yangi hujjatni yuklang
@@ -115,6 +117,10 @@ VALIDOR=Tomonidan tasdiqlangan
 ValidateAndSubmit=Tasdiqlang va tasdiqlash uchun topshiring
 ValidatedWaitingApproval=Tasdiqlangan (tasdiqlashni kutmoqda)
 ValideTrip=Xarajatlar to'g'risidagi hisobotni tasdiqlash
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Nonushta

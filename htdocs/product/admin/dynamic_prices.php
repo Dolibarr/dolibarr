@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015	    Ion Agorria             <ion@agorria.com>
  * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +153,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("DynamicPrice"));
+llxHeader("", "", $langs->trans("DynamicPrice"), '', 0, 0, '', '', '', 'mod-product page-admin_dynamic_prices');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
@@ -251,7 +252,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 	print '</tr>';
 
 	$arraypriceupdaters = $price_updaters->listUpdaters();
-	if (!empty($arraypriceupdaters)) {
+	if (!empty($arraypriceupdaters) && is_array($arraypriceupdaters)) {
 		foreach ($arraypriceupdaters as $i => $entry) {
 			$code = "";
 			if ($entry->fk_variable > 0) {

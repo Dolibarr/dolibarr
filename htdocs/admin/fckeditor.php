@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019		Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'fckeditor'));
+$langs->loadLangs(array('admin', 'fckeditor', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
 // Possible modes are:
@@ -51,13 +53,12 @@ $modules = array(
 	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
 	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
 	'SOCIETE' => 'FCKeditorForCompany',
-	//'PRODUCTDESC' => 'FCKeditorForProduct',
 	'DETAILS' => 'FCKeditorForProductDetails',
 	'USERSIGN' => 'FCKeditorForUserSignature',
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
-	'SPECIALCHAR' => 'SpecialCharActivation',
+	//'SPECIALCHAR' => 'SpecialCharActivation',
 );
 // Conditions for the option to be offered
 $conditions = array(
@@ -70,7 +71,7 @@ $conditions = array(
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('invoice') || isModEnabled("propal") || isModEnabled('order')),
 	'TICKET' => isModEnabled('ticket'),
-	'SPECIALCHAR' => 1,
+	//'SPECIALCHAR' => 1,
 );
 // Picto
 $picto = array(
@@ -83,7 +84,7 @@ $picto = array(
 	'MAILING' => 'email',
 	'MAIL' => 'email',
 	'TICKET' => 'ticket',
-	'SPECIALCHAR' => 'generic'
+	//'SPECIALCHAR' => 'generic'
 );
 
 
@@ -143,19 +144,19 @@ if (GETPOST('save', 'alpha')) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fckeditor');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AdvancedEditor"), $linkback, 'title_setup');
 print '<br>';
 
 if (empty($conf->use_javascript_ajax)) {
-	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
+	setEventMessages(null, array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
-	print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
+	print '<td class="center width100"></td>';
 	print "</tr>\n";
 
 	// Modules
@@ -191,15 +192,45 @@ if (empty($conf->use_javascript_ajax)) {
 
 	print '<br>'."\n";
 
+
+	// Other options
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Other").'</td>';
+	print '<td class="center"></td>';
+	print "</tr>\n";
+
+	$constante = 'FCKEDITOR_ENANLE_SPECIALCHAR';
+	print '<!-- constant = '.$constante.' -->'."\n";
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $langs->trans('SpecialCharActivation');
+	print '</td>';
+	print '<td class="center width100">';
+	$value = getDolGlobalInt($constante, 0);
+	if ($value == 0) {
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	} elseif ($value == 1) {
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+	}
+
+	print "</td>";
+	print '</tr>';
+
+	print '</table>'."\n";
+
+	print '<br>'."\n";
+
+
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page_y" value="">';
 
 	// Skins
-	show_skin(null, 1);
-	print '<br>'."\n";
+	//show_skin(null, 1);
+	//print '<br>'."\n";
 
-	$listofmodes = array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
+	$listofmodes = array('dolibarr_readonly', 'dolibarr_details', 'dolibarr_notes', 'dolibarr_mailings', 'Full', 'Full_inline');
 	$linkstomode = '';
 	foreach ($listofmodes as $newmode) {
 		if ($linkstomode) {
@@ -221,15 +252,15 @@ if (empty($conf->use_javascript_ajax)) {
 	if ($mode != 'Full_inline') {
 		$uselocalbrowser = true;
 		$readonly = ($mode == 'dolibarr_readonly' ? 1 : 0);
-		$editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
+		$editor = new DolEditor('formtestfield', getDolGlobalString('FCKEDITOR_TEST', 'Test'), '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, '8', $readonly);
 		$editor->Create();
 	} else {
 		// CKEditor inline enabled with the contenteditable="true"
 		print '<div style="border: 1px solid #888;" contenteditable="true">';
-		print $conf->global->FCKEDITOR_TEST;
+		print getDolGlobalString('FCKEDITOR_TEST');
 		print '</div>';
 	}
-	print $form->buttonsSaveCancel("Save", '', null, 0, 'reposition');
+	print $form->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 

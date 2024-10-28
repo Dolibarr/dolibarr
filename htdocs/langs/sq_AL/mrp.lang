@@ -15,6 +15,10 @@ ListOfBOMs=Faturat materiale - BOM
 ListOfManufacturingOrders=Porositë e prodhimit
 NewBOM=Fatura e re e materialeve
 ProductBOMHelp=Produkt për t'u krijuar (ose çmontuar) me këtë BOM.<br>Shënim: Produktet me vetinë 'Natyra e produktit' = 'Lëndë e parë' nuk janë të dukshme në këtë listë.
+CloneDefBomProduct=Clone the default BOM to use to manufacture the product
+CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
+BOMofRef=BOM of %s
+ErrorProductCloneBom=Error: Failed to clone a BOM
 BOMsNumberingModules=Modelet e numrave BOM
 BOMsModelModule=Modelet e dokumenteve BOM
 MOsNumberingModules=Modelet e numërimit të MO
@@ -100,6 +104,7 @@ WorkstationSetup = Vendosja e stacioneve të punës
 WorkstationSetupPage = Faqja e konfigurimit të stacioneve të punës
 WorkstationList=Lista e stacioneve të punës
 WorkstationCreate=Shto stacion të ri pune
+NewWorkstation=Stacion i ri pune
 ConfirmEnableWorkstation=Are you sure you want to enable workstation <b>%s</b> ?
 EnableAWorkstation=Aktivizo një stacion pune
 ConfirmDisableWorkstation=Are you sure you want to disable workstation <b>%s</b> ?
@@ -130,9 +135,8 @@ Manufacturing=Prodhimtaria
 Disassemble=çmontoni
 ProducedBy=Prodhuar nga
 QtyTot=Sasia Total
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Sasia nuk mund të ndahet
 NoRemainQtyToDispatch=Nuk ka mbetur asnjë sasi për t'u ndarë
-
 THMOperatorEstimatedHelp=Kostoja e vlerësuar e operatorit për orë. Do të përdoret për të vlerësuar koston e një BOM duke përdorur këtë stacion pune.
 THMMachineEstimatedHelp=Kostoja e vlerësuar e makinës për orë. Do të përdoret për të vlerësuar koston e një BOM duke përdorur këtë stacion pune.

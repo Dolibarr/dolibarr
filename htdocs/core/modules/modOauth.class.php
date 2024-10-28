@@ -103,7 +103,7 @@ class modOauth extends DolibarrModules
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// This is to declare the Top Menu entry:
 		//$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu

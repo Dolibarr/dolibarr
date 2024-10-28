@@ -78,7 +78,7 @@ class modECM extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(); // List of boxes
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:

@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('proposalindex'));
 
@@ -39,7 +39,7 @@ $hookmanager->initHooks(array('proposalindex'));
 $langs->loadLangs(array('propal', 'companies'));
 
 $now = dol_now();
-$max = 5;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -78,10 +78,10 @@ if ($tmp) {
  * Draft proposals
  */
 if (isModEnabled("propal")) {
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc";
-	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.email, s.entity, s.code_compta";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc,";
+	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.email, s.entity, s.code_compta as code_compta_client";
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut =".Propal::STATUS_DRAFT;
@@ -119,6 +119,7 @@ if (isModEnabled("propal")) {
 				$propalstatic->id = $obj->rowid;
 				$propalstatic->ref = $obj->ref;
 				$propalstatic->ref_client = $obj->ref_client;
+				$propalstatic->ref_customer = $obj->ref_client;
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
@@ -131,7 +132,8 @@ if (isModEnabled("propal")) {
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->entity = $obj->entity;
 				$companystatic->email = $obj->email;
-				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->code_compta = $obj->code_compta_client;
+				$companystatic->code_compta_client = $obj->code_compta_client;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
@@ -160,10 +162,10 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec";
-$sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
-$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
+$sql .= " ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
 $sql .= " AND c.fk_soc = s.rowid";
 // If the internal user must only see his customers, force searching by him
@@ -190,7 +192,8 @@ $sql .= $db->plimit($max, 0);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
-	startSimpleTable($langs->trans("LastModifiedProposals", $max), "", "", 3);
+
+	startSimpleTable($langs->trans("LastModifiedProposals", $max), "comm/propal/list.php", "sortfield=p.tms&sortorder=DESC", 2, -1, 'propal');
 
 	if ($num) {
 		$i = 0;
@@ -205,7 +208,8 @@ if ($resql) {
 			$companystatic->client = $obj->client;
 			$companystatic->canvas = $obj->canvas;
 			$companystatic->email = $obj->email;
-			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta = $obj->code_compta_client;
+			$companystatic->code_compta_client = $obj->code_compta_client;
 
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -213,7 +217,7 @@ if ($resql) {
 
 			print '<tr class="oddeven">';
 
-			print '<td width="20%" class="nowrap">';
+			print '<td class="nowrap">';
 			print '<table class="nobordernopadding">';
 			print '<tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">'.$propalstatic->getNomUrl(1).'</td>';
@@ -224,8 +228,13 @@ if ($resql) {
 			print '</td>';
 
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
+
+			$datem = $db->jdate($obj->datem);
+			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print dol_print_date($datem, 'day', 'tzuserrel');
+			print '</td>';
+
+			print '<td class="right">'.$propalstatic->LibStatut($obj->status, 3).'</td>';
 
 			print '</tr>';
 
@@ -244,10 +253,10 @@ if ($resql) {
  * Open (validated) proposals
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
-	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client,";
+	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
+	$sql .= " ".MAIN_DB_PREFIX."propal as p";
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
@@ -290,7 +299,8 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 				$companystatic->client = $obj->client;
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->email = $obj->email;
-				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->code_compta = $obj->code_compta_client;
+				$companystatic->code_compta_client = $obj->code_compta_client;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -311,7 +321,7 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
 				print '<td class="right">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';

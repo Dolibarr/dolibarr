@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Você usou o assistente de configuração do Dolibarr a par
 KeepDefaultValuesMamp=Você usou o assistente de configuração Dolibarr do DoliMamp, então os valores propostos aqui já estão otimizados. Mude-os somente se você souber o que está fazendo.
 KeepDefaultValuesProxmox=Você usou o assistente de configuração Dolibarr de um dispositivo virtual Proxmox, portanto, os valores propostos aqui já estão otimizados. Mude-os somente se você souber o que está fazendo.
 UpgradeExternalModule=Execute o processo de atualização dedicado do módulo externo
-SetAtLeastOneOptionAsUrlParameter=Defina pelo menos uma opção como um parâmetro no URL. Por exemplo: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nada para limpar/eliminar
 NothingToDo=Nada para fazer
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=O aplicativo tentou fazer o upgrade automático,
 YouTryUpgradeDisabledByMissingFileUnLock=O Aplicação tentou fazer o upgrade automático, mas o processo de atualização não é permitido no momento.<br>
 ClickHereToGoToApp=Clique aqui para ir ao seu aplicativo
 ClickOnLinkOrRemoveManualy=Se uma atualização estiver em andamento, aguarde. Caso contrário, clique no seguinte hiperligação, conexão. Se você sempre vê esta mesma página, você deve remover/renomear o ficheiro install.lock nos documentos diretoria.
-ClickOnLinkOrCreateUnlockFileManualy=Se uma atualização estiver em andamento, aguarde... Caso contrário, você deverá remover o ficheiro install.lock ou criar um ficheiro upgrade.unlock nos documentos Dolibarr diretoria.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Carregado
 FunctionTest=Teste de funcionamento
 NodoUpgradeAfterDB=Nenhuma ação solicitada por módulos externo após a atualização do banco de dados

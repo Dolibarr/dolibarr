@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 // $error must have been initialized to 0
 // $action must be defined
-// $arrayofparameters must be set for action 'update'
+// $arrayofparameters must be set to list of parameters to update for action 'update' on constants
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
@@ -34,8 +35,13 @@ if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty
 	return;
 }
 
+'
+@phan-var-force FormSetup $formSetup
+';
 
-if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin)) {
+$upload_dir = null;
+
+if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {

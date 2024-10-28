@@ -4,6 +4,7 @@
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,15 @@ if (empty($objectclass) || empty($uploaddir)) {
 	exit;
 }
 
+'
+@phan-var-force string $massaction
+@phan-var-force string $objectclass
+@phan-var-force ?string $diroutputmassaction
+@phan-var-force ?string $uploaddir
+@phan-var-force string[] $toselect
+@phan-var-force array<string,mixed> $parameters
+';
+
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
@@ -56,6 +66,7 @@ if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
 if (!$error && $massaction == 'confirm_presend_attendees' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend_attendees';
 }
+
 if (!$error && $massaction == 'confirm_presend_attendees') {
 	$resaction = '';
 	$nbsent = 0;
@@ -68,12 +79,13 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectref = array();
 	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
+	$listofselectedid = array();
+	$listofselectedref = array();
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendee = new ConferenceOrBoothAttendee($db);
-		$listofselectedid = array();
-		$listofselectedref = array();
 		$objecttmp = new $objectclass($db);
+		'@phan-var-force CommonObject $objecttmp';
 
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
@@ -91,6 +103,8 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			}
 		}
 	}
+	'@phan-var-force CommonObject $objecttmp';
+	'@phan-var-force array<string,CommonObject> $listofselectedref';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {
@@ -107,7 +121,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$receiver = array($receiver);
 		}
 	}
-	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
+	if (!trim(GETPOST('sendto', 'alphawithlgt')) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
 		$massaction = 'presend_attendees';
@@ -119,7 +133,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		$massaction = 'presend_attendees';
 	}
 
-	if (!$error) {
+	if (!$error && !empty($listofselectedid)) {
 		$objecttmp->fetch_thirdparty();
 		foreach ($listofselectedid as $email => $attendees) {
 			$sendto = '';
@@ -140,7 +154,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				}
 			}
 			$tmparray = array();
-			if (trim($_POST['sendtocc'])) {
+			if (trim(GETPOST('sendtocc', 'alphawithlgt'))) {
 				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			$sendtocc = implode(',', $tmparray);
@@ -156,10 +170,10 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
-				$from = trim($tmp[($reg[1] - 1)]);
+				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-				$from = trim($tmp[($reg[1] - 1)]);
+				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = "SELECT rowid, label, email FROM " . MAIN_DB_PREFIX . "c_email_senderprofile WHERE rowid = " . (int) $reg[1];
 				$resql = $db->query($sql);
@@ -180,6 +194,8 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $attendees);
+			$url_link = null;
+			$html_link = null;
 
 			if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
@@ -221,7 +237,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 					dol_syslog("Try to insert email event into agenda for objid=" . $attendees->id . " => objectobj=" . get_class($attendees));
 
-					$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
+					$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 					if ($message) {
 						if ($sendtocc) {
 							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
@@ -267,7 +283,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					}
 				}
 			}
-		}
+		}  // foreach ($listofselectedid as $email => $attendees)
 	}
 	$resaction .= ($resaction ? '<br>' : $resaction);
 	$resaction .= '<strong>' . $langs->trans("ResultOfMailSending") . ':</strong><br>' . "\n";

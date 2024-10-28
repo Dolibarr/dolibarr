@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2004-2009	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,10 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "contracts"));
 
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contratagenda';
+
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) {
@@ -48,8 +53,6 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 
@@ -61,6 +64,10 @@ if ($user->socid) {
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($id) ? 'rowid' : 'ref');
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('agendacontract', 'globalcard'));
+
 $result = restrictedArea($user, 'contrat', $fieldvalue, '', '', '', $fieldtype);
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -85,9 +92,6 @@ $object = new Contrat($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
@@ -146,12 +150,12 @@ if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$title = $langs->trans("Agenda");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
-	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+	$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -183,7 +187,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
+		$morehtmlref .= ' <span class="otherlink">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -220,7 +224,6 @@ if ($object->id > 0) {
 	print '</div>';
 
 	print dol_get_fiche_end();
-
 
 
 	// Actions buttons
@@ -274,8 +277,12 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_thirdparty_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print load_fiche_titre($langs->trans("ActionsOnContract").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), $newcardbutton, '');
-		//print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
+		$titlelist = $langs->trans("ActionsOnContract").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+		if (!empty($conf->dol_optimize_smallscreen)) {
+			$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+		}
+
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();

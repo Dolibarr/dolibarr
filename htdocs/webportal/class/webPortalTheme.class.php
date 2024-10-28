@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	John Botella			<john.botella@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,14 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php'; // used for col
  */
 class WebPortalTheme
 {
+	/**
+	 * @var string
+	 */
 	public $primaryColorHex = '#263c5c';
+
+	/**
+	 * @var array{h:float,l:float,s:float,a:float}
+	 */
 	public $primaryColorHsl = array(
 		'h' => 216, // Hue
 		'l' => 42,  // lightness
@@ -39,9 +47,19 @@ class WebPortalTheme
 		'a' =>  1   // Alfa
 	);
 
-
+	/**
+	 * @var string login logo url
+	 */
 	public $loginLogoUrl;
+
+	/**
+	 * @var string menu logo url
+	 */
 	public $menuLogoUrl;
+
+	/**
+	 * @var string login background
+	 */
 	public $loginBackground;
 
 	/**
@@ -60,9 +78,20 @@ class WebPortalTheme
 	 */
 	public function __construct()
 	{
+		global $mysoc, $conf;
+
 		$this->loadPrimaryColor();
 
-		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL');
+		$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
+		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+		}
+
+		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL', $urllogo);
 		$this->menuLogoUrl = getDolGlobalString('WEBPORTAL_MENU_LOGO_URL', $this->loginLogoUrl);
 		$this->loginBackground = getDolGlobalString('WEBPORTAL_LOGIN_BACKGROUND');
 		$this->bannerBackground = getDolGlobalString('WEBPORTAL_BANNER_BACKGROUND');
@@ -76,21 +105,21 @@ class WebPortalTheme
 	 */
 	public function loadPrimaryColor()
 	{
-		global $conf;
-
 		$outColor = '';
 
 		if (getDolGlobalString('WEBPORTAL_PRIMARY_COLOR')) {
 			$outColor = getDolGlobalString('WEBPORTAL_PRIMARY_COLOR');
 		} elseif (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')) {
-			$outColor = '#' . colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1));
+			$outColor = colorArrayToHex(colorStringToArray(getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')));
+		}
+		if (strpos($outColor, '#') !== 0) {
+			$outColor = '#'.$outColor;
 		}
 
-		if (empty($outColor) || !colorValidateHex($outColor)) {
-			$outColor = '#263c5c';
+		// If custom color is valid, w e use it
+		if (!empty($outColor) && colorValidateHex($outColor)) {
+			$this->primaryColorHex = $outColor;
+			$this->primaryColorHsl = colorHexToHsl($outColor, 1, true);
 		}
-
-		$this->primaryColorHex = $outColor;
-		$this->primaryColorHsl = colorHexToHsl($outColor, true, true);
 	}
 }

@@ -21,7 +21,6 @@ MenuDoneMyActions=Minu lõpetatud tegevused
 ListOfEvents=Sündmuste nimestik (vaikimisi kalender)
 ActionsAskedBy=Tegevused, mille sisestas
 ActionsToDoBy=Tegevused, mis on seotud
-ActionsDoneBy=Tegevused, mille tegi
 ActionAssignedTo=Sündmus omistatud kasutajale
 ViewCal=Kuu vaade
 ViewDay=Päeva vaade
@@ -135,12 +134,14 @@ AgendaModelModule=Dokumendimallid sündmusele
 DateActionStart=Alguskuupäev
 DateActionEnd=Lõppkuupäev
 AgendaUrlOptions1=Otsingutulemuste piiramiseks võib kasutada ka järgmisi parameetreid:
-AgendaUrlOptions3=<b>logina=%s</b> piiramaks väljundit kasutaja <b>%s</b> tegevustega.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> piiramaks väljundit mis ei ole kasutaja <b>%s</b> tegevused.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> piiramaks väljundit tegevustega, mis on omistatud kasutajale <b>%s</b> (omanik või muud)
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> piiramaks väljundit tegevustega, mis on seostatud projektiga <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> et välistada automaatsed sündmused.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> kaasamaks pühadeaegseid sündmusi.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Kontaktide sünnipäevad
 AgendaHideBirthdayEvents=Peida kontaktide sünnipäevad
 Busy=Hõivatud
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less
