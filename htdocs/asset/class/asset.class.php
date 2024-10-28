@@ -256,7 +256,7 @@ class Asset extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -343,13 +343,7 @@ class Asset extends CommonObject
 		//
 		//      // Load source object
 		//      $result = $object->fetchCommon($fromid);
-		//      if ($result > 0 && !empty($object->table_element_line)) {
-		//          $object->fetchLines();
-		//      }
 		//
-		//      // get lines so they will be clone
-		//      //foreach($this->lines as $line)
-		//      //  $line->fetch_optionals();
 		//
 		//      // Reset some properties
 		//      unset($object->id);
@@ -420,6 +414,7 @@ class Asset extends CommonObject
 		//          $this->db->rollback();
 		//          return -1;
 		//      }
+
 		return -1;
 	}
 
@@ -434,10 +429,6 @@ class Asset extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0) {
-			if (!empty($this->table_element_line)) {
-				$this->fetchLines();
-			}
-
 			$res = $this->hasDepreciationLinesInBookkeeping();
 			if ($res < 0) {
 				return -1;
@@ -452,18 +443,6 @@ class Asset extends CommonObject
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		return 1;
 	}
 
 
@@ -1589,18 +1568,6 @@ class Asset extends CommonObject
 		// $this->property2 = ...
 
 		return $this->initAsSpecimenCommon();
-	}
-
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		return $this->lines;
 	}
 
 	/**
