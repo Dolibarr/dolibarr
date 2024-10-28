@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013 Cédric Salvador <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,14 @@ class Link extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int|'' date add
+	 */
 	public $datea;
+
+	/**
+	 * @var string Object url
+	 */
 	public $url;
 
 	/**
@@ -52,7 +60,14 @@ class Link extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string Object type
+	 */
 	public $objecttype;
+
+	/**
+	 * @var int Object ID
+	 */
 	public $objectid;
 
 
@@ -167,11 +182,11 @@ class Link extends CommonObject
 		}
 
 		// Clean parameters
-		$this->url       = clean_url($this->url, 1);
+		$this->url = clean_url($this->url, 1);
 		if (empty($this->label)) {
 			$this->label = basename($this->url);
 		}
-		$this->label     = trim($this->label);
+		$this->label = trim($this->label);
 
 
 		$this->db->begin();
