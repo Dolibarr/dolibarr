@@ -102,7 +102,7 @@ class InterfaceNotification extends DolibarrTriggers
 	/**
 	 * Return list of events managed by notification module
 	 *
-	 * @return	<array{rowid:int,code:string,contexts:string,label:string,description:string,elementtype:string}>		Array of events managed by notification module
+	 * @return	array<array{rowid:int,code:string,contexts:string,label:string,description:string,elementtype:string}>		Array of events managed by notification module
 	 */
 	public function getListOfManagedEvents()
 	{

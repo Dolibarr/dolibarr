@@ -61,6 +61,9 @@ class PriceGlobalVariableUpdater
 	 */
 	public $description;
 
+	/**
+	 * @var ?string
+	 */
 	public $parameters;
 
 	/**
@@ -68,8 +71,17 @@ class PriceGlobalVariableUpdater
 	 */
 	public $fk_variable;
 
-	public $update_interval; //!< Interval in mins
-	public $next_update; //!< Next update timestamp
+	/**
+	 * @var int Interval in mins
+	 */
+	public $update_interval;
+	/**
+	 * @var int Next update timestamp
+	 */
+	public $next_update;
+	/**
+	 * @var ?string
+	 */
 	public $last_status;
 
 	/**

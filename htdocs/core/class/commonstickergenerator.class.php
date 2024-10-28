@@ -107,7 +107,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	/**
-	 * @var array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}
+	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}
 	 */
 	public $Tformat;
 

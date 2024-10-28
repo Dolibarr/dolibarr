@@ -74,31 +74,31 @@ class Cronjob extends CommonObject
 	 */
 	public $command;
 	/**
-	 * @var string
+	 * @var null|string
 	 */
 	public $classesname;
 	/**
-	 * @var string
+	 * @var null|string
 	 */
 	public $objectname;
 	/**
-	 * @var string
+	 * @var null|string
 	 */
 	public $methodename;
 	/**
-	 * @var string
+	 * @var null|string
 	 */
 	public $params;
 	/**
-	 * @var string
+	 * @var null|string
 	 */
 	public $md5params;
 	/**
-	 * @var int
+	 * @var null|string
 	 */
 	public $module_name;
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $priority;
 
@@ -536,9 +536,9 @@ class Cronjob extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset ppage
-	 * @param	int				$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
-	 * @param	string|array	$filter			Filter USF.
-	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
+	 * @param	int<-1,2>		$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
+	 * @param	string|array<string,string>	$filter	Filter USF.
+	 * @param	int<-1,1>		$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
 	 * @return	int								if KO: <0 || if OK: >0
 	 */
 	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)

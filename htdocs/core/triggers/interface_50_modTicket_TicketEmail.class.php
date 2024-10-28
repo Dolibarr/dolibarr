@@ -198,12 +198,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
+					$contactObj = null;
 
 					if (!empty($contactid)) {
 						$contactObj = new Contact($this->db);
 						$res = $contactObj->fetch($contactid);
-					} else {
-						$contactObj = null;
 					}
 
 					if ($contactObj !== null && !empty($contactObj->email) && !empty($contactObj->statut)) {
@@ -258,6 +257,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
+					$contactObj = null;
 
 					if ($contactid > 0) {
 						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'

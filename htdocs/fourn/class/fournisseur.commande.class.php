@@ -115,7 +115,7 @@ class CommandeFournisseur extends CommonOrder
 	public $ref_fourn;
 
 	/**
-	 * @var int
+	 * @var ?int<0,5>
 	 */
 	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running

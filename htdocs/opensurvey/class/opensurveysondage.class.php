@@ -157,6 +157,9 @@ class Opensurveysondage extends CommonObject
 	 * @var int|'' end date of survey
 	 */
 	public $date_fin = '';
+	/**
+	 * @var ?int
+	 */
 	public $status;
 
 	/**

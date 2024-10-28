@@ -60,8 +60,17 @@ class LoanSchedule extends CommonObject
 	public $datep;
 
 	public $amounts = array(); // Array of amounts
-	public $amount_capital; // Total amount of payment
+	/**
+	 * @var null|float|string  Total amount of payment
+	 */
+	public $amount_capital;
+	/**
+	 * @var null|float|string
+	 */
 	public $amount_insurance;
+	/**
+	 * @var null|float|string
+	 */
 	public $amount_interest;
 
 	/**

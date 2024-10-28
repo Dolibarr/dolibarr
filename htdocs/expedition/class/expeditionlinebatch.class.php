@@ -38,7 +38,13 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public $table_element = 'expeditiondet_batch';
 
+	/**
+	 * @var null|int|string
+	 */
 	public $sellby;
+	/**
+	 * @var null|int|string
+	 */
 	public $eatby;
 	public $batch;
 
@@ -46,7 +52,14 @@ class ExpeditionLineBatch extends CommonObject
 	 * @var float Quantity
 	 */
 	public $qty;
-	public $dluo_qty; // deprecated, use qty
+	/**
+	 * @var null|float
+	 * @deprecated Use $qty
+	 */
+	public $dluo_qty;
+	/**
+	 * @var int
+	 */
 	public $entrepot_id;
 	public $fk_origin_stock;		// rowid in llx_product_batch table (not useful)
 	public $fk_warehouse;			// warehouse ID

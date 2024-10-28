@@ -242,7 +242,7 @@ class pdf_paiement extends CommonDocGenerator
 		if ($result) {
 			$numpaiement = $this->db->num_rows($result);
 		} else {
-			$numpaiment = 0;
+			$numpaiement = 0;
 		}
 
 		// number of bill
