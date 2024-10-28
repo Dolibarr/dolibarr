@@ -341,15 +341,12 @@ if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
 }
 
 // Social networks
-if (empty($object->socialnetworks)) {
-	$object->socialnetworks = getSocialNetworks($object->id);
-}
-if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && count($object->socialnetworks) > 0) {
-	if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0)) {
-		$listOfSocialNetworks = array_values($object->socialnetworks);
+if (!empty($object->socialnetworks) && is_array($object->socialnetworks)) {
+	if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS')) {
+		$listOfSocialNetworks = $object->socialnetworks;
 		foreach ($listOfSocialNetworks as $key => $value) {
-			if (getDolGlobalString('USER_SOCIALNETWORK_'.strtoupper($value['name']))) {
-				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value['name'], 0, $object->id, strtolower($value['name']), $socialnetworksdict).'</div>';
+			if (getDolGlobalString('USER_SOCIALNETWORK_'.strtoupper($key))) {
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($key, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
 			}
 		}
 	}

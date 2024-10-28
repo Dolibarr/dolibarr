@@ -239,7 +239,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS", array(), null, 0, 0, 1);
 	print "</td></tr>\n";
 
 	//Show list of socialnetworks for user
@@ -294,7 +294,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", array(), null, 0, 0, 1);
 	print "</td></tr>\n";
 
 	// show list of social networks for company
