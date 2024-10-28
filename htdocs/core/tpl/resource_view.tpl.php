@@ -1,10 +1,19 @@
 <!-- BEGIN TEMPLATE resource_view.tpl.php -->
 <?php
+/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+'
+@phan-var-force string $element
+@phan-var-force int $element_id
+@phan-var-force string $resource_type
+@phan-var-force array<array{rowid:int,resource_id:int,resource_type:string,busy:int<0,1>,mandatory:int<0,1>}> $linked_resources
+';
 
 
 $form = new Form($db);

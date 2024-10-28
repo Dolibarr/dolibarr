@@ -1,7 +1,8 @@
 <?php
-/* Copyright (c) 2004-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (c) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$graphwidth = DolGraph::getDefaultGraphSizeForStats('width', 700);
+$graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
@@ -84,14 +85,16 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayjs, '', '', 'mod-member page-st
 print load_fiche_titre($title, '', $memberstatic->picto);
 
 //dol_mkdir($dir);
+$data = array();
+$tab = null;
 
 if ($mode) {
 	// Define sql
+	$sql = null;
 	if ($mode == 'memberbycountry') {
 		$label = $langs->trans("Country");
 		$tab = 'statscountry';
 
-		$data = array();
 		$sql = "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
@@ -159,7 +162,12 @@ if ($mode) {
 
 	// Define $data array
 	dol_syslog("Count member", LOG_DEBUG);
-	$resql = $db->query($sql);
+	if ($sql != null) {
+		$resql = $db->query($sql);
+	} else {
+		$resql = false;
+		dol_syslog(__FILE__.":No SQL, invalid mode '$mode'", LOG_ERR);
+	}
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -301,19 +309,18 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 if ($mode) {
 	// Print array
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="liste centpercent">';
+	print '<table class="liste centpercent noborder">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$label.'</td>';
+	print '<th>'.$label.'</th>';
 	if (isset($label2)) {
-		print '<td class="center">'.$label2.'</td>';
+		print '<th class="center">'.$label2.'</th>';
 	}
-	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-	print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
-	print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+	print '<th class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></th>';
+	print '<th class="center">'.$langs->trans("LastMemberDate").'</th>';
+	print '<th class="center">'.$langs->trans("LatestSubscriptionDate").'</th>';
 	print '</tr>';
 
 	foreach ($data as $val) {
-		$year = isset($val['year']) ? $val['year'] : '';
 		print '<tr class="oddeven">';
 		print '<td>'.$val['label'].'</td>';
 		if (isset($label2)) {

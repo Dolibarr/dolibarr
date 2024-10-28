@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 class CProductNature extends CommonDict
 {
 	/**
-	 * @var array record
+	 * @var CProductNature[] record
 	 */
 	public $records = array();
 
@@ -156,9 +156,9 @@ class CProductNature extends CommonDict
 	 * @param  string      $sortfield    Sort field
 	 * @param  int         $limit        Limit
 	 * @param  int         $offset       Offset
-	 * @param  string      $filter       Filter USF
+	 * @param  string|array<string,mixed>	$filter		Filter USF
 	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @return CProductNature[]|int<-1,-1>		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{

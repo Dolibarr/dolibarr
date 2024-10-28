@@ -142,6 +142,9 @@ class WebPortalMember extends Adherent
 
 		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL, 'showonheader' => 1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
 	//public $ref;
 	//public $lastname;
@@ -159,6 +162,9 @@ class WebPortalMember extends Adherent
 	//public $url;
 	//public $socialnetworks;
 	//public $login;
+	/**
+	 * @var int
+	 */
 	public $fk_adherent_type;
 	//public $morphy;
 	//public $societe;
@@ -212,10 +218,9 @@ class WebPortalMember extends Adherent
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param	array	$params		Params to construct tooltip data
-	 * @return	array
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -344,7 +349,7 @@ class WebPortalMember extends Adherent
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {
-				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
+				$result .= $this->getFullName($langs, 0, ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';

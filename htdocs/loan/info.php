@@ -57,6 +57,7 @@ $result = restrictedArea($user, 'loan', $id, '', '');
  * View
  */
 
+$morehtmlright = '';
 $form = new Form($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Info");

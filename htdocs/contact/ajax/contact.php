@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/contact/ajax/contact.php
- *       \brief      File to return Ajax response on contact list request. Used by the combo list of contacts.
+ *       \brief      File to return Ajax response on contact list request. Used by the combo list of contacts, for example into page list of projects
  *       			 Search done on name, firstname...
  */
 
@@ -66,6 +66,8 @@ if ($user->socid > 0) {
 }
 restrictedArea($user, 'societe', $object->id, '&societe');
 
+$permissiontoread = $user->hasRight('societe', 'lire');
+
 
 /*
  * View
@@ -75,7 +77,7 @@ top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (!empty($action) && $action == 'fetch' && !empty($id)) {
+if ($action == 'fetch' && !empty($id) && $permissiontoread) {
 	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 	$outjson = array();
@@ -90,11 +92,11 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	}
 
 	echo json_encode($outjson);
-} else {
+} elseif ($permissiontoread) {		// $action can be 'getContacts'
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	if (empty($htmlname)) {
-		return;
+		return 'Error value for parameter htmlname';
 	}
 
 	// The filter on the company to search for can be:
@@ -149,9 +151,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	} else {
 		$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 
-		if ($outjson) {
-			print json_encode($arrayresult);
-		}
+		print json_encode($arrayresult);
 	}
 }
 

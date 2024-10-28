@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,14 @@ savemethodname:
 */
 
 // Load object according to $id and $element
-$object = fetchObjectByElement($id, $element);
+$element_ref = '';
+if (is_numeric($fk_element)) {
+	$id = (int) $fk_element;
+} else {
+	$element_ref = $fk_element;
+	$id = 0;
+}
+$object = fetchObjectByElement($id, $element, $element_ref);
 
 $module = $object->module;
 $element = $object->element;
@@ -98,6 +106,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$savemethod = GETPOST('savemethod', 'alpha', 2);
 	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
 	$newelement = $element;
+	$subelement = null;
 
 	$view = '';
 	$format = 'text';
@@ -203,6 +212,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
+				'@phan-var-force CommonHookActions $object';
 				$ret = $object->$loadmethodname();
 				if ($ret > 0) {
 					$loadcache = $object->$loadcachename;

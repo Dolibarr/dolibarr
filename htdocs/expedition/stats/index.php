@@ -262,7 +262,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) { // If we have empty year
+	while (!empty($year) && $oldyear > (int) $year + 1) { // If we have empty year
 		$oldyear--;
 
 

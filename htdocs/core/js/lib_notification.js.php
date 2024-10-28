@@ -89,7 +89,7 @@ if ("Notification" in window) {
 
 	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
 	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-	var time_first_execution = <?php echo max(3, !getDolGlobalString('MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION') ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+	var time_first_execution = <?php echo max(3, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION', 0)); ?>;
 
 	setTimeout(first_execution, time_first_execution * 1000);	// Launch a first execution after a time_first_execution delay
 	time_js_next_test = nowtime + time_first_execution;
@@ -112,8 +112,17 @@ function first_execution() {
 function check_events() {
 	var result = 0;
 	dolnotif_nb_test_for_page += 1;
+	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jnotify')); ?>';
 
-	if (Notification.permission === "granted") {
+	permissionok = 0;
+	if (methodfornotification == "jsnotification" && Notification.permission == "granted") {
+		permissionok = 1;
+	}
+	if (methodfornotification == "jnotify") {
+		permissionok = 1;
+	}
+
+	if (permissionok == 1) {
 		var currentToken = 'notrequired';
 		const allMeta = document.getElementsByTagName("meta");
 		for (let i = 0; i < allMeta.length; i++) {
@@ -138,10 +147,11 @@ function check_events() {
 					console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
 					var audio = null;
 					<?php
-					if (getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND')) {
+					if (getDolUserString('AGENDA_REMINDER_BROWSER_SOUND', getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND'))) {
 						print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 					}
 					?>
+					var icon = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
 					var listofreminderids = '';
 					var noti = []
 
@@ -149,61 +159,91 @@ function check_events() {
 						console.log(value);
 						var url = "notdefined";
 						var title = "Not defined";
-						var body = value.label;
-						var icon = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
-						var image = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
-						if (value.type == 'agenda' && value.location != null && value.location != '') {
-							body += '\n' + value.location;
-						}
-
-						if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
-							body += '\n' + value.event_date_start_formated;
-						}
+						var body = "";
 
 						if (value.type == 'agenda')
 						{
 							url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
 							title = '<?php print dol_escape_js($langs->transnoentities('EventReminder')) ?>';
 						}
-						var extra = {
-							icon: icon,
-							body: body,
-							lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
-							tag: value.id_agenda,
-							requireInteraction: true	/* wait that the user click or close the notification */
-							/* only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
-							/* actions: [{ action: 'action1', title: 'New Button Label' }, { action: 'action2', title: 'Another Button' }] */
-						};
 
-						// We release the notify
-						console.log("Send notification on browser url="+url);
-						noti[index] = new Notification(title, extra);
-						if (index==0 && audio)
-						{
-							audio.play();
+						if (methodfornotification == "jsnotification") {
+							body = value.label;
+							if (value.type == 'agenda' && value.location != null && value.location != '') {
+								body += '\n' + value.location;
+							}
+
+							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
+								body += '\n' + value.event_date_start_formated;
+							}
+						} else {
+							if (title != "Not defined") {
+								body = title+'<br><br>';
+							}
+							body += '<img src="'+icon+'">';
+							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
+								body += ' '+value.event_date_start_formated;
+							}
+							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';
+							body += '<br>'+value.label;
+							if (value.type == 'agenda' && value.location != null && value.location != '') {
+								body += '<br>' + value.location;
+							}
 						}
 
-						if (noti[index]) {
-							noti[index].onclick = function (event) {
-								/* If the user has clicked on button Activate */
-								console.log("A click on notification on browser has been done for url="+url);
-								event.preventDefault(); // prevent the browser from focusing the Notification's tab
-								window.focus();
-								window.open(url, '_blank');
-								noti[index].close();
+						// We release the notify
+						console.log("Send notification on browser url="+url+" using method="+methodfornotification);
+
+						// Using the js browser Notification() popup
+						if (methodfornotification == 'jsnotification') {
+							var extra = {
+								icon: icon,
+								body: body,
+								lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
+								tag: value.id_agenda,
+								requireInteraction: true	/* wait that the user click or close the notification */
+								/* "actions:" parameter is only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
+								/* actions: [{ action: 'action1', title: 'New Button Label' }, { action: 'action2', title: 'Another Button' }] */
 							};
+
+							noti[index] = new Notification(title, extra);
+							if (index==0 && audio)
+							{
+								audio.play();
+							}
+
+							if (noti[index]) {
+								noti[index].onclick = function (event) {
+									/* If the user has clicked on button Activate */
+									console.log("A click on notification on browser has been done for url="+url);
+									event.preventDefault(); // prevent the browser from focusing the Notification's tab
+									window.focus();
+									window.open(url, '_blank');
+									noti[index].close();
+								};
+
+								listofreminderids = (listofreminderids == '' ? '' : listofreminderids + ',') + value.id_reminder
+							}
+						}
+
+						// Using jNotify popup
+						if (methodfornotification == 'jnotify') {
+							// Output a message with level "warning"
+							$.jnotify(body, 'warning', true, { remove: function (){} } );
 
 							listofreminderids = (listofreminderids == '' ? '' : listofreminderids + ',') + value.id_reminder
 						}
 					});
 
 					// Update status of all notifications we sent on browser (listofreminderids)
-					console.log("Flag notification as done for listofreminderids="+listofreminderids);
-					$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
-						type: "POST",   // Usually post or get
-						async: true,
-						data: { time_js_next_test: time_js_next_test, token: currentToken }
-					});
+					if (listofreminderids != '') {
+						console.log("Flag notification as done for listofreminderids="+listofreminderids);
+						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
+							type: "POST",
+							async: true,
+							data: { time_js_next_test: time_js_next_test, token: currentToken }
+						});
+					}
 				} else {
 					console.log("No remind to do found, next search at "+time_js_next_test);
 				}
@@ -212,9 +252,9 @@ function check_events() {
 
 		result = 1;
 	} else {
-		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https or browser is in Private mode).");
+		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because permission is off. Javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https or browser is in Private mode).");
 
-		result = 2;	// We return a positive so the repeated check will done even if authorization is not yet allowed may be after this check)
+		result = 2;	// We return a positive so the repeated check will be done even if authorization is not yet allowed may be after this check)
 	}
 
 	if (dolnotif_nb_test_for_page >= 5) {

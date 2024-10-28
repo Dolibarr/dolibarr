@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024 Charlene Benke  		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -704,7 +705,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		}
 
 		if ($result >= 0) {
-			if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
+			if (dol_move($outputfiletmp, $outputfile, '0', 1, 0, 0)) {
 				$result = 1;
 			} else {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;

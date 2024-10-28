@@ -34,7 +34,7 @@ if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')
 	print '</td>';
 }
 print '</tr></table>';
-print '</td><td colspan="3">';
+print '</td><td>';
 
 if ($action == 'editsalesrepresentatives') {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';

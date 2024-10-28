@@ -274,8 +274,8 @@ if (getDolGlobalString('PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH')) {
 
 print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.dol_escape_htmltag($project->title).'".<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.dol_htmlentitiesbr($project->note_public).'</td></tr>'."\n";
 print $text;
 print '</table>'."\n";
 

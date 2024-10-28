@@ -1,7 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2019  Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -436,9 +436,11 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  List jobs print
 	 *
+	 *  @param   ?string      $module     module
+	 *
 	 *  @return  int                     0 if OK, >0 if KO
 	 */
-	public function listJobs()
+	public function listJobs($module = null)
 	{
 		global $conf, $langs;
 

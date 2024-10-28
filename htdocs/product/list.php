@@ -1307,6 +1307,7 @@ if (!empty($arrayfields['p.label']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_product_type']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -1985,7 +1986,7 @@ while ($i < $imaxinloop) {
 			foreach ($arraypricelevel as $key => $value) {
 				if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 					print '<td class="right nowraponall">';
-					if (!empty($productpricescache[$obj->rowid])) {
+					if (!empty($productpricescache[$obj->rowid]) && isset($productpricescache[$obj->rowid][$key]['price_base_type'])) {
 						if ($productpricescache[$obj->rowid][$key]['price_base_type'] == 'TTC') {
 							print '<span class="amount">'.price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC").'</span>';
 						} else {
@@ -2147,7 +2148,7 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['p.fk_country']['checked'])) {
-			print '<td>'.getCountry($obj->fk_country, 0, $db).'</td>';
+			print '<td>'.getCountry($obj->fk_country, '', $db).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

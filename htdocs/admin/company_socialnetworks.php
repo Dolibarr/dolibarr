@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ print '<td></td>';
 print "</tr>\n";
 
 $listofnetworks = dol_sort_array($listofnetworks, 'label');
-//var_dump($listofnetworks);
+
 foreach ($listofnetworks as $key => $value) {
 	if (!empty($value['active'])) {
 		print '<tr class="oddeven">';

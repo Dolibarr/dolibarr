@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +79,7 @@ if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type)) {
 	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
 
 	if (is_object($object)) {
+		'@phan-var-force CommonObject $object';
 		$params[$htmlelement] = array($type => $value);
 		$object->extraparams = array_merge($object->extraparams, $params);
 

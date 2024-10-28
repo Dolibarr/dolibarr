@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +201,7 @@ $title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
-llxHeader('', $title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Define format of choices
@@ -255,7 +256,7 @@ print '</td></tr>';
 // Description
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
 	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
@@ -323,7 +324,7 @@ if ($object->fk_user_creat > 0) {
 	print $userstatic->getLoginUrl(-1);
 } else {
 	if ($action == 'edit') {
-		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
+		print '<input type="text" name="nouvelleadresse" class="minwidth200" value="'.$object->mail_admin.'">';
 	} else {
 		print dol_print_email($object->mail_admin, 0, 0, 1, 0, 1, 1);
 	}
@@ -416,7 +417,7 @@ $comments = $object->getComments();
 if (!empty($comments)) {
 	foreach ($comments as $comment) {
 		if ($user->hasRight('opensurvey', 'write')) {
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
+			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', 0, 0, 0, '', '', 0).'</a> ';
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";

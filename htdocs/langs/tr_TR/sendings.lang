@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Depoda gönderilecek ürün bulunamadı <b>%s</b>.
 WeightVolShort=Ağırlık/Hac.
 ValidateOrderFirstBeforeShipment=Sevkiyatları yapabilmek için önce siparişi doğrulamlısınız.
 NoLineGoOnTabToAddSome=Satır yok, eklemek için "%s" sekmesine gidin
-CreateInvoiceForThisCustomerFromSendings=Fatura gönderimleri
+CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=Fatura doğrulaması 'Hayır' ise, fatura doğrulanıncaya kadar gönderim 'Faturalanmamış' durumunda kalacaktır.
 OptionToSetSendingBilledNotEnabled=Fatura doğrulandığında gönderimi otomatik olarak 'Faturalandı' olarak ayarlamaya yönelik İş Akışı modülündeki seçenek etkin olmaz, dolayısıyla fatura oluşturulduktan sonra gönderimlerin durumunu manuel olarak 'Faturalandı' olarak ayarlamanız gerekecektir.
 

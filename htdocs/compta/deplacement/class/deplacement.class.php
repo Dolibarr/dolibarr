@@ -53,8 +53,17 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var int|string
+	 */
 	public $date;
+	/**
+	 * @var string
+	 */
 	public $type;
 
 	/**
@@ -95,6 +104,9 @@ class Deplacement extends CommonObject
 	 * @var int Status 0=draft, 1=validated, 2=Refunded
 	 */
 	public $statut;
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 
@@ -405,7 +417,7 @@ class Deplacement extends CommonObject
 	 * List of types
 	 *
 	 * @param	int		$active		Active or not
-	 * @return	array
+	 * @return	array<string,string>
 	 */
 	public function listOfTypes($active = 1)
 	{

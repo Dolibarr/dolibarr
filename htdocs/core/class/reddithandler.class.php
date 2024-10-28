@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +71,7 @@ class RedditHandler
 	public $error = '';
 
 	/**
-	 * @var  Array    posts of social network (Mastodon)
+	 * @var array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts of the social network
 	 */
 	private $posts;
 
@@ -141,7 +143,7 @@ class RedditHandler
 			return false;
 		}
 
-		$cacheFile = $cacheDir . '/' . dol_hash($urlAPI, 3);
+		$cacheFile = $cacheDir . '/' . dol_hash($urlAPI, '3');
 		$foundInCache = false;
 		$data = null;
 
@@ -235,7 +237,7 @@ class RedditHandler
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	public function getPosts()
 	{

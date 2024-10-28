@@ -106,4 +106,11 @@ abstract class ModeleNumRefPropales extends CommonNumRefGenerator
 	 *  @return string|int<-1,0>		Next value, <=0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $propal);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

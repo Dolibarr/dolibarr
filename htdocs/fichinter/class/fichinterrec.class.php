@@ -46,11 +46,6 @@ class FichinterRec extends Fichinter
 	public $table_element_line = 'fichinterdet_rec';
 
 	/**
-	 * @var string Fieldname with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
-
-	/**
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'title';
@@ -60,16 +55,10 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
-
 	/**
 	 * @var string title
 	 */
 	public $title;
-	public $number;
-	public $date;
-	public $amount;
-	public $tva;
-	public $total;
 
 	/**
 	 * @var int
@@ -81,6 +70,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $frequency;
 
+	/**
+	 * @var int
+	 */
 	public $id_origin;
 
 	/**
@@ -93,7 +85,14 @@ class FichinterRec extends Fichinter
 	 */
 	public $propalid;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_last_gen;
+
+	/**
+	 * @var datetime|string
+	 */
 	public $date_when;
 
 	/**
@@ -107,7 +106,7 @@ class FichinterRec extends Fichinter
 	public $nb_gen_max;
 
 	/**
-	 * int rank
+	 * @var int rank
 	 */
 	public $rang;
 
@@ -116,6 +115,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $special_code;
 
+	/**
+	 * @var int
+	 */
 	public $usenewprice = 0;
 
 	/**
@@ -248,7 +250,7 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->remise_percent,
 						'HT',
 						0,
-						'',
+						0,
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
@@ -470,7 +472,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param		string		$desc				Line description
 	 *  @param		integer		$duration			Duration
-	 *  @param		string		$date				Date
+	 *  @param		int			$date				Date
 	 *  @param		int			$rang				Position of line
 	 *  @param		double		$pu_ht				Unit price without tax (> 0 even for credit note)
 	 *  @param		double		$qty				Quantity

@@ -187,7 +187,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	global $conf, $langs;
+	global $langs;
 
 	dol_syslog("dol_imageResizeOrCrop file=".$file." mode=".$mode." newWidth=".$newWidth." newHeight=".$newHeight." src_x=".$src_x." src_y=".$src_y);
 
@@ -423,8 +423,8 @@ function dolRotateImage($file_path)
  * Add exif orientation correction for image
  *
  * @param string $fileSource Full path to source image to rotate
- * @param string|bool $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
- * @param int $quality output image quality
+ * @param string|bool|null $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
+ * @param int<-1,100> $quality output image quality
  * @return bool : true on success or false on failure or gd img if $fileDest is false.
  */
 function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
@@ -509,7 +509,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
- *    	@return    string|0						Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
+ *    	@return    string|int<0,0>				Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small', $quality = 50, $outdir = 'thumbs', $targetformat = 0)
 {

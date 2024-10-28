@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,7 +355,7 @@ $server->register(
 /**
  * Get produt or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	string		$ref_ext			Ref external of object
@@ -498,7 +498,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 /**
  * Create an invoice
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$product			Product
  * @return	array							Array result
  */
@@ -572,7 +572,7 @@ function createProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -613,7 +613,7 @@ function createProductOrService($authentication, $product)
 
 		if (!$error) {
 			// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled)) {
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && isModEnabled('stock')) {
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal = $newobject->stock_reel;
@@ -664,7 +664,7 @@ function createProductOrService($authentication, $product)
 /**
  * Update a product or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$product			Product
  * @return	array							Array result
  */
@@ -742,7 +742,7 @@ function updateProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -766,7 +766,7 @@ function updateProductOrService($authentication, $product)
 			$error++;
 		} else {
 			// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled)) {
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && isModEnabled('stock')) {
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal = $newobject->stock_reel;
@@ -831,7 +831,7 @@ function updateProductOrService($authentication, $product)
 /**
  * Delete a product or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$listofidstring		List of id with comma
  * @return	array							Array result
  */
@@ -918,7 +918,7 @@ function deleteProductOrService($authentication, $listofidstring)
 /**
  * getListOfProductsOrServices
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$filterproduct		Filter fields
  * @return	array							Array result
  */
@@ -992,7 +992,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 /**
  * Get list of products for a category
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Category id
  * @param	string		$lang				Force lang
  * @return	array							Array result

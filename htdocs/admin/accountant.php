@@ -106,6 +106,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
+			console.log("selectcountry_id change");
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
@@ -153,25 +154,25 @@ print '</td></tr>'."\n";
 
 // Telephone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="phone" id="phone" class="maxwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_PHONE')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_phoning_fax', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="fax" id="fax" class="maxwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_FAX')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // eMail
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_email', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="mail" id="email" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_MAIL')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-print img_picto('', 'globe', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="web" id="web" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_WEB')).'"></td></tr>';
 print '</td></tr>'."\n";
 

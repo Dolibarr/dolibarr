@@ -1,7 +1,8 @@
 -- ============================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007-2013 Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2001-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+-- Copyright (C) 2007-2013	Regis Houssin				<regis.houssin@inodbox.com>
+-- Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -98,16 +99,19 @@ create table llx_user
   color                   varchar(6),
   barcode                 varchar(255)  DEFAULT NULL,
   fk_barcode_type         integer       DEFAULT 0,
-  accountancy_code        varchar(32) NULL,
+
+  accountancy_code_user_general	varchar(32) DEFAULT NULL,
+  accountancy_code				varchar(32) NULL,
+
   nb_holiday              integer       DEFAULT 0,
   thm                     double(24,8),
   tjm                     double(24,8),
 
-  salary                  double(24,8),                       -- denormalized value coming from llx_user_employment
-  salaryextra             double(24,8),                       -- denormalized value coming from llx_user_employment
-  dateemployment          date,                               -- denormalized value coming from llx_user_employment
-  dateemploymentend       date,                               -- denormalized value coming from llx_user_employment
-  weeklyhours             double(16,8),                       -- denormalized value coming from llx_user_employment
+  salary                  double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  salaryextra             double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  dateemployment          date,                               -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  dateemploymentend       date,                               -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  weeklyhours             double(16,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
 
   import_key             varchar(14),                         -- import key
   default_range          integer,

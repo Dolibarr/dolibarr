@@ -106,6 +106,7 @@ $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $sea
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_sup = GETPOST("search_categ_sup", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
+$search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -645,6 +646,9 @@ if ($option == 'late') {
 if ($search_label) {
 	$sql .= natural_search('f.libelle', $search_label);
 }
+if ($search_fk_fac_rec_source) {
+	$sql .= " AND f.fk_fac_rec_source = ".(int) $search_fk_fac_rec_source;
+}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -817,6 +821,16 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-facture page-list');
 
+if ($search_fk_fac_rec_source) {
+	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+	$object = new FactureFournisseurRec($db);
+	$object->fetch((int) $search_fk_fac_rec_source);
+
+	$head = supplier_invoice_rec_prepare_head($object);
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+}
+
 if ($socid) {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
@@ -949,6 +963,9 @@ if ($search_categ_sup > 0) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.$search_type_thirdparty;
 }
+if ($search_fk_fac_rec_source) {
+	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -961,7 +978,7 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-  'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+  'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
@@ -978,10 +995,12 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
-if (!empty($socid)) {
-	$url .= '&socid='.urlencode((string) ($socid));
+if (!empty($object->socid)) {
+	$url .= '&socid='.urlencode((string) ($object->socid));
 }
-
+if (!empty($object->id)) {
+	$url .= '&fac_rec='.urlencode((string) $object->id);
+}
 $i = 0;
 print '<form method="POST" id="searchFormList" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
@@ -1002,7 +1021,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', (int) ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_invoice', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -1067,9 +1086,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -1373,6 +1389,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1515,8 +1532,8 @@ $totalarray['val']['f.total_vat'] = 0;
 $totalarray['val']['f.total_localtax1'] = 0;
 $totalarray['val']['f.total_localtax1'] = 0;
 $totalarray['val']['f.total_ttc'] = 0;
-$totalarray['val']['totalam']=0;
-$totalarray['val']['rtp']=0;
+$totalarray['val']['totalam'] = 0;
+$totalarray['val']['rtp'] = 0;
 
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {

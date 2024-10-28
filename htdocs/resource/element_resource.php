@@ -2,8 +2,9 @@
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$tmpobject = new Product($db);
 	$tmpobject->fetch($element_id);
 	$fieldtype = $tmpobject->type;
-	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
 
@@ -112,6 +113,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$error = 0;
+	$objstat = null;
 
 	if ($action == 'add_element_resource' && !$cancel) {
 		$res = 0;
@@ -184,7 +186,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && $res > 0) {
+		if (!$error && $res > 0 && is_object($objstat)) {
 			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 			exit;
@@ -194,15 +196,15 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha') && is_object($objstat)) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
 			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
-				$eventDateStart = $object->objelement->datep;
-				$eventDateEnd   = $object->objelement->datef;
+				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
 				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
@@ -286,7 +288,7 @@ if (empty($reshook)) {
 	}
 }
 
-$parameters = array('resource_id'=>$resource_id);
+$parameters = array('resource_id' => $resource_id);
 $reshook = $hookmanager->executeHooks('getElementResources', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -305,7 +307,7 @@ $help_url = '';
 llxHeader('', $pagetitle, $help_url, '', 0, 0, '', '', '', 'mod-resource page-element_resource');
 
 $now = dol_now();
-$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
@@ -331,6 +333,7 @@ if (!$ret) {
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act)) {
+			'@phan-var-force ActionComm $act';
 			$head = actions_prepare_head($act);
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
@@ -459,7 +462,7 @@ if (!$ret) {
 			$listofuserid = array();
 			if (empty($donotclearsession)) {
 				if ($act->userownerid > 0) {
-					$listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
+					$listofuserid[$act->userownerid] = array('id' => $act->userownerid, 'transparency' => $act->transparency); // Owner first
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
@@ -480,7 +483,7 @@ if (!$ret) {
 			$listofcontactid = array(); // not used yet
 			$listofotherid = array(); // not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), 0, 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
 			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
@@ -502,6 +505,8 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'societe') {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
+			'@phan-var-force Societe $socstatic';
+			/** @var Societe $socstatic */
 			$savobject = $object;
 			$object = $socstatic;
 
@@ -554,8 +559,8 @@ if (!$ret) {
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
-			$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
 			// Thirdparty
 			$morehtmlref .= '<br>'.$fichinter->thirdparty->getNomUrl(1, 'customer');
 			// Project
@@ -613,7 +618,7 @@ if (!$ret) {
 
 
 	// hook for other elements linked
-	$parameters = array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
+	$parameters = array('element' => $element, 'element_id' => $element_id, 'element_ref' => $element_ref);
 	$reshook = $hookmanager->executeHooks('printElementTab', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

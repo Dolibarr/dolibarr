@@ -146,15 +146,15 @@ class Asset extends CommonObject
 	 */
 	public $recovered_vat;
 	/**
-	 * @var string
+	 * @var int|''
 	 */
 	public $reversal_date;
 	/**
-	 * @var string
+	 * @var int|''
 	 */
 	public $date_acquisition;
 	/**
-	 * @var string
+	 * @var int|''
 	 */
 	public $date_start;
 	/**
@@ -245,7 +245,7 @@ class Asset extends CommonObject
 	 */
 	public $asset_accountancy_codes;
 	/**
-	 * @var array<string,array<array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
+	 * @var array<string,array<array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation_ht:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
 	 */
 	public $depreciation_lines = array();
 
@@ -450,6 +450,7 @@ class Asset extends CommonObject
 				$this->fields['reversal_amount_ht']['noteditable'] = '1';
 			}
 		}
+
 		return $result;
 	}
 
@@ -944,6 +945,7 @@ class Asset extends CommonObject
 			// Get fiscal period
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+			// @FIXME getCurrentPeriodOfFiscalYear return the first period found. What if there is several ? And what if not closed ? And what if end date not yet defined.
 			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];

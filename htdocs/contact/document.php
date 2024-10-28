@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2021	Frederic France			<frederic.france@free.fr>
+ * Copyright (C) 2015-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2017		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify

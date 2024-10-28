@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,8 +222,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
-
-
 
 
 /*
@@ -576,9 +575,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -820,7 +816,7 @@ $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $lang
 // If we ask a dedicated card and not allow to see it, we force on user.
 if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) {
 	$langs->load("errors");
-	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	print '<tr class="oddeven opacitymedium"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;
 } elseif ($num > 0 && !empty($mysoc->country_id)) {
 	// Lines

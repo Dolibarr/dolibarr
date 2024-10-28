@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr login
 NoDolibarrAccess=Ingen Dolibarr adgang
 ExportDataset_company_1=Tredjeparter (virksomheder/fonde/fysiske personer) og deres egenskaber
 ExportDataset_company_2=Kontakter og deres egenskaber
+ExportDataset_company_3=Tredjeparts bankkonti
 ImportDataset_company_1=Tredjeparter og deres egenskaber
 ImportDataset_company_2=Tredjeparts yderligere kontakter/adresser og attributter
 ImportDataset_company_3=Tredjeparts bankkonti

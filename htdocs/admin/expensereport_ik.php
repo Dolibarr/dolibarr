@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Mikael Carlavan        <contact@mika-carl.fr>
  * Copyright (C) 2017      ATM Consulting         <contact@atm-consulting.fr>
  * Copyright (C) 2017      Pierre-Henry Favre     <phf@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +145,8 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab) {
 	$tranche = 1;
 
 	foreach ($Tab['ranges'] as $k => $range) {
+		$ik = $range->ik;
+		'@phan-var-force ExpenseReportIk $ik';
 		if (isset($Tab['ranges'][$k + 1])) {
 			$label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k + 1]->range_ik - 1));
 		} else {
@@ -161,35 +164,35 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab) {
 
 		// Offset
 		echo '<td class="nowraponall">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
-			echo '<input type="text" class="maxwidth100" name="ikoffset" value="'.$range->ik->ikoffset.'" />';
+		if ($action == 'edit' && $ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
+			echo '<input type="text" class="maxwidth100" name="ikoffset" value="'.$ik->ikoffset.'" />';
 		} else {
-			echo $range->ik->ikoffset;
+			echo $ik->ikoffset;
 		}
 		echo '</td>';
 
 		// Coef
 		echo '<td class="nowraponall">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
-			echo '<input type="text" class="maxwidth100" name="coef" value="'.$range->ik->coef.'" />';
+		if ($action == 'edit' && $ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
+			echo '<input type="text" class="maxwidth100" name="coef" value="'.$ik->coef.'" />';
 		} else {
-			echo($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
+			echo($ik->id > 0 ? $ik->coef : $langs->trans('expenseReportCoefUndefined'));
 		}
 		echo '</td>';
 
 		// Total for one
-		echo '<td class="nowraponall">'.$langs->trans('expenseReportPrintExample', price($range->ik->ikoffset + 5 * $range->ik->coef)).'</td>';
+		echo '<td class="nowraponall">'.$langs->trans('expenseReportPrintExample', price($ik->ikoffset + 5 * $ik->coef)).'</td>';
 
 		// Action
 		echo '<td class="right">';
 		if ($range->range_active == 1) {
-			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
+			if ($action == 'edit' && $ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
 				echo '<input id="" class="button button-save" name="save" value="'.$langs->trans("Save").'" type="submit" />';
 				echo '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" type="button" />';
 			} else {
-				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
-				if (!empty($range->ik->id)) {
-					echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$range->ik->id.'">'.img_delete().'</a>';
+				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
+				if (!empty($ik->id)) {
+					echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$ik->id.'">'.img_delete().'</a>';
 				}
 				// TODO add delete link
 			}

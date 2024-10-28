@@ -3,6 +3,7 @@
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +201,7 @@ class BlockedLog
 
 		/*
 		// Salary
-		if (!empty($conf->salary->enabled)) {
+		if (isModEnabled('salary')) {
 			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
@@ -349,6 +350,8 @@ class BlockedLog
 			} else {
 				$this->error = (string) (((int) $this->error) + 1);
 			}
+		} elseif ($this->action == 'BLOCKEDLOG_EXPORT') {
+			return '<i class="opacitymedium">'.$langs->trans("logBLOCKEDLOG_EXPORT").'</i>';
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -974,7 +977,7 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->signature_line)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
-		$sql .= $this->fk_object.",";
+		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
@@ -1151,10 +1154,10 @@ class BlockedLog
 		}
 
 		if ($fk_object) {
-			$sql .= natural_search("rowid", $fk_object, 1);
+			$sql .= natural_search("rowid", (string) $fk_object, 1);
 		}
 		if ($search_fk_user > 0) {
-			$sql .= natural_search("fk_user", $search_fk_user, 2);
+			$sql .= natural_search("fk_user", (string) $search_fk_user, 2);
 		}
 		if ($search_start > 0) {
 			$sql .= " AND date_creation >= '".$this->db->idate($search_start)."'";
@@ -1219,7 +1222,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 
 			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 
@@ -1259,7 +1262,7 @@ class BlockedLog
 			dol_print_error($this->db);
 		}
 
-		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".json_encode($result));
+		dol_syslog("Module Blockedlog alreadyUsed(ignoresystem=".$ignoresystem.") returns ".json_encode($result));
 
 		return $result;
 	}

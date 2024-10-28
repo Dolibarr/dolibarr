@@ -33,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 class Users extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'login',
 	);
 
 	/**
-	 * @var User $user {@type User}
+	 * @var User $useraccount {@type User}
 	 */
 	public $useraccount;
 
@@ -70,6 +70,8 @@ class Users extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
 	{
@@ -144,6 +146,8 @@ class Users extends DolibarrApi
 	 * @param	int		$id						ID of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return	array|mixed						data without useless information
+	 * @phan-return Object
+	 * @phpstan-return Object
 	 *
 	 * @throws RestException 401 Insufficient rights
 	 * @throws RestException 404 User or group not found
@@ -180,6 +184,8 @@ class Users extends DolibarrApi
 	 * @param	string	$login					Login of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return	array|mixed						Data without useless information
+	 * @phan-return Object
+	 * @phpstan-return Object
 	 *
 	 * @url GET login/{login}
 	 *
@@ -197,7 +203,7 @@ class Users extends DolibarrApi
 			throw new RestException(403, 'Not allowed');
 		}
 
-		$result = $this->useraccount->fetch('', $login);
+		$result = $this->useraccount->fetch(0, $login);
 		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
@@ -219,6 +225,8 @@ class Users extends DolibarrApi
 	 * @param	string	$email					Email of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return	array|mixed						Data without useless information
+	 * @phan-return Object
+	 * @phpstan-return Object[
 	 *
 	 * @url GET email/{email}
 	 *
@@ -236,7 +244,7 @@ class Users extends DolibarrApi
 			throw new RestException(403, 'Not allowed');
 		}
 
-		$result = $this->useraccount->fetch('', '', '', 0, -1, $email);
+		$result = $this->useraccount->fetch(0, '', '', 0, -1, $email);
 		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
@@ -299,6 +307,8 @@ class Users extends DolibarrApi
 	 * Create user account
 	 *
 	 * @param array $request_data New user data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return int
 	 *
 	 * @throws RestException 401 Not allowed
@@ -352,6 +362,8 @@ class Users extends DolibarrApi
 	 *
 	 * @param	int			$id					Id of account to update
 	 * @param	array		$request_data		Datas
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return 	Object							Updated object
 	 *
 	 * @throws RestException 403 Not allowed
@@ -490,6 +502,8 @@ class Users extends DolibarrApi
 	 *
 	 * @param int $id     Id of user
 	 * @return array      Array of group objects
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -580,6 +594,8 @@ class Users extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
@@ -679,6 +695,8 @@ class Users extends DolibarrApi
 	 *
 	 * @param   int     $id Account ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
@@ -771,8 +789,8 @@ class Users extends DolibarrApi
 	/**
 	 * Clean sensible user group list datas
 	 *
-	 * @param   array  $objectList   Array of object to clean
-	 * @return  array                Array of cleaned object properties
+	 * @param   array<UserGroup>  $objectList   Array of object to clean
+	 * @return  array<UserGroup>                Array of cleaned object properties
 	 */
 	private function _cleanUserGroupListDatas($objectList)
 	{
@@ -818,8 +836,8 @@ class Users extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array|null     $data   Data to validate
-	 * @return  array
+	 * @param   ?array<string,mixed>     $data   Data to validate
+	 * @return  array<string,mixed>
 	 * @throws RestException
 	 */
 	private function _validate($data) // @phpstan-ignore-line

@@ -46,12 +46,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$permissiontoadd = $user->hasRight('expensereport', 'creer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -196,7 +198,7 @@ if ($action == 'create' || empty($action)) {
 	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head(null, '0', '', -1);
+	print dol_get_fiche_head([], '0', '', -1);
 
 	$linkback = '';
 	// $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';

@@ -577,9 +577,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -609,7 +606,7 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 // User
 if (!empty($arrayfields['user']['checked'])) {
 	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
-		print '<td class="liste_titre maxwidthonspartphone" align="left">';
+		print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 		print '</td>';
 	} else {

@@ -462,7 +462,7 @@ if (empty($reshook)) {
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
-							dol_print_error($db, $result);
+							dol_print_error($db, $object->error, $object->errors);
 						}
 					}
 				}
@@ -509,7 +509,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 				}
 			}
 		}
@@ -898,7 +898,7 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $objectsrc->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $objectsrc->note_public, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -906,7 +906,7 @@ if ($action == 'create') {
 			if ($objectsrc->note_private && !$user->socid) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $objectsrc->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $objectsrc->note_private, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -975,10 +975,10 @@ if ($action == 'create') {
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($list) > 1) {
+			if (is_countable($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
-				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);
+				print $form->selectarray('model', $list, getDolGlobalString('RECEPTION_ADDON_PDF'));
 				print "</td></tr>\n";
 			}
 
@@ -990,7 +990,7 @@ if ($action == 'create') {
 			$numAsked = 0;
 
 			/**
-			 * @var array $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
+			 * @var array<string,int> $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
 			 *                             extrafields from HTTP query can be assigned to the correct dispatch line
 			*/
 			$suffix2numAsked = array();
@@ -1587,7 +1587,7 @@ if ($action == 'create') {
 		if (!empty($object->trueWeight)) {
 			print ' ('.$langs->trans("SumOfProductWeights").': ';
 		}
-		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 		if (!empty($object->trueWeight)) {
 			print ')';
 		}
@@ -1639,7 +1639,7 @@ if ($action == 'create') {
 	// If reception volume not defined we use sum of products
 	if ($calculatedVolume > 0) {
 		if ($volumeUnit < 50) {
-			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT", 'no'));
 		} else {
 			print $calculatedVolume.' '.measuringUnitString(0, "volume", (string) $volumeUnit);
 		}
@@ -1648,7 +1648,7 @@ if ($action == 'create') {
 		if ($calculatedVolume) {
 			print ' ('.$langs->trans("SumOfProductVolumes").': ';
 		}
-		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'));
 		//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 		if ($calculatedVolume) {
 			print ')';
@@ -2243,7 +2243,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
 		print '</div><div class="fichehalfright">';

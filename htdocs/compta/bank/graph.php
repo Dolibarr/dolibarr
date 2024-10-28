@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '768');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '200');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankstats', 'globalcard'));

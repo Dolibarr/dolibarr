@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

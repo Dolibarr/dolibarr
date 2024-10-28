@@ -97,13 +97,21 @@ class SocialNetworkManager
 		if (!$this->handler) {
 			return false;
 		}
-		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
+
+		// This fetch URL
+		$result = $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
+
+		if (!empty($this->handler->error)) {
+			$this->error = $this->handler->error;
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>	List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	public function getPosts()
 	{

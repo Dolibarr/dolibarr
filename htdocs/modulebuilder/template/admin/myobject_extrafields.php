@@ -113,7 +113,7 @@ print dol_get_fiche_end();
 
 
 // Buttons
-if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.
+if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.  @phpstan-ignore-line
 	if ($action != 'create' && $action != 'edit') {
 		print '<div class="tabsAction">';
 		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';

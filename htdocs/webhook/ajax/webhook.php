@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,10 +107,10 @@ if ($action == "getjsonformtrigger") {
 
 				$json->object = $obj;
 			} else {
-				$objnotfound ++;
+				$objnotfound++;
 			}
 		} else {
-			$objnotfound ++;
+			$objnotfound++;
 		}
 
 		if ($objnotfound) {
@@ -129,13 +130,14 @@ if ($action == "getjsonformtrigger") {
  * Find and init a specimen for the given object type
  *
  * @param 	string      $objecttype		Object type to init as a specimen
- * @return object|false
+ * @return CommonObject|false
  */
 function findobjecttosend($objecttype)
 {
 	dol_syslog("Ajax webhook: We fetch object of type = ".$objecttype." and we init it as specimen");
 	$obj = fetchObjectByElement(0, dol_strtolower($objecttype));
 	if (is_object($obj)) {
+		'@phan-var-force CommonObject $obj';
 		$obj->initAsSpecimen();
 	} else {
 		return false;

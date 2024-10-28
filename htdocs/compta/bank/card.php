@@ -3,12 +3,12 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,9 +145,7 @@ if (empty($reshook)) {
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
-		$object->domiciliation = $object->address;	// deprecated
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -263,7 +261,6 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -406,7 +403,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="clos" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -449,7 +446,7 @@ if ($action == 'create') {
 	} elseif (empty($selectedcode)) {
 		$selectedcode = $mysoc->country_code;
 	}
-	$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+	$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
@@ -532,7 +529,8 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td>';
-	print $form->selectDate('', 're', 0, 0, 0, 'formsoc');
+	$startdate = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT('reday'), GETPOSTINT("reyear"));
+	print $form->selectDate($startdate, 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -657,7 +655,7 @@ if ($action == 'create') {
 
 	// Accountancy journal
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';
@@ -942,7 +940,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">'."\n\n";
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-		print dol_get_fiche_head(array(), 0, '', 0);
+		print dol_get_fiche_head(array(), '', '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
@@ -950,7 +948,7 @@ if ($action == 'create') {
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
@@ -991,7 +989,7 @@ if ($action == 'create') {
 		} elseif (empty($selectedcode)) {
 			$selectedcode = $mysoc->country_code;
 		}
-		$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+		$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
 		print '<td class="maxwidth200onsmartphone">';

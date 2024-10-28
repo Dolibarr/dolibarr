@@ -5,6 +5,7 @@
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2023       Christian Foellmann			<christian@foellmann.de>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$head = contract_prepare_head($object);
 
-		$hselected = 1;
+		$hselected = '1';
 
 		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
@@ -170,6 +171,9 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' <span class="otherlink">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+		}
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");

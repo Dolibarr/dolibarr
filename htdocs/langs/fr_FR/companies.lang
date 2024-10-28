@@ -384,6 +384,7 @@ DolibarrLogin=Identifiant utilisateur
 NoDolibarrAccess=Pas d'accès utilisateur
 ExportDataset_company_1=Tiers (sociétés/institutions/particuliers) et attributs
 ExportDataset_company_2=Contacts (de tiers) et attributs
+ExportDataset_company_3=Coordonnées bancaires des tiers
 ImportDataset_company_1=Tiers (sociétés/institutions/particuliers) et attributs
 ImportDataset_company_2=Contacts/Adresses (de tiers ou libre) et attributs
 ImportDataset_company_3=Coordonnées bancaires des tiers

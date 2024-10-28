@@ -172,6 +172,13 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
+if ($dates === '') {
+	$dates = null;
+}
+if ($datee === '') {
+	$datee = null;
+}
+
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
@@ -190,6 +197,13 @@ $hookmanager->initHooks(array('projectOverview'));
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
+$total_duration = 0;
+$total_ttc_by_line = 0;
+$total_ht_by_line = 0;
+$expensereport = null;
+$othermessage = '';
+$tmpprojtime = array();
+$nbAttendees = 0;
 
 /*
  * Actions
@@ -917,6 +931,7 @@ foreach ($listofreferent as $key => $value) {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$reg = array();
 					if (preg_replace('/^(\d+\.)\s\(.*\)/', $defaultvat, $reg)) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$defaultvat = $reg[1];
 					}
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ((float) $defaultvat / 100)), 'MT');
@@ -1091,7 +1106,7 @@ foreach ($listofreferent as $key => $value) {
 
 		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
-			if ($selectList < 0) {
+			if ((int) $selectList < 0) {  // cast to int because ''<0 is true.
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			} elseif ($selectList) {
 				// Define form with the combo list of elements to link
@@ -1706,14 +1721,16 @@ function canApplySubtotalOn($tablename)
 /**
  * sortElementsByClientName
  *
- * @param 	array		$elementarray	Element array
- * @return	array						Element array sorted
+ * @param 	int[]		$elementarray	Element array
+ * @return	int[]						Element array sorted
  */
 function sortElementsByClientName($elementarray)
 {
 	global $db, $classname;
+	'@phan-var-force string $classname';
 
 	$element = new $classname($db);
+	'@phan-var-force CommonObject $element';
 
 	$clientname = array();
 	foreach ($elementarray as $key => $id) {	// id = id of object

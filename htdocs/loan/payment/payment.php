@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2018	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $langs->loadLangs(array("bills", "loan"));
 
-$chid = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
+$confirm	= GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+
+$chid = GETPOSTINT('id');
 $datepaid = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 // Security check
@@ -84,12 +86,14 @@ if (!empty($line_id)) {
 	}
 }
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -179,7 +183,7 @@ if ($action == 'add_payment') {
 			if (!$error && !empty($line)) {
 				// If payment values are modified, recalculate schedule
 				if (($line->amount_capital != $pay_amount_capital) || ($line->amount_insurance != $pay_amount_insurance) || ($line->amount_interest != $pay_amount_interest)) {
-					$arr_term = loanCalcMonthlyPayment(($pay_amount_capital + $pay_amount_interest), $remaindertopay, ($loan->rate / 100), $echance, $loan->nbterm);
+					$arr_term = loanCalcMonthlyPayment(($pay_amount_capital + $pay_amount_interest), $remaindertopay, ($loan->rate / 100), $echance, (int) $loan->nbterm);
 					foreach ($arr_term as $k => $v) {
 						// Update fk_bank for current line
 						if ($k == $echance) {
