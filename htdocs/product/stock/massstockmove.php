@@ -567,7 +567,7 @@ print '<br>';
 //print '<br>';
 
 // Form to upload a file
-print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
+print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
 if (!empty($conf->dol_optimize_smallscreen)) {
@@ -660,7 +660,7 @@ print '<input type="hidden" name="action" value="addline">';
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste centpercent">';
+print '<table class="liste noborder centpercent">';
 
 $param = '';
 

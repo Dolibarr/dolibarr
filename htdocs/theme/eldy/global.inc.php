@@ -896,6 +896,10 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.smallincombo {
+	font-size: 95%;
+	font-weight: bold;
+}
 .lineheightsmall {
 	line-height: 1.2em;
 }
@@ -6195,7 +6199,7 @@ table.jPicker tr:first-of-type td {
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
-	background-color: #f4f4f4 !important;
+	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 }
 .jPicker .Grid {
@@ -6215,6 +6219,13 @@ table.jPicker {
 }
 .jPicker .Preview div {
 	height: 36px !important;
+}
+.jPicker input[type="button"] {
+	background: var(--butactionbg);
+	color: var(--textbutaction);
+	border-radius: 4px;
+	border-collapse: collapse;
+	border: none;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7273,11 +7284,11 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 230px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 230px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -7285,7 +7296,7 @@ select.multiselectononeline {
 		min-width: 140px !important;
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
-		min-width: 300px !important;
+		min-width: 320px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {

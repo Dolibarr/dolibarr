@@ -2755,14 +2755,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($object->isService()) {
 					// Duration
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($db);
+					$durations = [];
+					$plural = '';
+					if ($object->duration_value > 1) {
+						$plural = 's';
+					}
+					$result = $measuringUnits->fetchAll('', 'scale', 0, 0, ['t.active' => 1, 't.unit_type' => 'time']);
+					if ($result !== -1) {
+						foreach ($measuringUnits->records as $record) {
+							$durations[$record->short_label] = dol_ucfirst($record->label) . $plural;
+						}
+					}
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
 					print $object->duration_value;
-					if ($object->duration_value > 1) {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-					} elseif ($object->duration_value > 0) {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
-					}
-					print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
+					print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp;".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 
 					// Mandatory period
 					if ($object->duration_value > 0) {

@@ -506,6 +506,7 @@ if (!$ret) {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
 			'@phan-var-force Societe $socstatic';
+			/** @var Societe $socstatic */
 			$savobject = $object;
 			$object = $socstatic;
 

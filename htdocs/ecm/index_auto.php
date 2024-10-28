@@ -409,7 +409,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	}
 }
 
-$head = ecm_prepare_dasboard_head(null);
+$head = ecm_prepare_dasboard_head();
 print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 

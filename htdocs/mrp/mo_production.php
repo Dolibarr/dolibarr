@@ -915,31 +915,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<tr class="liste_titre">';
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
 			print '</td>';
 			// Qty
-			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width40 right"></td>';
 			// Unit
 			print '<td></td>';
 			// Cost price
 			if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 				print '<td></td>';
 			}
+
+			$colspan="3";
+			if (isModEnabled('stock')) {
+				$colspan++;;
+			}
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
 			// Qty already consumed + Warehouse
-			print '<td colspan="2">';
+			print '<td colspan="'.$colspan.'">';
 			print '<input type="submit" class="button buttongen button-add" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
 			print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelinebutton" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
-			if (isModEnabled('stock')) {
-				print '<td></td>';
-			}
-			// Lot - serial
-			if (isModEnabled('productbatch')) {
-				print '<td></td>';
-			}
-			// Split
-			print '<td></td>';
-			// SplitAll
+			// Split All
 			print '<td></td>';
 			// Edit Line
 			if ($object->status == Mo::STATUS_DRAFT) {

@@ -308,24 +308,24 @@ class CActionComm
 						if (($onlyautoornot == -1 || $onlyautoornot == -2) && getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 							// Add a group of elements
 							if ($typecalendar == 'system' || $typecalendar == 'user') {
-								$label = '&nbsp;&nbsp; '.$label;
+								//$label = '&nbsp;&nbsp; '.$label;
 								$TSystem['id'][-99] = $langs->trans("ActionAC_MANUAL");
-								$TSystem['code']['AC_NON_AUTO'] = '<small>-- '.$langs->trans("ActionAC_MANUAL").'</small>';
+								$TSystem['code']['AC_NON_AUTO'] = '<span class="smallincombo">-- '.$langs->trans("ActionAC_MANUAL").'</span>';
 							}
 							if ($typecalendar == 'systemauto') {
-								$label = '&nbsp;&nbsp; '.$label;
+								//$label = '&nbsp;&nbsp; '.$label;
 								$TSystemAuto['id'][-98] = $langs->trans("ActionAC_AUTO");
-								$TSystemAuto['code']['AC_ALL_AUTO'] = '<small>-- '.$langs->trans("ActionAC_AUTO").'</small>';
+								$TSystemAuto['code']['AC_ALL_AUTO'] = '<span class="smallincombo">-- '.$langs->trans("ActionAC_AUTO").'</span>';
 							}
 
 							if ($typecalendar == 'module') {
 								$module = preg_replace('/^[^@]+@/', '', $obj->module);
-								$label = '&nbsp;&nbsp; '.$label;
+								//$label = '&nbsp;&nbsp; '.$label;
 								if (!isset($TModule['id'][-1 * $idforallfornewmodule])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
 								$TModule['id'][-1 * $idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
-								$TModule['code']['AC_ALL_'.strtoupper($module)] = '<small>-- '.$langs->trans("Module").' '.ucfirst($module).'</small>';
+								$TModule['code']['AC_ALL_'.strtoupper($module)] = '<span class="smallincombo">-- '.$langs->trans("Module").' '.ucfirst($module).'</span>';
 							}
 						}
 						// Add element
