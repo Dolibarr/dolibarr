@@ -52,27 +52,49 @@ class Productlot extends CommonObject
 	 */
 	public $picto = 'lot';
 
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats propales
+	 */
 	public $stats_propale;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats orders
+	 */
 	public $stats_commande;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats contracts
+	 */
 	public $stats_contrat;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats invoices
+	 */
 	public $stats_facture;
+
+	/**
+	 * @var array{suppliers:int,nb:int,rows:int,qty:int} stats supplier propales
+	 */
 	public $stats_commande_fournisseur;
 
 	/**
-	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats shipping
 	 */
 	public $stats_expedition;
 
 	/**
-	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats receptions
 	 */
 	public $stats_reception;
 
 	/**
-	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats supplier orders
 	 */
 	public $stats_supplier_order;
 
+	/**
+	 * @var array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
+	 */
 	public $stats_mo;
 	public $stats_bom;
 	public $stats_mrptoconsume;

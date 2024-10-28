@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (c) 2018      Fidesio              <contact@fidesio.com>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (c) 2018       Fidesio                 <contact@fidesio.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,15 @@ class SalariesStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
-	public $userid;
 
-	public $from;
-	public $field;
-	public $where;
+	/**
+	 * @var int user ID
+	 */
+	public $userid;
 
 	/**
 	 * Constructor
