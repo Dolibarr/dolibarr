@@ -157,6 +157,7 @@ if (empty($reshook)) {
 					setEventMessages($skillAdded->error, null, 'errors');
 					break;
 				} else {
+					// Create new EvaluationLine for each Skill to add in draft evaluation
 					$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 					$sql_eval .= " WHERE e.status = 0 ";
 					$sql_eval .= " AND e.entity = ".(int) getEntity($object->element);
@@ -181,9 +182,6 @@ if (empty($reshook)) {
 						$i++;
 					}
 				}
-
-
-				//else unset($TSkillsToAdd);
 			}
 			if (!$error) {
 				setEventMessages($langs->trans("SaveAddSkill"), null);
@@ -194,6 +192,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'saveSkill' && $permissiontoadd) {
 		if (!empty($TNote)) {
+			$db->begin();
+			$error = 0;
 			foreach ($TNote as $skillId => $rank) {
 				$rank = ($rank == "NA" ? -1 : $rank);
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
@@ -201,12 +201,56 @@ if (empty($reshook)) {
 				if (is_array($TSkills) && !empty($TSkills)) {
 					foreach ($TSkills as $tmpObj) {
 						$tmpObj->rankorder = $rank;
-						$tmpObj->update($user);
-						//Make update eval
+						$ret = $tmpObj->update($user);
+						if ($ret < 0) {
+							$error++;
+							setEventMessages($tmpObj->error, null, 'errors');
+							break;
+						}
+						if (!$error) {
+							// Update draft Evaluations using this Skill
+							$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+							$sql_eval .= " WHERE e.status = 0 ";
+							$sql_eval .= " AND e.entity = ".getEntity($object->element);
+							$sql_eval .= " AND e.fk_job = ".(int) $object->id;
+							$result = $db->query($sql_eval);
+							$numEvals = $db->num_rows($result);
+							$i=0;
+							while ($i < $numEvals) {
+								$objEval = $db->fetch_object($result);
+								$line = new EvaluationLine($db);
+								$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $tmpObj->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
+								if ($lines != -1) {
+									foreach ($lines as $key => $evalline) {
+										$evalline->required_rank = $rank;
+										$ret = $evalline->update($user);
+										if ($ret <= 0) {
+											$error++;
+											setEventMessages($evalline->error, null, 'errors');
+											break;
+										}
+									}
+								} else {
+									$error++;
+									setEventMessages($line->error, null, 'errors');
+									break;
+								}
+								$i++;
+							}
+						}
 					}
+				} else {
+					$error++;
+					setEventMessages($skill->error, null, 'errors');
+					break;
 				}
 			}
-			setEventMessages($langs->trans("SaveLevelSkill"), null);
+			if (!$error) {
+				setEventMessages($langs->trans("SaveLevelSkill"), null);
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
 			exit;
 		}
@@ -216,6 +260,7 @@ if (empty($reshook)) {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
 		if ($ret > 0) {
+			// Remove EvaluationLine foreach draft Evaluations using this Skill
 			$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 			$sql_eval .= " WHERE e.status = 0 ";
 			$sql_eval .= " AND e.entity = ".getEntity($object->element);
@@ -243,6 +288,9 @@ if (empty($reshook)) {
 				}
 				$i++;
 			}
+		} else {
+			$error++;
+			setEventMessages($skillToDelete->error, null, 'errors');
 		}
 		if (!$error) {
 			$ret = $skillToDelete->delete($user);
