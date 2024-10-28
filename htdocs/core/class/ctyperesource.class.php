@@ -199,7 +199,7 @@ class Ctyperesource extends CommonDict
 	 * @param string 		$sortfield 		Sort field
 	 * @param int    		$limit     		Limit
 	 * @param int    		$offset    		Offset limit
-	 * @param string|array  $filter    		filter array
+	 * @param string|array<string,mixed>  $filter	Filter array
 	 * @param string 		$filtermode 	filter mode (AND or OR)
 	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
@@ -473,7 +473,7 @@ class CtyperesourceLine
 	public $id;
 
 	/**
-	 * @var mixed Sample line property 1
+	 * @var string Sample line property 1
 	 */
 	public $code;
 
@@ -482,5 +482,8 @@ class CtyperesourceLine
 	 */
 	public $label;
 
+	/**
+	 * @var int
+	 */
 	public $active;
 }

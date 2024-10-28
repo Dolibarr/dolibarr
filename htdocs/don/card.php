@@ -955,7 +955,11 @@ if (!empty($id) && $action != 'edit') {
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('don'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link

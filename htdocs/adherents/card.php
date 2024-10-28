@@ -2096,15 +2096,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('subscription'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, '');
-
-			// Show links to link elements
-			/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-			 if ($linktoelem) {
-				print ($somethingshown?'':'<br>').$linktoelem;
-			}
-			 */
 
 			// Show online payment link
 			// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()

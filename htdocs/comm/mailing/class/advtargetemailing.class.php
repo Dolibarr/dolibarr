@@ -2,6 +2,7 @@
 /* Advance Targeting Emailing for mass emailing module
  * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,12 +86,12 @@ class AdvanceTargetingMailing extends CommonObject
 	public $fk_user_mod;
 
 	/**
-	 * @var array select target type
+	 * @var array<int,string> select target type
 	 */
 	public $select_target_type = array();
 
 	/**
-	 * @var array type status comm prospect
+	 * @var array<int,string> type status comm prospect
 	 */
 	public $type_statuscommprospect = array();
 
@@ -129,7 +130,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$customerStatic->loadCacheOfProspStatus();
 		if (!empty($customerStatic->cacheprospectstatus)) {
 			foreach ($customerStatic->cacheprospectstatus as $dataProspectSt) {
-				$this->type_statuscommprospect[$dataProspectSt['id']]=$dataProspectSt['label'];
+				$this->type_statuscommprospect[$dataProspectSt['id']] = $dataProspectSt['label'];
 			}
 		} else {
 			$this->type_statuscommprospect = array(
@@ -398,9 +399,9 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param	User	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user		User that modifies
+	 *  @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -461,9 +462,9 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 *  Delete object in database
 	 *
-	 *	@param  User	$user        User that deletes
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 *	@param  User		$user        User that deletes
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int						 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -503,7 +504,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * Save query in database to retrieve it
 	 *
 	 *	@param  	User		$user    		User that deletes
-	 * 	@param		array		$arrayquery		All element to Query
+	 * 	@param		array<string,string|string[]>	$arrayquery	All element to Query
 	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function savequery($user, $arrayquery)
@@ -531,7 +532,7 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 * Load object in memory from database
 	 *
-	 * 	@param		array		$arrayquery	All element to Query
+	 * 	@param		array<string,string|string[]>	$arrayquery	All element to Query
 	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function query_thirdparty($arrayquery)
@@ -638,7 +639,7 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
 						if ($arrayquery['options_'.$key] > 0) {
-							$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
+							$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
 						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
@@ -685,8 +686,8 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 * Load object in memory from database
 	 *
-	 * 	@param		array		$arrayquery	All element to Query
-	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
+	 * 	@param		array<string,string|string[]>	$arrayquery	All element to Query
+	 * 	@param		int			$withThirdpartyFilter	add contact with third party filter
 	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function query_contact($arrayquery, $withThirdpartyFilter = 0)

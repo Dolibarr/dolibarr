@@ -130,7 +130,7 @@ if ($result) {
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'calendar', 0, $newcardbutton, '', $limit, 1);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste centpercent">';
+	print '<table class="tagtable liste centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Ref").'</td>';
 	print '<td>'.$langs->trans("Label").'</td>';

@@ -344,35 +344,50 @@ function getDefaultDatesForTransfer()
 }
 
 /**
- * Get current period of fiscal year
+ * 	Get current period of fiscal year?
  *
- * @param 	DoliDB		$db				Database handler
- * @param 	Conf		$conf			Config
- * @param 	int 		$from_time		[=null] Get current time or set time to find fiscal period
- * @return 	array		Period of fiscal year : [date_start, date_end]
+ * 	@param 	DoliDB		$db					Database handler
+ * 	@param 	Conf		$conf				Config
+ * 	@param 	int 		$from_time			[=null] Get current time or set time to find fiscal period
+ *	@param	mixed		$gm					'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
+ * 	@param	int			$withenddateonly	Do not return period if and date is not defined
+ * 	@return array							Period of fiscal year : [date_start, date_end]
  */
-function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
+function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
 {
 	$now = dol_now();
 	$now_arr = dol_getdate($now);
 	if ($from_time === null) {
 		$from_time = $now;
 	}
-	$from_db_time = $db->idate($from_time);
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+	// Take the first period found
 	$sql  = "SELECT date_start, date_end FROM ".$db->prefix()."accounting_fiscalyear";
-	$sql .= " WHERE date_start <= '".$db->escape($from_db_time)."' AND date_end >= '".$db->escape($from_db_time)."'";
+	$sql .= " WHERE date_start <= '".$db->idate($from_time, $gm)."'";
+	if ($withenddateonly) {
+		$sql .= " AND (date_end >= '".$db->idate($from_time, $gm)."')";
+	} else {
+		$sql .= " AND (date_end >= '".$db->idate($from_time, $gm)."' OR date_end IS NULL)";
+	}
+	//$sql .= " AND statut = 0"
+	$sql .= " AND entity IN (".getEntity('accounting_fiscalyear').")";
 	$sql .= $db->order('date_start', 'DESC');
 	$sql .= $db->plimit(1);
+
 	$res = $db->query($sql);
+
 	if ($db->num_rows($res) > 0) {
+		// If found
 		$obj = $db->fetch_object($res);
 
-		$date_start = $db->jdate($obj->date_start);
-		$date_end = $db->jdate($obj->date_end);
+		$date_start = $db->jdate($obj->date_start, $gm);
+		$date_end = dol_get_last_hour($db->jdate($obj->date_end, $gm), $gm);
 	} else {
+		// If not found, we generate a period
 		$month_start = 1;
-		$conf_fiscal_month_start = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
+		$conf_fiscal_month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START');
 		if ($conf_fiscal_month_start >= 1 && $conf_fiscal_month_start <= 12) {
 			$month_start = $conf_fiscal_month_start;
 		}
@@ -386,8 +401,8 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
 			$month_end = 12;
 			$year_end--;
 		}
-		$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-		$date_end = dol_get_last_day($year_end, $month_end);
+		$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start, $gm);
+		$date_end = dol_get_last_day($year_end, $month_end, $gm);
 	}
 
 	return array(

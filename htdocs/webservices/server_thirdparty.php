@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -306,7 +306,7 @@ $server->register(
 /**
  * Get a thirdparty
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
  * @param	string		$ref_ext	   		external reference
@@ -433,7 +433,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 /**
  * Create a thirdparty
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
@@ -566,7 +566,7 @@ function createThirdParty($authentication, $thirdparty)
 /**
  * Update a thirdparty
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
@@ -705,7 +705,7 @@ function updateThirdParty($authentication, $thirdparty)
 /**
  * getListOfThirdParties
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
  * @return	array							Array result
  */
@@ -815,7 +815,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 /**
  * Delete a thirdparty
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
  * @param	string		$ref_ext	   		external reference

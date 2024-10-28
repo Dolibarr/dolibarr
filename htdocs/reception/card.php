@@ -2243,7 +2243,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
 		print '</div><div class="fichehalfright">';

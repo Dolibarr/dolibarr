@@ -2918,7 +2918,11 @@ if ($action != 'presend') {
 	/*
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('expensereport'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
 	*/
