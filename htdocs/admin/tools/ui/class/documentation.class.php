@@ -314,8 +314,8 @@ class Documentation
 
 	/**
 	 *    Output summary
-	 * @param int $showsubmenu
-	 * @param int $showsubmenu_summary
+	 * @param int $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
+	 * @param int $showsubmenu_summary	Show summary of sub menus: 0 = No, 1 = Yes
 	 * @return void
 	 */
 	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1)
