@@ -12706,9 +12706,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	if (empty($reshook)) {
 		if (dol_textishtml($text)) {	// If content already HTML encoded
-			return '<' . $tag . ' ' . $compiledAttributes . '>' . $text . '</' . $tag . '>';
+			return '<' . $tag . ' ' . $compiledAttributes . '><span class="textbutton">' . $text . '</span></' . $tag . '>';
 		} else {
-			return '<' . $tag . ' ' . $compiledAttributes . '>' . dol_escape_htmltag($text) . '</' . $tag . '>';
+			return '<' . $tag . ' ' . $compiledAttributes . '><span class="textbutton">' . dol_escape_htmltag($text) . '</span></' . $tag . '>';
 		}
 	} else {
 		return $hookmanager->resPrint;

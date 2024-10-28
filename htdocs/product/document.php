@@ -263,6 +263,28 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
+	$formmail = new FormMail($db);
+	$formmail->withaiprompt = 'text';
+	$out = '';
+
+	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+	$showlinktoailabel = $langs->trans("GenerateImage");
+
+	$formatforouput = 'image';
+	$htmlname = 'bodyemail';
+
+	print load_fiche_titre($langs->trans('GenerateWithAI'), '', '');
+	print '<table class="border centpercent">';
+
+	// Fill $out
+	require DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+	print $out;
+	print '</table>';
+
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
