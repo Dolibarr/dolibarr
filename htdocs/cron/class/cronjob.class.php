@@ -73,12 +73,33 @@ class Cronjob extends CommonObject
 	 * @var string Job command
 	 */
 	public $command;
+	/**
+	 * @var string
+	 */
 	public $classesname;
+	/**
+	 * @var string
+	 */
 	public $objectname;
+	/**
+	 * @var string
+	 */
 	public $methodename;
+	/**
+	 * @var string
+	 */
 	public $params;
+	/**
+	 * @var string
+	 */
 	public $md5params;
+	/**
+	 * @var int
+	 */
 	public $module_name;
+	/**
+	 * @var int|string
+	 */
 	public $priority;
 
 	/**
