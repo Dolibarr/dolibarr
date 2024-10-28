@@ -278,7 +278,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

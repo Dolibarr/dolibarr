@@ -836,7 +836,7 @@ echo '<div class="div-table-responsive">';
 $colorsbytype = array();
 
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table class="centpercent noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month listwithfilterbefore">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';

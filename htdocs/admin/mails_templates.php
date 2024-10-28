@@ -62,6 +62,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $mode = GETPOST('mode', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 $id = $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
@@ -1160,7 +1161,7 @@ if ($num) {
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%', ($action != 'edit' ? 1 : 0));
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%', ($action != 'edit' ? 1 : 0));
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
@@ -1170,7 +1171,7 @@ if ($num) {
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 					}
@@ -1231,8 +1232,7 @@ if ($num) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=preview&token='.newToken().'">'.img_view().'</a>';
 					}
 					if ($iserasable) {
-						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
-						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().$param.'">'.img_delete().'</a>';
 					}
 					print '</td>';
 				}

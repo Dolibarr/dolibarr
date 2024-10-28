@@ -642,7 +642,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		$object->fetchObjectLinked();

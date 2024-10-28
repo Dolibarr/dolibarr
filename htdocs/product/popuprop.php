@@ -211,7 +211,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre($textforqty, $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
@@ -245,10 +245,14 @@ if ($mode && $mode != '-1') {
 		$tmpproduct->barcode = $vals['barcode'];
 
 		print "<tr>";
+
+		// Product ref
 		print '<td>';
 		print $tmpproduct->getNomUrl(1);
 		print '</td>';
-		print '<td>';
+
+		// Type
+		print '<td class="center">';
 		$s = '';
 		if ($vals['type'] == 1) {
 			$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');

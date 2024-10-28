@@ -2043,8 +2043,13 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('supplier_proposal'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('supplier_proposal'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
 		$MAXEVENT = 10;
 
 		print '</div><div class="fichehalfright">';

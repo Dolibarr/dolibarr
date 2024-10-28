@@ -635,7 +635,7 @@ if ($resql) {
 	}
 
 	// Title line with search boxes
-	print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
+	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -954,7 +954,7 @@ $db->close();
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
+	global $db;
 	global $form, $mysoc;
 
 	$formadmin = new FormAdmin($db);

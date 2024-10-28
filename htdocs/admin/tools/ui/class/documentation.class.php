@@ -16,13 +16,13 @@
  */
 
 /**
- *    \file       htdocs/documentation/class/documentation.class.php
- *    \ingroup    documentation
- *    \brief      File of class to manage documentation
+ *    \file       htdocs/admint/tools/ui/class/uidoc.class.php
+ *    \ingroup    ui
+ *    \brief      File of class to manage UI documentation
  */
 
 /**
- *    Class to manage documentation
+ *    Class to manage UI documentation
  */
 class Documentation
 {
@@ -35,11 +35,18 @@ class Documentation
 	public $view = array();
 
 	/**
-	 * Menu - Set in constructor in order to use dol_buildpath
+	 * Menu - Set in setMenu in order to use dol_buildpath and called in constructor 
 	 *
 	 * @var array
 	 */
 	public $menu = array();
+
+	/**
+	 * Summary - Set in setSummary and called in constructor 
+	 *
+	 * @var array
+	 */
+	public $summary = array();
 
 	/**
 	 * @var DoliDB Database handler.
@@ -56,48 +63,120 @@ class Documentation
 	{
 		$this->db = $db;
 
+		// https://www.figma.com/community/file/1393171578760389765/dolibarr-ui-ux-kit
+
+		// Menu Constructor
+		$this->setMenu();
+	}
+
+	/**
+	 *    Set Documentation Menu
+	 *
+	 * @return mixed false if error, void if no errors
+	 */
+	private function setMenu(){
+
+		global $hookmanager;
+
+
+		$hookmanager->initHooks( array('uidocumentation') );
+
+		$baseUrl = 'admin/tools/ui';
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
 			'url' => DOL_URL_ROOT, 
 			'icon' => 'fas fa-arrow-left pictofixedwidth',
-			'submenu' => array()
+			'submenu' => array(),
 		);
 
 		// Home for Ui documentation
 		$this->menu['DocumentationHome'] = array(
-			'url' => dol_buildpath('documentation/index.php', 1),
+			'url' => dol_buildpath($baseUrl.'/index.php', 1),
 			'icon' => 'fas fa-book',
-			'submenu' => array()
+			'submenu' => array(),
 		);
 
-		// Elements
-		$this->menu['Elements'] = array(
-			'url' => dol_buildpath('documentation/ux/index.php', 1), 
+		// Components
+		$this->menu['Components'] = array(
+			'url' => dol_buildpath($baseUrl.'/components/index.php', 1), 
 			'icon' => 'fas fa-th-large',
 			'submenu' => array(
 				'Badges' => array(
-					'url' => dol_buildpath('documentation/ux/badges.php', 1),
-					'icon' => 'fas fa-certificate',
-					'submenu' => array()
+					'url' => dol_buildpath($baseUrl.'/components/badges.php', 1),
+					'icon' => 'fas fa-certificate pictofixedwidth',
+					'submenu' => array(),	
+					'summary' => array(
+						'DocBasicUsage' => '#badgesection-basicusage',
+						'DocBadgeContextualVariations' => '#badgesection-contextvariations',
+						'DocBadgeDefaultStatus' => '#badgesection-defaultstatus',
+						'DocBadgePillBadges' => '#badgesection-pill',
+						'DocBadgeDotBadges' => '#badgesection-dot',
+						'DocBadgeLinks' => '#badgesection-links',
+						'DocBadgeHelper' => '#badgesection-dolgetbadge'
+					),				
 				),
 				'Buttons' => array(
-					'url' => dol_buildpath('documentation/ux/buttons.php', 1),
-					'icon' => 'fas fa-mouse',
-					'submenu' => array()
+					'url' => dol_buildpath($baseUrl.'/components/buttons.php', 1),
+					'icon' => 'fas fa-mouse pictofixedwidth',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#buttonsection-basicusage',
+						'DocButtonModal' => '#buttonsection-modals',
+						'DocButtonSubmenu' => '#buttonsection-submenu',
+					),
 				),
 				'Progress' => array(
-					'url' => dol_buildpath('documentation/ux/progress-bars.php', 1),
+					'url' => dol_buildpath($baseUrl.'/components/progress-bars.php', 1),
 					'icon' => 'fas fa-battery-half pictofixedwidth',
-					'submenu' => array()
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#progresse-section-basic-usage',
+						'DocColorVariants' => '#progress-section-color',
+						'DocStripedVariants' => '#progresse-section-stripped',
+					),
 				),
-        'Event Message' => array(
-          'url' => dol_buildpath('documentation/ux/event-message.php', 1),
-          'icon' => 'fas fa-comments pictofixedwidth',
-          'submenu' => array()
-        ),
+				'Event Message' => array(
+					'url' => dol_buildpath($baseUrl.'/components/event-message.php', 1),
+					'icon' => 'fas fa-comments pictofixedwidth',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#seteventmessagesection-basicusage',
+						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
+					)
+				),
+			),
+			'summary' => array(
+				'keySum' => '#keySum'
 			)
 		);
+
+		// Elements
+		$this->menu['Content'] = array(
+			'url' => dol_buildpath($baseUrl.'/content/index.php', 1), 
+			'icon' => 'fas fa-th-large',
+			'submenu' => array(
+				'Tables' => array(
+					'url' => dol_buildpath('admin/tools/ui/content/tables.php', 1),
+					'icon' => 'fas fa-table pictofixedwidth',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#tablesection-basicusage',
+						'DocTableWithFilters' => '#tablesection-withfilters'
+					),
+				),
+			)
+		);
+
+		$parameters = array(
+			'baseUrl' => $baseUrl,
+		);
+		$action = '';
+
+		$reshook = $hookmanager->executeHooks('setMenu', $parameters, $this, $action); 
+		if ($reshook < 0) {
+			return false;
+		} 
 	}
 
 	/**
@@ -121,21 +200,23 @@ class Documentation
 		print '<title>'.$title.'</title>';
 
 		// CSS
-		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('documentation/css/documentation.css', 1).'">';
+		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('admin/tools/ui/css/documentation.css', 1).'">';
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css">';
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 		$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME') ? getDolGlobalString('MAIN_USE_JQUERY_THEME') : 'base';		
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui.css">';
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css">';
 
 		// JS
 		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js"></script>';
-		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js"></script>';
+		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js"></script>';		
+		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>';
 		print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.'"></script>';
 
 		print '</head>';
 		print '<body class="dolibarr-doc">';
 
-		top_htmlhead('');
+		//top_htmlhead('');
 	}
 
 	/**
@@ -152,7 +233,7 @@ class Documentation
 		print '</div>';		
 
 		// JS
-		print '<script src="'.dol_buildpath('documentation/js/documentation.js', 1).'"></script>';
+		print '<script src="'.dol_buildpath('admin/tools/ui/js/documentation.js', 1).'"></script>';
 		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>';
 
 		print '</body>';
@@ -232,10 +313,13 @@ class Documentation
 		if (!empty($this->view)) {
 			$nb_entries = count($this->view);
 			$i = 0;
+
+			$menu_entry = $this->menu;
 			foreach ($this->view as $page) {
-				 $i++;
-				if ($i < $nb_entries && isset($this->menu[$page])) {
-					print '<li class="breadcrumb-item"><a href="'.$this->menu[$page]['url'].'">'.$langs->transnoentities($page).'</a></li>';
+				$i++;
+				if ($i < $nb_entries && isset($menu_entry[$page])) {
+					print '<li class="breadcrumb-item"><a href="'.$menu_entry[$page]['url'].'">'.$langs->transnoentities($page).'</a></li>';
+					$menu_entry = $menu_entry[$page]['submenu'];
 				} else {
 					print '<li class="breadcrumb-item">'.$langs->transnoentities($page).'</li>';
 				}
@@ -245,6 +329,79 @@ class Documentation
 		}
 		print '</ul>';
 		print '</nav>';
+	}
+
+	/**
+	 *    Output summary
+	 * @return void
+	 */
+	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1){
+
+		global $langs;
+
+		$i = 0;
+		if(!empty($this->view)):
+
+			// On se place au bon niveau
+			foreach ($this->view as $view) {
+				$i++;
+				if($i == 1){
+					$menu_entry = $this->menu[$view];
+				} else{
+					$menu_entry = $menu_entry['submenu'][$view];
+				}
+			}
+
+		endif;
+
+		if(!empty($menu_entry['summary']) || !empty($menu_entry['submenu'] && $showsubmenu)){
+			print '<div class="summary-wrapper">';
+				$this->displaySummary($menu_entry);
+			print '</div>';
+		}
+	}
+
+	
+	/**
+	 *    Recursive function for Automatic Summary
+	 *
+	 * @param array $menu  					$this->menu or submenus
+	 * @param int   $level 					level of menu
+	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
+	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes
+	 * @return void
+	 */
+	public function displaySummary($menu, $level = 0, $showsubmenu = 1, $showsubmenu_summary = 1){
+
+		global $langs;
+
+		$level++;
+		print '<ul class="documentation-summary level-'.$level.'"">';	
+
+		if (!empty($menu['summary'])):
+			foreach ($menu['summary'] as $summary_label => $summary_link) {
+
+				if($summary_link[0] == '#'){
+					$summary_link = $menu['url'].$summary_link;
+				}
+
+				print '<li><a href="'.$summary_link.'">'.$langs->trans($summary_label).'</a></li>';
+			}
+		endif;
+
+		if ($showsubmenu && !empty($menu['submenu'])){			
+			foreach ($menu['submenu'] as $key => $item) {
+				print '<li class="summary-title ">';
+					print '<h3 class="level-'.$level.'">'.$key.'</h3>';
+					if($showsubmenu_summary){
+						$this->displaySummary($item, $level);
+					}
+				print '</li>';
+			}
+		}
+		print '</ul>';
+
+
 	}
 
 	/**

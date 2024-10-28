@@ -4372,14 +4372,6 @@ table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.liste:not(.listwithfilterbefore) {
-	border-top-left-radius: <?php echo $borderradius; ?>px;
-	border-top-right-radius: <?php echo $borderradius; ?>px;
-}
-table.liste {
-	border-bottom-left-radius: <?php echo $borderradius; ?>px;
-	border-bottom-right-radius: <?php echo $borderradius; ?>px;
-}
 table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
 table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
@@ -4396,10 +4388,30 @@ table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
 table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
+table.noborder thead tr:last-child td:first-child,
+table.noborder thead tr:last-child th:first-child {
+	border-bottom-left-radius: unset !important;
+}
+table.noborder thead tr:last-child td:last-child,
+table.noborder thead tr:last-child th:last-child {
+	border-bottom-right-radius: unset !important;
+}
 
-table.liste tr.liste_titre_filter:first-child td:first-child,
-table.liste tr.liste_titre_filter:first-child th:first-child {
+table.liste:not(.listwithfilterbefore) {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:last-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 div.liste_titre_bydiv {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
@@ -4973,7 +4985,7 @@ div .tdtop:not(.tagtdnote) {
 	border-bottom: 1px solid #AAA !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
-	height: unset;
+/*	height: unset; */
 }
 
 
@@ -7135,16 +7147,19 @@ select.multiselectononeline {
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 240px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 240px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
 		min-width: 140px !important;
+	}
+	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 320px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {

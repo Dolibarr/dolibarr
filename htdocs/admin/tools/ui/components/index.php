@@ -18,9 +18,11 @@
  */
 
 $res=0;
-if (! $res && file_exists("../main.inc.php")) : $res=@include '../main.inc.php';
-endif;
 if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
+endif;
+if (! $res && file_exists("../../../main.inc.php")) : $res=@include '../../../main.inc.php';
+endif;
+if (! $res && file_exists("../../../../main.inc.php")) : $res=@include '../../../../main.inc.php';
 endif;
 
 // Protection if external user
@@ -28,7 +30,7 @@ if ($user->socid > 0) : accessforbidden();
 endif;
 
 // Includes
-dol_include_once('documentation/class/documentation.class.php');
+dol_include_once('admin/tools/ui/class/documentation.class.php');
 
 // Load documentation translations
 $langs->load('documentation@documentation');
@@ -40,7 +42,7 @@ $documentation = new Documentation($db);
 $documentation->docHeader();
 
 // Set view for menu and breadcrumb
-$documentation->view = array('DocumentationHome');
+$documentation->view = array('Components');
 
 // Output sidebar
 $documentation->showSidebar(); ?>
@@ -50,11 +52,14 @@ $documentation->showSidebar(); ?>
 	<?php $documentation->showBreadCrumb(); ?>
 
 	<div class="doc-content-wrapper">
-		<?php echo $langs->trans('WelcomeToDocumentation'); ?>
+
+		<h1 class="documentation-title"><?php echo $langs->trans('DocComponentsTitle'); ?></h1>
+		<p class="documentation-text"><?php echo $langs->trans('DocComponentsMainDescription'); ?></p>
+
+		<?php $documentation->showSummary(); ?>		
 	</div>
 
 </div>
-
 <?php
 // Output close body + html
 $documentation->docFooter();

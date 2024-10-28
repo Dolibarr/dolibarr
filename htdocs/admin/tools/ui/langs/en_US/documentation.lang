@@ -3,6 +3,10 @@ WelcomeToDocumentation=Welcome to UI Documentation. This section is under develo
 DocumentationHome=UI Documentation
 DocBasicUsage=Basic usage
 
+# Components
+DocComponentsTitle=Components
+DocComponentsMainDescription=Components section description is under developpment
+
 # Badges
 DocBadgeTitle=Badges
 DocBadgeMainDescription=Documentation and examples for badges, our small count and labeling component.

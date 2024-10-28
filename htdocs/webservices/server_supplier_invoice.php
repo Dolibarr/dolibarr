@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -237,7 +237,7 @@ $server->register(
 /**
  * Get invoice from id, ref or ref_ext
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
@@ -344,7 +344,7 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 /**
  * Get list of invoices for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */

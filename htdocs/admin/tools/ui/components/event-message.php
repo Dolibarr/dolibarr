@@ -18,17 +18,20 @@
  */
 
 $res=0;
-if (! $res && file_exists("../main.inc.php")) : $res=@include '../main.inc.php';
-endif;
 if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
 endif;
+if (! $res && file_exists("../../../main.inc.php")) : $res=@include '../../../main.inc.php';
+endif;
+if (! $res && file_exists("../../../../main.inc.php")) : $res=@include '../../../../main.inc.php';
+endif;
+
 
 // Protection if external user
 if ($user->socid > 0) : accessforbidden();
 endif;
 
 // Includes
-dol_include_once('documentation/class/documentation.class.php');
+dol_include_once('admin/tools/ui/class/documentation.class.php');
 
 // Load documentation translations
 $langs->load('documentation@documentation');
@@ -58,7 +61,7 @@ $documentation->docHeader('SetEventMessages');
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
-$documentation->view = array('Elements','SetEventMessages');
+$documentation->view = array('Components','Event Message');
 
 // Output sidebar
 $documentation->showSidebar(); ?>
@@ -73,19 +76,7 @@ $documentation->showSidebar(); ?>
 		<p class="documentation-text"><?php echo $langs->trans('DocSetEventMessageMainDescription'); ?></p>
 
 		<!-- Summary -->
-		<?php
-		$summary = array(
-			'DocBasicUsage' => '#seteventmessagesection-basicusage',
-			'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
-		);
-		?>
-		<ul class="documentation-summary">
-			<?php foreach ($summary as $summary_label => $summary_link) : ?>
-				<li>
-					<a href="<?php echo $summary_link; ?>"><?php echo $langs->trans($summary_label); ?></a>
-				</li>
-			<?php endforeach; ?>
-		</ul>
+		<?php $documentation->showSummary(); ?>
 
 		<!-- Basic usage -->
 		<div class="documentation-section" id="seteventmessagesection-basicusage">

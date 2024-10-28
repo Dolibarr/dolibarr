@@ -760,7 +760,10 @@ if ($id > 0 || !empty($ref)) {
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('project_task'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('project_task'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
 
 		$compatibleImportElementsList = false;
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);

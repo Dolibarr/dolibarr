@@ -83,7 +83,14 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $title;
 
+	/**
+	 * @var string
+	 * @deprecated
+	 */
 	public $ref_supplier;
+	/**
+	 * @var int
+	 */
 	public $socid;
 
 	/**
@@ -92,6 +99,9 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $fk_soc;
 
+	/**
+	 * @var int
+	 */
 	public $suspended; // status
 
 	/**
@@ -105,39 +115,87 @@ class FactureFournisseurRec extends CommonInvoice
 	public $label;
 
 	/**
-	 * @var double $amount
+	 * @var float $amount
 	 * @deprecated
 	 */
 	public $amount;
 	/**
-	 * @var double $remise
+	 * @var float
 	 * @deprecated
 	 */
 	public $remise;
 
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
+	/**
+	 * @var float
+	 */
 	public $localtax1;
+	/**
+	 * @var float
+	 */
 	public $localtax2;
 
+	/**
+	 * @var User
+	 */
 	public $user_author;
+	/**
+	 * @var int
+	 */
 	public $user_modif;
+	/**
+	 * @var int
+	 */
 	public $fk_project;
 
+	/**
+	 * @var int
+	 */
 	public $mode_reglement_id;
+	/**
+	 * @var string
+	 */
 	public $mode_reglement_code;
+	/**
+	 * @var string
+	 */
 	public $cond_reglement_code;
+	/**
+	 * @var string
+	 */
 	public $cond_reglement_doc;
+	/**
+	 * @var int
+	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var int Deadline for payment
+	 * @var int 	Deadline for payment
 	 */
 	public $date_lim_reglement;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $usenewprice = 0;
+	/**
+	 * @var int
+	 */
 	public $frequency;
+	/**
+	 * @var string
+	 */
 	public $unit_frequency;
+	/**
+	 * @var ?int
+	 */
 	public $date_when;
+	/**
+	 * @var ?int
+	 */
 	public $date_last_gen;
 
 	/**
@@ -154,6 +212,9 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @var int<0,1> auto validate 0 to create in draft, 1 to create and validate the new invoice
 	 */
 	public $auto_validate; //
+	/**
+	 * @var ?int<0,1>
+	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
 	/**
@@ -384,31 +445,34 @@ class FactureFournisseurRec extends CommonInvoice
 				// Add lines
 				$num = count($facfourn_src->lines);
 				for ($i = 0; $i < $num; $i++) {
-					$tva_tx = $facfourn_src->lines[$i]->tva_tx;
-					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
-						$tva_tx .= ' ('.$facfourn_src->lines[$i]->vat_src_code.')';
+					$facfourn_line = $facfourn_src->lines[$i];
+					'@phan-var-force SupplierInvoiceLine $facfourn_line';
+
+					$tva_tx = $facfourn_line->tva_tx;
+					if (!empty($facfourn_line->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
+						$tva_tx .= ' ('.$facfourn_line->vat_src_code.')';
 					}
 
 					$result_insert = $this->addline(
-						$facfourn_src->lines[$i]->fk_product,
-						$facfourn_src->lines[$i]->ref_supplier,
-						$facfourn_src->lines[$i]->product_label,
-						$facfourn_src->lines[$i]->desc ? $facfourn_src->lines[$i]->desc : $facfourn_src->lines[$i]->description,
-						$facfourn_src->lines[$i]->pu_ht,
-						$facfourn_src->lines[$i]->pu_ttc,
-						$facfourn_src->lines[$i]->qty,
-						$facfourn_src->lines[$i]->remise_percent,
+						$facfourn_line->fk_product,
+						$facfourn_line->ref_supplier,
+						$facfourn_line->product_label,
+						$facfourn_line->desc ? $facfourn_line->desc : $facfourn_line->description,
+						$facfourn_line->pu_ht,
+						$facfourn_line->pu_ttc,
+						$facfourn_line->qty,
+						$facfourn_line->remise_percent,
 						$tva_tx,
-						$facfourn_src->lines[$i]->localtax1_tx,
-						$facfourn_src->lines[$i]->localtax2_tx,
+						$facfourn_line->localtax1_tx,
+						$facfourn_line->localtax2_tx,
 						'HT',
-						$facfourn_src->lines[$i]->product_type,
-						$facfourn_src->lines[$i]->date_start,
-						$facfourn_src->lines[$i]->date_end,
-						$facfourn_src->lines[$i]->info_bits,
-						$facfourn_src->lines[$i]->special_code,
-						$facfourn_src->lines[$i]->rang,
-						$facfourn_src->lines[$i]->fk_unit
+						$facfourn_line->product_type,
+						$facfourn_line->date_start,
+						$facfourn_line->date_end,
+						$facfourn_line->info_bits,
+						$facfourn_line->special_code,
+						$facfourn_line->rang,
+						$facfourn_line->fk_unit
 					);
 
 					if ($result_insert < 0) {
@@ -419,9 +483,9 @@ class FactureFournisseurRec extends CommonInvoice
 						$result2 = $objectline->fetch($result_insert);
 						if ($result2 > 0) {
 							// Extrafields
-							if (method_exists($facfourn_src->lines[$i], 'fetch_optionals')) {
-								$facfourn_src->lines[$i]->fetch_optionals($facfourn_src->lines[$i]->id);
-								$objectline->array_options = $facfourn_src->lines[$i]->array_options;
+							if (method_exists($facfourn_line, 'fetch_optionals')) {
+								$facfourn_line->fetch_optionals($facfourn_line->id);
+								$objectline->array_options = $facfourn_line->array_options;
 							}
 
 							$result = $objectline->insertExtraFields();
@@ -1243,7 +1307,7 @@ class FactureFournisseurRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency);
 	}
 
 	/**
@@ -1403,7 +1467,8 @@ class FactureFournisseurRec extends CommonInvoice
 				if (!$error && $invoiceidgenerated >= 0) {
 					$facturerec->nb_gen_done++;
 					$facturerec->date_last_gen = dol_now();
-					$facturerec->date_when = $facturerec->getNextDate();
+					$nextDate = $facturerec->getNextDate();
+					$facturerec->date_when = (($nextDate === false) ? null : $nextDate);
 					$facturerec->update($user);
 					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->title);
 					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->title. ' is finished with a success generation');
@@ -1851,7 +1916,7 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Update the next date of execution
 	 *
-	 *	@param     	datetime	$date					date of execution
+	 *	@param     	int			$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
 	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */

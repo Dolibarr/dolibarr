@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +71,9 @@ class Events // extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int|string
+	 */
 	public $dateevent;
 
 	/**
@@ -103,31 +107,33 @@ class Events // extends CommonObject
 	public $authentication_method;
 
 
-	// List of all Audit/Security events supported by triggers
+	/**
+	 * @var array<array{id:string,test:int<0,1>}> List of all Audit/Security events supported by triggers
+	 */
 	public $eventstolog = array(
-		array('id'=>'USER_LOGIN', 'test'=>1),
-		array('id'=>'USER_LOGIN_FAILED', 'test'=>1),
-		array('id'=>'USER_LOGOUT', 'test'=>1),
-		array('id'=>'USER_CREATE', 'test'=>1),
-		array('id'=>'USER_MODIFY', 'test'=>1),
-		array('id'=>'USER_NEW_PASSWORD', 'test'=>1),
-		array('id'=>'USER_ENABLEDISABLE', 'test'=>1),
-		array('id'=>'USER_DELETE', 'test'=>1),
-		array('id'=>'USERGROUP_CREATE', 'test'=>1),
-		array('id'=>'USERGROUP_MODIFY', 'test'=>1),
-		array('id'=>'USERGROUP_DELETE', 'test'=>1),
+		array('id' => 'USER_LOGIN', 'test' => 1),
+		array('id' => 'USER_LOGIN_FAILED', 'test' => 1),
+		array('id' => 'USER_LOGOUT', 'test' => 1),
+		array('id' => 'USER_CREATE', 'test' => 1),
+		array('id' => 'USER_MODIFY', 'test' => 1),
+		array('id' => 'USER_NEW_PASSWORD', 'test' => 1),
+		array('id' => 'USER_ENABLEDISABLE', 'test' => 1),
+		array('id' => 'USER_DELETE', 'test' => 1),
+		array('id' => 'USERGROUP_CREATE', 'test' => 1),
+		array('id' => 'USERGROUP_MODIFY', 'test' => 1),
+		array('id' => 'USERGROUP_DELETE', 'test' => 1),
 	);
 
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'         =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>20),
-		'prefix_session'=>array('type'=>'varchar(255)', 'label'=>'PrefixSession', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
-		'user_agent'    =>array('type'=>'varchar(255)', 'label'=>'UserAgent', 'enabled'=>1, 'visible'=>-1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>1000),
+		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 20),
+		'prefix_session' => array('type' => 'varchar(255)', 'label' => 'PrefixSession', 'enabled' => 1, 'visible' => -1, 'notnull' => -1, 'index' => 0, 'position' => 1000),
+		'user_agent'    => array('type' => 'varchar(255)', 'label' => 'UserAgent', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 1000),
 	);
 
 
