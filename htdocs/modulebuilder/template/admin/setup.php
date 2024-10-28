@@ -165,17 +165,17 @@ $item->defaultFieldValue = '#FF0000';
 //$item->fieldInputOverride = false; // set this var to override field input
 //$item->fieldOutputOverride = false; // set this var to override field output
 
-$item = $formSetup->newItem('TEST_MYPARAM11')->setAsHtml();
+$item = $formSetup->newItem('MYMODULE_MYPARAM11')->setAsHtml();
 $item->nameText = $item->getNameText().' more html text ';
 $item->fieldInputOverride = '';
 $item->helpText = $langs->transnoentities('HelpMessage');
 $item->cssClass = 'minwidth500';
 
-$item = $formSetup->newItem('TEST_MYPARAM12');
+$item = $formSetup->newItem('MYMODULE_MYPARAM12');
 $item->fieldOverride = "Value forced, can't be modified";
 $item->cssClass = 'minwidth500';
 
-//$item = $formSetup->newItem('TEST_MYPARAM13')->setAsDate();	// Not yet implemented
+//$item = $formSetup->newItem('MYMODULE_MYPARAM13')->setAsDate();	// Not yet implemented
 
 // End of definition of parameters
 
