@@ -1018,7 +1018,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date line
 		if (!empty($arrayfields['fd.date']['checked'])) {
-			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
+			print '<td class="center nowraponall" title="'.dol_print_date($db->jdate($obj->dp), 'dayhour').'">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

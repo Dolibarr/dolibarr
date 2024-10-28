@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012  Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin		 <regis.houssin@inodbox.com>
- * Copyright (C) 2014-2015  Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France    	 <frederic.france@free.fr>
- * Copyright (C) 2023 		Charlene Benke    	 <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2012  Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2015  Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +156,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "deliveries", "sendings", "productbatch"));
+		$outputlangs->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "deliveries", "sendings", "productbatch", "compta"));
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('SHIPPING_DRAFT_WATERMARK'))) {
@@ -167,7 +168,7 @@ class pdf_espadon extends ModelePdfExpedition
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
+			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "deliveries", "sendings", "productbatch", "compta"));
 		}
 
 		$nblines = count($object->lines);
@@ -1077,6 +1078,12 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
+		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && !empty($object->thirdparty->code_compta_client)) {
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+		}
 
 		$pdf->SetFont('', '', $default_font_size + 3);
 		$Yoff = 25;

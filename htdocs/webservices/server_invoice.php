@@ -300,7 +300,7 @@ $server->register(
 /**
  * Get invoice from id, ref or ref_ext.
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
@@ -411,7 +411,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 /**
  * Get list of invoices for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
@@ -546,7 +546,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 /**
  * Create an invoice
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$invoice			Invoice
  * @return	array							Array result
  */

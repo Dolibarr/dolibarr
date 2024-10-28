@@ -443,4 +443,6 @@ AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtu
 ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>The quantities currently set in the inventory will be reset.
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
 PriceLabel=Price label
+GenerateImage=Generate image
+GenerateWithAI=Generate with AI
 PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)

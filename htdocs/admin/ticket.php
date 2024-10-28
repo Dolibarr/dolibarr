@@ -631,7 +631,7 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswers
 print '</td>';
 print '</tr>';
 
-print '</table><br>';
+print '</table>';
 
 print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 
