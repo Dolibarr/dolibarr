@@ -790,6 +790,7 @@ if (empty($reshook)) {
 				$db->begin();
 				$clone->context['createfromclone'] = 'createfromclone';
 				$id = $clone->create($user);
+				$refalreadyexists = 0;
 				if ($id > 0) {
 					if (GETPOST('clone_rights')) {
 						$result = $clone->cloneRights($object->id, $id);
