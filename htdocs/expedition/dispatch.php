@@ -1079,19 +1079,19 @@ if ($object->id > 0 || !empty($object->ref)) {
 									}
 									print '</td>';
 
-								// Warehouse
-								print '<td class="right">';
-								if ($can_update_stock) {
-									if (count($listwarehouses) > 1) {
-										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
-									} elseif (count($listwarehouses) == 1) {
-										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
-									} else {
-										$langs->load("errors");
-										print $langs->trans("ErrorNoWarehouseDefined");
+									// Warehouse
+									print '<td class="right">';
+									if ($can_update_stock) {
+										if (count($listwarehouses) > 1) {
+											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+										} elseif (count($listwarehouses) == 1) {
+											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+										} else {
+											$langs->load("errors");
+											print $langs->trans("ErrorNoWarehouseDefined");
+										}
 									}
-								}
-								print "</td>\n";
+									print "</td>\n";
 
 									// Enable hooks to append additional columns
 									$parameters = array(
