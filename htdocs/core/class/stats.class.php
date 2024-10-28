@@ -38,6 +38,10 @@ abstract class Stats
 	 * @var array<string,int>	Dates of cache file read by methods
 	 */
 	protected $lastfetchdate = array();
+
+	/**
+	 * @var string cachefilesuffix
+ 	 */
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
