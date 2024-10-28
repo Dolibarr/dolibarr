@@ -263,7 +263,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
+	/* To move into tpl
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 
 	$formmail = new FormMail($db);
@@ -284,6 +284,7 @@ if ($object->id > 0) {
 
 	print $out;
 	print '</table>';
+	*/
 
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
