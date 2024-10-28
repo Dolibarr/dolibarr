@@ -292,4 +292,4 @@ ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
 ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
 
-UPDATE llx_expeditiondet as ed LEFT JOIN llx_commandedet as cd ON cd.rowid = ed.fk_elementdet SET ed.fk_product = cd.fk_product WHERE ed.fk_product IS NULL;
+UPDATE llx_expeditiondet as ed LEFT JOIN llx_commandedet ON llx_commandedet.rowid = ed.fk_elementdet SET ed.fk_product = llx_commandedet.fk_product WHERE ed.fk_product IS NULL AND ed.element_type = 'commande';
