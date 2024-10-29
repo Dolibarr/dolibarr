@@ -42,6 +42,8 @@ if (empty($id) && empty($ref)) {
 	$id = $user->id;
 }
 
+$expand = $_COOKIE['virtualcard_expand'];
+
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
@@ -175,15 +177,21 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	  	if (div.style.display === "none") {
 	    	div.style.display = "block";
 			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
+			var date = new Date();
+        	date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
+			document.cookie = "virtualcard_expand=1; expires=" + date.toUTCString() + "; path=/";
 	  	} else {
 	    	div.style.display = "none";
 			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
+			var date = new Date();
+        	date.setTime(date.getTime() - (1 * 24 * 60 * 60 * 1000));
+			document.cookie = "virtualcard_expand=0; expires=" + date.toUTCString() + "; path=/";
 		}
 	}
 	</script>';
 
 	// Start div hide/Show
-	print '<div id="div_container_sub_exportoptions" style="display: none;">';
+	print '<div id="div_container_sub_exportoptions" style="'.($expand ? '' : 'display: none;').'">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -197,49 +205,49 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Photo"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_PHOTO", array(), null, 0, 0, 0);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_PHOTO", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Job position
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PostOrFunction"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_JOBPOSITION");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_JOBPOSITION", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Email
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Email"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_EMAIL");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_EMAIL", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Office phone
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhonePro"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_PHONE");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_PHONE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Office fax
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Fax"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_FAX");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_FAX", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// User mobile
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhoneMobile"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_USER_MOBILE");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_USER_MOBILE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS", array(), null, 0, 0, 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	//Show list of socialnetworks for user
@@ -268,14 +276,14 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_SHOW_BIRTH");
+	print ajax_constantonoff("USER_PUBLIC_SHOW_BIRTH", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Address
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Address"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_SHOW_ADDRESS");
+	print ajax_constantonoff("USER_PUBLIC_SHOW_ADDRESS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -287,14 +295,14 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("CompanySection"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_COMPANY");
+	print ajax_constantonoff("USER_PUBLIC_HIDE_COMPANY", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", array(), null, 0, 0, 1);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 	print "</td></tr>\n";
 
 	// show list of social networks for company
@@ -310,7 +318,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 			foreach ($listofnetworks as $key => $networkVal) {
 				print '<tr class="oddeven">';
 				print '<td>'.dol_escape_htmltag($key).'</td><td>';
-				print ajax_constantonoff('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key));
+				print ajax_constantonoff('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key), array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition');
 				print '</td>';
 				print "</tr>";
 			}
