@@ -48,6 +48,8 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		- '#.*phan-var#'
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512
