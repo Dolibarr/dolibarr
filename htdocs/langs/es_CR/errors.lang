@@ -148,7 +148,6 @@ ErrorBankStatementNameMustFollowRegex=Error, el nombre de la cuenta bancaria deb
 ErrorPhpMailDelivery=Compruebe que no utilice un número demasiado alto de destinatarios y que su contenido de correo electrónico no sea similar a un Spam. Pida también a su administrador que verifique los archivos de los cortafuegos y de los registros del servidor para obtener una información más completa.
 ErrorUserNotAssignedToTask=El usuario debe ser asignado a la tarea para poder ingresar tiempo consumido.
 ErrorModuleFileSeemsToHaveAWrongFormat=El paquete del módulo parece tener un formato incorrecto.
-ErrorFilenameDosNotMatchDolibarrPackageRules=El nombre del paquete del módulo (<strong> %s </strong>) no coincide con la sintaxis del nombre esperado: <strong>%s</strong>
 ErrorDuplicateTrigger=Error, nombre del disparador duplicado%s. Ya está cargado desde%s.
 ErrorNoWarehouseDefined=Error, no se han definido almacenes.
 ErrorBadLinkSourceSetButBadValueForRef=El enlace que utiliza no es válido. Se define una 'fuente' de pago, pero el valor de 'ref' no es válido.

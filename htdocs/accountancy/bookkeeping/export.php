@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -825,7 +825,7 @@ if ($action == 'export_file') {
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
-		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE'));
+		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE');
 		$form_question['notifiedvalidationdate'] = array(
 			'name' => 'notifiedvalidationdate',
 			'type' => 'checkbox',
@@ -912,7 +912,7 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, 
 
 // Not display message when all the list of docs are included
 if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
-	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0, 'hideonsmartphone info');
+	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, '0', 'hideonsmartphone info');
 }
 
 //$topicmail = "Information";

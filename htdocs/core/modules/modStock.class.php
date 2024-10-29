@@ -400,8 +400,8 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = sm.fk_product AND sm.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
-		// Export inventory
 
+		// Export inventories
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_inventory';
 		$this->export_label[$r] = "Inventories"; // Translation key (used only if key ExportDataset_xxx_z not found)
@@ -409,7 +409,7 @@ class modStock extends DolibarrModules
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
 			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
-			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated', 'id.fk_warehouse' => 'InventoryEntrepot',
+			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated',
 			'id.batch' => 'Lotserial',
 			'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 			'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
@@ -431,14 +431,14 @@ class modStock extends DolibarrModules
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode' => 'Text'));
 		}
 		$this->export_entities_array[$r] = array(
-			'e.rowid' => 'warehouse', 'e.ref' => 'warehouse', 'e.description' => 'warehouse', 'e.lieu' => 'warehouse', 'e.address' => 'warehouse', 'e.zip' => 'warehouse', 'e.town' => 'warehouse',
+			'id.qty_view' => 'inventory_line', 'id.qty_stock' => 'inventory_line', 'id.batch' => 'inventory_line', 'id.qty_regulated' => 'inventory_line', 'id.fk_warehouse' => 'inventory_line', 'id.rowid' => 'inventory_line',	'e.rowid' => 'warehouse', 'e.ref' => 'warehouse', 'e.description' => 'warehouse', 'e.lieu' => 'warehouse', 'e.address' => 'warehouse', 'e.zip' => 'warehouse', 'e.town' => 'warehouse',
 			'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
 			'p.barcode' => "product", 'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product", 'p.datec' => 'product', 'p.tms' => 'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		if (isModEnabled('productbatch')) {
 			$this->export_fields_array[$r]['id.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['id.batch'] = 'Text';
-			$this->export_entities_array[$r]['id.batch'] = 'movement';
+			$this->export_entities_array[$r]['id.batch'] = 'inventory_line';
 		}
 		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
@@ -549,7 +549,7 @@ class modStock extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
 
-		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname, '<span class="fas fa-bars size12x"></span>');
 	}
 
 	$num = count($newTabMenu);
@@ -82,9 +83,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		$showmode = dol_auguria_showmenu($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1) {
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
-
 			// url = url from host, shorturl = relative path into dolibarr sources
 			$url = $shorturl = $newTabMenu[$i]['url'];
+
 			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {	// Do not change url content for external links
 				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
 				$url = $shorturl = $tmp[0];
@@ -108,6 +109,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 				}
 			}
 
+			// Phan issue #4881 requires that we reforce the type
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
+
 			// TODO Find a generic solution
 			if (preg_match('/search_project_user=__search_project_user__/', $shorturl)) {
 				$search_project_user = GETPOSTINT('search_project_user');
@@ -117,6 +121,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 					$shorturl = preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
 				}
 			}
+
+			// Phan issue #4881 requires that we reforce the type
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
 
 			// Define the class (top menu selected or not)
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) {
@@ -232,7 +239,7 @@ function print_start_menu_entry_auguria($idsel, $classname, $showmode)
  */
 function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
 {
-	global $langs, $conf;
+	global $langs;
 
 	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
 	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
@@ -240,7 +247,6 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
-
 		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
 			print $menuval['prefix'];
 		} elseif (!empty($menuval['prefix']) && strpos($menuval['prefix'], 'fa-') === 0) {
@@ -688,8 +694,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 /**
  * Function to test if an entry is enabled or not
  *
- * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}	$menuentry	Array for menu entry
+ * @param	int		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string,module:string}	$menuentry	Array for menu entry
  * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray
  */

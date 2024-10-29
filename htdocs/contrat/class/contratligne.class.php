@@ -192,7 +192,7 @@ class ContratLigne extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var int|string
+	 * @var float|string
 	 */
 	public $remise_percent;
 
@@ -722,11 +722,11 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? $this->fk_remise_except : "null").",";
 		$sql .= " subprice = ".($this->subprice != '' ? $this->subprice : "null").",";
 		$sql .= " price_ht = ".($this->price_ht != '' ? $this->price_ht : "null").",";
-		$sql .= " total_ht = ".$this->total_ht.",";
-		$sql .= " total_tva = ".$this->total_tva.",";
-		$sql .= " total_localtax1 = ".$this->total_localtax1.",";
-		$sql .= " total_localtax2 = ".$this->total_localtax2.",";
-		$sql .= " total_ttc = ".$this->total_ttc.",";
+		$sql .= " total_ht = ".((float) $this->total_ht).",";
+		$sql .= " total_tva = ".((float) $this->total_tva).",";
+		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
+		$sql .= " total_localtax2 = ".((float) $this->total_localtax2).",";
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
 		$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";
@@ -953,7 +953,7 @@ class ContratLigne extends CommonObjectLine
 		$this->commentaire = $comment;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->statut).",";
-		$sql .= " date_ouverture = ".(dol_strlen($this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
+		$sql .= " date_ouverture = ".(dol_strlen((string) $this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($this->date_end) != 0 ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		}

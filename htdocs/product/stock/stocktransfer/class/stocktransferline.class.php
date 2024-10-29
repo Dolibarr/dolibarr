@@ -96,17 +96,38 @@ class StockTransferLine extends CommonObjectLine
 		'pmp' => array('type' => 'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label' => 'PMP', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1,),
 		'rang' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 0, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var float
+	 */
 	public $amount;
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse_destination;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse_source;
+	/**
+	 * @var int
+	 */
 	public $fk_stocktransfer;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var string
+	 */
 	public $batch;
 
 	/**
@@ -919,6 +940,7 @@ class StockTransferLine extends CommonObjectLine
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefStockTransfer $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -943,10 +965,10 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

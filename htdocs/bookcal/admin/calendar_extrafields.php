@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ print dol_get_fiche_end();
 
 
 // Buttons
-if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.
+if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.  @phpstan-ignore-line
 	if ($action != 'create' && $action != 'edit') {
 		print '<div class="tabsAction">';
 		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';

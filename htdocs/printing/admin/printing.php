@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,7 @@ if ($action == 'setconst' && $user->admin) {
 	$error = 0;
 	$db->begin();
 	foreach ($_POST['setupdriver'] as $setupconst) {
+		'@phan-var-force array<string,string> $setupconst';
 		//print '<pre>'.print_r($setupconst, true).'</pre>';
 		$result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
 		if (!($result > 0)) {
@@ -334,6 +336,7 @@ if ($mode == 'test' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
 		$printer = new $classname($db);
+		'@phan-var-force PrintingDriver $printer';
 		$langs->load($driver);
 		$langs->load('printing');
 

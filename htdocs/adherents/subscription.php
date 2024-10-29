@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +58,11 @@ $cancel = GETPOST('cancel');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -112,11 +114,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->hasRight('adherent', 'creer');
-// Define variables to determine what the current user can do on the properties of a member
-if ($id) {
-	$caneditfieldmember = $user->hasRight('adherent', 'creer');
-}
+$permissiontoaddmember = $user->hasRight('adherent', 'creer');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
@@ -170,12 +168,12 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 	}
 }
 
-if (empty($reshook) && $action == 'setsocid') {
+if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
 	if (!$error) {
-		if (GETPOSTINT('socid') != $object->fk_soc) {    // If link differs from currently in database
+		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = '".GETPOSTINT('socid')."'";
+			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -306,7 +304,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	}
 
 	// Record the subscription then complementary actions
-	if (!$error && $action == 'subscription') {
+	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
 
 		// Create subscription
@@ -466,12 +464,6 @@ if (! ($object->id > 0)) {
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-/*$res = $object->fetch($rowid);
-	if ($res < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-*/
 
 $adht->fetch($object->typeid);
 
@@ -671,7 +663,7 @@ if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
 print '</tr></table>';
 print '</td><td colspan="2" class="valeur">';
 if ($action == 'editlogin') {
-	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
+	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
 } else {
 	if ($object->user_id) {
 		$linkeduser = new User($db);
@@ -957,7 +949,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
 	print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->company).'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<div class="div-table-responsive">';
 	print '<table class="border centpercent">'."\n";
@@ -986,6 +978,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		}
 		// Now do a correction of the suggested date
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
+			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
+		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "3m") {
+			$datefrom = dol_time_plus_duree($object->datefin, -3, 'm');
 			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
 			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"));

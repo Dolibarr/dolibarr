@@ -456,7 +456,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if ($mailfile) {
+				if (!empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -570,7 +570,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if ($mailfile) {
+				if (!empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -683,9 +683,9 @@ if (empty($reshook)) {
 				}
 				*/
 
-				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, $emailCC, '', 0, -1);
 
-				if ($mailfile) {
+				if (!empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -796,7 +796,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if ($mailfile) {
+				if (!empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -912,7 +912,7 @@ if (empty($reshook)) {
 						// PREPARE SEND
 						$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-						if ($mailfile) {
+						if (!empty($mailfile->error)) {
 							// SEND
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1083,7 +1083,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if ($mailfile) {
+				if (!empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -1434,7 +1434,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -1511,7 +1511,7 @@ if ($action == 'create') {
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1523,7 +1523,7 @@ if ($action == 'create') {
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1720,6 +1720,15 @@ if ($action == 'create') {
 
 			if ($action == 'delete_line') {
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOSTINT('rowid'), $langs->trans("DeleteLine"), $langs->trans("ConfirmDeleteLine"), "confirm_delete_line", '', 'yes', 1);
+			}
+
+			// Call Hook formConfirm
+			$parameters = array('formConfirm' => $formconfirm);
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				$formconfirm .= $hookmanager->resPrint;
+			} elseif ($reshook > 0) {
+				$formconfirm = $hookmanager->resPrint;
 			}
 
 			// Print form confirm
@@ -1975,7 +1984,7 @@ if ($action == 'create') {
 					$paymentexpensereportstatic->type_code = $objp->payment_code;
 					$paymentexpensereportstatic->type_label = $objp->payment_type;
 
-					print '<tr class="oddseven">';
+					print '<tr class="oddeven">';
 					print '<td>';
 					print $paymentexpensereportstatic->getNomUrl(1);
 					print '</td>';
@@ -2323,11 +2332,11 @@ if ($action == 'create') {
 
 						print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
 						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 						print '</a>';
 						if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 							print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 							print '</a>';
 						}
 
@@ -2478,11 +2487,11 @@ if ($action == 'create') {
 				print '<tr class="liste_titre">';
 				print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
 				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 				print '</a>';
 				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 					print '</a>';
 				}
 
@@ -2661,7 +2670,7 @@ if ($action == 'create') {
                     let tva = jQuery("#vatrate").find(":selected").val();
                     let qty = jQuery(".input_qty").val();
 
-					let path = "'.DOL_DOCUMENT_ROOT.'/expensereport/ajax/ajaxik.php";
+					let path = "'.DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php";
 					path += "?fk_c_exp_tax_cat="+tax_cat;
 					path += "&fk_expense="+'.((int) $object->id).';
                     path += "&vatrate="+tva;
@@ -2909,7 +2918,11 @@ if ($action != 'presend') {
 	/*
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('expensereport'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
 	*/

@@ -635,7 +635,7 @@ if ($resql) {
 	}
 
 	// Title line with search boxes
-	print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
+	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -947,14 +947,14 @@ $db->close();
  *	Show fields in insert/edit mode
  *
  * 	@param		string[]	$fieldlist		Array of fields
- * 	@param		stdClass	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		?stdClass	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
+	global $db;
 	global $form, $mysoc;
 
 	$formadmin = new FormAdmin($db);

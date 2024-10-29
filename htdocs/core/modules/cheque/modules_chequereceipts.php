@@ -111,6 +111,18 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 		return $list;
 	}
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Fonction to generate document on disk
+	 *
+	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	string			$_dir			Directory
+	 *	@param	string			$number			Number
+	 *	@param	Translate		$outputlangs	Lang output object
+	 *	@return	int<-1,1>  						1=ok, 0=ko
+	 */
+	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	// phpcs:enable
 }
 
 
@@ -150,6 +162,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		require_once $dir.$file;
 
 		$obj = new $classname($db);
+		'@phan-var-force ModeleChequeReceipts $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

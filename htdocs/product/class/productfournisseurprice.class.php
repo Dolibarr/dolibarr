@@ -120,39 +120,141 @@ class ProductFournisseurPrice extends CommonObject
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'Fkbarcodetype', 'enabled' => '1', 'position' => 175, 'notnull' => 0, 'visible' => -1,),
 		'packaging' => array('type' => 'varchar(64)', 'label' => 'Packaging', 'enabled' => '1', 'position' => 180, 'notnull' => 0, 'visible' => -1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $entity;
+	/**
+	 * @var int|string
+	 */
 	public $datec;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var string
+	 */
 	public $ref_fourn;
+	/**
+	 * @var string
+	 */
 	public $desc_fourn;
+	/**
+	 * @var int
+	 */
 	public $fk_availability;
+	/**
+	 * @var float
+	 */
 	public $price;
+	/**
+	 * @var float
+	 */
 	public $quantity;
+	/**
+	 * @var float
+	 */
 	public $remise_percent;
+	/**
+	 * @var float
+	 */
 	public $remise;
+	/**
+	 * @var float
+	 */
 	public $unitprice;
+	/**
+	 * @var float
+	 */
 	public $charges;
+	/**
+	 * @var string
+	 */
 	public $default_vat_code;
+	/**
+	 * @var float
+	 */
 	public $tva_tx;
+	/**
+	 * @var int
+	 */
 	public $info_bits;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var int
+	 */
 	public $fk_supplier_price_expression;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $delivery_time_days;
+	/**
+	 * @var string
+	 */
 	public $supplier_reputation;
+	/**
+	 * @var int
+	 */
 	public $fk_multicurrency;
+	/**
+	 * @var string
+	 */
 	public $multicurrency_code;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_tx;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_price;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_unitprice;
+	/**
+	 * @var float
+	 */
 	public $localtax1_tx;
+	/**
+	 * @var string
+	 */
 	public $localtax1_type;
+	/**
+	 * @var float
+	 */
 	public $localtax2_tx;
+	/**
+	 * @var string
+	 */
 	public $localtax2_type;
+	/**
+	 * @var string
+	 */
 	public $barcode;
+	/**
+	 * @var int
+	 */
 	public $fk_barcode_type;
+	/**
+	 * @var string
+	 */
 	public $packaging;
 	// END MODULEBUILDER PROPERTIES
 
@@ -464,7 +566,7 @@ class ProductFournisseurPrice extends CommonObject
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
 			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".$user->id;
+				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -601,11 +703,11 @@ class ProductFournisseurPrice extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int<0,2>	$withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param  string		$option                     On what the link point to ('nolink', ...)
+	 *  @param  int<0,1>	$notooltip                  1=Disable tooltip
+	 *  @param  string		$morecss                    Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return	string                              String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -826,6 +928,7 @@ class ProductFournisseurPrice extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force CommonNumRefGenerator $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -850,10 +953,10 @@ class ProductFournisseurPrice extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>	$moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

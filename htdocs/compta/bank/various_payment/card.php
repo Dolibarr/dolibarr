@@ -410,7 +410,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent">';
 

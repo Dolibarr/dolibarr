@@ -71,15 +71,16 @@ $permissiontoedit = ((($object->id == $user->id) && $user->hasRight('user', 'sel
 if ($action == 'update' && $permissiontoedit) {
 	$tmparray = array();
 	$tmparray['USER_PUBLIC_HIDE_PHOTO'] = (GETPOST('USER_PUBLIC_HIDE_PHOTO') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (GETPOST('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_EMAIL'] = (GETPOST('USER_PUBLIC_HIDE_EMAIL') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_OFFICE_FAX'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_FAX') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_SHOW_BIRTH'] = (GETPOST('USER_PUBLIC_SHOW_BIRTH') ? 1 : 0);
 	$tmparray['USER_PUBLIC_SHOW_ADDRESS'] = (GETPOST('USER_PUBLIC_SHOW_ADDRESS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (GETPOST('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (GETPOST('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_OFFICE_FAX'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_FAX') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_MORE'] = (GETPOST('USER_PUBLIC_MORE') ? GETPOST('USER_PUBLIC_MORE') : '');
 
 	dol_set_user_param($db, $conf, $object, $tmparray);
@@ -106,24 +107,9 @@ $title = $person_name." - ".$langs->trans('Info');
 $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-virtualcard');
 
-$head = user_prepare_head($object);
 
 $title = $langs->trans("User");
 //print dol_get_fiche_head($head, 'info', $title, -1, 'user');
-
-
-$linkback = '';
-
-if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-}
-
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
-$morehtmlref .= '</a>';
-
-$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 
 print '<div class="fichecenter">';
@@ -131,7 +117,9 @@ print '<div class="fichecenter">';
 print '<br>';
 
 $param = '&id='.((int) $object->id);
-$param .= '&dol_openinpopup=1';
+if (GETPOSTISSET('dol_openinpopup')) {
+	$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+}
 
 $enabledisablehtml = $langs->trans("EnablePublicVirtualCard").' ';
 if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
@@ -148,7 +136,7 @@ if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" value="'.(!getDolGlobalString('USER_ENABLE_PUBLIC') ? 0 : 1).'">';
+print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" value="'.(getDolGlobalString('USER_ENABLE_PUBLIC') ? 1 : 0).'">';
 
 print '<br><br>';
 
@@ -208,8 +196,8 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Options").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 	// User photo
@@ -275,12 +263,30 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print $form->selectyesno("USER_PUBLIC_SHOW_ADDRESS", (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) ? getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
-	// Company name
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Company").'</td>';
+	print '<td></td>';
+	print "</tr>\n";
+
+	// Company section
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("CompanySection"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_COMPANY", (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) : 0), 1);
 	print "</td></tr>\n";
+
+	// Social networks
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object) : 0), 1);
+	print "</td></tr>\n";
+
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Other").'</td>';
+	print '<td></td>';
+	print "</tr>\n";
 
 	// More
 	print '<tr class="oddeven" id="tredit"><td>';

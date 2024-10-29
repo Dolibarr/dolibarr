@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 380);
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '380');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '160');
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
@@ -265,9 +266,9 @@ if ($result || !($id > 0)) {
 	}
 
 	if ($mode != 'byunit') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
+		print '<a class="a-mesure-disabled marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
 	} else {
-		print '<span class="a-mesure marginleftonly marginrightonly">';
+		print '<span class="a-mesure marginrightonly">';
 	}
 	if ($type == '0') {
 		print $langs->trans("StatsByNumberOfUnitsProducts");
@@ -355,12 +356,14 @@ if ($result || !($id > 0)) {
 	}
 
 	if (isModEnabled('order')) {
+		$langs->load("orders");
 		$graphfiles['orders'] = array('modulepart' => 'productstats_orders',
 			'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Orders")));
 	}
 
 	if (isModEnabled('supplier_order')) {
+		$langs->load("orders");
 		$graphfiles['orderssuppliers'] = array('modulepart' => 'productstats_orderssuppliers',
 			'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SuppliersOrders")));

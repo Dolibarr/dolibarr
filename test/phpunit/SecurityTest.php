@@ -1116,6 +1116,8 @@ class SecurityTest extends CommonClassTest
 		print "result16 = ".$result."\n";
 		$this->assertFalse($result);
 
+		$leftmenu = 'XXX';
+		$conf->global->MAIN_FEATURES_LEVEL = 1;		// Force for the case option is -1
 		$string = '(isModEnabled("agenda") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
 		$result = dol_eval($string, 1, 1, '1');
 		print "result17 = ".$result."\n";
@@ -1342,6 +1344,46 @@ class SecurityTest extends CommonClassTest
 			print __METHOD__." result=".$result."\n";
 			$this->assertEquals('<img src="x">', $result, 'Test example');
 		}
+
+
+		// For a string with js and link with restricthtmlallowlinkscript
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+		$s='<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>';
+		$result = dol_htmlwithnojs($s, 1, 'restricthtmlallowlinkscript');
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($s, $result, 'Test for restricthtmlallowlinkscript');
+
+		// For a string with js and link with restricthtmlallowlinkscript
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		$s='<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>';
+		$result = dol_htmlwithnojs($s, 1, 'restricthtmlallowlinkscript');
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($s, $result, 'Test for restricthtmlallowlinkscript');
+
+		// For a string with js and link with restricthtmlallowlinkscript
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+		$s='<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>';
+		$result = dol_htmlwithnojs($s, 1, 'restricthtmlallowlinkscript');
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($s, $result, 'Test for restricthtmlallowlinkscript');
 
 		return 0;
 	}

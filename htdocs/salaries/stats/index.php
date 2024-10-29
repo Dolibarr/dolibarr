@@ -240,7 +240,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {
+	while ($year && $oldyear > (int) $year + 1) {
 		// If we have empty year
 		$oldyear--;
 

@@ -384,6 +384,7 @@ DolibarrLogin=Login no Dolibarr
 NoDolibarrAccess=Sen acceso a Dolibarr
 ExportDataset_company_1=Terceiros (Empresas / fundacións / particulares) e as súas propiedades
 ExportDataset_company_2=Contactos e as súas propiedades
+ExportDataset_company_3=Contas bancarias de terceiros
 ImportDataset_company_1=Terceiros e as súas propiedades
 ImportDataset_company_2=Contactos/Enderezos e atributos de terceiros
 ImportDataset_company_3=Contas bancarias de terceiros

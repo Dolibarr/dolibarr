@@ -384,6 +384,7 @@ DolibarrLogin=Nume de autentificare
 NoDolibarrAccess=Utilizator fără acces în sistem
 ExportDataset_company_1=Terți (companii/fundații/persoane fizice) și proprietățile acestora
 ExportDataset_company_2=Persoane de contact și proprietățile acestora
+ExportDataset_company_3=Conturi bancare Terți
 ImportDataset_company_1=Terți și proprietățile acestora
 ImportDataset_company_2=Contacte/adrese și atribute suplimentare pentru terţi
 ImportDataset_company_3=Conturi bancare Terți

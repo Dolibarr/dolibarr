@@ -46,10 +46,20 @@ if (!empty($user->socid)) {
 }
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  *	View
  */
+
 $form = new Form($db);
 $object = new SupplierProposal($db);
 $object->fetch($id);

@@ -239,7 +239,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$name = substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
-		$ok = run_sql($dir.$file, 0, '', 1);
+		$ok = run_sql($dir.$file, 0, 0, 1);
 	}
 }
 
@@ -919,7 +919,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 					$id = $reg[1];
 				}
 
-				if ($id || $ref) {
+				if (($id || $ref) && $object_instance !== null) {
 					//print 'Fetch '.$id.' or '.$ref.'<br>';
 					$result = $object_instance->fetch($id, $ref);
 					//print $result.'<br>';
@@ -1324,7 +1324,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 			foreach ($arrayofforeignkey as $tmptable => $foreignkeyname) {
 				if ($table[0] == $tmptable) {
 					print '<tr><td colspan="2">';
-					$sqltmp = 'ALTER TABLE '.$db->sanitize($table[0]).' DROP FOREIGN KEY '.$db->sanitize($foreignkeyname);
+					$sqltmp = "ALTER TABLE ".$db->sanitize($table[0])." DROP FOREIGN KEY ".$db->sanitize($foreignkeyname);
 					print $sqltmp;
 					if ($force_utf8_on_tables == 'confirmed') {
 						$resqltmp = $db->query($sqltmp);
@@ -1347,10 +1347,16 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				continue;
 			}
 
+			$collation = 'utf8_unicode_ci';
+			$defaultcollation = $db->getDefaultCollationDatabase();
+			if (preg_match('/general/', $defaultcollation)) {
+				$collation = 'utf8_general_ci';
+			}
+
 			print '<tr><td colspan="2">';
 			print $table[0];
 			$sql1 = "ALTER TABLE ".$db->sanitize($table[0])." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
@@ -1371,7 +1377,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 		// Restore dropped foreign keys
 		foreach ($foreignkeystorestore as $tmptable => $foreignkeyname) {
-			$stringtofindinline = 'ALTER TABLE .* ADD CONSTRAINT '.$db->sanitize($foreignkeyname);
+			$stringtofindinline = "ALTER TABLE .* ADD CONSTRAINT ".$db->sanitize($foreignkeyname);
 			$fileforkeys = DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tmptable.'.key.sql';
 			//print 'Search in '.$fileforkeys.' to get '.$stringtofindinline."<br>\n";
 
@@ -1448,7 +1454,7 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 			foreach ($arrayofforeignkey as $tmptable => $foreignkeyname) {
 				if ($table[0] == $tmptable) {
 					print '<tr><td colspan="2">';
-					$sqltmp = 'ALTER TABLE '.$db->sanitize($table[0]).' DROP FOREIGN KEY '.$db->sanitize($foreignkeyname);
+					$sqltmp = "ALTER TABLE ".$db->sanitize($table[0])." DROP FOREIGN KEY ".$db->sanitize($foreignkeyname);
 					print $sqltmp;
 					if ($force_utf8mb4_on_tables == 'confirmed') {
 						$resqltmp = $db->query($sqltmp);
@@ -1471,10 +1477,16 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				continue;
 			}
 
+			$collation = 'utf8mb4_unicode_ci';
+			$defaultcollation = $db->getDefaultCollationDatabase();
+			if (preg_match('/general/', $defaultcollation)) {
+				$collation = 'utf8mb4_general_ci';
+			}
+
 			print '<tr><td colspan="2">';
 			print $table[0];
 			$sql1 = "ALTER TABLE ".$db->sanitize($table[0])." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {
@@ -1495,7 +1507,7 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 		// Restore dropped foreign keys
 		foreach ($foreignkeystorestore as $tmptable => $foreignkeyname) {
-			$stringtofindinline = 'ALTER TABLE .* ADD CONSTRAINT '.$db->sanitize($foreignkeyname);
+			$stringtofindinline = "ALTER TABLE .* ADD CONSTRAINT ".$db->sanitize($foreignkeyname);
 			$fileforkeys = DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tmptable.'.key.sql';
 			//print 'Search in '.$fileforkeys.' to get '.$stringtofindinline."<br>\n";
 

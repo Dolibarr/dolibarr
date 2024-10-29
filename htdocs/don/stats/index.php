@@ -38,7 +38,7 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 // Load translation files required by the page
-$langs->loadLangs("donations");
+$langs->loadLangs(array("donations"));
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
@@ -226,7 +226,7 @@ if (isModEnabled('category')) {
 	$cat_type = Categorie::TYPE_CUSTOMER;
 	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 	print '<tr><td>'.$cat_label.'</td><td>';
-	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
 	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	print '</td></tr>';
@@ -274,7 +274,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) {
+	while (!empty($year) && $oldyear > (int) $year + 1) {
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';

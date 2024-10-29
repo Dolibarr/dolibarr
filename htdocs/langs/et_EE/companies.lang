@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarri kasutaja
 NoDolibarrAccess=Dolibarri ligipääs puudub
 ExportDataset_company_1=Kolmandad osapooled (ettevõtted/sihtasutused/füüsilised isikud) ja nende omadused
 ExportDataset_company_2=Kontaktid ja nende omadused
+ExportDataset_company_3=Kolmandate osapoolte panga kontod
 ImportDataset_company_1=Kolmandad osapooled ja nende omadused
 ImportDataset_company_2=Kolmandate osapoolte lisa kontaktid/aadressid ja atribuudid
 ImportDataset_company_3=Kolmandate osapoolte panga kontod

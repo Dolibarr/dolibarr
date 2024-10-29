@@ -1,7 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2023 Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,6 +157,21 @@ class PrintingDriver
 	 * @return  int                     0 if OK, >0 if KO
 	 */
 	public function printFile($file, $module, $subdir = '')
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
+
+	/**
+	 *  List jobs print
+	 *
+	 *  @param   ?string      $module     module
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listJobs($module = null)
 	{
 		$msg = get_class($this)."::".__FUNCTION__." not implemented";
 		dol_syslog($msg, LOG_ERR);

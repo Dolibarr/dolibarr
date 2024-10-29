@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - hrm
 
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=禁用外部人力資源服務的電子郵件地址
+HRM_EMAIL_EXTERNAL_SERVICE=用於阻止 HRM 外部服務的電子郵件
 Establishments=機構
 Establishment=機構
 NewEstablishment=新增機構
@@ -72,6 +72,9 @@ AddSkill=向職位描述添加技能
 RequiredSkills=此職位描述所需的技能
 UserRank=用戶等級
 SkillList=技能列表
+SkillCreated=%s 技能已創建
+SkillRank=技能等級
+ShowSkillRank=展示技能等級
 SaveRank=保存級別
 TypeKnowHow=專業技能
 TypeHowToBe=工作態度

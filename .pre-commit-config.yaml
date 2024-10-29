@@ -1,5 +1,5 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
+exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -43,7 +43,7 @@ repos:
       - id: end-of-file-fixer
       # Check that there are no completely merged file conflicts
       - id: check-merge-conflict
-        stages: [pre-commit, pre-rebase, pre-commit, pre-merge-commit]
+        stages: [commit, pre-rebase, pre-commit, pre-merge-commit]
       # Check that files with shebangs have the executable bit set (in git)
       - id: check-executables-have-shebangs
       # Check that shell files are executables
@@ -58,11 +58,17 @@ repos:
       # Check that there are no files that have are the same when uppercased (conflict on windows)
       - id: check-case-conflict
 
-  # Beautify shell scripts
+  # Gitleaks is a SAST tool for detecting and preventing hardcoded secrets like passwords, api keys, and tokens in git repos
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.16.1
     hooks:
       - id: gitleaks
+
+  # Check github actions
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.3
+    hooks:
+      - id: actionlint
 
   # Beautify shell scripts
   - repo: https://github.com/lovesegfault/beautysh.git
@@ -210,7 +216,7 @@ repos:
           - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
         exclude_types: [image]
-        exclude: (?x)^(.phan/stubs/.*)$
+        exclude: (?x)^(.phan/stubs/.*|phpstan\.neon.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
         # Only for translations with specialised exceptions
@@ -246,7 +252,7 @@ repos:
     rev: 3.1.0
     hooks:
       - id: sqlfluff-lint
-        stages: [pre-commit, manual]  # manual needed for ci
+        stages: [commit, manual]  # manual needed for ci
         exclude: (?x)^
           (dev/initdemo/mysqldump_.*\.sql
           |htdocs/core/menus/init_menu_auguria\.sql

@@ -303,7 +303,7 @@ class EcmDirectory extends CommonObject
 		if (preg_match('/[0-9]+/', $value)) {
 			$sql .= " cachenbofdoc = ".(int) $value;
 		} else {
-			$sql .= " cachenbofdoc = cachenbofdoc ".$value." 1";
+			$sql .= " cachenbofdoc = cachenbofdoc ".preg_replace('/[^\-\+]/', '', $value)." 1";
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -708,7 +708,7 @@ class EcmDirectory extends CommonObject
 			$this->buildPathFromId($key, 0);
 		}
 
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0);
 		$this->full_arbo_loaded = 1;
 
 		return $this->cats;

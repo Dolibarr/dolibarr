@@ -8,7 +8,7 @@
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
@@ -507,7 +507,7 @@ if ($id > 0 || $ref) {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
 					$filter = '(fournisseur:=:1) AND (status:=:1)';
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, 'SelectThirdParty', 0, 0, $events);
+					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, $langs->transnoentitiesnoconv('SelectThirdParty'), 0, 0, $events);
 
 					$parameters = array('filter'=>$filter, 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
@@ -785,14 +785,14 @@ if ($id > 0 || $ref) {
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ? vatrate($object->fourn_remise_percent) : '')).'"> %';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ? vatrate(price2num($object->fourn_remise_percent)) : '')).'"> %';
 				print '</td>';
 				print '</tr>';
 
 				// Delivery delay in days
 				print '<tr>';
 				print '<td>'.$langs->trans('NbDaysToDelivery').'</td>';
-				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.($rowid ? $object->delivery_time_days : '').'">&nbsp;'.$langs->trans('days').'</td>';
+				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.(GETPOSTISSET('delivery_time_days') ? GETPOST('delivery_time_days') : ($rowid ? $object->delivery_time_days : '')).'">&nbsp;'.$langs->trans('days').'</td>';
 				print '</tr>';
 
 				// Reputation
@@ -975,9 +975,9 @@ if ($id > 0 || $ref) {
 							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
 								$extratitle = $langs->trans($value);
 								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => 0,
-																   'position' => (end($arrayfields)['position'] + 1),
-																   'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
-																   'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
+								'position' => (end($arrayfields)['position'] + 1),
+								'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
+								'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
 							}
 						}
 					}
@@ -997,8 +997,9 @@ if ($id > 0 || $ref) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 				// Suppliers list title
+				print '<!-- List of supplier prices -->'."\n";
 				print '<div class="div-table-responsive">';
-				print '<table class="liste centpercent">';
+				print '<table class="liste centpercent noborder">';
 
 				$param = "&id=".$object->id;
 

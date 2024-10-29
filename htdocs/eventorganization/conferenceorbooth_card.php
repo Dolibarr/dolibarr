@@ -2,6 +2,8 @@
 /* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +151,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -172,7 +174,7 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans("ConferenceOrBooth");
-$help_url='EN:Module_Event_Organization';
+$help_url = 'EN:Module_Event_Organization';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card');
 
@@ -640,7 +642,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		$object->fetchObjectLinked();
@@ -655,7 +657,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$sourcetouse = 'boothlocation';
 					$reftouse = $fac->id;
 
-					$url = getOnlinePaymentUrl(0, $sourcetouse, $reftouse);
+					$url = getOnlinePaymentUrl(0, $sourcetouse, (string) $reftouse);
 					$url .= '&booth='.$object->id;
 
 					print '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercent" value="'.$url.'">';

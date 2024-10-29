@@ -6,11 +6,10 @@
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +71,7 @@ class PaiementFourn extends Paiement
 	public $type_code;
 
 	/**
-	 * @var string Id of prelevement
+	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
 
@@ -291,6 +290,14 @@ class PaiementFourn extends Paiement
 									if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
 										$amount_ht = $amount_tva = $amount_ttc = array();
 										$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+										'
+										@phan-var-force array<string,float> $amount_ht
+										@phan-var-force array<string,float> $amount_tva
+										@phan-var-force array<string,float> $amount_ttc
+										@phan-var-force array<string,float> $multicurrency_amount_ht
+										@phan-var-force array<string,float> $multicurrency_amount_tva
+										@phan-var-force array<string,float> $multicurrency_amount_ttc
+										';
 
 										// Insert one discount by VAT rate category
 										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
@@ -307,6 +314,14 @@ class PaiementFourn extends Paiement
 											$i = 0;
 											foreach ($invoice->lines as $line) {
 												if ($line->total_ht != 0) {    // no need to create discount if amount is null
+													if (!array_key_exists($line->tva_tx, $amount_ht)) {
+														$amount_ht[$line->tva_tx] = 0.0;
+														$amount_tva[$line->tva_tx] = 0.0;
+														$amount_ttc[$line->tva_tx] = 0.0;
+														$multicurrency_amount_ht[$line->tva_tx] = 0.0;
+														$multicurrency_amount_tva[$line->tva_tx] = 0.0;
+														$multicurrency_amount_ttc[$line->tva_tx] = 0.0;
+													}
 													$amount_ht[$line->tva_tx] += $line->total_ht;
 													$amount_tva[$line->tva_tx] += $line->total_tva;
 													$amount_ttc[$line->tva_tx] += $line->total_ttc;
@@ -324,7 +339,7 @@ class PaiementFourn extends Paiement
 												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
-												$discount->tva_tx = abs($tva_tx);
+												$discount->tva_tx = abs((float) $tva_tx);
 
 												$result = $discount->create($user);
 												if ($result < 0) {

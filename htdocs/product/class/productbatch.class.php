@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +48,19 @@ class Productbatch extends CommonObject
 
 	public $fk_product_stock;
 
+	/**
+	 * @var string batch number
+	 */
 	public $batch = '';
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+
+	/**
+	 * @var int warehouse ID
+	 */
 	public $warehouseid;
 
 	/**
@@ -61,8 +68,12 @@ class Productbatch extends CommonObject
 	 */
 	public $fk_product;
 
-	// Properties of the lot
-	public $lotid;			// ID in table of the details of properties of each lots
+	/**
+	 *
+	 * @var int Properties of the lot
+	 *          ID in table of the details of properties of each lots
+	 */
+	public $lotid;
 
 	/**
 	 * @var int|string

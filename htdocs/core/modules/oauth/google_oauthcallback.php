@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,7 +222,7 @@ if (!GETPOST('code')) {
 	exit();
 } else {
 	// We are coming from the return of an OAuth2 provider page.
-	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
@@ -282,7 +282,7 @@ if (!GETPOST('code')) {
 
 				// Verify that email is a verified email
 				/*if (empty($userinfo['email_verified'])) {
-					setEventMessages($langs->trans('Bad value for email, email lwas not verified by Google'), null, 'errors');
+					setEventMessages($langs->trans('Bad value for email, email was not verified by Google'), null, 'errors');
 					$errorincheck++;
 				}*/
 

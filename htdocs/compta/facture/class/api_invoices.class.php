@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2020   	Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class Invoices extends DolibarrApi
 	private $invoice;
 
 	/**
-	 * @var FactureRec $templte_invoice {@type FactureRec}
+	 * @var FactureRec $template_invoice {@type FactureRec}
 	 */
 	private $template_invoice;
 
@@ -94,7 +94,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function getByRef($ref, $contact_list = 1)
 	{
-		return $this->_fetch('', $ref, '', $contact_list);
+		return $this->_fetch(0, $ref, '', $contact_list);
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function getByRefExt($ref_ext, $contact_list = 1)
 	{
-		return $this->_fetch('', '', $ref_ext, $contact_list);
+		return $this->_fetch(0, '', $ref_ext, $contact_list);
 	}
 
 	/**
@@ -1195,11 +1195,27 @@ class Invoices extends DolibarrApi
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
 			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+			'
+			@phan-var-force array<string,float> $amount_ht
+			@phan-var-force array<string,float> $amount_tva
+			@phan-var-force array<string,float> $amount_ttc
+			@phan-var-force array<string,float> $multicurrency_amount_ht
+			@phan-var-force array<string,float> $multicurrency_amount_tva
+			@phan-var-force array<string,float> $multicurrency_amount_ttc
+			';
 
 			// Loop on each vat rate
 			$i = 0;
 			foreach ($this->invoice->lines as $line) {
 				if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9
+					if (!array_key_exists($line->tva_tx, $amount_ht)) {
+						$amount_ht[$line->tva_tx] = 0.0;
+						$amount_tva[$line->tva_tx] = 0.0;
+						$amount_ttc[$line->tva_tx] = 0.0;
+						$multicurrency_amount_ht[$line->tva_tx] = 0.0;
+						$multicurrency_amount_tva[$line->tva_tx] = 0.0;
+						$multicurrency_amount_ttc[$line->tva_tx] = 0.0;
+					}
 					// no need to create discount if amount is null
 					$amount_ht[$line->tva_tx] += $line->total_ht;
 					$amount_tva[$line->tva_tx] += $line->total_tva;
@@ -1279,7 +1295,7 @@ class Invoices extends DolibarrApi
 					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
-					$discount->tva_tx = abs($tva_tx);
+					$discount->tva_tx = abs((float) $tva_tx);
 
 					$result = $discount->create(DolibarrApiAccess::$user);
 					if ($result < 0) {
@@ -1523,11 +1539,11 @@ class Invoices extends DolibarrApi
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
-		$paymentobj->datepaye     = dol_stringtotime($datepaye);
+		$paymentobj->datepaye     = $datepaye;
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid = $paymentid;
-		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, (string) $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment = $num_payment;
 		$paymentobj->note_private = $comment;
 
@@ -1675,7 +1691,7 @@ class Invoices extends DolibarrApi
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid   = $paymentid;
-		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, (string) $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment  = $num_payment;
 		$paymentobj->note_private = $comment;
 		$paymentobj->ref_ext      = $ref_ext;

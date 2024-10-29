@@ -141,20 +141,23 @@ if (!empty($id)) {
 
 			print '<table class="border centpercent">';
 
-			// ref invoice
+			// Ref invoice
 			print '<tr><td>'.$langs->trans("BillsSuppliers").'</td>';
 			$facturefournisseur_static->ref = $objp->ref;
 			$facturefournisseur_static->id = $objp->facid;
 			print '<td>'.$facturefournisseur_static->getNomUrl(1).'</td>';
 			print '</tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("Line").'</td>';
-			print '<td>'.stripslashes(nl2br($objp->description)).'</td></tr>';
-			print '<tr><td width="20%">'.$langs->trans("ProductLabel").'</td>';
-			print '<td>'.dol_trunc($objp->product_label, 24).'</td>';
-			print '<tr><td width="20%">'.$langs->trans("Account").'</td><td>';
+			print '<tr><td>'.$langs->trans("Description").'</td>';
+			print '<td>'.dolPrintHTML($objp->description).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("ProductLabel").'</td>';
+			print '<td>'.dol_trunc($objp->product_label, 24).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("Account").'</td><td>';
 			print $formaccounting->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
+
 			print '</table>';
 
 			print dol_get_fiche_end();

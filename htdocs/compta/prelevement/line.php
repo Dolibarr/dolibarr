@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,7 +153,7 @@ $head = array();
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.((int) $id).'&type='.urlencode($type);
 $head[$h][1] = $title;
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 if ($id) {

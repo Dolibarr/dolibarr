@@ -268,7 +268,7 @@ class EcmFiles extends CommonObject
 		// If ref not defined
 		if (empty($this->ref)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$this->ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+			$this->ref = dol_hash($this->filepath.'/'.$this->filename, '3');
 		}
 
 		$maxposition = 0;
@@ -337,7 +337,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';
 		$sql .= ' '.(!isset($this->extraparams) ? 'NULL' : "'".$this->db->escape($this->extraparams)."'").',';
 		$sql .= " '".$this->db->idate($this->date_c)."',";
-		$sql .= ' '.(!isset($this->date_m) || dol_strlen($this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
+		$sql .= ' '.(!isset($this->date_m) || dol_strlen((string) $this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
 		$sql .= ' '.(!isset($this->fk_user_c) ? $user->id : $this->fk_user_c).',';
 		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : $this->fk_user_m).',';
 		$sql .= ' '.(!isset($this->acl) ? 'NULL' : "'".$this->db->escape($this->acl)."'").',';
@@ -718,7 +718,7 @@ class EcmFiles extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, 3))."',";
+		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, '3'))."',";
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null").',';
 		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : $conf->entity).',';
@@ -732,7 +732,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
 		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
-		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
+		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen((string) $this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';

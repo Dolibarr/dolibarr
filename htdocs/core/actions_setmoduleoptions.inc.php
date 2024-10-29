@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,11 @@ if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty
 	return;
 }
 
+'
+@phan-var-force FormSetup $formSetup
+';
+
+$upload_dir = null;
 
 if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();

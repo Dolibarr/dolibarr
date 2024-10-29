@@ -132,7 +132,7 @@ class PropaleLigne extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * @var int|string|float
+	 * @var float|string
 	 */
 	public $remise_percent;
 
@@ -257,7 +257,7 @@ class PropaleLigne extends CommonObjectLine
 
 	/**
 	 * Product use lot
-	 * @var string
+	 * @var int
 	 */
 	public $product_tobatch;
 
@@ -445,7 +445,7 @@ class PropaleLigne extends CommonObjectLine
 	/**
 	 *  Insert object line propal in database
 	 *
-	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@param		int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0)

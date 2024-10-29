@@ -962,7 +962,7 @@ if ($resql) {
 
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -1298,6 +1298,7 @@ if ($resql) {
 
 	// Détail commande
 	if (!empty($arrayfields['rowid']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
 		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 	}
@@ -1464,6 +1465,7 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$productstat_cache = array();
+	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_sdtat_cache';
 	$productstat_cachevirtual = array();
 	$getNomUrl_cache = array();
 
@@ -1680,7 +1682,7 @@ if ($resql) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
@@ -1769,8 +1771,8 @@ if ($resql) {
 		}
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
+			print '<td class="center" title="'.$langs->trans($arrayfields['c.date_delivery']['label']).': '.dol_print_date($db->jdate($obj->date_delivery), 'dayhour').'">';
+			print dol_print_date($db->jdate($obj->date_delivery), 'day');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2110,7 +2112,7 @@ if ($resql) {
 							$productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 						} else {
 							$generic_product->stock_reel = $productstat_cache[$obj->fk_product]['stock_reel'];
-							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'];
 						}
 
 						if ($reliquat > $generic_product->stock_reel) {
@@ -2168,10 +2170,10 @@ if ($resql) {
 						}
 					}
 					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}
@@ -2191,7 +2193,11 @@ if ($resql) {
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed).'</td>';
+			print '<td class="center">';
+			if ($obj->billed) {
+				print yn($obj->billed, $langs->trans("Billed"));
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

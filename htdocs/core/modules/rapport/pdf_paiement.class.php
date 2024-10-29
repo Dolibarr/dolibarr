@@ -463,7 +463,7 @@ class pdf_paiement extends CommonDocGenerator
 	 *	Output body
 	 *
 	 *	@param	TCPDF		$pdf			PDF object
-	 *	@param	string		$page			Page
+	 *	@param	int 		$page			Page
 	 *	@param	array		$lines			Array of lines
 	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return	void

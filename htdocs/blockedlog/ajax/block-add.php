@@ -60,7 +60,7 @@ if (empty($action)) {
 	exit;
 }
 
-if ($element === 'facture') {
+if ($element === 'facture') {	// Test on permission done in top of page
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 

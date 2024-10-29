@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 class Receptions extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -97,6 +98,8 @@ class Receptions extends DolibarrApi
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
+	 * @phan-return array<array<string,mixed>>
+	 * @phpstan-return array<array<string,mixed>>
 	 *
 	 * @throws RestException
 	 */
@@ -197,6 +200,8 @@ class Receptions extends DolibarrApi
 	 * Create reception object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string|mixed[]> $request_data
+	 * @phpstan-param ?array<string,string|mixed[]> $request_data
 	 * @return  int     				ID of reception created
 	 */
 	public function post($request_data = null)
@@ -216,7 +221,7 @@ class Receptions extends DolibarrApi
 
 			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
-		if (isset($request_data["lines"])) {
+		if (isset($request_data["lines"]) && is_array($request_data['lines'])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
 				$receptionline = new ReceptionLineBatch($this->db);
@@ -420,6 +425,8 @@ class Receptions extends DolibarrApi
 	 * @param int   $id             Id of reception to update
 	 * @param int   $lineid         Id of line to delete
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
@@ -461,6 +468,8 @@ class Receptions extends DolibarrApi
 	 *
 	 * @param int   $id						Id of reception to update
 	 * @param array $request_data			Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return		Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -502,6 +511,8 @@ class Receptions extends DolibarrApi
 	 *
 	 * @param   int     $id         Reception ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -743,8 +754,8 @@ class Receptions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param   array<string,mixed>	$data   Array with data to verify
+	 * @return  array<string,mixed>
 	 * @throws  RestException
 	 */
 	private function _validate($data)

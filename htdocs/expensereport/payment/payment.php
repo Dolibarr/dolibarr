@@ -48,13 +48,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$permissiontoadd = $user->hasRight('expensereport', 'creer');
 $form = new Form($db);
 
 /*
  * Actions
  */
 
-if ($action === 'add_payment' || ($action === 'confirm_payment' && $confirm === 'yes')) {
+if (($action == 'add_payment' || ($action === 'confirm_payment' && $confirm === 'yes')) && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -187,9 +188,9 @@ if ($action == 'create' || $action == 'add_payment') {
 	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head(null, '0', '', -1);
+	print dol_get_fiche_head([], '0', '', -1);
 
-	print '<table class="centpercent">'."\n";
+
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));

@@ -372,6 +372,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['bc.ref']['checked'])) {
+		// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['bc.ref']['label'], $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}

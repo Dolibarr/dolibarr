@@ -92,7 +92,7 @@ $first_month = $prev['first_month'];
 $first_year = $prev['first_year'];
 $week = $prev['week'];
 
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next = dol_get_next_week($first_day, (int) $week, $first_month, $first_year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
@@ -331,10 +331,10 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 			$param = '';
 			$param .= ($mode ? '&mode='.urlencode($mode) : '');
 			$param .= ($projectid ? 'id='.urlencode((string) ($projectid)) : '');
-			$param .= ($search_usertoprocessid ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+			$param .= ($search_usertoprocessid ? '&search_usertoprocessid='.urlencode((string) $search_usertoprocessid) : '');
 			$param .= ($day ? '&day='.urlencode((string) ($day)) : '').($month ? '&month='.urlencode((string) ($month)) : '').($year ? '&year='.urlencode((string) ($year)) : '');
 			$param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
-			$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+			$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode((string) $search_usertoprocessid) : '');
 			$param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
 			$param .= ($search_declared_progress ? '&search_declared_progress='.urlencode($search_declared_progress) : '');
 			$param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
@@ -431,7 +431,7 @@ llxHeader("", $title, "", '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod
 $param = '';
 $param .= ($mode ? '&mode='.urlencode($mode) : '');
 $param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
-$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode((string) $search_usertoprocessid) : '');
 $param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
 $param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
 $param .= ($search_task_label ? '&search_task_label='.urlencode($search_task_label) : '');
@@ -588,7 +588,7 @@ if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -694,9 +694,14 @@ for ($idw = 0; $idw < 7; $idw++) {
 		$cssonholiday .= 'onholidayafternoon ';
 	}
 
+	$year = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%Y');
+	$month = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%m');
+	$day = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%d');
+
 	print '<th width="6%" class="center bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+	print '<a href="'.DOL_URL_ROOT.'/projet/activity/perday.php?year='.$year.'&month='.$month.'&day='.$day.'">';
 	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
-	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
+	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</a></th>';
 }
 
 //print '<td></td>';
