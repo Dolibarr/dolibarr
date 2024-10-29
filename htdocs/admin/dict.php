@@ -2468,6 +2468,9 @@ if ($id > 0) {
 								}
 								$valuetoshow = length_accountg($valuetoshow);
 							} elseif ($value == 'fk_tva') {
+								if (empty($form->cache_vatrates)) {
+									$form->load_tva('cache_fk_tva', '', $mysoc, new Societe($db), 0, 0, '', false, -1);
+								}
 								foreach ($form->cache_vatrates as $key => $Tab) {
 									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow) {
 										$valuetoshow = $form->cache_vatrates[$key]['label'];
