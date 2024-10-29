@@ -89,12 +89,13 @@ if (($action == 'add_payment' || ($action === 'confirm_payment' && $confirm === 
 
 	if (!$error) {
 		$paymentid = 0;
-		// $total = 0;
+		$totalpayment = 0;
 
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$cursorexpid = substr($key, 7);
+
 				if (GETPOST($key)) {
 					$amounts[$cursorexpid] = price2num(GETPOST($key));
 					$totalpayment += price2num(GETPOST($key));
@@ -324,7 +325,7 @@ if ($action == 'create' || $action == 'add_payment') {
 			$text .= '<br>'.$langs->trans("AllCompletelyPayedExpenseReportWillBeClosed");
 			print '<input type="hidden" name="closepaidexpensereports" value="'.GETPOST('closepaidexpensereports').'">';
 		}
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$id, $langs->trans('PayedUsersPayments'), $text, 'confirm_payment', $formquestion, 'yes');
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$id, $langs->trans('PayedUsersPayments'), $text, 'confirm_payment', '', 'yes');
 
 		// Print form confirm
 		print $formconfirm;
