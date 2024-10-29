@@ -1124,8 +1124,8 @@ class Mo extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " status = ".self::STATUS_VALIDATED.",";
-		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " date_valid = '".$this->db->idate($now)."',";
+		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);

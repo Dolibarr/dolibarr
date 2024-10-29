@@ -312,10 +312,10 @@ class Loan extends CommonObject
 		$sql .= " '".$this->db->escape($this->account_capital)."',";
 		$sql .= " '".$this->db->escape($this->account_insurance)."',";
 		$sql .= " '".$this->db->escape($this->account_interest)."',";
-		$sql .= " ".$conf->entity.",";
+		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".price2num($newinsuranceamount)."'";
 		$sql .= ")";
 
@@ -421,7 +421,7 @@ class Loan extends CommonObject
 		$sql .= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql .= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
 		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
-		$sql .= " fk_user_modif = ".$user->id.",";
+		$sql .= " fk_user_modif = ".((int) $user->id).",";
 		$sql .= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -446,7 +446,7 @@ class Loan extends CommonObject
 	public function setPaid($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = ".$this::STATUS_PAID;
+		$sql .= " paid = ".((int) $this::STATUS_PAID);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$return = $this->db->query($sql);
@@ -485,7 +485,7 @@ class Loan extends CommonObject
 	public function setStarted($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = ".$this::STATUS_STARTED;
+		$sql .= " paid = ".((int) $this::STATUS_STARTED);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$return = $this->db->query($sql);
@@ -508,7 +508,7 @@ class Loan extends CommonObject
 	public function setUnpaid($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = ".$this::STATUS_UNPAID;
+		$sql .= " paid = ".((int) $this::STATUS_UNPAID);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$return = $this->db->query($sql);

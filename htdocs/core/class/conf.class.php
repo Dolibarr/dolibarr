@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
- * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,10 +142,20 @@ class Conf extends stdClass
 	public $format_date_hour_text_short;
 	public $format_date_hour_text;
 
+	/**
+	 * @var int limit for list
+	 */
 	public $liste_limit;
+
+	/**
+	 * @var int checkboxes are on left column if 1
+	 */
 	public $main_checkbox_left_column;
 
-	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+	/**
+	 * @var string  Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+	 */
+	public $tzuserinputkey = 'tzserver';
 
 
 	// TODO Remove this part.

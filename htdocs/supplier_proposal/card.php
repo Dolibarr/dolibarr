@@ -294,9 +294,11 @@ if (empty($reshook)) {
 					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
+					$object->user_creation_id = $user->id;
 					$object->note = GETPOST('note', 'restricthtml');
 					$object->note_private = GETPOST('note', 'restricthtml');
 					$object->statut = SupplierProposal::STATUS_DRAFT;
+					$object->status = SupplierProposal::STATUS_DRAFT;
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_supplier_proposal')), null, 'errors');
 				}
@@ -311,6 +313,7 @@ if (empty($reshook)) {
 				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
+				$object->user_creation_id = $user->id;
 				$object->note = GETPOST('note', 'restricthtml');
 				$object->note_private = GETPOST('note', 'restricthtml');
 
@@ -1206,6 +1209,7 @@ if ($action == 'create') {
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
 		$element = $subelement = GETPOST('origin');
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
 			$element = $regs[1];
 			$subelement = $regs[2];

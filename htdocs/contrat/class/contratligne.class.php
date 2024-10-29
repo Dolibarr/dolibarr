@@ -722,11 +722,11 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? $this->fk_remise_except : "null").",";
 		$sql .= " subprice = ".($this->subprice != '' ? $this->subprice : "null").",";
 		$sql .= " price_ht = ".($this->price_ht != '' ? $this->price_ht : "null").",";
-		$sql .= " total_ht = ".$this->total_ht.",";
-		$sql .= " total_tva = ".$this->total_tva.",";
-		$sql .= " total_localtax1 = ".$this->total_localtax1.",";
-		$sql .= " total_localtax2 = ".$this->total_localtax2.",";
-		$sql .= " total_ttc = ".$this->total_ttc.",";
+		$sql .= " total_ht = ".((float) $this->total_ht).",";
+		$sql .= " total_tva = ".((float) $this->total_tva).",";
+		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
+		$sql .= " total_localtax2 = ".((float) $this->total_localtax2).",";
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
 		$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";

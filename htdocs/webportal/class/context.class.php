@@ -125,6 +125,9 @@ class Context
 	 */
 	public $rootUrl;
 
+	/**
+	 * @var string[]
+	 */
 	public $menu_active = array();
 
 	/**

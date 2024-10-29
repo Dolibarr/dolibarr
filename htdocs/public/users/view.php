@@ -150,6 +150,7 @@ if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 	$object->socialnetworks = [];
 }
+
 // By default, personal address not visible
 if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
 	$object->birth = null;

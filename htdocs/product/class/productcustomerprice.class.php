@@ -824,7 +824,7 @@ class ProductCustomerPrice extends CommonObject
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."product_customer_price SET";
 
-		$sql .= " entity=".$conf->entity.",";
+		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " datec='".$this->db->idate(dol_now())."',";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
@@ -842,7 +842,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " localtax2_tx=".(isset($this->localtax2_tx) ? (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx) : "null").",";
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";
 		$sql .= " localtax2_type=".(!empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'").",";
-		$sql .= " fk_user=".$user->id.",";
+		$sql .= " fk_user=".((int) $user->id).",";
 		$sql .= " price_label=".(isset($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
@@ -894,8 +894,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
 	{
-		global $conf;
-
 		if (getDolGlobalString('PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES')) {
 			return 0;
 		}
