@@ -173,7 +173,7 @@ if (empty($reshook)) {
 						$line->required_rank = 0;
 						$line->fk_rank = 0;
 
-						$res = $line->create($user, $notrigger);
+						$res = $line->create($user);
 						if ($res < 0) {
 							$error++;
 							setEventMessages($line->error, null, 'errors');
@@ -220,14 +220,16 @@ if (empty($reshook)) {
 								$objEval = $db->fetch_object($result);
 								$line = new EvaluationLine($db);
 								$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $tmpObj->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
-								if ($lines != -1) {
+								if (is_array($lines)) {
 									foreach ($lines as $key => $evalline) {
-										$evalline->required_rank = $rank;
-										$ret = $evalline->update($user);
-										if ($ret <= 0) {
-											$error++;
-											setEventMessages($evalline->error, null, 'errors');
-											break;
+										if (is_object($evalline)) {
+											$evalline->required_rank = $rank;
+											$ret = $evalline->update($user);
+											if ($ret <= 0) {
+												$error++;
+												setEventMessages($evalline->error, null, 'errors');
+												break;
+											}
 										}
 									}
 								} else {
@@ -272,13 +274,15 @@ if (empty($reshook)) {
 				$objEval = $db->fetch_object($result);
 				$line = new EvaluationLine($db);
 				$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $skillToDelete->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
-				if ($lines != -1) {
+				if (is_array($lines)) {
 					foreach ($lines as $key => $evalline) {
-						$ret = $evalline->delete($user);
-						if ($ret <= 0) {
-							$error++;
-							setEventMessages($evalline->error, null, 'errors');
-							break;
+						if (is_object($evalline)) {
+							$ret = $evalline->delete($user);
+							if ($ret <= 0) {
+								$error++;
+								setEventMessages($evalline->error, null, 'errors');
+								break;
+							}
 						}
 					}
 				} else {
