@@ -6821,7 +6821,7 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array|null	$val	       Array of properties for field to show (used only if ->fields not defined)
+	 * @param  array|null	$val	       Array of properties for field to show (set [] to use ->fields instead)
 	 * @param  string  		$key           Key of attribute
 	 * @param  string|array	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
@@ -6840,7 +6840,7 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		if (!empty($this->fields)) {
+		if (empty($val)) {
 			$val = $this->fields[$key];
 		}
 
