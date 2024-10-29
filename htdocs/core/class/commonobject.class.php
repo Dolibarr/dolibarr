@@ -7420,7 +7420,7 @@ abstract class CommonObject
 		$param['options'] = array();
 		$reg = array();
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
+		$size = !empty($val['size']) ? $val['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
@@ -7456,37 +7456,37 @@ abstract class CommonObject
 			$size = $reg[1];
 		} else {
 			$param['options'] = array();
-			$type = $this->fields[$key]['type'];
+			$type = $val['type'];
 		}
 		//var_dump($type); var_dump($param['options']);
 
 		// Special case that force options and type ($type can be integer, varchar, ...)
-		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
-			$param['options'] = $this->fields[$key]['arrayofkeyval'];
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			$param['options'] = $val['arrayofkeyval'];
 			// Special case that prevent to force $type to have multiple input @phan-suppress-next-line PhanTypeMismatchProperty
-			if (empty($this->fields[$key]['multiinput'])) {
-				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
+			if (empty($val['multiinput'])) {
+				$type = (($val['type'] == 'checkbox') ? $val['type'] : 'select');
 			}
 		}
 
-		$label = $this->fields[$key]['label'];
+		$label = $val['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
-		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
+		$default = (!empty($val['default']) ? $val['default'] : '');
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
+		$computed = (!empty($val['computed']) ? $val['computed'] : '');
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
+		$unique = (!empty($val['unique']) ? $val['unique'] : 0);
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
+		$required = (!empty($val['required']) ? $val['required'] : 0);
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
+		$autofocusoncreate = (!empty($val['autofocusoncreate']) ? $val['autofocusoncreate'] : 0);
 
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
+		$langfile = (!empty($val['langfile']) ? $val['langfile'] : '');
 		// @phan-suppress-next-line PhanTypeMismatchProperty
-		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
-		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
+		$list = (!empty($val['list']) ? $val['list'] : 0);
+		$hidden = (in_array(abs($val['visible']), array(0, 2)) ? 1 : 0);
 
 		$objectid = $this->id;
 
