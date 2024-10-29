@@ -3132,7 +3132,7 @@ class FactureFournisseur extends CommonInvoice
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." f.entity = ".$conf->entity;
+		$sql .= " ".$clause." f.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

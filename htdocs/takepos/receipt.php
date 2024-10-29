@@ -68,7 +68,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * View
  */
 
-top_httphead('text/html', 1);
+top_htmlhead('', '', 1);
 
 if ($place > 0) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
@@ -80,6 +80,25 @@ if ($place > 0) {
 }
 $object = new Facture($db);
 $object->fetch($facid);
+
+
+// Record entry in blocked logs
+// DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
+print "
+<script>
+jQuery(document).ready(function () {
+	console.log('Call /blockedlog/ajax/block-add on output of receipt.php');
+	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
+			, {
+				id: ".((int) $object->id)."
+									, element: '".dol_escape_js($object->element)."'
+									, action: 'DOC_PREVIEW'
+									, token: '".currentToken()."'
+			   }
+	);
+});
+</script>";
+
 
 // Call to external receipt modules if exist
 $parameters = array();
@@ -102,6 +121,16 @@ if (!empty($hookmanager->resPrint)) {
 }
 .left {
 	text-align: left;
+}
+.centpercent {
+	width: 100%;
+}
+@media only screen and (min-width: 1024px)
+{
+	body {
+		margin-left: 50px;
+		margin-right: 50px;
+	}
 }
 </style>
 <center>
@@ -132,7 +161,7 @@ print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
 	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
 }
-if ($object->statut == Facture::STATUS_DRAFT) {
+if ($object->status == Facture::STATUS_DRAFT) {
 	print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
 } else {
 	print $object->ref;
@@ -155,7 +184,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 </p>
 <br>
 
-<table width="100%" style="border-top-style: double;">
+<table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
 		<th class="center"><?php print $langs->trans("Label"); ?></th>
@@ -194,7 +223,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 			<?php if (!empty($line->product_label)) {
 				echo $line->product_label;
 			} else {
-				echo $line->description;
+				echo $line->desc;
 			} ?>
 			</td>
 			<td class="right"><?php echo $line->qty; ?></td>
@@ -219,7 +248,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 	</tbody>
 </table>
 <br>
-<table class="right">
+<table class="right centpercent">
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo $langs->trans("TotalHT");
