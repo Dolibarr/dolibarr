@@ -227,6 +227,9 @@ class Task extends CommonObjectLine
 	 */
 	public $fk_opp_status;
 
+	/**
+	 * @var int<0,1> Set to 1 if time spent must be converted into invoices
+	 */
 	public $usage_bill_time;
 
 	/**

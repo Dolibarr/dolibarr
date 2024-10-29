@@ -8670,11 +8670,6 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$disable_compute has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
 			message: "#^Property Conf\\:\\:\\$expedition_bon has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
@@ -8776,11 +8771,6 @@ parameters:
 
 		-
 			message: "#^Property Conf\\:\\:\\$propal \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$use_javascript_ajax has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
@@ -24110,11 +24100,6 @@ parameters:
 
 		-
 			message: "#^Property Task\\:\\:\\$timespent_withhour has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$usage_bill_time has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/task.class.php
 
