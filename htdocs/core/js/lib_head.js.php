@@ -1092,6 +1092,121 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+/**
+ * Get the list of operators for a given field type
+ */
+function getOperatorsForFieldType(type) {
+
+	// Define the list of operators for each general field category
+	const operatorList = {
+		text: [
+			"<?php print $langs->trans('Contains'); ?>",
+			"<?php print $langs->trans('DoesNotContain'); ?>",
+			"<?php print $langs->trans('Is'); ?>",
+			"<?php print $langs->trans('IsNot'); ?>",
+			"<?php print $langs->trans('StartsWith'); ?>",
+			"<?php print $langs->trans('EndsWith'); ?>"
+		],
+		number: ["=", "!=", "<", ">", "<=", ">="],
+		date: [
+			"<?php print $langs->trans('Is'); ?>",
+			"<?php print $langs->trans('IsNot'); ?>",
+			"<?php print $langs->trans('IsBefore'); ?>",
+			"<?php print $langs->trans('IsAfter'); ?>",
+			"<?php print $langs->trans('IsOnOrBefore'); ?>",
+			"<?php print $langs->trans('IsOnOrAfter'); ?>"
+		],
+		html: [
+			"<?php print $langs->trans('Contains'); ?>",
+			"<?php print $langs->trans('IsEmpty'); ?>",
+			"<?php print $langs->trans('IsNotEmpty'); ?>"
+		]
+	};
+
+
+	// Determine the general category for the given type using regex
+	let generalType = "";
+
+	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
+		generalType = "text";
+	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
+		generalType = "number";
+	} else if (/^(date|datetime|timestamp)$/i.test(type)) {
+		generalType = "date";
+	} else if (/^(tinyint|smallint)\(\d+\)$/i.test(type)) {
+		generalType = "number";
+	} else if (/^html$/i.test(type)) {
+		generalType = "html";
+	} else {
+		// Handle unknown or unsupported types
+		return [];
+	}
+
+	// Return the operators for the general type, or an empty array if not found
+	return operatorList[generalType] || [];
+}
+
+/**
+ * Generate a filter string based on the given column, operator, context and field type
+ */
+function generateFilterString(column, operator, context, fieldType) {
+	let filter = "";
+
+	switch (operator) {
+		case "Contains":
+			filter = column + " like \'%" + context + "%\'";
+			break;
+		case "Does not contain":
+			filter = column + " not like \'%" + context + "%\'";
+			break;
+		case "Is":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "Is not":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "Starts with":
+			filter = column + " like \'" + context + "%\'";
+			break;
+		case "Ends with":
+			filter = column + " like \'%" + context + "\'";
+			break;
+		case "=":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "!=":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "<":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case ">":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "<=":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case ">=":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		case "Is before":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case "Is after":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "Is on or before":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case "Is on or after":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		default:
+			filter = "";
+	}
+
+	return filter;
+}
 
 // Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
 (function() {

@@ -5255,6 +5255,46 @@ img.boxhandle, img.boxclose {
 	color: <?php echo $badgeWarning ?>;
 }
 
+.search-component-assistance {
+	display: none;
+	position: absolute;
+	background: var(--colorbacktitle1);
+	border-width: 1px 1px 2px;
+	border-style: solid;
+	border-color: rgb(204, 204, 204);
+	border-image: none; padding: 9px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	border-radius: 2px;
+	z-index: 1000;
+	top: 208.933px;
+	left: 352.683px;
+}
+.search-component-assistance .assistance-title {
+	font-size: 15px;
+	font-weight: bold;
+	color: #333;
+	margin: 5px
+}
+.search-component-assistance .separator {
+	border-left: 1px solid #ccc;
+	padding-left: 8px;
+	margin-left: 5px
+}
+.search-component-assistance .end-separator {
+	border-left: 1px solid #ccc;
+	margin-left: 8px;
+}
+.search-component-assistance .assistance-errors {
+	font-size: 12px;
+	color: #333;
+	margin: 5px 0px 5px 0px
+}
+.search-component-assistance .assistance-errors {
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+
 /*
  *   Ok, Warning, Error
  */
