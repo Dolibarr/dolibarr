@@ -6743,7 +6743,7 @@ class Form
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0, $show_empty = 0)
 	{
 		// phpcs:enable
-		global $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('errors');
 
