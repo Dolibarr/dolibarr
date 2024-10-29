@@ -3,6 +3,7 @@
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ $elementtype = 'commandedet';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_line_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_line_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -241,7 +242,7 @@ $elementtype = 'commande';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -369,7 +370,7 @@ $server->register(
 /**
  * Get order from id, ref or ref_ext.
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
@@ -406,7 +407,7 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
@@ -514,7 +515,7 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 /**
  * Get list of orders for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
  */
@@ -667,7 +668,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 /**
  * Create order
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$order				Order info
  * @return	array							array of new order
  */
@@ -808,7 +809,7 @@ function createOrder($authentication, $order)
 /**
  * Valid an order
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
@@ -830,7 +831,7 @@ function validOrder($authentication, $id = 0, $id_warehouse = 0)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
@@ -878,7 +879,7 @@ function validOrder($authentication, $id = 0, $id_warehouse = 0)
 /**
  * Update an order
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array{id:string,ref:string,refext:string}	$order	Order info
  * @return	array							Array result
  */

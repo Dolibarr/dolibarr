@@ -52,7 +52,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 // Initialize context for list
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
@@ -358,7 +358,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$
 
 // Output page
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-resource page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -526,6 +526,7 @@ $totalarray['nbfield'] = 0;
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['t.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ty.label']['checked'])) {

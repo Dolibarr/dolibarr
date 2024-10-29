@@ -31,7 +31,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/class/paiement.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage payments of customers invoices
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -79,14 +79,16 @@ class Paiement extends CommonObject
 	public $date;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $montant;
 
@@ -101,7 +103,7 @@ class Paiement extends CommonObject
 	public $multicurrency_amount;
 
 	/**
-	 * @var float[] array: invoice ID => amount for that invoice (in the main currency)
+	 * @var array<float|string> array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
@@ -125,10 +127,13 @@ class Paiement extends CommonObject
 	 */
 	public $pos_change = 0.0;
 
+	/**
+	 * @var int
+	 */
 	public $author;
 
 	/**
-	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement. Can get value from code using ...
 	 */
 	public $paiementid;
 
@@ -166,7 +171,7 @@ class Paiement extends CommonObject
 	public $ext_payment_id;
 
 	/**
-	 * @var string Id of prelevement
+	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
 
@@ -464,10 +469,18 @@ class Paiement extends CommonObject
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();
 									$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+									'
+									@phan-var-force array<string,float> $amount_ht
+									@phan-var-force array<string,float> $amount_tva
+									@phan-var-force array<string,float> $amount_ttc
+									@phan-var-force array<string,float> $multicurrency_amount_ht
+									@phan-var-force array<string,float> $multicurrency_amount_tva
+									@phan-var-force array<string,float> $multicurrency_amount_ttc
+									';
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
-									$discount->fetch('', $invoice->id);
+									$discount->fetch(0, $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
@@ -478,6 +491,14 @@ class Paiement extends CommonObject
 										$i = 0;
 										foreach ($invoice->lines as $line) {
 											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+												if (!array_key_exists($line->tva_tx, $amount_ht)) {
+													$amount_ht[$line->tva_tx] = 0.0;
+													$amount_tva[$line->tva_tx] = 0.0;
+													$amount_ttc[$line->tva_tx] = 0.0;
+													$multicurrency_amount_ht[$line->tva_tx] = 0.0;
+													$multicurrency_amount_tva[$line->tva_tx] = 0.0;
+													$multicurrency_amount_ttc[$line->tva_tx] = 0.0;
+												}
 												$amount_ht[$line->tva_tx] += $line->total_ht;
 												$amount_tva[$line->tva_tx] += $line->total_tva;
 												$amount_ttc[$line->tva_tx] += $line->total_ttc;
@@ -495,7 +516,7 @@ class Paiement extends CommonObject
 											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
-											$discount->tva_tx = abs($tva_tx);
+											$discount->tva_tx = abs((float) $tva_tx);
 
 											$result = $discount->create($user);
 											if ($result < 0) {
@@ -514,6 +535,8 @@ class Paiement extends CommonObject
 
 								// Set invoice to paid
 								if (!$error) {
+									$invoice->context['actionmsgmore'] = 'Invoice set to paid by the payment->create() of payment '.$this->ref.' because the remain to pay is 0';
+
 									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0) {
 										$this->error = $invoice->error;
@@ -756,12 +779,12 @@ class Paiement extends CommonObject
 				$label,
 				$totalamount, // Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
 				$accountancycode,
-				null,
+				0,
 				'',
 				$totalamount_main_currency
 			);
@@ -889,7 +912,7 @@ class Paiement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
+	 *      Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					Return integer <0 if KO, >0 if OK
@@ -952,9 +975,6 @@ class Paiement extends CommonObject
 			}
 
 			if (!$error) {
-			}
-
-			if (!$error) {
 				$this->datepaye = $date;
 				$this->date = $date;
 
@@ -999,11 +1019,11 @@ class Paiement extends CommonObject
 	/**
 	 * Validate payment
 	 *
-	 * @param	User|null	$user		User making validation
+	 * @param	?User		$user		User making validation
 	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 */
-	public function valide(User $user = null)
+	public function valide($user = null)
 	{
 		return $this->validate($user);
 	}
@@ -1011,10 +1031,10 @@ class Paiement extends CommonObject
 	/**
 	 * Validate payment
 	 *
-	 * @param	User|null	$user		User making validation
+	 * @param	?User		$user		User making validation
 	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function validate(User $user = null)
+	public function validate($user = null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.((int) $this->id);
 
@@ -1032,10 +1052,10 @@ class Paiement extends CommonObject
 	/**
 	 * Reject payment
 	 *
-	 * @param	User|null	$user		User making reject
+	 * @param	?User		$user		User making reject
 	 * @return  int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function reject(User $user = null)
+	public function reject($user = null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.((int) $this->id);
 
@@ -1086,7 +1106,7 @@ class Paiement extends CommonObject
 	 *  Return list of invoices the payment is related to.
 	 *
 	 *  @param	string		$filter         Filter
-	 *  @return int|array					Return integer <0 if KO or array of invoice id
+	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
@@ -1120,7 +1140,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of amounts of payments.
 	 *
-	 *  @return int|array					Array of amount of payments
+	 *  @return int|array<int,float>			Array of amount of payments
 	 *  @see getBillsArray()
 	 */
 	public function getAmountsArray()
@@ -1210,7 +1230,8 @@ class Paiement extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModeleNumRefPayments $obj';
+
 			$numref = $obj->getNextValue($soc, $this);
 
 			/**
@@ -1280,10 +1301,10 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@param	string	$option			What the link points to
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS
@@ -1321,7 +1342,7 @@ class Paiement extends CommonObject
 				$facturestatic = new Facture($this->db);
 				foreach ($arraybill as $billid) {
 					$facturestatic->fetch($billid);
-					$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, 1);
+					$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, -1);
 				}
 			}
 		}

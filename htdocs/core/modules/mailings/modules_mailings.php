@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,6 +391,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 			$objMod = new $modName($db);
 			if (is_object($objMod)) {
+				'@phan-var-force ModeleBoxes $objMod';
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
 				$disabledbymodule = 0; // TODO Set to 2 if module is not enabled
@@ -400,7 +402,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 					$disabledbyname = 1;
 				}
 
-				// We set info of modules
+				// We set info of modules @phan-suppress-next-line PhanUndeclaredProperty
 				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
@@ -425,5 +427,22 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		return $widget;
+	}
+
+
+	/**
+	 *  On the main mailing area, there is a box with statistics.
+	 *  If you want to add a line in this report you must provide an
+	 *  array of SQL request that returns two field:
+	 *  One called "label", One called "nb".
+	 *
+	 *	@return		string[]		Array with SQL requests
+	 */
+	public function getSqlArrayForStats()
+	{
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return array();
 	}
 }

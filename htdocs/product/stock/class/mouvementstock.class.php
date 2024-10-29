@@ -60,6 +60,9 @@ class MouvementStock extends CommonObject
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 
 	/**
@@ -72,6 +75,9 @@ class MouvementStock extends CommonObject
 	 */
 	public $type;
 
+	/**
+	 * @var null|int|'' datem date
+	 */
 	public $datem = '';
 	public $price;
 
@@ -111,14 +117,27 @@ class MouvementStock extends CommonObject
 	public $line_id_oject_src;
 	public $line_id_oject_origin;
 
-
+	/**
+	 * @var string inventory code
+	 */
 	public $inventorycode;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
 
 	public $line_id_object_src;
 	public $line_id_object_origin;
 
+	/**
+	 * @var null|int|'' eatby date
+	 */
 	public $eatby;
+
+	/**
+	 * @var null|int|'' sellby date
+	 */
 	public $sellby;
 
 
@@ -183,7 +202,7 @@ class MouvementStock extends CommonObject
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
-	 *	@return		int|string							Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK, or printabl result of hook
+	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
 	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
@@ -226,7 +245,7 @@ class MouvementStock extends CommonObject
 				}
 				return $reshook;
 			} elseif ($reshook > 0) {
-				return $hookmanager->resPrint;
+				return $reshook;
 			}
 		}
 		// end hook at beginning
@@ -303,7 +322,7 @@ class MouvementStock extends CommonObject
 			if (empty($batch)) {
 				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
-				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
+				dol_syslog("Try to make a movement of a product with status_batch on without any batch data", LOG_ERR);
 
 				$this->db->rollback();
 				return -2;
@@ -389,7 +408,7 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
-					$productlot->origin = !empty($this->origin_type) ? $this->origin_type : '';
+					$productlot->origin_type = !empty($this->origin_type) ? $this->origin_type : '';
 					$productlot->origin_id = !empty($this->origin_id) ? $this->origin_id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
@@ -412,23 +431,25 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		// Check if stock is enough when qty is < 0
+		// Check if stock is enough when qty is < 0.
+		// THIS MUST BE DONE AT END OF MOVEMENTS
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
 		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
+				if (isset($product->stock_warehouse[$entrepot_id])) {
+					foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
+						if ((string) $batch != (string) $batchcursor) {        // Lot '59' must be different than lot '59c'
+							continue;
+						}
 
-				foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
-					if ((string) $batch != (string) $batchcursor) {		// Lot '59' must be different than lot '59c'
-						continue;
+						$foundforbatch = 1;
+						if ($prodbatch->qty < abs($qty)) {
+							$qtyisnotenough = $prodbatch->qty;
+						}
+						break;
 					}
-
-					$foundforbatch = 1;
-					if ($prodbatch->qty < abs($qty)) {
-						$qtyisnotenough = $prodbatch->qty;
-					}
-					break;
 				}
 				if (!$foundforbatch || $qtyisnotenough) {
 					$langs->load("stocks");
@@ -442,7 +463,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
+				if (isset($product->stock_warehouse[$entrepot_id]) && (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
@@ -536,7 +557,7 @@ class MouvementStock extends CommonObject
 					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0) {
+						if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
 							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 						} else {
 							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
@@ -633,7 +654,6 @@ class MouvementStock extends CommonObject
 				$error++;
 			}
 			// End call triggers
-
 			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
@@ -1142,6 +1162,9 @@ class MouvementStock extends CommonObject
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$qtylabel = (($this->qty > 0) ? '<span class="stockmovemententry">+' : '<span class="stockmovementexit">') . $this->qty . '</span>';
+		if ($this->inventorycode) {
+			$label .= '<br><b>'.$langs->trans('InventoryCode').':</b> '.$this->inventorycode;
+		}
 		$label .= '<br><b>'.$langs->trans('Qty').':</b> ' . $qtylabel;
 		if ($this->batch) {
 			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
@@ -1317,5 +1340,38 @@ class MouvementStock extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Retrieve date of last stock movement for
+	 *
+	 * @param int $fk_entrepot  Warehouse id
+	 * @param int $fk_product   Product id
+	 * @param string $batch     Batch number
+	 * @return string   		Date of last stock movement if found else empty string
+	 */
+	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch)
+	{
+		$date = '';
+
+		$sql = 	"SELECT MAX(datem) as datem";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+		$sql .= " WHERE fk_product = " . ((int) $fk_product);
+		$sql .= " AND fk_entrepot  = " .((int) $fk_entrepot);
+		$sql .= " AND batch = '" . $this->db->escape($batch) . "'";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$dateObj = $this->db->fetch_object($result);
+				$date = $dateObj->datem;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+			return $date;
+		}
+
+		return $date;
 	}
 }

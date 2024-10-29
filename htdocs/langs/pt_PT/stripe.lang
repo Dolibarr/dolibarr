@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL para oferecer uma página de paga
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL para oferecer uma página de pagamento on-line %s de qualquer valor sem nenhum objeto existente
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma página de pagamento on-line %s para uma assinatura membro
 ToOfferALinkForOnlinePaymentOnDonation=URL para oferecer uma %s página de pagamento on-line para pagamento de uma doação
-YouCanAddTagOnUrl=Você também pode adicionar o parâmetro de URL <b>&tag=<i>valor</i></b> a qualquer um desses URLs (obrigatório apenas para pagamentos não vinculados a um objeto) para adicionar sua própria tag de comentário de pagamento.<br>Para o URL de pagamentos sem objeto existente, você também pode adicionar o parâmetro <strong>&noidempotency=1</strong> para que o mesmo hiperligação, conexão com a mesma tag pode ser usado várias vezes (alguns modos de pagamento podem limitar o pagamento a 1 para cada hiperligação, conexão diferente sem este parâmetro)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Configure o seu Stripe através do URL <b>%s</b> para que tenha os pagamentos criados automaticamente quando estes forem validades pelo Stripe.
 AccountParameter=Conta parâmetros
 UsageParameter=Parâmetros de uso
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Localização (endereço) dos Terminais Stripe
 RequestDirectDebitWithStripe=Solicitação Débito direto com Stripe
 RequesCreditTransferWithStripe=Solicitar transferência de crédito com Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Habilite os pagamentos Débito direto através do Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Modo Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

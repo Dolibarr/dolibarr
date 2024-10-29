@@ -16,7 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 /**
  * This class help you create setup render
  */
@@ -68,7 +67,7 @@ class FormSetup
 
 	/**
 	 *
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $formAttributes = array(
 		'action' => '', // set in __construct
@@ -77,7 +76,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array
+	 * @var array<string,string>  Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
@@ -117,7 +116,7 @@ class FormSetup
 	/**
 	 * Generate an attributes string form an input array
 	 *
-	 * @param 	array 	$attributes 	an array of attributes keys and values,
+	 * @param 	array<string,mixed|mixed[]|Object>	$attributes 	an array of attributes keys and values,
 	 * @return 	string					attribute string
 	 */
 	public static function generateAttributesStringFromArray($attributes)
@@ -323,6 +322,9 @@ class FormSetup
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
+			if (!empty($item->fieldParams['trClass'])) {
+				$trClass .= ' '.$item->fieldParams['trClass'];
+			}
 
 			$this->setupNotEmpty++;
 			$out .= '<tr class="'.$trClass.'">';
@@ -357,7 +359,7 @@ class FormSetup
 	/**
 	 * Method used to test  module builder conversion to this form usage
 	 *
-	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
+	 * @param 	array<array<string,null|int|float|string>> 	$params 	an array of arrays of params from old modulBuilder params
 	 * @return 	boolean
 	 */
 	public function addItemsFromParamsArray($params)
@@ -377,7 +379,7 @@ class FormSetup
 	 * Method was used to test  module builder conversion to this form usage.
 	 *
 	 * @param 	string 	$confKey 	the conf name to store
-	 * @param 	array 	$params 	an array of params from old modulBuilder params
+	 * @param 	array<string,null|int|float|string> 	$params 	an array of params from old modulBuilder params
 	 * @return 	bool
 	 */
 	public function addItemFromParams($confKey, $params)
@@ -403,12 +405,12 @@ class FormSetup
 		// @phan-suppress-next-line PhanDeprecatedFunction
 		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
-		if (!empty($params['enabled'])) {
-			$item->enabled = $params['enabled'];
+		if (!empty($params['enabled']) && is_numeric($params['enabled'])) {
+			$item->enabled = (int) $params['enabled'];
 		}
 
 		if (!empty($params['css'])) {
-			$item->cssClass = $params['css'];
+			$item->cssClass = (string) $params['css'];
 		}
 
 		$this->items[$item->confKey] = $item;
@@ -420,7 +422,7 @@ class FormSetup
 	 * Used to export param array for /core/actions_setmoduleoptions.inc.php template
 	 * Method exists only for manage setup conversion
 	 *
-	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
+	 * @return array<string,array{type:string,enabled:int<0,1>}> $arrayofparameters for /core/actions_setmoduleoptions.inc.php
 	 */
 	public function exportItemsAsParamsArray()
 	{
@@ -488,7 +490,7 @@ class FormSetup
 			// calc new rank for each item to make place for new item
 			foreach ($this->items as $fItem) {
 				if ($item->rank <= $fItem->rank) {
-					$fItem->rank = $fItem->rank + 1;
+					$fItem->rank += 1;
 					$this->setItemMaxRank($fItem->rank); // set new max rank if needed
 				}
 			}
@@ -603,22 +605,26 @@ class FormSetupItem
 	/** @var Form */
 	public $form;
 
+
 	/** @var string $confKey the conf key used in database */
 	public $confKey;
 
-	/** @var string|false $nameText  */
+	/** @var string|false $nameText */
 	public $nameText = false;
 
-	/** @var string $helpText  */
+	/** @var string $helpText */
 	public $helpText = '';
 
-	/** @var string $fieldValue  */
+	/** @var string $picto */
+	public $picto = '';
+
+	/** @var ?string $fieldValue */
 	public $fieldValue;
 
-	/** @var string $defaultFieldValue  */
+	/** @var ?string $defaultFieldValue */
 	public $defaultFieldValue = null;
 
-	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
+	/** @var array{name?:string,id?:string,value?:mixed,class?:string,disabled?:?int<0,1>,type?:string,size?:int,placeholder?:string,step?:float|string,min?:int,max?:int}  fields attribute only for compatible fields like input text */
 	public $fieldAttr = array();
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
@@ -633,8 +639,11 @@ class FormSetupItem
 	/** @var int $rank  */
 	public $rank = 0;
 
-	/** @var array set this var for options on select and multiselect items   */
+	/** @var array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
+
+	/** @var array<string,string|int|array{id:string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
+	public $fieldParams = array();
 
 	/** @var callable $saveCallBack  */
 	public $saveCallBack;
@@ -650,17 +659,20 @@ class FormSetupItem
 	/**
 	 * TODO each type must have setAs{type} method to help configuration
 	 *   And set var as protected when its done configuration must be done by method
-	 *   this is important for retrocompatibility of futures versions
+	 *   this is important for retrocompatibility of future versions
 	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 */
 	protected $type = 'string';
 
+
+	/** @var int<0,1> */
 	public $enabled = 1;
 
 	/**
 	 * @var string	The css to use on the input field of item
 	 */
 	public $cssClass = '';
+
 
 	/**
 	 * Constructor
@@ -893,7 +905,11 @@ class FormSetupItem
 			$out .=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey);
+				$input = $this->fieldParams['input'] ?? array();
+				$revertonoff = $this->fieldParams['revertonoff'] ? 1 : 0;
+				$forcereload = $this->fieldParams['forcereload'] ? 1 : 0;
+
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
 			} else {
 				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 			}
@@ -929,7 +945,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * generatec default input field
+	 * Generate default input field
 	 *
 	 * @return string
 	 */
@@ -1031,14 +1047,15 @@ class FormSetupItem
 	public function generateInputFieldSecureKey()
 	{
 		global $conf;
-		$out = '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
-		if (!empty($conf->use_javascript_ajax)) {
-			$out .= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
-		}
+		$out = '<input type="text" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'">';
 
-		// Add button to autosuggest a key
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		if (!empty($conf->use_javascript_ajax) && empty($this->fieldParams['hideGenerateButton'])) {
+			$out .= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
+
+			// Add button to autosuggest a key
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		}
 
 		return $out;
 	}
@@ -1055,7 +1072,7 @@ class FormSetupItem
 	{
 		global $conf, $langs, $user;
 
-		$min = 8;
+		$min = 6;
 		$max = 50;
 		if ($type == 'dolibarr') {
 			$gen = getDolGlobalString('USER_PASSWORD_GENERATED', 'standard');
@@ -1069,7 +1086,14 @@ class FormSetupItem
 			$min = $genhandler->length;
 			$max = $genhandler->length2;
 		}
-		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" minlength="' . $min . '" maxlength="' . $max . '">';
+		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		if ($min) {
+			$out .= ' minlength="' . $min . '"';
+		}
+		if ($max) {
+			$out .= ' maxlength="' . $max . '"';
+		}
+		$out .= '>';
 		return $out;
 	}
 
@@ -1098,7 +1122,14 @@ class FormSetupItem
 	 */
 	public function generateInputFieldSelect()
 	{
-		return $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+
+		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
+
+		return $s;
 	}
 
 	/**
@@ -1126,9 +1157,9 @@ class FormSetupItem
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
 	 *
-	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
-	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
-	 * @return bool
+	 * @param 		string 	$type 	Possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
+	 * @deprecated 					this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
+	 * @return 		bool
 	 */
 	public function setTypeFromTypeString($type)
 	{
@@ -1140,7 +1171,7 @@ class FormSetupItem
 	/**
 	 * Add error
 	 *
-	 * @param array|string $errors the error text
+	 * @param string[]|string $errors the error text
 	 * @return null
 	 */
 	public function setErrors($errors)
@@ -1192,7 +1223,10 @@ class FormSetupItem
 			$out .=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey, array(), $this->entity); // TODO possibility to add $input parameter
+				$revertonoff = $this->fieldParams['revertonoff'] ? 1 : 0;
+				$forcereload = $this->fieldParams['forcereload'] ? 1 : 0;
+
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload);
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');
@@ -1455,8 +1489,8 @@ class FormSetupItem
 	 * Set type of input as a category selector
 	 * TODO add default value
 	 *
-	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @return self
+	 * @param	string	$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @return	self
 	 */
 	public function setAsCategory($catType)
 	{
@@ -1479,7 +1513,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a simple title. No data to store
 	 *
-	 * @param array $fieldOptions A table of field options
+	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
 	 * @return self
 	 */
 	public function setAsMultiSelect($fieldOptions)
@@ -1495,7 +1529,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a simple title. No data to store
 	 *
-	 * @param array $fieldOptions  A table of field options
+	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)

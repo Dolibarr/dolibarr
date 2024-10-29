@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,9 +53,15 @@ if (GETPOSTISSET('infologin')) {
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');
 }
-
+$element_ref = '';
+if (is_numeric($id)) {
+	$id = (int) $id;
+} else {
+	$element_ref = $id;
+	$id = 0;
+}
 // Load object according to $element
-$object = fetchObjectByElement($id, $objecttype);
+$object = fetchObjectByElement($id, $objecttype, $element_ref);
 if (empty($object->element)) {
 	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
 }
@@ -82,6 +89,7 @@ top_httphead();
 $html = '';
 
 if (is_object($object)) {
+	'@phan-var-force CommonObject $object';
 	if ($object->id > 0 || !empty($object->ref)) {
 		/** @var CommonObject $object */
 		$html = $object->getTooltipContent($params);

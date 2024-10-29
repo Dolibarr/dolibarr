@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/commande/index.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      Home page of sales order module
  */
 
@@ -45,7 +45,7 @@ if (!$user->hasRight('commande', 'lire')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ordersindex'));
 
 
@@ -73,7 +73,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 
-llxHeader("", $langs->trans("Orders"), $help_url);
+llxHeader('', $langs->trans("Orders"), $help_url, '', 0, 0, '', '', '', 'mod-commande page-index');
 
 
 print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
@@ -344,7 +344,7 @@ if (isModEnabled('order')) {
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
-	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_ACCEPTED);
+	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_SHIPMENTONPROCESS);
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
@@ -360,7 +360,7 @@ if (isModEnabled('order')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_SHIPMENTONPROCESS.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num) {
 			$i = 0;

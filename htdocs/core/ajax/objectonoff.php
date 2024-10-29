@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@ $object = fetchObjectByElement($id, $element);
 if (!is_object($object)) {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
+'@phan-var-force CommonObject $object';
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
@@ -77,13 +79,20 @@ if (!empty($user->socid)) {
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/statu[st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
 }
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -95,7 +104,7 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering new values
-if (($action == 'set') && !empty($id)) {
+if (($action == 'set') && !empty($id)) {	// Test on permission already done in header according to object and field.
 	$triggerkey = strtoupper(($module != $element ? $module.'_' : '').$element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {

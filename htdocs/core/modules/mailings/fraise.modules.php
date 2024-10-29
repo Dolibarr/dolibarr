@@ -2,6 +2,7 @@
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,10 +213,10 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
-	 *  @param    int        $id        ID
-	 *  @return     string      Url lien
+	 *  @param	int		$id		ID
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{

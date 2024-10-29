@@ -116,7 +116,7 @@ RemoveItManuallyAndPressF5ToContinue=Iondoe wewe mwenyewe na ubonyeze F5 ili kue
 FieldRenamed=Sehemu imebadilishwa jina
 IfLoginDoesNotExistsCheckCreateUser=Ikiwa mtumiaji bado hayupo, lazima uangalie chaguo "Unda mtumiaji"
 ErrorConnection=Seva " <b> %s </b> ", jina la hifadhidata " <b> %s </b> ", ingia " <b> %s </b> ", au nenosiri la hifadhidata linaweza kuwa si sahihi au toleo la mteja wa PHP linaweza kuwa la zamani sana ikilinganishwa na toleo la hifadhidata.
-InstallChoiceRecommanded=Chaguo linalopendekezwa la kusakinisha toleo <b> %s </b>  kutoka kwa toleo lako la sasa <b> %s </b>
+InstallChoiceRecommanded=Chaguo linalopendekezwa la kusakinisha toleo <b> %s </b>  kutoka kwa toleo lako la sasa <b> %s </b> 
 InstallChoiceSuggested= <b> Chaguo la kusakinisha lililopendekezwa na kisakinishi </b> .
 MigrateIsDoneStepByStep=Toleo linalolengwa (%s) ina pengo la matoleo kadhaa. Kichawi cha kusakinisha kitarudi ili kupendekeza uhamishaji zaidi pindi hii itakapokamilika.
 CheckThatDatabasenameIsCorrect=Hakikisha kuwa jina la hifadhidata " <b> %s </b> " ni sahihi.
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Ulitumia mchawi wa usanidi wa Dolibarr kutoka kwa kifurushi
 KeepDefaultValuesMamp=Umetumia kichawi cha usanidi cha Dolibarr kutoka DoliMamp, kwa hivyo maadili yaliyopendekezwa hapa tayari yameboreshwa. Wabadilishe ikiwa tu unajua unachofanya.
 KeepDefaultValuesProxmox=Ulitumia kichawi cha usanidi cha Dolibarr kutoka kwa kifaa pepe cha Proxmox, kwa hivyo thamani zilizopendekezwa hapa tayari zimeboreshwa. Wabadilishe ikiwa tu unajua unachofanya.
 UpgradeExternalModule=Endesha mchakato maalum wa uboreshaji wa moduli ya nje
-SetAtLeastOneOptionAsUrlParameter=Weka angalau chaguo moja kama kigezo katika URL. Kwa mfano: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Hakuna cha kusafisha/kufuta
 NothingToDo=Hakuna cha kufanya
 #########
@@ -206,12 +206,12 @@ MigrationImportOrExportProfiles=Uhamishaji wa wasifu wa uingizaji au usafirishaj
 ShowNotAvailableOptions=Onyesha chaguo ambazo hazipatikani
 HideNotAvailableOptions=Ficha chaguo ambazo hazipatikani
 ErrorFoundDuringMigration=Hitilafu ziliripotiwa wakati wa mchakato wa uhamiaji kwa hivyo hatua inayofuata haipatikani. Ili kupuuza makosa, unaweza <a href="%s"> bofya hapa </a> , lakini programu au vipengele vingine huenda visifanye kazi ipasavyo hadi makosa yatatuliwe.
-YouTryInstallDisabledByDirLock=Programu ilijaribu kujiboresha, lakini kurasa za kusakinisha/kuboresha zimezimwa kwa usalama (saraka imepewa jina la .lock suffix). <br>
-YouTryInstallDisabledByFileLock=Programu ilijaribu kujiboresha, lakini kurasa za kusakinisha/kuboresha zimezimwa kwa usalama (kwa kuwepo kwa faili ya kufuli <strong> install.lock </strong>  kwenye saraka ya hati za dolibarr). <br>
-YouTryUpgradeDisabledByMissingFileUnLock=Programu ilijaribu kujiboresha, lakini mchakato wa kuboresha hauruhusiwi kwa sasa. <br>
+YouTryInstallDisabledByDirLock=Programu ilijaribu kujiboresha, lakini kurasa za kusakinisha/kuboresha zimezimwa kwa usalama (saraka imepewa jina la .lock suffix). <br> 
+YouTryInstallDisabledByFileLock=Programu ilijaribu kujiboresha, lakini kurasa za kusakinisha/kuboresha zimezimwa kwa usalama (kwa kuwepo kwa faili ya kufuli <strong> install.lock </strong>  kwenye saraka ya hati za dolibarr). <br> 
+YouTryUpgradeDisabledByMissingFileUnLock=Programu ilijaribu kujiboresha, lakini mchakato wa kuboresha hauruhusiwi kwa sasa. <br> 
 ClickHereToGoToApp=Bofya hapa ili kwenda kwa maombi yako
 ClickOnLinkOrRemoveManualy=Ikiwa uboreshaji unaendelea, tafadhali subiri. Ikiwa sivyo, bofya kiungo kifuatacho. Ikiwa unaona ukurasa huu kila wakati, lazima uondoe/ubadilishe jina la faili install.lock katika saraka ya hati.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock or create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Imepakiwa
 FunctionTest=Mtihani wa kazi
 NodoUpgradeAfterDB=Hakuna hatua iliyoombwa na moduli za nje baada ya uboreshaji wa hifadhidata

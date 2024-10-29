@@ -71,10 +71,8 @@ CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir la salida a acciones que no son propiedad del usuario <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b> para restringir el resultado a acciones vinculadas al proyecto <b> __ PROJECT_ID __ </ b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir eventos automáticos.
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango predeterminado de días laborables en la semana (Ejemplo: 1-5, 1-6)

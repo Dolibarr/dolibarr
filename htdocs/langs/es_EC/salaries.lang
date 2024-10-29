@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta de contabilidad por defecto para pagos de sueldos
 Salary=Sueldo
-Salaries=Sueldos
 SalaryPayment=Pago de sueldo
 SalariesPayments=Pagos de sueldos
 ShowSalaryPayment=Mostrar pago de sueldo

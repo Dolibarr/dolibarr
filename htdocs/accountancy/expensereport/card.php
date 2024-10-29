@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -90,7 +90,7 @@ if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
  */
 $help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader("", $langs->trans('FicheVentilation'), $help_url);
+llxHeader("", $langs->trans('FicheVentilation'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-expensereport page-card');
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';

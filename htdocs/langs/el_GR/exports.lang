@@ -46,10 +46,16 @@ LineLabel=Ετικέτα της γραμμής
 LineDescription=Περιγραφή γραμμής
 LineUnitPrice=Τιμή μονάδας γραμμής
 LineVATRate=Συντελεστής ΦΠΑ γραμμής
+LineLT1Rate=Συντελεστής φόρου 2 για γραμμή
+LineLT2Rate=Συντελεστής φόρου 3 για γραμμή
+LineLT1Type=Τύπος φόρου 2 για τη γραμμή
+LineLT2Type=Τύπος φόρου 3 για γραμμή
 LineQty=Ποσότητα για γραμμή
 LineTotalHT=Ποσό χωρίς φόρος για γραμμή
 LineTotalTTC=Ποσό με φόρο για γραμμή
 LineTotalVAT=Ποσό Φ.Π.Α. για γραμμή
+LineTotalLT1=Ποσό φόρου 2 για τη γραμμή
+LineTotalLT2=Ποσό φόρου 3 για γραμμή
 TypeOfLineServiceOrProduct=Τύπος γραμμής (0=προϊόν, 1=υπηρεσία)
 FileWithDataToImport=Αρχείο με δεδομένα για εισαγωγή
 FileToImport=Αρχείο προέλευσης για εισαγωγή

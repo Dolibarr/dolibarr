@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = イベント組織
 EventOrganizationDescription = モジュールプロジェクトによるイベント編成
 EventOrganizationDescriptionLong= イベントの構成を管理する（提案、投票、または登録用の公開ページを使用して、ショー、会議、参加者、または講演者）
-#
-# Menu
-#
 EventOrganizationMenuLeft = 開催済イベント
 EventOrganizationConferenceOrBoothMenuLeft = 会議またはブース
-
 PaymentEvent=イベントの支払
-
-#
+EventFee=イベント料金
 # Admin page
-#
 NewRegistration=登録
 EventOrganizationSetup=イベント組織の設定
 EventOrganization=イベント主催
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Massaction「Sendemails」から
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 参加者リストの大衆活動「メール送信」からメールを送信するときに使用するメールのテンプレート
 EVENTORGANIZATION_FILTERATTENDEES_CAT = 出席者を作成/追加するフォームで、サードパーティのリストをカテゴリ内のサードパーティに制限する
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = 出席者を作成/追加するフォームで、サードパーティのリストを性質のあるサードパーティに制限する
-
-#
 # Object
-#
 OrganizedEvent=主催イベント
 EventOrganizationConfOrBooth= 会議またはブース
-EventOrganizationConfOrBoothes=会議またはブース
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = イベントの構成を管理する
 ConferenceOrBooth = 会議またはブース
 ConferenceOrBoothTab = 会議またはブース
@@ -63,10 +50,7 @@ DateOfRegistration = 登録日
 ConferenceOrBoothAttendee = 会議またはブースの参加者
 ApplicantOrVisitor=申請者または訪問者
 Speaker=スピーカー
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = 会議要求は受信済
 YourOrganizationEventBoothRequestWasReceived = ブースの要望は受信済み
 EventOrganizationEmailAskConf = 会議の要求
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = イベントへの登録
 EventOrganizationMassEmailAttendees = 参加者へのコミュニケーション
 EventOrganizationMassEmailSpeakers = 話者とのコミュニケーション
 ToSpeakers=スピーカーへ
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=会議を提案できるようにする
 AllowUnknownPeopleSuggestConfHelp=見知らぬ人がやりたい会議を提案できるようにする
 AllowUnknownPeopleSuggestBooth=ブースへの申請を許可する
@@ -88,29 +69,29 @@ PriceOfRegistration=登録価格
 PriceOfRegistrationHelp=イベントの登録または参加に支払う価格
 PriceOfBooth=ブース立ちのサブスクリプション価格
 PriceOfBoothHelp=ブース出展用サブスクリプション価格
+EventOrganizationICSLinkProject=イベントの ICS をリンクする
 EventOrganizationICSLink=会議用のリンクICS
 ConferenceOrBoothInformation=カンファレンスまたはブース情報
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=参加者
-ListOfAttendeesOfEvent=イベントプロジェクトの参加者リスト
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ICS リンクをダウンロード
 EVENTORGANIZATION_SECUREKEY = 会議を提案するための公開登録ページのキーを確保するためのシード
 SERVICE_BOOTH_LOCATION = ブースの場所に関する請求書の行に使用されるサービス
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = イベントへの参加者のサブスクリプションに関する請求書の行に使用されるサービス
 NbVotes=投票数
-
-#
 # Status
-#
 EvntOrgDraft = 下書き
 EvntOrgSuggested = 提案済
 EvntOrgConfirmed = 確定済み
 EvntOrgNotQualified = 資格なし
 EvntOrgDone = 済
 EvntOrgCancelled = キャンセル
-
-#
 # Other
-#
 SuggestForm = 提案ページ
 SuggestOrVoteForConfOrBooth = 提案または投票のためのページ
 EvntOrgRegistrationHelpMessage = ここでは、会議に投票したり、イベントの新規会議を提案したりできる。イベント期間中にブースを申請することもできる。
@@ -133,6 +114,7 @@ EventType = イベント種別
 LabelOfBooth=ブースラベル
 LabelOfconference=会議ラベル
 ConferenceIsNotConfirmed=登録できない。会議はまだ確定されていない
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%sは必ず%sの前
 DateMustBeAfterThan=%sは必ず%sの後
 MaxNbOfAttendeesReached=参加者の最大数に達した
@@ -174,6 +156,7 @@ DateEndEvent=イベント終了日
 ModifyStatus=ステータスの変更
 ConfirmModifyStatus=ステータス変更の確定
 ConfirmModifyStatusQuestion=%s 選択されたレコード(s) を変更してよいか?
-RecordsUpdated = %s 記録が更新済
-RecordUpdated = 記録更新済
-NoRecordUpdated = 更新済レコードなし
+RecordsUpdated=%s 記録が更新済
+RecordUpdated=記録更新済
+NoRecordUpdated=更新済レコードなし
+ProfitPerValidatedAttendee=参加者1人あたり利益

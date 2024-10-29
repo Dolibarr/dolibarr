@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('expensereportindex'));
 
 // Load translation files required by the page
@@ -137,7 +137,7 @@ foreach ($listoftype as $code => $label) {
 }
 
 // Sort array with most important first
-$dataseries = dol_sort_array($dataseries, 1, 'desc');
+$dataseries = dol_sort_array($dataseries, '1', 'desc');
 
 // Merge all entries after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
 $KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain

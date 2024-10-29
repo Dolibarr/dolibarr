@@ -36,7 +36,7 @@ abstract class CommonNumRefGenerator
 	public $name = '';
 
 	/**
-	 * @var string              Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'experimental'|'dolibarr'	Version
 	 */
 	public $version = '';
 
@@ -85,6 +85,7 @@ abstract class CommonNumRefGenerator
 	 */
 	public $prefixIsRequired;
 
+
 	/** Return model name
 	 *
 	 *  @param	Translate	$langs		Object langs
@@ -125,7 +126,6 @@ abstract class CommonNumRefGenerator
 	 */
 	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("NoDescription");
 	}
 

@@ -15,6 +15,7 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
+        'htdocs/accountancy/admin/productaccount.php' => ['PhanTypeMismatchArgumentNullableInternal'],	// false positive
         'internal' => ['PhanUndeclaredConstant'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.

@@ -374,7 +374,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  List all price global variables
 	 *
-	 *  @return	array|int				Array of price global variable updaters
+	 *  @return	PriceGlobalVariableUpdater[]|int<-1,-1>		Array of price global variable updaters
 	 */
 	public function listUpdaters()
 	{
@@ -411,7 +411,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  List all updaters which need to be processed
 	 *
-	 *  @return	array|int				Array of price global variable updaters
+	 *  @return	PriceGlobalVariableUpdater[]|int<-1,-1>		Array of price global variable updaters
 	 */
 	public function listPendingUpdaters()
 	{
@@ -576,7 +576,7 @@ class PriceGlobalVariableUpdater
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " next_update = ".$this->next_update;
+		$sql .= " next_update = ".((int) $this->next_update);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

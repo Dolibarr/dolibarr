@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/prelevement.php
+ *	\file       htdocs/admin/prelf
  *	\ingroup    prelevement
  *	\brief      Page to setup Withdrawals
  */
@@ -72,7 +72,7 @@ if ($action == "set") {
 		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
-		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->owner_address,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		*/
 	} else {
@@ -141,7 +141,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("WithdrawalsSetup"));
+llxHeader('', $langs->trans("WithdrawalsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-prelevement');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 

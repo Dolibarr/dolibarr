@@ -36,14 +36,23 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
+
 $usercancreate = $user->hasRight('stock', 'creer');
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
  */
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("Stocks"), $help_url);
+llxHeader("", $langs->trans("Stocks"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_info');
 
 $object = new Entrepot($db);
 $object->fetch($id, $ref);

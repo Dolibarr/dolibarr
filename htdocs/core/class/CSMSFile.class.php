@@ -65,21 +65,48 @@ class CSMSFile
 	 * @var string address to
 	 */
 	public $addr_to;
+	/**
+	 * @var int
+	 */
 	public $deferred;
+	/**
+	 * @var int
+	 */
 	public $priority;
+	/**
+	 * @var int
+	 */
 	public $class;
+	/**
+	 * @var string
+	 */
 	public $message;
 	/**
 	 * @var bool
 	 */
 	public $nostop;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $contact_id;
+	/**
+	 * @var int
+	 */
 	public $member_id;
 
+	/**
+	 * @var int
+	 */
 	public $fk_project;
 
+	/**
+	 * @var int
+	 */
 	public $deliveryreceipt;
 
 
@@ -169,6 +196,7 @@ class CSMSFile
 
 					if (class_exists($classname)) {
 						$sms = new $classname($this->db);
+						'@phan-var-force OvhSms $sms';  // Using original for analysis
 
 						$sms->expe = $this->addr_from;
 						$sms->dest = $this->addr_to;
@@ -211,7 +239,7 @@ class CSMSFile
 				// Send sms method not correctly defined
 				// --------------------------------------
 				$this->error = 'Bad value for MAIN_SMS_SENDMODE constant';
-				$res = false;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$res = false;
 			}
 		} else {
 			$this->error = 'No sms sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';

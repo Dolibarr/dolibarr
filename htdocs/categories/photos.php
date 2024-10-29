@@ -5,6 +5,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +49,8 @@ if ($id == '' && $label == '') {
 	exit();
 }
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
 
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
@@ -64,11 +66,16 @@ if (is_numeric($type)) {
 
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
 
-$hookmanager->initHooks(array('categorycard'));
+// Security check
+$result = restrictedArea($user, 'categorie', $id, '&category');
+
+$permissiontoadd = $user->hasRight('categorie', 'creer');
+
 
 /*
  * Actions
  */
+
 $parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit") ? true : false));
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -83,7 +90,7 @@ if (empty($reshook)) {
 			if (is_array($file['name']) && count($file['name']) > 0) {
 				foreach ($file['name'] as $i => $name) {
 					if (empty($file['tmp_name'][$i]) || (getDolGlobalInt('MAIN_UPLOAD_DOC') * 1000) <= filesize($file['tmp_name'][$i])) {
-						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'), 'errors');
 						unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
 					}
 				}
@@ -95,11 +102,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
+	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $permissiontoadd) {
 		$object->delete_photo($upload_dir."/".GETPOST("file"));
 	}
 
-	if ($action == 'addthumb' && GETPOST("file")) {
+	if ($action == 'addthumb' && GETPOST("file") && $permissiontoadd) {
 		$object->addThumbs($upload_dir."/".GETPOST("file"));
 	}
 }
@@ -187,7 +194,7 @@ if ($object->id) {
 	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		// Affiche formulaire upload
 		$formfile = new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->hasRight('categorie', 'creer'), 50, $object, '', false, '', 0);
+		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, 0, $user->hasRight('categorie', 'creer'), 50, $object, '', false, '', 0);
 	}
 
 	// Affiche photos

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatscontract'));
 
 // Load variable for pagination
@@ -62,6 +63,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "c.date_contrat";
 }
+
+$socid = 0;
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
@@ -87,7 +90,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type));
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', 'mod-product page-stats_contrat');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -175,12 +178,14 @@ if ($id > 0 || !empty($ref)) {
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$option .= '&limit='.((int) $limit);
 			}
+			/*
 			if (!empty($search_month)) {
 				$option .= '&search_month='.urlencode($search_month);
 			}
 			if (!empty($search_year)) {
 				$option .= '&search_year='.urlencode((string) ($search_year));
 			}
+			*/
 
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -241,6 +246,8 @@ if ($id > 0 || !empty($ref)) {
 					print "</tr>\n";
 					$i++;
 				}
+			} else {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print '</table>';

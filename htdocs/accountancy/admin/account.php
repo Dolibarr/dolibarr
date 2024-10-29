@@ -71,10 +71,11 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -103,7 +104,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 
 $accounting = new AccountingAccount($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('accountancyadminaccount'));
 
 
@@ -231,7 +232,7 @@ $formaccounting = new FormAccounting($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("ListAccounts"), $help_url);
+llxHeader('', $langs->trans("ListAccounts"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_account');
 
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
@@ -338,7 +339,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountancy/admin/account.php:: $sql='.$sql);
+dol_syslog("accountancy/admin/account.php:: sql=".$sql);
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -434,7 +435,8 @@ if ($resql) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
-	dol_syslog('accountancy/admin/account.php $sql='.$sql);
+
+	dol_syslog("accountancy/admin/account.php sql=".$sql);
 
 	$resqlchart = $db->query($sql);
 	if ($resqlchart) {
@@ -466,7 +468,8 @@ if ($resql) {
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	$moreforfilter = '';

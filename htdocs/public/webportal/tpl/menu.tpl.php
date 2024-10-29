@@ -1,9 +1,29 @@
+<!-- file menu.tpl.php -->
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
+
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'@phan-var-force Context $context';
 
 global $conf, $hookmanager, $langs;
 
@@ -82,7 +102,7 @@ if ($context->userIsLog()) {
 		'id' => 'user_logout',
 		'rank' => 99999,
 		'url' => $context->getControllerUrl() . 'logout.php',
-		'name' => $langs->trans('Logout'),
+		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
 	);
 }
 
@@ -139,7 +159,7 @@ if (empty($reshook)) {
 					// apply rank
 					if (!empty($navGroupMenu[$goupId]['rank']) && $navGroupMenu[$goupId]['rank'] > 0) {
 						// minimum rank of group determine rank of group
-						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank']));
+						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank'])); // @phpstan-ignore-line
 					}
 				}
 			}
@@ -167,13 +187,13 @@ if (empty($reshook)) {
 }
 ?>
 <nav class="primary-top-nav container-fluid">
-	<ul>
+	<ul class="brand">
 		<li class="brand">
 		<?php
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
-			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '" >';
+			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '">';
 		} else {
 			print '<span class="brand__name">' . $brandTitle . '</span>';
 		}
@@ -181,7 +201,7 @@ if (empty($reshook)) {
 		?>
 		</li>
 	</ul>
-	<ul>
+	<ul class="menu-entries">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navMenu)) {
 		// show menu
@@ -189,7 +209,13 @@ if (empty($reshook)) {
 	}
 	?>
 	</ul>
-	<ul>
+	<ul class="menu-entries-alt">
+	<?php
+	// show menu
+	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
+	?>
+	</ul>
+	<ul class="logout">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {
 		// show menu

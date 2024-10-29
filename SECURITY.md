@@ -1,10 +1,12 @@
 # Security Policy
 
-This file contains some policies about the security reports on Dolibarr ERP CRM project, one of the most popular Open Source ERP and CRM in the world.
+This file contains some policies about the security reports on Dolibarr ERP CRM project, a popular Open Source ERP and CRM used by millions of users.
+
 
 ## Supported Versions for security reports
 
 Security report are valid only on current stable version (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
+
 
 ## Reporting a Vulnerability
 
@@ -15,6 +17,7 @@ To report a vulnerability, for a private report, you can:
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+
 
 ## Hunting vulnerabilities on Dolibarr
 
@@ -34,6 +37,7 @@ If you try to find bug on Dolibarr, we recommend to append to your user-agent he
 
 You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put in your own web server virtual host from [https://www.dolibarr.org/download](https://www.dolibarr.org/download)
 
+
 ## Eligibility and Responsible Disclosure
 
 We are happy to thank everyone who submits valid reports which help us improve the security of Dolibarr, however only those that meet the following eligibility requirements will be "validated reports" (if not, we may close the report without any answer):
@@ -45,6 +49,7 @@ You must avoid tests that could cause degradation or interruption of our service
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
 
 Reports are processed around once a month.
+
 
 ## Scope for qualified vulnerabilities
 
@@ -69,6 +74,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 
 Scope is the web application (backoffice) and the APIs.
 
+
 ## Examples of vulnerabilities that are Qualified for reporting.
 
 * Remote code execution (RCE)
@@ -87,6 +93,7 @@ Scope is the web application (backoffice) and the APIs.
 * Stack traces or path disclosure (for non-admin users only)
 * Ability for a high-level user to edit web site pages in the CMS by including HTML or JavaScript is an expected feature. Vulnerabilities in the website module are validated only 
   if HTML or JavaScript injection can be done by a non-allowed user.
+
 
 ## Examples of vulnerabilities that are Non-qualified for reporting.
 

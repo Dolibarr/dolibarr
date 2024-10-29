@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Adatvédelmi szabályzat
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Adatvédelmi modul (a GDPR-nak megfelelő)
-
-#
 # Administration page
-#
 datapolicySetup = A modul adatvédelmi szabályzatának beállítása
 Deletion = Adatok törlése
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = Az Ön országának jogszabályaitól függően (példa: <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">, a GDPR 5. cikke</a>) a személyes adatokat meghatározott ideig meg kell őrizni. nem haladja meg azt az időtartamot, ameddig az adatokra szükség van arra a célra, amelyre azokat gyűjtötték, kivéve archiválási célokat.<br>A törlés egy bizonyos időtartam után automatikusan megtörténik, események nélkül (az időtartam amelyet alább jelezni fog).
 NB_MONTHS = %s hónap
 ONE_YEAR = 1 év
 NB_YEARS = %s év
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = jelentkező/vevő
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
 DATAPOLICY_CONTACT_FOURNISSEUR = Beszállító
 DATAPOLICY_ADHERENT = Tag
-DATAPOLICY_Tooltip_SETUP = Kapcsolat típusa – Jelölje meg választását az egyes típusokhoz.
-DATAPOLICYMail = E-mailek beállítása
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Az e-mail tartalma
-DATAPOLICYSUBSITUTION = Az alábbi változókat használhatod az e-mailedben (a LINKACCEPT lehetővé teszi az érintett beleegyezését rögzítő link létrehozását, a LINKREFUSED pedig a személy elutasításának rögzítését):
-DATAPOLICYACCEPT = Üzenet egyeztetés után
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Küldhet GDPR e-mailt minden érintett kapcsolattartójának (akik még nem kaptak e-mailt, és akikhez még nem regisztrált semmit a GDPR-megállapodásukkal kapcsolatban). Ehhez használja a következő gombot.
 SendAgreement = Emaileket küld
 AllAgreementSend = Minden e-mailt elküldtünk
 TXTLINKDATAPOLICYACCEPT = Szöveg a linkhez "megállapodás"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Szöveg a "nézeteltérés" linkhez
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Személyes adatok feldolgozása
 DATAPOLICY_consentement = A személyes adatok feldolgozásához kapott hozzájárulás
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = A partner névtelenítése
-DATAPOLICY_POPUP_ANONYME_TEXTE = Nem törölheti ezt a névjegyet a Dolibarrból, mert vannak kapcsolódó elemek. A GDPR-nak megfelelően Ön ezeket az adatokat névtelenné teszi, hogy eleget tegyen kötelezettségeinek. Szeretné folytatni?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Hordozhatóság GDPR
-DATAPOLICY_PORTABILITE_TITLE = Személyes adatok exportálása
-DATAPOLICY_PORTABILITE_CONFIRMATION = Exportálni szeretné ennek a kapcsolattartónak a személyes adatait. Biztos vagy ebben ?
-
-#
+DATAPOLICY_opposition_traitement = Ellenzi személyes adatainak kezelését
+DATAPOLICY_opposition_prospection = Ellenzi személyes adatainak kutatási célú feldolgozását
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonimizálta a %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = GDPR e-mail küldése
+DATAPOLICY_date = Megállapodás/nézeteltérés dátuma GDPR
+DATAPOLICY_send = Az e-mail elküldésének dátuma
 MailSent = Az e-mail el lett küldve
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = A törlés előtti hónapok száma

@@ -54,7 +54,7 @@ if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -84,7 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 $title = $langs->trans('CommentPage');
 
-llxHeader('', $title, '');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-project page-card_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);

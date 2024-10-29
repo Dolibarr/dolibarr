@@ -42,7 +42,7 @@ $langs->loadLangs(array('companies', 'members', 'bills', 'users'));
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // If user is not user read and no permission to read other users, we stop
 if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
@@ -59,10 +59,10 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
+
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 
 /*
@@ -74,7 +74,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -82,7 +82,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-user page-card_note');
 
 $form = new Form($db);
 

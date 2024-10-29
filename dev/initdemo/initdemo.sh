@@ -54,12 +54,10 @@ fi
 # ----------------------------- if no params on command line
 if [ "$passwd" = "" ]
 then
-	# TODO: WHY 2 ASSIGNMENTS TO dumpfile
 	export dumpfile
 	# shellcheck disable=2012
 	dumpfile=$(ls -v "$mydir/mysqldump_dolibarr_"*".sql" | tail -n 1)
-	export dumpfile
-	dumpfile=$(basename "$dumpfile"ls -v "$mydir/mysqldump_dolibarr_"*".sql" )
+	dumpfile=$(basename "$dumpfile")
 
 	# ----------------------------- input file
 	DIALOG=${DIALOG:=dialog}
@@ -67,8 +65,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Input dump file :" 16 55 "$dumpfile" 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Input dump file :" 16 55 "$dumpfile" 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -82,12 +79,11 @@ then
 
 	# ----------------------------- database name
 	DIALOG=${DIALOG:=dialog}
-	DIALOG="'$DIALOG' --ascii-lines"
+	DIALOG="$DIALOG --ascii-lines"
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	"$DIALOG" --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -124,7 +120,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	"$DIALOG" --title "Init Dolibarr with demo values" --clear \
+	$DIALOG	 --title "Init Dolibarr with demo values" --clear \
 		--inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
 
 	valret=$?

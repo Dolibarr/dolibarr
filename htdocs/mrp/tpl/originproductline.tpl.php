@@ -70,6 +70,7 @@ print '</td>';
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 // Unit
 print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
+// Stock
 print '<td class="center">';
 if ($tmpproduct->isStockManaged()) {
 	print(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));

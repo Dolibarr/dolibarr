@@ -21,7 +21,6 @@ MenuDoneMyActions=Mijn beëindigde acties
 ListOfEvents=Lijst met evenementen (standaard kalender)
 ActionsAskedBy=Acties geregistreerd door
 ActionsToDoBy=Acties toegewezen aan
-ActionsDoneBy=Acties gedaan door
 ActionAssignedTo=Taken toegewezen aan
 ViewCal=Bekijk kalender
 ViewDay=Dag te bekijken
@@ -104,7 +103,7 @@ HOLIDAY_MODIFYInDolibarr=Verlofverzoek %s gewijzigd
 HOLIDAY_APPROVEInDolibarr=Verlofverzoek %s goedgekeurd
 HOLIDAY_VALIDATEInDolibarr=Verlofverzoek %s gevalideerd
 HOLIDAY_DELETEInDolibarr=Verlofverzoek %s verwijderd
-EXPENSE_REPORT_CREATEInDolibarr=Overzicht van kosten %s aangemaakt 
+EXPENSE_REPORT_CREATEInDolibarr=Overzicht van kosten %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Kosten rapportage %s goedgekeurd
 EXPENSE_REPORT_APPROVEInDolibarr=Overzicht van kosten %s goedgekeurd
 EXPENSE_REPORT_DELETEInDolibarr=Overzicht van kosten %s verwijderd
@@ -135,12 +134,14 @@ AgendaModelModule=Document sjablonen voor evenement
 DateActionStart=Startdatum
 DateActionEnd=Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
-AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
-AgendaUrlOptionsNotAdmin=<b>login=%s</b> om uitvoer van acties die niet zijn toegewezen aan gebruiker <b>%s</b> te beperken.
+AgendaUrlOptions3=<b>logina=%s</b> om de uitvoer te beperken tot acties die eigendom zijn van een gebruiker <b>%s</b> (gebruik <b> logina=!%s</b> voor evenementen die geen eigendom zijn van de gebruiker).
 AgendaUrlOptions4=<b> logint = %s </b>om de uitvoer te beperken tot acties die zijn toegewezen aan gebruiker <b> %s </b>(eigenaar en anderen).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties gekoppeld aan project<b>PROJECT_ID</b> te beperken.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenissen uit te sluiten.
+AgendaUrlOptionsType=<b>actiontype=%s</b> om automatische of handmatige gebeurtenissen te ontvangen
+AgendaUrlOptionsCode=<b>actioncode=%s</b> om alleen gebeurtenissen met een bepaalde code op te halen
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> om vakanties op te nemen.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> om te beperken tot gebeurtenissen in de afgelopen %s dagen (standaard is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> om te beperken tot de laatste 50 gebeurtenissen (standaard en maximum is %s ).
 AgendaShowBirthdayEvents=Verjaardagen van contacten
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig
@@ -201,4 +202,6 @@ AppointmentDuration = Afspraakduur: %s
 BookingSuccessfullyBooked=Uw boeking is opgeslagen
 BookingReservationHourAfter=We bevestigen de reservering van onze bijeenkomst op de datum %s
 BookcalBookingTitle=Online afspraak
-Transparency = Transparency
+Transparency = Transparantie
+ReadMore = Lees verder
+ReadLess = Lees minder

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +35,9 @@ class modPhpbarcode extends ModeleBarCode
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z''development'|'experimental'|'dolibarr'
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr';
 
 	/**
 	 * @var string Error code (or message)
@@ -124,20 +125,17 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *	Return an image file on the fly (no need to write on disk)
+	 *	Return an image file on the fly (no need to write on disk) with the HTTP content-type of image.
 	 *
-	 *	@param	string   	$code			  Value to encode
-	 *	@param  string	 	$encoding		  Mode of encoding
-	 *	@param  string	 	$readable		  Code can be read (What is this ? is this used ?)
-	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error
-	 *	@return	int							  Return integer <0 if KO, >0 if OK
+	 *	@param	string   	$code			  	Value to encode
+	 *	@param  string	 	$encoding		  	Mode of encoding
+	 *	@param  string	 	$readable		  	Code can be read (What is this ? is this used ?)
+	 *	@param	integer		$scale			  	Scale
+	 *  @param  integer     $nooutputiferror  	No output if error
+	 *	@return	int							  	Return integer <0 if KO, >0 if OK
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf;
-		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
-
 		if (!$this->encodingIsSupported($encoding)) {
 			return -1;
 		}
@@ -156,9 +154,14 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["scale"] = $scale;
 		$_GET["mode"] = $mode;
 
-		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode");
+		global $filebarcode;	// Retrieve variable where to store filename
+		if (empty($filebarcode)) {
+			$filebarcode = '';
+		}
+
+		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode,$filebarcode");
 		if ($code) {
-			$result = barcode_print($code, $encoding, $scale, $mode);
+			$result = barcode_print($code, $encoding, $scale, $mode, $filebarcode);
 		}
 
 		if (!is_array($result)) {
@@ -175,16 +178,16 @@ class modPhpbarcode extends ModeleBarCode
 	/**
 	 *	Save an image file on disk (with no output)
 	 *
-	 *	@param	string   	$code			  Value to encode
-	 *	@param	string   	$encoding		  Mode of encoding
-	 *	@param  string	 	$readable		  Code can be read
-	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error
-	 *	@return	int							  Return integer <0 if KO, >0 if OK
+	 *	@param	string   	$code			  	Value to encode
+	 *	@param	string   	$encoding		  	Mode of encoding
+	 *	@param  string	 	$readable		  	Code can be read
+	 *	@param	integer		$scale			  	Scale
+	 *  @param  integer     $nooutputiferror  	No output if error
+	 *	@return	int							  	Return integer <0 if KO, >0 if OK
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf, $filebarcode, $langs;
+		global $conf, $langs;
 
 		dol_mkdir($conf->barcode->dir_temp);
 		if (!is_writable($conf->barcode->dir_temp)) {
@@ -202,9 +205,8 @@ class modPhpbarcode extends ModeleBarCode
 			$newcode = dol_hash($newcode, 'md5');	// No need for security here, we can use md5
 		}
 
-		$file = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
-
-		$filebarcode = $file; // global var to be used in barcode_outimage called by barcode_print in buildBarCode
+		global $filebarcode;
+		$filebarcode = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
 
 		$result = $this->buildBarCode($code, $encoding, $readable, $scale, $nooutputiferror);
 

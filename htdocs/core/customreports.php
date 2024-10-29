@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha');
-	$objecttype = GETPOST('objecttype', 'aZ09arobase');
+	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array');
@@ -56,6 +57,8 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	} else {
 		$search_groupby = array();
 	}
+
+	'@phan-var-force string[] $search_groupby';
 
 	$search_yaxis = GETPOST('search_yaxis', 'array');
 	$search_graph = GETPOST('search_graph', 'restricthtml');
@@ -76,11 +79,17 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	$object = null;
 } else {
+	// When included
+	'
+	@phan-var-force int<0,1> $SHOWLEGEND
+	@phan-var-force string customreportkey
+	';
+
 	$langs->load("main");
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
 
 	if (empty($user) || empty($user->id)) {
-		print 'Page is called as an include but $user and its permission loaded with getrights() are not defined. We stop here.';
+		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
 		exit(-1);
 	}
 	if (empty($object)) {
@@ -121,6 +130,8 @@ $hookmanager->initHooks(array('customreport')); // Note that conf->hooks_modules
 
 $title = '';
 $picto = '';
+$errormessage = null;
+$keyforlabeloffield = null;
 $head = array();
 $ObjectClassName = '';
 // Objects available by default
@@ -313,7 +324,7 @@ $features = $object->element;
 if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
 } else {
-	$features = $features.(empty($object->module) ? '' : '@'.$object->module);
+	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
 restrictedArea($user, $features, 0, '');
@@ -371,17 +382,17 @@ $arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
 
 // Check parameters
 if ($action == 'viewgraph') {
-	if (!count($search_measures)) {
+	if (is_array($search_measures) && !count($search_measures)) {
 		setEventMessages($langs->trans("AtLeastOneMeasureIsRequired"), null, 'warnings');
-	} elseif ($mode == 'graph' && count($search_xaxis) > 1) {
+	} elseif ($mode == 'graph' && is_array($search_xaxis) && count($search_xaxis) > 1) {
 		setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
 		$search_xaxis = array(0 => $search_xaxis[0]);
 	}
-	if (count($search_groupby) >= 2) {
+	if (is_array($search_groupby) && count($search_groupby) >= 2) {
 		setEventMessages($langs->trans("ErrorOnlyOneFieldForGroupByIsPossible"), null, 'warnings');
 		$search_groupby = array(0 => $search_groupby[0]);
 	}
-	if (!count($search_xaxis)) {
+	if (is_array($search_xaxis) && !count($search_xaxis)) {
 		setEventMessages($langs->trans("AtLeastOneXAxisIsRequired"), null, 'warnings');
 	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > $MAXMEASURESINBARGRAPH) {
 		$langs->load("errors");
@@ -476,6 +487,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				dol_include_once($classpath);
 				if (class_exists($classname)) {
 					$tmpobject = new $classname($db);
+					'@phan-var-force CommonObject $tmpobject';
 					$tmpobject->fetch($obj->val);
 					foreach ($tmpobject->fields as $fieldkey => $field) {
 						if ($field['showoncombobox']) {
@@ -681,7 +693,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		// Add measure from extrafields
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 					$arrayofyaxis['te.'.$key] = array(
 						'label' => $extrafields->attributes[$object->table_element]['label'][$key],
 						'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
@@ -1025,7 +1037,7 @@ if ($sql) {
 							//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
 							//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis);
 
-							if (!is_array($data[$xi])) {
+							if (!array_key_exists($xi, $data)) {
 								$data[$xi] = array();
 							}
 
@@ -1149,7 +1161,7 @@ if ($mode == 'graph') {
 
 if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Show admin info
-	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, 1, '', 'TechnicalInformation');
+	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, '1', '', 'TechnicalInformation');
 }
 
 print '<div>';

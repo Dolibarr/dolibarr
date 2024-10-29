@@ -1,9 +1,13 @@
+<!-- file login.tpl.php -->
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'@phan-var-force Context $context';
 
 ?>
 <div class="login-page__container">
@@ -21,10 +25,10 @@ if (empty($context) || !is_object($context)) {
 				</div>
 				<div class="login__field">
 					<i class="login__icon fas fa-lock"></i>
-					<input type="password" class="login__input" name="password" placeholder="<?php print dol_escape_htmltag($langs->trans('loginWebportalPassword')) ?>">
+					<input type="password" class="login__input" name="password" placeholder="<?php print dol_escape_htmltag($langs->trans('Password')) ?>">
 				</div>
 				<button class="button login__submit">
-					<span class="button__text"><?php print dol_escape_htmltag($langs->trans('LoginNow')) ?></span>
+					<span class="button__text"><?php print dol_escape_htmltag($langs->trans('Connection')) ?></span>
 					<i class="button__icon fas fa-chevron-right"></i>
 				</button>
 			</form>

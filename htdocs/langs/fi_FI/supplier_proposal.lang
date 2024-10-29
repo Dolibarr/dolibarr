@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Hyväksytty
 SupplierProposalStatusNotSignedShort=Refused
 CopyAskFrom=luo hintapyynnön kopioimalla olemassa oleva pyyntö
 CreateEmptyAsk=luo tyhjä pyyntö
-ConfirmCloneAsk=Haluatko varmasti kloonata hintapyynnön <b>%s</b>?
 ConfirmReOpenAsk=Haluatko varmasti avata hintapyynnön <b>%s</b> ?
 SendAskByMail=Lähetä hintapyyntö postitse
 SendAskRef=Lähetetään hintapyyntö %s

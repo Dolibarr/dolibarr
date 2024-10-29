@@ -200,8 +200,8 @@ MembersStatisticsDesc=เลือกสถิติที่คุณต้อ�
 MenuMembersStats=สถิติ
 LastMemberDate=วันที่เป็นสมาชิกล่าสุด
 LatestSubscriptionDate=วันที่บริจาคล่าสุด
-MemberNature=ลักษณะของสมาชิก
-MembersNature=ลักษณะของสมาชิก
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s สามารถเผยแพร่การเป็นสมาชิกของฉันใน <a target="_blank" href="%s">ทะเบียนสาธารณะ</a>
 MembershipPublic=สมาชิกภาพสาธารณะ
 NewMemberbyWeb=สมาชิกใหม่ที่เพิ่ม รอการอนุมัติ
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=สร้างการสมัครสมาชิก
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

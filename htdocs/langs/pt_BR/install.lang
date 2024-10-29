@@ -68,7 +68,6 @@ MigrationShippingDelivery=Atualizar armazenamento de expedições
 MigrationShippingDelivery2=Atualizar armazenamento de expedição 2
 ActivateModule=Ativar modulo %s
 ShowEditTechnicalParameters=Clique aqui para mostrar/editar parametros avançados (modo avançado)
-SetAtLeastOneOptionAsUrlParameter=Defina pelo menos uma opção como um parâmetro no URL. Por exemplo: '... repair.php?standard=confirmed'
 NothingToDelete=Nada para limpar / excluir
 MigrationFixData=Correção para dados não normalizados
 MigrationOrder=Migração de dados para ordens de clientes

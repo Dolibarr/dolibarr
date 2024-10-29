@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +88,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 $apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
+'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
@@ -105,7 +107,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-if ($action == 'delete') {
+if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('userid'))) {
+	$storage->userid = GETPOSTINT('userid');
 	$storage->clearToken('GitHub');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -118,7 +121,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
 	try {

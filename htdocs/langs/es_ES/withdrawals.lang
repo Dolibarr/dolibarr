@@ -39,7 +39,6 @@ WithdrawalsSetup=Configuración de las domiciliaciones
 CreditTransferSetup=Configuración de transferencias bancarias
 WithdrawStatistics=Estadísticas de domiciliaciones
 CreditTransferStatistics=Estadísticas de transferencias bancarias
-Rejects=Devoluciones
 LastWithdrawalReceipt=Las %s últimas domiciliaciones
 MakeWithdrawRequest=Realizar una petición de domiciliación
 MakeWithdrawRequestStripe=Realice una solicitud de pago por domiciliación bancaria a través de Stripe

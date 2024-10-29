@@ -442,7 +442,6 @@ abstract class CommonClassTest extends TestCase
 		'webhook' => 'Webhook',
 		'webportal' => 'WebPortal',
 		'webservices' => 'WebServices',
-		'webservicesclient' => 'WebServicesClient',  // TODO: set proper name
 		'website' => 'Website',
 		'workflow' => 'Workflow',
 		'workstation' => 'Workstation',

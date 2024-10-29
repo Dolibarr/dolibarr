@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -88,10 +89,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $form = new Form($db);
+$formproject = new FormProjets($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Documents");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_documents');
 
 if ($object->id) {
 	$totalpaid = $object->getSumPayment();

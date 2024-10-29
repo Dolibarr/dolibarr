@@ -46,10 +46,16 @@ LineLabel=A vonal címkéje
 LineDescription=A vonal leírása
 LineUnitPrice=A vonal egységára
 LineVATRate=A sor ÁFA-kulcsa
+LineLT1Rate=Adó 2 kulcs a sorra
+LineLT2Rate=Adó 3 kulcs a sorra
+LineLT1Type=Adó 2 típusa a sorhoz
+LineLT2Type=Adó 3 típusa a sorhoz
 LineQty=A sorhoz tartozó mennyiség
 LineTotalHT=Összeg nem tartalmazza adó soronként
 LineTotalTTC=A sor adójával együtt
 LineTotalVAT=A sor ÁFA összege
+LineTotalLT1=Adó összege 2 sorra
+LineTotalLT2=Adó összege 3 sorra
 TypeOfLineServiceOrProduct=A vonal típusa (0=termék, 1=szolgáltatás)
 FileWithDataToImport=Importálandó adatokat tartalmazó fájl
 FileToImport=Importálandó forrásfájl
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=Válassza ki az importfájl formátumként használni
 ChooseFileToImport=Fájl feltöltése, majd kattintson a %s ikonra a fájl forrás importálási fájlként való kiválasztásához...
 SourceFileFormat=Forrásfájl formátum
 FieldsInSourceFile=Mezők a forrásfájlban
-FieldsInTargetDatabase=Célmezők a Dolibarr adatbázisban (félkövér = kötelező)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=Nincsenek mezők
 MoveField=Mező oszlopszám áthelyezése %s
 ExampleOfImportFile=Példa_import_fájlra

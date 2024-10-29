@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -29,7 +29,6 @@
  * $element     (used to test $user->hasRight($element, 'creer'))
  * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $type, $text, $description, $line
@@ -39,10 +38,13 @@
  * @var CommonObjectLine $line
  * @var int $num
  */
-'@phan-var-force CommonObjectLine $line
- @phan-var-force int $num
- @phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObjectLine $line
+@phan-var-force int $num
+@phan-var-force int $i
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -92,7 +94,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 $objectline = new BOMLine($object->db);
 
 $coldisplay = 0;
-print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_view.tpl.php -->\n";
 print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.' >';
 
 // Line nb
@@ -102,7 +104,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product
-print '<td class="linecoldescription minwidth300imp">';
+print '<td class="linecoldescription bomline minwidth300imp tdoverflowmax300">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
@@ -139,32 +141,18 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
-if ($filtertype != 1) {
-	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit nowrap left">';
+if ($filtertype != 1) { // Product
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
+		print '<td class="linecoluseunit nowrap">';
 		$label = measuringUnitString($line->fk_unit, '', '', 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
 		print '</td>';
 	}
-
-	print '<td class="linecolqtyfrozen nowrap right">';
-	$coldisplay++;
-	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
-	print '</td>';
-	print '<td class="linecoldisablestockchange nowrap right">';
-	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
-	print '</td>';
-
-	print '<td class="linecolefficiency nowrap right">';
-	$coldisplay++;
-	echo $line->efficiency;
-	print '</td>';
-} else {
-	// Unit
-	print '<td class="linecolunit nowrap right">';
+} else { // Service
+	// Unit											// For services, units are always enabled
+	print '<td class="linecolunit nowrap">';
 	$coldisplay++;
 
 	if (!empty($line->fk_unit)) {
@@ -175,23 +163,53 @@ if ($filtertype != 1) {
 	}
 
 	print '</td>';
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
+	// Qty frozen
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
+	print '</td>';
 
-	// Work station
-	if (isModEnabled('workstation')) {
-		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($line->fk_default_workstation);
+	// Disable stock change
+	print '<td class="linecoldisablestockchange nowrap right">';
+	$coldisplay++;
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
+	print '</td>';
 
-		print '<td class="linecolworkstation nowrap right">';
-		$coldisplay++;
-		if ($res > 0) {
-			echo $workstation->getNomUrl(1);
+	// Efficiency
+	print '<td class="linecolefficiency nowrap right">';
+	$coldisplay++;
+	echo $line->efficiency;
+	print '</td>';
+}
+
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
+	$workstation = new Workstation($object->db);
+	$res = $workstation->fetch($line->fk_default_workstation);
+
+	print '<td class="linecolworkstation nowrap">';
+	$coldisplay++;
+	if ($res > 0) {
+		$unit = new CUnits($object->db);
+		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
+		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		$line->total_cost = 0;
+		if ($workstation->thm_machine_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
 		}
-		print '</td>';
+		if ($workstation->thm_operator_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
+		}
+		echo $workstation->getNomUrl(1);
 	}
+	print '</td>';
 }
 
 // Cost
 $total_cost = 0;
+
 $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
@@ -202,7 +220,7 @@ if (!empty($line->fk_bom_child)) {
 }
 print '</td>';
 
-if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
+if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -241,7 +259,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') {

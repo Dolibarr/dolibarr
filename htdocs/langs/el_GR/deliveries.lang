@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Παράδοση
 DeliveryRef=Αναφορά Παράδοσης
-DeliveryCard=Απόδειξη αποθέματος
+DeliveryCard=Αποδεικτικό παράδοσης
 DeliveryOrder=Αποδεικτικό παράδοσης
 DeliveryDate=Ημερομηνία παράδοσης
 CreateDeliveryOrder=Δημιουργία αποδεικτικού παράδοσης

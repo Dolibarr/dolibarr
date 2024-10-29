@@ -135,7 +135,7 @@ print '<!-- Form to view jobs -->'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_OPENSURVEY_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_OPENSURVEY_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_OPENSURVEY_LOGO_');

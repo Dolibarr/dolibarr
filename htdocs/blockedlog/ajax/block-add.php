@@ -42,6 +42,12 @@ $id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+if ($element === 'facture') {
+	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
+} else {
+	accessforbidden('Bad value for element');
+}
+
 
 /*
  * View
@@ -49,7 +55,12 @@ $action = GETPOST('action', 'aZ09');
 
 top_httphead();
 
-if ($element === 'facture') {
+if (empty($action)) {
+	print 'No action logged. Empty action code.';
+	exit;
+}
+
+if ($element === 'facture') {	// Test on permission done in top of page
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -57,4 +68,6 @@ if ($element === 'facture') {
 	if ($facture->fetch($id) > 0) {
 		$facture->call_trigger($action, $user);
 	}
+
+	print 'Object '.$element.' logged with action code = '.$action;
 }

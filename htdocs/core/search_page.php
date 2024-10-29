@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -57,7 +58,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
  * Actions
  */
 
-if ($action == 'redirect') {
+if ($action == 'redirect') {	// Test on permission not required here. Test will be done on the targeted page.
 	global $dolibarr_main_url_root;
 
 	$url = GETPOST('url');
@@ -112,8 +113,6 @@ top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 print '<body>'."\n";
 print '<div>';
 //print '<br>';
-
-$nbofsearch = 0;
 
 // Instantiate hooks of thirdparty module
 $hookmanager->initHooks(array('searchform'));
@@ -174,7 +173,7 @@ if ($conf->dol_use_jmobile) {
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	$ret .= '<input type="hidden" name="action" value="redirect">';
 	$ret .= '<div class="tagtd">';
-	$ret .= img_picto('', 'url', '', false, 0, 0, '', 'paddingright width20');
+	$ret .= img_picto('', 'url', '', 0, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat minwidth200"';
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
@@ -192,7 +191,7 @@ if ($conf->dol_use_jmobile) {
 // Show all forms
 print "\n";
 print "<!-- Begin SearchForm -->\n";
-print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $searchform;

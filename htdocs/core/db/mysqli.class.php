@@ -5,7 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,6 +106,8 @@ class DoliDBMysqli extends DoliDB
 			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
 		}
 
+		$disableforcecharset = 0;	// Set to 1 to test without charset forcing
+
 		// If server connection is ok, we try to connect to the database
 		if ($this->connected && $name) {
 			if ($this->select_db($name)) {
@@ -118,12 +121,16 @@ class DoliDBMysqli extends DoliDB
 					$clientmustbe = 'utf8';
 				}
 
-				$disableforcecharset = 0;	// Set to 1 to test without charset forcing
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					try {
-						//print "You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the one of the database ".$this->db->character_set_name();
-						dol_syslog(get_class($this)."::DoliDBMysqli You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the one of the database ".$this->db->character_set_name(), LOG_WARNING);
-						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation
+						dol_syslog(get_class($this)."::DoliDBMysqli You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the same as the database default, so to ".$this->db->character_set_name(). " or upgrade database default to ".$clientmustbe.".", LOG_WARNING);
+						// To get current charset:   USE databasename; SHOW VARIABLES LIKE 'character_set_database'
+						//                     or:   USE databasename; SELECT schema_name, default_character_set_name FROM information_schema.SCHEMATA;
+						// To get current collation: USE databasename; SHOW VARIABLES LIKE 'collation_database'
+						//                       or: USE databasename; SELECT schema_name, default_character_set_name FROM information_schema.SCHEMATA;
+						// To upgrade database default, you can do: ALTER DATABASE databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation (colllation is forced later)
 					} catch (Exception $e) {
 						print 'Failed to force character_set_client to '.$clientmustbe." (according to setup) to match the one of the server database.<br>\n";
 						print $e->getMessage();
@@ -168,7 +175,7 @@ class DoliDBMysqli extends DoliDB
 					$clientmustbe = 'utf8';
 				}
 
-				if ($this->db->character_set_name() != $clientmustbe) {
+				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
 
 					$collation = $conf->db->dolibarr_main_db_collation;
@@ -255,6 +262,7 @@ class DoliDBMysqli extends DoliDB
 		try {
 			if (!class_exists('mysqli')) {
 				dol_print_error(null, 'Driver mysqli for PHP not available');
+				return false;
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
@@ -316,11 +324,11 @@ class DoliDBMysqli extends DoliDB
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * 	@param	int		$result_mode	Result mode (Using 1=MYSQLI_USE_RESULT instead of 0=MYSQLI_STORE_RESULT will not buffer the result and save memory)
-	 *	@return	bool|mysqli_result		Resultset of answer
+	 *	@return	false|mysqli_result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf, $dolibarr_main_db_readonly;
+		global $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -692,7 +700,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	bool|mysqli_result		resource defined if OK, null if KO
+	 * 	@return	null|mysqli_result		Resource defined if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
 	{
@@ -716,6 +724,7 @@ class DoliDBMysqli extends DoliDB
 			dol_syslog($sql, LOG_DEBUG);
 			$ret = $this->query($sql);
 		}
+
 		return $ret;
 	}
 
@@ -814,7 +823,7 @@ class DoliDBMysqli extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -852,7 +861,7 @@ class DoliDBMysqli extends DoliDB
 				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
 			}
 			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute'], 0, 0, 1);	// Allow space to accept attributes like "ON UPDATE CURRENT_TIMESTAMP"
 			}
 			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
@@ -971,7 +980,7 @@ class DoliDBMysqli extends DoliDB
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+			$sql .= " ".$this->sanitize($field_desc['null']);
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
@@ -1000,7 +1009,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 		Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -1008,10 +1017,10 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$this->sanitize($table);
 		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ".$this->sanitize($field_desc['type']);
-		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
+		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && array_key_exists('value', $field_desc) && $field_desc['value']) {
 			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
-		if (isset($field_desc['value']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
+		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
 				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
@@ -1281,38 +1290,41 @@ class DoliDBMysqli extends DoliDB
 	}
 }
 
-/**
- * Class to make SSL connection
- */
-class mysqliDoli extends mysqli
-{
+
+if (class_exists('myslqi')) {
 	/**
-	 *	Constructor.
-	 *	This create an opened connection to a database server and eventually to a database
-	 *
-	 *	@param	    string	$host		Address of database server
-	 *	@param	    string	$user		Name of database user
-	 *	@param	    string	$pass		Password of database user
-	 *	@param	    string	$name		Name of database
-	 *	@param	    int		$port		Port of database server
-	 *	@param	    string	$socket		Socket
+	 * Class to make SSL connection
 	 */
-	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+	class mysqliDoli extends mysqli
 	{
-		$flags = 0;
-		if (PHP_VERSION_ID >= 80100) {
-			parent::__construct();
-		} else {
-			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
-			parent::init();
+		/**
+		 *	Constructor.
+		 *	This create an opened connection to a database server and eventually to a database
+		 *
+		 *	@param	    string	$host		Address of database server
+		 *	@param	    string	$user		Name of database user
+		 *	@param	    string	$pass		Password of database user
+		 *	@param	    string	$name		Name of database
+		 *	@param	    int		$port		Port of database server
+		 *	@param	    string	$socket		Socket
+		 */
+		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+		{
+			$flags = 0;
+			if (PHP_VERSION_ID >= 80100) {
+				parent::__construct();
+			} else {
+				// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+				parent::init();
+			}
+			if (strpos($host, 'ssl://') === 0) {
+				$host = substr($host, 6);
+				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+				// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
+				parent::ssl_set(null, null, "", null, null);
+				$flags = MYSQLI_CLIENT_SSL;
+			}
+			parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
 		}
-		if (strpos($host, 'ssl://') === 0) {
-			$host = substr($host, 6);
-			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
-			// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
-			parent::ssl_set(null, null, "", null, null);
-			$flags = MYSQLI_CLIENT_SSL;
-		}
-		parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
 	}
 }

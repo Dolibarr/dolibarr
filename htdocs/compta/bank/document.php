@@ -21,7 +21,7 @@
 /**
  * 	\file       htdocs/compta/bank/document.php
  * 	\ingroup    banque
- * 	\brief      Page de gestion des documents attaches a un compte bancaire
+ * 	\brief      Page to manage documents attached to a bank account
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php";
@@ -38,7 +38,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankaccountdocuments', 'globalcard'));
 
 // Security check
@@ -54,8 +54,9 @@ if ($user->socid) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;

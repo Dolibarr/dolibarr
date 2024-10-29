@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Політика конфіденційності даних
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Модуль для керування конфіденційністю даних (відповідність GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Налаштування політики конфіденційності даних модуля
 Deletion = Видалення даних
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = Залежно від законодавства вашої країни (приклад <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">стаття 5</a> GDPR), персональні дані повинні зберігатися певний період не перевищуючи періоду, протягом якого дані потрібні для мети, для якої вони були зібрані, за винятком цілей архівування.<br>Видалення буде виконано автоматично через певний час без подій (тривалість які ви вкажете нижче).
 NB_MONTHS = %s місяців
 ONE_YEAR = 1 рік
 NB_YEARS = %s років
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Потенційний клієнт
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ні перспектива/Ні клієнт
 DATAPOLICY_CONTACT_FOURNISSEUR = Постачальник
 DATAPOLICY_ADHERENT = Член
-DATAPOLICY_Tooltip_SETUP = Тип контакту - вкажіть свій вибір для кожного типу.
-DATAPOLICYMail = Налаштування електронної пошти
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Зміст електронного листа
-DATAPOLICYSUBSITUTION = Ви можете використовувати такі змінні у своїй електронній пошті (LINKACCEPT дозволяє створити посилання, що фіксує згоду особи, LINKREFUSED дає змогу зафіксувати відмову особи):
-DATAPOLICYACCEPT = Повідомлення після узгодження
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Ви можете надіслати електронний лист GDPR усім своїм відповідним контактам (які ще не отримали електронний лист і для яких ви нічого не зареєстрували щодо їх угоди GDPR). Для цього скористайтеся наступною кнопкою.
 SendAgreement = Надсилайте електронні листи
 AllAgreementSend = Усі листи надіслано
 TXTLINKDATAPOLICYACCEPT = Текст для посилання "договір"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Текст для посилання "незгода"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Обробка персональних даних
 DATAPOLICY_consentement = Отримана згода на обробку персональних даних
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Анонімність третьої особи
-DATAPOLICY_POPUP_ANONYME_TEXTE = Ви не можете видалити цей контакт із Dolibarr, оскільки є пов’язані елементи. Відповідно до GDPR ви зробите всі ці дані анонімними, щоб виконувати свої зобов’язання. Ви б хотіли продовжити?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Портативність GDPR
-DATAPOLICY_PORTABILITE_TITLE = Експорт персональних даних
-DATAPOLICY_PORTABILITE_CONFIRMATION = Ви хочете експортувати особисті дані цього контакту. Ти впевнений ?
-
-#
+DATAPOLICY_opposition_traitement = Виступає проти обробки своїх персональних даних
+DATAPOLICY_opposition_prospection = Заперечує проти обробки своїх персональних даних для цілей пошуку
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Анонімно %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Надіслати електронний лист GDPR
+DATAPOLICY_date = Дата згоди/незгоди GDPR
+DATAPOLICY_send = Електронний лист про дату угоди надіслано
 MailSent = Повідомлення було відправлено
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = Кількість місяців до видалення

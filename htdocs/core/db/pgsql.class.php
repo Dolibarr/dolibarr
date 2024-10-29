@@ -193,7 +193,7 @@ class DoliDBPgsql extends DoliDB
 
 				$line = preg_replace('/\s/', ' ', $line); // Replace tabulation with space
 
-				// we are inside create table statement so lets process datatypes
+				// we are inside create table statement so let's process datatypes
 				if (preg_match('/(ISAM|innodb)/i', $line)) { // end of create table sequence
 					$line = preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i', ');', $line);
 					$line = preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i', ');', $line);
@@ -403,7 +403,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
-	 *	@return		bool|resource			Database access handler
+	 *	@return		false|resource			Database access handler
 	 *	@see		close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -514,7 +514,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf, $dolibarr_main_db_readonly;
+		global $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -850,7 +850,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec PostgreSQL
 	 * @param	string	$fieldid	Field name
-	 * @return  string     			Id of row
+	 * @return  int     			Id of row
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
@@ -863,7 +863,7 @@ class DoliDBPgsql extends DoliDB
 		}
 		//$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result, 0, 0);
-		return $row;
+		return (int) $row;
 	}
 
 	/**
@@ -876,7 +876,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -897,7 +897,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function decrypt($value)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -934,7 +934,7 @@ class DoliDBPgsql extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	false|resource				resource defined if OK, null if KO
+	 * 	@return	false|resource			Resource defined if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
 	{
@@ -951,8 +951,10 @@ class DoliDBPgsql extends DoliDB
 
 		// NOTE: Do not use ' around the database name
 		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
+
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
+
 		return $ret;
 	}
 
@@ -1017,8 +1019,7 @@ class DoliDBPgsql extends DoliDB
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des information des champs de la table
-	 *
+	 *	@return	array				Array with information on table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -1026,22 +1027,21 @@ class DoliDBPgsql extends DoliDB
 		$infotables = array();
 
 		$sql = "SELECT ";
-		$sql .= "	infcol.column_name as \"Column\",";
+		$sql .= "	infcol.column_name as 'Column',";
 		$sql .= "	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
 		$sql .= "		ELSE infcol.udt_name";
-		$sql .= "	END as \"Type\",";
-		$sql .= "	infcol.collation_name as \"Collation\",";
-		$sql .= "	infcol.is_nullable as \"Null\",";
-		$sql .= "	'' as \"Key\",";
-		$sql .= "	infcol.column_default as \"Default\",";
-		$sql .= "	'' as \"Extra\",";
-		$sql .= "	'' as \"Privileges\"";
+		$sql .= "	END as 'Type',";
+		$sql .= "	infcol.collation_name as 'Collation',";
+		$sql .= "	infcol.is_nullable as 'Null',";
+		$sql .= "	'' as 'Key',";
+		$sql .= "	infcol.column_default as 'Default',";
+		$sql .= "	'' as 'Extra',";
+		$sql .= "	'' as 'Privileges'";
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema = 'public' ";
 		$sql .= "	AND table_name = '".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
-		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
@@ -1057,7 +1057,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -1193,7 +1193,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to add
-	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parameter][valeur du parameter]
+	 *  @param  array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -1213,7 +1213,7 @@ class DoliDBPgsql extends DoliDB
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+			$sql .= " ".$this->sanitize($field_desc['null']);
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
@@ -1242,7 +1242,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 		Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -1256,7 +1256,7 @@ class DoliDBPgsql extends DoliDB
 			}
 		}
 
-		if (isset($field_desc['value']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
+		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
 				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";

@@ -42,6 +42,14 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'banque', '', '', '');
 
+
+/*
+ * Actions
+ */
+
+// None
+
+
 /*
  * View
  */

@@ -135,7 +135,7 @@ class ProjectStats extends Stats
 	/**
 	 * Return count, and sum of products
 	 *
-	 * @return array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
@@ -237,7 +237,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -262,7 +262,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array with amount by month
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -305,7 +305,6 @@ class ProjectStats extends Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -375,7 +374,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param  int $year               Year to scan
 	 * @param  int $wonlostfilter      Add a filter on status won/lost
-	 * @return array                   Array with amount by month
+	 * @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getWeightedAmountByMonth($year, $wonlostfilter = 1)
 	{
@@ -416,7 +415,6 @@ class ProjectStats extends Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -484,7 +482,7 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array with amount by month
+	 * @return 	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with amount by month
 	 */
 	public function getTransformRateByMonth($year, $format = 0)
 	{
@@ -533,7 +531,7 @@ class ProjectStats extends Stats
 	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
-	 * @return 	array
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	protected function getAverageByMonth($year)
 	{

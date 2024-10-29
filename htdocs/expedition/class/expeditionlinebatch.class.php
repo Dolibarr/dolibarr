@@ -41,6 +41,10 @@ class ExpeditionLineBatch extends CommonObject
 	public $sellby;
 	public $eatby;
 	public $batch;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;

@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=השתמשת באשף ההתקנה של Dolibarr מחביל
 KeepDefaultValuesMamp=השתמשת באשף ההגדרה של Dolibarr מ- DoliMamp, כך שהערכים המוצעים כאן כבר עברו אופטימיזציה. שנה אותם רק אם אתה יודע מה אתה עושה.
 KeepDefaultValuesProxmox=השתמשת באשף ההגדרה של Dolibarr ממכשיר וירטואלי של Proxmox, כך שהערכים המוצעים כאן כבר עברו אופטימיזציה. שנה אותם רק אם אתה יודע מה אתה עושה.
 UpgradeExternalModule=הפעל תהליך שדרוג ייעודי של מודול חיצוני
-SetAtLeastOneOptionAsUrlParameter=הגדר לפחות אפשרות אחת כפרמטר ב-URL. לדוגמה: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=אין מה לנקות/למחוק
 NothingToDo=אין מה לעשות
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=האפליקציה ניסתה לשדרג עצמ�
 YouTryUpgradeDisabledByMissingFileUnLock=האפליקציה ניסתה לשדרג עצמית, אך תהליך השדרוג אינו מותר כרגע.<br>
 ClickHereToGoToApp=לחץ כאן כדי לעבור ליישום שלך
 ClickOnLinkOrRemoveManualy=אם מתבצע שדרוג, אנא המתן. אם לא, לחץ על הקישור הבא. אם אתה תמיד רואה את אותו עמוד, עליך להסיר/לשנות את שם הקובץ install.lock בספריית המסמכים.
-ClickOnLinkOrCreateUnlockFileManualy=אם מתבצע שדרוג, אנא המתן... אם לא, עליך להסיר את הקובץ install.lock או ליצור קובץ upgrade.unlock לספריית המסמכים של Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=עמוס
 FunctionTest=מבחן תפקוד
 NodoUpgradeAfterDB=לא נדרשת פעולה על ידי מודולים חיצוניים לאחר שדרוג מסד הנתונים

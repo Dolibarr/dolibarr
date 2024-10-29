@@ -44,10 +44,9 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsbom'));
 
-$mesg = '';
 $option = '';
 
 // Load variable for pagination
@@ -67,6 +66,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "b.date_valid";
 }
+
+$socid = 0;
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
@@ -89,7 +90,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type));
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-stats_bom');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -115,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -182,6 +183,9 @@ if ($id > 0 || !empty($ref)) {
 					$bomtmp->fk_product = $objp->fk_product;
 					$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
 					$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache) ? $product_cache[$objp->fk_product]->getNomUrl(1) : '');
+					if (empty($bom_data_result[$objp->rowid]['qty_toproduce'])) {
+						$bom_data_result[$objp->rowid]['qty_toproduce'] = 0;
+					}
 					$bom_data_result[$objp->rowid]['qty_toproduce'] += ($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
 					$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
 					$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
@@ -246,6 +250,9 @@ if ($id > 0 || !empty($ref)) {
 						$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
 						$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache) ? $product_cache[$objp->fk_product]->getNomUrl(1) : '');
 						$bom_data_result[$objp->rowid]['qty_toproduce'] = 0;
+						if (empty($bom_data_result[$objp->rowid]['qty_toconsume'])) {
+							$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
+						}
 						$bom_data_result[$objp->rowid]['qty_toconsume'] += ($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
 						$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
 						$bom_data_result[$objp->rowid]['status'] = $bomtmp->LibStatut($objp->status, 5);

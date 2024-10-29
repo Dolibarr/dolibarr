@@ -26,6 +26,7 @@ PHP libraries:
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation. Used by dynamic price only. TODO Replace with dol_eval ?
 Escpos-php             3.0           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
+GeoPHP                 1.2           Modified BSD License        Yes             Lib to make geo convert
 MathPHP                2.8.1         MIT License                 Yes             Modern math library for PHP (only few files)
 Mobiledetect           2.8.41        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.16        LGPL 2.1+                   Yes             Library to develop SOAP Web services. From https://github.com/f00b4r/nusoap/tree/v0.9.16
@@ -46,7 +47,7 @@ Sabre                  4.6.0         BSD                         Yes            
 Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
 Symfony/var-dumper     ??? 			 MIT License                 Yes             Library to make var dump (used by DebugBar)
 Stripe                 10.7.0        MIT Licence                 Yes             Library for Stripe module
-TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
+TCPDF                  6.7.5         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 bacon, dasprid, swiss-qr-bill, kmukku, symfony/validator

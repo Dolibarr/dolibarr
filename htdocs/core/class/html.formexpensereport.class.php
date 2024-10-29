@@ -57,15 +57,16 @@ class FormExpenseReport
 	 *    @param    string  $htmlname       Name of HTML select
 	 *    @param    int     $useempty       1=Add empty line
 	 *    @param    int     $useshortlabel  Use short labels
+	 *    @param	string	$morecss		More CSS
 	 *    @return   string                  HTML select with status
 	 */
-	public function selectExpensereportStatus($selected = 0, $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
+	public function selectExpensereportStatus($selected = 0, $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0, $morecss = '')
 	{
 		global $langs;
 
 		$tmpep = new ExpenseReport($this->db);
 
-		$html = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		$html = '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($useempty) {
 			$html.='<option value="-1">&nbsp;</option>';
 		}
@@ -82,9 +83,10 @@ class FormExpenseReport
 			$html .= $langs->trans($val);
 			$html .= '</option>';
 		}
-		$html .= '</select>';
-		$html .= ajax_combobox($htmlname);
-		print $html;
+		$html .= '</select>'."\n";
+
+		$html .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($useempty < 0 ? (string) $useempty : '-1'), $morecss);
+
 		return $html;
 	}
 

@@ -16,7 +16,7 @@ CancelPropal=Avbryt
 AddProp=Skapa förslag
 ConfirmDeleteProp=Är du säker på att du vill radera det här kommersiella förslaget?
 ConfirmValidateProp=Är du säker på att du vill bekräfta detta kommersiella förslag under namnet <b> %s </b>?
-ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
+ConfirmCancelPropal=Är du säker på att du vill avbryta kommersiella förslag <b>%s</b>?
 LastPropals=Senaste %s-förslagen
 LastModifiedProposals=Senaste %s ändrade förslag
 AllPropals=Alla förslag
@@ -29,7 +29,7 @@ NbOfProposals=Antal kommersiella förslag
 ShowPropal=Visa förslag
 PropalsDraft=Utkast
 PropalsOpened=Öppen
-PropalStatusCanceled=Canceled (Abandoned)
+PropalStatusCanceled=Avbruten (övergiven)
 PropalStatusDraft=Utkast (måste bekräftas)
 PropalStatusValidated=Validerad (förslag är öppen)
 PropalStatusSigned=Undertecknats (behov fakturering)
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 vecka
 AvailabilityTypeAV_2W=2 veckor
 AvailabilityTypeAV_3W=3 veckor
 AvailabilityTypeAV_1M=1 månad
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representanten följa upp förslag
 TypeContact_propal_external_BILLING=Kundfaktura kontakt
 TypeContact_propal_external_CUSTOMER=Kundkontakt följa upp förslag
 TypeContact_propal_external_SHIPPING=Kundkontakt för leverans
-
 # Document models
 CantBeNoSign=kan inte ställas in som osignerad
 CaseFollowedBy=Fall följt av
@@ -118,7 +116,9 @@ RefusePropal=Avslå förslag
 Sign=Sign
 SignContract=Signera kontrakt
 SignFichinter=Signera intervention
-SignSociete_rib=Sign mandate
+SignSociete_rib=Underteckna mandat
 SignPropal=Acceptera förslaget
 Signed=signerad
 SignedOnly=Endast signerad
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

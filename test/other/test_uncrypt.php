@@ -17,7 +17,7 @@ if (! $res) {
 }
 
 
-print "Decode a value crypted with crypted:.... in conf.php file\n";
+print "Decode with dol_decode a value crypted with dol_encode:.... in conf.php file\n";
 
 print dol_decode('123456789');
 

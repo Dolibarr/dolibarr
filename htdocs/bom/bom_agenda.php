@@ -73,7 +73,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
@@ -83,7 +83,7 @@ $hookmanager->initHooks(array('bomagenda', 'globalcard')); // Note that conf->ho
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = (!empty($conf->bom->multidir_output[$object->entity]) ? $conf->bom->multidir_output[$object->entity] : $conf->bom->dir_output)."/".$object->id;
 }
@@ -132,7 +132,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Agenda';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

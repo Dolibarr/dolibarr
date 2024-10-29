@@ -93,7 +93,7 @@ class modHoliday extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		$this->const[$r][0] = "HOLIDAY_ADDON";
 		$this->const[$r][1] = "chaine";
@@ -156,7 +156,7 @@ class modHoliday extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		$this->rights[$r][0] = 20001; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read leave requests (yours and your subordinates)'; // Permission label
@@ -256,7 +256,7 @@ class modHoliday extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'holiday as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type AND t.entity IN ('.getEntity('c_holiday_types').')';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extrau ON u.rowid = extrau.fk_object';

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2022 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2015 	Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2022 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,25 @@ if ($size > 10000) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+'
+@phan-var-force string $captcha
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_hide_topmenu
+@phan-var-force int<0,1> $dol_no_mouse_hover
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force int<0,1> $dol_use_jmobile
+@phan-var-force string $focus_element
+@phan-var-force string $login
+@phan-var-force string $main_authentication
+@phan-var-force string $main_home
+@phan-var-force string $password
+@phan-var-force string $session_name
+@phan-var-force string $titletruedolibarrversion
+@phan-var-force string $urllogo
+
+@phan-var-force int<0,1> $forgetpasslink
+';
 
 
 header('Cache-Control: Public, must-revalidate');
@@ -103,14 +123,38 @@ if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$disablenofollow = 0;
 }
 
+// If OpenID Connect is set as an authentication
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
+	// Set a cookie to transfer rollback page information
+	$prefix = dol_getprefix('');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
+		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+	}
+
+	// Auto redirect if OpenID Connect is the only authentication
+	if ($conf->file->main_authentication === 'openid_connect') {
+		// Avoid redirection hell
+		if (empty(GETPOST('openid_mode'))) {
+			dol_include_once('/core/lib/openid_connect.lib.php');
+			header("Location: " . openid_connect_get_url(), true, 302);
+		} elseif (!empty($_SESSION['dol_loginmesg'])) {
+			// Show login error without the login form
+			print '<div class="center login_main_message"><div class="error">' . dol_escape_htmltag($_SESSION['dol_loginmesg']) . '</div></div>';
+		}
+		// We shouldn't continue executing this page
+		exit();
+	}
+}
+
 top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
+$helpcenterlink = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
 $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
@@ -139,10 +183,10 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-		$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+	print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">
@@ -227,14 +271,29 @@ if ($disablenofollow) {
 
 <?php
 if (!empty($captcha)) {
-		// Add a variable param to force not using cache (jmobile)
+	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
 		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-		// TODO: provide accessible captcha variants?>
+
+	$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$captchaobj = null;
+	if (dol_is_file($classfile)) {
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		require_once $classfile;
+
+		$captchaobj = new $classname($db, $conf, $langs, $user);
+	}
+
+	if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+		// TODO: get this code using a method of captcha
+	} else {
+		?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd none valignmiddle tdinputlogin nowrap">
@@ -245,11 +304,13 @@ if (!empty($captcha)) {
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a>
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
 	</span>
 
-	</div></div>
-	<?php
+	</div>
+	</div>
+		<?php
+	}
 }
 
 if (!empty($morelogincontent)) {
@@ -324,25 +385,26 @@ if ($forgetpasslink || $helpcenterlink) {
 	}
 
 	if ($helpcenterlink) {
-		$url = DOL_URL_ROOT.'/support/index.php'.$moreparam;
-		if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
-			$url = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
-		}
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
+		echo '<a class="alogin" href="'.dol_escape_htmltag($helpcenterlink).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
 		echo '</a>';
 	}
 	echo '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+	dol_include_once('/core/lib/openid_connect.lib.php');
 	$langs->load("users");
 
 	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
+	if (!getDolGlobalString("MAIN_AUTHENTICATION_OPENID_URL")) {
+		$url = openid_connect_get_url();
+	} else {
+		$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state=' . openid_connect_get_state();
+	}
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
@@ -399,20 +461,34 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 <?php
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
-	?>
-	<div class="center login_main_message">
-	<?php
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
-	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
-		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning" role="alert">';
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
 	} else {
-		print '<div class="error" role="alert">';
+		?>
+		<div class="center login_main_message">
+		<?php
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			print '<div class="warning" role="alert">';
+		} else {
+			print '<div class="error" role="alert">';
+		}
+		print dol_escape_htmltag($message);
+		print '</div>'; ?>
+		</div>
+		<?php
 	}
-	print dol_escape_htmltag($message);
-	print '</div>'; ?>
-	</div>
-	<?php
 }
 
 // Add commit strip
@@ -431,7 +507,8 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 			libxml_disable_entity_loader(true);
 		}
 
-		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
+		// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);
 	}

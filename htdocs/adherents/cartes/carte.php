@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,7 +266,10 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("MembersCards"));
+$title = $langs->trans('MembersCards');
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-cards');
 
 print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', $adherentstatic->picto);
 
@@ -307,7 +312,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 }
 asort($arrayoflabels);
 print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ? GETPOST('model') : getDolGlobalString('ADHERENT_CARD_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-print '<br>'.$langs->trans("Login").': <input class="with100" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
+print '<br>'.$langs->trans("Login").': <input class="width100" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 

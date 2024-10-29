@@ -7,6 +7,7 @@
  * LESS CSS compiler, adapted from http://lesscss.org
  *
  * Copyright 2013, Leaf Corcoran <leafot@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Licensed under MIT or GPLv3, see LICENSE
  */
 
@@ -2202,7 +2203,7 @@ class Lessc
 
 	public function compile($string, $name = null)
 	{
-		$locale = setlocale(LC_NUMERIC, 0);
+		$locale = setlocale(LC_NUMERIC, '0');
 		setlocale(LC_NUMERIC, "C");
 
 		$this->parser = $this->makeParser($name);

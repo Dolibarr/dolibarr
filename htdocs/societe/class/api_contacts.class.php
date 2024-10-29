@@ -66,7 +66,7 @@ class Contacts extends DolibarrApi
 	 * @param	int    $id                  ID of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return	array|mixed data without useless information
+	 * @return 	object 						data without useless information
 	 *
 	 * @throws	RestException
 	 */
@@ -168,11 +168,12 @@ class Contacts extends DolibarrApi
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @param int		$includeroles        Includes roles of the contact
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return Contact[]                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '', $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -225,6 +226,9 @@ class Contacts extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 
 		if ($limit) {
@@ -263,9 +267,24 @@ class Contacts extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve contacts : '.$sql);
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'Contacts not found');
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
+
 		return $obj_ret;
 	}
 
@@ -315,6 +334,10 @@ class Contacts extends DolibarrApi
 	 * @param 	int   	$id             	Id of contact to update
 	 * @param 	array 	$request_data   	Datas
 	 * @return 	Object|false				Updated object, false when issue toupdate
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -354,18 +377,18 @@ class Contacts extends DolibarrApi
 			$this->contact->setNoEmail($this->contact->no_email);
 		}
 
-		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, 'update')) {
+		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->contact->error);
 		}
-
-		return false;
 	}
 
 	/**
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  integer
+	 * @return  array[]
 	 */
 	public function delete($id)
 	{
@@ -381,7 +404,17 @@ class Contacts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete(DolibarrApiAccess::$user);
+
+		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact deleted'
+			)
+		);
 	}
 
 	/**

@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) ---Replace with your own copyright and developer email---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,4 +29,3 @@
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_VALIDATE','MyObject validated','Executed when myobject is validated', 'mymodule', 1000);
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_UNVALIDATE','MyObject unvalidated','Executed when myobject is unvalidated', 'mymodule', 1001);
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_DELETE','MyObject deleted','Executed when myobject deleted', 'mymodule', 1004);
-

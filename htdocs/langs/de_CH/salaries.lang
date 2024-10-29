@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard - Buchhaltungskonto für Lohnzahlungen
 Salary=Lohn
-Salaries=Löhne
 AddSalaryPayment=Neue Lohnzahlung
 SalaryPayment=Lohnzahlung
 SalariesPayments=Lohnzahlungen

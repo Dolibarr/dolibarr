@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,9 @@ if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user
 	accessforbidden();
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
@@ -81,13 +85,9 @@ if ($user->id != $id && !$canreaduser) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
-
 
 /*
  * Actions
@@ -111,12 +111,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -130,12 +131,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 }
 
@@ -149,7 +151,7 @@ $form = new Form($db);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_perms');
 
 $head = user_prepare_head($object);
 
@@ -173,6 +175,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
@@ -226,7 +229,10 @@ $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and ent
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
 $sql .= " WHERE gr.entity = ".((int) $entity);
-$sql .= " AND gu.entity =".((int) $entity);
+// The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
+// but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
+// other entities, so we are forced to add a filter on gu here
+$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -599,7 +605,7 @@ if ($result) {
 				print '<td class="center">'.img_picto($langs->trans("AdministratorDesc"), 'star').'</td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -614,7 +620,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -623,7 +629,7 @@ if ($result) {
 			print '<!-- permsgroupbyentitypluszero -->';
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
 				print '<td>';
@@ -639,7 +645,7 @@ if ($result) {
 					print '</a></td>';
 				} else {
 					print '<td class="center nowrap">';
-					print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+					print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 					print '</td>';
 				}
 				print '<td>';
@@ -656,7 +662,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td>';
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td class="center">';
@@ -671,6 +677,16 @@ if ($result) {
 			print '<td>';
 		}
 		print $permlabel;
+		$idtouse = $obj->id;
+		if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+			$idtouse = 122;
+		}
+		if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
+		}
+		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+		}
 		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
@@ -692,6 +708,13 @@ if ($result) {
 				print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
+		// Special case for reading bank account when you have permission to manage Chart of account
+		if ($obj->module == 'banque' && $obj->perms == 'lire') {
+			if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
+				print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));
+			}
+		}
+
 		print '</td>';
 
 		// Permission id

@@ -2,6 +2,7 @@
 /* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +26,10 @@ if (empty($blocname)) {
 
 $hide = true; // Hide by default
 if (isset($parameters['showblocbydefault'])) {
-	$hide = (empty($parameters['showblocbydefault']) ? true : false);
+	$hide = empty($parameters['showblocbydefault']);
 }
 if (isset($object->extraparams[$blocname]['showhide'])) {
-	$hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+	$hide = empty($object->extraparams[$blocname]['showhide']);
 }
 
 ?>

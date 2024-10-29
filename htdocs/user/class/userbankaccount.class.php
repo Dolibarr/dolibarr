@@ -5,6 +5,8 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,11 +87,11 @@ class UserBankAccount extends Account
 	/**
 	 * Create bank information record
 	 *
-	 * @param	User|null	$user		User
-	 * @param	int			$notrigger	1=Disable triggers
+	 * @param	?User		$user		User
+	 * @param	int<0,1>	$notrigger	1=Disable triggers
 	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
-	public function create(User $user = null, $notrigger = 0)
+	public function create($user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -113,11 +115,11 @@ class UserBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User|null	$user		Object user
-	 *	@param	int			$notrigger	1=Disable triggers
+	 *	@param	?User		$user		Object user
+	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -135,8 +137,8 @@ class UserBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address :$this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
@@ -190,7 +192,7 @@ class UserBankAccount extends Account
 		}
 
 		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation as address";
-		$sql .= ", ur.proprio, ur.owner_address, ur.label, ur.datec, ur.tms as datem";
+		$sql .= ", ur.proprio as owner_name, ur.owner_address, ur.label, ur.datec, ur.tms as datem";
 		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
 		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ', d.code_departement as state_code, d.nom as state';
@@ -222,12 +224,15 @@ class UserBankAccount extends Account
 				$this->cle_rib = $obj->cle_rib;
 				$this->bic = $obj->bic;
 				$this->iban = $obj->iban;
+				$this->courant = self::TYPE_CURRENT;
+				$this->type = self::TYPE_CURRENT;
 
-				$this->domiciliation = $obj->address;
 				$this->address = $obj->address;
 
-				$this->proprio = $obj->proprio;
+				$this->owner_name = $obj->owner_name;
+				$this->proprio = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
+
 				$this->label = $obj->label;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
@@ -253,10 +258,11 @@ class UserBankAccount extends Account
 	/**
 	 *  Delete user bank account from database
 	 *
-	 *  @param	User|null	$user	User deleting
-	 *  @return int             	Return integer <0 if KO, >0 if OK
+	 *  @param	?User		$user		User deleting
+	 *	@param  int<0,1>	$notrigger	1=Disable triggers
+	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$error = 0;
 

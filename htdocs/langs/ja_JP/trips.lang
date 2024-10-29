@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=によって記録された
 AUTHORPAIEMENT=によって支払われた
 AddTrip=経費報告書を作成する
@@ -13,6 +13,8 @@ byEX_EXP=行ごと(%sへの制限)
 byEX_MON=月ごと(%sへの制限)
 byEX_YEA=年ごと(%sへの制限)
 CANCEL_USER=によって削除された
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=ユーザ カードで定義された専用アカウントは、補助元帳会計にのみ使用される。このアカウントは総勘定元帳に使用され、ユーザ に専用会計アカウントが定義されていない場合は、補助元帳会計のデフォルト値としても使用される。
 CarCategory=車両カテゴリー
 ClassifyRefunded=分類「返金済」
 CompanyVisited=訪問した法人/組織
@@ -53,7 +55,7 @@ ExpenseReportConstraintViolationWarning=最大金額超過（ルール%s）：%s
 ExpenseReportDateEnd=日付の末尾
 ExpenseReportDateStart=開始日
 ExpenseReportDomain=適用するドメイン
-ExpenseReportIkDesc=以前に定義したカテゴリと範囲ごとに、キロメートル費用の計算を変更できる。 <b> d </b>はキロメートル単位の距離 
+ExpenseReportIkDesc=以前に定義したカテゴリと範囲ごとに、キロメートル費用の計算を変更できる。 <b> d </b>はキロメートル単位の距離
 ExpenseReportLimitAmount=最大金額
 ExpenseReportLimitOn=制限
 ExpenseReportLine=経費報告行
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=年ごと(制限なし)
 NoTripsToExportCSV=この期間にエクスポートする経費報告書はない。
 NOT_AUTHOR=あなたはこの経費報告書の作成者ではない。操作がキャンセル済。
 OnExpense=経費ライン
-PDFStandardExpenseReports=経費報告書のPDFドキュメントを生成するための標準テンプレート
+PDFStandardExpenseReports=経費報告書の PDF ドキュメント を生成するための標準テンプレート
 PaidTrip=経費報告書を支払う
 REFUSEUR=によって拒否された
 RangeIk=走行距離範囲
@@ -115,6 +117,10 @@ VALIDOR=によって承認された
 ValidateAndSubmit=検証して承認のために提出
 ValidatedWaitingApproval=検証済(承認待ち)
 ValideTrip=経費報告書を承認する
+ExpenseReportPayments=経費報告書支払
+TaxUndefinedForThisCategory = このカテゴリの税金は未定義
+errorComputeTtcOnMileageExpense=走行距離費用の計算エラー
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=一括操作で削除できるのは下書き状態の要素のみ
 
 ## Dictionary
 EX_BRE=朝食

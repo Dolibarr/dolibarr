@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ if (isset($_SESSION["nbrecases"])) {
 }
 
 if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
-	$_SESSION["nbrecases"] = $_SESSION["nbrecases"] + 5;
+	$_SESSION["nbrecases"] += 5;
 }
 
 // Create survey into database
@@ -128,11 +129,11 @@ print '<table>'."\n";
 //affichage des cases texte de formulaire
 for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	$j = $i + 1;
-	if (isset($_SESSION["choix$i"]) === false) {
+	if (!isset($_SESSION["choix$i"])) {
 		$_SESSION["choix$i"] = '';
 	}
 	print '<tr><td>'.$langs->trans("TitleChoice").' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
-	$tmparray = array('checkbox'=>$langs->trans("CheckBox"), 'yesno'=>$langs->trans("YesNoList"), 'foragainst'=>$langs->trans("PourContreList"));
+	$tmparray = array('checkbox' => $langs->trans("CheckBox"), 'yesno' => $langs->trans("YesNoList"), 'foragainst' => $langs->trans("PourContreList"));
 	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne$i"]);
 	print '</td></tr>'."\n";
 }

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +26,15 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+'
+@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force FormProduct $formproduct
+@phan-var-force string $backtopage
+';
+
 ?>
 
-<!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE STOCKTRANSFER.TPL.PHP -->
 <?php
 $productref = '';
 if ($object->element == 'product') {
@@ -78,11 +85,11 @@ if ($object->element == 'product') {
 	print $formproduct->selectWarehouses($selected, 'id_entrepot', $warehousestatus, 1, 0, 0, '', 0, 0, array(), 'minwidth75 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
-if ($object->element == 'stock') {
+if ($object->element == 'stockmouvement') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 
@@ -95,10 +102,10 @@ print '</tr>';
 // Serial / Eat-by date
 if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
-|| ($object->element == 'stock'))
+|| ($object->element == 'stockmouvement'))
 ) {
 	print '<tr>';
-	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
+	print '<td'.($object->element == 'stockmouvement' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {
 		// If form was opened for a specific pdluoid, field is disabled
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';

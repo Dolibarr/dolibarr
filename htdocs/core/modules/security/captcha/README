@@ -1,0 +1,35 @@
+README (english)
+------------------------------------
+Adding your own captcha module
+------------------------------------
+
+
+If you want to add your own captcha module. This is steps to follow to add your own password generator:
+
+
+***** STEP 1 *****
+
+Copy file
+htdocs/core/modules/security/captcha/modCaptchaGoogle.class.php
+into
+htdocs/core/modules/mailings/captcha/modCaptchaMycaptcha.class.php
+
+You can choose value of your choice instead of "Mycaptcha" in name of new file.
+
+
+***** STEP 2 *****
+
+Edit this file modCaptchaMycaptcha.class.php and change following text:
+
+"class modCaptchaGoogle"     into    "class modCaptchaMycaptcha"
+
+Then add code inside the "getDescription" function.
+Then add code inside the "getExample" function.
+Then add code inside the "getCodeForLoginForm" function.
+Then add code inside the "validateCodeAfterLoginSubmit" function.
+
+
+***** STEP 3 *****
+
+Once this file has been edited, you can go to the Dolibarr security setup,
+choose tab "captcha", you will see a new captcha in the "Captcha generators" area.

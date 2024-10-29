@@ -3,6 +3,7 @@
  * Copyright (C) 2017-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ $formaccounting = new FormAccounting($db);
 $title= $langs->trans('AccountingCategory');
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_categories');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $titlepicto = 'setup';
@@ -164,7 +165,7 @@ if (!empty($cat_id)) {
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-		print img_picto($langs->trans("AccountingAccount"), 'accounting_account', 'class="pictofixedwith"');
+		print img_picto($langs->trans("AccountingAccount"), 'accounting_account', 'class="pictofixedwidth"');
 		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), 0, 0, '', 0, "80%", '', '', $langs->transnoentitiesnoconv("AddAccountFromBookKeepingWithNoCategories"));
 		print '<input type="submit" class="button button-add small" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
 	}

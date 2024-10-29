@@ -2,6 +2,7 @@
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * It loads tabs from modules looking for the entity Opensurveyso
  *
  * @param Opensurveysondage $object Current viewing poll
- * @return array Tabs for the opensurvey section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the opensurvey section
  */
 function opensurvey_prepare_head(Opensurveysondage $object)
 {
@@ -69,8 +70,8 @@ function opensurvey_prepare_head(Opensurveysondage $object)
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @param	string		$numsondage			Num survey
  * @return	void
  */
@@ -166,7 +167,7 @@ function get_server_name()
 	$url = $urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
-		$url = $url."/";
+		$url .= "/";
 	}
 
 	return $url;
@@ -185,7 +186,7 @@ function issetAndNoEmpty($name, $tableau = null)
 		$tableau = $_POST;
 	}
 
-	return (isset($tableau[$name]) === true && empty($tableau[$name]) === false);
+	return (isset($tableau[$name]) && !empty($tableau[$name]));
 }
 
 

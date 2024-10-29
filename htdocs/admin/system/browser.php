@@ -37,14 +37,14 @@ if (empty($user->admin)) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_browser');
 
 print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
 
 // Browser
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2"></td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("UserAgent").'</td><td colspan="2">'.dol_escape_htmltag($conf->browser->ua).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserName").'</td><td colspan="2">'.$conf->browser->name.'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserOS").'</td><td colspan="2">'.$conf->browser->os.'</td></tr>'."\n";

@@ -41,7 +41,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRETRAN', '1');
 }*/
 
-// Load Dolibarr environment
+// Load Dolibarr environment and check user is logged.
 require '../../main.inc.php';
 
 $action = GETPOST('action');
@@ -51,17 +51,23 @@ $action = GETPOST('action');
 
 
 /*
+ * Action
+ */
+
+// None
+
+
+/*
  * View
  */
 
-//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Return a new generated password
 if ($action) {
-	if ($action == 'getrandompassword') {
+	if ($action == 'getrandompassword') {	// Test on permission not required here. Endpoint can be called by anu logged user.
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$generic = GETPOST('generic') ? true : false;
 		echo getRandomPassword($generic);

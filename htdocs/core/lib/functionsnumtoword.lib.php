@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Víctor Ortiz Pérez   <victor@accett.com.mx>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Víctor Ortiz Pérez      <victor@accett.com.mx>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,25 +37,17 @@
  */
 function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 {
-	global $conf;
-
 	//$num = str_replace(array(',', ' '), '', trim($num));	This should be useless since $num MUST be a php numeric value
 	if (!$num) {
 		return false;
 	}
 
 	if ($centimes && strlen((string) $num) == 1) {
-		$num = $num * 10;
+		$num *= 10;
 	}
 
 	if (isModEnabled('numberwords')) {
-		if ($currency) {
-			$type = '1';
-		} else {
-			$type = '0';
-		}
-
-		$concatWords = $langs->getLabelFromNumber($num, $type);
+		$concatWords = $langs->getLabelFromNumber($num, $currency);
 		return $concatWords;
 	} else {
 		$TNum = explode('.', (string) $num);
@@ -113,23 +106,23 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		$nboflevels = count($num_levels);
 		for ($i = 0; $i < $nboflevels; $i++) {
 			$levels--;
-			$hundreds = (int) ($num_levels[$i] / 100);
+			$hundreds = (int) ((int) $num_levels[$i] / 100);
 			$hundreds = ($hundreds ? ' '.$list1[$hundreds].' '.$langs->transnoentities('hundred').($hundreds == 1 ? '' : 's').' ' : '');
-			$tens = (int) ($num_levels[$i] % 100);
+			$tens = (int) ((int) $num_levels[$i] % 100);
 			$singles = '';
 			if ($tens < 20) {
 				$tens = ($tens ? ' '.$list1[$tens].' ' : '');
 			} else {
 				$tens = (int) ($tens / 10);
 				$tens = ' '.$list2[$tens].' ';
-				$singles = (int) ($num_levels[$i] % 10);
+				$singles = (int) ((int) $num_levels[$i] % 10);
 				$singles = ' '.$list1[$singles].' ';
 			}
 			$words[] = $hundreds.$tens.$singles.(($levels && (int) ($num_levels[$i])) ? ' '.$list3[$levels].' ' : '');
 		} //end for loop
 		$commas = count($words);
 		if ($commas > 1) {
-			$commas = $commas - 1;
+			$commas -= 1;
 		}
 		$concatWords = implode(' ', $words);
 		// Delete multi whitespaces
@@ -147,7 +140,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 				$concatWords .= ' '.$langs->transnoentities('and');
 			}
 
-			$concatWords .= ' '.dol_convertToWord($decimalpart, $langs, '', true);
+			$concatWords .= ' '.dol_convertToWord((float) $decimalpart, $langs, '', true);
 			if (!empty($currency)) {
 				$concatWords .= ' '.$langs->transnoentities('centimes');
 			}
@@ -202,21 +195,21 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			$number = $numero;
 			if ($number >= 1000000000) {
 				$CdMMillon = (int) ($numero / 100000000000);
-				$numero = $numero - $CdMMillon * 100000000000;
+				$numero -= $CdMMillon * 100000000000;
 				$DdMMillon = (int) ($numero / 10000000000);
-				$numero = $numero - $DdMMillon * 10000000000;
+				$numero -= $DdMMillon * 10000000000;
 				$UdMMillon = (int) ($numero / 1000000000);
-				$numero = $numero - $UdMMillon * 1000000000;
+				$numero -= $UdMMillon * 1000000000;
 				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
 				$entexto .= " MIL ";
 			}
 			if ($number >= 1000000) {
 				$CdMILLON = (int) ($numero / 100000000);
-				$numero = $numero - $CdMILLON * 100000000;
+				$numero -= $CdMILLON * 100000000;
 				$DdMILLON = (int) ($numero / 10000000);
-				$numero = $numero - $DdMILLON * 10000000;
+				$numero -= $DdMILLON * 10000000;
 				$udMILLON = (int) ($numero / 1000000);
-				$numero = $numero - $udMILLON * 1000000;
+				$numero -= $udMILLON * 1000000;
 				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1) {
 					$entexto .= " MILL&OacuteN ";
@@ -226,18 +219,18 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			}
 			if ($number >= 1000) {
 				$cdm = (int) ($numero / 100000);
-				$numero = $numero - $cdm * 100000;
+				$numero -= $cdm * 100000;
 				$ddm = (int) ($numero / 10000);
-				$numero = $numero - $ddm * 10000;
+				$numero -= $ddm * 10000;
 				$udm = (int) ($numero / 1000);
-				$numero = $numero - $udm * 1000;
+				$numero -= $udm * 1000;
 				$entexto .= hundreds2text($cdm, $ddm, $udm);
 				if ($cdm || $ddm || $udm) {
 					$entexto .= " MIL ";
 				}
 			}
 			$c = (int) ($numero / 100);
-			$numero = $numero - $c * 100;
+			$numero -= $c * 100;
 			$d = (int) ($numero / 10);
 			$u = (int) $numero - $d * 10;
 			$entexto .= hundreds2text($c, $d, $u);

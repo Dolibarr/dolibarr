@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,6 +266,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
+							'@phan-var-force ModeleNumRefRecruitmentCandidature $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -362,7 +364,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {
@@ -405,6 +409,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
+									'@phan-var-force ModelePDFRecruitmentJobPosition $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -419,7 +424,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}

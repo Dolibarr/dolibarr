@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ */
 /*  Copyright (C) 2013-2016    Jean-François FERRY    <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +81,7 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
 if (!isModEnabled('ticket')) {
@@ -99,9 +101,32 @@ if ($cancel) {
 	exit;
 }
 
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+$user_assign = new User($db);
+$user_create = new User($db);
+$formTicket = new FormTicket($db);
+
+if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
+	$db->close();
+	exit();
+}
+
+$arrayofjs = array();
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
+
+llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
+
+$display_ticket_list = false;
+
+// Load the ticket from track_id
 if ($action == "view_ticketlist") {
 	$error = 0;
-	$display_ticket_list = false;
 	if (!strlen($track_id)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTrackId")));
@@ -121,7 +146,7 @@ if ($action == "view_ticketlist") {
 	}
 
 	if (!$error) {
-		$ret = $object->fetch('', '', $track_id);
+		$ret = $object->fetch(0, '', $track_id);
 
 		if ($ret && $object->id > 0) {
 			// vérifie si l'adresse email est bien dans les contacts du ticket
@@ -167,31 +192,11 @@ if ($action == "view_ticketlist") {
 		}
 	}
 
-	if ($error || $errors) {
+	if ($error) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
 	}
 }
-
-/*
- * View
- */
-
-$form = new Form($db);
-$user_assign = new User($db);
-$user_create = new User($db);
-$formTicket = new FormTicket($db);
-
-if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
-	$db->close();
-	exit();
-}
-
-$arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
-
-llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
@@ -205,8 +210,8 @@ if ($action == "view_ticketlist") {
 		$search_type = GETPOST("search_type", 'alpha');
 		$search_category = GETPOST("search_category", 'alpha');
 		$search_severity = GETPOST("search_severity", 'alpha');
-		$search_fk_user_create = GETPOSTINT("search_fk_user_create");
-		$search_fk_user_assign = GETPOSTINT("search_fk_user_assign");
+		$search_fk_user_create = GETPOST("search_fk_user_create", "intcomma");
+		$search_fk_user_assign = GETPOST("search_fk_user_assign", "intcomma");
 
 		// Store current page url
 		$url_page_current = dol_buildpath('/public/ticket/list.php', 1);
@@ -419,7 +424,11 @@ if ($action == "view_ticketlist") {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
+				$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
+
+				$newcardbutton = '<a class="marginrightonly" href="'.$baseurl . 'create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'" rel="nofollow noopener"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon" title="'.dol_escape_htmltag($langs->trans("CreateTicket")).'"></span></a>';
+
+				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket', 0, $newcardbutton);
 
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" id="searchFormList" >'."\n";
@@ -472,13 +481,13 @@ if ($action == "view_ticketlist") {
 
 				if (!empty($arrayfields['category.code']['checked'])) {
 					print '<td class="liste_titre">';
-					$formTicket->selectGroupTickets($search_category, 'search_category', 'public=1', 2, 1, 1);
+					$formTicket->selectGroupTickets($search_category, 'search_category', '(public:=:1)', 2, 1, 1, 0, 'maxwidth150');
 					print '</td>';
 				}
 
 				if (!empty($arrayfields['severity.code']['checked'])) {
 					print '<td class="liste_titre">';
-					$formTicket->selectSeveritiesTickets($search_severity, 'search_severity', '', 2, 1, 1);
+					$formTicket->selectSeveritiesTickets($search_severity, 'search_severity', '', 2, 1, 1, 0, 'maxwidth150');
 					print '</td>';
 				}
 
@@ -580,21 +589,21 @@ if ($action == "view_ticketlist") {
 					// Date ticket
 					if (!empty($arrayfields['t.datec']['checked'])) {
 						print '<td>';
-						print dol_print_date($db->jdate($obj->datec), 'dayhour');
+						print dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuserrel');
 						print '</td>';
 					}
 
 					// Date read
 					if (!empty($arrayfields['t.date_read']['checked'])) {
 						print '<td>';
-						print dol_print_date($db->jdate($obj->date_read), 'dayhour');
+						print dol_print_date($db->jdate($obj->date_read), 'dayhour', 'tzuserrel');
 						print '</td>';
 					}
 
 					// Date close
 					if (!empty($arrayfields['t.date_close']['checked'])) {
 						print '<td>';
-						print dol_print_date($db->jdate($obj->date_close), 'dayhour');
+						print dol_print_date($db->jdate($obj->date_close), 'dayhour', 'tzuserrel');
 						print '</td>';
 					}
 
@@ -715,7 +724,7 @@ if ($action == "view_ticketlist") {
 
 				$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 1));
 
-				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.$url_public_ticket.'view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
+				print '<form method="POST" id="form_view_ticket" name="form_view_ticket" action="'.$url_public_ticket.'view.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';
@@ -746,21 +755,28 @@ if ($action == "view_ticketlist") {
 	print '<br>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'">';
+	print '<form method="POST" class="maxwidth1000 center" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticketlist">';
 	//print '<input type="hidden" name="search_fk_status" value="non_closed">';
 
-	print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans("OneOfTicketTrackId").'</span></label>';
-	print '<input size="30" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
+	print '<p><label for="track_id" style="display: inline-block" class="titlefieldcreate left"><span class="fieldrequired">';
+	print img_picto($langs->trans("TicketTrackId"), 'generic', 'class="pictofixedwidth"');
+	print $langs->trans("OneOfTicketTrackId");
+	print '</span></label>';
+	print '<br class="showonsmartphone hidden">';
+	print '<input class="minwidth100" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
 	print '</p>';
 
-	print '<p><label for="email" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans('Email').'</span></label>';
-	print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
+	print '<p><label for="email" style="display: inline-block" class="titlefieldcreate left"><span class="fieldrequired">';
+	print img_picto($langs->trans("Email"), 'email', 'class="pictofixedwidth"');
+	print $langs->trans('Email').'</span></label>';
+	print '<br class="showonsmartphone hidden">';
+	print '<input class="minwidth100" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
-	print '<input type="submit" class="button" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
+	print '<input type="submit" class="button button-select" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
 	print ' &nbsp; ';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print "</p>\n";

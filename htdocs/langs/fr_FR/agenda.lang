@@ -21,7 +21,6 @@ MenuDoneMyActions=Mes événem. terminés
 ListOfEvents=Liste des événements (calendrier par défaut)
 ActionsAskedBy=Événements enregistrés par
 ActionsToDoBy=Événements affectés à
-ActionsDoneBy=Événements réalisés par
 ActionAssignedTo=Evénement assigné à
 ViewCal=Vue mois
 ViewDay=Vue jour
@@ -135,12 +134,15 @@ AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
 DateActionEnd=Date de fin
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
-AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions n'appartenant pas à l'utilisateur <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur est propriétaire <b>%s</b> (utilisez <b>logina=!%s</b> pour les événements n'appartenant pas à l'utilisateur).
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
+AgendaUrlOptionsType=<b>actiontype=%s</b> pour récupérer des événements automatiques ou manuels
+AgendaUrlOptionsCode=<b>actioncode=%s</b> pour récupérer uniquement les événements avec un code donné
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b>pour limiter les événements aux %sderniers jours (%s jours par défaut)
+AgendaUrlOptionsLimit=<b>limit=50</b> pour limiter aux 50 derniers événements (%s par défaut et maximum).
 AgendaShowBirthdayEvents=Anniversaires des contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -202,3 +204,5 @@ BookingSuccessfullyBooked=Votre réservation a été enregistrée
 BookingReservationHourAfter=Nous confirmons la réservation de votre rendez-vous à la date %s
 BookcalBookingTitle=Rendez-vous en ligne
 Transparency = Transparence
+ReadMore = Lire plus
+ReadLess = Lire moins

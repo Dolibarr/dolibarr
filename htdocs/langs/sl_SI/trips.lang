@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Posnel
 AUTHORPAIEMENT=Plačano s strani
 AddTrip=Ustvari poročilo o stroških
@@ -13,6 +13,8 @@ byEX_EXP=po vrstici (omejitev na %s)
 byEX_MON=po mesecih (omejitev na %s)
 byEX_YEA=po letu (omejitev na %s)
 CANCEL_USER=Izbrisal
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Kategorija vozila
 ClassifyRefunded=Označi kot "Povrnjeno"
 CompanyVisited=Obiskano podjetje/organizacija
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=po letih (brez omejitev)
 NoTripsToExportCSV=Za to obdobje ni poročila o stroških za izvoz.
 NOT_AUTHOR=Niste avtor tega poročila o stroških. Operacija preklicana.
 OnExpense=Stroškovna linija
-PDFStandardExpenseReports=Standardna predloga za ustvarjanje dokumenta PDF za poročilo o stroških
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Plačajte poročilo o stroških
 REFUSEUR=Zavrnil
 RangeIk=Razpon prevoženih kilometrov
@@ -103,10 +105,10 @@ ShowExpenseReport=Pokaži poročilo o stroških
 ShowTrip=Pokaži poročilo o stroških
 TripCard=Poročilo o stroških
 TripId=Identifikacijsko poročilo o stroških
-TripNDF=Poročilo o stroških informacij
+TripNDF=Informativno poročilo o stroških
 TripSociete=Informacijsko podjetje
 Trips=Stroškovna poročila
-TripsAndExpenses=Poročila o stroških
+TripsAndExpenses=Stroškovna poročila
 TripsAndExpensesStatistics=Statistika poročil o stroških
 TypeFees=Vrste pristojbin
 UploadANewFileNow=Naložite nov dokument zdaj
@@ -115,6 +117,10 @@ VALIDOR=Odobril
 ValidateAndSubmit=Potrdite in predložite v odobritev
 ValidatedWaitingApproval=Potrjeno (čaka na odobritev)
 ValideTrip=Potrdite poročilo o stroških
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Zajtrk

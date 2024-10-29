@@ -176,7 +176,7 @@ class modStockTransfer extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'stocktransfer@stocktransfer',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
@@ -394,7 +394,7 @@ class modStockTransfer extends DolibarrModules
 		/* END MODULEBUILDER EXPORT STOCKTRANSFER */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT STOCKTRANSFER */
 		/*
 		 $langs->load("stocktransfer@stocktransfer");

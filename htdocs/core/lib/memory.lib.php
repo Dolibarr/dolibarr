@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,8 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcached();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $dolmemcache->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -105,7 +106,8 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcache();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $dolmemcache->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -154,7 +156,8 @@ function dol_getcache($memoryid)
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $m->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -179,7 +182,8 @@ function dol_getcache($memoryid)
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $m->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -248,7 +252,7 @@ function dol_listshmop()
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
- *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
+ *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@param	string	$data			Data to save. Must be a not null value.
  *  @param 	int		$expire			ttl in seconds, 0 never expire
  * 	@return	int						Return integer <0 if KO, 0=Caching not available, Nb of bytes written if OK

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
- * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,9 +142,20 @@ class Conf extends stdClass
 	public $format_date_hour_text_short;
 	public $format_date_hour_text;
 
+	/**
+	 * @var int limit for list
+	 */
 	public $liste_limit;
 
-	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+	/**
+	 * @var int checkboxes are on left column if 1
+	 */
+	public $main_checkbox_left_column;
+
+	/**
+	 * @var string  Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+	 */
+	public $tzuserinputkey = 'tzserver';
 
 
 	// TODO Remove this part.
@@ -159,19 +171,32 @@ class Conf extends stdClass
 	public $product;
 
 	/**
+	 * @var stdClass
 	 * @deprecated Use product
 	 */
 	public $produit;
-	public $service;
+
 	/**
+	 * @var stdClass  	service
+	 */
+	public $service;
+
+	/**
+	 * @var stdClass
 	 * @deprecated Use contract
 	 */
 	public $contrat;
+
+	/**
+	 * @var stdClass Contract
+	 */
 	public $contract;
 	public $actions;
 	public $agenda;
 	public $propal;
+
 	/**
+	 * @var stdClass
 	 * @deprecated Use order
 	 */
 	public $commande;
@@ -261,9 +286,11 @@ class Conf extends stdClass
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
+		$this->mailing = new stdClass();
 		$this->notification = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
+		$this->api = new stdClass();
 	}
 
 
@@ -318,6 +345,7 @@ class Conf extends stdClass
 		// First level object
 		// TODO Remove this part.
 		$this->fournisseur = new stdClass();
+		$this->compta = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
 		$this->contrat = new stdClass();
@@ -396,7 +424,7 @@ class Conf extends stdClass
 								}
 								$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg)) {
-								// If this is constant for all generic part activated by a module. It initializes
+								// If this is a constant for all generic part activated by a module. It initializes
 								// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
 								// modules_parts['models'], modules_parts['theme']
 								// modules_parts['sms'],
@@ -408,7 +436,9 @@ class Conf extends stdClass
 									$this->modules_parts[$partname] = array();
 								}
 
+								//$arrValue = json_decode($value, true, null, JSON_BIGINT_AS_STRING|JSON_THROW_ON_ERROR);
 								$arrValue = json_decode($value, true);
+								//var_dump($key); var_dump($value); var_dump($arrValue);
 
 								if (is_array($arrValue)) {
 									$newvalue = $arrValue;
@@ -660,6 +690,11 @@ class Conf extends stdClass
 				}
 			}
 
+			// Module compta
+			$this->compta->payment = new stdClass();
+			$this->compta->payment->dir_output				= $rootfordata."/compta/payment";
+			$this->compta->payment->dir_temp					= $rootfortemp."/compta/payment/temp";
+
 			// Module product/service
 			$this->product->multidir_output 		= array($this->entity => $rootfordata."/produit");
 			$this->product->multidir_temp			= array($this->entity => $rootfortemp."/produit/temp");
@@ -716,12 +751,12 @@ class Conf extends stdClass
 				$this->global->MAIN_UMASK = '0660'; // Default mask
 			} else {
 				// We remove the execute bits on the file umask
-				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = (octdec(getDolGlobalString('MAIN_UMASK')) & 0666);
 				$tmpumask = decoct($tmpumask);
-				if (!preg_match('/^0/', $tmpumask)) {
+				if (!preg_match('/^0/', $tmpumask)) {	// Convert string '123' into octal representation '0123'
 					$tmpumask = '0'.$tmpumask;
 				}
-				if (empty($tmpumask) || $tmpumask === '0') {
+				if (empty($tmpumask)) {		// when $tmpmask is null, '', or '0'
 					$tmpumask = '0664';
 				}
 				$this->global->MAIN_UMASK = $tmpumask;
@@ -802,20 +837,30 @@ class Conf extends stdClass
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
 
-			// conf->liste_limit = constante de taille maximale des listes
-			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
+			// conf->liste_limit = constant to limit size of lists
+			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
+			if ((int) $this->liste_limit <= 0) {
+				// Mode automatic.
+				$this->liste_limit = 15;
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+					$this->liste_limit = 10;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+					$this->liste_limit = 20;
+				}
 			}
-			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 
-			// conf->product->limit_size = constante de taille maximale des select de produit
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
+			}
+
+			// Set PRODUIT_LIMIT_SIZE if never defined
 			if (!isset($this->global->PRODUIT_LIMIT_SIZE)) {
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
-			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
 
 			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
-			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = getDolGlobalInt('PRODUIT_DESC_IN_FORM');
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {
@@ -884,6 +929,9 @@ class Conf extends stdClass
 			if (!isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 				$this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT = 1; // allow html content into free footer text
 			}
+			if (!isset($this->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING)) {
+				$this->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING = 1;
+			}
 
 			// Default max file size for upload (deprecated)
 			//$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
@@ -932,6 +980,7 @@ class Conf extends stdClass
 					$this->global->MAIN_MODULES_FOR_EXTERNAL .= ",".$key;
 				}
 			}
+			//$this->global->MAIN_MODULES_FOR_EXTERNAL .= ",ecm";
 
 			// Enable select2
 			if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') {
@@ -1017,8 +1066,12 @@ class Conf extends stdClass
 				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? (int) $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
 			}
 
-			if (!empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
+			if ((!empty($this->global->PRODUIT_MULTIPRICES) || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+			}
+
+			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
 			}
 
 			// For modules that want to disable top or left menu
@@ -1040,6 +1093,10 @@ class Conf extends stdClass
 
 			if (!isset($this->global->MAIN_JS_GRAPH)) {
 				$this->global->MAIN_JS_GRAPH = 'chart'; // Use chart.js library
+			}
+
+			if (!isset($this->global->THEME_ELDY_USEBORDERONTABLE)) {
+				$this->global->THEME_ELDY_USEBORDERONTABLE = 1;
 			}
 
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) {
@@ -1175,8 +1232,8 @@ class Conf extends stdClass
 
 					require_once $handler_file_found;
 					$loghandlerinstance = new $handler();
-					if (!$loghandlerinstance instanceof LogHandlerInterface) {
-						throw new Exception('Log handler does not extend LogHandlerInterface');
+					if (!$loghandlerinstance instanceof LogHandler) {
+						throw new Exception('Log handler does not extend LogHandler');
 					}
 
 					if (empty($this->loghandlers[$handler])) {

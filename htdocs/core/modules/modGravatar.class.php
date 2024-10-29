@@ -92,7 +92,7 @@ class modGravatar extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(); // List of boxes
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
@@ -104,7 +104,7 @@ class modGravatar extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
@@ -118,7 +118,7 @@ class modGravatar extends DolibarrModules
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Add here entries to declare new menus
 		// Example to declare the Top Menu entry:

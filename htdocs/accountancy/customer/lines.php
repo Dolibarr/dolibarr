@@ -177,7 +177,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"), $help_url);
+llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-lines');
 
 print '<script type="text/javascript">
 			$(function () {
@@ -387,10 +387,9 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneCustomer").'</span><br>';
+	print_barre_liste($langs->trans("InvoiceLinesDone").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilDoneCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
-	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
+	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom marginbottomonly">';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
@@ -489,7 +488,7 @@ if ($result) {
 		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facturestatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall tdoverflowmax125">'.$facturestatic->getNomUrl(1).'</td>';
 
 		// Date invoice
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
@@ -498,12 +497,16 @@ if ($result) {
 		print '<td class="tdoverflowmax100">';
 		if ($productstatic->id > 0) {
 			print $productstatic->getNomUrl(1);
+		} else {
+			print '&nbsp;';
 		}
-		if ($productstatic->id > 0 && $objp->product_label) {
+		//if ($productstatic->id > 0 && $objp->product_label) {
 			print '<br>';
-		}
+		//}
 		if ($objp->product_label) {
 			print '<span class="opacitymedium">'.$objp->product_label.'</span>';
+		} else {
+			print '&nbsp;';
 		}
 		print '</td>';
 

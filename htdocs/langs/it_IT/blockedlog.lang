@@ -18,7 +18,7 @@ BlockedlogInfoDialog=Log Details
 ListOfTrackedEvents=List of tracked events
 Fingerprint=Fingerprint
 DownloadLogCSV=Export archived logs (CSV)
-DataOfArchivedEvent=Full data of archived event
+DataOfArchivedEvent=Dati completi dell'evento archiviato
 ImpossibleToReloadObject=Original object (type %s, id %s) not linked (see 'Full datas' column to get unalterable saved data)
 BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs module was activated because of the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they cannot be validated by a tax audit.
@@ -29,7 +29,7 @@ RestrictYearToExport=Restrict month / year to export
 BlockedLogEnabled=È stato abilitato il sistema per tenere traccia degli eventi in registri inalterabili
 BlockedLogDisabled=Il sistema per tenere traccia degli eventi in registri inalterabili è stato disabilitato dopo l'esecuzione di alcune registrazioni. Abbiamo salvato un'impronta digitale speciale per tracciare la catena come rotta
 BlockedLogDisabledBis=Il sistema per tenere traccia degli eventi in log inalterabili è stato disabilitato. Ciò è possibile perché non è stata ancora eseguita alcuna registrazione.
-LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
+LinkHasBeenDisabledForPerformancePurpose=A scopo di performance, collegamento diretto a documento non viene visualizzato dopo il centesimo linea.
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

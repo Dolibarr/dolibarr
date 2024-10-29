@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+/* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +145,7 @@ $elementtype = 'socpeople';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -259,7 +260,7 @@ $server->register(
 /**
  * Get Contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref_ext			Ref external of object
  * @return	mixed
@@ -288,7 +289,7 @@ function getContact($authentication, $id, $ref_ext)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$contact = new Contact($db);
 		$result = $contact->fetch($id, null, $ref_ext);
@@ -376,7 +377,7 @@ function getContact($authentication, $id, $ref_ext)
 /**
  * Create Contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$contact		    $contact
  * @return	array							Array result
  */
@@ -485,7 +486,7 @@ function createContact($authentication, $contact)
 /**
  * Get list of contacts for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
@@ -614,7 +615,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 /**
  * Update a contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$contact		    Contact
  * @return	array							Array result
  */
@@ -671,7 +672,7 @@ function updateContact($authentication, $contact)
 
 			$object->country_id = $contact['country_id'];
 			if ($contact['country_code']) {
-				$object->country_id = getCountry($contact['country_code'], 3);
+				$object->country_id = getCountry($contact['country_code'], '3');
 			}
 			$object->province_id = $contact['province_id'];
 

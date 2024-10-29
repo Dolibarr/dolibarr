@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Manažment partnerstva
 PartnershipDescription=Modul Manažment partnerstva
 PartnershipDescriptionLong= Modul Manažment partnerstva
@@ -24,17 +20,11 @@ Partnerships=partnerstvá
 AddPartnership=Pridajte partnerstvo
 CancelPartnershipForExpiredMembers=Partnerstvo: Zrušte partnerstvo členov s vypršanými predplatnými
 PartnershipCheckBacklink=Partnerstvo: Skontrolujte odkazujúci spätný odkaz
-
-#
 # Menu
-#
 NewPartnership=Nové partnerstvo
 NewPartnershipbyWeb=Vaša žiadosť o partnerstvo bola úspešne pridaná. Čoskoro vás môžeme kontaktovať...
 ListOfPartnerships=Zoznam partnerstiev
-
-#
 # Admin page
-#
 PartnershipSetup=Nastavenie partnerstva
 PartnershipAbout=O partnerstve
 PartnershipAboutPage=Partnerstvo o stránke
@@ -45,17 +35,14 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb dní pred zrušením
 ReferingWebsiteCheck=Kontrola odkazujúcej webovej stránky
 ReferingWebsiteCheckDesc=Môžete povoliť funkciu na kontrolu, či vaši partneri pridali spätný odkaz na domény vašich webových stránok na ich vlastnej webovej lokalite.
 PublicFormRegistrationPartnerDesc=Dolibarr vám môže poskytnúť verejnú URL/webovú stránku, ktorá umožní externým návštevníkom požiadať o účasť v partnerskom programe.
-
-#
 # Object
-#
 DeletePartnership=Odstrániť partnerstvo
 PartnershipDedicatedToThisThirdParty=Partnerstvo venované tejto tretej strane
 PartnershipDedicatedToThisMember=Partnerstvo venované tomuto členovi
 DatePartnershipStart=Dátum začatia
 DatePartnershipEnd=Dátum ukončenia
 ReasonDecline=Dôvod odmietnutia
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=Dôvod odmietnutia alebo zrušenia
 PartnershipAlreadyExist=Partnerstvo už existuje
 ManagePartnership=Riadiť partnerstvo
 BacklinkNotFoundOnPartnerWebsite=Spätný odkaz sa nenašiel na partnerskej webovej stránke
@@ -68,30 +55,22 @@ PartnershipAccepted=Akceptované
 PartnershipRefused=Odmietol
 PartnershipCanceled=Zrušený
 PartnershipManagedFor=Partneri sú
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Partnerstvo bude čoskoro zrušené
 SendingEmailOnPartnershipRefused=Partnerstvo odmietnuté
 SendingEmailOnPartnershipAccepted=Partnerstvo prijaté
 SendingEmailOnPartnershipCanceled=Partnerstvo zrušené
-
 YourPartnershipWillSoonBeCanceledTopic=Partnerstvo bude čoskoro zrušené
 YourPartnershipRefusedTopic=Partnerstvo odmietnuté
 YourPartnershipAcceptedTopic=Partnerstvo prijaté
 YourPartnershipCanceledTopic=Partnerstvo zrušené
-
 YourPartnershipWillSoonBeCanceledContent=Radi by sme vás informovali, že naše partnerstvo bude čoskoro zrušené (neobdržali sme obnovenie alebo neboli splnené predpoklady pre naše partnerstvo). Kontaktujte nás, ak ste to dostali kvôli chybe.
 YourPartnershipRefusedContent=Radi by sme vás informovali, že vaša žiadosť o partnerstvo bola zamietnutá. Predpoklady nie sú splnené. Ak potrebujete ďalšie informácie, kontaktujte nás.
 YourPartnershipAcceptedContent=Radi by sme vás informovali, že vaša žiadosť o partnerstvo bola prijatá.
 YourPartnershipCanceledContent=Radi by sme vás informovali, že naše partnerstvo bolo zrušené. Ak potrebujete ďalšie informácie, kontaktujte nás.
-
 CountLastUrlCheckError=Počet chýb pri poslednej kontrole webovej adresy
 LastCheckBacklink=Dátum poslednej kontroly webovej adresy
-
 NewPartnershipRequest=Nová žiadosť o partnerstvo
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Táto stránka musí obsahovať aspoň jeden odkaz na jednu z nasledujúcich domén: %s
-
 IPOfApplicant=IP žiadateľa

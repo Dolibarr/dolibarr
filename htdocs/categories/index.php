@@ -46,7 +46,7 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categoryindex'));
 
 if (!$user->hasRight('categorie', 'lire')) {
@@ -200,26 +200,26 @@ foreach ($fulltree as $key => $val) {
 	$entry = '<table class="nobordernopadding centpercent">';
 	$entry .= '<tr>';
 
-	$entry .= '<td>';
+	$entry .= '<th>';
 	$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
-	$entry .= '</td>';
+	$entry .= '</th>';
 
 	// Add column counter
 	$entry .= $counter;
 
-	$entry .= '<td class="right" width="20px;">';
+	$entry .= '<th class="right" width="20px;">';
 	$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.urlencode($type).$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type)).'">'.img_view().'</a>';
-	$entry .= '</td>';
-	$entry .= '<td class="right" width="20px;">';
+	$entry .= '</th>';
+	$entry .= '<th class="right" width="20px;">';
 	if ($user->hasRight('categorie', 'creer')) {
 		$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . '&type=' . urlencode($type) . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
 	}
-	$entry .= '</td>';
-	$entry .= '<td class="right" width="20px;">';
+	$entry .= '</th>';
+	$entry .= '<th class="right" width="20px;">';
 	if ($user->hasRight('categorie', 'supprimer')) {
 		$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . '&type=' . urlencode($type) . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type) . $moreparam) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type) . $moreparam) . '">' . img_delete() . '</a>';
 	}
-	$entry .= '</td>';
+	$entry .= '</th>';
 
 	$entry .= '</tr>';
 	$entry .= '</table>';
@@ -238,7 +238,7 @@ foreach ($data as $record) {
 }
 
 
-print '<table class="liste nohover centpercent">';
+print '<table class="liste nohover centpercent noborder">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if ($morethan1level && !empty($conf->use_javascript_ajax)) {
 	print '<div id="iddivjstreecontrol">';
