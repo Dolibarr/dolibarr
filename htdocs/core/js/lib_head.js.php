@@ -1117,9 +1117,7 @@ function getOperatorsForFieldType(type) {
 			"<?php print $langs->trans('IsOnOrAfter'); ?>"
 		],
 		html: [
-			"<?php print $langs->trans('Contains'); ?>",
-			"<?php print $langs->trans('IsEmpty'); ?>",
-			"<?php print $langs->trans('IsNotEmpty'); ?>"
+			"<?php print $langs->trans('Contains'); ?>"
 		]
 	};
 
