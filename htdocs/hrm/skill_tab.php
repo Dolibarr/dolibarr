@@ -222,7 +222,8 @@ if (empty($reshook)) {
 								$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $tmpObj->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
 								if (is_array($lines)) {
 									foreach ($lines as $key => $evalline) {
-										if (is_object($evalline)) {
+										// Verify if fetchAll gave the right object
+										if (is_object($evalline) && $evalline instanceof EvaluationLine) {
 											$evalline->required_rank = $rank;
 											$ret = $evalline->update($user);
 											if ($ret <= 0) {
@@ -276,7 +277,8 @@ if (empty($reshook)) {
 				$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $skillToDelete->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
 				if (is_array($lines)) {
 					foreach ($lines as $key => $evalline) {
-						if (is_object($evalline)) {
+						// Verify if fetchAll gave the right object
+						if (is_object($evalline) && $evalline instanceof EvaluationLine) {
 							$ret = $evalline->delete($user);
 							if ($ret <= 0) {
 								$error++;
