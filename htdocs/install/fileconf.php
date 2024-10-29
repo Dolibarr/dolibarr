@@ -376,8 +376,8 @@ if (!empty($force_install_noedit)) {
 						$option .= ' '.$langs->trans("VersionExperimental");
 					} elseif ($type == 'sqlite3') {
 						$option .= ' '.$langs->trans("VersionExperimental");
-					} elseif (!function_exists($testfunction)) {
-						// No available
+					} elseif ($testfunction === null || !function_exists($testfunction)) {
+						// None available
 						$option .= ' - '.$langs->trans("FunctionNotAvailableInThisPHP");
 					}
 					$option .= '</option>';

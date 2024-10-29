@@ -41,9 +41,9 @@ abstract class Stats
 	protected $lastfetchdate = array();
 
 	/**
-	 * @var string cachefilesuffix
+	 * @var string  Suffix to add to name of cache file (to avoid file name conflicts)
 	 */
-	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
+	public $cachefilesuffix = '';
 
 	/**
 	 * @var string	To store the FROM part of the main table of the SQL request
@@ -125,6 +125,7 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = -1;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
@@ -226,6 +227,7 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = -1;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
@@ -258,7 +260,7 @@ abstract class Stats
 				$year = $startyear;
 				while ($year <= $endyear) {
 					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
-					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
+					$data[$i][] = $datay[$year - (1 - (int) floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
 					$year++;
 				}
 			}
@@ -350,6 +352,7 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = -1;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
