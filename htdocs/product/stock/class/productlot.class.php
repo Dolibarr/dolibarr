@@ -96,10 +96,25 @@ class Productlot extends CommonObject
 	 * @var array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
 	 */
 	public $stats_mo;
+	/**
+	 * @var array{nb_toproduce:int,qty_toproduce:float,nb_toconsume:int,qty_toconsume:float}
+	 */
 	public $stats_bom;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_mrptoconsume;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_mrptoproduce;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_facturerec;
+	/**
+	 * @var array{suppliers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_facture_fournisseur;
 
 
@@ -179,22 +194,31 @@ class Productlot extends CommonObject
 	public $sellby = '';
 
 	/**
-	 * @var int|string eal_date
+	 * @var int|'' eol_date
 	 */
 	public $eol_date = '';
 
 	/**
-	 * @var int|string manufacturing_date
+	 * @var int|'' manufacturing_date
 	 */
 	public $manufacturing_date = '';
 
 	/**
-	 * @var int|string scrapping_date
+	 * @var int|'' scrapping_date
 	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
+	/**
+	 * @var int|''
+	 */
 	public $qc_frequency = '';
+	/**
+	 * @var int|''
+	 */
 	public $lifetime = '';
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
 	/**
@@ -265,7 +289,7 @@ class Productlot extends CommonObject
 	 * @param	int			$sellBy				Sell by date
 	 * @param 	int			$eatBy				Eat by date
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
-	 * @return 	array|null	Array of errors or null if nothing done
+	 * @return 	string[]|null	Array of errors or null if nothing done
 	 */
 	public static function checkSellOrEatByMandatoryFromProductIdAndDates($productId, $sellBy, $eatBy, $onlyFieldName = '')
 	{
@@ -299,7 +323,7 @@ class Productlot extends CommonObject
 	 * @param 	int			$eatBy				Eat by date
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
 	 * @param	bool		$alreadyCheckConf	[=false] conf hasn't been already checked by default or true not to check conf
-	 * @return 	array|null	Array of errors or null if nothing done
+	 * @return 	string[]|null	Array of errors or null if nothing done
 	 */
 	public static function checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName = '', $alreadyCheckConf = false)
 	{

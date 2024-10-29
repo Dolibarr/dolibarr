@@ -95,22 +95,22 @@ class EcmDirectory extends CommonObject
 	public $ref;
 
 	/**
-	 * @var array array of categories
+	 * @var array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:int,id_children?:int[],level:int}>	Array of categories
 	 */
 	public $cats = array();
 
 	/**
-	 * @var array array of children categories
+	 * @var array<int,int> array of children categories
 	 */
 	public $motherof = array();
 
 	/**
-	 * @var array array of forbidden chars
+	 * @var string[] array of forbidden chars
 	 */
 	public $forbiddenchars = array('<', '>', ':', '/', '\\', '?', '*', '|', '"');
 
 	/**
-	 * @var array array of forbidden chars for dir
+	 * @var string[] array of forbidden chars for dir
 	 */
 	public $forbiddencharsdir = array('<', '>', ':', '?', '*', '|', '"');
 
@@ -358,7 +358,7 @@ class EcmDirectory extends CommonObject
 				$this->label = $obj->label;
 				$this->fk_parent = $obj->fk_parent;
 				$this->description = $obj->description;
-				$this->cachenbofdoc = $obj->cachenbofdoc;
+				$this->cachenbofdoc = (int) $obj->cachenbofdoc;
 				$this->fk_user_m = $obj->fk_user_m;
 				$this->fk_user_c = $obj->fk_user_c;
 				$this->date_c = $this->db->jdate($obj->date_c);
@@ -394,6 +394,7 @@ class EcmDirectory extends CommonObject
 
 		$error = 0;
 
+		$relativepath = '__MUST_NOT_EXIST__';
 		if ($mode != 'databaseonly') {
 			$relativepath = $this->getRelativePath(1); // Ex: dir1/dir2/dir3
 		}
@@ -421,6 +422,7 @@ class EcmDirectory extends CommonObject
 			// End call triggers
 		}
 
+		$file = '__MUST_NOT_EXIST__';
 		if ($mode != 'databaseonly') {
 			$file = $conf->ecm->dir_output."/".$relativepath;
 			if ($deletedirrecursive) {
@@ -547,7 +549,7 @@ class EcmDirectory extends CommonObject
 			//print "c=".$idtosearch."-".$cursorindex;
 
 			if ($cursorindex >= 0) {
-				// Path is label sanitized (no space and no special char) and concatenated
+				// Path is label sanitized (no space and no special char) and concatenated @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 				$ret = dol_sanitizeFileName($this->cats[$cursorindex]['label']).'/'.$ret;
 
 				$idtosearch = $this->cats[$cursorindex]['id_mere'];
@@ -636,8 +638,9 @@ class EcmDirectory extends CommonObject
 	 * 				fulllabel	        Full label (Added by buildPathFromId call)
 	 * 				level		        Level of line (Added by buildPathFromId call)
 	 *
+	 *
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
-	 *	@return	array|int			        Tableau de array if OK, -1 if KO
+	 *	@return array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:int,id_children?:int[],level:int}>|int<-1,-1>	Tableau de array if OK, -1 if KO
 	 */
 	public function get_full_arbo($force = 0)
 	{
@@ -677,7 +680,7 @@ class EcmDirectory extends CommonObject
 				$this->cats[$obj->rowid]['id_mere'] = (isset($this->motherof[$obj->rowid]) ? $this->motherof[$obj->rowid] : '');
 				$this->cats[$obj->rowid]['label'] = $obj->label;
 				$this->cats[$obj->rowid]['description'] = $obj->description;
-				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
+				$this->cats[$obj->rowid]['cachenbofdoc'] = (int) $obj->cachenbofdoc;
 				$this->cats[$obj->rowid]['date_c'] = $this->db->jdate($obj->date_c);
 				$this->cats[$obj->rowid]['fk_user_c'] = (int) $obj->fk_user_c;
 				$this->cats[$obj->rowid]['statut_c'] = (int) $obj->statut_c;

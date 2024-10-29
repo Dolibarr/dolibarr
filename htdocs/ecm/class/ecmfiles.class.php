@@ -107,7 +107,7 @@ class EcmFiles extends CommonObject
 	public $position;
 
 	/**
-	 * @var string can be 'generated', 'uploaded', 'unknown'
+	 * @var 'generated'|'uploaded'|'unknown'|'copy'|''
 	 */
 	public $gen_or_uploaded;
 
@@ -535,7 +535,7 @@ class EcmFiles extends CommonObject
 	 * @param 	string 			$sortfield 		Sort field
 	 * @param 	int    			$limit     		Limit
 	 * @param 	int    			$offset    		Offset limit
-	 * @param 	string|array  	$filter    		filter array
+	 * @param 	string|array<string,mixed> 	$filter		filter array
 	 * @param 	string 			$filtermode 	filter mode (AND or OR)
 	 * @return 	int 							Return integer <0 if KO, >0 if OK
 	 */
@@ -613,7 +613,7 @@ class EcmFiles extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new EcmFilesLine();
+				$line = new EcmFilesLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
@@ -1033,7 +1033,7 @@ class EcmFiles extends CommonObject
 /**
  * Class of an index line of a document
  */
-class EcmFilesLine
+class EcmFilesLine extends CommonObjectLine
 {
 	/**
 	 * @var string ECM files line label
@@ -1045,8 +1045,17 @@ class EcmFilesLine
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $filename;
+	/**
+	 * @var string
+	 */
 	public $filepath;
+	/**
+	 * @var string
+	 */
 	public $fullpath_orig;
 
 	/**
@@ -1054,12 +1063,33 @@ class EcmFilesLine
 	 */
 	public $description;
 
+	/**
+	 * @var string
+	 */
 	public $keywords;
+	/**
+	 * @var string
+	 */
 	public $cover;
+	/**
+	 * @var int
+	 */
 	public $position;
+	/**
+	 * @var 'generated'|'uploaded'|'unknown'|'copy'|''
+	 */
 	public $gen_or_uploaded; // can be 'generated', 'uploaded', 'unknown'
+	/**
+	 * @var string
+	 */
 	public $extraparams;
+	/**
+	 * @var int|''
+	 */
 	public $date_c = '';
+	/**
+	 * @var int|''
+	 */
 	public $date_m = '';
 
 	/**
@@ -1072,7 +1102,16 @@ class EcmFilesLine
 	 */
 	public $fk_user_m;
 
+	/**
+	 * @var string
+	 */
 	public $acl;
+	/**
+	 * @var string
+	 */
 	public $src_object_type;
+	/**
+	 * @var int
+	 */
 	public $src_object_id;
 }
