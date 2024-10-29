@@ -590,7 +590,7 @@ class BOM extends CommonObject
 	 * @param	?int		$fk_bom_child			Id of BOM Child
 	 * @param	?string		$import_key				Import Key
 	 * @param	int 		$fk_unit				Unit
-	 * @param	array		$array_options			extrafields array
+	 * @param	array<string,mixed>		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>							Return integer <0 if KO, Id of created object if OK
 	 */
@@ -698,7 +698,7 @@ class BOM extends CommonObject
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
 	 * @param	?string		$import_key				Import Key
 	 * @param	int			$fk_unit				Unit of line
-	 * @param	array		$array_options			extrafields array
+	 * @param	array<string,mixed>		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>						Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
@@ -1299,7 +1299,7 @@ class BOM extends CommonObject
 	 *  @param      int<0,1>	$hidedetails    Hide details of lines
 	 *  @param      int<0,1>	$hidedesc       Hide description
 	 *  @param      int<0,1>	$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int<0,1>       				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1489,7 +1489,7 @@ class BOM extends CommonObject
 						$reg = array();
 						$qtyhourservice = 0;
 						if (preg_match('/^(\d+)([a-z]+)$/', $defaultdurationofservice, $reg)) {
-							$qtyhourservice = convertDurationtoHour((int) $reg[1], $reg[2]);
+							$qtyhourservice = convertDurationtoHour((float) $reg[1], $reg[2]);
 						}
 
 						if ($qtyhourservice) {

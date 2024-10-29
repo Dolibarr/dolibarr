@@ -79,7 +79,7 @@ create table llx_facture
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- payment term (30 days, end of month...)
   fk_mode_reglement		integer,								-- payment mode (Virement, Prelevement)
   date_lim_reglement	date,									-- due date
-
+  payment_reference     varchar(25),                            -- SEPA and any other national or custom payment id
   note_private			text,
   note_public			text,
   model_pdf				varchar(255),

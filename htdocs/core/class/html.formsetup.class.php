@@ -67,7 +67,7 @@ class FormSetup
 
 	/**
 	 *
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $formAttributes = array(
 		'action' => '', // set in __construct
@@ -76,7 +76,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array
+	 * @var array<string,string>  Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
@@ -116,7 +116,7 @@ class FormSetup
 	/**
 	 * Generate an attributes string form an input array
 	 *
-	 * @param 	array 	$attributes 	an array of attributes keys and values,
+	 * @param 	array<string,mixed|mixed[]|Object>	$attributes 	an array of attributes keys and values,
 	 * @return 	string					attribute string
 	 */
 	public static function generateAttributesStringFromArray($attributes)
@@ -618,13 +618,13 @@ class FormSetupItem
 	/** @var string $picto */
 	public $picto = '';
 
-	/** @var string $fieldValue */
+	/** @var ?string $fieldValue */
 	public $fieldValue;
 
-	/** @var string $defaultFieldValue */
+	/** @var ?string $defaultFieldValue */
 	public $defaultFieldValue = null;
 
-	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
+	/** @var array{name?:string,id?:string,value?:mixed,class?:string,disabled?:?int<0,1>,type?:string,size?:int,placeholder?:string,step?:float|string,min?:int,max?:int}  fields attribute only for compatible fields like input text */
 	public $fieldAttr = array();
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
@@ -639,10 +639,10 @@ class FormSetupItem
 	/** @var int $rank  */
 	public $rank = 0;
 
-	/** @var array set this var for options on select and multiselect items   */
+	/** @var array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
 
-	/** @var array set this var to add more parameters */
+	/** @var array<string,string|int|array{id:string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
 	public $fieldParams = array();
 
 	/** @var callable $saveCallBack  */
@@ -945,7 +945,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * generatec default input field
+	 * Generate default input field
 	 *
 	 * @return string
 	 */
@@ -1513,7 +1513,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a simple title. No data to store
 	 *
-	 * @param array $fieldOptions A table of field options
+	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
 	 * @return self
 	 */
 	public function setAsMultiSelect($fieldOptions)
@@ -1529,7 +1529,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a simple title. No data to store
 	 *
-	 * @param array $fieldOptions  A table of field options
+	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)

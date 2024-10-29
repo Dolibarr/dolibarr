@@ -66,7 +66,7 @@ class StockTransfer extends CommonObject
 
 	/**
 	 * @var string Customer ref
-	 * @deprecated
+	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
 	public $ref_client;

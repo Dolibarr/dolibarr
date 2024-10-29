@@ -689,7 +689,7 @@ if ($action == 'create') {
 				$shipment->fetch($object->origin_id);
 
 				// Show links to link elements
-				//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
 				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 

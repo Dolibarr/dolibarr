@@ -569,16 +569,37 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
+		$captcha = '';
 		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+			print '<tr><td class="titlefield">';
+
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
-			print '<span class="span-icon-security inline-block">';
-			print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" />';
-			print '</span>';
-			print '<span class="nowrap inline-block">';
-			print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-			print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
-			print '</span>';
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+
+			$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			$captchaobj = null;
+			if (dol_is_file($classfile)) {
+				// Charging the numbering class
+				$classname = "modCaptcha".ucfirst($captcha);
+				require_once $classfile;
+
+				$captchaobj = new $classname($this->db, $conf, $langs, $user);
+			}
+
+			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+				// TODO: get this code using a method of captcha
+			} else {
+				print '<label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+				print '<span class="span-icon-security inline-block">';
+				print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" />';
+				print '</span>';
+				print '<span class="nowrap inline-block">';
+				print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
+				print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+				print '</span>';
+			}
+
 			print '</td></tr>';
 		}
 

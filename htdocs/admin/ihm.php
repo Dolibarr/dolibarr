@@ -666,10 +666,12 @@ if ($mode == 'login') {
 	print '</td></tr>';
 
 	// Hide helpcenter link on login page
+	/*
 	print '<tr class="oddeven"><td>' . $langs->trans("DisableLinkToHelpCenter") . '</td><td>';
 	print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '', 'login');
 	print '</td>';
 	print '</tr>';
+	*/
 
 	// Message on login page
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount', 'user'));

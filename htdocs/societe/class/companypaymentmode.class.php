@@ -158,7 +158,7 @@ class CompanyPaymentMode extends CommonObject
 
 	/**
 	 * @var string iban
-	 * @deprecated Use $iban_prefix
+	 * @deprecated Use $iban_prefix, or wait the field in database is renamed into iban.
 	 * @see $iban_prefix
 	 */
 	public $iban;
@@ -167,18 +167,34 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string IBAN prefix
 	 */
 	public $iban_prefix;
+
 	/**
 	 * @var string
+	 * @deprecated Use address
 	 */
 	public $domiciliation;
+
 	/**
 	 * @var string
 	 */
+	public $address;
+
+	/**
+	 * @var string
+	 * @deprecated Use owner_name
+	 */
 	public $proprio;
+
+	/**
+	 * @var string
+	 */
+	public $owner_name;
+
 	/**
 	 * @var string
 	 */
 	public $owner_address;
+
 	/**
 	 * @var int
 	 */
@@ -516,7 +532,7 @@ class CompanyPaymentMode extends CommonObject
 	public function setAsDefault($id = 0, $alltypes = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".($id ? $id : $this->id);
+		$sql1 .= " WHERE rowid = ".((int) ($id ? $id : $this->id));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);

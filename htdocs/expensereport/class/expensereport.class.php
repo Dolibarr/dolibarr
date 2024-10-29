@@ -622,9 +622,9 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " total_ht = ".$this->total_ht;
-		$sql .= " , total_ttc = ".$this->total_ttc;
-		$sql .= " , total_tva = ".$this->total_tva;
+		$sql .= " total_ht = ".((float) $this->total_ht);
+		$sql .= " , total_ttc = ".((float) $this->total_ttc);
+		$sql .= " , total_tva = ".((float) $this->total_tva);
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport)) {
@@ -633,7 +633,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
 		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
 		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
-		$sql .= " , fk_user_modif = ".$user->id;
+		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut : '0');
 		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement : "null");
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
@@ -1906,9 +1906,9 @@ class ExpenseReport extends CommonObject
 		$this->total_ttc += $this->total_tva;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " total_ht = ".$this->total_ht;
-		$sql .= " , total_ttc = ".$this->total_ttc;
-		$sql .= " , total_tva = ".$this->total_tva;
+		$sql .= " total_ht = ".((float) $this->total_ht);
+		$sql .= " , total_ttc = ".((float) $this->total_ttc);
+		$sql .= " , total_tva = ".((float) $this->total_tva);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);

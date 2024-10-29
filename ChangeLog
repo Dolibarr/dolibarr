@@ -26,6 +26,7 @@ The following changes may create regressions for some external modules, but were
   be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
 * The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
 * The trigger code CATEGORY_LINK and CATEGORY_UNLINK has been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff' to detect we want to make a link or unlink.
+* The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name
 
 ***** ChangeLog for 20.0.1 compared to 20.0.0 *****
 

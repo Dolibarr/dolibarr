@@ -610,17 +610,49 @@ class Product extends CommonObject
 	 */
 	public $barcode_type_code;
 
-	public $stats_propale = array();
-	public $stats_commande = array();
-	public $stats_contrat = array();
-	public $stats_facture = array();
-	public $stats_proposal_supplier = array();
-	public $stats_commande_fournisseur = array();
-	public $stats_expedition = array();
 	/**
-	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float}
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats propales
+	 */
+	public $stats_propale = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats orders
+	 */
+	public $stats_commande = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats contracts
+	 */
+	public $stats_contrat = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats invoices
+	 */
+	public $stats_facture = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int} stats supplier propales
+	 */
+	public $stats_proposal_supplier = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float} stats supplier orders
+	 */
+	public $stats_commande_fournisseur = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats shipping
+	 */
+	public $stats_expedition = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float} stats receptions
 	 */
 	public $stats_reception = array();
+
+	/**
+	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
+	 */
 	public $stats_mo = array();
 	public $stats_bom = array();
 	public $stats_mrptoconsume = array();
@@ -693,7 +725,7 @@ class Product extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $ref_supplier
 	 * @see        $ref_supplier
 	 */
 	public $ref_fourn;
@@ -2843,8 +2875,8 @@ class Product extends CommonObject
 			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 		}
 
-		//For MultiCompany
-		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
+		// For MultiCompany
+		// PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
 		$separatedEntityPMP = false;	// Set to true to get the AWP from table llx_product_perentity instead of field 'pmp' into llx_product.
 		$separatedStock = false;		// Set to true will count stock from subtable llx_product_stock. It is slower than using denormalized field 'stock', but it is required when using multientity and shared warehouses.
 		$visibleWarehousesEntities = $conf->entity;
@@ -2969,8 +3001,10 @@ class Product extends CommonObject
 				$this->fk_default_bom = $obj->fk_default_bom;
 
 				$this->duration = $obj->duration;
-				$this->duration_value = $obj->duration ? (int) (substr($obj->duration, 0, dol_strlen($obj->duration) - 1)) : 0;
-				$this->duration_unit = $obj->duration ? substr($obj->duration, -1) : null;
+				$matches = [];
+				preg_match('/(\d+)(\w+)/', $obj->duration, $matches);
+				$this->duration_value = !empty($matches[1]) ? (int) $matches[1] : 0;
+				$this->duration_unit = !empty($matches[2]) ? (string) $matches[2] : null;
 				$this->canvas = $obj->canvas;
 				$this->net_measure = $obj->net_measure;
 				$this->net_measure_units = $obj->net_measure_units;

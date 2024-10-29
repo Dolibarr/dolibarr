@@ -115,8 +115,8 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
- *  @param      int			$duration_value     Value of delay to add
+ *  @param      int|string	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
@@ -128,16 +128,16 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 		return $time;
 	}
 	if ($duration_unit == 's') {
-		return $time + ($duration_value);
+		return $time + (int) ($duration_value);
 	}
 	if ($duration_unit == 'i') {
-		return $time + (60 * $duration_value);
+		return $time + (int) (60 * $duration_value);
 	}
 	if ($duration_unit == 'h') {
-		return $time + (3600 * $duration_value);
+		return $time + (int) (3600 * $duration_value);
 	}
 	if ($duration_unit == 'w') {
-		return $time + (3600 * 24 * 7 * $duration_value);
+		return $time + (int) (3600 * 24 * 7 * $duration_value);
 	}
 
 	$deltastring = 'P';
@@ -327,9 +327,9 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 
 /**	  	Convert duration to hour
  *
- *    	@param      int		$duration_value		Duration value
+ *    	@param      float	$duration_value		Duration value
  *    	@param      string	$duration_unit		Duration unit
- *      @return     int		$result
+ *      @return     float	$result
  */
 function convertDurationtoHour($duration_value, $duration_unit)
 {
