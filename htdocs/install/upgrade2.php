@@ -2529,8 +2529,9 @@ function migrate_restore_missing_links($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
-				$sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($table2)." SET";
+				$sql .= " ".$db->sanitize($field2)." = '".$db->escape($obj->rowid)."'";
 				$sql .= " WHERE rowid = ".((int) $obj->field);
 
 				$resql2 = $db->query($sql);
@@ -2588,8 +2589,9 @@ function migrate_restore_missing_links($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
-				$sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($table2)." SET";
+				$sql .= " ".$db->sanitize($field2)." = '".$db->escape($obj->rowid)."'";
 				$sql .= " WHERE rowid = ".((int) $obj->field);
 
 				$resql2 = $db->query($sql);
@@ -3251,8 +3253,8 @@ function migrate_actioncomm_element($db, $langs, $conf)
 			$db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
-			$sql .= "fk_element = ".$field.", elementtype = '".$db->escape($type)."'";
-			$sql .= " WHERE ".$field." IS NOT NULL";
+			$sql .= "fk_element = ".$db->sanitize($field).", elementtype = '".$db->escape($type)."'";
+			$sql .= " WHERE ".$db->sanitize($field)." IS NOT NULL";
 			$sql .= " AND fk_element IS NULL";
 			$sql .= " AND elementtype IS NULL";
 

@@ -1369,7 +1369,7 @@ abstract class CommonObject
 		// phpcs:enable
 		// Insert into database
 		$sql = "UPDATE ".$this->db->prefix()."element_contact set";
-		$sql .= " statut = ".$statut;
+		$sql .= " statut = ".((int) $statut);
 		if ($type_contact_id) {
 			$sql .= ", fk_c_type_contact = ".((int) $type_contact_id);
 		}
@@ -1377,6 +1377,7 @@ abstract class CommonObject
 			$sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		}
 		$sql .= " where rowid = ".((int) $rowid);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 0;
@@ -4102,11 +4103,11 @@ abstract class CommonObject
 
 			if (!$error && empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
-				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
-				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
-				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
-				$sql .= " ".$fieldlocaltax2." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
-				$sql .= " ".$fieldttc." = ".((float) price2num($this->total_ttc, 'MT', 1));
+				$sql .= " ".$this->db->sanitize($fieldht)." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldtva)." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldlocaltax1)." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldlocaltax2)." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldttc)." = ".((float) price2num($this->total_ttc, 'MT', 1));
 				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
 				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
 				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));

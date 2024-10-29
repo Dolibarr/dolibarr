@@ -1360,7 +1360,7 @@ class Form
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';
 			} elseif ($hidelabel == 1 && !is_numeric($showempty)) {
-				$placeholder = $showempty;
+				$placeholder = $langs->trans($showempty);
 			} elseif ($hidelabel > 1) {
 				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {

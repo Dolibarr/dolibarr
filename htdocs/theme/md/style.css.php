@@ -6152,7 +6152,7 @@ table.jPicker tr:first-of-type td {
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
-	background-color: #f4f4f4 !important;
+	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 }
 .jPicker .Grid {
@@ -6172,6 +6172,13 @@ table.jPicker {
 }
 .jPicker .Preview div {
 	height: 36px !important;
+}
+.jPicker input[type="button"] {
+	background: var(--butactionbg);
+	color: var(--textbutaction);
+	border-radius: 4px;
+	border-collapse: collapse;
+	border: none;
 }
 
 A.color, A.color:active, A.color:visited {

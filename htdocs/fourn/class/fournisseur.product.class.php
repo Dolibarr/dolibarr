@@ -537,14 +537,14 @@ class ProductFournisseur extends Product
 			$sql .= " multicurrency_tx = ".(isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
 			$sql .= " fk_multicurrency = ".(isset($fk_multicurrency) ? (int) $fk_multicurrency : 'null').",";
 			$sql .= " multicurrency_code = ".(isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
-			$sql .= " entity = ".$conf->entity.",";
-			$sql .= " tva_tx = ".price2num($tva_tx).",";
+			$sql .= " entity = ".((int) $conf->entity).",";
+			$sql .= " tva_tx = ".((float) price2num($tva_tx)).",";
 			// TODO Add localtax1 and localtax2
 			//$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
 			//$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
 			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$this->db->escape($localtaxtype1)."'":"'0'").",";
 			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$this->db->escape($localtaxtype2)."'":"'0'").",";
-			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
+			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " info_bits = ".((int) $newnpr).",";
 			$sql .= " charges = ".((float) $charges).","; // deprecated
 			$sql .= " delivery_time_days = ".($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
@@ -1524,7 +1524,7 @@ class ProductFournisseur extends Product
 		$sql .= (isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 		$sql .= "'".$this->db->idate($datec)."',";
 		$sql .= " ".((int) $this->product_fourn_price_id).",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " ".price2num($buyprice).",";
 		$sql .= " ".price2num($qty);
 		$sql .= ")";

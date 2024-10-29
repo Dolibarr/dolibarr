@@ -980,7 +980,7 @@ class DoliDBMysqli extends DoliDB
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+			$sql .= " ".$this->sanitize($field_desc['null']);
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
