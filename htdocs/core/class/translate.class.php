@@ -500,7 +500,7 @@ class Translate
 			return 0;
 		}
 
-		$this->_tab_loaded[$newdomain] = 2; // Preset the load ad failed and make  sure this function is called once only for domain 'database'
+		$this->_tab_loaded[$newdomain] = 1; // Preset the load as loaded and make sure this function is called once only for domain 'newdomain'
 
 		$fileread = 0;
 		$langofdir = $this->defaultlang;
