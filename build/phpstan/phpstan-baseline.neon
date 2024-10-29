@@ -211,6 +211,11 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountancycategory.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/accountancy/class/accountancyexport.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force FactureFournisseur \\$invoice'\" on a separate line does not do anything\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
@@ -446,6 +451,11 @@ parameters:
 			path: ../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/accountancy/class/lettering.class.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/class/lettering.class.php
@@ -519,6 +529,16 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/index.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/accountancy/journal/bankjournal.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<mixed\\> will always evaluate to true\\.$#"
+			count: 3
+			path: ../../htdocs/accountancy/journal/bankjournal.php
 
 		-
 			message: """
@@ -680,6 +700,36 @@ parameters:
 			path: ../../htdocs/adherents/card.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<mixed\\> will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/adherents/class/adherent.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Adherent\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Adherent\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Adherent\\) and 'photo' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Adherent\\) and 'societe' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefMembers \\$modCodeMember'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/class/adherent.class.php
@@ -730,6 +780,26 @@ parameters:
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(AdherentType\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent_type.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(AdherentType\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent_type.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(AdherentType\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent_type.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(AdherentType\\) and 'vote' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/adherent_type.class.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/class/adherent_type.class.php
@@ -753,6 +823,21 @@ parameters:
 			message: "#^Property AdherentType\\:\\:\\$vote \\(int\\<0, 1\\>\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/class/adherent_type.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Subscription\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/subscription.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Subscription\\) and 'datef' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/subscription.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Subscription\\) and 'dateh' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/class/subscription.class.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -793,6 +878,11 @@ parameters:
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/list.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Adherent will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/adherents/messaging.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -935,6 +1025,11 @@ parameters:
 			path: ../../htdocs/admin/bom.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with ModeleBoxes will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/admin/boxes.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefChequeReceipts \\$module'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/admin/chequereceipts.php
@@ -963,6 +1058,11 @@ parameters:
 			message: "#^Expression \"'@phan\\-var\\-force ModelePDFDeliveryOrder \\$module'\" on a separate line does not do anything\\.$#"
 			count: 2
 			path: ../../htdocs/admin/delivery.php
+
+		-
+			message: "#^Call to function is_null\\(\\) with null will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/admin/dict.php
 
 		-
 			message: "#^Variable \\$param in empty\\(\\) always exists and is not falsy\\.$#"
@@ -1185,6 +1285,11 @@ parameters:
 			path: ../../htdocs/admin/limits.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int, array\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/admin/mails.php
+
+		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 3
 			path: ../../htdocs/admin/mails.php
@@ -1280,6 +1385,11 @@ parameters:
 			path: ../../htdocs/admin/modulehelp.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/admin/modules.php
+
+		-
 			message: """
 				#^Expression "'
 				@phan\\-var\\-force string \\$dolibarr_main_url_root_alt
@@ -1339,6 +1449,11 @@ parameters:
 			path: ../../htdocs/admin/mrp.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/admin/notification.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/admin/notification.php
@@ -1347,6 +1462,11 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/admin/oauth.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force PrintingDriver \\$printer'\" on a separate line does not do anything\\.$#"
@@ -1402,6 +1522,11 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/admin/pdf.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/admin/perms.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force DolibarrModules \\$objMod'\" on a separate line does not do anything\\.$#"
@@ -1623,9 +1748,19 @@ parameters:
 			path: ../../htdocs/admin/system/phpinfo.php
 
 		-
+			message: "#^Call to function function_exists\\(\\) with 'exec'\\|'popen' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/admin/system/security.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force string\\[\\] \\$arrayofstreamtodisable'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/admin/system/security.php
+
+		-
+			message: "#^Call to function is_bool\\(\\) with true will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/admin/system/xdebug.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefTicket \\$module'\" on a separate line does not do anything\\.$#"
@@ -1751,6 +1886,11 @@ parameters:
 			message: "#^Property DolibarrApiAccess\\:\\:\\$requires type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/api/class/api_access.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with ActionComm\\|Adherent\\|Commande\\|CommandeFournisseur\\|Contact\\|Contrat\\|ExpenseReport\\|Facture\\|FactureFournisseur\\|Fichinter\\|Mo\\|Product\\|Project\\|Propal\\|Task will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/api/class/api_documents.class.php
 
 		-
 			message: "#^Method Documents\\:\\:builddoc\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2078,6 +2218,36 @@ parameters:
 			path: ../../htdocs/asset/class/asset.class.php
 
 		-
+			message: "#^Call to function is_callable\\(\\) with array\\{\\$this\\(AssetDepreciationOptions\\), 'validateField'\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/asset/class/assetdepreciationoptions.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with AssetModel and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/asset/class/assetmodel.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with AssetModel and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/asset/class/assetmodel.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with AssetModel and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/asset/class/assetmodel.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with AssetModel and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/asset/class/assetmodel.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with AssetModel and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/asset/class/assetmodel.class.php
+
+		-
 			message: "#^Property AssetModel\\:\\:\\$asset_accountancy_codes \\(AssetAccountancyCodes\\) in empty\\(\\) is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/asset/class/assetmodel.class.php
@@ -2206,6 +2376,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$objtoshow of function formatObject expects object, array given\\.$#"
 			count: 1
 			path: ../../htdocs/blockedlog/ajax/block-info.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Don\\|Facture\\|FactureFournisseur\\|PaymentVarious will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/blockedlog/class/blockedlog.class.php
 
 		-
 			message: "#^Dead catch \\- Exception is never thrown in the try block\\.$#"
@@ -2358,6 +2533,16 @@ parameters:
 			path: ../../htdocs/bom/class/api_boms.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(BOM\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bom/class/bom.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(BOM\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bom/class/bom.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force BOMLine \\$newline'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/bom/class/bom.class.php
@@ -2403,6 +2588,11 @@ parameters:
 			path: ../../htdocs/bom/tpl/linkedobjectblock.tpl.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with BOMLine will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
+
+		-
 			message: """
 				#^Expression "'
 				@phan\\-var\\-force CommonObject \\$this
@@ -2412,6 +2602,11 @@ parameters:
 			"""
 			count: 1
 			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with BOMLine will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bom/tpl/objectline_edit.tpl.php
 
 		-
 			message: """
@@ -2599,6 +2794,11 @@ parameters:
 			path: ../../htdocs/bookcal/booking_list.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with Calendar and 'module' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/calendar_agenda.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/calendar_agenda.php
@@ -2703,6 +2903,46 @@ parameters:
 			path: ../../htdocs/bookcal/calendar_note.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Availabilities\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Availabilities\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Availabilities\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Availabilities and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Availabilities and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Availabilities and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Availabilities and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Availabilities and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonNumRefGenerator \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/class/availabilities.class.php
@@ -2746,6 +2986,51 @@ parameters:
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/bookcal/class/availabilities.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Calendar\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Calendar\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Calendar\\) and 'fk_soc' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Calendar\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Calendar and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Calendar and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Calendar and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Calendar and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Calendar and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/class/calendar.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonNumRefGenerator \\$obj'\" on a separate line does not do anything\\.$#"
@@ -2801,6 +3086,11 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/bookcal/lib/bookcal_calendar.lib.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/bookmarks/bookmarks.lib.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
@@ -3151,6 +3441,16 @@ parameters:
 			path: ../../htdocs/comm/action/document.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/comm/action/index.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, array\\{type\\: 'globalsetup'\\|'usersetup', src\\: mixed, name\\: mixed, offsettz\\: int, color\\: mixed, default\\: mixed, buggedfile\\: mixed\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/action/index.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ActionComm \\$event'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/index.php
@@ -3210,6 +3510,16 @@ parameters:
 			path: ../../htdocs/comm/action/info.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/action/list.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with ActionComm will always evaluate to true\\.$#"
+			count: 3
+			path: ../../htdocs/comm/action/list.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<string,array\\{label\\:string,checked\\?\\:int\\<0,1\\>,position\\?\\:int,help\\?\\:string\\}\\> \\$arrayfields'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/list.php
@@ -3223,6 +3533,11 @@ parameters:
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/list.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/action/pertype.php
 
 		-
 			message: "#^Comparison operation \"\\<\" between int\\<1, max\\> and 1 is always false\\.$#"
@@ -3278,6 +3593,11 @@ parameters:
 			message: "#^Variable \\$mode in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/comm/action/pertype.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/action/peruser.php
 
 		-
 			message: "#^Function show_day_events2\\(\\) has parameter \\$colorsbytype with no value type specified in iterable type array\\.$#"
@@ -3469,6 +3789,11 @@ parameters:
 			path: ../../htdocs/comm/mailing/list.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with Propal and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/comm/propal/agenda.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/agenda.php
@@ -3612,6 +3937,26 @@ parameters:
 			message: "#^Property Proposals\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/class/api_proposals.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Propal\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/propal/class/propal.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Propal\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/propal/class/propal.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Propal\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/propal/class/propal.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Propal\\) and 'total_ht' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/comm/propal/class/propal.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefPropales \\$obj'\" on a separate line does not do anything\\.$#"
@@ -3842,6 +4187,11 @@ parameters:
 			message: "#^Expression \"'@phan\\-var\\-force Translate \\$langs'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Commande and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/commande/agenda.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -4154,6 +4504,11 @@ parameters:
 			path: ../../htdocs/commande/document.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Commande and 'fetch_lines' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/commande/list.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force OrderLine \\$orderLine'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/commande/list.php
@@ -4239,6 +4594,11 @@ parameters:
 			path: ../../htdocs/compta/bank/annuel.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/compta/bank/bankentries_list.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/bankentries_list.php
@@ -4277,6 +4637,26 @@ parameters:
 			message: "#^Variable \\$selectedcode in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/card.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Account\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/account.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Account\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/account.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Account\\) and 'solde' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/account.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Account\\) and 'type_lib' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/account.class.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -4369,6 +4749,31 @@ parameters:
 			path: ../../htdocs/compta/bank/class/bankcateg.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(PaymentVarious\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentVarious\\) and 'accountancy_code' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentVarious\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentVarious\\) and 'datep' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentVarious\\) and 'fk_bank' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
+
+		-
 			message: "#^Property PaymentVarious\\:\\:\\$accountid \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
@@ -4444,6 +4849,11 @@ parameters:
 			path: ../../htdocs/compta/bank/treso.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/bank/various_payment/card.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/card.php
@@ -4504,6 +4914,31 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(CashControl\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/cashcontrol/class/cashcontrol.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(CashControl\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/cashcontrol/class/cashcontrol.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CashControl\\) and 'posmodule' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/cashcontrol/class/cashcontrol.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CashControl\\) and 'year_close' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/cashcontrol/class/cashcontrol.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int\\|string, \\(float\\|int\\)\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/cashcontrol/report.php
+
+		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 1
 			path: ../../htdocs/compta/cashcontrol/report.php
@@ -4514,9 +4949,19 @@ parameters:
 			path: ../../htdocs/compta/charges/index.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with FactureRec and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/compta/facture/agenda-rec.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/agenda-rec.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Facture and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/compta/facture/agenda.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -4848,6 +5293,26 @@ parameters:
 			message: "#^Result of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture-rec.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Facture\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/facture/class/facture.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Facture\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/facture/class/facture.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Facture\\) and 'date' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/facture/class/facture.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Facture\\) and 'total_ht' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force FactureLigne \\$line'\" on a separate line does not do anything\\.$#"
@@ -5190,6 +5655,11 @@ parameters:
 			path: ../../htdocs/compta/facture/list.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with Facture and 'module' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/facture/messaging.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/messaging.php
@@ -5285,6 +5755,31 @@ parameters:
 			path: ../../htdocs/compta/localtax/card.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Localtax\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/localtax/class/localtax.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Localtax\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/localtax/class/localtax.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Localtax\\) and 'datep' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/localtax/class/localtax.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Localtax\\) and 'datev' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/localtax/class/localtax.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Localtax\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/localtax/class/localtax.class.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/localtax/class/localtax.class.php
@@ -5318,6 +5813,11 @@ parameters:
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/localtax/index.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, array\\<string, mixed\\>\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/localtax/quadri_detail.php
 
 		-
 			message: "#^Comparison operation \"\\<\" between 0 and 4 is always true\\.$#"
@@ -5383,6 +5883,36 @@ parameters:
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 3
 			path: ../../htdocs/compta/paiement/cheque/card.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(RemiseCheque\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(RemiseCheque\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RemiseCheque\\) and 'account_id' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RemiseCheque\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RemiseCheque\\) and 'date_bordereau' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RemiseCheque\\) and 'nbcheque' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleChequeReceipts \\$docmodel'\" on a separate line does not do anything\\.$#"
@@ -5554,6 +6084,26 @@ parameters:
 			path: ../../htdocs/compta/prelevement/card.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(BonPrelevement\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(BonPrelevement\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(BonPrelevement\\) and 'date_echeance' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(BonPrelevement\\) and 'total' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
@@ -5627,6 +6177,11 @@ parameters:
 			message: "#^Offset 'checked' on array\\{label\\: 'Date', checked\\: 1\\} in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/compta/recap-compta.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int\\|string, array\\{NP\\: mixed, N\\?\\: \\(float\\|int\\), M\\?\\: non\\-empty\\-array\\<0\\|1\\|2\\|3\\|4\\|5\\|6\\|7\\|8\\|9\\|10\\|11, mixed\\>\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/resultat/result.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
@@ -5727,6 +6282,31 @@ parameters:
 			message: "#^Property Cchargesociales\\:\\:\\$module \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/compta/sociales/class/cchargesociales.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ChargeSociales\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/sociales/class/chargesociales.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ChargeSociales\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/sociales/class/chargesociales.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ChargeSociales\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/sociales/class/chargesociales.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ChargeSociales\\) and 'date_ech' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/sociales/class/chargesociales.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ChargeSociales\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/sociales/class/chargesociales.class.php
 
 		-
 			message: "#^Property ChargeSociales\\:\\:\\$paye \\(int\\<0, 1\\>\\) in isset\\(\\) is not nullable\\.$#"
@@ -6014,9 +6594,44 @@ parameters:
 			path: ../../htdocs/compta/tva/class/paymentvat.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Tva\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/class/tva.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Tva\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/class/tva.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Tva\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/class/tva.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Tva\\) and 'datev' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/class/tva.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Tva\\) and 'type_payment' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/class/tva.class.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/tva/class/tva.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, array\\{id\\: mixed, descr\\: mixed, pid\\: mixed, pref\\: mixed, ptype\\: int, pstatus\\: mixed, pstatusbuy\\: mixed, payment_id\\: mixed, \\.\\.\\.\\}\\|array\\{id\\: mixed, descr\\: mixed, pid\\: mixed, pref\\: mixed, ptype\\: mixed, pstatus\\: int, pstatusbuy\\: int, payment_id\\: mixed, \\.\\.\\.\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/clients.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, array\\{id\\: mixed, descr\\: mixed, pid\\: mixed, pref\\: mixed, ptype\\: mixed, pstatus\\: mixed, pstatusbuy\\: mixed, payment_id\\: mixed, \\.\\.\\.\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/clients.php
 
 		-
 			message: "#^Comparison operation \"\\<\" between 0 and 4 is always true\\.$#"
@@ -6067,6 +6682,16 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/tva/payments.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, array\\{id\\: mixed, descr\\: mixed, pid\\: mixed, pref\\: mixed, ptype\\: int, payment_id\\: mixed, payment_ref\\: mixed, payment_amount\\: mixed, \\.\\.\\.\\}\\|array\\{id\\: mixed, descr\\: mixed, pid\\: mixed, pref\\: mixed, ptype\\: mixed, payment_id\\: mixed, payment_ref\\: mixed, payment_amount\\: mixed, \\.\\.\\.\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/quadri_detail.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, array\\{id\\: mixed, descr\\: mixed, pid\\: mixed, pref\\: mixed, ptype\\: mixed, payment_id\\: mixed, payment_ref\\: mixed, payment_amount\\: mixed, \\.\\.\\.\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/compta/tva/quadri_detail.php
 
 		-
 			message: "#^Comparison operation \"\\<\" between 0 and 4 is always true\\.$#"
@@ -6143,6 +6768,31 @@ parameters:
 			message: "#^Variable \\$triggermodname in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/contact/card.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contact/class/contact.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Contact\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contact/class/contact.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Contact\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contact/class/contact.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Contact\\) and 'photo' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contact/class/contact.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Contact\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contact/class/contact.class.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -6238,6 +6888,11 @@ parameters:
 			message: "#^Variable \\$ref in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/contact/list.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Contact will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contact/messaging.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -6398,6 +7053,21 @@ parameters:
 			message: "#^Property Contracts\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/contrat/class/api_contracts.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Contrat\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contrat/class/contrat.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Contrat\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contrat/class/contrat.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Contrat\\) and 'date_contrat' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/contrat/class/contrat.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModelNumRefContracts \\$modCodeContrat'\" on a separate line does not do anything\\.$#"
@@ -6717,6 +7387,16 @@ parameters:
 			path: ../../htdocs/core/actions_lineupdown.inc.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int\\|string, array\\{paths\\: array\\{mixed\\}, names\\: array\\{string\\}, mimes\\: array\\{mixed\\}\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/actions_massactions.inc.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Adherent\\|ConferenceOrBoothAttendee\\|Contact\\|Societe\\|User will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/actions_massactions.inc.php
+
+		-
 			message: "#^Comparison operation \"\\>\" between 0 and 1 is always false\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_massactions.inc.php
@@ -6865,6 +7545,16 @@ parameters:
 			path: ../../htdocs/core/actions_printing.inc.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/actions_sendmails.inc.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/actions_sendmails.inc.php
+
+		-
 			message: """
 				#^Expression "'
 				@phan\\-var\\-force Societe      \\$mysoc
@@ -6878,6 +7568,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$filenb of function dol_remove_file_process expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
 			message: """
@@ -6940,9 +7635,24 @@ parameters:
 			path: ../../htdocs/core/ajax/locationincoterms.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/ajax/mailtemplate.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$object'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/ajax/objectonoff.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/ajax/onlineSign.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Propal and 'call_trigger' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/ajax/onlineSign.php
 
 		-
 			message: "#^Function dolPrintSignatureImage\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
@@ -6985,9 +7695,19 @@ parameters:
 			path: ../../htdocs/core/boxes/box_activity.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/boxes/box_birthdays.php
+
+		-
 			message: "#^Constructor of class box_birthdays has an unused parameter \\$param\\.$#"
 			count: 1
 			path: ../../htdocs/core/boxes/box_birthdays.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/boxes/box_birthdays_members.php
 
 		-
 			message: "#^Constructor of class box_birthdays_members has an unused parameter \\$param\\.$#"
@@ -7038,6 +7758,16 @@ parameters:
 			message: "#^Constructor of class box_customers_outstanding_bill_reached has an unused parameter \\$param\\.$#"
 			count: 1
 			path: ../../htdocs/core/boxes/box_customers_outstanding_bill_reached.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<'contacts'\\|'contracts'\\|'customers'\\|'dolresource'\\|'donations'\\|'expensereports'\\|'holidays'\\|'interventions'\\|'invoices'\\|'members'\\|'orders'\\|'products'\\|'projects'\\|'proposals'\\|'prospects'\\|'services'\\|'supplier_invoices'\\|'supplier_orders'\\|'supplier_proposals'\\|'suppliers'\\|'ticket'\\|'users', non\\-falsy\\-string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/boxes/box_dolibarr_state_board.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Adherent\\|Client\\|Commande\\|CommandeFournisseur\\|Contact\\|Contrat\\|Dolresource\\|Don\\|ExpenseReport\\|Facture\\|FactureFournisseur\\|Fichinter\\|Fournisseur\\|Holiday\\|Product\\|Project\\|Propal\\|SupplierProposal\\|Ticket\\|User and 'loadStateBoard' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/boxes/box_dolibarr_state_board.php
 
 		-
 			message: "#^Constructor of class box_dolibarr_state_board has an unused parameter \\$param\\.$#"
@@ -7300,6 +8030,11 @@ parameters:
 			path: ../../htdocs/core/boxes/box_validated_projects.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/boxes/modules_boxes.php
+
+		-
 			message: "#^Comparison operation \"\\>\" between 0 and 1 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/boxes/modules_boxes.php
@@ -7523,6 +8258,26 @@ parameters:
 			message: "#^Variable \\$field4 in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/commoninvoice.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 4
+			path: ../../htdocs/core/class/commonobject.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 9
+			path: ../../htdocs/core/class/commonobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommonObject\\) and 'fields' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/commonobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommonObject\\) and 'statut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/commonobject.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force Commande \\$this'\" on a separate line does not do anything\\.$#"
@@ -7770,6 +8525,16 @@ parameters:
 			path: ../../htdocs/core/class/commonobject.class.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommonOrder\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/commonorder.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommonOrder\\) and 'total_ht' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/commonorder.class.php
+
+		-
 			message: "#^Property CommonOrderLine\\:\\:\\$localtax1_type has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/commonorder.class.php
@@ -7875,33 +8640,18 @@ parameters:
 			path: ../../htdocs/core/class/commonstickergenerator.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$actions has no type specified\\.$#"
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$adherent has no type specified\\.$#"
+			message: "#^Property Conf\\:\\:\\$adherent \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$admin has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$agenda has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$bank has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$category has no type specified\\.$#"
-			count: 1
+			message: "#^Property Conf\\:\\:\\$agenda \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
@@ -7915,11 +8665,6 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$currency has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
 			message: "#^Property Conf\\:\\:\\$delivery_note has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
@@ -7930,48 +8675,18 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$dol_hide_leftmenu has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$dol_hide_topmenu has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$dol_no_mouse_hover has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$dol_optimize_smallscreen has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$dol_use_jmobile has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$email_from has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
 			message: "#^Property Conf\\:\\:\\$expedition_bon has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$expensereport has no type specified\\.$#"
+			message: "#^Property Conf\\:\\:\\$expensereport \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$facture has no type specified\\.$#"
-			count: 1
+			message: "#^Property Conf\\:\\:\\$facture \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
@@ -8025,22 +8740,12 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$invoice has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
 			message: "#^Property Conf\\:\\:\\$main_checkbox_left_column \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$medias has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$member has no type specified\\.$#"
+			message: "#^Property Conf\\:\\:\\$member \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
@@ -8050,22 +8755,7 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$multicompany has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
 			message: "#^Property Conf\\:\\:\\$mycompany has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$notification has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$order has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
@@ -8075,12 +8765,7 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$productbatch has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$project has no type specified\\.$#"
+			message: "#^Property Conf\\:\\:\\$project \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
@@ -8090,27 +8775,7 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$propal has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$standard_menu has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$supplier_invoice has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$supplier_order has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/conf.class.php
-
-		-
-			message: "#^Property Conf\\:\\:\\$supplier_proposal has no type specified\\.$#"
+			message: "#^Property Conf\\:\\:\\$propal \\(stdClass\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
@@ -8120,8 +8785,8 @@ parameters:
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
-			message: "#^Property Conf\\:\\:\\$user has no type specified\\.$#"
-			count: 1
+			message: "#^Result of && is always false\\.$#"
+			count: 2
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
@@ -8310,6 +8975,11 @@ parameters:
 			path: ../../htdocs/core/class/dolgeophp.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\{stacknum\\: int, legend\\: mixed, legendwithgroup\\: non\\-falsy\\-string\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/dolgraph.class.php
+
+		-
 			message: "#^Comparison operation \"\\>\" between 0 and 0 is always false\\.$#"
 			count: 3
 			path: ../../htdocs/core/class/dolgraph.class.php
@@ -8370,6 +9040,26 @@ parameters:
 			path: ../../htdocs/core/class/dolreceiptprinter.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/core/class/extrafields.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, \\(int\\|string\\)\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/extrafields.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 11
+			path: ../../htdocs/core/class/extrafields.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/extrafields.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$tmpobject'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/extrafields.class.php
@@ -8390,6 +9080,11 @@ parameters:
 			path: ../../htdocs/core/class/extrafields.class.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int\\<0, max\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/fileupload.class.php
+
+		-
 			message: "#^Property Fiscalyear\\:\\:\\$date_start \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/fiscalyear.class.php
@@ -8398,6 +9093,11 @@ parameters:
 			message: "#^Property Fiscalyear\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/fiscalyear.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/hookmanager.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonHookActions \\$actionInstance'\" on a separate line does not do anything\\.$#"
@@ -8418,6 +9118,11 @@ parameters:
 			message: "#^Property HookManager\\:\\:\\$hooksSorted has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/hookmanager.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/core/class/html.form.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ActionComm \\$object'\" on a separate line does not do anything\\.$#"
@@ -8565,9 +9270,24 @@ parameters:
 			path: ../../htdocs/core/class/html.formbank.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formcategory.class.php
+
+		-
 			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:multiselectarray\\(\\) expects array\\<string, array\\{id\\: string, label\\: string, color\\: string, picto\\: string, labelhtml\\: string\\}\\|string\\>, array\\<int, array\\{id\\: int, fulllabel\\: string, color\\: string, picto\\: string\\}\\|array\\{rowid\\: int, id\\: int, fk_parent\\: int, label\\: string, description\\: string, color\\: string, position\\: string, visible\\: int, \\.\\.\\.\\}\\|string\\>\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formcategory.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formcompany.class.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|\\(non\\-falsy\\-string&numeric\\-string\\) will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formcompany.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$object'\" on a separate line does not do anything\\.$#"
@@ -8593,6 +9313,11 @@ parameters:
 			message: "#^Parameter \\#3 \\$selected of method Form\\:\\:multiselectarray\\(\\) expects array\\<string\\>, array\\<array\\<string, int\\>\\|int\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formcompany.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formfile.class.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between 1 and 0 is always true\\.$#"
@@ -8750,6 +9475,21 @@ parameters:
 			path: ../../htdocs/core/class/html.formsms.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formticket.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/core/class/html.formticket.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, non\\-falsy\\-string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formticket.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$objectsrc'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formticket.class.php
@@ -8777,6 +9517,11 @@ parameters:
 		-
 			message: "#^Call to function is_object\\(\\) with mixed will always evaluate to false\\.$#"
 			count: 2
+			path: ../../htdocs/core/class/interfaces.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 4
 			path: ../../htdocs/core/class/interfaces.class.php
 
 		-
@@ -9030,6 +9775,11 @@ parameters:
 			path: ../../htdocs/core/class/notify.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int\\|string, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/openid.class.php
+
+		-
 			message: "#^Method SimpleOpenID\\:\\:GetError\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/openid.class.php
@@ -9110,6 +9860,11 @@ parameters:
 			path: ../../htdocs/core/class/reddithandler.class.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with XMLParser will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/rssparser.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force SimpleXMLElement \\$value'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/rssparser.class.php
@@ -9153,6 +9908,36 @@ parameters:
 			message: "#^Expression \"'@phan\\-var\\-force array\\<int\\<0,11\\>,array\\{0\\:int\\<1,12\\>,1\\:int\\}\\> \\$data'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/stats.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(TimeSpent\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/timespent.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(TimeSpent\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/timespent.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with TimeSpent and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/timespent.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with TimeSpent and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/timespent.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with TimeSpent and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/timespent.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with TimeSpent and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/timespent.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonNumRefGenerator \\$obj'\" on a separate line does not do anything\\.$#"
@@ -9210,6 +9995,11 @@ parameters:
 			path: ../../htdocs/core/class/translate.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\|false\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/utils.class.php
+
+		-
 			message: "#^Comparison operation \"\\<\" between 0\\|1 and 0 is always false\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/utils.class.php
@@ -9253,6 +10043,11 @@ parameters:
 			message: "#^Expression \"'@phan\\-var\\-force DolibarrModules \\$this'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/commonfieldsinimport.inc.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<string, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/customreports.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between 0 and 0 is always false\\.$#"
@@ -9675,6 +10470,11 @@ parameters:
 			path: ../../htdocs/core/lib/accounting.lib.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/admin.lib.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force DolibarrModules \\$objMod'\" on a separate line does not do anything\\.$#"
 			count: 4
 			path: ../../htdocs/core/lib/admin.lib.php
@@ -9800,9 +10600,24 @@ parameters:
 			path: ../../htdocs/core/lib/customreports.lib.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with 'DateTimeZone' and 'getOffset' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/date.lib.php
+
+		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/emailing.lib.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{file\\: string, timestamp\\: int\\|false\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/files.lib.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/files.lib.php
 
 		-
 			message: "#^Elseif condition is always true\\.$#"
@@ -9868,6 +10683,26 @@ parameters:
 			message: "#^Parameter \\#1 \\$ftp of function ftp_rmdir expects FTP\\\\Connection, resource given\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/ftp.lib.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<string, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/functions.lib.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with float will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/functions.lib.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with User will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/functions.lib.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 24
+			path: ../../htdocs/core/lib/functions.lib.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between int\\<1, max\\> and 0 is always true\\.$#"
@@ -10190,6 +11025,11 @@ parameters:
 			path: ../../htdocs/core/lib/geturl.lib.php
 
 		-
+			message: "#^Call to function function_exists\\(\\) with 'imagecreatefromgif'\\|'imagecreatefromjpeg'\\|'imagecreatefrompng'\\|'imagecreatefromwbmp'\\|'imagecreatefromwebp' will always evaluate to true\\.$#"
+			count: 3
+			path: ../../htdocs/core/lib/images.lib.php
+
+		-
 			message: "#^Function dol_getImageSize\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/images.lib.php
@@ -10243,6 +11083,26 @@ parameters:
 			message: "#^Function dol_listshmop\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/memory.lib.php
+
+		-
+			message: "#^Call to function array_key_exists\\(\\) with 'code' and array\\{rowid\\: array\\{type\\: 'integer', value\\: 11, extra\\: 'AUTO_INCREMENT'\\}, code\\: array\\{type\\: 'varchar', value\\: 255, null\\: 'NOT NULL'\\}, label\\: array\\{type\\: 'varchar', value\\: 255, null\\: 'NOT NULL'\\}, position\\: array\\{type\\: 'integer', value\\: 11, null\\: 'NULL'\\}, use_default\\: array\\{type\\: 'varchar', value\\: 11, default\\: '1'\\}, active\\: array\\{type\\: 'integer', value\\: 3\\}\\} will always evaluate to true\\.$#"
+			count: 4
+			path: ../../htdocs/core/lib/modulebuilder.lib.php
+
+		-
+			message: "#^Call to function array_key_exists\\(\\) with 'label' and array\\{rowid\\: array\\{type\\: 'integer', value\\: 11, extra\\: 'AUTO_INCREMENT'\\}, code\\: array\\{type\\: 'varchar', value\\: 255, null\\: 'NOT NULL'\\}, label\\: array\\{type\\: 'varchar', value\\: 255, null\\: 'NOT NULL'\\}, position\\: array\\{type\\: 'integer', value\\: 11, null\\: 'NULL'\\}, use_default\\: array\\{type\\: 'varchar', value\\: 11, default\\: '1'\\}, active\\: array\\{type\\: 'integer', value\\: 3\\}\\} will always evaluate to true\\.$#"
+			count: 4
+			path: ../../htdocs/core/lib/modulebuilder.lib.php
+
+		-
+			message: "#^Call to function array_key_exists\\(\\) with 'rowid' and array\\{rowid\\: array\\{type\\: 'integer', value\\: 11, extra\\: 'AUTO_INCREMENT'\\}, code\\: array\\{type\\: 'varchar', value\\: 255, null\\: 'NOT NULL'\\}, label\\: array\\{type\\: 'varchar', value\\: 255, null\\: 'NOT NULL'\\}, position\\: array\\{type\\: 'integer', value\\: 11, null\\: 'NULL'\\}, use_default\\: array\\{type\\: 'varchar', value\\: 11, default\\: '1'\\}, active\\: array\\{type\\: 'integer', value\\: 3\\}\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/modulebuilder.lib.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{name\\: string, key\\: string, type\\: string, label\\: string, picot\\?\\: string, enabled\\: int\\<0, 1\\>, notnull\\: int\\<0, 1\\>, position\\: int, \\.\\.\\.\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/modulebuilder.lib.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$object'\" on a separate line does not do anything\\.$#"
@@ -10345,6 +11205,11 @@ parameters:
 			path: ../../htdocs/core/lib/profid.lib.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, \\(int\\|string\\)\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/project.lib.php
+
+		-
 			message: """
 				#^Expression "'
 					@phan\\-var\\-force FormOther \\$formother
@@ -10381,6 +11246,11 @@ parameters:
 			message: "#^Function report_header\\(\\) has parameter \\$moreparam with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/report.lib.php
+
+		-
+			message: "#^Call to function is_string\\(\\) with string will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/security.lib.php
 
 		-
 			message: "#^Function accessforbidden\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
@@ -10508,6 +11378,11 @@ parameters:
 			path: ../../htdocs/core/lib/usergroups.lib.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/website.lib.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force WebSite \\$website'\" on a separate line does not do anything\\.$#"
 			count: 7
 			path: ../../htdocs/core/lib/website.lib.php
@@ -10531,6 +11406,11 @@ parameters:
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/website.lib.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/website2.lib.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -10673,6 +11553,11 @@ parameters:
 			path: ../../htdocs/core/menus/standard/eldy_menu.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\} will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/core/menus/standard/empty.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<array\\{rowid\\:string,fk_menu\\:string,langs\\:string,enabled\\:int\\<0,2\\>,type\\:string,fk_mainmenu\\:string,fk_leftmenu\\:string,url\\:string,titre\\:string,perms\\:string,target\\:string,mainmenu\\:string,leftmenu\\:string,position\\:int,level\\?\\:int,prefix\\:string\\}\\> \\$menu_array'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/menus/standard/empty.php
@@ -10798,6 +11683,11 @@ parameters:
 			path: ../../htdocs/core/modules/DolibarrModules.class.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/action/doc/pdf_standard_actions.class.php
+
+		-
 			message: "#^Property pdf_standard_actions\\:\\:\\$format type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/action/doc/pdf_standard_actions.class.php
@@ -10816,6 +11706,11 @@ parameters:
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -10868,6 +11763,11 @@ parameters:
 			path: ../../htdocs/core/modules/asset/mod_asset_standard.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
@@ -10881,6 +11781,11 @@ parameters:
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_ban\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -10961,6 +11866,11 @@ parameters:
 			message: "#^Property mod_bom_standard\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/bom/mod_bom_standard.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
 
 		-
 			message: "#^Parameter \\#2 \\$object of method BordereauChequeBlochet\\:\\:_pagefoot\\(\\) expects object, string given\\.$#"
@@ -11071,6 +11981,11 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -11188,6 +12103,11 @@ parameters:
 			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
+
+		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
@@ -11246,6 +12166,11 @@ parameters:
 			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
 			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
@@ -11313,6 +12238,16 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/mod_delivery_jade.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/dons/html_cerfafr.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/dons/html_generic.modules.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
@@ -11371,6 +12306,11 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
 			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
@@ -11543,6 +12483,11 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 6
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
@@ -11626,6 +12571,11 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 13
+			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -11741,6 +12691,11 @@ parameters:
 			message: "#^Variable \\$hidetop in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 3
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 14
+			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between int\\<2, max\\> and 1 is always true\\.$#"
@@ -11988,6 +12943,11 @@ parameters:
 			path: ../../htdocs/core/modules/hrm/mod_evaluation_standard.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/import/import_csv.modules.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefMembers\\|ModeleNumRefCommandes\\|ModeleNumRefSuppliersInvoices\\|ModeleNumRefSuppliersOrders\\|ModeleNumRefProjects\\|ModeleNumRefTask\\|ModeleNumRefPropales \\$modForNumber'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/import/import_csv.modules.php
@@ -12111,6 +13071,11 @@ parameters:
 			message: "#^Property mailing_fraise\\:\\:\\$require_module has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/mailings/fraise.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/mailings/modules_mailings.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between 0 and 1 is always false\\.$#"
@@ -12346,6 +13311,11 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/modWorkstation.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Entrepot\\|MouvementStock given\\.$#"
@@ -12728,6 +13698,11 @@ parameters:
 			path: ../../htdocs/core/modules/product_batch/mod_sn_standard.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
+
+		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
@@ -12808,6 +13783,11 @@ parameters:
 			path: ../../htdocs/core/modules/project/mod_project_simple.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
+
+		-
 			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_object\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
@@ -12883,6 +13863,11 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
+
+		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Propal given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
@@ -12948,6 +13933,11 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
+
+		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Propal given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
@@ -13011,6 +14001,11 @@ parameters:
 			message: "#^Property mod_propale_marbre\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/mod_propale_marbre.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
 
 		-
 			message: "#^Method pdf_paiement\\:\\:Body\\(\\) has parameter \\$lines with no value type specified in iterable type array\\.$#"
@@ -13166,6 +14161,11 @@ parameters:
 			message: "#^Property modGeneratePassPerso\\:\\:\\$Spe has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
 
 		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
@@ -13923,6 +14923,11 @@ parameters:
 			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/tpl/contacts.tpl.php
+
+		-
 			message: """
 				#^Expression "'
 				@phan\\-var\\-force \\?CommonObject \\$object
@@ -14304,6 +15309,11 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/triggers/interface_50_modEventOrganization_EventOrganization.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefTask \\$modTask'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/core/triggers/interface_50_modEventOrganization_EventOrganization.class.php
@@ -14339,6 +15349,11 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modNotification_Notification.class.php
 
 		-
+			message: "#^Property Conf\\:\\:\\$notification \\(stdClass\\) in empty\\(\\) is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/triggers/interface_50_modNotification_Notification.class.php
+
+		-
 			message: "#^Property InterfaceNotification\\:\\:\\$listofmanagedevents has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/triggers/interface_50_modNotification_Notification.class.php
@@ -14354,6 +15369,26 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Contact and 'getContactRoles' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/triggers/interface_90_modSociete_ContactRoles.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php
+
+		-
+			message: "#^Call to function is_null\\(\\) with null will always evaluate to true\\.$#"
+			count: 4
+			path: ../../htdocs/core/website.inc.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with WebsitePage will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/core/website.inc.php
+
+		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/cron/card.php
@@ -14362,6 +15397,16 @@ parameters:
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/cron/card.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/cron/class/cronjob.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/cron/class/cronjob.class.php
 
 		-
 			message: "#^Method Cronjob\\:\\:fetchAll\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
@@ -14799,6 +15844,11 @@ parameters:
 			path: ../../htdocs/don/admin/donation.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Don and 'generateDocument' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/don/card.php
+
+		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/don/card.php
@@ -14862,6 +15912,36 @@ parameters:
 			message: "#^Property Donations\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/don/class/api_donations.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/don/class/don.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Don\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/don/class/don.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Don\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/don/class/don.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Don\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/don/class/don.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Don\\) and 'date' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/don/class/don.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Don\\) and 'societe' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/don/class/don.class.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -15249,6 +16329,16 @@ parameters:
 			path: ../../htdocs/ecm/index_medias.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, non\\-empty\\-string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/emailcollector/class/emailcollector.class.php
+
+		-
+			message: "#^Call to function is_null\\(\\) with null will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/emailcollector/class/emailcollector.class.php
+
+		-
 			message: "#^Comparison operation \"\\>\" between 0 and 1000 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/emailcollector/class/emailcollector.class.php
@@ -15379,6 +16469,26 @@ parameters:
 			path: ../../htdocs/emailcollector/lib/emailcollector.lib.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ConferenceOrBooth\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorbooth.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ConferenceOrBooth\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorbooth.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ConferenceOrBooth\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorbooth.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ConferenceOrBooth\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorbooth.class.php
+
+		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/class/conferenceorbooth.class.php
@@ -15402,6 +16512,31 @@ parameters:
 			message: "#^Property ConferenceOrBooth\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/class/conferenceorbooth.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ConferenceOrBoothAttendee\\) and 'fk_soc' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ConferenceOrBoothAttendee and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ConferenceOrBoothAttendee and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ConferenceOrBoothAttendee and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ConferenceOrBoothAttendee and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonNumRefGenerator \\$obj'\" on a separate line does not do anything\\.$#"
@@ -15439,6 +16574,11 @@ parameters:
 			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/conferenceorbooth_card.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/conferenceorbooth_card.php
@@ -15454,6 +16594,11 @@ parameters:
 			path: ../../htdocs/eventorganization/conferenceorbooth_card.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/conferenceorbooth_contact.php
+
+		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/conferenceorbooth_contact.php
@@ -15462,6 +16607,11 @@ parameters:
 			message: "#^Property ConferenceOrBooth\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/conferenceorbooth_contact.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/conferenceorbooth_document.php
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
@@ -15477,6 +16627,11 @@ parameters:
 			message: "#^Comparison operation \"\\>\" between 0 and 0 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/conferenceorbooth_list.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -15502,6 +16657,11 @@ parameters:
 			message: "#^Variable \\$withproject in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 3
 			path: ../../htdocs/eventorganization/conferenceorboothattendee_card.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
 			message: """
@@ -15651,6 +16811,26 @@ parameters:
 			message: "#^Property Shipments\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/class/api_shipments.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Expedition\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expedition/class/expedition.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Expedition\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expedition/class/expedition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Expedition\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expedition/class/expedition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Expedition\\) and 'total_ht' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expedition/class/expedition.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ExpeditionLigne \\$line'\" on a separate line does not do anything\\.$#"
@@ -15893,6 +17073,11 @@ parameters:
 			path: ../../htdocs/expedition/document.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Expedition and 'fetch_lines' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expedition/list.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<string,array\\{label\\:string,checked\\?\\:int\\<0,1\\>,position\\?\\:int,help\\?\\:string\\}\\> \\$arrayfields'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/list.php
@@ -16073,6 +17258,26 @@ parameters:
 			path: ../../htdocs/expensereport/class/api_expensereports.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ExpenseReport\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/expensereport.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ExpenseReport\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/expensereport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ExpenseReport\\) and 'date_debut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/expensereport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ExpenseReport\\) and 'date_fin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/expensereport.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefExpenseReport \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/expensereport/class/expensereport.class.php
@@ -16106,6 +17311,36 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/expensereport/class/expensereportline.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(PaymentExpenseReport\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(PaymentExpenseReport\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentExpenseReport\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentExpenseReport\\) and 'datep' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentExpenseReport\\) and 'fk_bank' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentExpenseReport\\) and 'fk_typepayment' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -16228,6 +17463,11 @@ parameters:
 			path: ../../htdocs/exports/export.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with Fichinter and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/fichinter/agenda.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/agenda.php
@@ -16266,6 +17506,11 @@ parameters:
 			message: "#^Property CommonObjectLine\\:\\:\\$product_type \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with FichinterLigne will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fichinter/card.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force Commande\\|Propal\\|Contrat \\$objectsrc'\" on a separate line does not do anything\\.$#"
@@ -16356,6 +17601,21 @@ parameters:
 			message: "#^Property Interventions\\:\\:\\$FIELDSLINE has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/class/api_interventions.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Fichinter\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fichinter/class/fichinter.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Fichinter\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fichinter/class/fichinter.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Fichinter\\) and 'duration' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fichinter/class/fichinter.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefFicheinter \\$obj'\" on a separate line does not do anything\\.$#"
@@ -16618,6 +17878,31 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(CommandeFournisseur\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(CommandeFournisseur\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommandeFournisseur\\) and 'billed' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommandeFournisseur\\) and 'socid' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(CommandeFournisseur\\) and 'total_tva' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefSuppliersOrders \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
@@ -16866,6 +18151,26 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/fourn/class/fournisseur.facture-rec.ligne.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(FactureFournisseur\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(FactureFournisseur\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(FactureFournisseur\\) and 'date' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(FactureFournisseur\\) and 'total_ht' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefSuppliersInvoices \\$obj'\" on a separate line does not do anything\\.$#"
@@ -17297,6 +18602,11 @@ parameters:
 			path: ../../htdocs/fourn/commande/info.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with CommandeFournisseur and 'fetch_lines' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/commande/list.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<string,array\\{label\\:string,checked\\?\\:int\\<0,1\\>,position\\?\\:int,help\\?\\:string\\}\\> \\$arrayfields'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/list.php
@@ -17330,6 +18640,11 @@ parameters:
 			message: "#^Expression \"'@phan\\-var\\-force Translate \\$langs'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/tpl/linkedobjectblock.tpl.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with FactureFournisseur and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/fourn/facture/agenda.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -17519,6 +18834,11 @@ parameters:
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with FactureFournisseur and 'module' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/facture/messaging.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/messaging.php
@@ -17532,6 +18852,11 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/note.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with float will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -17653,6 +18978,26 @@ parameters:
 			path: ../../htdocs/holiday/card_group.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Holiday\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/holiday/class/holiday.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Holiday\\) and 'date_debut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/holiday/class/holiday.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Holiday\\) and 'date_fin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/holiday/class/holiday.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Holiday\\) and 'fk_type' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/holiday/class/holiday.class.php
+
+		-
 			message: "#^Comparison operation \"\\<\" between 0 and 0 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/holiday/class/holiday.class.php
@@ -17748,6 +19093,41 @@ parameters:
 			path: ../../htdocs/hrm/class/establishment.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Evaluation\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Evaluation\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Evaluation and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Evaluation and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Evaluation and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Evaluation and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Evaluation and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/evaluation.class.php
@@ -17766,6 +19146,26 @@ parameters:
 			message: "#^Property Evaluation\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/evaluation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with EvaluationLine and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluationdet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with EvaluationLine and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluationdet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with EvaluationLine and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluationdet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with EvaluationLine and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/evaluationdet.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
@@ -17801,6 +19201,41 @@ parameters:
 			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/evaluationdet.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Job\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Job\\) and 'description' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Job and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Job and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Job and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Job and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Job and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/job.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
@@ -17843,6 +19278,41 @@ parameters:
 			path: ../../htdocs/hrm/class/job.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Position\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Position\\) and 'date_end' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Position\\) and 'date_start' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Position and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Position and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Position and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Position and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/position.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/position.class.php
@@ -17883,6 +19353,46 @@ parameters:
 			path: ../../htdocs/hrm/class/position.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Skill\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Skill\\) and 'description' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Skill\\) and 'skill_type' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skill and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skill and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skill and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skill and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skill and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skill.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skill.class.php
@@ -17918,6 +19428,26 @@ parameters:
 			path: ../../htdocs/hrm/class/skill.class.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with Skilldet and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skilldet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skilldet and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skilldet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skilldet and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skilldet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Skilldet and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skilldet.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skilldet.class.php
@@ -17941,6 +19471,31 @@ parameters:
 			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skilldet.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with SkillRank and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skillrank.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with SkillRank and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skillrank.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with SkillRank and 'fk_object' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skillrank.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with SkillRank and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skillrank.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with SkillRank and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/hrm/class/skillrank.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefEvaluation \\$obj'\" on a separate line does not do anything\\.$#"
@@ -18159,6 +19714,11 @@ parameters:
 			path: ../../htdocs/hrm/skill_list.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/hrm/skill_tab.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force SkillRank\\[\\] \\$tSkills'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/skill_tab.php
@@ -18304,9 +19864,19 @@ parameters:
 			path: ../../htdocs/install/index.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/install/repair.php
+
+		-
 			message: "#^Variable \\$actiondone in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/install/repair.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/install/step1.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -18364,6 +19934,16 @@ parameters:
 			path: ../../htdocs/install/step5.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, array\\{mixed, mixed, mixed\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/install/upgrade2.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/install/upgrade2.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force DolibarrModules \\$mod'\" on a separate line does not do anything\\.$#"
 			count: 2
 			path: ../../htdocs/install/upgrade2.php
@@ -18402,6 +19982,21 @@ parameters:
 			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/intracommreport/card.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(IntracommReport\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/intracommreport/class/intracommreport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(IntracommReport\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/intracommreport/class/intracommreport.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(IntracommReport\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/intracommreport/class/intracommreport.class.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -18494,6 +20089,51 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(KnowledgeRecord\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(KnowledgeRecord\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(KnowledgeRecord\\) and 'lang' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(KnowledgeRecord\\) and 'question' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with KnowledgeRecord and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with KnowledgeRecord and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with KnowledgeRecord and 'question' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with KnowledgeRecord and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with KnowledgeRecord and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefKnowledgeRecord \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
@@ -18552,6 +20192,31 @@ parameters:
 			message: "#^Parameter \\#3 \\$rate of function loanCalcMonthlyPayment expects float, string given\\.$#"
 			count: 1
 			path: ../../htdocs/loan/calcmens.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Loan\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/loan/class/loan.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Loan\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/loan/class/loan.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Loan\\) and 'capital' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/loan/class/loan.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Loan\\) and 'dateend' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/loan/class/loan.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Loan\\) and 'datestart' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/loan/class/loan.class.php
 
 		-
 			message: "#^Parameter \\#2 \\$alreadypaid of method Loan\\:\\:getLibStatut\\(\\) expects int, float given\\.$#"
@@ -18799,6 +20464,21 @@ parameters:
 			path: ../../htdocs/mailmanspip/class/mailmanspip.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/main.inc.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/main.inc.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/main.inc.php
+
+		-
 			message: "#^Elseif condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/main.inc.php
@@ -18912,6 +20592,11 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\|string, array\\{modulenamewithcase\\: mixed, moduledescriptorrelpath\\: string, moduledescriptorfullpath\\: mixed, moduledescriptorrootpath\\: mixed, moduletype\\?\\: 'external'\\|'internal'\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/index.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force DolibarrMOdules \\$moduleobj'\" on a separate line does not do anything\\.$#"
@@ -19059,6 +20744,66 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/class/api_mymodule.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(MyObject\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(MyObject\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(MyObject\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(MyObject\\) and 'fk_soc' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(MyObject\\) and 'label' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(MyObject\\) and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(MyObject\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with MyObject and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with MyObject and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with MyObject and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with MyObject and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with MyObject and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefMyObject \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/class/myobject.class.php
@@ -19112,6 +20857,11 @@ parameters:
 			message: "#^Property MyObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force TCPDI\\|TCPDF \\$pdf'\" on a separate line does not do anything\\.$#"
@@ -19192,6 +20942,16 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/mymoduleindex.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with 0 will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with MyObject and 'module' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -19389,6 +21149,26 @@ parameters:
 			path: ../../htdocs/mrp/class/api_mos.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Mo\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/mrp/class/mo.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Mo\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/mrp/class/mo.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Mo\\) and 'qty' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/mrp/class/mo.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Mo\\) and 'socid' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/mrp/class/mo.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefMos \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/mrp/class/mo.class.php
@@ -19497,6 +21277,11 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/mrp/mo_note.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with MoLine will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/mrp/mo_production.php
 
 		-
 			message: "#^Left side of \\|\\| is always true\\.$#"
@@ -19774,6 +21559,46 @@ parameters:
 			path: ../../htdocs/partnership/class/api_partnerships.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Partnership\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Partnership\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Partnership\\) and 'fk_soc' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Partnership\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Partnership and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Partnership and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Partnership and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Partnership and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/partnership/class/partnership.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefPartnership \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/partnership/class/partnership.class.php
@@ -19824,6 +21649,16 @@ parameters:
 			path: ../../htdocs/partnership/class/partnership_type.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\} will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/partnership/class/partnershiputils.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Partnership will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/partnership/class/partnershiputils.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force DOMElement \\$href'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/partnership/class/partnershiputils.class.php
@@ -19842,6 +21677,11 @@ parameters:
 			message: "#^Property mod_partnership_standard\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/partnership/core/modules/partnership/mod_partnership_standard.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Partnership and 'generateDocument' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/partnership/partnership_card.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -20279,6 +22119,36 @@ parameters:
 			path: ../../htdocs/product/class/api_products.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Product\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/product.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Product\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/product.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Product\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/product.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Product\\) and 'price' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/product.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Product\\) and 'price_ttc' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/product.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Product\\) and 'stock_reel' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/product.class.php
+
+		-
 			message: "#^Comparison operation \"\\>\\=\" between 0 and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/product.class.php
@@ -20559,6 +22429,26 @@ parameters:
 			path: ../../htdocs/product/class/productcustomerprice.class.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with ProductFournisseurPrice and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/productfournisseurprice.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ProductFournisseurPrice and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/productfournisseurprice.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ProductFournisseurPrice and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/productfournisseurprice.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with ProductFournisseurPrice and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/class/productfournisseurprice.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonNumRefGenerator \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/productfournisseurprice.class.php
@@ -20799,6 +22689,16 @@ parameters:
 			path: ../../htdocs/product/inventory/card.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Inventory\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/inventory/class/inventory.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Inventory\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/inventory/class/inventory.class.php
+
+		-
 			message: "#^Method Inventory\\:\\:getChildWarehouse\\(\\) has parameter \\$TChildWarehouse with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/product/inventory/class/inventory.class.php
@@ -20857,6 +22757,11 @@ parameters:
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/product/list.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Product will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/messaging.php
 
 		-
 			message: "#^Parameter \\#4 \\$txtva of function calcul_price_total expects float, string given\\.$#"
@@ -21129,6 +23034,21 @@ parameters:
 			path: ../../htdocs/product/stock/class/api_warehouses.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Entrepot\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/stock/class/entrepot.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Entrepot\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/stock/class/entrepot.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Entrepot\\) and 'lieu' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/stock/class/entrepot.class.php
+
+		-
 			message: "#^Method Entrepot\\:\\:list_array\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/class/entrepot.class.php
@@ -21152,6 +23072,11 @@ parameters:
 			message: "#^Property Entrepot\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/class/entrepot.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/stock/class/mouvementstock.class.php
 
 		-
 			message: "#^Method MouvementStock\\:\\:createBatch\\(\\) has parameter \\$dluo with no value type specified in iterable type array\\.$#"
@@ -21499,6 +23424,11 @@ parameters:
 			path: ../../htdocs/product/stock/stats/reception.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(StockTransfer\\) and 'socid' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefStockTransfer \\$obj'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
@@ -21655,6 +23585,11 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/activity/perday.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perday.php
@@ -21770,6 +23705,16 @@ parameters:
 			path: ../../htdocs/projet/admin/project.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/agenda.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/card.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefProjects \\$modProject'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/projet/card.php
@@ -21838,6 +23783,21 @@ parameters:
 			message: "#^Property Tasks\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/api_tasks.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Project\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/project.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Project\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/project.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Project\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/project.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefProjects \\$modProject'\" on a separate line does not do anything\\.$#"
@@ -21943,6 +23903,26 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/projectstats.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/task.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Task\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/task.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Task\\) and 'budget_amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/task.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Task\\) and 'duration_effective' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/task.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefTask \\$modTask'\" on a separate line does not do anything\\.$#"
@@ -22150,6 +24130,26 @@ parameters:
 			path: ../../htdocs/projet/class/taskstats.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/comment.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/projet/contact.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/document.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/element.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$element'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/projet/element.php
@@ -22215,6 +24215,11 @@ parameters:
 			path: ../../htdocs/projet/ganttchart.inc.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/ganttview.php
+
+		-
 			message: "#^Comparison operation \"\\>\" between 0 and 0 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/projet/index.php
@@ -22265,6 +24270,21 @@ parameters:
 			path: ../../htdocs/projet/list.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/messaging.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/note.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefTask \\$modTask'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks.php
@@ -22290,6 +24310,21 @@ parameters:
 			path: ../../htdocs/projet/tasks.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/comment.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/contact.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Task and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/contact.php
+
+		-
 			message: "#^Property Project\\:\\:\\$budget_amount \\(float\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/contact.php
@@ -22300,6 +24335,16 @@ parameters:
 			path: ../../htdocs/projet/tasks/contact.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/document.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Task and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/document.php
+
+		-
 			message: "#^Property Project\\:\\:\\$budget_amount \\(float\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/document.php
@@ -22308,6 +24353,16 @@ parameters:
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/document.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Form will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/list.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Project will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/list.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<string,array\\{label\\:string,checked\\?\\:int\\<0,1\\>,position\\?\\:int,help\\?\\:string\\}\\> \\$arrayfields'\" on a separate line does not do anything\\.$#"
@@ -22435,14 +24490,44 @@ parameters:
 			path: ../../htdocs/projet/tasks/list.php
 
 		-
-			message: "#^Property Project\\:\\:\\$budget_amount \\(float\\|string\\) in isset\\(\\) is not nullable\\.$#"
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/note.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Task and 'fetchComments' will always evaluate to true\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/note.php
 
 		-
 			message: "#^Property Project\\:\\:\\$budget_amount \\(float\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
+			path: ../../htdocs/projet/tasks/note.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
 			path: ../../htdocs/projet/tasks/task.php
+
+		-
+			message: "#^Property Project\\:\\:\\$budget_amount \\(float\\|string\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/task.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{generateinvoice\\?\\: mixed, generateinter\\?\\: mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/time.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Project and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/time.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with Task and 'fetchComments' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/time.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<string,array\\{label\\:string,checked\\?\\:int\\<0,1\\>,position\\?\\:int,help\\?\\:string\\}\\> \\$arrayfields'\" on a separate line does not do anything\\.$#"
@@ -22495,6 +24580,11 @@ parameters:
 			path: ../../htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/agenda/agendaexport.php
+
+		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/public/agenda/agendaexport.php
@@ -22510,6 +24600,11 @@ parameters:
 			path: ../../htdocs/public/bookcal/index.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/company/new.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/public/company/new.php
@@ -22523,6 +24618,11 @@ parameters:
 			message: "#^Variable \\$ext in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/public/company/new.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/cron/cron_run_jobs_by_url.php
 
 		-
 			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
@@ -22555,6 +24655,11 @@ parameters:
 			path: ../../htdocs/public/demo/index.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/eventorganization/attendee_new.php
+
+		-
 			message: "#^Comparison operation \"\\<\\=\" between 0 and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/public/eventorganization/attendee_new.php
@@ -22580,9 +24685,19 @@ parameters:
 			path: ../../htdocs/public/eventorganization/attendee_new.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/eventorganization/subscriptionok.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/public/eventorganization/subscriptionok.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/fichinter/agendaexport.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -22605,14 +24720,34 @@ parameters:
 			path: ../../htdocs/public/fichinter/agendaexport.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/members/new.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/public/members/new.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/members/public_card.php
+
+		-
 			message: "#^Property Adherent\\:\\:\\$photo \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/public/members/public_card.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/members/public_list.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -22650,9 +24785,19 @@ parameters:
 			path: ../../htdocs/public/opensurvey/index.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/partnership/new.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/public/partnership/new.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/payment/newpayment.php
 
 		-
 			message: """
@@ -22671,9 +24816,34 @@ parameters:
 			path: ../../htdocs/public/payment/newpayment.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/payment/paymentko.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with stdClass will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/payment/paymentko.php
+
+		-
+			message: "#^Call to function is_scalar\\(\\) with \\(int\\|string\\) will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/payment/paymentko.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$object'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/public/payment/paymentko.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/payment/paymentok.php
+
+		-
+			message: "#^Call to function is_scalar\\(\\) with \\(int\\|string\\) will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/public/payment/paymentok.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -22691,6 +24861,11 @@ parameters:
 			path: ../../htdocs/public/payment/paymentok.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/project/index.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/index.php
@@ -22706,6 +24881,11 @@ parameters:
 			path: ../../htdocs/public/project/index.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/project/new.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefProjects \\$modProject'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/new.php
@@ -22716,6 +24896,11 @@ parameters:
 			path: ../../htdocs/public/project/new.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/project/suggestbooth.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleThirdPartyCode \\$modCodeClient'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/suggestbooth.php
@@ -22741,6 +24926,11 @@ parameters:
 			path: ../../htdocs/public/project/suggestbooth.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/project/suggestconference.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleThirdPartyCode \\$modCodeClient'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/suggestconference.php
@@ -22764,6 +24954,11 @@ parameters:
 			message: "#^Right side of \\|\\| is always false\\.$#"
 			count: 2
 			path: ../../htdocs/public/project/suggestconference.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/project/viewandvote.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -22789,6 +24984,11 @@ parameters:
 			message: "#^Variable \\$backtopage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/public/recruitment/view.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/stripe/ipn.php
 
 		-
 			message: "#^Dead catch \\- Exception is never thrown in the try block\\.$#"
@@ -22831,6 +25031,11 @@ parameters:
 			path: ../../htdocs/public/test/test_buttons.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/ticket/create_ticket.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/public/ticket/create_ticket.php
@@ -22841,9 +25046,24 @@ parameters:
 			path: ../../htdocs/public/ticket/create_ticket.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/ticket/index.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/ticket/list.php
+
+		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/public/ticket/list.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/public/ticket/view.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -22959,6 +25179,21 @@ parameters:
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 6
 			path: ../../htdocs/reception/card.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Reception\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/reception/class/reception.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Reception\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/reception/class/reception.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Reception\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/reception/class/reception.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommandeFournisseur \\$origin_object'\" on a separate line does not do anything\\.$#"
@@ -23151,6 +25386,11 @@ parameters:
 			path: ../../htdocs/reception/document.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with Reception and 'fetch_lines' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/reception/list.php
+
+		-
 			message: "#^Expression \"'@phan\\-var FactureFournisseur\\[\\] \\$TFactThird'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/reception/list.php
@@ -23266,6 +25506,51 @@ parameters:
 			path: ../../htdocs/recruitment/class/api_recruitments.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(RecruitmentCandidature\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(RecruitmentCandidature\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RecruitmentCandidature\\) and 'email' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RecruitmentCandidature\\) and 'fk…' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RecruitmentCandidature\\) and 'phone' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentCandidature and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentCandidature and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentCandidature and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentCandidature and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefRecruitmentCandidature \\$module'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
@@ -23299,6 +25584,46 @@ parameters:
 			message: "#^Property RecruitmentCandidature\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(RecruitmentJobPosition\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(RecruitmentJobPosition\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(RecruitmentJobPosition\\) and 'remuneration…' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentJobPosition and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentJobPosition and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentJobPosition and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentJobPosition and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with RecruitmentJobPosition and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefRecruitmentJobPosition \\$module'\" on a separate line does not do anything\\.$#"
@@ -23344,6 +25669,11 @@ parameters:
 			message: "#^Property RecruitmentJobPosition\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -23456,6 +25786,11 @@ parameters:
 			path: ../../htdocs/resource/card.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/resource/class/dolresource.class.php
+
+		-
 			message: "#^Property CommonObject\\:\\:\\$ref \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/resource/class/dolresource.class.php
@@ -23541,6 +25876,11 @@ parameters:
 			path: ../../htdocs/resource/class/dolresource.class.php
 
 		-
+			message: "#^Call to function is_numeric\\(\\) with float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|\\(non\\-falsy\\-string&numeric\\-string\\) will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/resource/class/html.formresource.class.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/resource/class/html.formresource.class.php
@@ -23574,6 +25914,16 @@ parameters:
 			message: "#^Property FormResource\\:\\:\\$substit has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/resource/class/html.formresource.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Fichinter will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/resource/element_resource.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Product will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/resource/element_resource.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ActionComm \\$act'\" on a separate line does not do anything\\.$#"
@@ -23681,6 +26031,31 @@ parameters:
 			path: ../../htdocs/salaries/class/api_salaries.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(PaymentSalary\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/paymentsalary.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentSalary\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/paymentsalary.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentSalary\\) and 'fk_bank' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/paymentsalary.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentSalary\\) and 'fk_typepayment' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/paymentsalary.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(PaymentSalary\\) and 'fk_user_author' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/paymentsalary.class.php
+
+		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/class/paymentsalary.class.php
@@ -23749,6 +26124,26 @@ parameters:
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/salaries/class/paymentsalary.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Salary\\) and 'LibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/salary.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Salary\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/salary.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Salary\\) and 'amount' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/salary.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Salary\\) and 'type_payment' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/class/salary.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force User \\$user'\" on a separate line does not do anything\\.$#"
@@ -23866,6 +26261,11 @@ parameters:
 			path: ../../htdocs/societe/admin/societe.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with Societe will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/agenda.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/societe/agenda.php
@@ -23905,6 +26305,11 @@ parameters:
 			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\{mixed, mixed, mixed, mixed\\} given\\.$#"
 			count: 1
 			path: ../../htdocs/societe/canvas/actions_card_common.class.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with 0\\|1\\|2\\|3\\|4\\|5\\|6\\|7\\|8\\|9 will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/societe/card.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between 1\\|2 and 0 is always true\\.$#"
@@ -24157,6 +26562,26 @@ parameters:
 			path: ../../htdocs/societe/class/companybankaccount.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/class/societe.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Societe\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/class/societe.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Societe\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/class/societe.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Societe\\) and 'code_client' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/class/societe.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$child_object'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/societe/class/societe.class.php
@@ -24307,9 +26732,24 @@ parameters:
 			path: ../../htdocs/societe/list.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with Societe will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/messaging.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/societe/messaging.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int\\|string, array\\{available\\: mixed, currency\\: mixed, pending\\?\\: \\(array\\|float\\|int\\)\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/paymentmodes.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Stripe will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/societe/paymentmodes.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -24367,6 +26807,11 @@ parameters:
 			path: ../../htdocs/stripe/admin/stripe.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with Facture will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/stripe/ajax/ajax.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force \\\\\\\\Stripe\\\\\\\\Charge \\$charge'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/stripe/charge.php
@@ -24395,6 +26840,11 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/stripe/class/actions_stripe.class.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with CompanyPaymentMode will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/stripe/class/stripe.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force stdClass\\|\\\\\\\\Stripe\\\\\\\\Charge \\$charge'\" on a separate line does not do anything\\.$#"
@@ -24547,6 +26997,31 @@ parameters:
 			path: ../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(SupplierProposal\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(SupplierProposal\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(SupplierProposal\\) and 'delivery_date' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(SupplierProposal\\) and 'socid' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(SupplierProposal\\) and 'total_ttc' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefSupplierProposal \\$modSupplierProposal'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
@@ -24675,6 +27150,11 @@ parameters:
 			message: "#^Property CommonInvoiceLine\\:\\:\\$product_type \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/invoice.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with Facture will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/takepos/pay.php
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
@@ -25007,6 +27487,26 @@ parameters:
 			path: ../../htdocs/ticket/class/api_tickets.class.php
 
 		-
+			message: "#^Call to function property_exists\\(\\) with CTicketCategory and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/cticketcategory.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with CTicketCategory and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/cticketcategory.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with CTicketCategory and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/cticketcategory.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with CTicketCategory and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/cticketcategory.class.php
+
+		-
 			message: "#^Method CTicketCategory\\:\\:fetchAll\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/class/cticketcategory.class.php
@@ -25015,6 +27515,36 @@ parameters:
 			message: "#^Property CommonObject\\:\\:\\$ismultientitymanaged \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/class/cticketcategory.class.php
+
+		-
+			message: "#^Call to function array_key_exists\\(\\) with 'paths' and array\\{paths\\: mixed, names\\: mixed, mimes\\: mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/ticket.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/ticket.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{paths\\: mixed, names\\: mixed, mimes\\: mixed\\} will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/ticket/class/ticket.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Ticket\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/ticket.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Ticket\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/ticket.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Ticket\\) and 'type_code' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/ticket/class/ticket.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefTicket \\$modTicket'\" on a separate line does not do anything\\.$#"
@@ -25197,6 +27727,21 @@ parameters:
 			path: ../../htdocs/ticket/tpl/linkedobjectblock.tpl.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with User will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/agenda.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with User and 'admin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/bank.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<string\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/card.php
+
+		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/user/card.php
@@ -25205,6 +27750,21 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 7
 			path: ../../htdocs/user/card.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/class/user.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(User\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/class/user.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(User\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/class/user.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleGenPassword \\$modGeneratePass'\" on a separate line does not do anything\\.$#"
@@ -25297,6 +27857,21 @@ parameters:
 			path: ../../htdocs/user/class/userbankaccount.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(UserGroup\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/class/usergroup.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(UserGroup\\) and 'members' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/class/usergroup.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(UserGroup\\) and 'nb_rights' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/class/usergroup.class.php
+
+		-
 			message: "#^Method UserGroup\\:\\:_load_ldap_dn\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/user/class/usergroup.class.php
@@ -25350,6 +27925,11 @@ parameters:
 			message: "#^Variable \\$wherefordel in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/user/class/usergroup.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with User and 'admin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/document.php
 
 		-
 			message: "#^Elseif condition is always false\\.$#"
@@ -25407,9 +27987,44 @@ parameters:
 			path: ../../htdocs/user/list.php
 
 		-
+			message: "#^Call to function is_object\\(\\) with User will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/messaging.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/user/messaging.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with User and 'admin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/note.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with User and 'admin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/notify/card.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with User and 'admin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/param_ihm.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 3
+			path: ../../htdocs/user/perms.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/user/perms.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with User and 'admin' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/user/perms.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force DolibarrModules \\$objMod'\" on a separate line does not do anything\\.$#"
@@ -25425,6 +28040,26 @@ parameters:
 			message: "#^Variable \\$permsgroupbyentitypluszero in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 3
 			path: ../../htdocs/user/perms.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ProductAttribute\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/variants/class/ProductAttribute.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(ProductAttribute\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/variants/class/ProductAttribute.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ProductAttribute\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/variants/class/ProductAttribute.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(ProductAttribute\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/variants/class/ProductAttribute.class.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -25482,6 +28117,11 @@ parameters:
 			path: ../../htdocs/variants/class/ProductCombination.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/variants/combinations.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/variants/combinations.php
@@ -25517,6 +28157,11 @@ parameters:
 			"""
 			count: 1
 			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
+
+		-
+			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/viewimage.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleBarCode \\$module'\" on a separate line does not do anything\\.$#"
@@ -25567,6 +28212,31 @@ parameters:
 			message: "#^Property Webhook\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webhook/class/api_webhook.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Target and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webhook/class/target.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Target and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webhook/class/target.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Target and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webhook/class/target.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Target and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webhook/class/target.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Target and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webhook/class/target.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonNumRefGenerator \\$obj'\" on a separate line does not do anything\\.$#"
@@ -25739,6 +28409,11 @@ parameters:
 			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 8
+			path: ../../htdocs/webportal/class/html.formwebportal.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force CommonObject \\$object'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/html.formwebportal.class.php
@@ -25749,9 +28424,34 @@ parameters:
 			path: ../../htdocs/webportal/class/html.formwebportal.class.php
 
 		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(WebPortalInvoice\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalinvoice.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(WebPortalInvoice\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalinvoice.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(WebPortalInvoice\\) and 'fk_user_author' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalinvoice.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(WebPortalInvoice\\) and 'socid' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalinvoice.class.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/webportalinvoice.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\{\\}\\|array\\{mixed\\} will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalmember.class.php
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
@@ -25767,6 +28467,26 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/webportalmember.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(WebPortalOrder\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalorder.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(WebPortalOrder\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalorder.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(WebPortalOrder\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalorder.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(WebPortalOrder\\) and 'total_ht' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalorder.class.php
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
@@ -25787,6 +28507,16 @@ parameters:
 			message: "#^Property Partnership\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/webportalpartnership.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(WebPortalPropal\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalpropal.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(WebPortalPropal\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webportal/class/webportalpropal.class.php
 
 		-
 			message: "#^Property Propal\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
@@ -25907,6 +28637,11 @@ parameters:
 			message: "#^Function validOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_order.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<non\\-falsy\\-string, array\\{name\\: non\\-falsy\\-string, type\\: 'xsd\\:dateTime'\\|'xsd\\:string'\\}\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/webservices/server_productorservice.php
 
 		-
 			message: "#^Function createProductOrService\\(\\) has parameter \\$product with no value type specified in iterable type array\\.$#"
@@ -26034,6 +28769,16 @@ parameters:
 			path: ../../htdocs/webservices/server_user.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, mixed\\> will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/website/class/website.class.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 4
+			path: ../../htdocs/website/class/website.class.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force WebSite \\$website'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/website/class/website.class.php
@@ -26134,6 +28879,11 @@ parameters:
 			path: ../../htdocs/website/class/websitepage.class.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with array\\<int, string\\> will always evaluate to true\\.$#"
+			count: 2
+			path: ../../htdocs/website/index.php
+
+		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\{type\\:string\\} \\$answerrecord'\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: ../../htdocs/website/index.php
@@ -26217,6 +28967,51 @@ parameters:
 			message: "#^Method Workstations\\:\\:index\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/workstation/class/api_workstations.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Workstation\\) and 'getLibStatut' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\$this\\(Workstation\\) and 'getNomUrl' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Workstation\\) and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with \\$this\\(Workstation\\) and 'thirdparty' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Workstation and 'date_creation' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Workstation and 'date_modification' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Workstation and 'label' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Workstation and 'ref' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
+
+		-
+			message: "#^Call to function property_exists\\(\\) with Workstation and 'status' will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/workstation/class/workstation.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force ModeleNumRefWorkstation \\$obj'\" on a separate line does not do anything\\.$#"

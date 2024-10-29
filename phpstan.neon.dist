@@ -28,7 +28,7 @@ parameters:
 		analyse:
 		- htdocs/includes/*
 		- htdocs/core/class/lessc.class.php
-	checkAlwaysTrueCheckTypeFunctionCall: false
+	checkAlwaysTrueCheckTypeFunctionCall: true
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: true
