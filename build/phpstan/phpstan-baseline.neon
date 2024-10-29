@@ -6104,6 +6104,11 @@ parameters:
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
 
 		-
+			message: "#^Expression \"'@phan\\-var\\-force array\\<int\\<0,12\\>,string\\> \\$row'\" on a separate line does not do anything\\.$#"
+			count: 1
+			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
@@ -9540,66 +9545,6 @@ parameters:
 			path: ../../htdocs/core/class/ldap.class.php
 
 		-
-			message: "#^Method Ldap\\:\\:add\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:addAttribute\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:deleteAttribute\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:dump\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:dumpContent\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:getAttribute\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:getAttributeValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:modify\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:parseUACF\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:search\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:update\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Ldap\\:\\:updateAttribute\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/ldap.class.php
@@ -9710,21 +9655,6 @@ parameters:
 			path: ../../htdocs/core/class/ldap.class.php
 
 		-
-			message: "#^Property Ldap\\:\\:\\$server type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Property Ldap\\:\\:\\$uacf type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/ldap.class.php
-
-		-
-			message: "#^Method Link\\:\\:fetchAll\\(\\) has parameter \\$links with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/link.class.php
-
-		-
 			message: "#^Parameter \\#2 \\$pere of method Menubase\\:\\:recur\\(\\) expects int, string given\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/menubase.class.php
@@ -9770,84 +9700,9 @@ parameters:
 			path: ../../htdocs/core/class/openid.class.php
 
 		-
-			message: "#^Method SimpleOpenID\\:\\:GetError\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Method SimpleOpenID\\:\\:HTML2OpenIDServer\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Method SimpleOpenID\\:\\:SetOptionalFields\\(\\) has parameter \\$a with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Method SimpleOpenID\\:\\:SetRequiredFields\\(\\) has parameter \\$a with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Method SimpleOpenID\\:\\:array2url\\(\\) has parameter \\$arr with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Method SimpleOpenID\\:\\:splitResponse\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
 			message: "#^Parameter \\#1 \\$content of method SimpleOpenID\\:\\:HTML2OpenIDServer\\(\\) expects string, array given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Property SimpleOpenID\\:\\:\\$URLs has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Property SimpleOpenID\\:\\:\\$error has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Property SimpleOpenID\\:\\:\\$fields has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Property SimpleOpenID\\:\\:\\$openid_url_identity has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/openid.class.php
-
-		-
-			message: "#^Method RedditHandler\\:\\:__construct\\(\\) has parameter \\$authParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/reddithandler.class.php
-
-		-
-			message: "#^Method RedditHandler\\:\\:fetch\\(\\) has parameter \\$authParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/reddithandler.class.php
-
-		-
-			message: "#^Method RedditHandler\\:\\:fetch\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/reddithandler.class.php
-
-		-
-			message: "#^Method RedditHandler\\:\\:normalizeData\\(\\) has parameter \\$postData with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/reddithandler.class.php
-
-		-
-			message: "#^Method RedditHandler\\:\\:normalizeData\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/reddithandler.class.php
 
 		-
 			message: "#^Call to function is_object\\(\\) with XMLParser will always evaluate to true\\.$#"
@@ -9873,21 +9728,6 @@ parameters:
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/smtps.class.php
-
-		-
-			message: "#^Method SocialNetworkManager\\:\\:__construct\\(\\) has parameter \\$authParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/socialnetworkmanager.class.php
-
-		-
-			message: "#^Method SocialNetworkManager\\:\\:fetchPosts\\(\\) has parameter \\$authParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/socialnetworkmanager.class.php
-
-		-
-			message: "#^Method SocialNetworkManager\\:\\:initializeHandler\\(\\) has parameter \\$authParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/socialnetworkmanager.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<int\\<0,11\\>,array\\{0\\:int\\<1,12\\>,1\\:int\\|float\\}\\> \\$data'\" on a separate line does not do anything\\.$#"
@@ -9963,26 +9803,6 @@ parameters:
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/timespent.class.php
-
-		-
-			message: "#^Property Translate\\:\\:\\$_tab_loaded type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/translate.class.php
-
-		-
-			message: "#^Property Translate\\:\\:\\$cache_currencies type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/translate.class.php
-
-		-
-			message: "#^Property Translate\\:\\:\\$cache_labels type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/translate.class.php
-
-		-
-			message: "#^Property Translate\\:\\:\\$tab_translate type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/translate.class.php
 
 		-
 			message: "#^Call to function is_array\\(\\) with array\\<int, string\\|false\\> will always evaluate to true\\.$#"
@@ -10080,137 +9900,7 @@ parameters:
 			path: ../../htdocs/core/customreports.php
 
 		-
-			message: "#^Method Database\\:\\:DDLCreateTable\\(\\) has parameter \\$fulltext_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:DDLCreateTable\\(\\) has parameter \\$keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:DDLCreateTable\\(\\) has parameter \\$unique_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:DDLInfoTable\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:DDLListTables\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:DDLListTablesFull\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:fetch_array\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:fetch_row\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:getListOfCharacterSet\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:getListOfCollation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:getServerParametersValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:getServerStatusValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method Database\\:\\:getVersionArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/Database.interface.php
-
-		-
-			message: "#^Method DoliDB\\:\\:getRows\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/DoliDB.class.php
-
-		-
 			message: "#^Constructor of class DoliDBMysqli has an unused parameter \\$type\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:DDLCreateTable\\(\\) has parameter \\$fulltext_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:DDLCreateTable\\(\\) has parameter \\$keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:DDLCreateTable\\(\\) has parameter \\$unique_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:DDLInfoTable\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:DDLListTables\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:DDLListTablesFull\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:fetch_array\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:fetch_row\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:getListOfCharacterSet\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:getListOfCollation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:getServerParametersValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: "#^Method DoliDBMysqli\\:\\:getServerStatusValues\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/db/mysqli.class.php
 
@@ -10231,66 +9921,6 @@ parameters:
 
 		-
 			message: "#^Constructor of class DoliDBPgsql has an unused parameter \\$type\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:DDLCreateTable\\(\\) has parameter \\$fulltext_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:DDLCreateTable\\(\\) has parameter \\$keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:DDLCreateTable\\(\\) has parameter \\$unique_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:DDLInfoTable\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:DDLListTables\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:DDLListTablesFull\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:fetch_array\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:fetch_row\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:getListOfCharacterSet\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:getListOfCollation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:getServerParametersValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
-			message: "#^Method DoliDBPgsql\\:\\:getServerStatusValues\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/db/pgsql.class.php
 
@@ -10330,72 +9960,12 @@ parameters:
 			path: ../../htdocs/core/db/pgsql.class.php
 
 		-
-			message: "#^Property DoliDBPgsql\\:\\:\\$standard_conforming_strings has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/pgsql.class.php
-
-		-
 			message: "#^Constructor of class DoliDBSqlite3 has an unused parameter \\$type\\.$#"
 			count: 1
 			path: ../../htdocs/core/db/sqlite3.class.php
 
 		-
-			message: "#^Method DoliDBSqlite3\\:\\:DDLCreateTable\\(\\) has parameter \\$fulltext_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:DDLCreateTable\\(\\) has parameter \\$keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:DDLCreateTable\\(\\) has parameter \\$unique_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:DDLInfoTable\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:DDLListTables\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:DDLListTablesFull\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:fetch_array\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:fetch_row\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:getListOfCharacterSet\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:getListOfCollation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:getServerParametersValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: "#^Method DoliDBSqlite3\\:\\:getServerStatusValues\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DoliDBSqlite3\\:\\:getListOfCollation\\(\\) should return array\\<int, array\\{collation\\: string\\}\\>\\|null but returns array\\{array\\{charset\\: 'UTF\\-8', description\\: 'UTF\\-8'\\}\\}\\.$#"
 			count: 1
 			path: ../../htdocs/core/db/sqlite3.class.php
 
@@ -15698,77 +15268,7 @@ parameters:
 			path: ../../htdocs/debugbar/class/DataCollector/DolibarrCollector.php
 
 		-
-			message: "#^Method TraceableDB\\:\\:DDLCreateTable\\(\\) has parameter \\$fulltext_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:DDLCreateTable\\(\\) has parameter \\$keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:DDLCreateTable\\(\\) has parameter \\$unique_keys with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:DDLInfoTable\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:DDLListTables\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:DDLListTablesFull\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:fetch_array\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:fetch_row\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:getListOfCharacterSet\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:getListOfCollation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:getServerParametersValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:getServerStatusValues\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Method TraceableDB\\:\\:getVersionArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
 			message: "#^Parameter \\#2 \\$resql of method TraceableDB\\:\\:endTracing\\(\\) expects string, bool\\|mysqli_result\\|resource given\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/TraceableDB.php
-
-		-
-			message: "#^Property TraceableDB\\:\\:\\$queries type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/debugbar/class/TraceableDB.php
 
@@ -21351,11 +20851,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$object of method MultiCurrencies\\:\\:_cleanObjectDatasRate\\(\\) expects MultiCurrency, CurrencyRate given\\.$#"
 			count: 1
 			path: ../../htdocs/multicurrency/class/api_multicurrencies.class.php
-
-		-
-			message: "#^Method MultiCurrency\\:\\:getIdAndTxFromCode\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/multicurrency/class/multicurrency.class.php
 
 		-
 			message: "#^Expression \"'@phan\\-var\\-force array\\<string,array\\{label\\:string,checked\\?\\:int\\<0,1\\>,position\\?\\:int,help\\?\\:string\\}\\> \\$arrayfields'\" on a separate line does not do anything\\.$#"
