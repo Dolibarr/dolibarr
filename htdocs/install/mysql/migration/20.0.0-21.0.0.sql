@@ -51,6 +51,8 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 -- V21 migration
 
+ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
+
 DROP TABLE llx_contratdet_log;
 
 ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
