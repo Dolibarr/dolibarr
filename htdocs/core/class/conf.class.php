@@ -75,10 +75,14 @@ class Conf extends stdClass
 	public $expedition_bon;
 	public $delivery_note;
 
-
-	//! To store if javascript/ajax is enabled
+	/**
+	 * @var int To store if javascript/ajax is enabled
+	 */
 	public $use_javascript_ajax;
-	//! To store if compute is enabled
+
+	/**
+	 * @var int To store if compute is enabled
+	 */
 	public $disable_compute;
 
 	/**
