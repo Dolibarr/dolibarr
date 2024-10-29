@@ -33,7 +33,6 @@ $leftmenuwidth = 240;
 @phan-var-force int<0,1> $dol_hide_leftmenu
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force int<0,1> $dol_no_mouse_hover
-
 @phan-var-force string $badgeDanger
 @phan-var-force string $badgeWarning
 @phan-var-force string $borderwidth
