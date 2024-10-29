@@ -23091,16 +23091,6 @@ parameters:
 			path: ../../htdocs/ticket/card.php
 
 		-
-			message: "#^Method ActionsTicket\\:\\:emailElementlist\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/actions_ticket.class.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/actions_ticket.class.php
-
-		-
 			message: "#^Property ActionsTicket\\:\\:\\$errno has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/class/actions_ticket.class.php
