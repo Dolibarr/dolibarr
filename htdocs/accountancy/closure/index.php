@@ -406,6 +406,7 @@ if (empty($current_fiscal_period)) {
 	$head[0][2] = 'step2';
 	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
+	$button = '';
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 	if ((empty($count_by_month['total']) || getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) && empty($current_fiscal_period['status'])) {
 		// If no unlocked record and period still open
@@ -414,7 +415,7 @@ if (empty($current_fiscal_period)) {
 		if (!empty($current_fiscal_period['status'])) {
 			$button = '<a class="butActionRefused classfortooltip" href="#" title="The period is already closed. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 		} elseif (!empty($count_by_month['total'])) {
-			$button = '<a class="butActionRefused classfortooltip" href="#" title="There is no line to include in this period. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
+			$button = '<a class="butActionRefused classfortooltip" href="#" title="There is some lines not yet locked. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 		}
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
