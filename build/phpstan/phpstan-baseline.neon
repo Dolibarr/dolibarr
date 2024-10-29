@@ -15055,7 +15055,6 @@ parameters:
 				@phan\\-var\\-force string \\$session_name
 				@phan\\-var\\-force string \\$titletruedolibarrversion
 				@phan\\-var\\-force string \\$urllogo
-
 				@phan\\-var\\-force int\\<0,1\\> \\$forgetpasslink
 				'" on a separate line does not do anything\\.$#
 			"""

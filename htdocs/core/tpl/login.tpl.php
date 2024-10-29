@@ -2,6 +2,7 @@
 /* Copyright (C) 2009-2015 	Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2022 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 @phan-var-force string $session_name
 @phan-var-force string $titletruedolibarrversion
 @phan-var-force string $urllogo
-
 @phan-var-force int<0,1> $forgetpasslink
 ';
 
