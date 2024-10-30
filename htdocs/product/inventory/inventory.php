@@ -1029,6 +1029,10 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	print '</tr>';
 }
 
+// Sort by warehouse/product or product/warehouse
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref');
+$sortorder .= ',' . $sortorder;
+
 // Request to show lines of inventory (prefilled after start/validate step)
 $sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 $sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
@@ -1036,7 +1040,7 @@ $sql .= ' FROM ' . $db->prefix() . 'inventorydet as id';
 $sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
 $sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 $sql .= ' WHERE id.fk_inventory = ' . ((int) $object->id);
-$sql .= $db->order($sortfield . ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref'), $sortorder . ',' . $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit, $offset);
 
 $cacheOfProducts = array();
