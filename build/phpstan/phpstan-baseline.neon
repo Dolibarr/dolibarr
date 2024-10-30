@@ -7717,7 +7717,7 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
-			count: 7
+			count: 8
 			path: ../../htdocs/core/class/html.form.class.php
 
 		-
@@ -8071,7 +8071,7 @@ parameters:
 			path: ../../htdocs/core/class/menubase.class.php
 
 		-
-			message: "#^Property Menubase\\:\\:\\$enabled \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			message: "#^Property Menubase\\:\\:\\$enabled \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/menubase.class.php
 
@@ -8449,6 +8449,16 @@ parameters:
 			message: "#^Left side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/core/lib/contact.lib.php
+
+		-
+			message: "#^Function fillArrayOfFilterFields\\(\\) has parameter \\$arrayoffields with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/customreports.lib.php
+
+		-
+			message: "#^Function fillArrayOfFilterFields\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/customreports.lib.php
 
 		-
 			message: "#^Function fillArrayOfGroupBy\\(\\) has parameter \\$arrayofgroupby with no value type specified in iterable type array\\.$#"
@@ -9206,67 +9216,17 @@ parameters:
 			path: ../../htdocs/core/modules/DolibarrModules.class.php
 
 		-
-			message: "#^Method DolibarrModules\\:\\:_init\\(\\) has parameter \\$array_sql with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Method DolibarrModules\\:\\:declareNewDictionary\\(\\) has parameter \\$dictionaryArray with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Method DolibarrModules\\:\\:getLastActivationInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/DolibarrModules.class.php
 
 		-
-			message: "#^Parameter \\#3 \\$replaceimagepath of function dolMd2Html expects string\\|null, array\\<string, string\\> given\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$cronjobs type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$dictionaries type has no value type specified in iterable type array\\.$#"
+			message: "#^Offset 'entity' on array\\{data\\: string, entity\\: int\\} in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/DolibarrModules.class.php
 
 		-
 			message: "#^Property DolibarrModules\\:\\:\\$dirs \\(array\\<string\\>\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$enabled_bydefault has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$menu type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$need_javascript_ajax has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$rights type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
-			message: "#^Property DolibarrModules\\:\\:\\$tabs type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/DolibarrModules.class.php
 
@@ -11591,56 +11551,6 @@ parameters:
 			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
 
 		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$All has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$Ambi has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$Maj has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$Min has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$Nb has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$NbMaj has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$NbNum has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$NbRepeat has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$NbSpe has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
-			message: "#^Property modGeneratePassPerso\\:\\:\\$Spe has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/security/generate/modGeneratePassPerso.class.php
-
-		-
 			message: "#^Call to function is_array\\(\\) with array\\<int\\<0, max\\>, mixed\\> will always evaluate to true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
@@ -12374,16 +12284,6 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Constant DolibarrTriggers\\:\\:VERSIONS type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/triggers/dolibarrtriggers.class.php
-
-		-
-			message: "#^Property DolibarrTriggers\\:\\:\\$errors type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/triggers/dolibarrtriggers.class.php
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$fk_project \\(int\\) in isset\\(\\) is not nullable\\.$#"
@@ -18231,107 +18131,7 @@ parameters:
 			path: ../../htdocs/product/canvas/product/actions_card_product.class.php
 
 		-
-			message: "#^Property ActionsCardService\\:\\:\\$accountancy_code_buy has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$accountancy_code_sell has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$canvas has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$card has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$definition has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$description has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$dirmodule has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$fieldListName has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
 			message: "#^Property ActionsCardService\\:\\:\\$field_list has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$id has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$label has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$module has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$name has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$next_prev_filter has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$note has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$object has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$price has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$price_base_type has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$price_min has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$ref has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: "#^Property ActionsCardService\\:\\:\\$targetmodule has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
 
@@ -19976,6 +19776,11 @@ parameters:
 			path: ../../htdocs/projet/card.php
 
 		-
+			message: "#^Parameter \\#1 \\$object of method Projects\\:\\:_cleanObjectDatas\\(\\) expects object, string given\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/api_projects.class.php
+
+		-
 			message: "#^Method Tasks\\:\\:_validate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/api_tasks.class.php
@@ -20022,6 +19827,11 @@ parameters:
 
 		-
 			message: "#^Method Tasks\\:\\:putTimeSpent\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../htdocs/projet/class/api_tasks.class.php
+
+		-
+			message: "#^Parameter \\#1 \\$object of method Tasks\\:\\:_cleanObjectDatas\\(\\) expects object, string given\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/api_tasks.class.php
 
@@ -20156,42 +19966,12 @@ parameters:
 			path: ../../htdocs/projet/class/task.class.php
 
 		-
-			message: "#^Call to function property_exists\\(\\) with \\$this\\(Task\\) and 'budget_amount' will always evaluate to true\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
 			message: "#^Call to function property_exists\\(\\) with \\$this\\(Task\\) and 'duration_effective' will always evaluate to true\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/task.class.php
 
 		-
 			message: "#^Left side of \\|\\| is always false\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Method Task\\:\\:fetchAllTimeSpent\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Method Task\\:\\:getListContactId\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Method Task\\:\\:getSumOfAmount\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Method Task\\:\\:getSummaryOfTimeSpent\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Method Task\\:\\:getUserRolesForProjectsOrTasks\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/projet/class/task.class.php
 
@@ -20218,11 +19998,6 @@ parameters:
 		-
 			message: "#^Property CommonObject\\:\\:\\$ref \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$array_options_project has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/projet/class/task.class.php
 
 		-
@@ -20261,93 +20036,8 @@ parameters:
 			path: ../../htdocs/projet/class/task.class.php
 
 		-
-			message: "#^Property Task\\:\\:\\$timespent_date has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_datehour has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_duration has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_fk_product has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_fk_user has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_id has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_invoiceid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_invoicelineid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_max_date has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_min_date has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_nblines has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_nblinesnull has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_note has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_old_duration has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_thm has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_total_amount has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_total_duration has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Property Task\\:\\:\\$timespent_withhour has no type specified\\.$#"
-			count: 1
+			message: "#^Property Task\\:\\:\\$timespent_note \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
 			path: ../../htdocs/projet/class/task.class.php
 
 		-
