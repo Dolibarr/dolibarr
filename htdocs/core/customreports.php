@@ -934,9 +934,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 				global $db;
 				$column = $matches[1] . '.' . $matches[2];
 				$operator = $matches[3];
-				$year = $matches[4];
-				$month = $matches[5];
-				$day = $matches[6];
+				$year = (int) $matches[4];
+				$month = (int) $matches[5];
+				$day = (int) $matches[6];
 
 				$startOfDay = $db->idate(dol_mktime(0, 0, 0, $month, $day, $year));
 				$endOfDay = $db->idate(dol_mktime(23, 59, 59, $month, $day, $year));
