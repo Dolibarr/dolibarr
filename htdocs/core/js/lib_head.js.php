@@ -1099,35 +1099,28 @@ function getOperatorsForFieldType(type) {
 
 	// Define the list of operators for each general field category
 	const operatorList = {
-		text: {
-			Contains: "<?php print $langs->trans('Contains'); ?>",
-			DoesNotContain: "<?php print $langs->trans('DoesNotContain'); ?>",
-			Is: "<?php print $langs->trans('Is'); ?>",
-			IsNot: "<?php print $langs->trans('IsNot'); ?>",
-			StartsWith: "<?php print $langs->trans('StartsWith'); ?>",
-			EndsWith: "<?php print $langs->trans('EndsWith'); ?>"
-		},
-		number: {
-			"=": "=",
-			"!=": "!=",
-			"<": "<",
-			">": ">",
-			"<=": "<=",
-			">=": ">="
-		},
-		date: {
-			Is: "<?php print $langs->trans('Is'); ?>",
-			IsNot: "<?php print $langs->trans('IsNot'); ?>",
-			IsBefore: "<?php print $langs->trans('IsBefore'); ?>",
-			IsAfter: "<?php print $langs->trans('IsAfter'); ?>",
-			IsOnOrBefore: "<?php print $langs->trans('IsOnOrBefore'); ?>",
-			IsOnOrAfter: "<?php print $langs->trans('IsOnOrAfter'); ?>"
-		},
-		html: {
-			Contains: "<?php print $langs->trans('Contains'); ?>",
-			IsEmpty: "<?php print $langs->trans('IsEmpty'); ?>",
-			IsNotEmpty: "<?php print $langs->trans('IsNotEmpty'); ?>"
-		}
+		text: [
+			"<?php print $langs->trans('Contains'); ?>",
+			"<?php print $langs->trans('DoesNotContain'); ?>",
+			"<?php print $langs->trans('Is'); ?>",
+			"<?php print $langs->trans('IsNot'); ?>",
+			"<?php print $langs->trans('StartsWith'); ?>",
+			"<?php print $langs->trans('EndsWith'); ?>"
+		],
+		number: ["=", "!=", "<", ">", "<=", ">="],
+		date: [
+			"<?php print $langs->trans('Is'); ?>",
+			"<?php print $langs->trans('IsNot'); ?>",
+			"<?php print $langs->trans('IsBefore'); ?>",
+			"<?php print $langs->trans('IsAfter'); ?>",
+			"<?php print $langs->trans('IsOnOrBefore'); ?>",
+			"<?php print $langs->trans('IsOnOrAfter'); ?>"
+		],
+		html: [
+			"<?php print $langs->trans('Contains'); ?>",
+			"<?php print $langs->trans('IsEmpty'); ?>",
+			"<?php print $langs->trans('IsNotEmpty'); ?>"
+		]
 	};
 
 
@@ -1163,19 +1156,19 @@ function generateFilterString(column, operator, context, fieldType) {
 		case "Contains":
 			filter = column + " like \'%" + context + "%\'";
 			break;
-		case "DoesNotContain":
-			filter = column + " notlike \'%" + context + "%\'";
+		case "Does not contain":
+			filter = column + " not like \'%" + context + "%\'";
 			break;
 		case "Is":
 			filter = column + " = \'" + context + "\'";
 			break;
-		case "IsNot":
+		case "Is not":
 			filter = column + " != \'" + context + "\'";
 			break;
-		case "StartsWith":
+		case "Starts with":
 			filter = column + " like \'" + context + "%\'";
 			break;
-		case "EndsWith":
+		case "Ends with":
 			filter = column + " like \'%" + context + "\'";
 			break;
 		case "=":
@@ -1196,16 +1189,16 @@ function generateFilterString(column, operator, context, fieldType) {
 		case ">=":
 			filter = column + " >= \'" + context + "\'";
 			break;
-		case "IsBefore":
+		case "Is before":
 			filter = column + " < \'" + context + "\'";
 			break;
-		case "IsAfter":
+		case "Is after":
 			filter = column + " > \'" + context + "\'";
 			break;
-		case "IsOnOrBefore":
+		case "Is on or before":
 			filter = column + " <= \'" + context + "\'";
 			break;
-		case "IsOnOrAfter":
+		case "Is on or after":
 			filter = column + " >= \'" + context + "\'";
 			break;
 		default:
