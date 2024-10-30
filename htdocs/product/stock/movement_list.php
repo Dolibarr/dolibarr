@@ -495,6 +495,9 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
 
+				$srcwarehouseid = 0;
+				$eatby = -1;
+				$sellby = -1;
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {

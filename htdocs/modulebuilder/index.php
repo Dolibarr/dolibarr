@@ -2196,7 +2196,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		$error++;
 		setEventMessages($langs->trans("ErrorDictionaryNotFound", ucfirst($dicname)), null, 'errors');
 	}
-	if (!$error) {
+	if (!$error && $newdicname !== null) {
 		// delete table
 		$_results = $db->DDLDropTable(MAIN_DB_PREFIX.strtolower($newdicname));
 		if ($_results < 0) {

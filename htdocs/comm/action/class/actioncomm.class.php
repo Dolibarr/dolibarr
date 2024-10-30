@@ -231,7 +231,7 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}> Array of contact ids
+	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}|int> Array of contact ids
 	 */
 	public $socpeopleassigned = array();
 
@@ -2707,7 +2707,9 @@ class ActionComm extends CommonObject
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
-					if ($res > 0) $res = $this->fetch_thirdparty();
+					if ($res > 0) {
+						$res = $this->fetch_thirdparty();
+					}
 					if ($res > 0) {
 						// PREPARE EMAIL
 						$errormesg = '';
