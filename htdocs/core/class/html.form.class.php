@@ -11021,7 +11021,7 @@ class Form
 		global $langs, $form;
 
 		require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
-		$formother = new FormOther($db);
+		$formother = new FormOther($this->db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
@@ -11200,14 +11200,6 @@ class Form
 		$ret .=  $form->selectDate(($dateOne ? $dateOne : -1), 'dateone', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '');
 		$ret .= '</span>';
 
-		$ret .= '<span class="date-month" style="display:none">';
-		$ret .= $formother->select_month("", "datemonth", 1, 0, "minwidth50 maxwidth75imp valignmiddle", true);
-		$ret .= '</span>';
-
-		$ret .= '<span class="date-year" style="display:none">';
-		$ret .= $formother->selectyear("", "dateyear", 1, 100, 5, 0, 0, "", "valignmiddle width75", true);
-		$ret .= '</span>';
-
 		$ret .= '<span class="end-separator"></span> </td>';
 
 		$ret .= '<td>';
@@ -11232,7 +11224,7 @@ class Form
 					}).slideToggle(200);
 				});
 				$(document).on("click", function(e) {
-					if (!$(e.target).closest("#search_component_params_input, .search-component-assistance").length) {
+					if (!$(e.target).closest("#search_component_params_input, .search-component-assistance, #ui-datepicker-div").length) {
 						$(".search-component-assistance").hide();
 					}
 				});
@@ -11252,8 +11244,8 @@ class Form
 					operatorSelector.empty();
 
 					// Populate operators
-					operators.forEach(function(operator) {
-						operatorSelector.append("<option value=\'" + operator + "\'>" + operator + "</option>");
+					Object.entries(operators).forEach(function([operator, label]) {
+						operatorSelector.append("<option value=\'" + operator + "\'>" + label + "</option>");
 					});
 
 					operatorSelector.trigger("change.select2");
@@ -11265,14 +11257,7 @@ class Form
 					$(".date-one, .date-month, .date-year").hide();
 
 					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
-						// Show the appropriate date-specific input based on selected field value
-						if (selectedFieldValue?.includes("-day")) {
-							$(".date-one").show();
-						} else if (selectedFieldValue?.includes("-month")) {
-							$(".date-month, .date-year").show();
-						} else if (selectedFieldValue?.includes("-year")) {
-							$(".date-year").show();
-						}
+						$(".date-one").show();
 					} else {
 						$(".value-input").show();
 					}
@@ -11287,33 +11272,12 @@ class Form
 					const fieldType = $(".search_filter_field").find(":selected").data("type");
 
 					if (["date", "datetime", "timestamp"].includes(fieldType)) {
-						const dateInputs = {
-							day: $("#dateone").val(),
-							month: $("#datemonth").val(),
-							year: $("#dateyear").val()
-						};
-
-						// Construct date based on available input fields
-						value = "";
-						if (dateInputs.day) {
-							value = dateInputs.day;
-						} else if (dateInputs.month && dateInputs.year) {
-							value = `${dateInputs.year}-${dateInputs.month.padStart(2, "0")}`;
-						} else if (dateInputs.year) {
-							value = dateInputs.year;
-						}
-
-						// Parse and format the date
-						const parsedDate = new Date(value);
+						const parsedDate = new Date($("#dateone").val());
 						if (!isNaN(parsedDate)) {
 							const year = parsedDate.getFullYear();
 							const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
 							const day = String(parsedDate.getDate()).padStart(2, "0");
-
-							// Adjust `value` based on input presence
-							value = dateInputs.day ? `${year}-${month}-${day}` :
-									dateInputs.month ? `${year}-${month}` :
-									year;
+							value = `${year}-${month}-${day}`;
 						}
 					}
 					const filterString = generateFilterString(field, operator, value, fieldType);

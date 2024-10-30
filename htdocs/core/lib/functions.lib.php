@@ -13702,7 +13702,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 		$filter = '(' . $filter . ')';
 	}
 
-	$regexstring = '\(([a-zA-Z0-9_\.\-]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
+	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
 	$firstandlastparenthesis = 0;
 
 	if (!dolCheckFilters($filter, $errorstr, $firstandlastparenthesis)) {
@@ -13910,7 +13910,7 @@ function dolForgeCriteriaCallback($matches)
 		return '';
 	}
 
-	$operand = preg_replace('/[^a-z0-9\._-]/i', '', trim($tmp[0]));
+	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
 	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
