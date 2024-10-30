@@ -539,13 +539,6 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 		$tablepath .= ','.$object->table_element.'='.$tablealias;
 	}
 
-	$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-	$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-	$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-	$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-	$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-	$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
-
 	// Note: here $tablealias can be 't' or 't__fk_contract' or 't_fk_contract_fk_soc'
 
 	// Add main fields of object
