@@ -579,15 +579,12 @@ if (isModEnabled('category')) {
 $moreforfilter .= '<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial ? ' checked' : '').'>';
 
 
-if (!empty($moreforfilter)) {
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	print '</div>';
-}
-
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+print '</div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';

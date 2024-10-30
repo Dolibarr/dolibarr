@@ -778,12 +778,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter)) {
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-	}
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	$moreforfilter = '';
 

@@ -111,11 +111,6 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/bookkeeping/export.php
@@ -1168,11 +1163,6 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 2
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
 			path: ../../htdocs/admin/modules.php
 
 		-
@@ -19171,11 +19161,6 @@ parameters:
 			path: ../../htdocs/product/reassort.php
 
 		-
-			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/product/reassort.php
-
-		-
 			message: "#^Comparison operation \"\\<\" between null and 0 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/product/reassortlot.php
@@ -19187,11 +19172,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/product/reassortlot.php
-
-		-
-			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/reassortlot.php
 

@@ -423,14 +423,12 @@ if ($resql) {
 	$moreforfilter .= '<label for="search_toolowstock">'.$langs->trans("StockTooLow").' </label><input type="checkbox" id="search_toolowstock" name="search_toolowstock" value="1"'.($search_toolowstock ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter)) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		print '</div>';
-	}
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
