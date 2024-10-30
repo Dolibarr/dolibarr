@@ -406,8 +406,8 @@ if (empty($current_fiscal_period)) {
 	$head[0][2] = 'step2';
 	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
-	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 	$button = '';
+	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 	if ((empty($count_by_month['total']) || getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) && empty($current_fiscal_period['status'])) {
 		// If no unlocked record and period still open
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
