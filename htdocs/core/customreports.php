@@ -885,7 +885,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 
 	// Add LEFT JOIN for all tables mentioned into filter
 	if (!empty($search_component_params_hidden)) {
-		// Get all fields used into the filter
+		// Get all fields use into the filter
 		preg_match_all('/\b(t[\w]*_[\w]*)\.(\w+(-\w+)?)/', $search_component_params_hidden, $matches);
 		$fieldsUsedInFilter = array_unique($matches[0]);
 
@@ -896,7 +896,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		foreach ($fieldsUsedInFilter as $key => $val) {
 			if (!empty($arrayoffilterfields[$val])) {
 				$tmpval = explode('.', $val);
-				$tmpforloop = dolExplodeIntoArray($arrayoffilterfields[$val]['tablefromt'], ',');
+				$tmpforloop = dolExplodeIntoArray($arrayofxaxis[$val]['tablefromt'], ',');
 				foreach ($tmpforloop as $tmptable => $tmptablealias) {
 					if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
@@ -927,40 +927,25 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	if ($sqlfilters) {
 		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 1);
 
-		// Replace date values by $db->idate(dol_mktime(...))
-		$sql = preg_replace_callback(
-			"/(\w+)\.(\w+)\s*(=|!=|<>|<|>|<=|>=)\s*'(\d{4})-(\d{2})-(\d{2})'/",
-			function (array $matches) use ($db) {
-				$column = $matches[1] . '.' . $matches[2];
-				$operator = $matches[3];
-				$year = $matches[4];
-				$month = $matches[5];
-				$day = $matches[6];
+		// Replace year, month, day with %Y, %Y-%m, %Y-%m-%d. For example, (t.datef-year := '2024') becomes WHERE DATE_FORMAT(t.datef, '%Y') = '2024'
+		$pattern = "/(\w+)\.(\w+)-(\w+)/"; // Regex pattern to match the conditions
+		$sql = preg_replace_callback($pattern, function ($matches) {
+			$formats = [
+				'year' => "'%Y'",
+				'month' => "'%Y-%m'",
+				'day' => "'%Y-%m-%d'",
+			];
 
-				$startOfDay = $db->idate(dol_mktime(0, 0, 0, $month, $day, $year));
-				$endOfDay = $db->idate(dol_mktime(23, 59, 59, $month, $day, $year));
+			// Check if the time unit is valid
+			if (!isset($formats[$matches[3]])) {
+				return $matches[0]; // Return original match if unit is invalid
+			}
 
-				switch ($operator) {
-					case "=":
-						return "($column >= '$startOfDay' AND $column <= '$endOfDay')";
-					case "!=":
-					case "<>":
-						return "NOT ($column >= '$startOfDay' AND $column <= '$endOfDay')";
-					case "<":
-						return "$column < '$startOfDay'";
-					case ">":
-						return "$column > '$endOfDay'";
-					case "<=":
-						return "$column <= '$endOfDay'";
-					case ">=":
-						return "$column >= '$startOfDay'";
-					default:
-						return "";
-				}
-			},
-			$sql
-		);
+			// Construct the replacement string for DATE_FORMAT
+			return sprintf("DATE_FORMAT(%s.%s, %s)", $matches[1], $matches[2], $formats[$matches[3]]);
+		}, $sql);
 	}
+
 	$sql .= " GROUP BY ";
 	foreach ($search_xaxis as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
