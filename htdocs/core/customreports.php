@@ -931,6 +931,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		$sql = preg_replace_callback(
 			"/(\w+)\.(\w+)\s*(=|!=|<>|<|>|<=|>=)\s*'(\d{4})-(\d{2})-(\d{2})'/",
 			function (array $matches) use ($db) {
+				global $db;
 				$column = $matches[1] . '.' . $matches[2];
 				$operator = $matches[3];
 				$year = $matches[4];
