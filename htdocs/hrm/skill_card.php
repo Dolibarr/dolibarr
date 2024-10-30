@@ -128,32 +128,10 @@ if (empty($reshook)) {
 
 	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
-
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	$noback = 1;
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-
-	// action update on Skilldet
+	// action update on Skilldet must be done before real update action in core/actions_addupdatedelete.inc.php
 	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
-
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
-			if ($action == 'add' && $permissiontoadd) {
-				$arraySkill = $object->fetchLines();
-				'@phan-var-force Skilldet[] $arraySkill';
-				$index = 0;
-				foreach ($arraySkill as $skilldet) {
-					if (isset($skilldetArray[$index])) {
-						$SkValueToUpdate = $skilldetArray[$index];
-						$skilldet->description = $SkValueToUpdate;
-						$resupd = $skilldet->update($user);
-						if ($resupd <= 0) {
-							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
-						}
-					}
-					$index++;
-				}
-			}
 			if ($action == 'update' && $permissiontoadd) {
 				foreach ($skilldetArray as $key => $SkValueToUpdate) {
 					$skilldetObj = new Skilldet($object->db);
@@ -163,9 +141,43 @@ if (empty($reshook)) {
 						$resupd = $skilldetObj->update($user);
 						if ($resupd <= 0) {
 							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							$error++;
 						}
 					}
 				}
+			}
+		}
+	}
+
+	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+	$noback = 1;
+	if (in_array($action, array("confirm_delete", "update"))) {
+		$noback = 0;
+	}
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+	if (!$error) {
+		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
+			if ($action == 'add' && $permissiontoadd) {
+				$arraySkill = $object->fetchLines();
+				'@phan-var-force Skilldet[] $arraySkill';
+				$index = 0;
+				foreach ($arraySkill as $skilldet) {
+					if ($skilldet->rankorder != 0) {
+						if (isset($skilldetArray[$index])) {
+							$SkValueToUpdate = $skilldetArray[$index];
+							$skilldet->description = !empty($SkValueToUpdate) ? $SkValueToUpdate : $skilldet->description;
+							$resupd = $skilldet->update($user);
+							if ($resupd <= 0) {
+								setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							}
+						}
+						$index++;
+					}
+				}
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+				exit;
 			}
 		}
 	}
@@ -634,6 +646,7 @@ if ($action != "create" && $action != "edit") {
 		$sql .= " WHERE 1 = 1 ";
 	}
 	$sql .= " AND fk_skill = ".((int) $id);
+	$sql .= " AND rankorder <> 0";
 
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
@@ -880,7 +893,11 @@ if ($action != "create" && $action != "edit") {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('skill'));
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('skill'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright">';

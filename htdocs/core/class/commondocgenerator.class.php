@@ -760,7 +760,7 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_bank_bic'] = (empty($bank_account) ? '' : $bank_account->bic);
 			$resarray[$array_key.'_bank_label'] = (empty($bank_account) ? '' : $bank_account->label);
 			$resarray[$array_key.'_bank_number'] = (empty($bank_account) ? '' : $bank_account->number);
-			$resarray[$array_key.'_bank_proprio'] = (empty($bank_account) ? '' : $bank_account->proprio);
+			$resarray[$array_key.'_bank_proprio'] = (empty($bank_account) ? '' : $bank_account->owner_name);
 			$resarray[$array_key.'_bank_address'] = (empty($bank_account) ? '' : $bank_account->address);
 			$resarray[$array_key.'_bank_state'] = (empty($bank_account) ? '' : $bank_account->state);
 			$resarray[$array_key.'_bank_country'] = (empty($bank_account) ? '' : $bank_account->country);
@@ -777,7 +777,7 @@ abstract class CommonDocGenerator
 		// Fetch project information if there is a project assigned to this object
 		if ($object->element != "project" && !empty($object->fk_project) && $object->fk_project > 0) {
 			if (!is_object($object->project)) {
-				$object->fetch_projet();
+				$object->fetchProject();
 			}
 
 			$resarray[$array_key.'_project_ref'] = $object->project->ref;

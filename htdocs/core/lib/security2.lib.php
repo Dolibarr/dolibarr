@@ -271,22 +271,20 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Security graphical code
-		$captcha = 0;
-		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			$captcha = 1;
-			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+		$captcha = '';
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 		}
 
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 				$helpcenterlink = 1;
 			}
 		}

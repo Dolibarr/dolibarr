@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -244,10 +244,12 @@ class FormMail extends Form
 	 * @var array<string,string>
 	 */
 	public $substit = array();
+
 	/**
-	 * @var string[]
+	 * @var array<int,array<string,string>>
 	 */
 	public $substit_lines = array();
+
 	/**
 	 * @var array{}|array{models:string,langsmodels?:string,fileinit?:string[],returnurl:string}
 	 */
@@ -1504,6 +1506,10 @@ class FormMail extends Form
 		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 		$out .= '</div>';
 
+		if ($function == 'imagegeneration') {
+			$out .= '<div id="ai_image_result" class="margintoponly"></div>'; // Div for displaying the generated image
+		}
+
 		$out .= "</div>\n";
 
 		$out .= "<script type='text/javascript'>
@@ -1532,11 +1538,43 @@ class FormMail extends Form
 						}
 					}, 2000);
 
-					// set editor in readonly
-        			if (CKEDITOR.instances.".$htmlContent.") {
-						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
-					}
+					if ('".$function."' === 'imagegeneration') {
+						// Handle image generation request
+						$.ajax({
+							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								'format': '".dol_escape_js($format)."',			/* the format for output */
+								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
+								'instructions': instructions,					/* the prompt string */
+							}),
+							success: function(response) {
+								console.log('Received image URL: '+response);
+								// Assuming response is the URL of the generated image
+								var imageUrl = response;
+								$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');
 
+								// Clear the input field
+								$('#ai_instructions').val('');
+
+								apicallfinished = 1;
+								if (timeoutfinished) {
+									$('#ai_status_message').hide();
+								}
+							},
+							error: function(xhr, status, error) {
+								alert(error);
+								console.error('error ajax', status, error);
+								$('#ai_status_message').hide();
+							}
+						});
+					} else {
+
+						// set editor in readonly
+						if (CKEDITOR.instances.".$htmlContent.") {
+							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
+						}
 
 					$.ajax({
 						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',

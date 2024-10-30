@@ -121,6 +121,11 @@ print '<input type="hidden" name="action" value="update">';
 // Define main accounts for closure
 print '<table class="noborder centpercent">';
 
+print '<tr class="liste_titre">';
+print '<th>'.$langs->trans("Parameter").'</th>';
+print '<th>';
+print '</th></tr>';
+
 foreach ($list_account_main as $key) {
 	print '<tr class="oddeven value">';
 	// Param

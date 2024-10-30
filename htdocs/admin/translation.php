@@ -342,6 +342,7 @@ if ($mode == 'overwrite') {
 	print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
 	print ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
+	print '<br>';
 	print $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	print '</span></div>';
@@ -511,7 +512,7 @@ if ($mode == 'searchkey') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre_filter"><td>';
+	print '<tr class="liste_titre liste_titre_filter"><td>';
 	//print $formadmin->select_language($langcode,'langcode',0,null,$langs->trans("All"),0,0,'',1);
 	print $formadmin->select_language($langcode, 'langcode', 0, array(), 0, 0, 0, 'maxwidth250', 1);
 	print '</td>'."\n";

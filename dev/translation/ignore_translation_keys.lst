@@ -1004,7 +1004,6 @@ VideoGeneration
 #####################################################################
 #####################################################################
 AddService
-AnHelpMessage
 Analytic
 AnalyticLabel
 BankId
@@ -1036,6 +1035,7 @@ FailedToLogin
 First
 GroupCreate
 GroupUpdate
+HelpMessage
 INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION
 INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION
 INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID
@@ -1073,6 +1073,10 @@ MYMODULE_MYPARAM6
 MYMODULE_MYPARAM7
 MYMODULE_MYPARAM8
 MYMODULE_MYPARAM9
+MYMODULE_MYPARAM10
+MYMODULE_MYPARAM11
+MYMODULE_MYPARAM12
+MYMODULE_MYPARAM13
 ManufacturingOrders
 MemberCreate
 MemberTypeCreate
@@ -1113,8 +1117,6 @@ TicketMessageMailSignatureText
 TicketSetupPage
 Tiers
 Timeline
-TotalDiscount
-TotalHTBeforeDiscount
 Transfer
 TryAnotherConnectionMode
 UndefinedKey

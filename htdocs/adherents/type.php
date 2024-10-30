@@ -328,7 +328,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$moreforfilter = '';
 
 		print '<div class="div-table-responsive">';
-		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+		print '<table class="tagtable noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

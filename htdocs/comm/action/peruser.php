@@ -731,6 +731,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -835,7 +836,7 @@ echo '<div class="div-table-responsive">';
 $colorsbytype = array();
 
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table class="centpercent noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month listwithfilterbefore">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';

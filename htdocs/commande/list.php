@@ -2844,7 +2844,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.facture']['checked'])) {
 			print '<td class="center">';
 			if ($obj->billed) {
-				print yn($obj->billed, 4);
+				print yn($obj->billed, $langs->trans("Billed"));
 			}
 			print '</td>';
 			if (!$i) {

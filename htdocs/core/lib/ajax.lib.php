@@ -637,10 +637,11 @@ function ajax_event($htmlname, $events)
  *  @param  string      $suffix                 Suffix to use on the name of the switch picto when option is on. Example: '', '_red'
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
+ *  @param	int			$userconst				1=OnOff for user constant of user $userconst
  * 	@return string
  *  @see ajax_object_onoff() to update the status of an object
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0)
 {
 	global $conf, $langs, $user;
 
@@ -650,7 +651,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	}
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
-		if (empty($conf->global->$code)) {
+		if (!getDolGlobalString($code)) {
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').'href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -665,6 +666,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var entity = \''.dol_escape_js($entity).'\';
 				var strict = \''.dol_escape_js((string) $strict).'\';
 				var userid = \''.dol_escape_js((string) $user->id).'\';
+				var userconst = '.((int) $userconst).';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -676,7 +678,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
 					} else {
-						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);
+						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 1, userconst);
 					}
 				});
 
@@ -688,18 +690,23 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
 					} else {';
 		if (empty($setzeroinsteadofdel)) {
-			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
+			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, userconst);';
 		} else {
-			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
+			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0, userconst);';
 		}
 		$out .= '	}
 				});
 			});
 		</script>'."\n";
 
+		if ($userconst) {
+			$value = getDolUserString($code);
+		} else {
+			$value = getDolGlobalString($code);
+		}
 		$out .= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.(getDolGlobalString($code) ? 'hideobject' : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
-		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.(getDolGlobalString($code) ? '' : 'hideobject').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
 		$out .= "\n";
 	}
 

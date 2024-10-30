@@ -56,8 +56,8 @@ class Account extends CommonObject
 	public $picto = 'account';
 
 	/**
-	 * @var	int		Use id instead of rowid
-	 * @deprecated
+	 * @var	int
+	 * @deprecated	Use $id instead of $rowid
 	 * @see $id
 	 */
 	public $rowid;
@@ -71,7 +71,7 @@ class Account extends CommonObject
 	/**
 	 * Bank account type. Check TYPE_ constants
 	 * @var int
-	 * @deprecated
+	 * @deprecated Use $type
 	 * @see $type
 	 */
 	public $courant;
@@ -149,7 +149,7 @@ class Account extends CommonObject
 	 * IBAN number
 	 *
 	 * @var string
-	 * @deprecated see $iban
+	 * @deprecated See $iban
 	 */
 	public $iban_prefix;
 
@@ -162,7 +162,7 @@ class Account extends CommonObject
 	/**
 	 * Name of account holder
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $owner_name
 	 * @see $owner_name
 	 */
 	public $proprio;
@@ -190,13 +190,19 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $owner_town;
+	/**
+	 * @var int
+	 */
 	public $owner_country_id;
+	/**
+	 * @var string
+	 */
 	public $owner_country_code;
 
 	/**
 	 * Address of the bank account
 	 * @var string
-	 * @deprecated
+	 * @deprecated See $address
 	 * @see $address
 	 */
 	public $domiciliation;
@@ -206,15 +212,27 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $address;
+	/**
+	 * @var int
+	 */
 	public $state_id;
+	/**
+	 * @var string
+	 */
 	public $state_code;
+	/**
+	 * @var string
+	 */
 	public $state;
+	/**
+	 * @var int
+	 */
 	public $country_id;
 
 	/**
 	 * Variable containing all account types with their respective translated label.
 	 * Defined in __construct
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $type_lib = array();
 
@@ -517,7 +535,7 @@ class Account extends CommonObject
 	 *      @param  int         $fk_bank    To search using bank transaction id
 	 *      @param  int         $url_id     To search using link to
 	 *      @param  string      $type       To search using type
-	 *      @return array|int               Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
+	 *		@return	int<-1,-1>|array<int,array{0:string,1:int,2:string,3:int,url:string,url_id:int,label:string,type:int,fk_bank:int}>		Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
 	public function get_url($fk_bank = 0, $url_id = 0, $type = '')
 	{
@@ -737,18 +755,9 @@ class Account extends CommonObject
 		if (empty($balance)) {
 			$balance = 0;
 		}
-		if (empty($this->address && !empty($this->domiciliation))) {
-			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
-			$this->address = $this->domiciliation;
-		}
 		if (empty($this->status && !empty($this->clos))) {
 			dol_syslog(get_class($this)."::create clos is deprecated use status", LOG_NOTICE);
 			$this->status = $this->clos;
-		}
-
-		if (empty($this->address && !empty($this->domiciliation))) {
-			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
-			$this->address = $this->domiciliation;
 		}
 
 		// Load the library to validate/check a BAN account
@@ -804,7 +813,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
-		$sql .= ", '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ", '".$this->db->escape($this->owner_name)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ", '".$this->db->escape($this->owner_town)."'";
@@ -928,7 +937,7 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
-		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1035,8 +1044,8 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1108,7 +1117,7 @@ class Account extends CommonObject
 				$this->courant       = $obj->type;
 				$this->bank          = $obj->bank;
 				$this->clos          = $obj->status;
-				$this->status = $obj->status;
+				$this->status        = $obj->status;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1118,15 +1127,16 @@ class Account extends CommonObject
 				$this->cle_rib       = $obj->cle_rib;
 				$this->bic           = $obj->bic;
 				$this->iban          = $obj->iban;
-				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
-				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->owner_name;
+
 				$this->owner_name    = $obj->owner_name;
+				$this->proprio       = $this->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;
 				$this->owner_country_id = $obj->owner_country_id;
+
+				$this->pti_in_ctti   = $obj->pti_in_ctti;
 
 				$this->state_id        = $obj->state_id;
 				$this->state_code      = $obj->state_code;
@@ -1858,8 +1868,8 @@ class Account extends CommonObject
 	 *
 	 * Some countries show less or more bank account properties to the user
 	 *
-	 * @param  int     $includeibanbic         1=Return also key for IBAN and BIC
-	 * @return array                           Array of fields to show
+	 * @param  int<0,1>	$includeibanbic         1=Return also key for IBAN and BIC
+	 * @return string[]                         Array of fields to show
 	 * @see useDetailedBBAN()
 	 */
 	public function getFieldsToShow($includeibanbic = 0)
@@ -1899,7 +1909,7 @@ class Account extends CommonObject
 	 * - BankAccountNumberKey
 	 * - DeskCode
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public static function getAccountNumberOrder()
 	{
@@ -1961,19 +1971,18 @@ class Account extends CommonObject
 
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
-		$this->proprio         = 'Owner';
 		$this->owner_name      = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
 		$this->owner_town      = 'Owner town';
-		$this->owner_country_id = 'Owner country_id';
+		$this->owner_country_id = 1;
 		$this->country_id      = 1;
 
 		return 1;
 	}
 
 	/**
-	 * Function used to replace a thirdparty id with another one.
+	 * Function used to replace a third party id with another one.
 	 *
 	 * @param DoliDB 	$dbs 			Database handler
 	 * @param int 		$origin_id 		Old thirdparty id
@@ -2180,6 +2189,7 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * User author of the reconciliation
 	 * TODO: variable used only by method info() => is it the same as $fk_user_rappro ?
+	 * @var int
 	 */
 	public $user_rappro;
 

@@ -395,10 +395,9 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneSupplier").'</span><br>';
+	print_barre_liste($langs->trans("InvoiceLinesDone").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilDoneSupplier").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
-	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom">';
+	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom marginbottomonly">';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 

@@ -160,7 +160,7 @@ if (empty($reshook)) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
-				$line->rankorder = $TNote[$line->fk_skill];
+				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
 				$line->update($user);
 			}
 			setEventMessage($langs->trans("SaveLevelSkill"));
@@ -568,9 +568,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$Tab[$num]->skilllabel = $obj->skilllabel;
 				$Tab[$num]->description = $obj->description;
 				$Tab[$num]->userRankForSkill = '<span title="'.$obj->userRankForSkillDesc.'" class="radio_js_bloc_number TNote_1">' . $obj->userRankForSkill . '</span>';
-				$Tab[$num]->required_rank = '<span title="'.$obj->required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $obj->required_rank . '</span>';
 
-				if ($obj->userRankForSkill > $obj->required_rank) {
+				$required_rank = $obj->required_rank;
+				$required_rank_desc = $obj->required_rank_desc;
+				if ($required_rank == "-1") {
+					$required_rank = $langs->trans("NA");
+					$required_rank_desc = $langs->trans("NA");
+				} elseif ($required_rank == "0") {
+					$required_rank_desc = $langs->trans('SkillNotRequired');
+				}
+
+				$Tab[$num]->required_rank = '<span title="'.$required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $required_rank . '</span>';
+
+				if ($obj->userRankForSkill == -1) {
+					$title = $langs->trans('NA');
+					$class .= 'veryhappy diffnote';
+				} elseif ($obj->userRankForSkill > $obj->required_rank) {
 					$title = $langs->trans('MaxlevelGreaterThanShort');
 					$class .= 'veryhappy diffnote';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
@@ -699,7 +712,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('evaluation'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('evaluation'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

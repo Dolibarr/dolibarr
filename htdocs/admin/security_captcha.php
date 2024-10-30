@@ -105,7 +105,7 @@ print "<br>\n";
 
 
 // Load array with all captcha generation modules
-$dir = "../core/modules/security/captcha";
+$dir = DOL_DOCUMENT_ROOT."/core/modules/security/captcha";
 clearstatcache();
 $handle = opendir($dir);
 $i = 1;
@@ -142,23 +142,41 @@ print '<br>';
 
 
 print $langs->trans("UseCaptchaCode");
-if (function_exists("imagecreatefrompng")) {
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA', array(), null, 0, 0, 1);
-	} else {
-		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-		}
-	}
+if (!empty($conf->use_javascript_ajax)) {
+	print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA', array(), null, 0, 0, 1);
 } else {
-	$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
-	print $desc;
+	if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
 }
 
+if (isModEnabled('ticket')) {
+	print '<br>';
+	print $langs->trans("TicketUseCaptchaCodeHelp");
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
 
+$showavailablecaptcha = 0;
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	$showavailablecaptcha = 1;
+}
+if (isModEnabled('ticket') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+	$showavailablecaptcha = 1;
+}
+
+$selectedcaptcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+
+if ($showavailablecaptcha) {
 	print '<br>';
 	print '<br>';
 	print '<br>';
@@ -170,13 +188,6 @@ if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 	print '<td>'.$langs->trans("Example").'</td>';
 	print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
 	print '</tr>';
-
-	$arrayofcaptcha = array(
-		'standard' => array('label' => 'Standard', 'picto' => 'ee')
-	);
-	//$arrayofcaptcha['google'] = array('label' => 'Google');
-
-	$selectedcaptcha = 'standard';
 
 	// Loop on each available captcha
 	foreach ($arrayhandler as $key => $module) {
@@ -192,9 +203,22 @@ if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		print $module->getExample().'<br>';
 		print '</td>';
 		print '<td class="right" width="100">';
-		if ($key == $selectedcaptcha) {
-			print 'On';
+
+		if (function_exists("imagecreatefrompng")) {
+			if ($key != $selectedcaptcha) {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=enabledcaptchahandler&token='.newToken().'&handler=standard"><input type="checkbox"></a>';
+			} else {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=disablecaptchahandler&token='.newToken().'&handler=standard"><input type="checkbox" checked="checked"';
+				if (count($arrayhandler) <= 1) {
+					print 'disabled="disabled"';
+				}
+				print '></a>';
+			}
+		} else {
+			$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
+			print $desc;
 		}
+
 		print '</td>';
 		print '</tr>';
 	}

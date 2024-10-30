@@ -52,22 +52,22 @@ class Translate
 
 
 	/**
-	 * @var array       Array of all translations key=>value
+	 * @var array<string,string>       Array of all translations key=>value
 	 */
 	public $tab_translate = array();
 
 	/**
-	 * @var array       Array to store result after loading each language file
+	 * @var array<string,int<1,2>>       Array to store result after loading each language file
 	 */
 	private $_tab_loaded = array();
 
 	/**
-	 * @var array       Cache for labels returned by getLabelFromKey method
+	 * @var array<string,array<string,string>>		Cache for labels returned by getLabelFromKey method
 	 */
 	public $cache_labels = array();
 
 	/**
-	 * @var array       Cache to store currency symbols
+	 * @var array<string,array{label:string,unicode:string}>	Cache to store currency symbols
 	 */
 	public $cache_currencies = array();
 
@@ -281,8 +281,8 @@ class Translate
 		// Search if a module directory name is provided into lang file name
 		$regs = array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $domain, $regs)) {
-			$newdomain = $regs[1];
-			$modulename = $regs[2];
+			$newdomain = (string) $regs[1];
+			$modulename = (string) $regs[2];
 		}
 
 		// Check cache
@@ -353,9 +353,7 @@ class Translate
 
 				if (!$found) {
 					if ($fp = @fopen($file_lang, "rt")) {
-						if ($usecachekey) {
-							// $tabtranslatedomain = array(); // To save lang content in cache
-						}
+						// $tabtranslatedomain = array(); // To save lang content in cache when enabled (commented because initial = argument to function)
 
 						/**
 						 * Read each lines until a '=' (with any combination of spaces around it)
@@ -502,7 +500,7 @@ class Translate
 			return 0;
 		}
 
-		$this->_tab_loaded[$newdomain] = 1; // We want to be sure this function is called once only for domain 'database'
+		$this->_tab_loaded[$newdomain] = 2; // Preset the load as loaded and make sure this function is called once only for $newdomain='database'
 
 		$fileread = 0;
 		$langofdir = $this->defaultlang;
@@ -551,9 +549,7 @@ class Translate
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				if ($num) {
-					if ($usecachekey) {
-						$tabtranslatedomain = array(); // To save lang content in cache
-					}
+					$tabtranslatedomain = array(); // To save lang content in cache (when enabled)
 
 					$i = 0;
 					while ($i < $num) {	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
@@ -594,10 +590,6 @@ class Translate
 
 		if ($fileread) {
 			$this->_tab_loaded[$newdomain] = 1; // Set domain file as loaded
-		}
-
-		if (empty($this->_tab_loaded[$newdomain])) {
-			$this->_tab_loaded[$newdomain] = 2; // Mark this case as not found (no lines found for language)
 		}
 
 		return 1;
@@ -947,8 +939,8 @@ class Translate
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
 	 *  @param	string	$filename       Language filename to search
-	 *  @param  integer	$searchalt      Search also alternate language file
-	 *  @return boolean         		true if exists and readable
+	 *  @param  int		$searchalt      Search also alternate language file
+	 *  @return bool	         		true if exists and readable
 	 */
 	public function file_exists($filename, $searchalt = 0)
 	{
@@ -960,12 +952,13 @@ class Translate
 			}
 
 			if ($searchalt) {
+				$filenamealt = null;
 				// Test si fichier dans repertoire de la langue alternative
 				if ($this->defaultlang != "en_US") {
 					$filenamealt = $searchdir . "/langs/en_US/" . $filename;
 				}
 				//else $filenamealt = $searchdir."/langs/fr_FR/".$filename;
-				if (is_readable(dol_osencode($filenamealt))) {
+				if ($filenamealt !== null && is_readable(dol_osencode($filenamealt))) {
 					return true;
 				}
 			}
@@ -1068,7 +1061,7 @@ class Translate
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$this->cache_labels[$tablename][$key] = $obj->label;
+				$this->cache_labels[$tablename][$key] = (string) $obj->label;
 			} else {
 				$this->cache_labels[$tablename][$key] = $key;
 			}
@@ -1117,7 +1110,7 @@ class Translate
 		if (function_exists("mb_convert_encoding")) {
 			$this->loadCacheCurrencies($forceloadall ? '' : $currency_code);
 
-			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {
+			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				foreach ($this->cache_currencies[$currency_code]['unicode'] as $unicode) {
 					$currency_sign .= mb_convert_encoding("&#" . $unicode . ";", "UTF-8", 'HTML-ENTITIES');
 				}
@@ -1170,7 +1163,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency" . $obj->code_iso) != "Currency" . $obj->code_iso ? $this->trans("Currency" . $obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);  // @phan-suppress-current-line PhanTypeMismatchProperty
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

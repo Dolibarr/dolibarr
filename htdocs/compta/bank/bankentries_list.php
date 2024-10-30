@@ -100,14 +100,11 @@ if (empty($dateop)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-$pageplusone = GETPOSTINT("pageplusone");
-if ($pageplusone) {
-	$page = $pageplusone - 1;
-}
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -1494,7 +1491,7 @@ if ($resql) {
 		}
 
 		$banklinestatic->id = $objp->rowid;
-		$banklinestatic->ref = $objp->rowid;
+		$banklinestatic->ref = (string) $objp->rowid;
 
 		print '<tr class="oddeven" '.$backgroundcolor.'>';
 
@@ -1551,25 +1548,25 @@ if ($resql) {
 					print $banktransferstatic->getNomUrl(0).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment') {
 					$paymentstatic->id = $links[$key]['url_id'];
-					$paymentstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
+					$paymentstatic->ref = (string) $links[$key]['url_id']; // FIXME This is id, not ref of payment
 					$paymentstatic->date = $db->jdate($objp->do);
 					print $paymentstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
-					$paymentsupplierstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
+					$paymentsupplierstatic->ref = (string) $links[$key]['url_id']; // FIXME This is id, not ref of payment
 					print $paymentsupplierstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_sc') {
 					$paymentscstatic->id = $links[$key]['url_id'];
-					$paymentscstatic->ref = $links[$key]['url_id'];
+					$paymentscstatic->ref = (string) $links[$key]['url_id'];
 					$paymentscstatic->label = $links[$key]['label'];
 					print $paymentscstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_vat') {
 					$paymentvatstatic->id = $links[$key]['url_id'];
-					$paymentvatstatic->ref = $links[$key]['url_id'];
+					$paymentvatstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentvatstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
-					$paymentsalstatic->ref = $links[$key]['url_id'];
+					$paymentsalstatic->ref = (string) $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					print $paymentsalstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_loan') {
@@ -1578,15 +1575,15 @@ if ($resql) {
 					print '</a>'.($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonationstatic->id = $links[$key]['url_id'];
-					$paymentdonationstatic->ref = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentdonationstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
-					$paymentexpensereportstatic->ref = $links[$key]['url_id'];
+					$paymentexpensereportstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentexpensereportstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_various') {
 					$paymentvariousstatic->id = $links[$key]['url_id'];
-					$paymentvariousstatic->ref = $links[$key]['url_id'];
+					$paymentvariousstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentvariousstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.

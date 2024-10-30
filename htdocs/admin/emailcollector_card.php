@@ -413,7 +413,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				} else {
 					$keyforprovider = '';
 				}
-				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
 				if (!empty($supportedoauth2array)) {
@@ -623,6 +623,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswithonsecondcolumn';
+	$nounderbanner = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -639,7 +640,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Filters
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelineoffilters" class="noborder nobordertop noshadow">';
+	print '<table id="tablelineoffilters" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';

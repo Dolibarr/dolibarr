@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2022 	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +196,6 @@ if (!empty($disablenofollow)) {
 
 
 <?php
-$captcha = 0;
 if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
@@ -205,7 +204,22 @@ if (!empty($captcha)) {
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants?>
+
+	$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$captchaobj = null;
+	if (dol_is_file($classfile)) {
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		require_once $classfile;
+
+		$captchaobj = new $classname($db, $conf, $langs, $user);
+	}
+
+	if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+		// TODO: get this code using a method of captcha
+	} else {
+		?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd tdinputlogin nowrap none valignmiddle">
@@ -216,11 +230,13 @@ if (!empty($captcha)) {
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a>
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
 	</span>
 
-	</div></div>
-	<?php
+	</div>
+	</div>
+		<?php
+	}
 }
 
 if (!empty($morelogincontent)) {
