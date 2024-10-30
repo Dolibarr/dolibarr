@@ -610,17 +610,49 @@ class Product extends CommonObject
 	 */
 	public $barcode_type_code;
 
-	public $stats_propale = array();
-	public $stats_commande = array();
-	public $stats_contrat = array();
-	public $stats_facture = array();
-	public $stats_proposal_supplier = array();
-	public $stats_commande_fournisseur = array();
-	public $stats_expedition = array();
 	/**
-	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float}
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats propales
+	 */
+	public $stats_propale = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats orders
+	 */
+	public $stats_commande = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats contracts
+	 */
+	public $stats_contrat = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats invoices
+	 */
+	public $stats_facture = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int} stats supplier propales
+	 */
+	public $stats_proposal_supplier = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float} stats supplier orders
+	 */
+	public $stats_commande_fournisseur = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats shipping
+	 */
+	public $stats_expedition = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float} stats receptions
 	 */
 	public $stats_reception = array();
+
+	/**
+	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
+	 */
 	public $stats_mo = array();
 	public $stats_bom = array();
 	public $stats_mrptoconsume = array();
@@ -693,7 +725,7 @@ class Product extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $ref_supplier
 	 * @see        $ref_supplier
 	 */
 	public $ref_fourn;

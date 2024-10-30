@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,8 +83,8 @@ if ($action == 'add_payment' && $permissiontoadd) {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
-				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num(GETPOST($key));
+				$other_chid = (int) substr($key, 7);
+				$amounts[$other_chid] = (float) price2num(GETPOST($key));
 			}
 		}
 
@@ -99,12 +99,12 @@ if ($action == 'add_payment' && $permissiontoadd) {
 
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
-			$payment->chid         = $chid;
+			$payment->chid        = $chid;
 			$payment->datep     = $datepaid;
-			$payment->amounts      = $amounts; // Tableau de montant
-			$payment->paymenttype  = GETPOSTINT("paymenttype");
-			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$payment->note_public  = GETPOST("note_public", 'restricthtml');
+			$payment->amounts     = $amounts; // Tableau de montant
+			$payment->paymenttype = GETPOSTINT("paymenttype");
+			$payment->num_payment = GETPOST("num_payment", 'alphanohtml');
+			$payment->note_public = GETPOST("note_public", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $payment->create($user);

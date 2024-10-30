@@ -1176,6 +1176,7 @@ class BonPrelevement extends CommonObject
 
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
+					'@phan-var-force array<int<0,12>,string> $row';
 					$factures[$i] = $row; // All fields
 
 					if ($row[7] == 0) {
@@ -1247,7 +1248,7 @@ class BonPrelevement extends CommonObject
 							//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 						} else {
 							if ($type != 'bank-transfer') {
-								$tmpsoc->id = $fac[2];
+								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/compta/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
@@ -1255,7 +1256,7 @@ class BonPrelevement extends CommonObject
 								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-								$tmpsoc->id = $fac[2];
+								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
@@ -1263,7 +1264,7 @@ class BonPrelevement extends CommonObject
 								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype == 'salary') {
-								$tmpuser->id = $fac[2];
+								$tmpuser->id = (int) $fac[2];
 								$tmpuser->firstname = $fac[8];
 								$salary_url = "<a href='" . DOL_URL_ROOT . '/salaries/card.php?id=' . $fac[0] . "'>" . $fac[0] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
