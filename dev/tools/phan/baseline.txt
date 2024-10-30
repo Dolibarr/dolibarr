@@ -9,25 +9,27 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 550+ occurrences
+    // PhanUndeclaredProperty : 560+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 520+ occurrences
     // PhanUndeclaredGlobalVariable : 350+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 330+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 320+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 220+ occurrences
     // PhanTypeMismatchProperty : 160+ occurrences
-    // PhanPossiblyUndeclaredVariable : 150+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 130+ occurrences
     // PhanPluginUnknownPropertyType : 130+ occurrences
+    // PhanPossiblyUndeclaredVariable : 110+ occurrences
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 50+ occurrences
     // PhanRedefineFunction : 45+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
     // PhanPluginEmptyStatementIf : 35+ occurrences
-    // PhanTypeInvalidDimOffset : 35+ occurrences
+    // PhanPluginUnknownArrayFunctionParamType : 35+ occurrences
+    // PhanPluginUnknownArrayFunctionReturnType : 30+ occurrences
+    // PhanTypeInvalidDimOffset : 30+ occurrences
     // PhanTypeMismatchDimFetch : 30+ occurrences
-    // PhanPluginUnknownObjectMethodCall : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanEmptyForeach : 10+ occurrences
+    // PhanPluginUnknownObjectMethodCall : 10+ occurrences
     // PhanTypeArraySuspiciousNull : 10+ occurrences
     // PhanTypeComparisonFromArray : 10+ occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
@@ -36,7 +38,6 @@ return [
     // PhanPluginSuspiciousParamPosition : 8 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 7 occurrences
     // PhanPluginUnknownArrayPropertyType : 7 occurrences
-    // PhanPluginConstantVariableNull : 6 occurrences
     // PhanParamTooMany : 5 occurrences
     // PhanPossiblyNullTypeMismatchProperty : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
@@ -263,7 +264,6 @@ return [
         'htdocs/core/db/sqlite3.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/core/extrafieldsinimport.inc.php' => ['PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/core/lib/admin.lib.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/lib/agenda.lib.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchArgumentReal'],
         'htdocs/core/lib/company.lib.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/core/lib/customreports.lib.php' => ['PhanTypeMismatchDimFetch', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/files.lib.php' => ['PhanUndeclaredProperty'],
@@ -522,7 +522,6 @@ return [
         'htdocs/product/class/productfournisseurprice.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/product/document.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/product/index.php' => ['PhanPluginUndeclaredVariableIsset'],
-        'htdocs/product/inventory/ajax/searchfrombarcode.php' => ['PhanTypeMismatchProperty'],
         'htdocs/product/inventory/card.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/product/inventory/class/inventory.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/inventory/inventory.php' => ['PhanTypeMismatchArgumentProbablyReal'],
