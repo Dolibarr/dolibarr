@@ -454,7 +454,7 @@ if ($object->id <= 0) {
 
 $param = '';
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
+	$param .= '&limit=' . ((int) $limit);
 }
 
 
@@ -592,8 +592,8 @@ print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER[
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateinventorylines">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
+print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
