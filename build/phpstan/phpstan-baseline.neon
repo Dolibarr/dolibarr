@@ -23556,11 +23556,6 @@ parameters:
 			path: ../../htdocs/user/class/usergroup.class.php
 
 		-
-			message: "#^Property UserGroup\\:\\:\\$globalgroup has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/user/class/usergroup.class.php
-
-		-
 			message: "#^Property UserGroup\\:\\:\\$name \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/user/class/usergroup.class.php
