@@ -931,9 +931,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		$sql = preg_replace_callback(
 			"/(\w+)\.(\w+)\s*(=|!=|<>|<|>|<=|>=)\s*'(\d{4})-(\d{2})-(\d{2})'/",
 			/**
-	         * @param array<int, string> $matches
-	         * @return string
-	         */
+			* @param array<int, string> $matches
+			* @return string
+			*/
 			function (array $matches): string {
 				global $db;
 				$column = $matches[1] . '.' . $matches[2];
