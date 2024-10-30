@@ -497,18 +497,16 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		/// === false because it can return an empty array
 		if ($busyResources === false) {
-			// an error occured in the sql
+			// an error occurred in the sql
 			$error++; $donotclearsession = 1; $action = 'create';
 			$object->error = $db->lasterror();
 			$object->errors[] = $object->error;
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-
-		else if (!empty($busyResources)){
+		} elseif (!empty($busyResources)) {
 			// Resource already in use
 			$error++; $donotclearsession = 1; $action = 'create';
 
-			$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+			$object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ' ;
 			foreach ($busyResources as $row) {
 				$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $row->r_ref, $row->ac_label.' ['.$row->ac_id.']');
 			}
@@ -567,11 +565,11 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				if (!empty($_SESSION['assignedtoresource'])) {
 					$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 
-					foreach ($assignedtoresource as $resource_id => $resource){
+					foreach ($assignedtoresource as $resource_id => $resource) {
 						// hardcoding dolresource might be a problem later on
-						// add_element_resource(id, type, busy, mandatory) -> 1 on sucess or 0
-						if (!$object->add_element_resource($resource_id, "dolresource", 1, (int) $resource['mandatory'])){
-							dol_syslog("An Error occured in add_element_resource: '" . $object->error . "'", LOG_ERR);
+						// add_element_resource(id, type, busy, mandatory) -> 1 on success or 0
+						if (!$object->add_element_resource($resource_id, "dolresource", 1, (int) $resource['mandatory'])) {
+							dol_syslog("An Error occurred in add_element_resource: '" . $object->error . "'", LOG_ERR);
 						};
 					}
 				}
