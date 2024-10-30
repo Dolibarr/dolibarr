@@ -1291,6 +1291,8 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $langs, $conf, $hookmanager;
 
+		$this->oldcopy = dol_clone($this, 2);
+
 		$this->db->begin();
 
 		$error = 0;
@@ -1322,6 +1324,8 @@ class CommandeFournisseur extends CommonOrder
 
 		// We set order into draft status
 		$this->brouillon = 1;
+		$this->statut = self::STATUS_DRAFT;
+		$this->status = self::STATUS_DRAFT;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
 		$sql .= "ref";
@@ -1410,6 +1414,8 @@ class CommandeFournisseur extends CommonOrder
 						);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
+						$this->statut = $this->oldcopy->statut;
+						$this->status = $this->oldcopy->status;
 						$this->db->rollback();
 						return -1;
 					}
@@ -1463,6 +1469,8 @@ class CommandeFournisseur extends CommonOrder
 						// Call trigger
 						$result = $this->call_trigger('ORDER_SUPPLIER_CREATE', $user);
 						if ($result < 0) {
+							$this->statut = $this->oldcopy->statut;
+							$this->status = $this->oldcopy->status;
 							$this->db->rollback();
 							return -1;
 						}
@@ -1473,12 +1481,16 @@ class CommandeFournisseur extends CommonOrder
 					return $this->id;
 				} else {
 					$this->error = $this->db->lasterror();
+					$this->statut = $this->oldcopy->statut;
+					$this->status = $this->oldcopy->status;
 					$this->db->rollback();
 					return -2;
 				}
 			}
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->statut = $this->oldcopy->statut;
+			$this->status = $this->oldcopy->status;
 			$this->db->rollback();
 			return -1;
 		}
