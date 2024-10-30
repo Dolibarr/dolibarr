@@ -98,3 +98,4 @@ NeedBusinessTravels=Need business travels
 NoDescription=No description
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
 PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment
+SkillNotRequired=Skill not required

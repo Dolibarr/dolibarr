@@ -240,7 +240,7 @@ class Task extends CommonObjectLine
 
 	/**
 	 * @var int ID of thirdparty
-	 * @deprecated
+	 * @deprecated Use $thirdparty_id
 	 * @see $thirdparty_id
 	 */
 	public $socid;

@@ -164,15 +164,17 @@ if (empty($reshook)) {
 				'@phan-var-force Skilldet[] $arraySkill';
 				$index = 0;
 				foreach ($arraySkill as $skilldet) {
-					if (isset($skilldetArray[$index])) {
-						$SkValueToUpdate = $skilldetArray[$index];
-						$skilldet->description = $SkValueToUpdate;
-						$resupd = $skilldet->update($user);
-						if ($resupd <= 0) {
-							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+					if ($skilldet->rankorder != 0) {
+						if (isset($skilldetArray[$index])) {
+							$SkValueToUpdate = $skilldetArray[$index];
+							$skilldet->description = !empty($SkValueToUpdate) ? $SkValueToUpdate : $skilldet->description;
+							$resupd = $skilldet->update($user);
+							if ($resupd <= 0) {
+								setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							}
 						}
+						$index++;
 					}
-					$index++;
 				}
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 				exit;
@@ -644,6 +646,7 @@ if ($action != "create" && $action != "edit") {
 		$sql .= " WHERE 1 = 1 ";
 	}
 	$sql .= " AND fk_skill = ".((int) $id);
+	$sql .= " AND rankorder <> 0";
 
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);

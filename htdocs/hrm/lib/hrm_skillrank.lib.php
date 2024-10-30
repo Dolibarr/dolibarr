@@ -123,7 +123,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 		return $langs->trans('SkillHasNoLines');
 	}
 
-	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">';
+	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.($selected_rank == "-1" ? ' selected' : '').'">';
 	$ret .= $langs->trans('NA');
 	$ret .= '</span>';
 	if (is_array($Lines) && !empty($Lines)) {

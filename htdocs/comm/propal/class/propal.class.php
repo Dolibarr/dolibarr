@@ -111,7 +111,7 @@ class Propal extends CommonObject
 	/**
 	 * Ref from thirdparty
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
 	public $ref_client;
@@ -144,7 +144,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @var int|''
-	 * @deprecated
+	 * @deprecated Use $date_creation
 	 * @see $date_creation
 	 */
 	public $datec;

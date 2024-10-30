@@ -566,18 +566,21 @@ function hideMessage(fieldId,message) {
  * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
- * @param	int		value       Value to set
  * @param   string  token       Token
+ * @param	int		value       Value to set
+ * @param	int		userconst	1=On/Off of user constant instead of global const
  * @return   boolean
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
 		token: token,
-		value: value
+		value: value,
+		userconst: userconst
 	},
 	function() {	/* handler for success of post */
 		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
@@ -666,23 +669,26 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
- * @param	{string}	code		Code
- * @param	{string}	input		Array of complementary actions to do if success
- * @param	{int}		entity		Entity
- * @param	{int}		strict		Strict
- * @param   {int}     forcereload Force reload
- * @param   {int}     userid      User id
- * @param   {string}  token       Token
+ * @param	string		url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
+ * @param	string		code		Code
+ * @param	string		input		Array of complementary actions to do if success
+ * @param	int			entity		Entity
+ * @param	int			strict		Strict
+ * @param   int     	forcereload Force reload
+ * @param   int     	userid      User id
+ * @param   string  	token       Token
+ * @param	int			userconst	1=On/Off of user constant instead of global const
  * @return  boolean
  */
-function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function delConstant(url, code, input, entity, strict, forcereload, userid, token, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "del",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		userconst: userconst
 	},
 	function() {
 		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
