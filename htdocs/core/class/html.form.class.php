@@ -11021,7 +11021,7 @@ class Form
 		global $langs, $form;
 
 		require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
-		$formother = new FormOther($this->db);
+		$formother = new FormOther($db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
