@@ -2501,11 +2501,6 @@ parameters:
 			path: ../../htdocs/categories/class/api_categories.class.php
 
 		-
-			message: "#^Property Categories\\:\\:\\$TYPES has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/categories/class/api_categories.class.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/categories/class/categorie.class.php
