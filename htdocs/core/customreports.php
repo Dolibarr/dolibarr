@@ -930,7 +930,11 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		// Replace date values by $db->idate(dol_mktime(...))
 		$sql = preg_replace_callback(
 			"/(\w+)\.(\w+)\s*(=|!=|<>|<|>|<=|>=)\s*'(\d{4})-(\d{2})-(\d{2})'/",
-			function (array $matches) use ($db) {
+			/**
+	         * @param array<int, string> $matches
+	         * @return string
+	         */
+			function (array $matches): string {
 				global $db;
 				$column = $matches[1] . '.' . $matches[2];
 				$operator = $matches[3];
