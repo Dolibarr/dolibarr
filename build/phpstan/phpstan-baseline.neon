@@ -6086,41 +6086,6 @@ parameters:
 			path: ../../htdocs/blockedlog/class/blockedlog.class.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bom/ajax/ajax.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bom/ajax/ajax.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bom/bom_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/bom/bom_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bom/bom_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bom/bom_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bom/bom_agenda.php
-
-		-
 			message: "#^Property BOM\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/bom/bom_card.php
@@ -6131,28 +6096,8 @@ parameters:
 			path: ../../htdocs/bom/bom_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bom/bom_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/bom/bom_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/bom/bom_card.php
-
-		-
 			message: "#^Variable \\$idprod might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/bom/bom_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 53
 			path: ../../htdocs/bom/bom_card.php
 
 		-
@@ -6161,43 +6106,8 @@ parameters:
 			path: ../../htdocs/bom/bom_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/bom/bom_card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bom/bom_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bom/bom_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bom/bom_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bom/bom_document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bom/bom_document.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/bom/bom_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/bom/bom_list.php
 
 		-
@@ -6206,28 +6116,8 @@ parameters:
 			path: ../../htdocs/bom/bom_list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/bom/bom_list.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/bom/bom_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/bom/bom_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/bom/bom_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/bom/bom_list.php
 
 		-
@@ -6244,56 +6134,6 @@ parameters:
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bom/bom_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bom/bom_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bom/bom_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bom/bom_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bom/bom_note.php
 
 		-
 			message: "#^Left side of && is always false\\.$#"
@@ -6526,51 +6366,6 @@ parameters:
 			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/admin/availabilities_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookcal/admin/availabilities_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/admin/availabilities_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/admin/calendar_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/bookcal/admin/calendar_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/admin/calendar_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/admin/setup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookcal/admin/setup.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/admin/setup.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_agenda.php
@@ -6578,31 +6373,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/availabilities_agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookcal/availabilities_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/availabilities_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/bookcal/availabilities_agenda.php
 
 		-
@@ -6656,28 +6426,8 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 30
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
@@ -6696,11 +6446,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_contact.php
@@ -6716,31 +6461,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookcal/availabilities_contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/availabilities_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/availabilities_contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/availabilities_contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_document.php
@@ -6751,31 +6471,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/availabilities_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookcal/availabilities_document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/availabilities_document.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_list.php
@@ -6783,26 +6478,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/availabilities_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/bookcal/availabilities_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/bookcal/availabilities_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/bookcal/availabilities_list.php
 
 		-
@@ -6811,11 +6486,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookcal/availabilities_list.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_note.php
@@ -6824,46 +6494,6 @@ parameters:
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/availabilities_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookcal/availabilities_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/availabilities_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/bookcalindex.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/bookcalindex.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/bookcalindex.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -6881,34 +6511,9 @@ parameters:
 			path: ../../htdocs/bookcal/booking_list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/bookcal/booking_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/bookcal/booking_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/bookcal/booking_list.php
-
-		-
 			message: "#^Variable \\$lineid might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/booking_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/booking_list.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with Calendar and 'module' will always evaluate to true\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/calendar_agenda.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -6918,31 +6523,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/calendar_agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/calendar_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/bookcal/calendar_agenda.php
 
 		-
@@ -6976,26 +6556,6 @@ parameters:
 			path: ../../htdocs/bookcal/calendar_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/bookcal/calendar_card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/bookcal/calendar_card.php
@@ -7008,11 +6568,6 @@ parameters:
 		-
 			message: "#^Variable \\$soc might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/bookcal/calendar_card.php
 
 		-
@@ -7031,31 +6586,6 @@ parameters:
 			path: ../../htdocs/bookcal/calendar_contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/calendar_contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookcal/calendar_contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/calendar_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/bookcal/calendar_contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/calendar_contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/calendar_document.php
@@ -7066,31 +6596,6 @@ parameters:
 			path: ../../htdocs/bookcal/calendar_document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/calendar_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookcal/calendar_document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/calendar_document.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/calendar_list.php
@@ -7098,26 +6603,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/calendar_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/bookcal/calendar_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/bookcal/calendar_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/bookcal/calendar_list.php
 
 		-
@@ -7126,11 +6611,6 @@ parameters:
 			path: ../../htdocs/bookcal/calendar_list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookcal/calendar_list.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/calendar_note.php
@@ -7138,31 +6618,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/bookcal/calendar_note.php
 
 		-
@@ -55726,43 +55181,13 @@ parameters:
 			path: ../../htdocs/workstation/workstation_list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/zapier/admin/about.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/zapier/admin/about.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/zapier/admin/about.php
-
-		-
 			message: "#^Variable \\$arrayofparameters in empty\\(\\) always exists and is always falsy\\.$#"
-			count: 1
-			path: ../../htdocs/zapier/admin/setup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/zapier/admin/setup.php
 
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/zapier/admin/setup.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/zapier/admin/setup.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/zapier/admin/setup.php
 
 		-
