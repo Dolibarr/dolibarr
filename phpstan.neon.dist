@@ -35,7 +35,7 @@ parameters:
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
 	checkArgumentsPassedByReference: false
-	checkMaybeUndefinedVariables: false
+	checkMaybeUndefinedVariables: true
 	checkNullables: false
 	checkThisOnly: true
 	checkUnionTypes: false
