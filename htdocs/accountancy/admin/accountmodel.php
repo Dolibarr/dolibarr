@@ -90,6 +90,7 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries

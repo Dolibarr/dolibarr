@@ -136,6 +136,7 @@ if ($sortfield == "") {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $formfile = new FormFile($db);
+/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array($context_default));
 
 $formaccounting = new FormAccounting($db);

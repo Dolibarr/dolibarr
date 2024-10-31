@@ -26,18 +26,8 @@ parameters:
 			path: ../../htdocs/accountancy/admin/account.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 16
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/accountancy/admin/account.php
 
 		-
@@ -68,11 +58,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 38
-			path: ../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/accountancy/admin/accountmodel.php
 
 		-
@@ -138,11 +123,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 57
-			path: ../../htdocs/accountancy/admin/categories_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/accountancy/admin/categories_list.php
 
 		-
@@ -213,11 +193,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 14
-			path: ../../htdocs/accountancy/admin/fiscalyear.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/accountancy/admin/fiscalyear.php
 
 		-
@@ -323,11 +298,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 44
-			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/accountancy/admin/journals_list.php
 
 		-
@@ -466,11 +436,6 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 28
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
@@ -488,11 +453,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/bookkeeping/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/accountancy/bookkeeping/card.php
 
 		-
@@ -536,11 +496,6 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/accountancy/bookkeeping/export.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 59
 			path: ../../htdocs/accountancy/bookkeeping/export.php
@@ -581,11 +536,6 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/list.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 70
 			path: ../../htdocs/accountancy/bookkeeping/list.php
@@ -613,11 +563,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 30
-			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
 			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
 
 		-

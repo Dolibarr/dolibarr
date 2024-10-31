@@ -81,6 +81,7 @@ if (!empty($update)) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('bookkeepingcard', 'globalcard'));
 
 $object = new BookKeeping($db);

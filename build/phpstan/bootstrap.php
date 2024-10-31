@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 
 // Defined some constants and load Dolibarr env to reduce PHPStan bootstrap that fails to load a lot of things.
 //define('DOL_DOCUMENT_ROOT', __DIR__ . '/../../htdocs');
@@ -16,5 +18,5 @@ if (!defined("NOHTTPSREDIRECT")) {
 	define("NOHTTPSREDIRECT", '1');
 }
 
-global $conf, $db, $langs, $user;
+global $conf, $db, $hookmanager, $langs, $user;
 include_once __DIR__ . '/../../htdocs/main.inc.php';
