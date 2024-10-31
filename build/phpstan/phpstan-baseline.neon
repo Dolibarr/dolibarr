@@ -6986,31 +6986,6 @@ parameters:
 			path: ../../htdocs/comm/action/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 76
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 167
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 55
-			path: ../../htdocs/comm/action/card.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/class/actioncomm.class.php
@@ -7136,31 +7111,6 @@ parameters:
 			path: ../../htdocs/comm/action/document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/comm/action/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/comm/action/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/comm/action/document.php
-
-		-
 			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
 			count: 2
 			path: ../../htdocs/comm/action/index.php
@@ -7191,11 +7141,6 @@ parameters:
 			path: ../../htdocs/comm/action/index.php
 
 		-
-			message: "#^Property ActionComm\\:\\:\\$datep \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 12
-			path: ../../htdocs/comm/action/index.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/index.php
@@ -7203,26 +7148,6 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 2
-			path: ../../htdocs/comm/action/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/comm/action/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 61
-			path: ../../htdocs/comm/action/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/comm/action/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 34
 			path: ../../htdocs/comm/action/index.php
 
 		-
@@ -7241,33 +7166,8 @@ parameters:
 			path: ../../htdocs/comm/action/index.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/comm/action/index.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/info.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/action/info.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/info.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
 			path: ../../htdocs/comm/action/info.php
 
 		-
@@ -7281,18 +7181,8 @@ parameters:
 			path: ../../htdocs/comm/action/info.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/comm/action/info.php
-
-		-
 			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/list.php
-
-		-
-			message: "#^Call to function is_object\\(\\) with ActionComm will always evaluate to true\\.$#"
-			count: 3
 			path: ../../htdocs/comm/action/list.php
 
 		-
@@ -7301,33 +7191,8 @@ parameters:
 			path: ../../htdocs/comm/action/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/action/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 46
-			path: ../../htdocs/comm/action/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/comm/action/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/comm/action/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 18
 			path: ../../htdocs/comm/action/list.php
 
 		-
@@ -7386,26 +7251,6 @@ parameters:
 			path: ../../htdocs/comm/action/pertype.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
 			message: "#^Variable \\$mode in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/comm/action/pertype.php
@@ -7418,11 +7263,6 @@ parameters:
 		-
 			message: "#^Variable \\$theme_datacolor might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 14
 			path: ../../htdocs/comm/action/pertype.php
 
 		-
@@ -7476,28 +7316,8 @@ parameters:
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
 			message: "#^Variable \\$labelbytype might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 35
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
@@ -7516,64 +7336,9 @@ parameters:
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/rapport/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/action/rapport/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/action/rapport/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/action/rapport/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/rapport/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/admin/propal_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/comm/admin/propal_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/admin/propal_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/admin/propaldet_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/comm/admin/propaldet_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/admin/propaldet_extrafields.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -7586,16 +7351,6 @@ parameters:
 			path: ../../htdocs/comm/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/comm/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 75
-			path: ../../htdocs/comm/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/comm/card.php
@@ -7603,16 +7358,6 @@ parameters:
 		-
 			message: "#^Variable \\$filedir in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 6
-			path: ../../htdocs/comm/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 123
 			path: ../../htdocs/comm/card.php
 
 		-
@@ -7631,38 +7376,8 @@ parameters:
 			path: ../../htdocs/comm/card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 64
-			path: ../../htdocs/comm/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/comm/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/contact.php
-
-		-
 			message: "#^Variable \\$label might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/comm/contact.php
 
 		-
@@ -7671,48 +7386,8 @@ parameters:
 			path: ../../htdocs/comm/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/comm/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 83
-			path: ../../htdocs/comm/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/comm/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 53
-			path: ../../htdocs/comm/index.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
-			path: ../../htdocs/comm/mailing/advtargetemailing.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/mailing/advtargetemailing.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/comm/mailing/advtargetemailing.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/comm/mailing/advtargetemailing.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/comm/mailing/advtargetemailing.php
 
 		-
@@ -7736,33 +7411,8 @@ parameters:
 			path: ../../htdocs/comm/mailing/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/comm/mailing/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/comm/mailing/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/comm/mailing/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 155
-			path: ../../htdocs/comm/mailing/card.php
-
-		-
 			message: "#^Variable \\$mesg might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/mailing/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 39
 			path: ../../htdocs/comm/mailing/card.php
 
 		-
@@ -7771,33 +7421,8 @@ parameters:
 			path: ../../htdocs/comm/mailing/cibles.php
 
 		-
-			message: "#^Variable \\$bctag might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
 			message: "#^Variable \\$filter might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 57
 			path: ../../htdocs/comm/mailing/cibles.php
 
 		-
@@ -7808,11 +7433,6 @@ parameters:
 		-
 			message: "#^Variable \\$mesgs might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 16
 			path: ../../htdocs/comm/mailing/cibles.php
 
 		-
@@ -7861,104 +7481,9 @@ parameters:
 			path: ../../htdocs/comm/mailing/class/mailing.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/mailing/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/comm/mailing/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/comm/mailing/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/mailing/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/mailing/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/mailing/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/mailing/info.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 4
 			path: ../../htdocs/comm/mailing/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/mailing/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/comm/mailing/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/comm/mailing/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/mailing/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/comm/mailing/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/mailing/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/mailing/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/mailing/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/mailing/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/mailing/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/multiprix.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/comm/multiprix.php
 
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
@@ -7966,53 +7491,8 @@ parameters:
 			path: ../../htdocs/comm/multiprix.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/multiprix.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/comm/multiprix.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/comm/multiprix.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with Propal and 'module' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/comm/propal/agenda.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/comm/propal/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/comm/propal/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/comm/propal/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/comm/propal/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/comm/propal/agenda.php
 
 		-
@@ -8056,38 +7536,8 @@ parameters:
 			path: ../../htdocs/comm/propal/card.php
 
 		-
-			message: "#^Property PropaleLigne\\:\\:\\$date_end \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Property PropaleLigne\\:\\:\\$date_start \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/comm/propal/card.php
-
-		-
 			message: "#^Variable \\$classname might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 40
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 59
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 211
 			path: ../../htdocs/comm/propal/card.php
 
 		-
@@ -8103,11 +7553,6 @@ parameters:
 		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 42
 			path: ../../htdocs/comm/propal/card.php
 
 		-
@@ -8371,84 +7816,14 @@ parameters:
 			path: ../../htdocs/comm/propal/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/propal/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/comm/propal/contact.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/comm/propal/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/propal/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/comm/propal/contact.php
 
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/propal/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/propal/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/comm/propal/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/propal/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/propal/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/comm/propal/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/comm/propal/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/comm/propal/index.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -8466,33 +7841,13 @@ parameters:
 			path: ../../htdocs/comm/propal/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/comm/propal/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/comm/propal/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 78
-			path: ../../htdocs/comm/propal/list.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/comm/propal/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/comm/propal/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 48
 			path: ../../htdocs/comm/propal/list.php
 
 		-
@@ -8506,73 +7861,13 @@ parameters:
 			path: ../../htdocs/comm/propal/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/comm/propal/list.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/note.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/comm/propal/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/propal/note.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
 			message: "#^Variable \\$title might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
 			path: ../../htdocs/comm/propal/stats/index.php
 
 		-
@@ -8581,69 +7876,9 @@ parameters:
 			path: ../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/comm/prospect/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/comm/prospect/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/comm/prospect/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/recap-client.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/comm/recap-client.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/comm/recap-client.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/recap-client.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/comm/remise.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/comm/remise.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/comm/remise.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/comm/remx.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 60
-			path: ../../htdocs/comm/remx.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 126
-			path: ../../htdocs/comm/remx.php
 
 		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
@@ -8651,38 +7886,8 @@ parameters:
 			path: ../../htdocs/comm/remx.php
 
 		-
-			message: "#^Call to function property_exists\\(\\) with Commande and 'module' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/commande/agenda.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/commande/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/commande/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/commande/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/commande/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/commande/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/commande/agenda.php
 
 		-
@@ -8736,26 +7941,6 @@ parameters:
 			path: ../../htdocs/commande/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 43
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 186
-			path: ../../htdocs/commande/card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 14
 			path: ../../htdocs/commande/card.php
@@ -8763,11 +7948,6 @@ parameters:
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 6
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 38
 			path: ../../htdocs/commande/card.php
 
 		-
@@ -8996,31 +8176,6 @@ parameters:
 			path: ../../htdocs/commande/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/commande/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/commande/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/commande/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/commande/contact.php
-
-		-
 			message: "#^Variable \\$addu might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/commande/customer.php
@@ -9028,21 +8183,6 @@ parameters:
 		-
 			message: "#^Variable \\$begin might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/commande/customer.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/customer.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/commande/customer.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/commande/customer.php
 
 		-
@@ -9056,59 +8196,9 @@ parameters:
 			path: ../../htdocs/commande/customer.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/commande/customer.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/commande/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/commande/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/commande/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/commande/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/commande/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/commande/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/commande/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/commande/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/commande/index.php
 
 		-
 			message: "#^Call to function method_exists\\(\\) with Commande and 'fetch_lines' will always evaluate to true\\.$#"
@@ -9121,28 +8211,8 @@ parameters:
 			path: ../../htdocs/commande/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/commande/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 3
-			path: ../../htdocs/commande/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 70
-			path: ../../htdocs/commande/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/commande/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 97
 			path: ../../htdocs/commande/list.php
 
 		-
@@ -9161,38 +8231,13 @@ parameters:
 			path: ../../htdocs/commande/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/commande/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/commande/list_det.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/commande/list_det.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 46
-			path: ../../htdocs/commande/list_det.php
-
-		-
 			message: "#^Variable \\$formproduct might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 59
 			path: ../../htdocs/commande/list_det.php
 
 		-
@@ -9226,73 +8271,13 @@ parameters:
 			path: ../../htdocs/commande/list_det.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/commande/list_det.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/commande/note.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/commande/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/commande/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/commande/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/commande/note.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/stats/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/commande/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/commande/stats/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/commande/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/commande/stats/index.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/stats/index.php
-
-		-
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/commande/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 19
 			path: ../../htdocs/commande/stats/index.php
 
 		-
