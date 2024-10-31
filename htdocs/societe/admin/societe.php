@@ -196,7 +196,7 @@ if ($action == "setaccountancycodecustomerinvoicemandatory") {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-/* This code is not needed anymore as setprofid serie is used instead with key='VAT_INTRA'
+/* This code is not needed anymore as we can use the setprofid functions instead with key = 'VAT_INTRA'
 //Activate Set vat id unique
 if ($action == "setvatintraunique") {
 	$setvatintraunique = GETPOSTINT('value');
