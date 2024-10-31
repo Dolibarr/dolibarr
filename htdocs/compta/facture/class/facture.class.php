@@ -3272,7 +3272,7 @@ class Facture extends CommonInvoice
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
-			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER');
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER');
 			foreach ($array_to_check as $key) {
 				$keymin = strtolower($key);
 				if (!property_exists($this->thirdparty, $keymin)) {
