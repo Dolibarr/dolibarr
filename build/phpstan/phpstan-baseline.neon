@@ -15941,11 +15941,6 @@ parameters:
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
 
 		-
-			message: "#^Variable \\$societeRibID might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
 			message: "#^Property LignePrelevement\\:\\:\\$labelStatus has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/class/ligneprelevement.class.php
