@@ -508,3 +508,113 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	return $arrayofgroupby;
 }
+
+
+/**
+ * Fill array of possible filter fields for an object
+ *
+ * @param 	mixed		$object			Any object
+ * @param	string		$tablealias		Alias of table ('t' for example)
+ * @param	string		$labelofobject	Label of object
+ * @param	array		$arrayoffields	Array of fields already filled
+ * @param	int			$level 			Level
+ * @param	int			$count			Count
+ * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
+ * @return 	array						Array of fields
+ */
+function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayoffields, $level = 0, &$count = 0, &$tablepath = '')
+{
+	global $langs, $extrafields, $db;
+
+	if (empty($object)) {	// Protection against bad use of method
+		return array();
+	}
+	if ($level >= 3) {	// Limit scan on 2 levels max
+		return $arrayoffields;
+	}
+
+	if (empty($tablepath)) {
+		$tablepath = $object->table_element.'='.$tablealias;
+	} else {
+		$tablepath .= ','.$object->table_element.'='.$tablealias;
+	}
+
+	// Note: here $tablealias can be 't' or 't__fk_contract' or 't_fk_contract_fk_soc'
+
+	// Add main fields of object
+	foreach ($object->fields as $key => $val) {
+		if (empty($val['measure'])) {
+			if (in_array($key, array(
+				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
+				continue;
+			}
+			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				continue;
+			}
+			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+				continue;
+			}
+			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
+				continue;
+			}
+			if (preg_match('/^pass/', $key)) {
+				continue;
+			}
+			if (in_array($val['type'], array('html', 'text'))) {
+				continue;
+			}
+
+			$position = (empty($val['position']) ? 0 : intval($val['position']));
+			$arrayoffields[$tablealias.'.'.$key] = array(
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
+				'position' => ($position + ($count * 100000)),
+				'table' => $object->table_element,
+				'tablefromt' => $tablepath,
+				'type' => $val['type']
+			);
+		}
+	}
+
+	// Add extrafields to fields
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
+				continue;
+			}
+			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+				continue;
+			}
+
+			$arrayoffields[preg_replace('/^t/', 'te', $tablealias).'.'.$key] = array(
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val),
+				'labelnohtml' => $labelofobject.': '.$langs->trans($val),
+				'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
+				'table' => $object->table_element,
+				'tablefromt' => $tablepath,
+				'type' => $val['type']
+			);
+		}
+	}
+
+	// Add fields for parent objects
+	foreach ($object->fields as $key => $val) {
+		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
+			$tmptype = explode(':', $val['type'], 4);
+			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
+				$newobject = $tmptype[1];
+				dol_include_once($tmptype[2]);
+				if (class_exists($newobject)) {
+					$tmpobject = new $newobject($db);
+					$count++;
+					$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+				} else {
+					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
+				}
+			}
+		}
+	}
+
+	return $arrayoffields;
+}

@@ -111,7 +111,7 @@ class Propal extends CommonObject
 	/**
 	 * Ref from thirdparty
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
 	public $ref_client;
@@ -144,7 +144,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @var int|''
-	 * @deprecated
+	 * @deprecated Use $date_creation
 	 * @see $date_creation
 	 */
 	public $datec;
@@ -205,18 +205,21 @@ class Propal extends CommonObject
 	public $author;
 
 	/**
-	 * @deprecated
+	 * @var float
+	 * @deprecated See $total_ht
 	 * @see $total_ht
 	 */
 	public $price;
 
 	/**
-	 * @deprecated
+	 * @var float
+	 * @deprecated See $total_tva
 	 * @see $total_tva
 	 */
 	public $tva;
 	/**
-	 * @deprecated
+	 * @var float
+	 * @deprecated See $total_ttc
 	 * @see $total_ttc
 	 */
 	public $total;
@@ -293,6 +296,9 @@ class Propal extends CommonObject
 	 */
 	public $availability;
 
+	/**
+	 * @var int|string
+	 */
 	public $duree_validite;
 
 	/**
@@ -483,7 +489,7 @@ class Propal extends CommonObject
 
 			$productdesc = $prod->description;
 
-			$tva_tx = get_default_tva($mysoc, $this->thirdparty, $prod->id);
+			$tva_tx = (string) get_default_tva($mysoc, $this->thirdparty, $prod->id);
 			$tva_npr = get_default_npr($mysoc, $this->thirdparty, $prod->id);
 			if (empty($tva_tx)) {
 				$tva_npr = 0;
@@ -556,7 +562,7 @@ class Propal extends CommonObject
 			$line->desc = $remise->description; // Description ligne
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
-			$line->subprice = -$remise->amount_ht;
+			$line->subprice = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefined
 			$line->qty = 1;
 			$line->remise_percent = 0;
@@ -564,11 +570,11 @@ class Propal extends CommonObject
 			$line->info_bits = 2;
 
 			// TODO deprecated
-			$line->price = -$remise->amount_ht;
+			$line->price = -(float) $remise->amount_ht;
 
-			$line->total_ht  = -$remise->amount_ht;
-			$line->total_tva = -$remise->amount_tva;
-			$line->total_ttc = -$remise->amount_ttc;
+			$line->total_ht  = -(float) $remise->amount_ht;
+			$line->total_tva = -(float) $remise->amount_tva;
+			$line->total_ttc = -(float) $remise->amount_ttc;
 
 			$result = $line->insert();
 			if ($result > 0) {
@@ -619,11 +625,11 @@ class Propal extends CommonObject
 	 *      @param		string		$label				???
 	 *		@param      int|string	$date_start       	Start date of the line
 	 *		@param      int|string	$date_end         	End date of the line
-	 *      @param		array		$array_options		extrafields array
+	 *      @param		array<string,mixed>	$array_options	extrafields array
 	 * 		@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *      @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
-	 * 		@param		double		$pu_ht_devise		Unit price in currency
+	 * 		@param		float		$pu_ht_devise		Unit price in currency
 	 * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
 	 *  	@param		int			$noupdateafterinsertline	No update after insert of line
 	 *    	@return    	int         	    			>0 if OK, <0 if KO
@@ -868,11 +874,11 @@ class Propal extends CommonObject
 	 *  @param		int			$type				0/1=Product/service
 	 *	@param      int|string	$date_start       	Start date of the line
 	 *	@param      int|string	$date_end         	End date of the line
-	 *  @param		array		$array_options		extrafields array
+	 *  @param		array<string,mixed>	$array_options	extrafields array
 	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 * 	@param		float		$pu_ht_devise		Unit price in currency
 	 * 	@param		int			$notrigger			disable line update trigger
-	 * @param       integer $rang   line rank
+	 *	@param       int			$rang   line rank
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
@@ -1488,14 +1494,14 @@ class Propal extends CommonObject
 						if ($res > 0) {
 							if ($update_prices === true) {
 								$pu_ht = $prod->price;
-								$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
+								$tva_tx = (string) get_default_tva($mysoc, $objsoc, $prod->id);
 								$remise_percent = $objsoc->remise_percent;
 
 								if (getDolGlobalString('PRODUIT_MULTIPRICES') && $objsoc->price_level > 0) {
 									$pu_ht = $prod->multiprices[$objsoc->price_level];
 									if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 										if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
-											$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+											$tva_tx = (string) $prod->multiprices_tva_tx[$objsoc->price_level];
 										}
 									}
 								} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
@@ -1681,7 +1687,7 @@ class Propal extends CommonObject
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 
 				$this->fk_project = $obj->fk_project;
-				$this->project = null; // Clear if another value was already set by fetch_projet
+				$this->project = null; // Clear if another value was already set by fetchProject
 
 				$this->model_pdf            = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
@@ -2975,7 +2981,7 @@ class Propal extends CommonObject
 	/**
 	 *  Returns an array with the numbers of related invoices
 	 *
-	 *	@return	array		Array of invoices
+	 *	@return	CommonInvoice[]		Array of invoices
 	 */
 	public function getInvoiceArrayList()
 	{
@@ -2987,7 +2993,7 @@ class Propal extends CommonObject
 	 *  Returns an array with id and ref of related invoices
 	 *
 	 *	@param		int			$id			Id propal
-	 *	@return		array|int				Array of invoices id
+	 *	@return		CommonInvoice[]|int		Array of invoices id
 	 */
 	public function InvoiceArrayList($id)
 	{
@@ -3738,7 +3744,7 @@ class Propal extends CommonObject
 			if (!$nofetch) {
 				$langs->load('project');
 				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
-					$res = $this->fetch_project();
+					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
@@ -3917,10 +3923,10 @@ class Propal extends CommonObject
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
 	 * 	@param		Translate	$outputlangs	Object langs to use for output
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param   	null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param   	?array<string,mixed>  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

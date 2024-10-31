@@ -49,7 +49,7 @@ $action = GETPOST('action', 'aZ09');
 $type = GETPOSTINT('type');
 $mode = GETPOST('mode', 'alpha');
 
-$ext=(GETPOSTISSET('output') && in_array(GETPOST('output'), array('csv'))) ? GETPOST('output') : '';
+$ext = (GETPOSTISSET('output') && in_array(GETPOST('output'), array('csv'))) ? GETPOST('output') : '';
 
 $date = '';
 $dateendofday = '';
@@ -250,8 +250,8 @@ if ($date && $dateIsValid) {
 			$movements_prod_warehouse_nb[$fk_product][$fk_entrepot] = $nbofmovement;
 
 			// Pour llx_product.stock
-			$movements_prod[$fk_product] = $stock + (array_key_exists($fk_product, $movements_prod)?$movements_prod[$fk_product]:0);
-			$movements_prod_nb[$fk_product] = $nbofmovement + (array_key_exists($fk_product, $movements_prod_nb)?$movements_prod_nb[$fk_product]:0);
+			$movements_prod[$fk_product] = $stock + (array_key_exists($fk_product, $movements_prod) ? $movements_prod[$fk_product] : 0);
+			$movements_prod_nb[$fk_product] = $nbofmovement + (array_key_exists($fk_product, $movements_prod_nb) ? $movements_prod_nb[$fk_product] : 0);
 
 			$i++;
 		}
@@ -371,11 +371,11 @@ if ($mode == 'future') {
 if ($ext == 'csv') {
 	top_httphead("text/csv");
 	//header("Content-Type: text/csv");
-	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d", $date):'').".csv");
+	header("Content-Disposition: attachment; filename=stock".($date ? '-'.date("Y-m-d", $date) : '').".csv");
 
 	// Lines of title
 	print implode(";", ($mode == 'future') ?
-		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
+		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"') :
 		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_stockatdate');
@@ -421,7 +421,7 @@ if ($ext == 'csv') {
 		print img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("Warehouse").' :';
 		print '</span> ';
 		$selected = ((GETPOSTISSET('search_fk_warehouse') || GETPOSTISSET('fk_warehouse')) ? $search_fk_warehouse : 'ifonenodefault');
-		print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, 'minwidth200', null, 1, false, 'e.ref', 1);
+		print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, array(), 'minwidth200', array(), 1, false, 'e.ref', 1);
 	}
 
 	print '</div>';
@@ -473,13 +473,13 @@ if ($ext == 'csv') {
 	if ($num) {
 		print '<p>';
 		print '<a href="stockatdate.php?output=csv&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'&type='.((int) $type).'&mode='.urlencode($mode).
-			(($productid > 0)?"&productid=".((int) $productid):'').
+			(($productid > 0) ? "&productid=".((int) $productid) : '').
 			$param_warehouse.
 			"&search_ref=".dol_escape_htmltag($search_ref).
 			"&search_nom=".dol_escape_htmltag($search_nom).
-			(GETPOSTISSET('dateday')?"&dateday=".GETPOSTINT('dateday'):'').
-			(GETPOSTISSET('datemonth')?"&datemonth=".GETPOSTINT('datemonth'):'').
-			(GETPOSTISSET('dateyear')?"&dateyear=".GETPOSTINT('dateyear'):'').
+			(GETPOSTISSET('dateday') ? "&dateday=".GETPOSTINT('dateday') : '').
+			(GETPOSTISSET('datemonth') ? "&datemonth=".GETPOSTINT('datemonth') : '').
+			(GETPOSTISSET('dateyear') ? "&dateyear=".GETPOSTINT('dateyear') : '').
 			'" title="Download CSV" />';
 		print img_picto('', 'download', 'class="pictofixedwidth"');
 		print 'Download CSV';
@@ -508,7 +508,7 @@ if ($ext == 'csv') {
 		print '<td class="liste_titre"></td>';
 	}
 	// Fields from hook
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -545,7 +545,7 @@ if ($ext == 'csv') {
 	}
 
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -638,8 +638,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
 					'"'.price(price2num($stock, 'MS')).'"',
-					price2num($stock * $objp->pmp, 'MT')?'"'.price2num($stock * $objp->pmp, 'MT').'"':'',
-					!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price2num($stock * $objp->price, 'MT').'"':'"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
+					price2num($stock * $objp->pmp, 'MT') ? '"'.price2num($stock * $objp->pmp, 'MT').'"' : '',
+					!getDolGlobalString('PRODUIT_MULTIPRICES') ? '"'.price2num($stock * $objp->price, 'MT').'"' : '"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
 					"$nbofmovement",
 					'"'.price2num($currentstock, 'MS').'"'))."\r\n";
 				$totalbuyingprice += $stock * $objp->pmp;
@@ -737,7 +737,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalcurrentstock += $currentstock;
 
 			// Fields from hook
-			$parameters = array('objp'=>$objp);
+			$parameters = array('objp' => $objp);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -750,9 +750,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$i++;
 }
 
-$parameters = array('sql'=>$sql);
+$parameters = array('sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-if ($ext!='csv') {
+if ($ext != 'csv') {
 	print $hookmanager->resPrint;
 }
 
@@ -761,22 +761,24 @@ if ($mode == 'future') {
 	$colspan++;
 }
 
-if ($ext=='csv') {
-	print implode(";",
-		($mode == 'future')?array(
+if ($ext == 'csv') {
+	print implode(
+		";",
+		($mode == 'future') ? array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
 		$productid > 0 ? price2num($totalcurrentstock, 'MS') : '',
 		'',
-		price(price2num($totalvirtualstock, 'MS'))):
+		price(price2num($totalvirtualstock, 'MS'))) :
 		array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
 		'',
 		'"'.price2num($totalbuyingprice, 'MT').'"',
-		!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price2num($totalsellingprice, 'MT').'"':'',
+		!getDolGlobalString('PRODUIT_MULTIPRICES') ? '"'.price2num($totalsellingprice, 'MT').'"' : '',
 		'',
-		$productid > 0 ? price2num($totalcurrentstock, 'MS') : ''));
+		$productid > 0 ? price2num($totalcurrentstock, 'MS') : '')
+	);
 } else {
 	if (empty($date) || !$dateIsValid) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';

@@ -192,7 +192,7 @@ foreach ($dirbarcode as $reldir) {
 		}
 	}
 }
-'@phan-var-force array<string,ModeleBarCode> $barcodelist';
+'@phan-var-force array<string,string> $barcodelist';
 
 
 // Select barcode numbering module

@@ -231,7 +231,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 		}
 
 		if (!$error) {
-			$object->fetch_projet();
+			$object->fetchProject();
 
 			if (empty($object->project->status)) {
 				setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');

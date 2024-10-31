@@ -513,7 +513,7 @@ if (empty($reshook)) {
 			$units = GETPOSTINT('units');
 
 			$object->entity				= $conf->entity;
-			$object->ref				= $ref;
+			$object->ref				= (string) $ref;
 			$object->label				= GETPOST('label', $label_security_check);
 			$object->price_base_type	= GETPOST('price_base_type', 'aZ09');
 			$object->mandatory_period	= !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
@@ -753,7 +753,7 @@ if (empty($reshook)) {
 				$object->oldcopy = dol_clone($object, 1);
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-					$object->ref                = $ref;
+					$object->ref                = (string) $ref;
 				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
@@ -772,7 +772,7 @@ if (empty($reshook)) {
 				$object->qc_frequency           = GETPOSTINT('qc_frequency');
 				$object->status                 = GETPOSTINT('statut');
 				$object->status_buy             = GETPOSTINT('statut_buy');
-				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->status_batch = GETPOSTINT('status_batch');
 				$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOSTINT('fk_default_warehouse');
@@ -1462,10 +1462,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('productbatch')) {
 				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
-				print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
+				print $form->selectarray('status_batch', $statutarray, GETPOSTINT('status_batch'));
 				print '</td></tr>';
 				// Product specific batch number management
-				$status_batch = GETPOST('status_batch');
+				$status_batch = GETPOSTINT('status_batch');
 				if ($status_batch !== '0') {
 					$langs->load("admin");
 					$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
@@ -2029,7 +2029,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 
-						print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch);
+						print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOSTINT('status_batch') : $object->status_batch);
 
 						print '<span id="statusBatchWarning" class="warning" style="display: none;">';
 						print img_warning().'&nbsp;'.$langs->trans("WarningConvertFromBatchToSerial").'</span>';
@@ -2755,14 +2755,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($object->isService()) {
 					// Duration
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($db);
+					$durations = [];
+					$plural = '';
+					if ($object->duration_value > 1) {
+						$plural = 's';
+					}
+					$result = $measuringUnits->fetchAll('', 'scale', 0, 0, ['t.active' => 1, 't.unit_type' => 'time']);
+					if ($result !== -1) {
+						foreach ($measuringUnits->records as $record) {
+							$durations[$record->short_label] = dol_ucfirst($record->label) . $plural;
+						}
+					}
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
 					print $object->duration_value;
-					if ($object->duration_value > 1) {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-					} elseif ($object->duration_value > 0) {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
-					}
-					print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
+					print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp;".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 
 					// Mandatory period
 					if ($object->duration_value > 0) {

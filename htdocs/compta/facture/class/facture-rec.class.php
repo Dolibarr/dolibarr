@@ -2003,6 +2003,15 @@ class FactureRec extends CommonInvoice
 			$this->date_when = $date;
 			if ($increment_nb_gen_done > 0) {
 				$this->nb_gen_done++;
+
+				if (getDolGlobalInt('MAIN_SUSPEND_FACTURE_REC_ON_MAX_GEN_REACHED') && $this->isMaxNbGenReached()) {
+					$resSuspend = $this->setValueFrom('suspended', 1);
+
+					if ($resSuspend <= 0) {
+						dol_syslog(__METHOD__ . '::setValueFrom Error : ' . $this->error, LOG_ERR);
+						return -1;
+					}
+				}
 			}
 
 			if (!$notrigger) {

@@ -460,7 +460,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 *	@param	int|string		$datestart	Date start to scan
 	 *	@param	int|string		$dateend	Date end to scan
-	 *	@return	string			Number of entries
+	 *	@return	int				Number of entries
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -478,10 +478,11 @@ class Fiscalyear extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
+		$nb = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}
@@ -494,7 +495,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 *  @param	int|string		$datestart	Date start to scan
 	 *  @param	int|string		$dateend	Date end to scan
-	 *  @return	string				Number of movements
+	 *  @return	int							Number of movements
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -512,10 +513,11 @@ class Fiscalyear extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
+		$nb = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}

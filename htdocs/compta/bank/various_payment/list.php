@@ -164,7 +164,7 @@ $arrayfields = array(
 	'datep'			=> array('label' => "DatePayment", 'checked' => 1, 'position' => 120),
 	'datev'			=> array('label' => "DateValue", 'checked' => -1, 'position' => 130),
 	'type'			=> array('label' => "PaymentMode", 'checked' => 1, 'position' => 140),
-	'project'		=> array('label' => "Project", 'checked' => 1, 'position' => 200, "enabled" => isModEnabled('project')),
+	'project'		=> array('label' => "Project", 'checked' => -1, 'position' => 200, "enabled" => isModEnabled('project')),
 	'bank'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 300, "enabled" => isModEnabled("bank")),
 	'entry'			=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 310, "enabled" => isModEnabled("bank")),
 	'account'		=> array('label' => "AccountAccountingShort", 'checked' => 1, 'position' => 400, "enabled" => isModEnabled('accounting')),
@@ -306,8 +306,12 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if ($search_accountancy_subledger > 0) {
-	$sql .= " AND v.subledger_account = ".((int) $search_accountancy_subledger);
+if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
+} else {
+	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {
+		$sql .= natural_search("v.subledger_account", $search_accountancy_subledger);
+	}
 }
 if ($search_type_id > 0) {
 	$sql .= " AND v.fk_typepayment=".((int) $search_type_id);
@@ -315,6 +319,7 @@ if ($search_type_id > 0) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -475,11 +480,11 @@ $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('che
 
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
-print '<tr class="liste_titre_filter">';
+print '<tr class="liste_titre liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch">';
@@ -572,7 +577,13 @@ if (!empty($arrayfields['account']['checked'])) {
 if (!empty($arrayfields['subledger']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
+
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth150');
+	} else {
+		print '<input type="text" class="maxwidth150 maxwidthonsmartphone" name="search_accountancy_subledger" value="'.$search_accountancy_subledger.'">';
+	}
+
 	print '</div>';
 	print '</td>';
 }
@@ -769,12 +780,13 @@ while ($i < $imaxinloop) {
 
 		// Type
 		if ($arrayfields['type']['checked']) {
-			print '<td class="center">';
+			$labeltoshow = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code);
-				print ' ';
+				$labeltoshow = $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->payment_code).' ';
 			}
-			print $obj->num_payment;
+			$labeltoshow .= $obj->num_payment;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTML($labeltoshow).'">';
+			print $labeltoshow;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

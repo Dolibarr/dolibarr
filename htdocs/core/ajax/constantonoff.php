@@ -51,9 +51,11 @@ $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
 $entity = GETPOSTINT('entity');
 $value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
+$userconst = GETPOSTINT('userconst');
+
 
 // Security check
-if (empty($user->admin)) {
+if (empty($user->admin) && empty($userconst)) {
 	httponly_accessforbidden('This ajax component can be called by admin user only');
 }
 
@@ -64,12 +66,24 @@ if (empty($user->admin)) {
 
 // Registering the new value of constant
 if (!empty($action) && !empty($name)) {
-	if ($action == 'set') {			// Test on permission not required here. Already done into test on user->admin in header.
-		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
-	} elseif ($action == 'del') {	// Test on permission not required here. Already done into test on user->admin in header.
-		dolibarr_del_const($db, $name, $entity);
-		if ($entity == 1) {	// Sometimes the param was saved in both entity 0 and 1. When we work on master entity, we should clean also if entity is 0
-			dolibarr_del_const($db, $name, 0);
+	if ($userconst) {
+		$tmpuser = new User($db);
+		$tmpuser->id = $userconst;
+		if ($tmpuser->id == $user->id || $user->hasRight('user', 'user', 'creer')) {
+			if ($action == 'set') {			// Test on permission not required here. Already done into test on user->admin in header.
+				dol_set_user_param($db, $conf, $tmpuser, array($name => $value));
+			} elseif ($action == 'del') {	// Test on permission not required here. Already done into test on user->admin in header.
+				dol_set_user_param($db, $conf, $tmpuser, array($name => ''));
+			}
+		}
+	} else {
+		if ($action == 'set') {			// Test on permission not required here. Already done into test on user->admin in header.
+			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
+		} elseif ($action == 'del') {	// Test on permission not required here. Already done into test on user->admin in header.
+			dolibarr_del_const($db, $name, $entity);
+			if ($entity == 1) {	// Sometimes the param was saved in both entity 0 and 1. When we work on master entity, we should clean also if entity is 0
+				dolibarr_del_const($db, $name, 0);
+			}
 		}
 	}
 } else {

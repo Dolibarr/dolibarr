@@ -161,7 +161,7 @@ if ($action === 'downloadblockchain') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
 		$error++;
 	} else {
-		// Get ID of first line
+		// Get the ID of the first line qualified
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".$conf->entity;
@@ -187,6 +187,37 @@ if ($action === 'downloadblockchain') {
 		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
+		}
+	}
+
+	if (! $error) {
+		// We record the export as a new line into the unalterable logs
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($db);
+
+		$object = new stdClass();
+		$object->id = 0;
+		$object->element = 'module';
+		$object->ref = 'systemevent';
+		$object->entity = $conf->entity;
+		$object->date = dol_now();
+
+		$object->label = 'Export unalterable logs - Period: year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
+
+		$action = 'BLOCKEDLOG_EXPORT';
+		$result = $b->setObjectData($object, $action, 0, $user);
+		//var_dump($b); exit;
+
+		if ($result < 0) {
+			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
+			$error++;
+		}
+
+		$res = $b->create($user);
+
+		if ($res < 0) {
+			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
+			$error++;
 		}
 	}
 
@@ -333,7 +364,18 @@ if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
-print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FingerprintsDesc")."<br></div>\n";
+print '<div class="opacitymedium hideonsmartphone justify">';
+
+print $langs->trans("FingerprintsDesc")."<br>";
+
+print '<br>';
+
+$s = $langs->trans("FilesIntegrityDesc", '{s}');
+$s = str_replace('{s}', DOL_URL_ROOT.'/admin/system/filecheck.php', $s);
+print $s;
+print "<br>\n";
+
+print "</div>\n";
 
 print '<br>';
 
@@ -492,7 +534,7 @@ print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', 
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ')."\n";
-print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp').'<br>'.$langs->trans('DataOfArchivedEventHelp2'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
@@ -573,7 +615,8 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Action
-			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($langs->trans('log'.$block->action)).'">'.$langs->trans('log'.$block->action).'</td>';
+			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
+			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
 
 			// Ref
 			print '<td class="nowraponall">';
@@ -581,7 +624,7 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Link to source object
-			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.' - '.$object_link_title)).'"').'>';
+			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
 			print $object_link;
 			print '</td>';
@@ -594,8 +637,8 @@ if (is_array($blocks)) {
 
 			// Fingerprint
 			print '<td class="nowraponall">';
-			$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("Saved").':<br>'.$block->signature;
-			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256(previoushash * data):<br>'.$checkdetail[$block->id]['calculatedsignature'];
+			$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("SavedOnLine").' =<br>'.$block->signature;
+			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256('.$langs->trans("PreviousHash").' on line '.($block->id - 1).' + data) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
 			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';
 			//$texttoshow .= '<br>keyforsignature='.$checkdetail[$block->id]['keyforsignature'];
 			print $form->textwithpicto(dol_trunc($block->signature, 8), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);

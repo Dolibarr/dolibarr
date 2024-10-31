@@ -56,8 +56,8 @@ class Account extends CommonObject
 	public $picto = 'account';
 
 	/**
-	 * @var	int		Use id instead of rowid
-	 * @deprecated
+	 * @var	int
+	 * @deprecated	Use $id instead of $rowid
 	 * @see $id
 	 */
 	public $rowid;
@@ -71,7 +71,7 @@ class Account extends CommonObject
 	/**
 	 * Bank account type. Check TYPE_ constants
 	 * @var int
-	 * @deprecated
+	 * @deprecated Use $type
 	 * @see $type
 	 */
 	public $courant;
@@ -149,7 +149,7 @@ class Account extends CommonObject
 	 * IBAN number
 	 *
 	 * @var string
-	 * @deprecated see $iban
+	 * @deprecated See $iban
 	 */
 	public $iban_prefix;
 
@@ -162,7 +162,7 @@ class Account extends CommonObject
 	/**
 	 * Name of account holder
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $owner_name
 	 * @see $owner_name
 	 */
 	public $proprio;
@@ -190,13 +190,19 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $owner_town;
+	/**
+	 * @var int
+	 */
 	public $owner_country_id;
+	/**
+	 * @var string
+	 */
 	public $owner_country_code;
 
 	/**
 	 * Address of the bank account
 	 * @var string
-	 * @deprecated
+	 * @deprecated See $address
 	 * @see $address
 	 */
 	public $domiciliation;
@@ -206,15 +212,27 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $address;
+	/**
+	 * @var int
+	 */
 	public $state_id;
+	/**
+	 * @var string
+	 */
 	public $state_code;
+	/**
+	 * @var string
+	 */
 	public $state;
+	/**
+	 * @var int
+	 */
 	public $country_id;
 
 	/**
 	 * Variable containing all account types with their respective translated label.
 	 * Defined in __construct
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $type_lib = array();
 
@@ -517,7 +535,7 @@ class Account extends CommonObject
 	 *      @param  int         $fk_bank    To search using bank transaction id
 	 *      @param  int         $url_id     To search using link to
 	 *      @param  string      $type       To search using type
-	 *      @return array|int               Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
+	 *		@return	int<-1,-1>|array<int,array{0:string,1:int,2:string,3:int,url:string,url_id:int,label:string,type:int,fk_bank:int}>		Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
 	public function get_url($fk_bank = 0, $url_id = 0, $type = '')
 	{
@@ -1850,8 +1868,8 @@ class Account extends CommonObject
 	 *
 	 * Some countries show less or more bank account properties to the user
 	 *
-	 * @param  int     $includeibanbic         1=Return also key for IBAN and BIC
-	 * @return array                           Array of fields to show
+	 * @param  int<0,1>	$includeibanbic         1=Return also key for IBAN and BIC
+	 * @return string[]                         Array of fields to show
 	 * @see useDetailedBBAN()
 	 */
 	public function getFieldsToShow($includeibanbic = 0)
@@ -1891,7 +1909,7 @@ class Account extends CommonObject
 	 * - BankAccountNumberKey
 	 * - DeskCode
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public static function getAccountNumberOrder()
 	{
@@ -1957,14 +1975,14 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
 		$this->owner_town      = 'Owner town';
-		$this->owner_country_id = 'Owner country_id';
+		$this->owner_country_id = 1;
 		$this->country_id      = 1;
 
 		return 1;
 	}
 
 	/**
-	 * Function used to replace a thirdparty id with another one.
+	 * Function used to replace a third party id with another one.
 	 *
 	 * @param DoliDB 	$dbs 			Database handler
 	 * @param int 		$origin_id 		Old thirdparty id
@@ -2171,6 +2189,7 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * User author of the reconciliation
 	 * TODO: variable used only by method info() => is it the same as $fk_user_rappro ?
+	 * @var int
 	 */
 	public $user_rappro;
 

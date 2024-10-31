@@ -115,7 +115,17 @@ if (empty($reshook)) {
 			}
 			$paymentservice = GETPOST('paymentservice');
 
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			// Get chosen iban id
+			$iban = explode(" / ", GETPOST('ribList'))[0];
+			$sql = "SELECT rowid FROM ".$db->prefix()."societe_rib WHERE iban_prefix = '".$db->escape($iban)."'" ;
+			$resql = $object->db->query($sql);
+			if ($resql) {
+				if ($resql->num_rows) {
+					$selectedRibObj = $object->db->fetch_object($resql);
+				}
+			}
+			$amount = GETPOST('withdraw_request_amount', 'alpha');
+			$result = $object->demande_prelevement($user, price2num($amount), $newtype, $sourcetype, 0, $selectedRibObj->rowid ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -377,11 +387,11 @@ if ($object->id > 0) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if ($type == 'bank-transfer') {
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 	} else {
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 	}
 	// Project
@@ -605,36 +615,11 @@ if ($object->id > 0) {
 	} else {
 		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
-	print "</td>";
+	print '</td>';
 	print '</tr>';
-
-	// IBAN of seller or supplier
-	$title = 'CustomerIBAN';
-	if ($type == 'bank-transfer') {
-		$title = 'SupplierIBAN';
-	}
-	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
-
-	$bac = new CompanyBankAccount($db);
-	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$bac->fetch(0, '', $object->thirdparty->id);
-
-	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-	if (!empty($bac->iban)) {
-		if ($bac->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
-		}
-	} else {
-		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-			print img_warning($langs->trans("NoDefaultIBANFound"));
-		}
-	}
-
-	print '</td></tr>';
-
 	print '</table>';
-
 	print '</div>';
+
 	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
 
@@ -761,14 +746,64 @@ if ($object->id > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
+				print("</div>");
+
+				$title = $langs->trans("NewStandingOrder");
+				if ($type == 'bank-transfer') {
+					$title = $langs->trans("NewPaymentByBankTransfer");
+				}
+
+				print load_fiche_titre($title);
+				print dol_get_fiche_head();
+				print '<table class="border centpercent tableforfield">';
 				print '<form method="POST" action="">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
+				print '<tr><td class="titlefield">'.$langs->trans('CustomerIBAN').'</td>';
+				print '<td class="nowraponall">';
+
+				$ribList = $object->thirdparty->get_all_rib();
+				$ribForSelection = [];
+				$defaultRib = '';
+				foreach ($ribList as $rib) {
+					$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
+					$ribForSelection[$rib->id] = $ribString;
+					if ($rib->default_rib == 1) {
+						$defaultRib = $ribString;
+					}
+				}
+
+				$selectedRib= $defaultRib;
+				$listeOfRibs = GETPOST('ribList');
+				$selectedRib = $form->formIban(!empty($listeOfRibs) ? $listeOfRibs: $defaultRib, 'ribList', 0, $type, 0, $ribForSelection);
+
+				if (!empty($rib->iban)) {
+					if (!$rib->verif()) {
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
+					}
+				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+						print img_warning($langs->trans("NoDefaultIBANFound"));
+				}
+
+				print '</td></tr>';
+
+				// Bank Transfer Amount
+				print '<tr><td class="nowrap">';
+				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+				print '</td></tr></table>';
+				print '</td><td colspan="3">';
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
+				print '</td>';
+				print '</table>';
+				print '</div>';
+
+				// Button
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+				print '<br><br>';
+
 				print '</form>';
 
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
@@ -787,6 +822,7 @@ if ($object->id > 0) {
 					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 					print '</form>';
 				}
+				print '<div class="fichecenter">';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
@@ -840,6 +876,7 @@ if ($object->id > 0) {
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td class="center">'.$langs->trans("CustomerIBAN").'</td>';
 	if ($type == 'bank-transfer') {
 		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
@@ -855,10 +892,12 @@ if ($object->id > 0) {
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status,";
+	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
+	$sql .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".$db->prefix()."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".$db->prefix()."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".$db->prefix()."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -913,6 +952,9 @@ if ($object->id > 0) {
 
 			// Date process
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
+
+			// Iban
+			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
 
 			// Link to make payment now
 			print '<td class="minwidth75">';
@@ -975,10 +1017,12 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
+	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
+	$sql .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".$db->prefix()."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".$db->prefix()."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".$db->prefix()."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -1029,6 +1073,9 @@ if ($object->id > 0) {
 
 			// Date process
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
+
+			// Iban
+			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
 
 			// Link to payment request done
 			print '<td class="center minwidth75">';
