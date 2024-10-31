@@ -1114,6 +1114,7 @@ class BonPrelevement extends CommonObject
 			dol_syslog(__METHOD__ . " Read fk_societe_rib error " . $this->db->lasterror(), LOG_ERR);
 			return -1;
 		}
+		$societeRibID = 0;
 		if ($resql->num_rows) {
 			$obj = $this->db->fetch_object($resql);
 			$societeRibID = $obj->fk_societe_rib;

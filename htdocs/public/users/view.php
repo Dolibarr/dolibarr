@@ -357,6 +357,8 @@ if ($usersection) {
 	// Show photo
 	if ($urllogo) {
 		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	} else {
+		print '<br>';
 	}
 
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
