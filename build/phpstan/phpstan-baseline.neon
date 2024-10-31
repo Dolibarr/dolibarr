@@ -801,18 +801,8 @@ parameters:
 			path: ../../htdocs/adherents/admin/member.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 48
-			path: ../../htdocs/adherents/admin/member.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/adherents/admin/member.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 87
 			path: ../../htdocs/adherents/admin/member.php
 
 		-
@@ -821,114 +811,9 @@ parameters:
 			path: ../../htdocs/adherents/admin/member.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/admin/member.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/admin/member_emails.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/adherents/admin/member_emails.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/adherents/admin/member_emails.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/admin/member_emails.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/admin/member_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/admin/member_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/admin/member_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/admin/member_type_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/admin/member_type_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/admin/member_type_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/adherents/admin/website.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/adherents/admin/website.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/admin/website.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/adherents/admin/website.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/admin/website.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/adherents/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/adherents/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/agenda.php
 
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
@@ -991,28 +876,8 @@ parameters:
 			path: ../../htdocs/adherents/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/adherents/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 61
-			path: ../../htdocs/adherents/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 16
-			path: ../../htdocs/adherents/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/adherents/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 250
 			path: ../../htdocs/adherents/card.php
 
 		-
@@ -1026,33 +891,8 @@ parameters:
 			path: ../../htdocs/adherents/card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 68
-			path: ../../htdocs/adherents/card.php
-
-		-
 			message: "#^Variable \\$_Avery_Labels might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/adherents/cartes/carte.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/cartes/carte.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/adherents/cartes/carte.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/adherents/cartes/carte.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/adherents/cartes/carte.php
 
 		-
@@ -1201,26 +1041,6 @@ parameters:
 			path: ../../htdocs/adherents/class/subscription.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/adherents/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/adherents/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/adherents/document.php
-
-		-
 			message: "#^Variable \\$badgeStatus0 might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/index.php
@@ -1246,41 +1066,6 @@ parameters:
 			path: ../../htdocs/adherents/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/adherents/ldap.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/adherents/ldap.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/adherents/list.php
@@ -1301,18 +1086,8 @@ parameters:
 			path: ../../htdocs/adherents/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/adherents/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/adherents/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 54
 			path: ../../htdocs/adherents/list.php
 
 		-
@@ -1326,84 +1101,14 @@ parameters:
 			path: ../../htdocs/adherents/list.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/adherents/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/adherents/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/adherents/list.php
-
-		-
-			message: "#^Call to function is_object\\(\\) with Adherent will always evaluate to true\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/messaging.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/adherents/messaging.php
 
 		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/adherents/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/adherents/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/adherents/note.php
 
 		-
 			message: "#^Property Partnership\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
@@ -1416,94 +1121,14 @@ parameters:
 			path: ../../htdocs/adherents/partnership.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/partnership.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/adherents/partnership.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/adherents/partnership.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/adherents/partnership.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/partnership.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/adherents/stats/byproperties.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/adherents/stats/byproperties.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/stats/byproperties.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/stats/geo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/adherents/stats/geo.php
-
-		-
 			message: "#^Variable \\$label might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/adherents/stats/geo.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 46
 			path: ../../htdocs/adherents/stats/geo.php
 
 		-
 			message: "#^Variable \\$theme_datacolor might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/adherents/stats/geo.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/stats/geo.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/adherents/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/stats/index.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -1526,74 +1151,14 @@ parameters:
 			path: ../../htdocs/adherents/subscription.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 125
-			path: ../../htdocs/adherents/subscription.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 27
 			path: ../../htdocs/adherents/subscription.php
 
 		-
 			message: "#^Variable \\$bankline in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/subscription/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/adherents/subscription/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 34
-			path: ../../htdocs/adherents/subscription/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/adherents/subscription/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/subscription/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/adherents/subscription/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription/info.php
 
 		-
 			message: "#^Empty array passed to foreach\\.$#"
@@ -1616,31 +1181,6 @@ parameters:
 			path: ../../htdocs/adherents/subscription/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/subscription/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/adherents/subscription/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/adherents/subscription/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/adherents/subscription/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/subscription/list.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/tpl/linkedobjectblock.tpl.php
@@ -1651,89 +1191,9 @@ parameters:
 			path: ../../htdocs/adherents/type.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/adherents/type.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/adherents/type.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/adherents/type.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/adherents/type.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/type.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 135
-			path: ../../htdocs/adherents/type.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/adherents/type.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/type_ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/type_ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/adherents/type_ldap.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/type_ldap.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/type_translation.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/adherents/type_translation.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/adherents/type_translation.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/adherents/vcard.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/vcard.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/adherents/vcard.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -9021,11 +8481,6 @@ parameters:
 			path: ../../htdocs/comm/action/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 9
 			path: ../../htdocs/comm/action/card.php
@@ -10106,11 +9561,6 @@ parameters:
 			path: ../../htdocs/comm/propal/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/comm/propal/card.php
-
-		-
 			message: "#^Variable \\$classname might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/comm/propal/card.php
@@ -10773,11 +10223,6 @@ parameters:
 		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
 			path: ../../htdocs/commande/card.php
 
 		-
@@ -12851,11 +12296,6 @@ parameters:
 			path: ../../htdocs/compta/facture/card-rec.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 11
 			path: ../../htdocs/compta/facture/card-rec.php
@@ -12967,11 +12407,6 @@ parameters:
 
 		-
 			message: "#^Right side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
 			count: 1
 			path: ../../htdocs/compta/facture/card.php
 
@@ -17011,11 +16446,6 @@ parameters:
 			path: ../../htdocs/contact/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/contact/card.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 18
 			path: ../../htdocs/contact/card.php
@@ -18108,11 +17538,6 @@ parameters:
 		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 2
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
@@ -28396,11 +27821,6 @@ parameters:
 			path: ../../htdocs/don/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 9
 			path: ../../htdocs/don/card.php
@@ -30846,11 +30266,6 @@ parameters:
 			path: ../../htdocs/expensereport/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 33
 			path: ../../htdocs/expensereport/card.php
@@ -31672,11 +31087,6 @@ parameters:
 
 		-
 			message: "#^Right side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
 			count: 1
 			path: ../../htdocs/fichinter/card.php
 
@@ -33391,11 +32801,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/card-rec.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 11
 			path: ../../htdocs/fourn/facture/card-rec.php
@@ -33498,11 +32903,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 6
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
 			path: ../../htdocs/fourn/facture/card.php
 
 		-
@@ -34308,11 +33708,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 8
-			path: ../../htdocs/holiday/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 4
 			path: ../../htdocs/holiday/card.php
 
 		-
@@ -41081,11 +40476,6 @@ parameters:
 			path: ../../htdocs/product/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 2
-			path: ../../htdocs/product/card.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 9
 			path: ../../htdocs/product/card.php
@@ -42997,11 +42387,6 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
 			count: 1
 			path: ../../htdocs/product/stock/card.php
 
@@ -46631,11 +46016,6 @@ parameters:
 			path: ../../htdocs/public/cron/cron_run_jobs_by_url.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/public/cron/cron_run_jobs_by_url.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/public/cron/cron_run_jobs_by_url.php
@@ -47272,11 +46652,6 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/public/payment/paymentok.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
 			count: 1
 			path: ../../htdocs/public/payment/paymentok.php
 
@@ -50866,11 +50241,6 @@ parameters:
 			path: ../../htdocs/societe/card.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../htdocs/societe/card.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 68
 			path: ../../htdocs/societe/card.php
@@ -52032,11 +51402,6 @@ parameters:
 
 		-
 			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
 			count: 1
 			path: ../../htdocs/supplier_proposal/card.php
 
@@ -57359,11 +56724,6 @@ parameters:
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 4
 			path: ../../scripts/contracts/email_expire_services_to_representatives.php
-
-		-
-			message: "#^Unable to resolve the template type T in call to function dol_clone$#"
-			count: 1
-			path: ../../scripts/cron/cron_run_jobs.php
 
 		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
