@@ -6796,28 +6796,8 @@ parameters:
 			path: ../../htdocs/bookcal/lib/bookcal_calendar.lib.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookmarks/admin/bookmark.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookmarks/admin/bookmark.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/bookmarks/admin/bookmark.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/bookmarks/admin/bookmark.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/bookmarks/admin/bookmark.php
 
 		-
@@ -6831,108 +6811,13 @@ parameters:
 			path: ../../htdocs/bookmarks/bookmarks.lib.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/bookmarks/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 34
-			path: ../../htdocs/bookmarks/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/bookmarks/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/bookmarks/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/bookmarks/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/bookmarks/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/bookmarks/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/bookmarks/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/bookmarks/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/categories/admin/categorie.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/admin/categorie.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/categories/admin/categorie.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/categories/admin/categorie.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/categories/admin/categorie_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/categories/admin/categorie_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/categories/admin/categorie_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/categories/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/categories/card.php
-
-		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/categories/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/categories/card.php
 
 		-
@@ -7011,61 +6896,6 @@ parameters:
 			path: ../../htdocs/categories/class/categorie.class.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/edit.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/edit.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/categories/edit.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/categories/edit.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/categories/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/categories/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/categories/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/categories/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/categories/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/categories/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/categories/info.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/categories/photos.php
@@ -7074,46 +6904,6 @@ parameters:
 			message: "#^Left side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/categories/photos.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/categories/photos.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/photos.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/categories/photos.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/categories/photos.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/categories/photos.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/traduction.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/categories/traduction.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/categories/traduction.php
 
 		-
 			message: "#^Elseif condition is always true\\.$#"
@@ -7126,49 +6916,9 @@ parameters:
 			path: ../../htdocs/categories/viewcat.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/categories/viewcat.php
-
-		-
 			message: "#^Variable \\$elementtype might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 105
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 54
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/collab/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/collab/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/collab/index.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -7178,11 +6928,6 @@ parameters:
 		-
 			message: "#^Variable \\$objectpage might not be defined\\.$#"
 			count: 11
-			path: ../../htdocs/collab/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/collab/index.php
 
 		-
