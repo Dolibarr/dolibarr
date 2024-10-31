@@ -51,7 +51,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 				}
 
-				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, '', $object);
 				$title = dol_string_nohtmltag($valuetoshow);
 
 				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
