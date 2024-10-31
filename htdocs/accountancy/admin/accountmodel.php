@@ -46,6 +46,14 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
 
@@ -90,7 +98,6 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries

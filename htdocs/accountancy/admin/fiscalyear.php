@@ -27,6 +27,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 
 // Load variable for pagination
@@ -56,13 +64,12 @@ $errors = array();
 
 // List of status
 static $tmpstatut2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
+	'0' => 'OpenFiscalYear',
+	'1' => 'CloseFiscalYear'
 );
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fiscalyear($db);
-/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('fiscalyearlist'));
 
 // Security check

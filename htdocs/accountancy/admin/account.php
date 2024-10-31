@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
@@ -106,7 +114,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 $accounting = new AccountingAccount($db);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('accountancyadminaccount'));
 
 

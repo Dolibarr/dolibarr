@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta", "accountancy"));
 
@@ -85,7 +93,6 @@ $error = 0;
 $search_country_id = GETPOST('search_country_id', 'int');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries

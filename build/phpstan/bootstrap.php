@@ -19,4 +19,13 @@ if (!defined("NOHTTPSREDIRECT")) {
 }
 
 global $conf, $db, $hookmanager, $langs, $user;
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 include_once __DIR__ . '/../../htdocs/main.inc.php';

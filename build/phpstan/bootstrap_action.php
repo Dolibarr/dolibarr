@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 
 // Load the main.inc.php file to have functions env defined
 if (!defined("NOLOGIN")) {
@@ -18,5 +20,14 @@ define('DOL_URL_ROOT', '/');
 define('DOL_MAIN_URL_ROOT', '/');
 define('MAIN_DB_PREFIX', 'llx_');
 
-global $conf, $db, $langs, $user;
+global $conf, $db, $hookmanager, $langs, $user;
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // include_once DOL_DOCUMENT_ROOT . '/../../htdocs/main.inc.php';

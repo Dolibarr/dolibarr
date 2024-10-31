@@ -4,6 +4,7 @@
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,12 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+/**
+ * @var string $formatexportset
+ * @var string $type_export
+ * @var string $filename
+ * @var int<-1,1> $downloadMode
+ */
 
 $code = getDolGlobalString('MAIN_INFO_ACCOUNTANT_CODE');
 $prefix = getDolGlobalString('ACCOUNTING_EXPORT_PREFIX_SPEC');

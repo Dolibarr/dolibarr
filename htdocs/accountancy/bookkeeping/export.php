@@ -41,6 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
@@ -155,7 +163,6 @@ if ($sortfield == "") {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
-/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('bookkeepingexport'));
 
 $formaccounting = new FormAccounting($db);
@@ -905,7 +912,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), $user->hasRight('accounting', 'mouvements', 'export'));
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), '', $user->hasRight('accounting', 'mouvements', 'export'));
 	}
 }
 

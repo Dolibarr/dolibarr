@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,7 @@ require_once '../lib/mymodule.lib.php';
 $langs->loadLangs(array("admin", "mymodule@mymodule"));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
 
 // Parameters

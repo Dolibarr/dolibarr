@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
@@ -85,7 +93,6 @@ if ($sortfield == "") {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
-/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules contains array
 
 $formaccounting = new FormAccounting($db);

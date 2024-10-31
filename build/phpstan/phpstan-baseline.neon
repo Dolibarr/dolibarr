@@ -11,28 +11,8 @@ parameters:
 			path: ../../htdocs/accountancy/admin/account.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/accountancy/admin/account.php
 
 		-
@@ -51,62 +31,7 @@ parameters:
 			path: ../../htdocs/accountancy/admin/accountmodel.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/accountancy/admin/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 46
-			path: ../../htdocs/accountancy/admin/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/admin/card.php
-
-		-
 			message: "#^Variable \\$cat_id in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/admin/categories.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/admin/categories.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/admin/categories.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/accountancy/admin/categories.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/admin/categories.php
 
@@ -116,129 +41,14 @@ parameters:
 			path: ../../htdocs/accountancy/admin/categories_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/categories_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 57
-			path: ../../htdocs/accountancy/admin/categories_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 65
-			path: ../../htdocs/accountancy/admin/categories_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/admin/categories_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/admin/closure.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/admin/closure.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/accountancy/admin/closure.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/admin/closure.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/accountancy/admin/defaultaccounts.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/accountancy/admin/defaultaccounts.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/accountancy/admin/defaultaccounts.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
 			path: ../../htdocs/accountancy/admin/defaultaccounts.php
 
 		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/accountancy/admin/defaultaccounts.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/admin/defaultaccounts.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/fiscalyear.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/accountancy/admin/fiscalyear.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/accountancy/admin/fiscalyear.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/admin/fiscalyear.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/admin/fiscalyear_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/admin/fiscalyear_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/accountancy/admin/fiscalyear_card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/admin/fiscalyear_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/fiscalyear_info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/admin/fiscalyear_info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/fiscalyear_info.php
 
 		-
 			message: "#^Elseif condition is always true\\.$#"
@@ -253,26 +63,6 @@ parameters:
 		-
 			message: "#^Right side of \\|\\| is always true\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/admin/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/accountancy/admin/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/accountancy/admin/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 96
-			path: ../../htdocs/accountancy/admin/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/accountancy/admin/index.php
 
 		-
@@ -291,39 +81,9 @@ parameters:
 			path: ../../htdocs/accountancy/admin/journals_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/accountancy/admin/productaccount.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/accountancy/admin/productaccount.php
 
 		-
 			message: "#^Variable \\$defaultvalue in empty\\(\\) always exists and is always falsy\\.$#"
@@ -331,22 +91,7 @@ parameters:
 			path: ../../htdocs/accountancy/admin/productaccount.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/accountancy/admin/productaccount.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 73
-			path: ../../htdocs/accountancy/admin/productaccount.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/productaccount.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/admin/productaccount.php
 
@@ -356,48 +101,13 @@ parameters:
 			path: ../../htdocs/accountancy/admin/productaccount.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/admin/productaccount.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 3
 			path: ../../htdocs/accountancy/admin/subaccount.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/subaccount.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/admin/subaccount.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/accountancy/admin/subaccount.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/admin/subaccount.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/accountancy/admin/subaccount.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/admin/subaccount.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/accountancy/admin/subaccount.php
 
 		-
@@ -416,18 +126,8 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
@@ -436,33 +136,8 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/accountancy/bookkeeping/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/bookkeeping/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 69
-			path: ../../htdocs/accountancy/bookkeeping/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/accountancy/bookkeeping/card.php
 
 		-
@@ -476,18 +151,8 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/bookkeeping/export.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/export.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 70
 			path: ../../htdocs/accountancy/bookkeeping/export.php
 
 		-
@@ -496,33 +161,13 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 59
-			path: ../../htdocs/accountancy/bookkeeping/export.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/bookkeeping/export.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/bookkeeping/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 68
 			path: ../../htdocs/accountancy/bookkeeping/list.php
 
 		-
@@ -536,43 +181,13 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/list.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 70
-			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 78
-			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
 
 		-
@@ -906,58 +521,8 @@ parameters:
 			path: ../../htdocs/accountancy/closure/index.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/closure/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/closure/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 48
-			path: ../../htdocs/accountancy/closure/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/closure/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/customer/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/accountancy/customer/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/accountancy/customer/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/customer/card.php
-
-		-
 			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
 			count: 3
-			path: ../../htdocs/accountancy/customer/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/customer/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 97
 			path: ../../htdocs/accountancy/customer/index.php
 
 		-
@@ -966,18 +531,8 @@ parameters:
 			path: ../../htdocs/accountancy/customer/index.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 39
-			path: ../../htdocs/accountancy/customer/index.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/customer/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/accountancy/customer/index.php
 
 		-
@@ -986,43 +541,13 @@ parameters:
 			path: ../../htdocs/accountancy/customer/lines.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/customer/lines.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/accountancy/customer/lines.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/customer/lines.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/accountancy/customer/lines.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/customer/lines.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/customer/lines.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/accountancy/customer/list.php
 
 		-
@@ -1031,63 +556,13 @@ parameters:
 			path: ../../htdocs/accountancy/customer/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 39
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/accountancy/customer/list.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/accountancy/expensereport/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/accountancy/expensereport/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/expensereport/card.php
-
-		-
 			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
 			count: 3
-			path: ../../htdocs/accountancy/expensereport/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/expensereport/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 54
 			path: ../../htdocs/accountancy/expensereport/index.php
 
 		-
@@ -1096,78 +571,18 @@ parameters:
 			path: ../../htdocs/accountancy/expensereport/index.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/accountancy/expensereport/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/expensereport/index.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/expensereport/lines.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/expensereport/lines.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/accountancy/expensereport/lines.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/accountancy/expensereport/lines.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/expensereport/lines.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/accountancy/expensereport/list.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/accountancy/expensereport/list.php
 
 		-
@@ -1181,28 +596,8 @@ parameters:
 			path: ../../htdocs/accountancy/index.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 66
-			path: ../../htdocs/accountancy/index.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/accountancy/index.php
 
 		-
@@ -1226,26 +621,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/bankjournal.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/journal/bankjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 61
-			path: ../../htdocs/accountancy/journal/bankjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 72
-			path: ../../htdocs/accountancy/journal/bankjournal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/journal/bankjournal.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
@@ -1271,28 +646,8 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
 			message: "#^Variable \\$def_tva might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 55
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
@@ -1306,11 +661,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
@@ -1331,28 +681,8 @@ parameters:
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
 			message: "#^Variable \\$def_tva might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 63
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
@@ -1366,11 +696,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
@@ -1391,28 +716,8 @@ parameters:
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
 			message: "#^Variable \\$def_tva might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 69
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
 
 		-
@@ -1426,11 +731,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/journal/variousjournal.php
@@ -1451,63 +751,8 @@ parameters:
 			path: ../../htdocs/accountancy/journal/variousjournal.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/supplier/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/accountancy/supplier/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/accountancy/supplier/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/supplier/card.php
-
-		-
 			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
 			count: 3
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 84
 			path: ../../htdocs/accountancy/supplier/index.php
 
 		-
@@ -1516,18 +761,8 @@ parameters:
 			path: ../../htdocs/accountancy/supplier/index.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/accountancy/supplier/index.php
 
 		-
@@ -1536,43 +771,13 @@ parameters:
 			path: ../../htdocs/accountancy/supplier/lines.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/supplier/lines.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/accountancy/supplier/lines.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/supplier/lines.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/accountancy/supplier/lines.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/supplier/lines.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/supplier/lines.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/accountancy/supplier/list.php
 
 		-
@@ -1581,53 +786,13 @@ parameters:
 			path: ../../htdocs/accountancy/supplier/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/accountancy/supplier/list.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/tpl/export_journal.tpl.php
-
-		-
-			message: "#^Variable \\$filename might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/tpl/export_journal.tpl.php
-
-		-
-			message: "#^Variable \\$formatexportset might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/tpl/export_journal.tpl.php
-
-		-
-			message: "#^Variable \\$type_export might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/accountancy/tpl/export_journal.tpl.php
 
 		-
@@ -39403,11 +38568,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 18
-			path: ../../htdocs/modulebuilder/template/admin/setup.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/modulebuilder/template/admin/setup.php
 
 		-
