@@ -1307,6 +1307,8 @@ class EmailCollector extends CommonObject
 
 			try {
 				$client->connect();
+
+				$connection = true;
 			} catch (ConnectionFailedException $e) {
 				$this->error = $e->getMessage();
 				$this->errors[] = $this->error;
@@ -1687,6 +1689,7 @@ class EmailCollector extends CommonObject
 					$Query->leaveUnread();
 				}
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
+				dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));	// @phpstan-ignore-line
 				//var_dump($arrayofemail);
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
