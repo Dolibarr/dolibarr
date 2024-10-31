@@ -1656,7 +1656,6 @@ class EmailCollector extends CommonObject
 					$folder = $f[0];
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-						dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));
 					} else {
 						$error++;
 						$this->error = "Source directory ".$sourcedir." not found";
@@ -1690,6 +1689,7 @@ class EmailCollector extends CommonObject
 					$Query->leaveUnread();
 				}
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
+				dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));	// @phpstan-ignore-line
 				//var_dump($arrayofemail);
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
