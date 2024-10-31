@@ -38561,28 +38561,8 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/admin/setup.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/modulebuilder/template/admin/setup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/modulebuilder/template/admin/setup.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/template/ajax/myobject.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/modulebuilder/template/ajax/myobject.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/modulebuilder/template/ajax/myobject.php
 
 		-
