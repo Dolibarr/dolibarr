@@ -23091,21 +23091,6 @@ parameters:
 			path: ../../htdocs/expedition/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expensereport/ajax/ajaxik.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expensereport/ajax/ajaxik.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/expensereport/ajax/ajaxik.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/expensereport/card.php
@@ -23131,18 +23116,8 @@ parameters:
 			path: ../../htdocs/expensereport/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/expensereport/card.php
-
-		-
 			message: "#^Variable \\$date might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 73
 			path: ../../htdocs/expensereport/card.php
 
 		-
@@ -23158,16 +23133,6 @@ parameters:
 		-
 			message: "#^Variable \\$fk_project might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 245
 			path: ../../htdocs/expensereport/card.php
 
 		-
@@ -23396,124 +23361,9 @@ parameters:
 			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expensereport/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/expensereport/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/expensereport/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/expensereport/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/expensereport/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/expensereport/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/expensereport/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/expensereport/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/expensereport/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/expensereport/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expensereport/info.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expensereport/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/expensereport/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/expensereport/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/expensereport/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/expensereport/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/expensereport/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/expensereport/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/expensereport/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/expensereport/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/expensereport/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/expensereport/payment/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/expensereport/payment/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/expensereport/payment/card.php
 
 		-
 			message: "#^Variable \\$outputlangs might not be defined\\.$#"
@@ -23526,29 +23376,9 @@ parameters:
 			path: ../../htdocs/expensereport/payment/card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/expensereport/payment/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expensereport/payment/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expensereport/payment/info.php
-
-		-
 			message: "#^Variable \\$linkback might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/expensereport/payment/info.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expensereport/payment/list.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -23556,28 +23386,8 @@ parameters:
 			path: ../../htdocs/expensereport/payment/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/expensereport/payment/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/expensereport/payment/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/expensereport/payment/list.php
-
-		-
 			message: "#^Variable \\$toselect might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/payment/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/expensereport/payment/list.php
 
 		-
@@ -23591,53 +23401,13 @@ parameters:
 			path: ../../htdocs/expensereport/payment/payment.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/expensereport/payment/payment.php
-
-		-
 			message: "#^Variable \\$sumpaid might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/expensereport/payment/payment.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expensereport/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expensereport/stats/index.php
-
-		-
 			message: "#^Variable \\$fileurl_avg might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/expensereport/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/expensereport/stats/index.php
 
 		-
