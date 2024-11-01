@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
 

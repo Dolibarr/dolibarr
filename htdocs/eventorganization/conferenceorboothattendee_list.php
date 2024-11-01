@@ -41,7 +41,15 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-global $dolibarr_main_url_root;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "bills"));
