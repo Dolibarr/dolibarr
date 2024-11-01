@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
 //
@@ -46,6 +48,14 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp"));
@@ -224,4 +234,3 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 		}
 	}
 }
-

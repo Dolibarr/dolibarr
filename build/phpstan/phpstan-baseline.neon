@@ -28176,26 +28176,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/scripts/mymodule.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/mrp/ajax/ajax_bom.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/mrp/ajax/ajax_bom.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/mrp/ajax/interface.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/mrp/ajax/interface.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 3
 			path: ../../htdocs/mrp/class/api_mos.class.php
@@ -28351,38 +28331,8 @@ parameters:
 			path: ../../htdocs/mrp/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/mrp/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/mrp/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/mrp/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/mrp/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/mrp/js/lib_dispatch.js.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/mrp/mo_agenda.php
 
 		-
@@ -28391,28 +28341,8 @@ parameters:
 			path: ../../htdocs/mrp/mo_agenda.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/mrp/mo_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/mrp/mo_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/mrp/mo_agenda.php
-
-		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/mrp/mo_agenda.php
 
 		-
@@ -28423,26 +28353,6 @@ parameters:
 		-
 			message: "#^Property Mo\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/mrp/mo_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/mrp/mo_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/mrp/mo_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 51
 			path: ../../htdocs/mrp/mo_card.php
 
 		-
@@ -28461,69 +28371,14 @@ parameters:
 			path: ../../htdocs/mrp/mo_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/mrp/mo_card.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/mrp/mo_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/mrp/mo_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/mrp/mo_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/mrp/mo_document.php
 
 		-
 			message: "#^Variable \\$upload_dir might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/mrp/mo_document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/mrp/mo_document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/mrp/mo_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/mrp/mo_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/mrp/mo_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/mrp/mo_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/mrp/mo_list.php
 
 		-
 			message: "#^Property Mo\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
@@ -28536,28 +28391,8 @@ parameters:
 			path: ../../htdocs/mrp/mo_movements.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/mrp/mo_movements.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_movements.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/mrp/mo_movements.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/mrp/mo_movements.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
 			path: ../../htdocs/mrp/mo_movements.php
 
 		-
@@ -28571,38 +28406,8 @@ parameters:
 			path: ../../htdocs/mrp/mo_movements.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/mrp/mo_movements.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/mrp/mo_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/mrp/mo_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/mrp/mo_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/mrp/mo_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/mrp/mo_note.php
 
 		-
@@ -28631,38 +28436,13 @@ parameters:
 			path: ../../htdocs/mrp/mo_production.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/mrp/mo_production.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/mrp/mo_production.php
-
-		-
 			message: "#^Variable \\$extrafields in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/mrp/mo_production.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/mrp/mo_production.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 133
-			path: ../../htdocs/mrp/mo_production.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
-			path: ../../htdocs/mrp/mo_production.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 19
 			path: ../../htdocs/mrp/mo_production.php
 
 		-
@@ -28726,31 +28506,6 @@ parameters:
 			path: ../../htdocs/multicurrency/multicurrency_rate.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/multicurrency/multicurrency_rate.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/multicurrency/multicurrency_rate.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/multicurrency/multicurrency_rate.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/multicurrency/multicurrency_rate.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/multicurrency/multicurrency_rate.php
-
-		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 1
 			path: ../../htdocs/opcachepreload.php
@@ -28771,33 +28526,13 @@ parameters:
 			path: ../../htdocs/opensurvey/card.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/opensurvey/card.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/card.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/opensurvey/card.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/opensurvey/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/opensurvey/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
 			path: ../../htdocs/opensurvey/card.php
 
 		-
@@ -28871,36 +28606,6 @@ parameters:
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/opensurvey/exportcsv.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/exportcsv.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/exportcsv.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/opensurvey/index.php
-
-		-
 			message: "#^Function issetAndNoEmpty\\(\\) has parameter \\$tableau with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/lib/opensurvey.lib.php
@@ -28911,28 +28616,8 @@ parameters:
 			path: ../../htdocs/opensurvey/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/opensurvey/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/opensurvey/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/opensurvey/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/opensurvey/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/opensurvey/list.php
 
 		-
@@ -28941,18 +28626,8 @@ parameters:
 			path: ../../htdocs/opensurvey/list.php
 
 		-
-			message: "#^Variable \\$resql might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/opensurvey/list.php
-
-		-
 			message: "#^Variable \\$search_all might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/opensurvey/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/opensurvey/list.php
 
 		-
@@ -28981,11 +28656,6 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 63
-			path: ../../htdocs/opensurvey/results.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/results.php
@@ -29006,11 +28676,6 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 65
-			path: ../../htdocs/opensurvey/results.php
-
-		-
 			message: "#^Variable \\$meilleurecolonne might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/results.php
@@ -29021,44 +28686,9 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/opensurvey/results.php
-
-		-
 			message: "#^Variable \\$userstatic might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/results.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/opensurvey/wizard/choix_autre.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/opensurvey/wizard/choix_autre.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/choix_autre.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/choix_date.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/opensurvey/wizard/choix_date.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/choix_date.php
 
 		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
@@ -29089,36 +28719,6 @@ parameters:
 			message: "#^Variable \\$champdatefin might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/opensurvey/wizard/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/index.php
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
