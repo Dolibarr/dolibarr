@@ -34,7 +34,7 @@ parameters:
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
-	checkArgumentsPassedByReference: false
+	checkArgumentsPassedByReference: true
 	checkMaybeUndefinedVariables: true
 	checkNullables: false
 	checkThisOnly: true

@@ -29,6 +29,14 @@ require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 require 'lib/variants.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products'));
 
