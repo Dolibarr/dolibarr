@@ -32826,44 +32826,9 @@ parameters:
 			path: ../../htdocs/printing/admin/printing.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/printing/admin/printing.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/printing/admin/printing.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/printing/admin/printing.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 53
-			path: ../../htdocs/printing/admin/printing.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/printing/admin/printing.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/printing/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/printing/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/printing/index.php
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
