@@ -26881,26 +26881,6 @@ parameters:
 			path: ../../htdocs/intracommreport/admin/intracommreport.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/intracommreport/admin/intracommreport.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/intracommreport/admin/intracommreport.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/intracommreport/admin/intracommreport.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/admin/intracommreport.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/intracommreport/card.php
@@ -26921,26 +26901,6 @@ parameters:
 			path: ../../htdocs/intracommreport/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/intracommreport/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/intracommreport/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/intracommreport/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/intracommreport/card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/intracommreport/card.php
@@ -26948,11 +26908,6 @@ parameters:
 		-
 			message: "#^Variable \\$soc might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/intracommreport/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/intracommreport/card.php
 
 		-
@@ -27026,18 +26981,8 @@ parameters:
 			path: ../../htdocs/intracommreport/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/intracommreport/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/intracommreport/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
 			path: ../../htdocs/intracommreport/list.php
 
 		-
@@ -27046,23 +26991,8 @@ parameters:
 			path: ../../htdocs/intracommreport/list.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/intracommreport/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/intracommreport/list.php
-
-		-
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/intracommreport/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/intracommreport/list.php
 
 		-
@@ -27171,46 +27101,6 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/knowledgemanagement/knowledgemanagementindex.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/knowledgemanagement/knowledgemanagementindex.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/knowledgemanagement/knowledgemanagementindex.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_agenda.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
@@ -27226,139 +27116,14 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 34
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_contact.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_document.php
-
-		-
 			message: "#^Variable \\$upload_dir might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/knowledgemanagement/knowledgerecord_note.php
 
 		-
 			message: "#^Parameter \\#1 \\$mens of function loanCalcMonthlyPayment expects float, string given\\.$#"

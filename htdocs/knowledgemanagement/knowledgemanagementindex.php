@@ -49,7 +49,7 @@ $action = GETPOST('action', 'aZ09');
 // 	accessforbidden();
 // }
 $socid = GETPOSTINT('socid');
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
