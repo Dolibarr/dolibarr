@@ -23501,68 +23501,8 @@ parameters:
 			path: ../../htdocs/externalsite/frames.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/admin/fichinter_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fichinter/admin/fichinter_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/admin/fichinter_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/admin/fichinterdet_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fichinter/admin/fichinterdet_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/admin/fichinterdet_extrafields.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with Fichinter and 'module' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/agenda.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fichinter/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fichinter/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fichinter/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/fichinter/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/fichinter/agenda.php
 
 		-
@@ -23601,23 +23541,8 @@ parameters:
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 88
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
@@ -23628,11 +23553,6 @@ parameters:
 		-
 			message: "#^Variable \\$objp might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 25
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
@@ -23661,28 +23581,8 @@ parameters:
 			path: ../../htdocs/fichinter/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/fichinter/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 60
-			path: ../../htdocs/fichinter/card.php
-
-		-
 			message: "#^Variable \\$extrafields in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/fichinter/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/fichinter/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 115
 			path: ../../htdocs/fichinter/card.php
 
 		-
@@ -23693,11 +23593,6 @@ parameters:
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 11
-			path: ../../htdocs/fichinter/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 50
 			path: ../../htdocs/fichinter/card.php
 
 		-
@@ -23826,48 +23721,8 @@ parameters:
 			path: ../../htdocs/fichinter/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fichinter/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fichinter/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fichinter/contact.php
-
-		-
 			message: "#^Right side of && is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fichinter/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fichinter/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/fichinter/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/fichinter/document.php
 
 		-
@@ -23886,33 +23741,13 @@ parameters:
 			path: ../../htdocs/fichinter/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fichinter/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/fichinter/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/fichinter/index.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 18
+			count: 1
 			path: ../../htdocs/fichinter/index.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fichinter/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/fichinter/list.php
 
 		-
@@ -23926,74 +23761,14 @@ parameters:
 			path: ../../htdocs/fichinter/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/fichinter/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/fichinter/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/fichinter/list.php
-
-		-
 			message: "#^Variable \\$projetstatic might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/fichinter/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/fichinter/list.php
 
 		-
 			message: "#^Right side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fichinter/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fichinter/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fichinter/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fichinter/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fichinter/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/fichinter/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/fichinter/stats/index.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -24006,48 +23781,13 @@ parameters:
 			path: ../../htdocs/filefunc.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/ajax/getSupplierPrices.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/ajax/getSupplierPrices.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/fourn/ajax/getSupplierPrices.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 10
 			path: ../../htdocs/fourn/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 63
-			path: ../../htdocs/fourn/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 91
 			path: ../../htdocs/fourn/card.php
 
 		-
@@ -24058,11 +23798,6 @@ parameters:
 		-
 			message: "#^Variable \\$num might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 48
 			path: ../../htdocs/fourn/card.php
 
 		-
@@ -24816,11 +24551,6 @@ parameters:
 			path: ../../htdocs/fourn/class/paiementfourn.class.php
 
 		-
-			message: "#^Elseif condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/card.php
@@ -24886,28 +24616,8 @@ parameters:
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 76
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
 			message: "#^Variable \\$fk_account might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 216
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
@@ -24936,11 +24646,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/contact.php
@@ -24948,26 +24653,6 @@ parameters:
 		-
 			message: "#^Variable \\$caneditproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/commande/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/commande/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/fourn/commande/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/fourn/commande/contact.php
 
 		-
@@ -25001,16 +24686,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/dispatch.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 58
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/fourn/commande/dispatch.php
@@ -25018,16 +24693,6 @@ parameters:
 		-
 			message: "#^Variable \\$errors might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 84
 			path: ../../htdocs/fourn/commande/dispatch.php
 
 		-
@@ -25041,11 +24706,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/dispatch.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/document.php
@@ -25053,31 +24713,6 @@ parameters:
 		-
 			message: "#^Variable \\$caneditproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/commande/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/commande/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fourn/commande/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/commande/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/commande/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/fourn/commande/document.php
 
 		-
@@ -25106,28 +24741,8 @@ parameters:
 			path: ../../htdocs/fourn/commande/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/fourn/commande/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/fourn/commande/index.php
-
-		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/fourn/commande/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
 			path: ../../htdocs/fourn/commande/index.php
 
 		-
@@ -25138,36 +24753,6 @@ parameters:
 		-
 			message: "#^Variable \\$caneditproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/commande/info.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/info.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/commande/info.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/fourn/commande/info.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/commande/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/fourn/commande/info.php
 
 		-
@@ -25186,28 +24771,8 @@ parameters:
 			path: ../../htdocs/fourn/commande/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/commande/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 3
-			path: ../../htdocs/fourn/commande/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 69
-			path: ../../htdocs/fourn/commande/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/fourn/commande/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 47
 			path: ../../htdocs/fourn/commande/list.php
 
 		-
@@ -25221,11 +24786,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/fourn/commande/list.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/note.php
@@ -25233,26 +24793,6 @@ parameters:
 		-
 			message: "#^Variable \\$caneditproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/commande/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/commande/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/commande/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/fourn/commande/note.php
 
 		-
@@ -25266,23 +24806,8 @@ parameters:
 			path: ../../htdocs/fourn/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/contact.php
-
-		-
 			message: "#^Variable \\$contactname might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/fourn/contact.php
 
 		-
@@ -25296,43 +24821,8 @@ parameters:
 			path: ../../htdocs/fourn/contact.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fourn/contact.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with FactureFournisseur and 'module' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/facture/agenda.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/facture/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/fourn/facture/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/facture/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/fourn/facture/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/fourn/facture/agenda.php
 
 		-
@@ -25366,33 +24856,13 @@ parameters:
 			path: ../../htdocs/fourn/facture/card-rec.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/card-rec.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$label might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 172
 			path: ../../htdocs/fourn/facture/card-rec.php
 
 		-
@@ -25423,11 +24893,6 @@ parameters:
 		-
 			message: "#^Variable \\$ref_fournisseur might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 36
 			path: ../../htdocs/fourn/facture/card-rec.php
 
 		-
@@ -25481,26 +24946,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 110
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 355
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 16
 			path: ../../htdocs/fourn/facture/card.php
@@ -25516,11 +24961,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
 			message: "#^Variable \\$vat_reverse_charge might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/card.php
@@ -25531,48 +24971,8 @@ parameters:
 			path: ../../htdocs/fourn/facture/contact.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/facture/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/facture/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/fourn/facture/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/fourn/facture/contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/facture/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/facture/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
 			path: ../../htdocs/fourn/facture/document.php
 
 		-
@@ -25586,26 +24986,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/facture/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/facture/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/index.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/info.php
@@ -25616,53 +24996,8 @@ parameters:
 			path: ../../htdocs/fourn/facture/info.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/facture/info.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/facture/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/facture/info.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/facture/list-rec.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/fourn/facture/list-rec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/fourn/facture/list-rec.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/fourn/facture/list-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 39
-			path: ../../htdocs/fourn/facture/list-rec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/fourn/facture/list-rec.php
 
 		-
@@ -25686,33 +25021,13 @@ parameters:
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 62
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 50
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
@@ -25731,63 +25046,13 @@ parameters:
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with FactureFournisseur and 'module' will always evaluate to true\\.$#"
+			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/messaging.php
 
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/messaging.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/facture/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/facture/messaging.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/facture/messaging.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/fourn/facture/messaging.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/facture/messaging.php
-
-		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/note-rec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/facture/note-rec.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/facture/note-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 39
 			path: ../../htdocs/fourn/facture/note-rec.php
 
 		-
@@ -25796,43 +25061,13 @@ parameters:
 			path: ../../htdocs/fourn/facture/note-rec.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/facture/note-rec.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/note.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/facture/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/facture/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/facture/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/fourn/facture/note.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/fourn/facture/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/fourn/facture/note.php
 
 		-
@@ -25866,16 +25101,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/paiement.php
@@ -25886,18 +25111,8 @@ parameters:
 			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 55
 			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
@@ -25946,33 +25161,8 @@ parameters:
 			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/facture/rapport.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/facture/rapport.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/facture/rapport.php
-
-		-
 			message: "#^Variable \\$obj might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/rapport.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/fourn/facture/rapport.php
 
 		-
@@ -25981,74 +25171,14 @@ parameters:
 			path: ../../htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/fourn/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/fourn/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/fourn/index.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/paiement/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/paiement/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/fourn/paiement/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/paiement/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 36
 			path: ../../htdocs/fourn/paiement/card.php
 
 		-
 			message: "#^Variable \\$title_button might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/paiement/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/fourn/paiement/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/paiement/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/paiement/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/fourn/paiement/document.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -26061,33 +25191,8 @@ parameters:
 			path: ../../htdocs/fourn/paiement/document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/fourn/paiement/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/paiement/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/paiement/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/paiement/info.php
-
-		-
 			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/fourn/paiement/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/fourn/paiement/list.php
 
 		-
@@ -26096,79 +25201,9 @@ parameters:
 			path: ../../htdocs/fourn/paiement/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/fourn/paiement/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/fourn/paiement/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/fourn/paiement/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fourn/paiement/list.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fourn/product/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/fourn/recap-fourn.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/recap-fourn.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/fourn/recap-fourn.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fourn/recap-fourn.php
 
 		-
 			message: "#^Variable \\$result2 might not be defined\\.$#"
