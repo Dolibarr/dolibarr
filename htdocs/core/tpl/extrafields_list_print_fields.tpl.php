@@ -1,6 +1,11 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  */
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ */
+
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

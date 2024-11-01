@@ -19971,11 +19971,6 @@ parameters:
 			path: ../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
-
-		-
 			message: "#^Variable \\$totalarray might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
