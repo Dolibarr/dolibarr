@@ -11566,68 +11566,13 @@ parameters:
 			path: ../../htdocs/contact/perso.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/admin/contract_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contrat/admin/contract_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contrat/admin/contract_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/admin/contractdet_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contrat/admin/contractdet_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contrat/admin/contractdet_extrafields.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/contrat/agenda.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/agenda.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contrat/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/contrat/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/contrat/agenda.php
 
 		-
@@ -11676,26 +11621,6 @@ parameters:
 			path: ../../htdocs/contrat/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 48
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 160
-			path: ../../htdocs/contrat/card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/contrat/card.php
@@ -11713,11 +11638,6 @@ parameters:
 		-
 			message: "#^Variable \\$tmpcode might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 83
 			path: ../../htdocs/contrat/card.php
 
 		-
@@ -11911,63 +11831,13 @@ parameters:
 			path: ../../htdocs/contrat/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contrat/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/contrat/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/contrat/contact.php
-
-		-
 			message: "#^Variable \\$mesg might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/contrat/contact.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contrat/contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/contrat/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contrat/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/contrat/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/contrat/document.php
 
 		-
@@ -11991,26 +11861,6 @@ parameters:
 			path: ../../htdocs/contrat/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/contrat/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 55
-			path: ../../htdocs/contrat/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/contrat/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/contrat/index.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/contrat/list.php
@@ -12021,28 +11871,8 @@ parameters:
 			path: ../../htdocs/contrat/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contrat/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 66
-			path: ../../htdocs/contrat/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/contrat/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 45
 			path: ../../htdocs/contrat/list.php
 
 		-
@@ -12051,18 +11881,8 @@ parameters:
 			path: ../../htdocs/contrat/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/contrat/list.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/messaging.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/contrat/messaging.php
 
 		-
@@ -12071,53 +11891,8 @@ parameters:
 			path: ../../htdocs/contrat/messaging.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contrat/messaging.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/messaging.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/contrat/messaging.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/contrat/messaging.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contrat/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/contrat/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/contrat/note.php
 
 		-
@@ -12151,58 +11926,13 @@ parameters:
 			path: ../../htdocs/contrat/services_list.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/contrat/services_list.php
-
-		-
 			message: "#^Variable \\$filter_opcloture in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 3
 			path: ../../htdocs/contrat/services_list.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/contrat/services_list.php
-
-		-
 			message: "#^Property Ticket\\:\\:\\$progress \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/ticket.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contrat/ticket.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/contrat/ticket.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/contrat/ticket.php
 
 		-
@@ -15491,33 +15221,8 @@ parameters:
 			path: ../../htdocs/core/customreports.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/customreports.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/customreports.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/core/customreports.php
-
-		-
 			message: "#^Variable \\$gval might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/customreports.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/customreports.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 67
 			path: ../../htdocs/core/customreports.php
 
 		-
@@ -15557,11 +15262,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$tabfamily might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/customreports.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/core/customreports.php
 
@@ -20269,21 +19969,6 @@ parameters:
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/search_page.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tools.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tools.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tools.php
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"

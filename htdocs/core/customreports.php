@@ -32,6 +32,14 @@
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
+ /**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
