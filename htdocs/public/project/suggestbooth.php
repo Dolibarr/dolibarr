@@ -104,7 +104,9 @@ $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
 $arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='booth@eventorganization'");
-
+if ($arrayofconfboothtype == -1) {
+	$arrayofconfboothtype = [];
+}
 // Security check
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');

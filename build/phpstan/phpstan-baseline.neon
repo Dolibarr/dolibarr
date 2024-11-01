@@ -351,11 +351,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<int\\|string, non\\-falsy\\-string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
 			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(callable\\(string\\)\\: bool\\)\\|null, 'strlen' given\\.$#"
 			count: 3
 			path: ../../htdocs/accountancy/class/bookkeeping.class.php
@@ -8341,11 +8336,6 @@ parameters:
 			path: ../../htdocs/compta/bank/bankentries_list.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, non\\-empty\\-array\\<int, string\\> given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/bankentries_list.php
@@ -8687,11 +8677,6 @@ parameters:
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, non\\-empty\\-array\\<int, string\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/card.php
 
@@ -14076,16 +14061,6 @@ parameters:
 			path: ../../htdocs/core/class/dolgraph.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\{1\\: mixed, 2\\: mixed, 3\\: mixed, 4\\: mixed, 5\\: mixed\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/dolreceiptprinter.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\{mixed, mixed, mixed, mixed, mixed\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/dolreceiptprinter.class.php
-
-		-
 			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/extrafields.class.php
@@ -14186,16 +14161,6 @@ parameters:
 			path: ../../htdocs/core/class/html.form.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.form.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, non\\-empty\\-array\\<string, string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.form.class.php
-
-		-
 			message: "#^Parameter \\#3 \\$selected of method Form\\:\\:multiselectarray\\(\\) expects array\\<string\\>, array\\<int\\<0, max\\>, int\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.form.class.php
@@ -14266,16 +14231,6 @@ parameters:
 			path: ../../htdocs/core/class/html.form.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<int\\|string, string\\> given\\.$#"
-			count: 3
-			path: ../../htdocs/core/class/html.formaccounting.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<int, string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.formbank.class.php
-
-		-
 			message: "#^Variable \\$select_encoder might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formbarcode.class.php
@@ -14302,11 +14257,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$selected of method FormCompany\\:\\:select_state\\(\\) expects int, string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<string, string\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formcompany.class.php
 
@@ -14366,11 +14316,6 @@ parameters:
 			path: ../../htdocs/core/class/html.formmail.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, non\\-empty\\-array\\<int, string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.formmail.class.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:multiselectarray\\(\\) expects array\\<string, array\\{id\\: string, label\\: string, color\\: string, picto\\: string, labelhtml\\: string\\}\\|string\\>, array\\<int, string\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formmail.class.php
@@ -14381,24 +14326,9 @@ parameters:
 			path: ../../htdocs/core/class/html.formmail.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<int, string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.formmailing.class.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:multiselectarray\\(\\) expects array\\<string, array\\{id\\: string, label\\: string, color\\: string, picto\\: string, labelhtml\\: string\\}\\|string\\>, non\\-empty\\-array\\<\\-1\\|0\\|1\\|2\\|3, string\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formorder.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, non\\-empty\\-array\\<0\\|1\\|2\\|3\\|4\\|5\\|9\\|'6,7', string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.formorder.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<int, array\\{label\\: mixed, data\\-html\\: non\\-falsy\\-string\\}\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/html.formother.class.php
 
 		-
 			message: "#^Parameter \\#3 \\$zone of static method InfoBox\\:\\:listBoxes\\(\\) expects int, string given\\.$#"
@@ -27141,28 +27071,8 @@ parameters:
 			path: ../../htdocs/loan/calcmens.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/loan/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/loan/card.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/loan/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/loan/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 79
 			path: ../../htdocs/loan/card.php
 
 		-
@@ -27178,11 +27088,6 @@ parameters:
 		-
 			message: "#^Variable \\$staytopay might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/loan/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 16
 			path: ../../htdocs/loan/card.php
 
 		-
@@ -27431,21 +27336,6 @@ parameters:
 			path: ../../htdocs/loan/class/paymentloan.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/loan/document.php
-
-		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/loan/document.php
@@ -27456,54 +27346,14 @@ parameters:
 			path: ../../htdocs/loan/document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/info.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/loan/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/loan/info.php
 
 		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/loan/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/info.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/loan/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/loan/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/loan/list.php
 
 		-
 			message: "#^Variable \\$search_all might not be defined\\.$#"
@@ -27511,28 +27361,8 @@ parameters:
 			path: ../../htdocs/loan/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/loan/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/note.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/loan/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/loan/note.php
 
 		-
@@ -27541,33 +27371,8 @@ parameters:
 			path: ../../htdocs/loan/note.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/loan/payment/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/loan/payment/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/loan/payment/card.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/loan/payment/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/loan/payment/card.php
 
 		-
@@ -27591,16 +27396,6 @@ parameters:
 			path: ../../htdocs/loan/payment/payment.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/loan/payment/payment.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/loan/payment/payment.php
-
-		-
 			message: "#^Variable \\$line_id might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/loan/payment/payment.php
@@ -27611,26 +27406,6 @@ parameters:
 			path: ../../htdocs/loan/payment/payment.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/loan/payment/payment.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/loan/schedule.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/loan/schedule.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/loan/schedule.php
-
-		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/loan/schedule.php
@@ -27638,11 +27413,6 @@ parameters:
 		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/loan/schedule.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/loan/schedule.php
 
 		-
@@ -27746,98 +27516,18 @@ parameters:
 			path: ../../htdocs/main.inc.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\{1\\: mixed, 2\\: mixed, 3\\: mixed\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/margin/admin/margin.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/margin/admin/margin.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/margin/admin/margin.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/margin/admin/margin.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/margin/admin/margin.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/margin/agentMargins.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/agentMargins.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/margin/agentMargins.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/margin/agentMargins.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/margin/agentMargins.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/margin/agentMargins.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/margin/checkMargins.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/margin/checkMargins.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/margin/checkMargins.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/margin/checkMargins.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/margin/checkMargins.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/margin/checkMargins.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/margin/checkMargins.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/margin/checkMargins.php
 
 		-
@@ -27856,36 +27546,6 @@ parameters:
 			path: ../../htdocs/margin/customerMargins.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/customerMargins.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/margin/customerMargins.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/margin/customerMargins.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/margin/customerMargins.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/margin/customerMargins.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/index.php
-
-		-
 			message: "#^Function getMarginInfos\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/margin/lib/margins.lib.php
@@ -27901,51 +27561,6 @@ parameters:
 			path: ../../htdocs/margin/productMargins.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/productMargins.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/margin/productMargins.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/margin/productMargins.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/margin/productMargins.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/productMargins.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/margin/tabs/productMargins.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/margin/tabs/productMargins.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/margin/tabs/productMargins.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/margin/tabs/productMargins.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/margin/tabs/productMargins.php
@@ -27956,36 +27571,6 @@ parameters:
 			path: ../../htdocs/margin/tabs/productMargins.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/margin/tabs/productMargins.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
@@ -27993,11 +27578,6 @@ parameters:
 		-
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/margin/tabs/thirdpartyMargins.php
 
 		-
@@ -30109,11 +29689,6 @@ parameters:
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/product/admin/inventory_extrafields.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, non\\-empty\\-array\\<int\\<1, max\\>, non\\-falsy\\-string\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/price_rules.php
 
 		-
 			message: "#^Result of \\|\\| is always true\\.$#"
@@ -36871,11 +36446,6 @@ parameters:
 			path: ../../htdocs/public/project/suggestbooth.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, \\-1\\|array\\{id\\: array\\<int, string\\>, code\\: array\\<string, string\\>, all\\: array\\<string, array\\{id\\: string, label\\: string, type\\: string, color\\: mixed, picto\\: string\\}\\>, AC_OTH_AUTO\\?\\: mixed\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/public/project/suggestbooth.php
-
-		-
 			message: "#^Right side of \\|\\| is always false\\.$#"
 			count: 2
 			path: ../../htdocs/public/project/suggestbooth.php
@@ -36942,11 +36512,6 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/public/project/suggestconference.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, \\-1\\|array\\{id\\: array\\<int, string\\>, code\\: array\\<string, string\\>, all\\: array\\<string, array\\{id\\: string, label\\: string, type\\: string, color\\: mixed, picto\\: string\\}\\>, AC_OTH_AUTO\\?\\: mixed\\} given\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/suggestconference.php
 
@@ -40084,11 +39649,6 @@ parameters:
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/societe/ajax/company.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\{mixed, mixed, mixed, mixed\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/societe/canvas/actions_card_common.class.php
 
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
@@ -43642,11 +43202,6 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method Form\\:\\:selectarray\\(\\) expects array\\{label\\: string, data\\-html\\: string, disable\\?\\: int\\<0, 1\\>, css\\?\\: string\\}, array\\<int, string\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/class/ticket.class.php
 
