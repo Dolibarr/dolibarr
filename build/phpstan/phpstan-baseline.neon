@@ -76,18 +76,8 @@ parameters:
 			path: ../../htdocs/accountancy/admin/journals_list.php
 
 		-
-			message: "#^Variable \\$sql might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/admin/journals_list.php
-
-		-
 			message: "#^Variable \\$defaultvalue in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 6
-			path: ../../htdocs/accountancy/admin/productaccount.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/accountancy/admin/productaccount.php
 
 		-
@@ -26216,21 +26206,6 @@ parameters:
 			path: ../../htdocs/imports/emptyexample.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/imports/emptyexample.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/imports/emptyexample.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/imports/emptyexample.php
-
-		-
 			message: "#^Comparison operation \"\\>\\=\" between int\\<1, max\\> and 1 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/imports/import.php
@@ -26281,49 +26256,9 @@ parameters:
 			path: ../../htdocs/imports/import.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 185
-			path: ../../htdocs/imports/import.php
-
-		-
 			message: "#^Variable \\$relativepath might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/imports/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/imports/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/imports/index.php
 
 		-
 			message: "#^If condition is always true\\.$#"
