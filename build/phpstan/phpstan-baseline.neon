@@ -8291,26 +8291,6 @@ parameters:
 			path: ../../htdocs/compta/accounting-files.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 43
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 70
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/compta/accounting-files.php
@@ -8336,48 +8316,13 @@ parameters:
 			path: ../../htdocs/compta/accounting-files.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/ajaxpayment.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/bank/account_statement_document.php
-
-		-
 			message: "#^Variable \\$ve might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/account_statement_document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 40
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
 			path: ../../htdocs/compta/bank/annuel.php
 
 		-
@@ -8388,11 +8333,6 @@ parameters:
 		-
 			message: "#^Variable \\$min might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/bank/annuel.php
 
 		-
@@ -8421,11 +8361,6 @@ parameters:
 			path: ../../htdocs/compta/bank/bankentries_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/bankentries_list.php
@@ -8436,69 +8371,9 @@ parameters:
 			path: ../../htdocs/compta/bank/bankentries_list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 71
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 118
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
 			message: "#^Variable \\$numr might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/bilan.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/bilan.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/bilan.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/budget.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/bank/budget.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/bank/budget.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/budget.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/bank/card.php
 
 		-
 			message: "#^Variable \\$css might not be defined\\.$#"
@@ -8506,23 +8381,8 @@ parameters:
 			path: ../../htdocs/compta/bank/card.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/compta/bank/card.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/compta/bank/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/bank/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 154
 			path: ../../htdocs/compta/bank/card.php
 
 		-
@@ -8549,31 +8409,6 @@ parameters:
 			message: "#^Variable \\$title might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/bank/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/categ.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/bank/categ.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/bank/categ.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/bank/categ.php
 
 		-
 			message: "#^Call to function method_exists\\(\\) with \\$this\\(Account\\) and 'getLibStatut' will always evaluate to true\\.$#"
@@ -8716,53 +8551,8 @@ parameters:
 			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/bank/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 80
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 39
 			path: ../../htdocs/compta/bank/graph.php
 
 		-
@@ -8801,26 +8591,6 @@ parameters:
 			path: ../../htdocs/compta/bank/graph.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/bank/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/bank/info.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/line.php
@@ -8846,11 +8616,6 @@ parameters:
 			path: ../../htdocs/compta/bank/line.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 51
-			path: ../../htdocs/compta/bank/line.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/line.php
@@ -8861,23 +8626,8 @@ parameters:
 			path: ../../htdocs/compta/bank/line.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/line.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 72
-			path: ../../htdocs/compta/bank/line.php
-
-		-
 			message: "#^Variable \\$oldfilepath might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/line.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 28
 			path: ../../htdocs/compta/bank/line.php
 
 		-
@@ -8896,38 +8646,13 @@ parameters:
 			path: ../../htdocs/compta/bank/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/bank/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/bank/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/compta/bank/list.php
-
-		-
 			message: "#^Variable \\$num might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/compta/bank/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/compta/bank/list.php
 
 		-
@@ -8941,28 +8666,8 @@ parameters:
 			path: ../../htdocs/compta/bank/releve.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 71
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 59
 			path: ../../htdocs/compta/bank/releve.php
 
 		-
@@ -8971,43 +8676,8 @@ parameters:
 			path: ../../htdocs/compta/bank/releve.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/transfer.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/transfer.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/bank/transfer.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/transfer.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/compta/bank/transfer.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/transfer.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/compta/bank/transfer.php
 
 		-
@@ -9016,48 +8686,13 @@ parameters:
 			path: ../../htdocs/compta/bank/treso.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/treso.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
-			message: "#^Variable \\$tmpobject might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/treso.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/bank/treso.php
 
 		-
@@ -9086,16 +8721,6 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/compta/bank/various_payment/card.php
@@ -9106,23 +8731,8 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/card.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 83
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
 			message: "#^Variable \\$ref might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/compta/bank/various_payment/card.php
 
 		-
@@ -9131,23 +8741,8 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/various_payment/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/various_payment/document.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/compta/bank/various_payment/document.php
 
 		-
@@ -9161,18 +8756,8 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/various_payment/document.php
-
-		-
 			message: "#^Right side of && is always false\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/info.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/bank/various_payment/info.php
 
 		-
@@ -9186,11 +8771,6 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/info.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/bank/various_payment/info.php
-
-		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/info.php
@@ -9198,11 +8778,6 @@ parameters:
 		-
 			message: "#^Variable \\$morehtmlright might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/bank/various_payment/info.php
 
 		-
@@ -9226,18 +8801,8 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
 			message: "#^Variable \\$bankline might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
@@ -9246,28 +8811,8 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
@@ -9291,28 +8836,8 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 63
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
@@ -9326,38 +8851,8 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_list.php
 
 		-
@@ -9391,27 +8886,7 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/report.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/cashcontrol/report.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/cashcontrol/report.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/compta/cashcontrol/report.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/cashcontrol/report.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/compta/cashcontrol/report.php
 
@@ -9421,48 +8896,13 @@ parameters:
 			path: ../../htdocs/compta/charges/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/charges/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/compta/charges/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/charges/index.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/charges/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/compta/charges/index.php
 
 		-
 			message: "#^Variable \\$addu might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/clients.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/clients.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/compta/clients.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/compta/clients.php
 
 		-
@@ -9486,128 +8926,13 @@ parameters:
 			path: ../../htdocs/compta/clients.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/clients.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/deplacement/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/deplacement/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/compta/deplacement/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/compta/deplacement/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/deplacement/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/deplacement/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/deplacement/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/deplacement/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/deplacement/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/deplacement/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/deplacement/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/deplacement/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/deplacement/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/deplacement/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/deplacement/info.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/deplacement/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/deplacement/list.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/deplacement/list.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/deplacement/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/deplacement/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/deplacement/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/deplacement/stats/index.php
-
-		-
 			message: "#^Variable \\$fileurl_avg might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/deplacement/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
 			path: ../../htdocs/compta/deplacement/stats/index.php
 
 		-
@@ -9616,138 +8941,13 @@ parameters:
 			path: ../../htdocs/compta/deplacement/stats/index.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/compta/deplacement/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/admin/invoice_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/facture/admin/invoice_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/admin/invoice_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/admin/invoice_rec_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/facture/admin/invoice_rec_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/admin/invoice_rec_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/admin/invoicedet_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/admin/invoicedet_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/admin/invoicedet_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/admin/invoicedet_rec_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/admin/invoicedet_rec_cust_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/admin/invoicedet_rec_cust_extrafields.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with FactureRec and 'module' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/agenda-rec.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/agenda-rec.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/facture/agenda-rec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/agenda-rec.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/agenda-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/facture/agenda-rec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/agenda-rec.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with Facture and 'module' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/agenda.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/facture/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/compta/facture/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/compta/facture/agenda.php
 
 		-
@@ -9786,26 +8986,6 @@ parameters:
 			path: ../../htdocs/compta/facture/card-rec.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 185
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 11
 			path: ../../htdocs/compta/facture/card-rec.php
@@ -9813,11 +8993,6 @@ parameters:
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 2
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 49
 			path: ../../htdocs/compta/facture/card-rec.php
 
 		-
@@ -9906,33 +9081,13 @@ parameters:
 			path: ../../htdocs/compta/facture/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 48
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 118
-			path: ../../htdocs/compta/facture/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 26
 			path: ../../htdocs/compta/facture/card.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/compta/facture/card.php
-
-		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 504
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -9953,11 +9108,6 @@ parameters:
 		-
 			message: "#^Variable \\$num might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 52
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -10386,108 +9536,18 @@ parameters:
 			path: ../../htdocs/compta/facture/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/facture/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/facture/contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/facture/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/facture/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/facture/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/index.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/invoicetemplate_list.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/compta/facture/invoicetemplate_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/compta/facture/invoicetemplate_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/facture/invoicetemplate_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 39
-			path: ../../htdocs/compta/facture/invoicetemplate_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/compta/facture/invoicetemplate_list.php
 
 		-
@@ -10506,28 +9566,8 @@ parameters:
 			path: ../../htdocs/compta/facture/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/facture/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 76
-			path: ../../htdocs/compta/facture/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/compta/facture/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 82
 			path: ../../htdocs/compta/facture/list.php
 
 		-
@@ -10541,43 +9581,8 @@ parameters:
 			path: ../../htdocs/compta/facture/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/compta/facture/list.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with Facture and 'module' will always evaluate to true\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/messaging.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/messaging.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/facture/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/facture/messaging.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/messaging.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/compta/facture/messaging.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/compta/facture/messaging.php
 
 		-
@@ -10586,53 +9591,8 @@ parameters:
 			path: ../../htdocs/compta/facture/note-rec.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/facture/note-rec.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/note-rec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/compta/facture/note-rec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/facture/note-rec.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/facture/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/facture/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/compta/facture/note.php
 
 		-
@@ -10646,28 +9606,8 @@ parameters:
 			path: ../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 60
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
 			message: "#^Variable \\$isdraft might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 79
 			path: ../../htdocs/compta/facture/prelevement.php
 
 		-
@@ -10681,16 +9621,6 @@ parameters:
 			path: ../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
 			message: "#^Variable \\$cat_label might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/stats/index.php
@@ -10698,16 +9628,6 @@ parameters:
 		-
 			message: "#^Variable \\$cat_type might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/compta/facture/stats/index.php
 
 		-
@@ -10726,28 +9646,8 @@ parameters:
 			path: ../../htdocs/compta/facture/stats/index.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/compta/facture/stats/index.php
 
 		-
@@ -10766,31 +9666,6 @@ parameters:
 			path: ../../htdocs/compta/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 53
-			path: ../../htdocs/compta/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/compta/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/compta/index.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/index.php
-
-		-
 			message: "#^Variable \\$total_ht might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/index.php
@@ -10798,11 +9673,6 @@ parameters:
 		-
 			message: "#^Variable \\$total_ttc might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
 			path: ../../htdocs/compta/index.php
 
 		-
@@ -10818,26 +9688,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
 			path: ../../htdocs/compta/journal/purchasesjournal.php
 
 		-
@@ -10876,11 +9726,6 @@ parameters:
 			path: ../../htdocs/compta/journal/purchasesjournal.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/journal/sellsjournal.php
@@ -10893,26 +9738,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
 			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
@@ -10948,11 +9773,6 @@ parameters:
 		-
 			message: "#^Variable \\$tabtva might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
@@ -10976,21 +9796,6 @@ parameters:
 			path: ../../htdocs/compta/localtax/card.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
 			message: "#^Variable \\$morehtmlref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/card.php
@@ -10998,11 +9803,6 @@ parameters:
 		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/compta/localtax/card.php
 
 		-
@@ -11051,11 +9851,6 @@ parameters:
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
 			message: "#^Variable \\$builddate might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/clients.php
@@ -11066,38 +9861,13 @@ parameters:
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
 			message: "#^Variable \\$find might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 48
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
@@ -11113,11 +9883,6 @@ parameters:
 		-
 			message: "#^Variable \\$replace might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
@@ -11146,53 +9911,13 @@ parameters:
 			path: ../../htdocs/compta/localtax/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 7
 			path: ../../htdocs/compta/localtax/index.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
 			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/localtax/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/localtax/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/localtax/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/compta/localtax/list.php
 
 		-
@@ -11203,11 +9928,6 @@ parameters:
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/localtax/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/localtax/list.php
 
 		-
@@ -11251,53 +9971,13 @@ parameters:
 			path: ../../htdocs/compta/localtax/quadri_detail.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/paiement.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/paiement.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/compta/paiement.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/paiement.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/paiement.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 83
 			path: ../../htdocs/compta/paiement.php
 
 		-
@@ -11341,31 +10021,6 @@ parameters:
 			path: ../../htdocs/compta/paiement.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/paiement.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/paiement/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/compta/paiement/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/paiement/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/compta/paiement/card.php
-
-		-
 			message: "#^Variable \\$marginInfo might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/paiement/card.php
@@ -11378,11 +10033,6 @@ parameters:
 		-
 			message: "#^Variable \\$site_account_payment might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/paiement/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 21
 			path: ../../htdocs/compta/paiement/card.php
 
 		-
@@ -11406,21 +10056,6 @@ parameters:
 			path: ../../htdocs/compta/paiement/cheque/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/paiement/cheque/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/compta/paiement/cheque/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 76
-			path: ../../htdocs/compta/paiement/cheque/card.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 3
 			path: ../../htdocs/compta/paiement/cheque/card.php
@@ -11428,11 +10063,6 @@ parameters:
 		-
 			message: "#^Variable \\$paiement might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/paiement/cheque/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 28
 			path: ../../htdocs/compta/paiement/cheque/card.php
 
 		-
@@ -11471,26 +10101,6 @@ parameters:
 			path: ../../htdocs/compta/paiement/cheque/class/remisecheque.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/cheque/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/paiement/cheque/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/paiement/cheque/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/paiement/cheque/index.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/paiement/cheque/list.php
@@ -11506,38 +10116,8 @@ parameters:
 			path: ../../htdocs/compta/paiement/cheque/list.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/cheque/list.php
-
-		-
 			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/paiement/cheque/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/paiement/cheque/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/compta/paiement/cheque/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/compta/paiement/cheque/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/paiement/cheque/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/compta/paiement/cheque/list.php
 
 		-
@@ -11596,54 +10176,9 @@ parameters:
 			path: ../../htdocs/compta/paiement/class/paiement.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/paiement/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/paiement/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/compta/paiement/document.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/paiement/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/paiement/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/paiement/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/paiement/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/paiement/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/paiement/info.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -11666,76 +10201,11 @@ parameters:
 			path: ../../htdocs/compta/paiement/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/paiement/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/compta/paiement/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/compta/paiement/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/paiement/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/paiement/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/paiement/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/paiement/rapport.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/paiement/rapport.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/paiement/rapport.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/paiement/rapport.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/tovalidate.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/paiement/tovalidate.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/paiement/tovalidate.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/paiement/tovalidate.php
-
-		-
 			message: "#^Comparison operation \"\\>\" between 1 and 1 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/paiement_charge.php
@@ -11746,23 +10216,8 @@ parameters:
 			path: ../../htdocs/compta/paiement_charge.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/paiement_charge.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/compta/paiement_charge.php
-
-		-
 			message: "#^Variable \\$sumpaid might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/compta/paiement_charge.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/compta/paiement_charge.php
 
 		-
@@ -11776,109 +10231,14 @@ parameters:
 			path: ../../htdocs/compta/paiement_vat.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/paiement_vat.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/compta/paiement_vat.php
-
-		-
 			message: "#^Variable \\$sumpaid might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/compta/paiement_vat.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/paiement_vat.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/payment_sc/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/payment_sc/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/compta/payment_sc/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/payment_sc/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/payment_vat/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/payment_vat/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/compta/payment_vat/card.php
 
 		-
 			message: "#^Variable \\$outputlangs might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/payment_vat/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/payment_vat/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/compta/paymentbybanktransfer/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/compta/paymentbybanktransfer/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/paymentbybanktransfer/index.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 2
-			path: ../../htdocs/compta/prelevement/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/prelevement/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/prelevement/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/prelevement/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/compta/prelevement/card.php
 
 		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
@@ -11893,11 +10253,6 @@ parameters:
 		-
 			message: "#^Variable \\$thirdparty might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/prelevement/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 27
 			path: ../../htdocs/compta/prelevement/card.php
 
 		-
@@ -11986,99 +10341,14 @@ parameters:
 			path: ../../htdocs/compta/prelevement/create.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 59
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/prelevement/create.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
 			message: "#^Variable \\$massaction might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$resql might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/prelevement/demandes.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/prelevement/factures.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/compta/prelevement/factures.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/factures.php
 
 		-
 			message: "#^Variable \\$invoicetmpcustomer might not be defined\\.$#"
@@ -12091,123 +10361,8 @@ parameters:
 			path: ../../htdocs/compta/prelevement/factures.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/compta/prelevement/factures.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/prelevement/factures.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/fiche-rejet.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/prelevement/fiche-rejet.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/compta/prelevement/fiche-rejet.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/prelevement/fiche-rejet.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/fiche-stat.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/compta/prelevement/fiche-stat.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/compta/prelevement/fiche-stat.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/prelevement/fiche-stat.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/compta/prelevement/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/prelevement/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/prelevement/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/prelevement/line.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/compta/prelevement/line.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/compta/prelevement/line.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/prelevement/line.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/prelevement/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/prelevement/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/compta/prelevement/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/prelevement/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/prelevement/list.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/prelevement/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/prelevement/list.php
 
 		-
@@ -12216,18 +10371,8 @@ parameters:
 			path: ../../htdocs/compta/prelevement/orders_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
 			path: ../../htdocs/compta/prelevement/orders_list.php
 
 		-
@@ -12241,16 +10386,6 @@ parameters:
 			path: ../../htdocs/compta/prelevement/orders_list.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
 			message: "#^Variable \\$nbignored might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/orders_list.php
@@ -12259,56 +10394,6 @@ parameters:
 			message: "#^Variable \\$nbok might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/prelevement/rejets.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/prelevement/rejets.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/rejets.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/rejets.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/prelevement/rejets.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/prelevement/stats.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/prelevement/stats.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/prelevement/stats.php
 
 		-
 			message: "#^Variable \\$nbtotal might not be defined\\.$#"
@@ -12321,38 +10406,8 @@ parameters:
 			path: ../../htdocs/compta/prelevement/stats.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/prelevement/stats.php
-
-		-
 			message: "#^Offset 'checked' on array\\{label\\: 'Date', checked\\: 1\\} in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/recap-compta.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/recap-compta.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/recap-compta.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/recap-compta.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/compta/recap-compta.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/compta/recap-compta.php
 
 		-
@@ -12361,28 +10416,8 @@ parameters:
 			path: ../../htdocs/compta/resultat/clientfourn.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 127
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 69
 			path: ../../htdocs/compta/resultat/clientfourn.php
 
 		-
@@ -12406,38 +10441,13 @@ parameters:
 			path: ../../htdocs/compta/resultat/clientfourn.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
 			message: "#^Variable \\$builddate might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/resultat/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/resultat/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 108
-			path: ../../htdocs/compta/resultat/index.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/resultat/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/resultat/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
 			path: ../../htdocs/compta/resultat/index.php
 
 		-
@@ -12458,11 +10468,6 @@ parameters:
 		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/compta/resultat/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/resultat/index.php
 
 		-
@@ -12491,23 +10496,8 @@ parameters:
 			path: ../../htdocs/compta/resultat/result.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/resultat/result.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/resultat/result.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/resultat/result.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 46
 			path: ../../htdocs/compta/resultat/result.php
 
 		-
@@ -12533,11 +10523,6 @@ parameters:
 		-
 			message: "#^Variable \\$totCat in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/resultat/result.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/resultat/result.php
 
 		-
@@ -12586,33 +10571,8 @@ parameters:
 			path: ../../htdocs/compta/sociales/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 89
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
 			message: "#^Variable \\$resteapayer might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 29
 			path: ../../htdocs/compta/sociales/card.php
 
 		-
@@ -12741,48 +10701,8 @@ parameters:
 			path: ../../htdocs/compta/sociales/class/paymentsocialcontribution.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/sociales/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/sociales/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/sociales/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/sociales/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/sociales/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/sociales/info.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/compta/sociales/list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/sociales/list.php
 
 		-
@@ -12791,78 +10711,13 @@ parameters:
 			path: ../../htdocs/compta/sociales/list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/compta/sociales/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/compta/sociales/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/compta/sociales/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/sociales/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/sociales/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/sociales/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/sociales/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/sociales/note.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/sociales/payments.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/payments.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/compta/sociales/payments.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/sociales/payments.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/sociales/payments.php
-
-		-
-			message: "#^Variable \\$resql might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/sociales/payments.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/sociales/payments.php
 
 		-
@@ -12878,26 +10733,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/stats/byratecountry.php
 
 		-
@@ -12936,23 +10771,8 @@ parameters:
 			path: ../../htdocs/compta/stats/cabyprodserv.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 34
 			path: ../../htdocs/compta/stats/cabyprodserv.php
 
 		-
@@ -12981,11 +10801,6 @@ parameters:
 			path: ../../htdocs/compta/stats/cabyprodserv.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/stats/cabyuser.php
@@ -13016,23 +10831,8 @@ parameters:
 			path: ../../htdocs/compta/stats/cabyuser.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
 			path: ../../htdocs/compta/stats/cabyuser.php
 
 		-
@@ -13046,11 +10846,6 @@ parameters:
 			path: ../../htdocs/compta/stats/cabyuser.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/stats/casoc.php
@@ -13081,23 +10876,8 @@ parameters:
 			path: ../../htdocs/compta/stats/casoc.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/compta/stats/casoc.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/casoc.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/stats/casoc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 31
 			path: ../../htdocs/compta/stats/casoc.php
 
 		-
@@ -13111,33 +10891,13 @@ parameters:
 			path: ../../htdocs/compta/stats/casoc.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/casoc.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/stats/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/stats/index.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
 			path: ../../htdocs/compta/stats/index.php
 
 		-
@@ -13156,33 +10916,13 @@ parameters:
 			path: ../../htdocs/compta/stats/index.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/index.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/stats/supplier_turnover.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/supplier_turnover.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/compta/stats/supplier_turnover.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/supplier_turnover.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
 			path: ../../htdocs/compta/stats/supplier_turnover.php
 
 		-
@@ -13198,11 +10938,6 @@ parameters:
 		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/supplier_turnover.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/stats/supplier_turnover.php
 
 		-
@@ -13216,28 +10951,8 @@ parameters:
 			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 30
 			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
 
 		-
@@ -13271,11 +10986,6 @@ parameters:
 			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
@@ -13301,28 +11011,8 @@ parameters:
 			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 31
 			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
 
 		-
@@ -13338,11 +11028,6 @@ parameters:
 		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
 
 		-
@@ -13371,33 +11056,8 @@ parameters:
 			path: ../../htdocs/compta/tva/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/tva/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/compta/tva/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/tva/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 82
-			path: ../../htdocs/compta/tva/card.php
-
-		-
 			message: "#^Variable \\$resteapayer might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/compta/tva/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 38
 			path: ../../htdocs/compta/tva/card.php
 
 		-
@@ -13521,23 +11181,8 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
 			message: "#^Variable \\$description might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 64
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
@@ -13551,39 +11196,9 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
 			message: "#^Variable \\$year_current might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/tva/clients.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/tva/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/compta/tva/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/compta/tva/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/index.php
 
 		-
 			message: "#^Variable \\$date_end might not be defined\\.$#"
@@ -13596,43 +11211,8 @@ parameters:
 			path: ../../htdocs/compta/tva/index.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/compta/tva/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/compta/tva/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/tva/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/tva/info.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/tva/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/tva/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/compta/tva/info.php
 
 		-
@@ -13651,38 +11231,8 @@ parameters:
 			path: ../../htdocs/compta/tva/initdatesforvat.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/tva/initdatesforvat.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/tva/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/compta/tva/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/compta/tva/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/tva/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/tva/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/compta/tva/list.php
 
 		-
@@ -13691,28 +11241,8 @@ parameters:
 			path: ../../htdocs/compta/tva/payments.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/tva/payments.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/compta/tva/payments.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/tva/payments.php
-
-		-
 			message: "#^Variable \\$num might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/compta/tva/payments.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/compta/tva/payments.php
 
 		-
@@ -13786,59 +11316,14 @@ parameters:
 			path: ../../htdocs/compta/tva/quadri_detail.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 62
-			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/tva/quadri_detail.php
 
 		-
 			message: "#^Variable \\$year_current might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/contact/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/contact/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/contact/agenda.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -13848,16 +11333,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/contact/ajax/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/ajax/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/contact/ajax/contact.php
 
 		-
@@ -13936,26 +11411,6 @@ parameters:
 			path: ../../htdocs/contact/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/contact/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/contact/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contact/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 136
-			path: ../../htdocs/contact/card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/contact/card.php
@@ -13968,11 +11423,6 @@ parameters:
 		-
 			message: "#^Variable \\$triggermodname in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/contact/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 30
 			path: ../../htdocs/contact/card.php
 
 		-
@@ -14056,99 +11506,14 @@ parameters:
 			path: ../../htdocs/contact/consumption.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/consumption.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/consumption.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/contact/consumption.php
-
-		-
 			message: "#^Variable \\$documentstaticline might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/contact/consumption.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contact/consumption.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 38
 			path: ../../htdocs/contact/consumption.php
 
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/contact/consumption.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/contact/consumption.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/contact/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contact/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/contact/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/contact/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/info.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/info.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contact/ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/contact/ldap.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contact/ldap.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -14171,89 +11536,14 @@ parameters:
 			path: ../../htdocs/contact/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/contact/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 60
-			path: ../../htdocs/contact/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/contact/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 42
 			path: ../../htdocs/contact/list.php
 
 		-
 			message: "#^Variable \\$ref in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/contact/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/contact/list.php
-
-		-
-			message: "#^Call to function is_object\\(\\) with Contact will always evaluate to true\\.$#"
-			count: 1
-			path: ../../htdocs/contact/messaging.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/contact/messaging.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/messaging.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/contact/messaging.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/contact/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/contact/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/note.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -14274,76 +11564,6 @@ parameters:
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/contact/project.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/contact/vcard.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/vcard.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/contact/vcard.php
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"

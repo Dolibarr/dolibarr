@@ -60,6 +60,14 @@ if (isModEnabled('project')) {
 const PAY_DEBIT = 0;
 const PAY_CREDIT = 1;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks", "loan"));
 
 $date_start = GETPOST('date_start', 'alpha');

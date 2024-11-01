@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
@@ -44,6 +44,14 @@ if (isModEnabled('project')) {
 if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
