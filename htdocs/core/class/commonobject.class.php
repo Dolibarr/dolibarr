@@ -4249,8 +4249,8 @@ abstract class CommonObject
 
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->getElementType());
+		$targettype = (!empty($targettype) ? $targettype : $this->getElementType());
 
 		/*if (empty($sourceid) && empty($targetid))
 		 {
