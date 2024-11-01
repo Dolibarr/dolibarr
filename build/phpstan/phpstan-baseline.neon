@@ -32176,37 +32176,7 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/admin/about.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/modulebuilder/template/admin/about.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/modulebuilder/template/admin/about.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/admin/about.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/admin/myobject_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/modulebuilder/template/admin/myobject_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/modulebuilder/template/admin/myobject_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/admin/myobject_extrafields.php
 
@@ -32451,22 +32421,7 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/mymoduleindex.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/modulebuilder/template/mymoduleindex.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/modulebuilder/template/mymoduleindex.php
-
-		-
 			message: "#^Call to function is_numeric\\(\\) with 0 will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: "#^Call to function property_exists\\(\\) with MyObject and 'module' will always evaluate to true\\.$#"
 			count: 2
 			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
 
@@ -32483,31 +32438,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
 
 		-
@@ -32546,26 +32476,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
@@ -32573,11 +32483,6 @@ parameters:
 		-
 			message: "#^Variable \\$permissiontoadd in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
@@ -32601,31 +32506,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/myobject_document.php
@@ -32641,33 +32521,8 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
 			message: "#^Variable \\$upload_dir might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/modulebuilder/template/myobject_document.php
 
 		-
@@ -32691,33 +32546,8 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
 			message: "#^Variable \\$permissiontodelete in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/modulebuilder/template/myobject_list.php
 
 		-
@@ -32736,53 +32566,8 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_note.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/modulebuilder/template/scripts/mymodule.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/template/scripts/mymodule.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/scripts/mymodule.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/scripts/mymodule.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/modulebuilder/template/scripts/mymodule.php
 
 		-
