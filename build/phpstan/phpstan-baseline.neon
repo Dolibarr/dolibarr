@@ -23491,84 +23491,14 @@ parameters:
 			path: ../../htdocs/exports/export.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/exports/export.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/exports/export.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 143
-			path: ../../htdocs/exports/export.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/exports/export.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/exports/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/exports/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/exports/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/externalsite/admin/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/externalsite/admin/index.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/externalsite/admin/index.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/externalsite/admin/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/externalsite/admin/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/externalsite/frames.php
-
-		-
 			message: "#^Variable \\$heightforframes might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/externalsite/frames.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/externalsite/frames.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/externalsite/frametop.php
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
