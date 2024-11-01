@@ -22571,16 +22571,6 @@ parameters:
 			path: ../../htdocs/eventorganization/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/expedition/ajax/searchfrombarcode.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expedition/ajax/searchfrombarcode.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/card.php
@@ -22606,16 +22596,6 @@ parameters:
 			path: ../../htdocs/expedition/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/expedition/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 62
-			path: ../../htdocs/expedition/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 17
 			path: ../../htdocs/expedition/card.php
@@ -22623,16 +22603,6 @@ parameters:
 		-
 			message: "#^Variable \\$extrafields in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/expedition/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/expedition/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 164
 			path: ../../htdocs/expedition/card.php
 
 		-
@@ -22653,11 +22623,6 @@ parameters:
 		-
 			message: "#^Variable \\$rowExtrafieldsView might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expedition/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 56
 			path: ../../htdocs/expedition/card.php
 
 		-
@@ -22926,26 +22891,6 @@ parameters:
 			path: ../../htdocs/expedition/contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/expedition/contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/expedition/contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/expedition/contact.php
-
-		-
 			message: "#^Variable \\$mesgs might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/contact.php
@@ -22958,11 +22903,6 @@ parameters:
 		-
 			message: "#^Variable \\$typeobject might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/expedition/contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/expedition/contact.php
 
 		-
@@ -22983,26 +22923,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 63
 			path: ../../htdocs/expedition/dispatch.php
 
 		-
@@ -23031,28 +22951,8 @@ parameters:
 			path: ../../htdocs/expedition/dispatch.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/expedition/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expedition/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/expedition/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/expedition/document.php
 
 		-
@@ -23064,26 +22964,6 @@ parameters:
 			message: "#^Variable \\$typeobject might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/expedition/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/expedition/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/expedition/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/expedition/index.php
 
 		-
 			message: "#^Call to function method_exists\\(\\) with Expedition and 'fetch_lines' will always evaluate to true\\.$#"
@@ -23116,28 +22996,8 @@ parameters:
 			path: ../../htdocs/expedition/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/expedition/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 49
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 67
 			path: ../../htdocs/expedition/list.php
 
 		-
@@ -23156,33 +23016,8 @@ parameters:
 			path: ../../htdocs/expedition/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/expedition/list.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/expedition/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/expedition/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/expedition/note.php
 
 		-
@@ -23193,11 +23028,6 @@ parameters:
 		-
 			message: "#^Variable \\$typeobject might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/expedition/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/expedition/note.php
 
 		-
@@ -23221,28 +23051,8 @@ parameters:
 			path: ../../htdocs/expedition/shipment.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/expedition/shipment.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/expedition/shipment.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/expedition/shipment.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/expedition/shipment.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 66
 			path: ../../htdocs/expedition/shipment.php
 
 		-
@@ -23271,53 +23081,8 @@ parameters:
 			path: ../../htdocs/expedition/shipment.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/expedition/shipment.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expedition/stats/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expedition/stats/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/expedition/stats/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/expedition/stats/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expedition/stats/month.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expedition/stats/month.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/expedition/stats/month.php
-
-		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expedition/stats/month.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/expedition/stats/month.php
 
 		-
