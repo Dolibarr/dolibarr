@@ -506,23 +506,8 @@ parameters:
 			path: ../../htdocs/accountancy/customer/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/customer/index.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/customer/index.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/customer/lines.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/accountancy/customer/lines.php
 
 		-
@@ -533,11 +518,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/customer/list.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/accountancy/customer/list.php
 
 		-
@@ -572,11 +552,6 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/index.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/index.php
 
@@ -631,16 +606,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Variable \\$tabuser might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
@@ -663,11 +628,6 @@ parameters:
 		-
 			message: "#^Variable \\$def_tva might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
@@ -697,11 +657,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$def_tva might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
 
@@ -798,16 +753,6 @@ parameters:
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
 
 		-
@@ -28721,62 +28666,7 @@ parameters:
 			path: ../../htdocs/opensurvey/wizard/create_survey.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/partnership/admin/partnership_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/partnership/admin/partnership_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/partnership/admin/partnership_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/partnership/admin/setup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/partnership/admin/setup.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/partnership/admin/setup.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/partnership/admin/setup.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/partnership/admin/website.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/partnership/admin/website.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/partnership/admin/website.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/partnership/admin/website.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/partnership/admin/website.php
 
@@ -28931,36 +28821,6 @@ parameters:
 			path: ../../htdocs/partnership/core/modules/partnership/mod_partnership_standard.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/partnership/partnership_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/partnership/partnership_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/partnership/partnership_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/partnership/partnership_agenda.php
-
-		-
-			message: "#^Call to function method_exists\\(\\) with Partnership and 'generateDocument' will always evaluate to true\\.$#"
-			count: 2
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/partnership/partnership_card.php
@@ -28981,26 +28841,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/partnership/partnership_card.php
@@ -29016,63 +28856,8 @@ parameters:
 			path: ../../htdocs/partnership/partnership_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/partnership/partnership_contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/partnership/partnership_contact.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/partnership/partnership_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/partnership/partnership_contact.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/partnership/partnership_contact.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/partnership/partnership_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/partnership/partnership_document.php
-
-		-
 			message: "#^Variable \\$upload_dir might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/partnership/partnership_document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/partnership/partnership_document.php
 
 		-
@@ -29091,66 +28876,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/partnership/partnership_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/partnership/partnership_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/partnership/partnership_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/partnership/partnership_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/partnership/partnership_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/partnership/partnership_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/partnership/partnership_note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 16
 			path: ../../htdocs/paybox/admin/paybox.php
@@ -29161,18 +28886,8 @@ parameters:
 			path: ../../htdocs/paybox/admin/paybox.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/paybox/admin/paybox.php
 
 		-
@@ -29191,33 +28906,13 @@ parameters:
 			path: ../../htdocs/paybox/lib/paybox.lib.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 18
 			path: ../../htdocs/paypal/admin/paypal.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/paypal/admin/paypal.php
 
 		-
@@ -29271,63 +28966,13 @@ parameters:
 			path: ../../htdocs/printing/admin/printing.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/admin/dynamic_prices.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/product/admin/dynamic_prices.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/admin/dynamic_prices.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/inventory_extrafields.php
-
-		-
 			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/price_rules.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/admin/price_rules.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/product/admin/price_rules.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/admin/price_rules.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/product/admin/product.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/product/admin/product.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/product/admin/product.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 101
 			path: ../../htdocs/product/admin/product.php
 
 		-
@@ -29341,109 +28986,9 @@ parameters:
 			path: ../../htdocs/product/admin/product.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/product_customer_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/admin/product_customer_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product_customer_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/product_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/admin/product_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/product/admin/product_lot.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/admin/product_lot.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 67
-			path: ../../htdocs/product/admin/product_lot.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/admin/product_lot.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product_lot.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/product_lot_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/admin/product_lot_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product_lot_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/product_price_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/admin/product_price_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product_price_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/product_supplier_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/admin/product_supplier_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/product_supplier_extrafields.php
 
 		-
 			message: "#^Comparison operation \"\\<\" between 0 and 0 is always false\\.$#"
@@ -29461,21 +29006,6 @@ parameters:
 			path: ../../htdocs/product/admin/product_tools.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/product/admin/product_tools.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/product_tools.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/product/admin/product_tools.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 8
 			path: ../../htdocs/product/admin/product_tools.php
@@ -29486,107 +29016,12 @@ parameters:
 			path: ../../htdocs/product/admin/product_tools.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/admin/product_tools.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/stock_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/admin/stock_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/stock_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/admin/stock_mouvement_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/admin/stock_mouvement_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/admin/stock_mouvement_extrafields.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/agenda.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/product/agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/product/agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/ajax/product_lot.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/ajax/product_lot.php
-
-		-
 			message: "#^Variable \\$arrayresult might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/ajax/products.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/ajax/products.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/ajax/products.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/ajax/products.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/ajax/products.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/ajax/products.php
 
@@ -29696,28 +29131,8 @@ parameters:
 			path: ../../htdocs/product/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 62
-			path: ../../htdocs/product/card.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 12
-			path: ../../htdocs/product/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 318
 			path: ../../htdocs/product/card.php
 
 		-
@@ -29733,11 +29148,6 @@ parameters:
 		-
 			message: "#^Variable \\$prod might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 42
 			path: ../../htdocs/product/card.php
 
 		-
@@ -30271,28 +29681,8 @@ parameters:
 			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/composition/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/product/composition/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/product/composition/card.php
-
-		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/composition/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 59
 			path: ../../htdocs/product/composition/card.php
 
 		-
@@ -30306,33 +29696,8 @@ parameters:
 			path: ../../htdocs/product/composition/card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/composition/card.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/product/document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
 			path: ../../htdocs/product/document.php
 
 		-
@@ -30343,11 +29708,6 @@ parameters:
 		-
 			message: "#^Variable \\$upload_dirold might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/document.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/product/document.php
 
 		-
@@ -30491,59 +29851,9 @@ parameters:
 			path: ../../htdocs/product/dynamic_price/editor.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/dynamic_price/editor.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/product/dynamic_price/editor.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/dynamic_price/editor.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/product/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/product/index.php
-
-		-
 			message: "#^Variable \\$lastmodified might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/product/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/inventory/ajax/searchfrombarcode.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/inventory/ajax/searchfrombarcode.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -30566,33 +29876,8 @@ parameters:
 			path: ../../htdocs/product/inventory/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/inventory/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/inventory/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/inventory/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/product/inventory/card.php
-
-		-
 			message: "#^Variable \\$text might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/inventory/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 14
 			path: ../../htdocs/product/inventory/card.php
 
 		-
@@ -30651,59 +29936,9 @@ parameters:
 			path: ../../htdocs/product/inventory/class/inventory.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/inventory/inventory.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/product/inventory/inventory.php
-
-		-
 			message: "#^Variable \\$error in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/inventory/inventory.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/inventory/inventory.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 83
-			path: ../../htdocs/product/inventory/inventory.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/product/inventory/inventory.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/inventory/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/product/inventory/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/product/inventory/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/product/inventory/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/inventory/list.php
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
@@ -30711,28 +29946,8 @@ parameters:
 			path: ../../htdocs/product/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 43
-			path: ../../htdocs/product/list.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 69
 			path: ../../htdocs/product/list.php
 
 		-
@@ -30746,89 +29961,9 @@ parameters:
 			path: ../../htdocs/product/list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/product/list.php
-
-		-
 			message: "#^Variable \\$workstation_static might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/product/list.php
-
-		-
-			message: "#^Call to function is_object\\(\\) with Product will always evaluate to true\\.$#"
-			count: 1
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/product/messaging.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/popuprop.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/product/popuprop.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/product/popuprop.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/popuprop.php
 
 		-
 			message: "#^Parameter \\#4 \\$txtva of function calcul_price_total expects float, string given\\.$#"
@@ -30846,23 +29981,13 @@ parameters:
 			path: ../../htdocs/product/price.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/price.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 103
+			count: 1
 			path: ../../htdocs/product/price.php
 
 		-
 			message: "#^Variable \\$extrafield_values might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/price.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/product/price.php
 
 		-
@@ -30873,11 +29998,6 @@ parameters:
 		-
 			message: "#^Variable \\$ii might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/price.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 246
 			path: ../../htdocs/product/price.php
 
 		-
@@ -30916,63 +30036,13 @@ parameters:
 			path: ../../htdocs/product/price.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 58
-			path: ../../htdocs/product/price.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/price_suppliers.php
 
 		-
-			message: "#^Property ProductFournisseur\\:\\:\\$fourn_multicurrency_code \\(string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Property ProductFournisseur\\:\\:\\$fourn_multicurrency_price \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Property ProductFournisseur\\:\\:\\$fourn_multicurrency_tx \\(float\\|int\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Property ProductFournisseur\\:\\:\\$fourn_price \\(float\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Property ProductFournisseur\\:\\:\\$fourn_remise_percent \\(float\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 123
 			path: ../../htdocs/product/price_suppliers.php
 
 		-
@@ -30986,43 +30056,13 @@ parameters:
 			path: ../../htdocs/product/price_suppliers.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/reassort.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/reassort.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/reassort.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/reassort.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/product/reassort.php
-
-		-
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/product/reassort.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/product/reassort.php
 
 		-
@@ -31036,18 +30076,8 @@ parameters:
 			path: ../../htdocs/product/reassortlot.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/reassortlot.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/reassortlot.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
 			path: ../../htdocs/product/reassortlot.php
 
 		-
@@ -31056,54 +30086,9 @@ parameters:
 			path: ../../htdocs/product/reassortlot.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/reassortlot.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/reassortlot.php
-
-		-
-			message: "#^Variable \\$product might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/reassortlot.php
-
-		-
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/product/reassortlot.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/reassortlot.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/bom.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/bom.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/product/stats/bom.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/bom.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stats/bom.php
 
 		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
@@ -31113,11 +30098,6 @@ parameters:
 		-
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/stats/bom.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/product/stats/bom.php
 
 		-
@@ -31126,56 +30106,6 @@ parameters:
 			path: ../../htdocs/product/stats/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stats/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stats/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 58
-			path: ../../htdocs/product/stats/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/stats/card.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/commande.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/commande.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/stats/commande.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/commande.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stats/commande.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/commande.php
@@ -31184,36 +30114,6 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/commande.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/commande.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stats/commande_fournisseur.php
 
 		-
 			message: "#^Variable \\$param might not be defined\\.$#"
@@ -31231,41 +30131,11 @@ parameters:
 			path: ../../htdocs/product/stats/commande_fournisseur.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/commande_fournisseur.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/contrat.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/contrat.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/contrat.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/product/stats/contrat.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/contrat.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/contrat.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/contrat.php
@@ -31276,36 +30146,6 @@ parameters:
 			path: ../../htdocs/product/stats/contrat.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/contrat.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/expedition.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/expedition.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stats/expedition.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/expedition.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/expedition.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/expedition.php
@@ -31314,31 +30154,6 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/expedition.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stats/expedition.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/facture.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stats/facture.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stats/facture.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/stats/facture.php
 
 		-
 			message: "#^Variable \\$param might not be defined\\.$#"
@@ -31356,36 +30171,6 @@ parameters:
 			path: ../../htdocs/product/stats/facture.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/facture.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/facture_fournisseur.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/facture_fournisseur.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/product/stats/facture_fournisseur.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/facture_fournisseur.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/facture_fournisseur.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/facture_fournisseur.php
@@ -31396,36 +30181,6 @@ parameters:
 			path: ../../htdocs/product/stats/facture_fournisseur.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stats/facture_fournisseur.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/facturerec.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/facturerec.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/facturerec.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/facturerec.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/stats/facturerec.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/facturerec.php
@@ -31433,11 +30188,6 @@ parameters:
 		-
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/stats/facturerec.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/product/stats/facturerec.php
 
 		-
@@ -31446,31 +30196,6 @@ parameters:
 			path: ../../htdocs/product/stats/mo.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/product/stats/mo.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/mo.php
@@ -31479,36 +30204,6 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/propal.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/propal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/propal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/propal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/propal.php
 
 		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
@@ -31521,36 +30216,6 @@ parameters:
 			path: ../../htdocs/product/stats/propal.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/propal.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/reception.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/reception.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stats/reception.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/reception.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/reception.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/reception.php
@@ -31561,36 +30226,6 @@ parameters:
 			path: ../../htdocs/product/stats/reception.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stats/reception.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stats/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stats/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stats/supplier_proposal.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stats/supplier_proposal.php
@@ -31598,41 +30233,16 @@ parameters:
 		-
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/stats/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/product/stats/supplier_proposal.php
 
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
 			path: ../../htdocs/product/stock/card.php
 
 		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 79
 			path: ../../htdocs/product/stock/card.php
 
 		-
@@ -31653,11 +30263,6 @@ parameters:
 		-
 			message: "#^Variable \\$units might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 22
 			path: ../../htdocs/product/stock/card.php
 
 		-
@@ -31946,48 +30551,8 @@ parameters:
 			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/fiche-valo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/fiche-valo.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/product/stock/fiche-valo.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/fiche-valo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/product/stock/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/product/stock/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/index.php
-
-		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/stock/info.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/product/stock/info.php
 
 		-
@@ -32001,18 +30566,8 @@ parameters:
 			path: ../../htdocs/product/stock/info.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/stock/info.php
-
-		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/info.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/product/stock/info.php
 
 		-
@@ -32031,28 +30586,8 @@ parameters:
 			path: ../../htdocs/product/stock/list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stock/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/product/stock/list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stock/list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/product/stock/list.php
 
 		-
@@ -32063,11 +30598,6 @@ parameters:
 		-
 			message: "#^Variable \\$totalnboflines might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/product/stock/list.php
 
 		-
@@ -32091,18 +30621,8 @@ parameters:
 			path: ../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/massstockmove.php
-
-		-
 			message: "#^Variable \\$datatoimport might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
 			path: ../../htdocs/product/stock/massstockmove.php
 
 		-
@@ -32121,23 +30641,8 @@ parameters:
 			path: ../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 83
-			path: ../../htdocs/product/stock/massstockmove.php
-
-		-
 			message: "#^Variable \\$producttmp might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/product/stock/massstockmove.php
 
 		-
@@ -32166,11 +30671,6 @@ parameters:
 			path: ../../htdocs/product/stock/movement_card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/movement_card.php
@@ -32186,23 +30686,8 @@ parameters:
 			path: ../../htdocs/product/stock/movement_card.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
 			message: "#^Variable \\$eatby might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 60
 			path: ../../htdocs/product/stock/movement_card.php
 
 		-
@@ -32261,11 +30746,6 @@ parameters:
 			path: ../../htdocs/product/stock/movement_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/movement_list.php
@@ -32286,11 +30766,6 @@ parameters:
 			path: ../../htdocs/product/stock/movement_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/stock/movement_list.php
-
-		-
 			message: "#^Variable \\$d_eatby might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/movement_list.php
@@ -32301,28 +30776,13 @@ parameters:
 			path: ../../htdocs/product/stock/movement_list.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 52
-			path: ../../htdocs/product/stock/movement_list.php
-
-		-
 			message: "#^Variable \\$diroutputmassaction in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/movement_list.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/stock/movement_list.php
-
-		-
 			message: "#^Variable \\$idAlreadyReverse might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/movement_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 59
 			path: ../../htdocs/product/stock/movement_list.php
 
 		-
@@ -32343,11 +30803,6 @@ parameters:
 		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/movement_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 18
 			path: ../../htdocs/product/stock/movement_list.php
 
 		-
@@ -32376,32 +30831,12 @@ parameters:
 			path: ../../htdocs/product/stock/product.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/product/stock/product.php
-
-		-
 			message: "#^Variable \\$eatby might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/product.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/product/stock/product.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 142
-			path: ../../htdocs/product/stock/product.php
-
-		-
 			message: "#^Variable \\$lastmovementdate might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/product.php
-
-		-
-			message: "#^Variable \\$object in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/product.php
 
@@ -32436,11 +30871,6 @@ parameters:
 			path: ../../htdocs/product/stock/product.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 39
-			path: ../../htdocs/product/stock/product.php
-
-		-
 			message: "#^Variable \\$variants might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/product/stock/product.php
@@ -32448,11 +30878,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/productlot_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/product/stock/productlot_card.php
 
 		-
@@ -32466,38 +30891,13 @@ parameters:
 			path: ../../htdocs/product/stock/productlot_document.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/productlot_document.php
-
-		-
 			message: "#^Variable \\$productid might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/productlot_document.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/product/stock/productlot_list.php
 
 		-
@@ -32506,53 +30906,8 @@ parameters:
 			path: ../../htdocs/product/stock/productlot_list.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/productlot_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/productlot_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/productlot_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/productlot_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/productlot_note.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/replenish.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 61
-			path: ../../htdocs/product/stock/replenish.php
-
-		-
 			message: "#^Variable \\$draftchecked in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/replenish.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 20
 			path: ../../htdocs/product/stock/replenish.php
 
 		-
@@ -32561,29 +30916,9 @@ parameters:
 			path: ../../htdocs/product/stock/replenish.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 42
-			path: ../../htdocs/product/stock/replenish.php
-
-		-
 			message: "#^Variable \\$lastWarehouseID might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/replenish.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/replenish.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/stock/replenish.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/replenishorders.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -32591,46 +30926,6 @@ parameters:
 			path: ../../htdocs/product/stock/replenishorders.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/product/stock/replenishorders.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stock/replenishorders.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/stock/replenishorders.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
 			message: "#^Variable \\$morehtmlref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
@@ -32651,36 +30946,6 @@ parameters:
 			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
 			message: "#^Variable \\$morehtmlref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stats/expedition.php
@@ -32699,40 +30964,10 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/mo.php
 
 		-
 			message: "#^Variable \\$batch might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
 			path: ../../htdocs/product/stock/stats/mo.php
 
 		-
@@ -32743,11 +30978,6 @@ parameters:
 		-
 			message: "#^Variable \\$objectid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: "#^Variable \\$product might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/product/stock/stats/mo.php
 
 		-
@@ -32766,36 +30996,6 @@ parameters:
 			path: ../../htdocs/product/stock/stats/mo.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
 			message: "#^Variable \\$morehtmlref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stats/reception.php
@@ -32816,48 +31016,13 @@ parameters:
 			path: ../../htdocs/product/stock/stats/reception.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stockatdate.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/product/stock/stockatdate.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/product/stock/stockatdate.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/product/stock/stockatdate.php
-
-		-
 			message: "#^Variable \\$nbofmovement might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/stockatdate.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/stockatdate.php
-
-		-
 			message: "#^Variable \\$resql might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/stockatdate.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/product/stock/stockatdate.php
 
 		-
@@ -32926,31 +31091,6 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
@@ -32962,32 +31102,12 @@ parameters:
 
 		-
 			message: "#^Property StockTransfer\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 34
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 10
+			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
 
 		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 91
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
 
 		-
@@ -33006,11 +31126,6 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
@@ -33021,23 +31136,8 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
@@ -33046,94 +31146,14 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
 			message: "#^Variable \\$upload_dir might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_note.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_note.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_note.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_note.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_note.php
 
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
@@ -33241,48 +31261,8 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/product/stock/valo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/product/stock/valo.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/stock/valo.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/valo.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/product/traduction.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/traduction.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/product/traduction.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/product/traduction.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 18
+			count: 9
 			path: ../../htdocs/product/traduction.php
 
 		-

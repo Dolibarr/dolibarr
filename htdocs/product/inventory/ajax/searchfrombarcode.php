@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,14 @@ if (!defined('NOREQUIRESOC')) {
 }
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $warehouse = new Entrepot($db);
 
 $action = GETPOST("action", "alpha");

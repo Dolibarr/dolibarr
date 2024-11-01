@@ -45,6 +45,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 
