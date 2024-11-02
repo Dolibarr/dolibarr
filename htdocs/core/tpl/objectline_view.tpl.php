@@ -40,6 +40,14 @@
  *
  * $text, $description, $line
  */
+/**
+ * @var CommonObject $object
+ * @var CommonObject $this
+ * @var CommonObjectLine $line
+ *
+ * @var string $description
+ * @var string $text
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -381,7 +389,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	print dol_print_reduction($line->remise_percent, $langs);
+	print dol_print_reduction((float) $line->remise_percent, $langs);
 	print '</td>';
 } else {
 	print '<td class="linecoldiscount">&nbsp;</td>';
