@@ -691,23 +691,8 @@ parameters:
 			path: ../../htdocs/accountancy/supplier/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/supplier/lines.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/accountancy/supplier/lines.php
 
 		-
@@ -719,26 +704,6 @@ parameters:
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/tpl/export_journal.tpl.php
-
-		-
-			message: "#^Variable \\$_Avery_Labels might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/admin/member.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/adherents/admin/member.php
 
 		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
@@ -801,24 +766,9 @@ parameters:
 			path: ../../htdocs/adherents/card.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/adherents/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/adherents/card.php
-
-		-
 			message: "#^Variable \\$public in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/card.php
-
-		-
-			message: "#^Variable \\$_Avery_Labels might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/adherents/cartes/carte.php
 
 		-
 			message: "#^Call to function is_array\\(\\) with array\\<mixed\\> will always evaluate to true\\.$#"
@@ -5943,11 +5893,6 @@ parameters:
 		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 3
-			path: ../../htdocs/barcode/printsheet.php
-
-		-
-			message: "#^Variable \\$_Avery_Labels might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/barcode/printsheet.php
 
 		-
@@ -39013,11 +38958,6 @@ parameters:
 		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 6
-			path: ../../htdocs/webhook/target_card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/webhook/target_card.php
 
 		-

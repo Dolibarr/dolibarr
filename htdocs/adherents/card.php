@@ -53,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -73,6 +74,7 @@ $typeid = GETPOSTINT('typeid');
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
+$error = 0;
 
 if (isModEnabled('mailmanspip')) {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';

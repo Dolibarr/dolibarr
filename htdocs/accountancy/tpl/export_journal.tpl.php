@@ -30,17 +30,20 @@
 @phan-var-force int<-1,1> $downloadMode
 ';
 
-// Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf)) {
-	print "Error, template page can't be called as URL";
-	exit(1);
-}
 /**
+ * @var Conf $conf
+ * @var DoliDB $db
  * @var string $formatexportset
  * @var string $type_export
  * @var string $filename
  * @var int<-1,1> $downloadMode
  */
+
+ // Protection to avoid direct call of template
+if (empty($conf) || !is_object($conf)) {
+	print "Error, template page can't be called as URL";
+	exit(1);
+}
 
 $code = getDolGlobalString('MAIN_INFO_ACCOUNTANT_CODE');
 $prefix = getDolGlobalString('ACCOUNTING_EXPORT_PREFIX_SPEC');

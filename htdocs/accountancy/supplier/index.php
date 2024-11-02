@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -67,6 +68,7 @@ if ($month_end < 1) {
 $search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
 $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
+$error = 0;
 
 // Validate History
 $action = GETPOST('action', 'aZ09');
