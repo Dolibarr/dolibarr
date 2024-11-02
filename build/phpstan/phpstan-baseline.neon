@@ -1326,109 +1326,14 @@ parameters:
 			path: ../../htdocs/admin/hrm.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/import.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/import.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/admin/import.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/import.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/admin/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
 			path: ../../htdocs/admin/index.php
 
 		-
 			message: "#^Variable \\$setupcompanynotcomplete in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/admin/invoice.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/admin/invoice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 129
-			path: ../../htdocs/admin/invoice.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/invoice.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/invoice.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/invoice_situation.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/invoice_situation.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/invoice_situation.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/invoice_situation.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/invoice_situation.php
 
 		-
 			message: "#^Empty array passed to foreach\\.$#"
@@ -1451,164 +1356,9 @@ parameters:
 			path: ../../htdocs/admin/knowledgemanagement.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/admin/knowledgemanagement.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/knowledgemanagement.php
-
-		-
 			message: "#^Variable \\$setupnotempty in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/knowledgemanagement.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/knowledgerecord_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/knowledgerecord_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/knowledgerecord_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/ldap.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/admin/ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/admin/ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 51
-			path: ../../htdocs/admin/ldap.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ldap.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/ldap.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 57
-			path: ../../htdocs/admin/ldap_contacts.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/ldap_contacts.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 47
-			path: ../../htdocs/admin/ldap_contacts.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/ldap_contacts.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/ldap_groups.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/ldap_groups.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/admin/ldap_groups.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/ldap_groups.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 47
-			path: ../../htdocs/admin/ldap_members.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/admin/ldap_members.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 68
-			path: ../../htdocs/admin/ldap_members.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/ldap_members.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/ldap_members_types.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/ldap_members_types.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/admin/ldap_members_types.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/ldap_members_types.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/admin/ldap_users.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/admin/ldap_users.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 71
-			path: ../../htdocs/admin/ldap_users.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/ldap_users.php
 
 		-
 			message: "#^Parameter \\#2 \\$pu of function calcul_price_total expects float, string given\\.$#"
@@ -1621,94 +1371,14 @@ parameters:
 			path: ../../htdocs/admin/limits.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/admin/limits.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/admin/limits.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 65
-			path: ../../htdocs/admin/limits.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/limits.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/loan.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/loan.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/loan.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/loan.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/mailing.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/mailing.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/admin/mailing.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
 			path: ../../htdocs/admin/mailing.php
 
 		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/mailing.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mailing.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/mailman.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/mailman.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/admin/mailman.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mailman.php
 
 		-
 			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array\\<int, array\\> will always evaluate to true\\.$#"
@@ -1726,28 +1396,8 @@ parameters:
 			path: ../../htdocs/admin/mails.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 46
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/admin/mails.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 165
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/mails.php
 
 		-
@@ -1756,28 +1406,8 @@ parameters:
 			path: ../../htdocs/admin/mails.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/admin/mails.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
-			path: ../../htdocs/admin/mails_emailing.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/admin/mails_emailing.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/mails_emailing.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 92
 			path: ../../htdocs/admin/mails_emailing.php
 
 		-
@@ -1786,58 +1416,13 @@ parameters:
 			path: ../../htdocs/admin/mails_emailing.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/mails_emailing.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mails_ingoing.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/mails_ingoing.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/admin/mails_ingoing.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mails_ingoing.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/admin/mails_passwordreset.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/admin/mails_passwordreset.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/mails_passwordreset.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 92
-			path: ../../htdocs/admin/mails_passwordreset.php
-
-		-
 			message: "#^Variable \\$text in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/admin/mails_passwordreset.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 23
 			path: ../../htdocs/admin/mails_passwordreset.php
 
 		-
@@ -1846,33 +1431,8 @@ parameters:
 			path: ../../htdocs/admin/mails_senderprofile_list.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/mails_senderprofile_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/admin/mails_senderprofile_list.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/admin/mails_senderprofile_list.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/mails_senderprofile_list.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/mails_senderprofile_list.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/admin/mails_senderprofile_list.php
 
 		-
@@ -1891,84 +1451,14 @@ parameters:
 			path: ../../htdocs/admin/mails_templates.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/mails_templates.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/admin/mails_templates.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/mails_templates.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 88
-			path: ../../htdocs/admin/mails_templates.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/mails_templates.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/admin/mails_templates.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
-			path: ../../htdocs/admin/mails_ticket.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/admin/mails_ticket.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/mails_ticket.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 92
 			path: ../../htdocs/admin/mails_ticket.php
 
 		-
 			message: "#^Variable \\$text in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/admin/mails_ticket.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/mails_ticket.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/menus.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/menus.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/menus.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/menus.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -1979,16 +1469,6 @@ parameters:
 			message: "#^Property Menubase\\:\\:\\$target \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/admin/menus/edit.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/admin/modulehelp.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 71
-			path: ../../htdocs/admin/modulehelp.php
 
 		-
 			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
@@ -2016,54 +1496,9 @@ parameters:
 			path: ../../htdocs/admin/modules.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root_alt might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 164
-			path: ../../htdocs/admin/modules.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 11
 			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/admin/modules.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/mrp.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/mrp.php
 
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
@@ -2071,69 +1506,9 @@ parameters:
 			path: ../../htdocs/admin/mrp.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 66
-			path: ../../htdocs/admin/mrp.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/mrp.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mrp.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/mrp_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/mrp_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mrp_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/mrp_production_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/admin/mrp_production_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/mrp_production_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/multicurrency.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/multicurrency.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 49
-			path: ../../htdocs/admin/multicurrency.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/multicurrency.php
 
 		-
 			message: "#^Call to function is_array\\(\\) with array will always evaluate to true\\.$#"
@@ -2146,53 +1521,8 @@ parameters:
 			path: ../../htdocs/admin/notification.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/notification.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/admin/notification.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 68
-			path: ../../htdocs/admin/notification.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/notification.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
-			path: ../../htdocs/admin/oauth.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/admin/oauth.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/admin/oauth.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/oauth.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/admin/oauth.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/oauth.php
 
 		-
@@ -2216,16 +1546,6 @@ parameters:
 			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/oauthlogintokens.php
@@ -2233,16 +1553,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 47
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
@@ -2261,73 +1571,13 @@ parameters:
 			path: ../../htdocs/admin/openid_connect.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/openid_connect.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/admin/openid_connect.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/openid_connect.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/admin/openinghours.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/admin/openinghours.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/admin/openinghours.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/openinghours.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/admin/openinghours.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/openinghours.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/openinghours.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/order.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/admin/order.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 12
-			path: ../../htdocs/admin/order.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 97
 			path: ../../htdocs/admin/order.php
 
 		-
@@ -2336,58 +1586,8 @@ parameters:
 			path: ../../htdocs/admin/order.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/order.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/order_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/order_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/order_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/orderdet_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/orderdet_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/orderdet_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/payment.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/payment.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/admin/payment.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
 			path: ../../htdocs/admin/payment.php
 
 		-
@@ -2396,33 +1596,8 @@ parameters:
 			path: ../../htdocs/admin/payment.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/payment.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/paymentbybanktransfer.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/admin/paymentbybanktransfer.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/admin/paymentbybanktransfer.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/paymentbybanktransfer.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/paymentbybanktransfer.php
 
 		-
@@ -2431,49 +1606,9 @@ parameters:
 			path: ../../htdocs/admin/pdf.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 63
-			path: ../../htdocs/admin/pdf.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/admin/pdf.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 85
-			path: ../../htdocs/admin/pdf.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 11
 			path: ../../htdocs/admin/pdf.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/pdf.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/admin/pdf_other.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/admin/pdf_other.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 92
-			path: ../../htdocs/admin/pdf_other.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/pdf_other.php
 
 		-
 			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
@@ -2481,89 +1616,9 @@ parameters:
 			path: ../../htdocs/admin/perms.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/prelevement.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/admin/prelevement.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/prelevement.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/prelevement.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/admin/propal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/admin/propal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 101
-			path: ../../htdocs/admin/propal.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/propal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/propal.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/proxy.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/admin/proxy.php
 
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
@@ -2571,143 +1626,18 @@ parameters:
 			path: ../../htdocs/admin/proxy.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/proxy.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/proxy.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/admin/receiptprinter.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/receiptprinter.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 71
-			path: ../../htdocs/admin/receiptprinter.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/admin/receiptprinter.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/reception_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/reception_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/reception_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/reception_setup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/reception_setup.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/admin/reception_setup.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 58
 			path: ../../htdocs/admin/reception_setup.php
 
 		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/reception_setup.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/reception_setup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/receptiondet_batch_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/admin/receptiondet_batch_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/receptiondet_batch_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/resource.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/resource.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/admin/resource.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/resource.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/resource_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/resource_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/resource_extrafields.php
 
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
-			path: ../../htdocs/admin/security.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/security.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 21
 			path: ../../htdocs/admin/security.php
 
 		-
@@ -2716,79 +1646,9 @@ parameters:
 			path: ../../htdocs/admin/security.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 51
-			path: ../../htdocs/admin/security.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/security.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/security_captcha.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/admin/security_captcha.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/admin/security_captcha.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/security_captcha.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/security_file.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/security_file.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/admin/security_file.php
-
-		-
 			message: "#^Variable \\$max in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/admin/security_file.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/security_file.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/security_other.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/security_other.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/security_other.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/security_other.php
 
 		-
 			message: "#^Parameter \\#4 \\$deliveryreceipt of class CSMSFile constructor expects int, array\\|string given\\.$#"
@@ -2811,39 +1671,9 @@ parameters:
 			path: ../../htdocs/admin/sms.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/admin/sms.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/sms.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/admin/sms.php
-
-		-
 			message: "#^Variable \\$smsfile might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/admin/sms.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/admin/sms.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/spip.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/admin/spip.php
 
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
@@ -2851,37 +1681,7 @@ parameters:
 			path: ../../htdocs/admin/spip.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/spip.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/spip.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 62
-			path: ../../htdocs/admin/stock.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/admin/stock.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/stock.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 138
-			path: ../../htdocs/admin/stock.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/stock.php
 
@@ -2891,79 +1691,19 @@ parameters:
 			path: ../../htdocs/admin/stocktransfer.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/stocktransfer.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/admin/stocktransfer.php
-
-		-
 			message: "#^Variable \\$setupnotempty in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/stocktransfer.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/admin/supplier_invoice.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/admin/supplier_invoice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 67
-			path: ../../htdocs/admin/supplier_invoice.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/supplier_invoice.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplier_invoice.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/admin/supplier_order.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/admin/supplier_order.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 79
-			path: ../../htdocs/admin/supplier_order.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/supplier_order.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplier_order.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/supplier_payment.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/supplier_payment.php
 
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
@@ -2971,149 +1711,14 @@ parameters:
 			path: ../../htdocs/admin/supplier_payment.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 58
-			path: ../../htdocs/admin/supplier_payment.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/supplier_payment.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/supplier_payment.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/admin/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/admin/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 84
-			path: ../../htdocs/admin/supplier_proposal.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/supplier_proposal.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/supplierinvoice_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/supplierinvoice_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplierinvoice_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/supplierinvoice_rec_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/supplierinvoice_rec_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplierinvoice_rec_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/supplierinvoicedet_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/supplierinvoicedet_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplierinvoicedet_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/supplierinvoicedet_rec_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/supplierinvoicedet_rec_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplierinvoicedet_rec_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/supplierorder_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/supplierorder_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplierorder_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/supplierorderdet_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/supplierorderdet_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplierorderdet_extrafields.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/syslog.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/admin/syslog.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/syslog.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -3221,87 +1826,12 @@ parameters:
 			path: ../../htdocs/admin/system/xdebug.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/taxes.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/admin/taxes.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 53
-			path: ../../htdocs/admin/taxes.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/taxes.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/admin/ticket.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/admin/ticket.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 99
-			path: ../../htdocs/admin/ticket.php
-
-		-
 			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/ticket.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ticket.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/ticket_extrafields.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/ticket_extrafields.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ticket_extrafields.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 29
-			path: ../../htdocs/admin/ticket_public.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 41
-			path: ../../htdocs/admin/ticket_public.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ticket_public.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 68
-			path: ../../htdocs/admin/ticket_public.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/ticket_public.php
 
@@ -3366,42 +1896,12 @@ parameters:
 			path: ../../htdocs/admin/tools/purge.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/admin/translation.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 34
-			path: ../../htdocs/admin/translation.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/translation.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/translation.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 49
-			path: ../../htdocs/admin/translation.php
-
-		-
 			message: "#^Variable \\$massactionbutton in empty\\(\\) always exists and is always falsy\\.$#"
-			count: 1
-			path: ../../htdocs/admin/translation.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/translation.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/translation.php
 
@@ -3411,53 +1911,8 @@ parameters:
 			path: ../../htdocs/admin/triggers.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/triggers.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/admin/triggers.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/triggers.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/admin/user.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/user.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/admin/user.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/usergroup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/usergroup.php
-
-		-
 			message: "#^Variable \\$label might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/admin/usergroup.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
 			path: ../../htdocs/admin/usergroup.php
 
 		-
@@ -3466,43 +1921,13 @@ parameters:
 			path: ../../htdocs/admin/usergroup.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/usergroup.php
-
-		-
 			message: "#^Variable \\$arrayofparameters might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/webhook.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/webhook.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/admin/webhook.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/webhook.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/admin/webhook.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/admin/webhook.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/admin/webhook.php
 
 		-
@@ -3526,79 +1951,9 @@ parameters:
 			path: ../../htdocs/admin/website.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/admin/website.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/admin/website.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/website.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/admin/website.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/admin/website.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/website.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/website_options.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/website_options.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/website_options.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/admin/website_options.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/website_options.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/workflow.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/workflow.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/admin/workflow.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/workflow.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -3616,23 +1971,8 @@ parameters:
 			path: ../../htdocs/admin/workstation.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/workstation.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/admin/workstation.php
-
-		-
 			message: "#^Variable \\$label might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/admin/workstation.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 63
 			path: ../../htdocs/admin/workstation.php
 
 		-
@@ -3643,11 +1983,6 @@ parameters:
 		-
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/admin/workstation.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/workstation.php
 
 		-
