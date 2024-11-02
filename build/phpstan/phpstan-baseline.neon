@@ -4766,11 +4766,6 @@ parameters:
 			path: ../../htdocs/compta/bank/card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/card.php
-
-		-
 			message: "#^Variable \\$name might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/compta/bank/card.php
@@ -28956,23 +28951,8 @@ parameters:
 			path: ../../htdocs/public/opensurvey/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/public/opensurvey/studs.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 38
-			path: ../../htdocs/public/opensurvey/studs.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/public/opensurvey/studs.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 52
 			path: ../../htdocs/public/opensurvey/studs.php
 
 		-
@@ -31376,33 +31356,8 @@ parameters:
 			path: ../../htdocs/societe/canvas/company/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/societe/canvas/company/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/societe/canvas/company/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/societe/canvas/company/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/societe/canvas/company/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/societe/canvas/company/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 55
 			path: ../../htdocs/societe/canvas/company/tpl/card_edit.tpl.php
 
 		-
@@ -31421,11 +31376,6 @@ parameters:
 			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 37
-			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
 			message: "#^Variable \\$objcanvas might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
@@ -31436,48 +31386,13 @@ parameters:
 			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
 
 		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 50
-			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/societe/canvas/individual/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/societe/canvas/individual/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/societe/canvas/individual/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/canvas/individual/tpl/card_create.tpl.php
 
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/societe/canvas/individual/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/societe/canvas/individual/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 44
 			path: ../../htdocs/societe/canvas/individual/tpl/card_edit.tpl.php
 
 		-
@@ -31496,11 +31411,6 @@ parameters:
 			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
-
-		-
 			message: "#^Variable \\$objcanvas might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
@@ -31508,16 +31418,6 @@ parameters:
 		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 36
-			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
 
 		-
@@ -33881,11 +33781,6 @@ parameters:
 			path: ../../htdocs/user/bank.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/user/bank.php
-
-		-
 			message: "#^Variable \\$name might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/user/bank.php
@@ -34103,11 +33998,6 @@ parameters:
 		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/user/group/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/user/group/card.php
 
 		-
