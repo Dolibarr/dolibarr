@@ -16326,16 +16326,6 @@ parameters:
 			path: ../../htdocs/core/tpl/login.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
@@ -16356,18 +16346,8 @@ parameters:
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
-			message: "#^Variable \\$modelmail might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 12
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$sendto might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
@@ -16386,18 +16366,8 @@ parameters:
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/notes.tpl.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/tpl/notes.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 22
 			path: ../../htdocs/core/tpl/notes.tpl.php
 
 		-
@@ -28611,43 +28581,13 @@ parameters:
 			path: ../../htdocs/public/eventorganization/attendee_new.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/public/eventorganization/attendee_new.php
-
-		-
 			message: "#^Variable \\$genericcompanyname in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/public/eventorganization/attendee_new.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 47
-			path: ../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/public/eventorganization/attendee_new.php
-
-		-
 			message: "#^Variable \\$tmpcode might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 14
 			path: ../../htdocs/public/eventorganization/attendee_new.php
 
 		-
@@ -28697,26 +28637,6 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
-			count: 2
-			path: ../../htdocs/public/fichinter/agendaexport.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/public/fichinter/agendaexport.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/fichinter/agendaexport.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/public/fichinter/agendaexport.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/public/fichinter/agendaexport.php
 

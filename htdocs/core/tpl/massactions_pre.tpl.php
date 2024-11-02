@@ -38,8 +38,13 @@
  * @var Form $form
  * @var Translate $langs
  *
+ * @var string $action
  * @var string $massaction
+ * @var string $modelmail
+ * @var string $sendto
+ * @var string $topicmail
  * @var int[] $toselect
+ * @var int[] $arrayofselected
  */
 '
 @phan-var-force CommonObject $objecttmp
