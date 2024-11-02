@@ -32,7 +32,9 @@ require 'lib/variants.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
