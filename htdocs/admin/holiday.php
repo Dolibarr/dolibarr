@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */

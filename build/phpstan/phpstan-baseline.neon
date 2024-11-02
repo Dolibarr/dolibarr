@@ -1121,29 +1121,9 @@ parameters:
 			path: ../../htdocs/admin/chequereceipts.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/chequereceipts.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/clicktodial.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 84
-			path: ../../htdocs/admin/company.php
-
-		-
 			message: "#^Variable \\$massaction might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/const.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/contract.php
 
 		-
 			message: "#^Offset 'css' on array\\{css\\: 'minwidth200', enabled\\: mixed\\} in empty\\(\\) always exists and is not falsy\\.$#"
@@ -1163,11 +1143,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/admin/delivery.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/delivery.php
 
 		-
@@ -1223,11 +1198,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/admin/expedition.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/expedition.php
 
 		-
@@ -1293,11 +1263,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/admin/holiday.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/holiday.php
 
 		-
@@ -1373,11 +1338,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/admin/mailing.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/admin/mailing.php
 
 		-
@@ -1496,18 +1456,8 @@ parameters:
 			path: ../../htdocs/admin/modules.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/modules.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/admin/mrp.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/admin/mrp.php
 
 		-
@@ -1581,18 +1531,8 @@ parameters:
 			path: ../../htdocs/admin/order.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/order.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/admin/payment.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/admin/payment.php
 
 		-
