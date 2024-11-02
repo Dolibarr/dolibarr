@@ -1546,19 +1546,9 @@ parameters:
 			path: ../../htdocs/admin/pdf.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/admin/pdf.php
-
-		-
 			message: "#^Call to function is_object\\(\\) with object will always evaluate to true\\.$#"
 			count: 2
 			path: ../../htdocs/admin/perms.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/propal.php
 
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
@@ -2536,11 +2526,6 @@ parameters:
 			path: ../../htdocs/barcode/printsheet.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/barcode/printsheet.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
@@ -2603,11 +2588,6 @@ parameters:
 		-
 			message: "#^Variable \\$idprod might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/bom/bom_card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/bom/bom_card.php
 
 		-
@@ -3866,11 +3846,6 @@ parameters:
 			path: ../../htdocs/comm/card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/comm/card.php
-
-		-
 			message: "#^Variable \\$sortfield in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 6
 			path: ../../htdocs/comm/card.php
@@ -4043,11 +4018,6 @@ parameters:
 		-
 			message: "#^Variable \\$classname might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 16
 			path: ../../htdocs/comm/propal/card.php
 
 		-
@@ -8476,21 +8446,6 @@ parameters:
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Variable \\$backtopage might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Variable \\$backurlforlist might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
@@ -8536,33 +8491,13 @@ parameters:
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 103
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Variable \\$permissiontoadd might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 13
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_builddoc.inc.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/actions_builddoc.inc.php
-
-		-
-			message: "#^Variable \\$id might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/core/actions_builddoc.inc.php
 
 		-
@@ -8573,16 +8508,6 @@ parameters:
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
-			path: ../../htdocs/core/actions_builddoc.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/core/actions_builddoc.inc.php
-
-		-
-			message: "#^Variable \\$permissiontoadd might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/core/actions_builddoc.inc.php
 
 		-

@@ -40,7 +40,22 @@
 @phan-var-force string $hidedesc
 @phan-var-force string $hideref
 ';
-
+/**
+ * @var CommonObject $this
+ * @var ?string $action
+ * @var ?string $cancel
+ * @var CommonObject $object
+ * @var string $permissiontoadd
+ * @var ?string $permissionedit
+ * @var string $permissiontodelete
+ * @var string $backurlforlist
+ * @var ?string $backtopage
+ * @var ?string $noback
+ * @var ?string $triggermodname
+ * @var string $hidedetails
+ * @var string $hidedesc
+ * @var string $hideref
+ */
 // $action or $cancel must be defined
 // $object must be defined
 // $permissiontoadd must be defined
