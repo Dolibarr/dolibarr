@@ -64,6 +64,7 @@ const PAY_CREDIT = 1;
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -373,7 +374,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 							$modulepart = "salaries";
 							break;
 						case "Donation":
-							$tmpdonation->fetch($objp->id);
+							$tmpdonation->fetch($objd->id);
 							$subdir = get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
 							$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 							$upload_dir = $conf->don->dir_output.'/'.$subdir;

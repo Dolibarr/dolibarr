@@ -2336,11 +2336,6 @@ parameters:
 			path: ../../htdocs/asset/model/list.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/model/list.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/asset/model/note.php
@@ -2881,11 +2876,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: "#^Variable \\$permissiontoadd in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_card.php
@@ -3003,11 +2993,6 @@ parameters:
 		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 5
-			path: ../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/bookcal/calendar_card.php
 
 		-
@@ -4321,11 +4306,6 @@ parameters:
 			path: ../../htdocs/comm/recap-client.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/remx.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/commande/agenda.php
@@ -4378,11 +4358,6 @@ parameters:
 		-
 			message: "#^Variable \\$classname might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 14
 			path: ../../htdocs/commande/card.php
 
 		-
@@ -4737,16 +4712,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$modulepart might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/accounting-files.php
-
-		-
-			message: "#^Variable \\$objp might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/accounting-files.php
 
@@ -17609,11 +17574,6 @@ parameters:
 			message: "#^Property DataPolicyCron\\:\\:\\$output has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/datapolicy/class/datapolicycron.class.php
-
-		-
-			message: "#^Function datapolicyAdminPrepareHead\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/lib/datapolicy.lib.php
 
 		-
 			message: "#^Variable \\$baseUri in isset\\(\\) always exists and is not nullable\\.$#"
