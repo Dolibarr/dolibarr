@@ -11251,31 +11251,6 @@ parameters:
 			path: ../../htdocs/core/filemanagerdol/connectors/php/connector.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/js/lib_foot.js.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/js/lib_foot.js.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/js/lib_head.js.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 85
-			path: ../../htdocs/core/js/lib_head.js.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/js/lib_notification.js.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/js/timepicker.js.php
@@ -28906,38 +28881,8 @@ parameters:
 			path: ../../htdocs/public/members/new.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/public/members/new.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 31
-			path: ../../htdocs/public/members/new.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/public/members/new.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 94
-			path: ../../htdocs/public/members/new.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/public/members/new.php
-
-		-
 			message: "#^Variable \\$php_self might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/public/members/new.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/public/members/new.php
 
 		-
@@ -29736,16 +29681,6 @@ parameters:
 			path: ../../htdocs/public/stripe/ipn.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/public/stripe/ipn.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 87
-			path: ../../htdocs/public/stripe/ipn.php
-
-		-
 			message: "#^Variable \\$directdebitorcreditransfer_id might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/public/stripe/ipn.php
@@ -29756,17 +29691,7 @@ parameters:
 			path: ../../htdocs/public/stripe/ipn.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/stripe/ipn.php
-
-		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/public/stripe/ipn.php
-
-		-
-			message: "#^Variable \\$paymentTypeCodeInDolibarr in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/public/stripe/ipn.php
 
@@ -32741,32 +32666,12 @@ parameters:
 			path: ../../htdocs/takepos/genimg/qr.php
 
 		-
-			message: "#^If condition is always true\\.$#"
+			message: "#^Elseif condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 15
-			path: ../../htdocs/takepos/index.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/takepos/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 88
-			path: ../../htdocs/takepos/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
+			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/index.php
 
