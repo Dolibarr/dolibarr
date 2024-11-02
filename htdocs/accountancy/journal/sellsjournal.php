@@ -208,25 +208,25 @@ $sql .= " ORDER BY f.datef, f.ref";
 //print $sql;
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
+$tabfac = array();
+$tabht = array();
+$tabtva = array();
+$def_tva = array();
+$tabwarranty = array();
+$tabrevenuestamp = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+$tabcompany = array();
+$vatdata_cache = array();
+
+// Variables
+$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined');
+$cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined');
+
 $result = $db->query($sql);
 if ($result) {
-	$tabfac = array();
-	$tabht = array();
-	$tabtva = array();
-	$def_tva = array();
-	$tabwarranty = array();
-	$tabrevenuestamp = array();
-	$tabttc = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabcompany = array();
-	$vatdata_cache = array();
-
 	$num = $db->num_rows($result);
-
-	// Variables
-	$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined');
-	$cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined');
 
 	$i = 0;
 	while ($i < $num) {
@@ -245,7 +245,7 @@ if ($result) {
 			}
 		}
 
-		//$compta_revenuestamp = getDolGlobalString('ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT', 'NotDefined');
+		// $compta_revenuestamp = getDolGlobalString('ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT', 'NotDefined');
 
 		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
 		if (array_key_exists($tax_id, $vatdata_cache)) {

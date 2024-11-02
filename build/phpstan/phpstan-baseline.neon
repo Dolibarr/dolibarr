@@ -626,16 +626,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
-			message: "#^Variable \\$def_tva might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Variable \\$tabcompany might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
@@ -653,16 +643,6 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$def_tva might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Variable \\$tabcompany might not be defined\\.$#"
-			count: 25
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
 
 		-
@@ -34986,11 +34966,6 @@ parameters:
 			path: ../../htdocs/user/perms.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/user/virtualcard.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/variants/admin/admin.php
@@ -35118,72 +35093,12 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$i might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$line might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/variants/tpl/productattributevalueline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/variants/tpl/productattributevalueline_title.tpl.php
 
 		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/variants/tpl/productattributevalueline_title.tpl.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
-
-		-
-			message: "#^Variable \\$i might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
-
-		-
-			message: "#^Variable \\$line might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
-
-		-
-			message: "#^Variable \\$num might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_view.tpl.php
 
 		-
 			message: "#^Call to function is_numeric\\(\\) with int will always evaluate to true\\.$#"
