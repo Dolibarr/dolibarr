@@ -15606,64 +15606,9 @@ parameters:
 			path: ../../htdocs/core/search_page.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/admin_extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/core/tpl/admin_extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 45
-			path: ../../htdocs/core/tpl/admin_extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$attrname might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$elementtype might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$extrafields might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 46
-			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
 			message: "#^Variable \\$type2label might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$elementtype might not be defined\\.$#"
-			count: 43
-			path: ../../htdocs/core/tpl/admin_extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$extrafields might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/admin_extrafields_view.tpl.php
 
 		-
 			message: "#^Variable \\$type2label might not be defined\\.$#"
@@ -31398,16 +31343,6 @@ parameters:
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$formfile might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
 
 		-
