@@ -8477,41 +8477,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$elementtype might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 27
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 76
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$value might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_extrafields.inc.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_fetchobject.inc.php
 
