@@ -1577,9 +1577,9 @@ function migrate_price_facture($db, $langs, $conf)
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
 
-				$facligne->total_ht  = $total_ht;
-				$facligne->total_tva = $total_tva;
-				$facligne->total_ttc = $total_ttc;
+				$facligne->total_ht  = (float) $total_ht;
+				$facligne->total_tva = (float) $total_tva;
+				$facligne->total_ttc = (float) $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: line ".$rowid.": facid=".$obj->facid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
 				print '. ';
@@ -1678,9 +1678,9 @@ function migrate_price_propal($db, $langs, $conf)
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
 
-				$propalligne->total_ht  = $total_ht;
-				$propalligne->total_tva = $total_tva;
-				$propalligne->total_ttc = $total_ttc;
+				$propalligne->total_ht  = (float) $total_ht;
+				$propalligne->total_tva = (float) $total_tva;
+				$propalligne->total_ttc = (float) $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": propalid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
 				print '. ';
@@ -1762,9 +1762,9 @@ function migrate_price_contrat($db, $langs, $conf)
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
 
-				$contratligne->total_ht  = $total_ht;
-				$contratligne->total_tva = $total_tva;
-				$contratligne->total_ttc = $total_ttc;
+				$contratligne->total_ht  = (float) $total_ht;
+				$contratligne->total_tva = (float) $total_tva;
+				$contratligne->total_ttc = (float) $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": contratdetid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent."  -> ".$total_ht.", ".$total_tva." , ".$total_ttc);
 				print '. ';
@@ -1843,9 +1843,9 @@ function migrate_price_commande($db, $langs, $conf)
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
 
-				$commandeligne->total_ht  = $total_ht;
-				$commandeligne->total_tva = $total_tva;
-				$commandeligne->total_ttc = $total_ttc;
+				$commandeligne->total_ht  = (float) $total_ht;
+				$commandeligne->total_tva = (float) $total_tva;
+				$commandeligne->total_ttc = (float) $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid." : commandeid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global."  -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
 				print '. ';
@@ -1936,9 +1936,9 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
 
-				$commandeligne->total_ht  = $total_ht;
-				$commandeligne->total_tva = $total_tva;
-				$commandeligne->total_ttc = $total_ttc;
+				$commandeligne->total_ht  = (float) $total_ht;
+				$commandeligne->total_tva = (float) $total_tva;
+				$commandeligne->total_ttc = (float) $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": commandeid=".$obj->rowid." pu=".$pu."  qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
 				print '. ';

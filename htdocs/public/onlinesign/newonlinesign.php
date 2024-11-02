@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -573,7 +574,7 @@ if ($source == 'proposal') {
 
 	$last_main_doc_file = $object->last_main_doc;
 	$diroutput = $conf->societe->multidir_output[$object->thirdparty->entity].'/'
-			.dol_sanitizeFileName($object->thirdparty->id).'/';
+			.dol_sanitizeFileName((string) $object->thirdparty->id).'/';
 	if ((empty($last_main_doc_file) ||
 		!dol_is_file($diroutput
 			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$object->id."-".dol_sanitizeFileName($object->rum).".pdf"))

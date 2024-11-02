@@ -247,7 +247,8 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_av
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden($langs->trans('NotEnoughPermissions'), 0, 1);
-		exit;
+		// @phan-suppress-next-line PhanPluginUnreachableCode
+		exit;  // accessforbidden already terminates @phpstan-ignore-line
 	}
 
 	print load_fiche_titre($langs->trans("NewAvailabilities"), '', 'object_'.$object->picto);
