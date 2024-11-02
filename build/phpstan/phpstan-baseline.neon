@@ -23636,31 +23636,6 @@ parameters:
 			path: ../../htdocs/main.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 53
-			path: ../../htdocs/main.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/main.inc.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/main.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/main.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 72
-			path: ../../htdocs/main.inc.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/margin/agentMargins.php
