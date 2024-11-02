@@ -43,6 +43,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_document_root_alt
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors"));
 
@@ -1402,6 +1413,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				try {
 					$moduleobj = new $class($db);
 					'@phan-var-force DolibarrModules $moduleobj';
+					/** @var DolibarrModules $moduleobj */
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());
@@ -1495,6 +1507,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
 		$firstobjectname = '';
+		$stringtoadd = '';
 		foreach ($listofobject as $fileobj) {
 			if (preg_match('/^api_/', $fileobj['name'])) {
 				continue;
@@ -1578,6 +1591,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -1714,6 +1728,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) && $user->hasRi
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -1965,6 +1980,7 @@ if ($dirins && $action == 'confirm_deletemodule' && $user->hasRight("modulebuild
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrMOdules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2048,6 +2064,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname && $user->hasRig
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrMOdules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2145,6 +2162,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2230,6 +2248,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') && $us
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2299,6 +2318,7 @@ if ($dirins && $action == 'generatepackage' && $user->hasRight("modulebuilder", 
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2353,6 +2373,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) && $us
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2456,6 +2477,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2574,6 +2596,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2748,6 +2771,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') && $user
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2812,6 +2836,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) && $user->hasRight("module
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2898,7 +2923,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) && $user->hasRight("module
 			'enabled' => GETPOST('enabled', 'alpha'),
 			'perms' => '$user->hasRight("'.strtolower($module).'", "'.GETPOST('objects', 'alpha').'", "'.GETPOST('perms', 'alpha').'")',
 			'target' => GETPOST('target', 'alpha'),
-			'user' => GETPOST('user', 'alpha'),
+			'user' => GETPOSTINT('user'),
 		);
 
 		if (GETPOST('type') == 'left') {
@@ -2970,6 +2995,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrMOdules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2984,6 +3010,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 				'fk_menu' => GETPOST('fk_menu', 'alpha'),
 				'type'  => GETPOST('type', 'alpha'),
 				'titre' => ucfirst(GETPOST('titre', 'alpha')),
+				'prefix' => '',
 				'mainmenu' => GETPOST('mainmenu', 'alpha'),
 				'leftmenu' => $menus[$key]['leftmenu'],
 				'url' => GETPOST('url', 'alpha'),
@@ -2992,7 +3019,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 				'enabled' => GETPOST('enabled', 'alpha'),
 				'perms' => GETPOST('perms', 'alpha'),
 				'target' => GETPOST('target', 'alpha'),
-				'user' => GETPOST('user', 'alpha'),
+				'user' => GETPOSTINT('user'),
 			);
 		if (!empty(GETPOST('fk_menu')) && GETPOST('fk_menu') != $menus[$key]['fk_menu']) {
 			$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu').',fk_leftmenu='.GETPOST('fk_menu');
@@ -3073,6 +3100,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -3236,6 +3264,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrMOdules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			print $e->getMessage();
@@ -5495,7 +5524,7 @@ if ($module == 'initmodule') {
 
 							// Position
 							print '<td class="center">';
-							print dol_escape_htmltag($menu['position']);
+							print dol_escape_htmltag((string) $menu['position']);
 							print '</td>';
 
 							// Enabled
@@ -6573,6 +6602,7 @@ if ($module == 'initmodule') {
 				try {
 					$moduleobj = new $class($db);
 					'@phan-var-force DolibarrMOdules $moduleobj';
+					/** @var DolibarrModules $moduleobj */
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());

@@ -24066,6 +24066,11 @@ parameters:
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with non\\-empty\\-array will always evaluate to true\\.$#"
+			count: 1
+			path: ../../htdocs/modulebuilder/index.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/index.php
@@ -24077,16 +24082,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Parameter \\#3 \\$menuWantTo of function reWriteAllMenus expects array\\{commentgroup\\: string, fk_menu\\: string, type\\: string, titre\\: string, mainmenu\\: string, leftmenu\\: string, url\\: string, langs\\: string, \\.\\.\\.\\}\\|string\\|null, array\\{fk_menu\\: mixed, type\\: array\\|string, titre\\: string, mainmenu\\: array\\|string, leftmenu\\: mixed, url\\: array\\|string, langs\\: non\\-falsy\\-string, position\\: '', \\.\\.\\.\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Parameter \\#3 \\$menuWantTo of function reWriteAllMenus expects array\\{commentgroup\\: string, fk_menu\\: string, type\\: string, titre\\: string, mainmenu\\: string, leftmenu\\: string, url\\: string, langs\\: string, \\.\\.\\.\\}\\|string\\|null, array\\{fk_menu\\: mixed, type\\: array\\|string, titre\\: string, prefix\\?\\: '', mainmenu\\: array\\|string, leftmenu\\: array\\|string, url\\: array\\|string, langs\\: non\\-falsy\\-string, \\.\\.\\.\\} given\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/index.php
 
@@ -24106,27 +24101,7 @@ parameters:
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
 			message: "#^Variable \\$content might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 68
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_document_root might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_document_root_alt might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/index.php
 
@@ -24138,11 +24113,6 @@ parameters:
 		-
 			message: "#^Variable \\$key might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 751
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
@@ -24188,16 +24158,6 @@ parameters:
 		-
 			message: "#^Variable \\$realpathtoapi in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$stringtoadd might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 54
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
