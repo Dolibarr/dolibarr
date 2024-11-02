@@ -33,6 +33,14 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+/**
+ * @var CommonObject $objecttmp
+ * @var Form $form
+ * @var Translate $langs
+ *
+ * @var string $massaction
+ * @var int[] $toselect
+ */
 '
 @phan-var-force CommonObject $objecttmp
 @phan-var-force int[] $toselect

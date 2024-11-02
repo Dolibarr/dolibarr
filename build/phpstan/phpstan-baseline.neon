@@ -16346,11 +16346,6 @@ parameters:
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
 			message: "#^Variable \\$formcompany might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
@@ -16358,16 +16353,6 @@ parameters:
 		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 49
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$massaction might not be defined\\.$#"
-			count: 15
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
@@ -16381,11 +16366,6 @@ parameters:
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
-			message: "#^Variable \\$objecttmp might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
 			message: "#^Variable \\$sendto might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
@@ -16393,11 +16373,6 @@ parameters:
 		-
 			message: "#^Variable \\$taskstatic might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$toselect might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
 
 		-
@@ -28913,26 +28888,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/public/partnership/new.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/public/partnership/new.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/public/partnership/new.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/public/partnership/new.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 43
 			path: ../../htdocs/public/partnership/new.php
 
 		-
