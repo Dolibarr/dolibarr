@@ -61,6 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */

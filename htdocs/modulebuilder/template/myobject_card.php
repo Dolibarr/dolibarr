@@ -91,6 +91,7 @@ dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */

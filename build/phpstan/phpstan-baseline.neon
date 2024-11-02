@@ -1561,11 +1561,6 @@ parameters:
 			path: ../../htdocs/admin/reception_setup.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/reception_setup.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/admin/security.php
@@ -1624,31 +1619,6 @@ parameters:
 			message: "#^Variable \\$setupnotempty in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/stocktransfer.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/supplier_invoice.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/supplier_order.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/supplier_payment.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/supplier_payment.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/supplier_proposal.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -1754,11 +1724,6 @@ parameters:
 			message: "#^Call to function is_bool\\(\\) with true will always evaluate to true\\.$#"
 			count: 1
 			path: ../../htdocs/admin/system/xdebug.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ticket.php
 
 		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
@@ -24126,11 +24091,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
 			message: "#^Variable \\$newmask in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/index.php
@@ -24466,11 +24426,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
 			message: "#^Variable \\$permissiontoadd in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
@@ -24737,11 +24692,6 @@ parameters:
 
 		-
 			message: "#^Property Mo\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/mrp/mo_card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/mrp/mo_card.php
 
@@ -25281,11 +25231,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/partnership/partnership_card.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 2
 			path: ../../htdocs/partnership/partnership_card.php
@@ -25326,11 +25271,6 @@ parameters:
 			path: ../../htdocs/paybox/admin/paybox.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$IBS_DEVISE in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/paybox/lib/paybox.lib.php
@@ -25348,11 +25288,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 18
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/paypal/admin/paypal.php
 
 		-
@@ -25446,22 +25381,12 @@ parameters:
 			path: ../../htdocs/product/admin/product_tools.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/product/admin/product_tools.php
-
-		-
 			message: "#^Variable \\$price_base_type in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/product/admin/product_tools.php
 
 		-
 			message: "#^Variable \\$arrayresult might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/ajax/products.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/ajax/products.php
 
@@ -25578,11 +25503,6 @@ parameters:
 		-
 			message: "#^Variable \\$modCodeProduct might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 23
 			path: ../../htdocs/product/card.php
 
 		-
@@ -26391,11 +26311,6 @@ parameters:
 			path: ../../htdocs/product/list.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/list.php
-
-		-
 			message: "#^Variable \\$perm might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/list.php
@@ -26451,11 +26366,6 @@ parameters:
 			path: ../../htdocs/product/price.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 47
-			path: ../../htdocs/product/price.php
-
-		-
 			message: "#^Variable \\$obj might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/price.php
@@ -26483,11 +26393,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/product/price_suppliers.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/product/price_suppliers.php
 
 		-
