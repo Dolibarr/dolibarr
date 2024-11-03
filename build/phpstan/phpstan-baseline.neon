@@ -15631,12 +15631,7 @@ parameters:
 			path: ../../htdocs/core/tpl/advtarget.tpl.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/ajaxrow.tpl.php
-
-		-
-			message: "#^Variable \\$fk_element might not be defined\\.$#"
+			message: "#^Property CommonObject\\:\\:\\$lines \\(array\\<CommonObject\\|stdClass\\>\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/ajaxrow.tpl.php
 
@@ -23718,11 +23713,6 @@ parameters:
 		-
 			message: "#^Variable \\$outputfilezip might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Variable \\$param might not be defined\\.$#"
-			count: 41
 			path: ../../htdocs/modulebuilder/index.php
 
 		-

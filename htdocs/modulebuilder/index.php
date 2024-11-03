@@ -136,6 +136,7 @@ if (empty($newmask)) {	// This should no happen
 $result = restrictedArea($user, 'modulebuilder', 0);
 
 $error = 0;
+$param = '';
 
 $form = new Form($db);
 
