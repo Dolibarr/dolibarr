@@ -16601,11 +16601,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
-			message: "#^Variable \\$product_static might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/core/tpl/objectlinked_lineimport.tpl.php

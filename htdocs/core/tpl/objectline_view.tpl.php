@@ -45,12 +45,14 @@
  * @var CommonObject $this
  * @var CommonObjectLine $line
  * @var HookManager $hookmanager
+ * @var ?Product $product_static
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
  * @var 0|1 $forceall
  * @var int $num
+ * @var 0|1 $senderissupplier
  * @var string $text
  * @var string $description
  */
