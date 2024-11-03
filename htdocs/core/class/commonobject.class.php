@@ -5375,7 +5375,7 @@ abstract class CommonObject
 			if (isset($this->expeditions[$line->id])) {
 				$qty_shipped = $this->expeditions[$line->id];
 			}
-			$disableedit = $qty_shipped >= $line->qty;
+			$disableedit = ($qty_shipped > 0) && ($qty_shipped >= $line->qty);
 
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {

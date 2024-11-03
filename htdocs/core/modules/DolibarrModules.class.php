@@ -120,17 +120,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $const = array();
 
 	/**
-	 * @var array Module cron jobs entries
+	 * @var array<array{entity?:int,label?:string,jobtype?:string,class?:string,objectname?:string,method?:string,command?:string,parameters?:string,md5params?:string,comment?:string,frequency?:int,unitfrequency?:int,priority?:int,datestart?:int,dateend?:int,datenextrun?:string,status?:int,maxrun?:int,libname?:string,test?:string|bool}> Module cron jobs entries
 	 */
 	public $cronjobs = array();
 
 	/**
-	 * @var array 	Module access rights
+	 * @var array<int,array<int<0,7>,string|int>> 	Module access rights
 	 */
 	public $rights;
 
 	/**
-	 * @var int		1=Admin is always granted of permission of modules (even when module is disabled)
+	 * @var int<0,1>	1=Admin is always granted of permission of modules (even when module is disabled)
 	 */
 	public $rights_admin_allowed;
 
@@ -149,7 +149,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array|int 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
+	 * @var array<array{titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
 
@@ -232,12 +232,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $descriptionlong;
 
 	/**
-	 * @var array dictionaries description
+	 * @var array{}|array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<bool|int<0,1>>,tabhelp:array<array<string,string>>} dictionaries description
 	 */
 	public $dictionaries = array();
 
 	/**
-	 * @var array tabs description
+	 * @var array<string|array{data:string,entity:int}> tabs description
 	 */
 	public $tabs;
 
@@ -485,12 +485,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $need_dolibarr_version;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $need_javascript_ajax;
 
+	/**
+	 * @var bool
+	 */
 	public $enabled_bydefault;
 
 	/**
-	 * @var bool|int Whether to hide the module.
+	 * @var bool|int<0,1> Whether to hide the module.
 	 */
 	public $hidden = false;
 
@@ -520,8 +526,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * Enables a module.
 	 * Inserts all information into database.
 	 *
-	 * @param array  $array_sql 	SQL requests to be executed when enabling module
-	 * @param string $options   	String with options when disabling module:
+	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|array<string,string>	$array_sql 	SQL requests to be executed when enabling module
+	 * @param string	$options   	String with options when disabling module:
 	 *                          	- 'noboxes' = Do all actions but do not insert boxes
 	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
 	 * @return int                  1 if OK, 0 if KO
@@ -1113,7 +1119,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Gives the last author of activation
 	 *
-	 * @return array       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
+	 * @return array{}|array{authorid:int|'',ip:string,lastactivationdate:int|'',lastactivationversion:string}       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
 	 */
 	public function getLastActivationInfo()
 	{
@@ -1137,10 +1143,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
-					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : (int) $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : (string) $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
-					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
+					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? (string) $tmp['lastactivationversion'] : 'unknown'),
 				);
 			}
 		}
@@ -1937,10 +1943,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Adds access rights
 	 *
-	 * @param  int $reinitadminperms 	If 1, we also grant them to all admin users
-	 * @param  int $force_entity     	Force current entity
-	 * @param  int $notrigger        	1=Does not execute triggers, 0= execute triggers
-	 * @return int                     	Error count (0 if OK)
+	 * @param  int<0,1>	$reinitadminperms 	If 1, we also grant them to all admin users
+	 * @param  ?int		$force_entity     	Force current entity
+	 * @param  int<0,1> $notrigger        	1=Does not execute triggers, 0= execute triggers
+	 * @return int		                	Error count (0 if OK)
 	 */
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
@@ -2770,18 +2776,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Helper method to declare dictionaries one at a time (rather than declaring dictionaries property by property).
 	 *
-	 * @param array $dictionaryArray Array describing one dictionary. Keys are:
-	 *                               'name',        table name (without prefix)
-	 *                               'lib',         dictionary label
-	 *                               'sql',         query for select
-	 *                               'sqlsort',     sort order
-	 *                               'field',       comma-separated list of fields to select
-	 *                               'fieldvalue',  list of columns used for editing existing rows
-	 *                               'fieldinsert', list of columns used for inserting new rows
-	 *                               'rowid',       name of the technical ID (primary key) column, usually 'rowid'
-	 *                               'cond',        condition for the dictionary to be shown / active
-	 *                               'help',        optional array of translation keys by column for tooltips
-	 *                               'fieldcheck'   (appears to be unused)
+	 * @param array{name:string,lib:string,sql:string,sqlsort:string,field:string,fieldvalue:string,fieldinsert:string,rowid:string,cond:bool,help:array<string,string>,fieldcheck?:null} $dictionaryArray Array describing one dictionary. Keys are:
+	 *                                                                                                                                                                                                     'name',        table name (without prefix)
+	 *                                                                                                                                                                                                     'lib',         dictionary label
+	 *                                                                                                                                                                                                     'sql',         query for select
+	 *                                                                                                                                                                                                     'sqlsort',     sort order
+	 *                                                                                                                                                                                                     'field',       comma-separated list of fields to select
+	 *                                                                                                                                                                                                     'fieldvalue',  list of columns used for editing existing rows
+	 *                                                                                                                                                                                                     'fieldinsert', list of columns used for inserting new rows
+	 *                                                                                                                                                                                                     'rowid',       name of the technical ID (primary key) column, usually 'rowid'
+	 *                                                                                                                                                                                                     'cond',        condition for the dictionary to be shown / active
+	 *                                                                                                                                                                                                     'help',        optional array of translation keys by column for tooltips
+	 *                                                                                                                                                                                                     'fieldcheck'   (appears to be unused)
 	 * @param string $langs Optional translation file to include (appears to be unused)
 	 * @return void
 	 */
@@ -2791,6 +2797,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		foreach ($fields as $field) {
 			if (isset($dictionaryArray[$field])) {
+				// @phan-suppress-next-line PhanTypeMismatchProperty
 				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
 			}
 		}

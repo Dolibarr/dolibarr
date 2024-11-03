@@ -173,7 +173,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<td>';
 		print $langs->trans($desc);
 		if ($const == 'DETAILS') {
-			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
+			print $form->textwithpicto('', '<span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>');
 		}
 		print '</td>';
 		print '<td class="center centpercent width100">';
@@ -181,7 +181,11 @@ if (empty($conf->use_javascript_ajax)) {
 		if ($value == 0) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			if ($const == 'DETAILS') {
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled").' - '.$langs->trans("FCKeditorForProductDetails2"), 'switch_on', '', 0, 0, 0, '', 'warning').'</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			}
 		}
 
 		print "</td>";

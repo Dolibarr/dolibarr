@@ -2570,7 +2570,7 @@ class Form
 			$resourcestatic->fetch($value['id']);
 			$out .= $resourcestatic->getNomUrl(-1);
 			if ($nbassignetoresource >= 1 && $action != 'view') {
-				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $resourcestatic->id . '" class="removedassigned reposition" id="removedassignedresource_' . $resourcestatic->id . '" name="removedassignedresource_' . $resourcestatic->id . '">';
+				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $resourcestatic->id . '" class="removedassignedresource reposition" id="removedassignedresource_' . $resourcestatic->id . '" name="removedassignedresource_' . $resourcestatic->id . '">';
 			}
 			// Show my availability
 			if ($showproperties) {
@@ -2592,7 +2592,7 @@ class Form
 
 		// Method with no ajax
 		if ($action != 'view') {
-			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassignedresource" value="">';
+			$out .= '<input type="hidden" class="removedassignedresourcehidden" name="removedassignedresource" value="">';
 			$out .= '<script nonce="' . getNonce() . '" type="text/javascript">jQuery(document).ready(function () {';
 			$out .= 'jQuery(".removedassignedresource").click(function() { jQuery(".removedassignedresourcehidden").val(jQuery(this).val()); });';
 			$out .= 'jQuery(".assignedtoresource").change(function() { console.log(jQuery(".assignedtoresource option:selected").val());';
@@ -4036,7 +4036,7 @@ class Form
 					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 					if (isModEnabled('multicurrency')) {
 						$optstart .= ' data-multicurrency-code="' . dol_escape_htmltag($objp->multicurrency_code) . '"';
-						$optstart .= ' data-multicurrency-up="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
+						$optstart .= ' data-multicurrency-unitprice="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
 					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
@@ -4760,6 +4760,41 @@ class Form
 		}
 	}
 
+	/**
+	 * Return list of payment methods
+	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 *
+	 * @param 	string 	 $selected 		    Id or code or preselected payment mode
+	 * @param 	string 	 $htmlname 		    Name of select field
+	 * @param 	int 	 $empty 			1=can be empty, 0 otherwise
+	 * @param 	string 	 $morecss 		    Add more CSS on select tag
+	 * @param 	int 	 $nooutput 		    1=Return string, do not send to output
+	 * @param   string[] $ribForSelection   Array of RIBs (IBAN / BIC))
+	 * @return  string|void                 String for the HTML select component
+	 */
+	public function selectTypesIban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
+	{
+		$out = '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
+		if ($empty) {
+			$out .= '<option value="">&nbsp;</option>';
+		}
+
+		foreach ($ribForSelection as $rib) {
+			$selectedAttribute = $selected == $rib ? 'selected' : '';
+			$out .= '<option value="' . $rib . '" '.$selectedAttribute.'>';
+			$out .= $rib;
+			$out .= '</option>';
+		}
+		$out .= '</select>';
+		$out .= ajax_combobox('select' . $htmlname);
+
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+	}
+
 
 	/**
 	 *  Selection HT or TTC
@@ -5174,18 +5209,24 @@ class Form
 
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
-				} else {
-					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
-				}
-				$out .= trim($obj->label);
+
+				$labeltoshow = trim($obj->label);
+				$labeltoshowhtml = trim($obj->label);
 				if ($showcurrency) {
-					$out .= ' (' . $obj->currency_code . ')';
+					$labeltoshow .= ' (' . $obj->currency_code . ')';
+					$labeltoshowhtml .= ' <span class="opacitymedium">(' . $obj->currency_code . ')</span>';
 				}
 				if ($status == 2 && $obj->status == 1) {
-					$out .= ' (' . $langs->trans("Closed") . ')';
+					$labeltoshow .= ' (' . $langs->trans("Closed") . ')';
+					$labeltoshowhtml .= ' <span class="opacitymedium">(' . $langs->trans("Closed") . ')</span>';
 				}
+
+				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml).'" selected>';
+				} else {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml).'">';
+				}
+				$out .= $labeltoshow;
 				$out .= '</option>';
 				$i++;
 			}
@@ -6297,6 +6338,40 @@ class Form
 		}
 	}
 
+	/**
+	 *    Show form with IBAN
+	 *
+	 * @param   string   $selected Id mode pre-selectionne
+	 * @param   string   $htmlname Name of select html field
+	 * @param   int      $addempty 1=Add empty entry
+	 * @param   string   $type Type ('direct-debit' or 'bank-transfer')
+	 * @param   int      $nooutput 1=Return string, no output
+	 * @param   string[] $ribForSelection Array of RIBs (IBAN / BIC))
+	 * @return  string   HTML output or ''
+	 */
+	public function formIban(string $selected = '', string $htmlname = 'ribList', int $addempty = 0, string $type = '', int $nooutput = 0, $ribForSelection = [])
+	{
+		$out = '';
+		if ($htmlname != "none") {
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($type) {
+				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
+			}
+			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
+		} else {
+			if ($selected) {
+				$out .= $selected;
+			} else {
+				$out .= "&nbsp;";
+			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		}
+		print $out;
+		return array_search($selected, $ribForSelection);
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
@@ -11012,11 +11087,16 @@ class Form
 	 * @param 	array<int,string> 						$search_component_params 			Array of selected search criteria
 	 * @param 	string[] 								$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
 	 * @param 	string 									$search_component_params_hidden 	String with $search_component_params criteria
+	 * @param 	array<string,array{type:string}> 		$arrayoffiltercriterias 			Array of available filter criteria for an object and linked objects
 	 * @return	string                                    									HTML component for advanced search
 	 */
-	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '')
+	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '', $arrayoffiltercriterias = array())
 	{
-		global $langs;
+		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
+		global $langs, $form;
+
+		require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
+		$formother = new FormOther($this->db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
@@ -11073,6 +11153,7 @@ class Form
 		$ret .= '<input type="hidden" id="search_component_params_hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
+		// TODO : Use $arrayoffiltercriterias instead of $arrayofcriterias
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
 		foreach ($arrayofcriterias as $criteria) {
 			foreach ($criteria as $criteriafamilykey => $criteriafamilyval) {
@@ -11153,6 +11234,139 @@ class Form
 
 		</script>
 		';
+
+		$arrayoffilterfieldslabel = array();
+		foreach ($arrayoffiltercriterias as $key => $val) {
+			$arrayoffilterfieldslabel[$key]['label'] = $val['label'];
+			$arrayoffilterfieldslabel[$key]['data-type'] = $val['type'];
+		}
+
+		// Adding the div for search assistance
+		$ret .= '<div class="search-component-assistance">';
+
+		$ret .= '<table><tbody>';
+
+		$ret .= '<p class="assistance-title">' . img_picto('', 'help') . ' ' . $langs->trans('FilterAssistance') . ' </p>';
+
+		$ret .= '<p class="assistance-errors error" style="display:none">' . $langs->trans('AllFieldsRequired') . ' </p>';
+
+		$ret .= '<tr><td>';
+		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
+		$ret .= '</td>';
+
+		$ret .= '<td><span class="separator"></span>';
+		// Operator selector (will be populated dynamically)
+		$ret .= '<select class="operator-selector" id="operator-selector"">';
+		$ret .= '</select>';
+		$ret .= '<script>$(document).ready(function() {';
+		$ret .= '   $(".operator-selector").select2({';
+		$ret .= '       placeholder: "' . $langs->trans('Operator') . '"';
+		$ret .= '   });';
+		$ret .= '});</script>';
+		$ret .= '</td>';
+
+		$ret .= '<td><span class="separator"></span>';
+		// Input field for entering values
+		$ret .= '<input type="text" class="flat width100 value-input" placeholder="' . $langs->trans('Value') . '">';
+
+		// Date selector
+		$dateOne = '';
+		$ret .= '<span class="date-one" style="display:none">';
+		$ret .=  $form->selectDate(($dateOne ? $dateOne : -1), 'dateone', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '');
+		$ret .= '</span>';
+
+		$ret .= '<span class="end-separator"></span> </td>';
+
+		$ret .= '<td>';
+		$ret .= '<button class="button buttongen button-save small add-filter-btn" type="button">' . $langs->trans("addToFilter") . '</button>';
+		$ret .= '</td>';
+
+		$ret .= '</tr>';
+		$ret .= '</tbody></table>';
+
+		// End of the assistance div
+		$ret .= '</div>';
+
+		// Script jQuery to show/hide the floating assistance
+		$ret .= '<script>
+			$(document).ready(function() {
+				$("#search_component_params_input").on("click", function() {
+					const inputPosition = $(this).offset();
+					const inputHeight = $(this).outerHeight();
+					$(".search-component-assistance").css({
+						top: inputPosition.top + inputHeight + 5 + "px",
+						left: $("#divadvancedsearchfieldcompinput").css("left")
+					}).slideToggle(200);
+				});
+				$(document).on("click", function(e) {
+					if (!$(e.target).closest("#search_component_params_input, .search-component-assistance, #ui-datepicker-div").length) {
+						$(".search-component-assistance").hide();
+					}
+				});
+			});
+		</script>';
+
+		$ret .= '<script>
+			$(document).ready(function() {
+				$(".search_filter_field").on("change", function() {
+					const selectedField = $(this).find(":selected");
+					const fieldType = selectedField.data("type");
+					const selectedFieldValue = selectedField.val();
+					const operators = getOperatorsForFieldType(fieldType);
+					const operatorSelector = $(".operator-selector");
+
+					// Clear existing options
+					operatorSelector.empty();
+
+					// Populate operators
+					Object.entries(operators).forEach(function([operator, label]) {
+						operatorSelector.append("<option value=\'" + operator + "\'>" + label + "</option>");
+					});
+
+					operatorSelector.trigger("change.select2");
+
+					// Clear and hide all input elements initially
+					$(".value-input, .dateone, .datemonth, .dateyear").val("").hide();
+					$("#datemonth, #dateyear").val(null).trigger("change.select2");
+					$("#dateone").datepicker("setDate", null);
+					$(".date-one, .date-month, .date-year").hide();
+
+					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
+						$(".date-one").show();
+					} else {
+						$(".value-input").show();
+					}
+				});
+
+				$(".add-filter-btn").on("click", function(event) {
+					event.preventDefault();
+
+					const field = $(".search_filter_field").val();
+					const operator = $(".operator-selector").val();
+					let value = $(".value-input").val();
+					const fieldType = $(".search_filter_field").find(":selected").data("type");
+
+					if (["date", "datetime", "timestamp"].includes(fieldType)) {
+						const parsedDate = new Date($("#dateone").val());
+						if (!isNaN(parsedDate)) {
+							const year = parsedDate.getFullYear();
+							const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+							const day = String(parsedDate.getDate()).padStart(2, "0");
+							value = `${year}-${month}-${day}`;
+						}
+					}
+					const filterString = generateFilterString(field, operator, value, fieldType);
+
+					// Submit the form
+					if (filterString !== "" && field !== "" && operator !== "" && value !== "") {
+						$("#search_component_params_input").val($("#search_component_params_input").val() + " " + filterString);
+						$("#search_component_params_input").closest("form").submit();
+					} else {
+						$(".assistance-errors").show();
+					}
+				});
+			});
+		</script>';
 
 		return $ret;
 	}
