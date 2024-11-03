@@ -20,6 +20,7 @@
 /**
  * @var CommonObject $object
  * @var Form $form
+ * @var Translate $langs
  * @var User $user
  *
  * @var int $permissionnote

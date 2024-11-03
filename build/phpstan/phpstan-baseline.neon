@@ -16116,11 +16116,6 @@ parameters:
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
 			message: "#^Variable \\$ecmdir might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
@@ -16136,16 +16131,6 @@ parameters:
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
 			message: "#^Variable \\$module in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
@@ -16153,11 +16138,6 @@ parameters:
 		-
 			message: "#^Variable \\$pageid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
@@ -16171,27 +16151,12 @@ parameters:
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: "#^Variable \\$formmail might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/formlayoutai.tpl.php
-
-		-
 			message: "#^Variable \\$showlinktoai might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/formlayoutai.tpl.php
 
 		-
 			message: "#^Variable \\$showlinktoailabel might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/formlayoutai.tpl.php
-
-		-
-			message: "#^Variable \\$showlinktolayout might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/formlayoutai.tpl.php
-
-		-
-			message: "#^Variable \\$showlinktolayoutlabel might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/formlayoutai.tpl.php
 
@@ -16229,141 +16194,6 @@ parameters:
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$dol_hide_leftmenu might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$dol_hide_topmenu might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$dol_no_mouse_hover might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$dol_optimize_smallscreen might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$dol_use_jmobile might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$focus_element might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$forgetpasslink might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$login might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$main_authentication might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$main_home might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$password might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$session_name might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$title might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$titletruedolibarrversion might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$urllogo might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$formcompany might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$taskstatic might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$trackid might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/notes.tpl.php
 
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
