@@ -41,6 +41,7 @@
  * @var CommonObjectLine $line
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {

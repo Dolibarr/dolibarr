@@ -16516,11 +16516,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
 			message: "#^Variable \\$buyer might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
@@ -16543,11 +16538,6 @@ parameters:
 		-
 			message: "#^Variable \\$seller might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
@@ -16578,11 +16568,6 @@ parameters:
 		-
 			message: "#^Variable \\$usemargins might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
@@ -16618,11 +16603,6 @@ parameters:
 		-
 			message: "#^Variable \\$product_static might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-

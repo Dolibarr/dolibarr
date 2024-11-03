@@ -41,6 +41,7 @@
  * @var CommonObjectLine $line
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  */
 
  // Protection to avoid direct call of template
@@ -153,6 +154,7 @@ $coldisplay++;
 
 	$situationinvoicelinewithparent = 0;
 	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		/** @var CommonInvoice $object */
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle

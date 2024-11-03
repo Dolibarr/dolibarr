@@ -47,6 +47,7 @@
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  *
  * @var 0|1 $forceall
  * @var int $num
