@@ -618,7 +618,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
             print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_user_general, 'accountancycodeusergeneral', 0, 1, '', 1);
         } else {
             $accountingaccount = new AccountingAccount($db);
-            $accountingaccount->fetch($object->accountancy_code_user_general, '', 1);
+            $accountingaccount->fetch('', $object->accountancy_code_user_general, 1);
 
             print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
         }

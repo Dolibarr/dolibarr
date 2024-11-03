@@ -1439,7 +1439,7 @@ if ($action == 'create' || $action == 'adduserldap') {
         print '<tr><td class="titlefieldcreate">';
         print $langs->trans("UserAccountancyCodeGeneral");
         print '</td><td>';
-        print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 0, 0, 'minwidth200');
+        print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 1, 1, 'minwidth200');
         $accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
         print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
         print '</td>';
@@ -2969,7 +2969,7 @@ if ($action == 'create' || $action == 'adduserldap') {
                 print $langs->trans("UserAccountancyCodeGeneral");
                 print '</td><td>';
                 if ($permissiontoedit) {
-                    print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 0, 0, 'minwidth200');
+                    print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 1, 1, 'minwidth200');
                 } else {
                     print length_accountg($object->accountancy_code_user_general);
                 }
