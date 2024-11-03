@@ -116,10 +116,10 @@ class AccountancyReport // extends CommonObject
 			$this->label = trim($this->label);
 		}
 		if (isset($this->fk_country)) {
-			$this->fk_country = (int)$this->fk_country;
+			$this->fk_country = (int) $this->fk_country;
 		}
 		if (isset($this->active)) {
-			$this->active = (int)$this->active;
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -137,13 +137,13 @@ class AccountancyReport // extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		if ($this->rowid > 0) {
-			$sql .= " " . ((int)$this->rowid) . ",";
+			$sql .= " " . ((int) $this->rowid) . ",";
 		}
 		$sql .= " " . (!isset($this->code) ? "NULL" : "'" . $this->db->escape($this->code) . "'") . ",";
 		$sql .= " " . (!isset($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'") . ",";
 		$sql .= " " . (!isset($this->fk_country) ? 'NULL' : ((int)$this->fk_country)) . ",";
 		$sql .= " " . (!isset($this->active) ? 'NULL' : ((int)$this->active));
-		$sql .= ", " . ((int)$conf->entity);
+		$sql .= ", " . ((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -188,7 +188,7 @@ class AccountancyReport // extends CommonObject
 		$sql .= " t.active";
 		$sql .= " FROM " . $this->db->prefix() . $this->table_element . " as t";
 		if ($id) {
-			$sql .= " WHERE t.rowid = " . ((int)$id);
+			$sql .= " WHERE t.rowid = " . ((int) $id);
 		} else {
 			$sql .= " WHERE t.entity IN (" . getEntity('c_accounting_report') . ")"; // Don't use entity if you use rowid
 			if ($code) {
@@ -240,10 +240,10 @@ class AccountancyReport // extends CommonObject
 			$this->label = trim($this->label);
 		}
 		if (isset($this->fk_country)) {
-			$this->fk_country = (int)$this->fk_country;
+			$this->fk_country = (int) $this->fk_country;
 		}
 		if (isset($this->active)) {
-			$this->active = (int)$this->active;
+			$this->active = (int) $this->active;
 		}
 
 
@@ -256,7 +256,7 @@ class AccountancyReport // extends CommonObject
 		$sql .= " label=" . (isset($this->label) ? "'" . $this->db->escape($this->label) . "'" : "null") . ",";
 		$sql .= " fk_country=" . (isset($this->fk_country) ? ((int)$this->fk_country) : "null") . ",";
 		$sql .= " active=" . (isset($this->active) ? ((int)$this->active) : "null");
-		$sql .= " WHERE rowid=" . ((int)$this->id);
+		$sql .= " WHERE rowid=" . ((int) $this->id);
 
 		$this->db->begin();
 
@@ -295,7 +295,7 @@ class AccountancyReport // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
-		$sql .= " WHERE rowid=" . ((int)$this->id);
+		$sql .= " WHERE rowid=" . ((int) $this->id);
 
 		$this->db->begin();
 

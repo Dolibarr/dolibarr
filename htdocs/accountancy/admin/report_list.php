@@ -642,10 +642,10 @@ if ($resql) {
 					print '<td></td>';
 				}
 
-                // Show fields
-                if (empty($reshook)) {
-                    fieldListAccountingReport($fieldlist, $obj, $tabname[$id], 'edit');
-                }
+				// Show fields
+				if (empty($reshook)) {
+					fieldListAccountingReport($fieldlist, $obj, $tabname[$id], 'edit');
+				}
 
 				print '<td></td>';
 				print '<td class="center">';
