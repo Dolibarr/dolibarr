@@ -35,7 +35,15 @@
  * $canchangeproduct (0 by default, 1 to allow to change the product if it is a predefined product)
  */
 
-// Protection to avoid direct call of template
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
+
+ // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);

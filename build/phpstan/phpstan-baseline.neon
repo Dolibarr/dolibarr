@@ -16476,11 +16476,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
 			message: "#^Variable \\$buyer might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
@@ -16506,28 +16501,8 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$line might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
 			message: "#^Variable \\$seller might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 23
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
@@ -16546,11 +16521,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
 			message: "#^Variable \\$buyer might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
@@ -16566,33 +16536,13 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$line might not be defined\\.$#"
-			count: 76
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
 			message: "#^Variable \\$seller might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
@@ -16621,18 +16571,8 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 32
-			path: ../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
 			message: "#^Variable \\$outputalsopricetotalwithtax might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
@@ -16668,16 +16608,6 @@ parameters:
 		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 35
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$num might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-

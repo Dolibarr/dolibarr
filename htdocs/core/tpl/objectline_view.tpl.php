@@ -44,9 +44,14 @@
  * @var CommonObject $object
  * @var CommonObject $this
  * @var CommonObjectLine $line
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
  *
- * @var string $description
+ * @var 0|1 $forceall
+ * @var int $num
  * @var string $text
+ * @var string $description
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
