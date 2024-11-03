@@ -101,9 +101,12 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $sign = 1;
-// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
-	$sign = -1;
+if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+	if ($object->type == $object::TYPE_CREDIT_NOTE) {
+		$sign = -1;
+	}
 }
 
 
@@ -471,6 +474,7 @@ $tmppermtoedit = $objectRights->creer;
 if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
+		/** @var CommonInvoice $object */
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle
