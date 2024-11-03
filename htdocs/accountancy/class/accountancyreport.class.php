@@ -141,8 +141,8 @@ class AccountancyReport // extends CommonObject
 		}
 		$sql .= " " . (!isset($this->code) ? "NULL" : "'" . $this->db->escape($this->code) . "'") . ",";
 		$sql .= " " . (!isset($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'") . ",";
-		$sql .= " " . (!isset($this->fk_country) ? 'NULL' : ((int)$this->fk_country)) . ",";
-		$sql .= " " . (!isset($this->active) ? 'NULL' : ((int)$this->active));
+		$sql .= " " . (!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)) . ",";
+		$sql .= " " . (!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ", " . ((int) $conf->entity);
 		$sql .= ")";
 
@@ -254,8 +254,8 @@ class AccountancyReport // extends CommonObject
 		$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET";
 		$sql .= " code=" . (isset($this->code) ? "'" . $this->db->escape($this->code) . "'" : "null") . ",";
 		$sql .= " label=" . (isset($this->label) ? "'" . $this->db->escape($this->label) . "'" : "null") . ",";
-		$sql .= " fk_country=" . (isset($this->fk_country) ? ((int)$this->fk_country) : "null") . ",";
-		$sql .= " active=" . (isset($this->active) ? ((int)$this->active) : "null");
+		$sql .= " fk_country=" . (isset($this->fk_country) ? ((int) $this->fk_country) : "null") . ",";
+		$sql .= " active=" . (isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=" . ((int) $this->id);
 
 		$this->db->begin();
