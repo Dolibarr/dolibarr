@@ -198,8 +198,8 @@ function societe_prepare_head(Societe $object)
 
 		$title = $langs->trans("PaymentModes");
 
+		$servicestatus = 0;
 		if (isModEnabled('stripe')) {
-			$servicestatus = 0;
 			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$servicestatus = 1;
 			}
@@ -805,7 +805,7 @@ function getFormeJuridiqueLabel($code)
  *  Return list of countries that are inside the EEC (European Economic Community)
  *  Note: Try to keep this function as a "memory only" function for performance reasons.
  *
- *  @return     array					Array of countries code in EEC
+ *  @return     string[]				Array of countries code in EEC
  */
 function getCountriesInEEC()
 {
@@ -1745,7 +1745,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  *      @param  int<0,1>			$noprint		Return string but does not output it
  *      @param  string|string[]		$actioncode		Filter on actioncode
  *      @param  'done'|'todo'|''	$donetodo		Filter on event 'done' or 'todo' or ''=nofilter (all).
- *      @param  array				$filters		Filter on other fields
+ *      @param  array<string,string|string[]>		$filters		Filter on other fields
  *      @param  string				$sortfield		Sort field
  *      @param  string				$sortorder		Sort order
  *      @param	string				$module			You can add module name here if elementtype in table llx_actioncomm is objectkey@module
@@ -1889,7 +1889,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-curren-line PhanTypeInvalidDimOffset
 		&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 		}
@@ -1948,7 +1948,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
 				&& $filterobj->table_element && $filterobj->element) {
 				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
@@ -2069,23 +2069,23 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$histo[$numaction] = array(
 						'type' => $obj->type,
 						'tododone' => $tododone,
-						'id' => $obj->id,
+						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'percent' => $obj->percent,
+						'percent' => (int) $obj->percent,
 
-						'userid' => $obj->user_id,
+						'userid' => (int) $obj->user_id,
 						'login' => $obj->user_login,
 						'userfirstname' => $obj->user_firstname,
 						'userlastname' => $obj->user_lastname,
 						'userphoto' => $obj->user_photo,
 
-						'contact_id' => $obj->fk_contact,
+						'contact_id' => (int) $obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
 						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
 						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
-						'fk_element' => $obj->fk_element,
+						'fk_element' => (int) $obj->fk_element,
 						'elementtype' => $obj->elementtype,
 						// Type of event
 						'acode' => $obj->acode,
@@ -2097,14 +2097,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$histo[$numaction] = array(
 						'type' => $obj->type,
 						'tododone' => 'done',
-						'id' => $obj->id,
+						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'percent' => $obj->percent,
+						'percent' => (int) $obj->percent,
 						'acode' => $obj->acode,
 
-						'userid' => $obj->user_id,
+						'userid' => (int) $obj->user_id,
 						'login' => $obj->user_login,
 						'userfirstname' => $obj->user_firstname,
 						'userlastname' => $obj->user_lastname,
@@ -2120,7 +2120,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 	}
 
-	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:string,lastname:string,firstname:string,contact_photo:string,socpeaopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:int,lastname:string,firstname:string,contact_photo:string,socpeopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
@@ -2565,7 +2565,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
  * 		@param	int 		$now		    now
- * 		@param	array		$filters		array
+ * 		@param	array<string,string|string[]>	$filters	array
  * 		@return	string      sql request
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
@@ -2637,7 +2637,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
  * @param   Translate	$langs			Output language
  * @param	int			$addformmessage	Add the payment form message
  * @param	string		$suffix			Suffix to use on constants
- * @param	Object		$object			Object related to payment
+ * @param	null|CommonObject|CommonHookActions	$object		Object related to payment
  * @return	void
  */
 function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)

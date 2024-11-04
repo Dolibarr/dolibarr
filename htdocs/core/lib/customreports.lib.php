@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,11 @@
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array		$arrayofmesures	Array of measures already filled
+ * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return 	array						Array of measures
+ * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
  */
 function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesures, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -182,11 +183,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array		$arrayofxaxis	Array of xaxis already filled
+ * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return 	array						Array of xaxis
+ * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
  */
 function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -346,16 +347,16 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 
 /**
- * Fill arrayofgrupby for an object
+ * Fill arrayofgroupby for an object
  *
- * @param 	mixed		$object			Any object
+ * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array		$arrayofgroupby	Array of groupby already filled
+ * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return 	array						Array of groupby
+ * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
  */
 function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroupby, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -469,7 +470,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-day'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element,
@@ -477,7 +478,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				);
 			} else {
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val),
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val),  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
 					'table' => $object->table_element,
@@ -513,14 +514,14 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 /**
  * Fill array of possible filter fields for an object
  *
- * @param 	mixed		$object			Any object
+ * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array		$arrayoffields	Array of fields already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	$arrayoffields	Array of fields already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return 	array						Array of fields
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	Array of fields
  */
 function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayoffields, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -588,12 +589,12 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 			}
 
 			$arrayoffields[preg_replace('/^t/', 'te', $tablealias).'.'.$key] = array(
-				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val),
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val),  // @phan-suppress-current-line PhanUndeclaredProperty
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 				'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath,
-				'type' => $val['type']
+				'type' => $val['type']  // TODO: Check this, seems a copy/paste error
 			);
 		}
 	}

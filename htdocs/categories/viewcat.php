@@ -416,7 +416,7 @@ if ($cats < 0) {
 
 	// Define data (format for treeview)
 	$data = array();
-	$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+	$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 	foreach ($fulltree as $key => $val) {
 		$categstatic->id = $val['id'];
 		$categstatic->ref = $val['label'];

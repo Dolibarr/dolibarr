@@ -199,7 +199,8 @@ function pt($db, $sql, $date)
 
 if (empty($localTaxType)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
+	// @phan-suppress-next-line PhanPluginUnreachableCode
+	exit;  // accessforbidden already exits @phpstan-ignore-line
 }
 
 

@@ -29,7 +29,7 @@
 /**
  * Return array of possible OAUTH2 services
  *
- * @return 	array				Array of services
+ * @return 	array<string[]>				Array of services
  */
 function getAllOauth2Array()
 {
@@ -273,9 +273,9 @@ function getAllOauth2Array()
 
 
 /**
- * Return array of tabs to used on pages to setup cron module.
+ * Return array of tabs to use on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return 	array<string,array<string,string>>		Array of tabs
  */
 function getSupportedOauth2Array()
 {

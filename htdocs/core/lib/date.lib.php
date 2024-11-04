@@ -118,7 +118,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int|string	$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
- *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
+ *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
  *  @see convertSecondToTime(), convertTimeToSeconds()
  */
@@ -141,6 +141,8 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$deltastring = 'P';
+
+	$sub = false;
 
 	if ($duration_value > 0) {
 		$deltastring .= abs($duration_value);
@@ -221,20 +223,20 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *      Can be used to show a duration.
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format
- *    										- 'all': total delay days hour:min like "2 days 12:30",
- *                                          - 'allwithouthour': total delay days without hour part like "2 days",
- *                                          - 'allhourmin': total delay with format hours:min like "60:30",
- *                                          - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",
- *                                          - 'allhour': total delay hours without min/sec like "60:30",
- *                                          - 'fullhour': total delay hour decimal like "60.5" for 60:30,
- *                                          - 'hour': only hours part "12",
- *                                          - 'min': only minutes part "30",
- *                                          - 'sec': only seconds part,
- *                                          - 'month': only month part,
- *                                          - 'year': only year part);
- *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
- *      @param      int		$lengthOfWeek   Length of week (default 7)
+ *		@param		'all'|'allwithouthour'|'allhourmin'|'allhourminsec'|'allhour'|'fullhour'|'hour'|'min'|'sec'|'month'|'year'	$format		    Output format
+ *                                                                                                                                              - 'all': total delay days hour:min like "2 days 12:30",
+ *                                                                                                                                              - 'allwithouthour': total delay days without hour part like "2 days",
+ *                                                                                                                                              - 'allhourmin': total delay with format hours:min like "60:30",
+ *                                                                                                                                              - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",
+ *                                                                                                                                              - 'allhour': total delay hours without min/sec like "60:30",
+ *                                                                                                                                              - 'fullhour': total delay hour decimal like "60.5" for 60:30,
+ *                                                                                                                                              - 'hour': only hours part "12",
+ *                                                                                                                                              - 'min': only minutes part "30",
+ *                                                                                                                                              - 'sec': only seconds part,
+ *                                                                                                                                              - 'month': only month part,
+ *                                                                                                                                              - 'year': only year part);
+ *      @param      int<1,86400>	$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
+ *      @param      int<1,7>	$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formatted text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  *      @see convertTime2Seconds()
@@ -251,12 +253,13 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 	}
 	$nbHbyDay = $lengthOfDay / 3600;
 
+	$sTime = '';
+
 	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec') {
 		if ((int) $iSecond === 0) {
 			return '0'; // This is to avoid having 0 return a 12:00 AM for en_US
 		}
 
-		$sTime = '';
 		$sDay = 0;
 		$sWeek = 0;
 
@@ -321,7 +324,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 	} elseif ($format == 'year') {	// only year part
 		$sTime = dol_print_date($iSecond, '%Y', true);
 	}
-	return trim($sTime);
+	return trim((string) $sTime);
 }
 
 

@@ -1799,11 +1799,11 @@ class Expedition extends CommonObject
 				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc, $localtax_array); // We force type to 0
 				$line->desc = $obj->description; // We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty = $line->qty_shipped;
-				$line->total_ht = $tabprice[0];
-				$line->total_localtax1 	= $tabprice[9];
-				$line->total_localtax2 	= $tabprice[10];
-				$line->total_ttc	 	= $tabprice[2];
-				$line->total_tva	 	= $tabprice[1];
+				$line->total_ht = (float) $tabprice[0];
+				$line->total_localtax1 	= (float) $tabprice[9];
+				$line->total_localtax2 	= (float) $tabprice[10];
+				$line->total_ttc	 	= (float) $tabprice[2];
+				$line->total_tva	 	= (float) $tabprice[1];
 				$line->vat_src_code = $obj->vat_src_code;
 				$line->tva_tx = $obj->tva_tx;
 				$line->localtax1_tx 	= $obj->localtax1_tx;
