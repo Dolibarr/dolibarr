@@ -61,8 +61,6 @@ $childids[] = $user->id;
 if ($userid > 0) {
 	if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous') && !in_array($userid, $childids)) {
 		accessforbidden();
-		// @phan-suppress-next-line PhanPluginUnreachableCode
-		exit;  // accessforbidden already exits @phpstan-ignore-line
 	}
 }
 
