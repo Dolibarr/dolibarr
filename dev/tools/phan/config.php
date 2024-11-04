@@ -272,6 +272,8 @@ return [
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
 		'senderissupplier' => 'int<0,2>',
+		'shmkeys' => 'array<string,int>', // memory.lib
+		'shmoffset' => 'int', // memory.lib
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',

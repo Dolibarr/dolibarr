@@ -199,7 +199,6 @@ function pt($db, $sql, $date)
 
 if (empty($localTaxType)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
 
 

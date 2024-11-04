@@ -343,7 +343,11 @@ while ($i < min($num, $limit)) {
 
 	print '<td class="right">';
 	print '<span class="amount">';
-	print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	if ($obj->amount != $obj->total_ttc) {
+		print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	} else {
+		print price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	}
 	print '</span>';
 	print '</td>';
 

@@ -47,7 +47,6 @@ parameters:
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
-		- '#Unable to resolve the template type T#'
 		- '#Offset .* (?:isset\(\)) always exists and is not nullable#'
 		- '#(?:Variable \$(?:_(?:FILES|POST|SERVER)|array_propal_object|baseUri|current_fiscal_period|d(?:b_create_(?:database|user)|olibarr_main_(?:db_prefix|url_root)|raftchecked)|erreur_ajout_date|isImageValid|keyforstripeterminalbank|(?:lo|mar)gin|max|n(?:ewProperty|um)|p(?:ermsgroupbyentitypluszero|ro(?:gressCalculated|parrayofkeyval)|ublic)|t(?:(?:itl|otal_tim)e|va_tx)|var)) in isset\(\) always exists and is not nullable#'
 		- '#(?:Property CommonOrderLine::\$multicurrency_subprice \(float\) on left side of \?\?|isset\(\)) is not nullable#'
@@ -91,7 +90,6 @@ parameters:
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'
 		- '#(?:F(?:acture(?:(?:Fournisseur)?Rec::addline\(\))|ichinterRec::addLineRec\(\))|dolMd2Html) expects string\|null,#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
-		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#(?: DoliDBPgsql::fetch_row\(\)) expects resource, PgSql\\Result given\.#'
@@ -117,6 +115,10 @@ parameters:
 		- '#Property (?:(?:(?:(?:AgendaEven|Cont(?:r?ac))t|Do(?:libarrApiAcces|nation)|ExpenseReport|In(?:tervention|voice)|Order|Pro(?:duct|posal)|S(?:alarie|(?:hip|tockMove)ment|upplier(?:Invoice|Order|Proposal))|T(?:ask|hirdpartie|icket)|Warehouse)s|Webhook|Zapier)::.*) no value type specified in iterable type array#'
 		- '#Property RemiseCheque::\$account_id \(int\) does not accept string\.#'
 		- '#Property Contact::\$roles \(array<int, array\{id: int, socid: int, element: string, source: string, code: string, label: string\}>\) does not accept non-empty-array<int, string>\.#'
+		- '# calcul_price_total expects array\{string, int\|string, string, int\|string, string, string\}\|array\{string, int\|string, string, string\}, array\{\} given\.#'
+		- '#(?: ftp_(?:(?:raw|n)list)) expects FTP.Connection, resource given\.#'
+		- '#Function getURLContent\(\) should return array#'
+		- '#SimpleOpenID::HTML2OpenIDServer\(\) expects string#'
 
 	internalErrorsCountLimit: 50
 	cache:

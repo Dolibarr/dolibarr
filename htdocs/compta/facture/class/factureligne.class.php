@@ -256,8 +256,8 @@ class FactureLigne extends CommonInvoiceLine
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
 			$this->pa_ht				= $marginInfos[0];
-			$this->marge_tx				= $marginInfos[1];
-			$this->marque_tx			= $marginInfos[2];
+			$this->marge_tx				= (string) $marginInfos[1];
+			$this->marque_tx			= (string) $marginInfos[2];
 
 			$this->ref = $objp->product_ref; // deprecated
 

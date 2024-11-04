@@ -1997,11 +1997,11 @@ class ExpenseReport extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			$this->line->fk_expensereport = $this->id;
 			$this->line->qty = $qty;
@@ -2104,11 +2104,11 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($this->line->qty, $new_current_total_ttc / $this->line->qty, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			return false;
 		} else {
@@ -2165,11 +2165,11 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			return true;
 		}
@@ -2277,11 +2277,11 @@ class ExpenseReport extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			$this->line->fk_ecm_files = $fk_ecm_files;
 

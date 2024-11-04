@@ -2006,14 +2006,14 @@ if (empty($reshook)) {
 
 						// The $line->situation_percent has been modified, so we must recalculate all amounts
 						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $line->situation_percent);
-						$line->total_ht = $tabprice[0];
-						$line->total_tva = $tabprice[1];
-						$line->total_ttc = $tabprice[2];
-						$line->total_localtax1 = $tabprice[9];
-						$line->total_localtax2 = $tabprice[10];
-						$line->multicurrency_total_ht  = $tabprice[16];
-						$line->multicurrency_total_tva = $tabprice[17];
-						$line->multicurrency_total_ttc = $tabprice[18];
+						$line->total_ht = (float) $tabprice[0];
+						$line->total_tva = (float) $tabprice[1];
+						$line->total_ttc = (float) $tabprice[2];
+						$line->total_localtax1 = (float) $tabprice[9];
+						$line->total_localtax2 = (float) $tabprice[10];
+						$line->multicurrency_total_ht  = (float) $tabprice[16];
+						$line->multicurrency_total_tva = (float) $tabprice[17];
+						$line->multicurrency_total_ttc = (float) $tabprice[18];
 
 						// If fk_remise_except defined we check if the reduction has already been applied
 						if ($line->fk_remise_except) {

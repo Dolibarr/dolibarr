@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,9 +485,13 @@ if (!function_exists('ftp_connect')) {
 				//  }
 				//  $i++;
 				//}
-			} else {
+			} elseif (!empty($conn_id)) {
 				$buff = ftp_rawlist($conn_id, $newsectioniso);
 				$contents = ftp_nlist($conn_id, $newsectioniso); // Sometimes rawlist fails but never nlist
+			} else {
+				dol_syslog(__FILE__ . ": Unexpected state for ftp connection", LOG_ERR);
+				$buff = array();
+				$contents = array();
 			}
 
 			$nboflines = count($contents);

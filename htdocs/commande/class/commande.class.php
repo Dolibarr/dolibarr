@@ -1697,14 +1697,14 @@ class Commande extends CommonOrder
 			$this->line->product_type = $product_type;
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice = $pu_ht;
+			$this->line->subprice = (float) $pu_ht;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
-			$this->line->total_ht = $total_ht;
-			$this->line->total_tva = $total_tva;
-			$this->line->total_localtax1 = $total_localtax1;
-			$this->line->total_localtax2 = $total_localtax2;
-			$this->line->total_ttc = $total_ttc;
+			$this->line->total_ht = (float) $total_ht;
+			$this->line->total_tva = (float) $total_tva;
+			$this->line->total_localtax1 = (float) $total_localtax1;
+			$this->line->total_localtax2 = (float) $total_localtax2;
+			$this->line->total_ttc = (float) $total_ttc;
 			$this->line->special_code = $special_code;
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
@@ -1720,10 +1720,10 @@ class Commande extends CommonOrder
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
-			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
 			// TODO Ne plus utiliser
 			$this->line->price = $price;
@@ -3278,14 +3278,14 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice       = $pu_ht;
+			$this->line->subprice       = (float) $pu_ht;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
-			$this->line->total_ht       = $total_ht;
-			$this->line->total_tva      = $total_tva;
-			$this->line->total_localtax1 = $total_localtax1;
-			$this->line->total_localtax2 = $total_localtax2;
-			$this->line->total_ttc      = $total_ttc;
+			$this->line->total_ht       = (float) $total_ht;
+			$this->line->total_tva      = (float) $total_tva;
+			$this->line->total_localtax1 = (float) $total_localtax1;
+			$this->line->total_localtax2 = (float) $total_localtax2;
+			$this->line->total_ttc      = (float) $total_ttc;
 			$this->line->date_start     = $date_start;
 			$this->line->date_end       = $date_end;
 			$this->line->product_type   = $type;
@@ -3297,10 +3297,10 @@ class Commande extends CommonOrder
 			$this->line->pa_ht = $pa_ht;
 
 			// Multicurrency
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
-			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
 			// TODO deprecated
 			$this->line->price = $price;

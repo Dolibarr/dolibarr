@@ -3215,8 +3215,8 @@ class pdf_octopus extends ModelePDFFactures
 				$pu_ht = $tabprice[3];
 
 				return array(
-					'progress_prec' => $l->situation_percent,
-					'total_ht_without_progress' => $total_ht,
+					'progress_prec' => (float) $l->situation_percent,
+					'total_ht_without_progress' => (float) $total_ht,
 					'total_ht' => $l->total_ht,
 				);
 			}
