@@ -39,7 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fediverseparser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/boxes/box_fediverse.php';
 
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 //load translation files requires by the page
 $langs->loadLangs(array('admin', 'users', 'dict'));
