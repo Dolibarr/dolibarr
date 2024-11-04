@@ -813,7 +813,7 @@ select.flat, form.flat select, .pageplusone {
 select.flat, form.flat select, .divadvancedsearchfieldcompinput {
 	height: 2em;
 }
-input.pageplusone, .divadvancedsearchfieldcompinput {
+input.pageplusone {
 	padding-bottom: 4px;
 	padding-top: 4px;
 	margin-right: 4px;
@@ -4372,20 +4372,24 @@ table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder thead tr:last-child td:first-child,
@@ -4416,6 +4420,13 @@ table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:last
 div.liste_titre_bydiv {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv_nothingafter {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	border-bottom-width: 1px;
+	border-bottom-color: var(--colortopbordertitle1);
+	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
 table.liste tr:last-child th:first-child {
@@ -4838,12 +4849,6 @@ div.liste_titre_bydiv {
 	box-shadow: none;
 	width: calc(100% - 2px);	/* -2px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
-/*
-div.liste_titre_bydiv_inlineblock {
-	display: inline-block;
-	width: 100%;
-}
-*/
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
@@ -5261,7 +5266,7 @@ img.boxhandle, img.boxclose {
 .search-component-assistance {
 	display: none;
 	position: absolute;
-	background: var(--colorbacktitle1);
+	background: var(--colorbackbody);
 	border-width: 1px 1px 2px;
 	border-style: solid;
 	border-color: rgb(204, 204, 204);
@@ -5271,6 +5276,7 @@ img.boxhandle, img.boxclose {
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
+	min-width: 600px
 }
 .search-component-assistance .assistance-title {
 	font-size: 15px;
@@ -8367,6 +8373,10 @@ table.jPicker {
 		font-size: small;
 		width: 122px;
 	}
+
+	.search-component-assistance {
+		min-width: 300px;
+	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -8377,6 +8387,9 @@ table.jPicker {
 	}
 	div#ecm-layout-center {
 		width: 100%;
+	}
+	.search-component-assistance {
+		min-width: 400px;
 	}
 }
 
