@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 if (!$user->admin) {

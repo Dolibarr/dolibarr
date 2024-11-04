@@ -1101,11 +1101,6 @@ parameters:
 			path: ../../htdocs/admin/agenda_reminder.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/agenda_xcal.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/agenda_xcal.php
@@ -4986,11 +4981,6 @@ parameters:
 			path: ../../htdocs/compta/charges/index.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/charges/index.php
-
-		-
 			message: "#^Variable \\$addu might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/clients.php
@@ -5073,11 +5063,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/compta/facture/card-rec.php
 
 		-
@@ -5188,11 +5173,6 @@ parameters:
 		-
 			message: "#^Variable \\$lines might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 26
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -5641,11 +5621,6 @@ parameters:
 			path: ../../htdocs/compta/facture/list.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/list.php
-
-		-
 			message: "#^Variable \\$numprlv might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/list.php
@@ -5678,11 +5653,6 @@ parameters:
 		-
 			message: "#^Variable \\$isdraft might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/compta/facture/prelevement.php
 
 		-
@@ -5868,11 +5838,6 @@ parameters:
 		-
 			message: "#^Variable \\$morehtmlref might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/compta/localtax/card.php
 
 		-
