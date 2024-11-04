@@ -3272,7 +3272,7 @@ class Facture extends CommonInvoice
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
-			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'ACCOUNTANCY_CODE_CUSTOMER');
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER');
 			foreach ($array_to_check as $key) {
 				$keymin = strtolower($key);
 				if (!property_exists($this->thirdparty, $keymin)) {
@@ -3309,6 +3309,15 @@ class Facture extends CommonInvoice
 						if (getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY') && empty($this->thirdparty->code_compta_client)) {
 							$langs->load("errors");
 							$this->error = $langs->trans("ErrorAccountancyCodeCustomerIsMandatory", $this->thirdparty->name).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+					if ($key == 'TVA_INTRA') {
+						// Check for mandatory
+						if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') && ($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra)) {
+							$langs->load("errors");
+							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
