@@ -149,7 +149,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array<array{titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
+	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
 

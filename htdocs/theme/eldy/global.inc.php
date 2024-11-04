@@ -28,12 +28,70 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 $leftmenuwidth = 240;
 
 // Variables defined in style.css.php (includes this file).
+/**
+ * @var int<0,1> $dol_hide_topmenu
+ * @var int<0,1> $dol_hide_leftmenu
+ * @var int<0,1> $dol_optimize_smallscreen
+ * @var int<0,1> $dol_no_mouse_hover
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $borderwidth
+ * @var string $colorbackbody
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinebreak
+ * @var string $colorbacklineimpair1
+ * @var string $colorbacklineimpair2
+ * @var string $colorbacklinepair1
+ * @var string $colorbacklinepair2
+ * @var string $colorbacklinepairchecked
+ * @var string $colorbacklinepairhover
+ * @var string $colorbacktabactive
+ * @var string $colorbacktabcard1
+ * @var string $colorbacktitle1
+ * @var string $colorbackvmenu1
+ * @var string $colorblind_deuteranopes_textSuccess
+ * @var string $colorblind_deuteranopes_textWarning
+ * @var string $colorshadowtitle
+ * @var string $colortext
+ * @var string $colortextbackhmenu
+ * @var string $colortextbacktab
+ * @var string $colortextbackvmenu
+ * @var string $colortextlink
+ * @var string $colortexttitle
+ * @var string $colortexttitlelink
+ * @var string $colortexttitlenotab
+ * @var string $colortexttitlenotab2
+ * @var string $colortopbordertitle1
+ * @var int<0,1> $disableimages
+ * @var int<0,1> $dol_hide_leftmenu
+ * @var int<0,1> $dol_hide_topmenu
+ * @var int<0,1> $dol_optimize_smallscreen
+ * @var string $fontlist
+ * @var string $fontsize
+ * @var int $heightmenu
+ * @var string $heightrow
+ * @var string $img_button
+ * @var string $left
+ * @var string $maxwidthloginblock
+ * @var int $minwidthtmenu
+ * @var int $nbtopmenuentries
+ * @var int $nbtopmenuentriesreal
+ * @var string $path
+ * @var string $right
+ * @var string $textDanger
+ * @var string $textSuccess
+ * @var string $textWarning
+ * @var string $toolTipBgColor
+ * @var string $toolTipFontColor
+ * @var int<0,1> $useboldtitle
+ * @var int $userborderontable
+ * @var array{h:int,l:int,s:int,a:int} $colortextlinkHsla
+ */
 '
 @phan-var-force int<0,1> $dol_hide_topmenu
 @phan-var-force int<0,1> $dol_hide_leftmenu
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force int<0,1> $dol_no_mouse_hover
-
 @phan-var-force string $badgeDanger
 @phan-var-force string $badgeWarning
 @phan-var-force string $borderwidth

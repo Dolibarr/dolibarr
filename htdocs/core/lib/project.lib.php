@@ -476,7 +476,7 @@ function task_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param	string	$mode		Mode
- * @param   string  $fuser      Filter on user
+ * @param   User|string  $fuser      Filter on user
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function project_timesheet_prepare_head($mode, $fuser = null)

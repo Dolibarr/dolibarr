@@ -2,6 +2,17 @@
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $withproject
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";

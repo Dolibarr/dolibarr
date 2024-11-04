@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
 
@@ -53,8 +61,8 @@ $action      = GETPOST('action', 'aZ09');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
-$backtopage  = GETPOST('backtopage', 'alpha');
-$lineid      = GETPOSTINT('lineid');
+$backtopage = GETPOST('backtopage', 'alpha');
+$lineid = GETPOSTINT('lineid');
 $fk_movement = GETPOSTINT('fk_movement');
 $fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 
