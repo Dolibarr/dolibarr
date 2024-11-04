@@ -39,6 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
@@ -772,6 +775,20 @@ if ($object->id > 0) {
 					$ribForSelection[$rib->id] = $ribString;
 					if ($rib->default_rib == 1) {
 						$defaultRib = $ribString;
+					}
+				}
+
+				// if societe rib in model invoice, we preselect it
+				if ($object->element = 'invoice' && $object->fk_fac_rec_source) {
+					$facturerec = new FactureRec($db);
+					$facturerec->fetch($object->fk_fac_rec_source);
+					if ($facturerec->fk_societe_rib) {
+						$companyBankAccount = new CompanyBankAccount($db);
+						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
+						if ($res > 0) {
+							$ribString = $companyBankAccount->iban . (($companyBankAccount->iban && $companyBankAccount->bic) ? ' / ' : '') . $companyBankAccount->bic;
+							$defaultRib = $ribString;
+						}
 					}
 				}
 

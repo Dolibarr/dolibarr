@@ -1456,7 +1456,7 @@ if ($action == 'create') {
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editbankaccountcustomer') {
-				$form->formSelectAccountCustomer($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'fk_societe_rib', 1);
+				$form->formSelectAccountCustomer($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'accountcustomerid', 1);
 			} else {
 				$form->formSelectAccountCustomer($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'none');
 			}
