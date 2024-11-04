@@ -852,7 +852,7 @@ if (empty($reshook)) {
 	// Set incoterm
 	if ($action == 'set_incoterms' && $permissiontoadd && isModEnabled('incoterm')) {
 		$object->fetch($socid);
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 
 	// Set parent company

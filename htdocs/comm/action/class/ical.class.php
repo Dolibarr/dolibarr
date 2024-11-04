@@ -45,7 +45,7 @@ class ICal
 	public $file_text;
 
 	/**
-	 * @var array Array to save iCalendar parse data
+	 * @var  array<string,array<'VEVENT'|'VFREEBUSY'|'VTODO',array<int,array<string,string>>>>|array<string,array<int,array<string,array<string,int>>>>|array<string,array<int,array<string,int>>>|array<string,array<int,array<string,string>>>	Array to save iCalendar parse data
 	 */
 	public $cal;
 
@@ -138,7 +138,7 @@ class ICal
 	 * @param	string	 	$uri			Url
 	 * @param	string		$usecachefile	Full path of a cache file to use a cache file
 	 * @param	int			$delaycache		Delay in seconds for cache (by default 3600 secondes)
-	 * @return	array|string
+	 * @return  string|array<string,array<'VEVENT'|'VFREEBUSY'|'VTODO',array<int,array<string,string>>>>|array<string,array<int,array<string,array<string,int>>>>|array<string,array<int,array<string,int>>>|array<string,array<int,array<string,string>>>
 	 */
 	public function parse($uri, $usecachefile = '', $delaycache = 3600)
 	{
@@ -277,12 +277,15 @@ class ICal
 			$key = $this->last_key;
 			switch ($type) {
 				case 'VEVENT':
+					// @phan-suppress-next-line PhanTypeMismatchDimFetch
 					$value = $this->cal[$type][$this->event_count][$key].$value;
 					break;
 				case 'VFREEBUSY':
+					// @phan-suppress-next-line PhanTypeMismatchDimFetch
 					$value = $this->cal[$type][$this->freebusy_count][$key].$value;
 					break;
 				case 'VTODO':
+					// @phan-suppress-next-line PhanTypeMismatchDimFetch
 					$value = $this->cal[$type][$this->todo_count][$key].$value;
 					break;
 			}
@@ -303,18 +306,22 @@ class ICal
 
 		switch ($type) {
 			case "VTODO":
+				// @phan-suppress-next-line PhanTypeMismatchReturn
 				$this->cal[$type][$this->todo_count][$key] = $value;
 				break;
 
 			case "VEVENT":
+				// @phan-suppress-next-line PhanTypeMismatchReturn
 				$this->cal[$type][$this->event_count][$key] = $value;
 				break;
 
 			case "VFREEBUSY":
+				// @phan-suppress-next-line PhanTypeMismatchReturn
 				$this->cal[$type][$this->freebusy_count][$key] = $value;
 				break;
 
 			default:
+				// @phan-suppress-next-line PhanTypeMismatchProperty
 				$this->cal[$type][$key] = $value;
 				break;
 		}
@@ -326,7 +333,7 @@ class ICal
 	 * Parse text "XXXX:value text some with : " and return array($key = "XXXX", $value="value");
 	 *
 	 * @param 	string 	$text	Text
-	 * @return 	array
+	 * @return 	array{0:string,1:string}
 	 */
 	public function retun_key_value($text)
 	{
@@ -351,7 +358,7 @@ class ICal
 	 * Parse RRULE  return array
 	 *
 	 * @param 	string 	$value	string
-	 * @return 	array
+	 * @return 	array<string,string>
 	 */
 	public function ical_rrule($value)
 	{
@@ -425,14 +432,14 @@ class ICal
 	/**
 	 * Return sorted eventlist as array or false if calendar is empty
 	 *
-	 * @return array|false
+	 * @return array<int,array<string,string>>|false
 	 */
 	public function get_sort_event_list()
 	{
 		// phpcs:enable
 		$temp = $this->get_event_list();
 		if (!empty($temp)) {
-			usort($temp, array(&$this, "ical_dtstart_compare"));
+			usort($temp, array($this, "ical_dtstart_compare"));  // false-positive @phpstan-ignore-line
 			return $temp;
 		} else {
 			return false;
@@ -443,9 +450,9 @@ class ICal
 	/**
 	 * Compare two unix timestamp
 	 *
-	 * @param 	array 	$a		Operand a
-	 * @param 	array 	$b		Operand b
-	 * @return 	integer
+	 * @param 	array{DTSTART:array{unixtime:string}} 	$a		Operand a
+	 * @param 	array{DTSTART:array{unixtime:string}}  	$b		Operand b
+	 * @return 	int
 	 */
 	public function ical_dtstart_compare($a, $b)
 	{
@@ -457,7 +464,7 @@ class ICal
 	/**
 	 * Return eventlist array (not sorted eventlist array)
 	 *
-	 * @return array
+	 * @return array<int,array<string,string>>
 	 */
 	public function get_event_list()
 	{
@@ -469,7 +476,7 @@ class ICal
 	/**
 	 * Return freebusy array (not sort eventlist array)
 	 *
-	 * @return array
+	 * @return array<int,array<string,string>>
 	 */
 	public function get_freebusy_list()
 	{
@@ -481,7 +488,7 @@ class ICal
 	/**
 	 * Return to do array (not sorted todo array)
 	 *
-	 * @return array
+	 * @return array<int,array<string,string>>
 	 */
 	public function get_todo_list()
 	{
@@ -493,7 +500,7 @@ class ICal
 	/**
 	 * Return base calendar data
 	 *
-	 * @return array
+	 * @return array<int,array<string,string>>
 	 */
 	public function get_calender_data()
 	{
@@ -505,7 +512,7 @@ class ICal
 	/**
 	 * Return array with all data
 	 *
-	 * @return array
+	 * @return  array<string,array<'VEVENT'|'VFREEBUSY'|'VTODO',array<int,array<string,string>>>>|array<string,array<int,array<string,array<string,int>>>>|array<string,array<int,array<string,int>>>|array<string,array<int,array<string,string>>>
 	 */
 	public function get_all_data()
 	{

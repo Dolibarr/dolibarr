@@ -858,7 +858,7 @@ print $moreforfilter;
 print '</div>';
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste centpercent">';
+print '<table class="tagtable liste centpercent listwithfilterbefore">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';

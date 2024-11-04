@@ -108,8 +108,9 @@ class Evaluation extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '0', 'visible' => 5, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '6' => 'Closed'),),
 		'date_eval' => array('type' => 'date', 'label' => 'DateEval', 'enabled' => 1, 'position' => 502, 'notnull' => 1, 'visible' => 1,),
-		'fk_user' => array('type' => 'integer:User:user/class/user.class.php:0', 'label' => 'Employee', 'enabled' => 1, 'position' => 504, 'notnull' => 1, 'visible' => 1, 'picto' => 'user', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php:0:(t.statut:!=:0)', 'label' => 'Employee', 'enabled' => 1, 'position' => 504, 'notnull' => 1, 'visible' => 1, 'picto' => 'user', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'fk_job' => array('type' => 'integer:Job:/hrm/class/job.class.php', 'label' => 'JobProfile', 'enabled' => 1, 'position' => 505, 'notnull' => 1, 'visible' => 1, 'picto' => 'jobprofile', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
 	);
 	/**
 	 * @var int

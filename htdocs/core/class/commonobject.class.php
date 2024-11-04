@@ -1369,7 +1369,7 @@ abstract class CommonObject
 		// phpcs:enable
 		// Insert into database
 		$sql = "UPDATE ".$this->db->prefix()."element_contact set";
-		$sql .= " statut = ".$statut;
+		$sql .= " statut = ".((int) $statut);
 		if ($type_contact_id) {
 			$sql .= ", fk_c_type_contact = ".((int) $type_contact_id);
 		}
@@ -1377,6 +1377,7 @@ abstract class CommonObject
 			$sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		}
 		$sql .= " where rowid = ".((int) $rowid);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 0;
@@ -1988,27 +1989,13 @@ abstract class CommonObject
 		return 0;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the project with id $this->fk_project into this->project
+	 *  Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int<-1,1>		Return integer <0 if KO, >=0 if OK
+	 *  @return		int<-1,1>		Return integer <0 if KO, >=0 if OK
 	 */
-	public function fetch_project()
+	public function fetchProject()
 	{
-		// phpcs:enable
-		return $this->fetch_projet();
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *		Load the project with id $this->fk_project into this->project
-	 *
-	 *		@return		int			Return integer <0 if KO, >=0 if OK
-	 */
-	public function fetch_projet()
-	{
-		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
@@ -2023,7 +2010,36 @@ abstract class CommonObject
 
 		$this->projet = $project; // deprecated
 		$this->project = $project;
+
 		return $result;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load the project with id $this->fk_project into this->project
+	 *
+	 *  @return		int<-1,1>		Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  @see fetchProject()
+	 */
+	public function fetch_project()
+	{
+		// phpcs:enable
+		return $this->fetchProject();
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load the project with id $this->fk_project into this->project
+	 *
+	 *  @return		int			Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  @see fetchProject()
+	 */
+	public function fetch_projet()
+	{
+		// phpcs:enable
+		return $this->fetchProject();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -4087,11 +4103,11 @@ abstract class CommonObject
 
 			if (!$error && empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
-				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
-				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
-				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
-				$sql .= " ".$fieldlocaltax2." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
-				$sql .= " ".$fieldttc." = ".((float) price2num($this->total_ttc, 'MT', 1));
+				$sql .= " ".$this->db->sanitize($fieldht)." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldtva)." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldlocaltax1)." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldlocaltax2)." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
+				$sql .= " ".$this->db->sanitize($fieldttc)." = ".((float) price2num($this->total_ttc, 'MT', 1));
 				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
 				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
 				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
@@ -5221,6 +5237,10 @@ abstract class CommonObject
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
 
+		if (method_exists($this, 'loadExpeditions')) {
+			$this->loadExpeditions();
+		}
+
 		$parameters = array('num' => $num, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $this->table_element_line);
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
@@ -5350,6 +5370,13 @@ abstract class CommonObject
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
+
+			$qty_shipped = 0;
+			if (isset($this->expeditions[$line->id])) {
+				$qty_shipped = $this->expeditions[$line->id];
+			}
+			$disableedit = ($qty_shipped > 0) && ($qty_shipped >= $line->qty);
+
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
 				$res = 0;
@@ -11237,7 +11264,7 @@ abstract class CommonObject
 				case 'project_task':
 					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-					$project_result = $this->fetch_projet();
+					$project_result = $this->fetchProject();
 					if ($project_result >= 0) {
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}

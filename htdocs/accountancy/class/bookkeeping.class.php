@@ -2616,7 +2616,8 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Get list of count by month into the fiscal period
+	 * Get list of count by month into the fiscal period.
+	 * This function can be called by step 1 of closure process.
 	 *
 	 * @param 	int			$date_start		Date start
 	 * @param 	int			$date_end		Date end
@@ -2624,6 +2625,8 @@ class BookKeeping extends CommonObject
 	 */
 	public function getCountByMonthForFiscalPeriod($date_start, $date_end)
 	{
+		global $conf;
+
 		$total = 0;
 		$list = array();
 
@@ -2639,12 +2642,11 @@ class BookKeeping extends CommonObject
 
 		// Get count for each month into the fiscal period
 		if (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
-			// TODO Analyse is done by finding record not into a closed period
 			// Loop on each closed period
-			$sql .= " AND b.doc_date BETWEEN 0 AND 0";
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX.'accounting_fiscalyear as af WHERE b.doc_date >= af.date_start AND b.doc_date <= af.date_end AND af.entity = '.((int) $conf->entity)." AND af.statut = 1)";
 		} else {
-			// Analyse closed record using the unitary flag/date on each record
-			$sql .= " AND date_validated IS NULL";
+			// Filter on the unitary flag/date lock on each record
+			$sql .= " AND date_validated IS NULL";	// not locked
 		}
 
 		$sql .= " GROUP BY YEAR(b.doc_date)";

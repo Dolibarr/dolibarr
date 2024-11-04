@@ -338,6 +338,30 @@ if ($action == 'install' && $allowonlineinstall) {
 		}
 	}
 
+	/*
+	if (!$error) {
+		if (GETPOST('checkforcompliance')) {
+			$dir = $dirins;
+			$file = $modulenameval;
+			// $installedmodule
+			try {
+				$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+				$modName = substr($file, 0, dol_strlen($file) - 10);
+				if ($modName) {
+					if (class_exists($modName)) {
+						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
+
+						//var_dump($objMod);
+					}
+				}
+			} catch(Exception $e) {
+				// Nothing done
+			}
+		}
+	}
+	*/
+
 	if (!$error) {
 		$searchParams = array(
 			'search_keyword' => $modulenameval,
@@ -1417,7 +1441,7 @@ if ($mode == 'deploy') {
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
 						if(this.files[0].size > '.($maxmin * 1024).') {
-							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
+							alert("'.dol_escape_js($langs->transnoentitiesnoconv("ErrorFileSizeTooLarge")).'");
 							this.value = "";
 						}
 					});

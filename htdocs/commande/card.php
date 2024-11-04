@@ -652,7 +652,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTFLOAT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -859,7 +859,7 @@ if (empty($reshook)) {
 							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
 							$price_base_type = $prodcustprice->lines[0]->price_base_type;
 							$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', (string) $tva_tx)) {
 								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
 							}
 							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
@@ -871,7 +871,7 @@ if (empty($reshook)) {
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
 
-					if ( !$pricebycustomerexist && !empty($object->thirdparty->price_level)) { //// If price per segment
+					if (!$pricebycustomerexist && !empty($object->thirdparty->price_level)) { //// If price per segment
 						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
@@ -1329,6 +1329,15 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 			$action = 'editline';
+		}
+
+		$object->loadExpeditions();
+		if (isset($object->expeditions[GETPOST('lineid', 'int')])) {
+			if ($qty < $object->expeditions[GETPOST('lineid', 'int')]) {
+				setEventMessages($langs->trans('ErrorQtyOrderedLessQtyShipped'), null, 'errors');
+				$error++;
+				$action = 'editline';
+			}
 		}
 
 		if (!$error) {
@@ -2136,7 +2145,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -2147,7 +2156,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
 
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -3015,7 +3024,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 				}
 				// Edit
-				if ($object->statut == Commande::STATUS_VALIDATED && $usercancreate) {
+				if (($object->statut == Commande::STATUS_VALIDATED || ($object->statut == Commande::STATUS_SHIPMENTONPROCESS && getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS'))) && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 
@@ -3161,7 +3170,10 @@ if ($action == 'create' && $usercancreate) {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('order'));
+			$tmparray = $form->showLinkToObjectBlock($object, array(), array('order'), 1);
+			$linktoelem = $tmparray['linktoelem'];
+			$htmltoenteralink = $tmparray['htmltoenteralink'];
+			print $htmltoenteralink;
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate

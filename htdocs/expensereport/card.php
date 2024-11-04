@@ -5,7 +5,7 @@
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ $candelete = 0;
 if ($user->hasRight('expensereport', 'supprimer')) {
 	$candelete = 1;
 }
-if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
+if ($object->status == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
 	$candelete = 1;
 }
 
@@ -1511,7 +1511,7 @@ if ($action == 'create') {
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1523,7 +1523,7 @@ if ($action == 'create') {
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1567,7 +1567,7 @@ if ($action == 'create') {
 
 		$head = expensereport_prepare_head($object);
 
-		if ($action == 'edit' && ($object->status < 3 || $object->status == 99)) {
+		if ($action == 'edit' && ($object->status < 3 || $object->status == ExpenseReport::STATUS_REFUSED)) {
 			print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -1575,7 +1575,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
-			if ($object->status == 99) {
+			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';
 			} else {
 				print '<input type="hidden" name="action" value="update">';
@@ -1641,7 +1641,7 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
-			if ($object->status == 6) {
+			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				print '<tr>';
 				print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
 				print '<td>';
@@ -1781,10 +1781,10 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td>'.$langs->trans("DATE_SAVE").'</td>';
 			print '<td>'.dol_print_date($object->date_valid, 'dayhour', 'tzuser');
-			if ($object->status == 2 && $object->hasDelay('toapprove')) {
+			if ($object->status == ExpenseReport::STATUS_VALIDATED && $object->hasDelay('toapprove')) {
 				print ' '.img_warning($langs->trans("Late").' - '.$langs->trans("ToApprove"));
 			}
-			if ($object->status == 5 && $object->hasDelay('topay')) {
+			if ($object->status == ExpenseReport::STATUS_APPROVED && $object->hasDelay('topay')) {
 				print ' '.img_warning($langs->trans("Late").' - '.$langs->trans("ToPay"));
 			}
 			print '</td></tr>';
@@ -1847,7 +1847,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			if ($object->status == 99 || !empty($object->detail_refuse)) {
+			if ($object->status == ExpenseReport::STATUS_REFUSED || !empty($object->detail_refuse)) {
 				print '<tr>';
 				print '<td>'.$langs->trans("REFUSEUR").'</td>';
 				print '<td>';
@@ -2051,7 +2051,7 @@ if ($action == 'create') {
 			print '<div style="clear: both;"></div>';
 
 			$actiontouse = 'updateline';
-			if (($object->status == 0 || $object->status == 99) && $action != 'editline') {
+			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline') {
 				$actiontouse = 'addline';
 			}
 
@@ -2099,7 +2099,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Ajout des boutons de modification/suppression
-				if (($object->status < 2 || $object->status == 99) && $user->hasRight('expensereport', 'creer')) {
+				if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->hasRight('expensereport', 'creer')) {
 					print '<td class="right"></td>';
 				}
 				print '</tr>';
@@ -2918,7 +2918,11 @@ if ($action != 'presend') {
 	/*
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('expensereport'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
 	*/
@@ -2933,7 +2937,7 @@ if ($action != 'presend') {
 }
 
 // Presend form
-$modelmail = 'expensereport';
+$modelmail = 'expensereport_send';
 $defaulttopic = 'SendExpenseReportRef';
 $diroutput = $conf->expensereport->dir_output;
 $trackid = 'exp'.$object->id;

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+/* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -260,7 +260,7 @@ $server->register(
 /**
  * Get Contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref_ext			Ref external of object
  * @return	mixed
@@ -377,7 +377,7 @@ function getContact($authentication, $id, $ref_ext)
 /**
  * Create Contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$contact		    $contact
  * @return	array							Array result
  */
@@ -486,7 +486,7 @@ function createContact($authentication, $contact)
 /**
  * Get list of contacts for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
@@ -615,7 +615,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 /**
  * Update a contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$contact		    Contact
  * @return	array							Array result
  */

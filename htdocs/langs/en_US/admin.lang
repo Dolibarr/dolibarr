@@ -468,7 +468,7 @@ ExtrafieldLinestringGeo=Geometric Linestring
 ExtrafieldPolygonGeo=Geometric Polygon
 ExtrafieldStars=Stars
 ComputedFormula=Computed field
-ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>((($reloadedobj = new Societe($db)) && $reloadedobj->fetchNoCompute($objectoffield->id) > 0) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Store computed field
 ComputedpersistentDesc=Computed extra fields will be stored in the database, however, the value will only be recalculated when the object of this field is changed. If the computed field depends on other objects or global data this value might be wrong!!
 ExtrafieldParamHelpPassword=Leaving this field blank means this value will be stored WITHOUT encryption (field is just hidden with stars on screen).<br><br>Enter value 'dolcrypt' to encode value with a reversible encryption algorithm. Clear data can still be known and edited but is encrypted into database.<br><br>Enter 'auto' (or 'md5', 'sha256', 'password_hash', ...) to use the default password encryption algorithm (or md5, sha256, password_hash...) to save the non reversible hashed password into database (no way to retrieve original value)
@@ -2139,6 +2139,7 @@ MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN=Hide the total price
 MAIN_PDF_NO_SENDER_FRAME=Hide borders on sender address frame
 MAIN_PDF_NO_RECIPENT_FRAME=Hide borders on recipient address frame
 MAIN_PDF_HIDE_CUSTOMER_CODE=Hide customer code
+MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE=Hide customer accounting code
 MAIN_PDF_HIDE_SENDER_NAME=Hide sender/company name in address block
 PROPOSAL_PDF_HIDE_PAYMENTTERM=Hide payments conditions
 PROPOSAL_PDF_HIDE_PAYMENTMODE=Hide payment mode
@@ -2576,3 +2577,9 @@ YouHaveALargeAmountOfRecordOnLists=You have a default max size for lists set to 
 RoundBorders=Round borders
 CheckIfModuleIsNotBlackListed=Block install for modules found into the <b>Remote blacklist</b>
 CheckIfModuleIsNotBlackListedHelp=Some modules may be provided by some companies that do not respect the project's rules of goodwill (non-compliance with GDPR, violation of the rules tof use the Dolibarr brand name, etc.). By checking this box, a request will be made to the project server to see if a report was received about this module, and will protect you by blocking the deployment of flagged modules
+DatabaseEncryption=Encryption in database
+AlgorithmFor=Algorithm for: %s
+SensitiveData=Sensitive data
+ToolToDecryptAString=Tool to decrypt a string
+Decrypt=Decrypt
+FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using <a href="%s">this tool</a>.

@@ -501,31 +501,4 @@ class ActionsTicket extends CommonHookActions
 		print '</div>';
 		print '<br>';
 	}
-
-	/**
-	 * Hook to add email element template
-	 *
-	 * @param array 		$parameters   Parameters
-	 * @param Ticket		$object       Object for action
-	 * @param string 		$action       Action string
-	 * @param HookManager 	$hookmanager  Hookmanager object
-	 * @return int
-	 */
-	public function emailElementlist($parameters, &$object, &$action, $hookmanager)
-	{
-		global $langs;
-
-		$error = 0;
-
-		if (in_array('admin', explode(':', $parameters['context']))) {
-			$this->results = array('ticket_send' => $langs->trans('MailToSendTicketMessage'));
-		}
-
-		if (!$error) {
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
-	}
 }

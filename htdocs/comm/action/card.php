@@ -8,8 +8,8 @@
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019	    Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019	      Ferran Marcet	          <fmarcet@2byte.es>
+ * Copyright (C) 2024		    MDW						          <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,6 +376,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			}
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
+				$object->elementid = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -402,6 +403,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			}
 
 			$object->fk_element = $taskid;
+			$object->elementid = $taskid;
 			$object->elementtype = 'task';
 		}
 
@@ -836,6 +838,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			}
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
+				$object->elementid = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -1794,7 +1797,7 @@ if ($id > 0) {
 	}
 
 	$result2 = $object->fetch_thirdparty();
-	$result2 = $object->fetch_projet();
+	$result2 = $object->fetchProject();
 	$result3 = $object->fetch_contact();
 	$result4 = $object->fetch_userassigned();
 	$result5 = $object->fetch_optionals();

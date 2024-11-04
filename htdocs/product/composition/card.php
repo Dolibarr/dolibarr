@@ -330,11 +330,11 @@ if ($id > 0 || !empty($ref)) {
 
 		print load_fiche_titre($langs->trans("ProductParentList"), '', '');
 
-		print '<table class="liste">';
+		print '<table class="liste noborder">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('ParentProducts').'</td>';
-		print '<td>'.$langs->trans('Label').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<th>'.$langs->trans('ParentProducts').'</th>';
+		print '<th>'.$langs->trans('Label').'</th>';
+		print '<th class="right">'.$langs->trans('Qty').'</th>';
 		print '</td>';
 		if (count($prodsfather) > 0) {
 			foreach ($prodsfather as $value) {
@@ -374,33 +374,33 @@ if ($id > 0 || !empty($ref)) {
 		print '<input type="hidden" name="action" value="save_composed_product" />';
 		print '<input type="hidden" name="id" value="'.$id.'" />';
 
-		print '<table id="tablelines" class="ui-sortable liste nobottom">';
+		print '<table id="tablelines" class="ui-sortable liste noborder nobottom">';
 
 		print '<tr class="liste_titre nodrag nodrop">';
 		// Rank
-		print '<td>'.$langs->trans('Position').'</td>';
+		print '<th>'.$langs->trans('Position').'</th>';
 		// Product ref
-		print '<td>'.$langs->trans('ComposedProduct').'</td>';
+		print '<th>'.$langs->trans('ComposedProduct').'</th>';
 		// Product label
-		print '<td>'.$langs->trans('Label').'</td>';
+		print '<th>'.$langs->trans('Label').'</th>';
 		// Min supplier price
-		print '<td class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
+		print '<th class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</th>';
 		// Min customer price
-		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
+		print '<th class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</th>';
 		// Stock
 		if (isModEnabled('stock')) {
-			print '<td class="right">'.$langs->trans('Stock').'</td>';
+			print '<th class="right">'.$langs->trans('Stock').'</th>';
 		}
 		// Hook fields
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Qty in kit
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<th class="right">'.$langs->trans('Qty').'</th>';
 		// Stoc inc/dev
-		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+		print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
 		// Move
-		print '<td class="linecolmove" style="width: 10px"></td>';
+		print '<th class="linecolmove" style="width: 10px"></th>';
 		print '</tr>'."\n";
 
 		$totalsell = 0;

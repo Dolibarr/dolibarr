@@ -90,7 +90,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
@@ -150,17 +150,17 @@ class Mailing extends CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array statut dest
+	 * @var array<int,string> statut dest
 	 */
 	public $statut_dest = array();
 
 	/**
-	 * @var array substitutionarray
+	 * @var array<string,string> substitutionarray
 	 */
 	public $substitutionarray;
 
 	/**
-	 * @var array substitutionarrayfortest
+	 * @var array<string,string> substitutionarrayfortest
 	 */
 	public $substitutionarrayfortest;
 

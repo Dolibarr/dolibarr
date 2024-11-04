@@ -129,7 +129,7 @@ class ProductAttribute extends CommonObject
 
 	/**
 	 * @var int position
-	 * @deprecated
+	 * @deprecated Use $position
 	 * @see $position
 	 */
 	public $rang;

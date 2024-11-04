@@ -20,8 +20,8 @@
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var string customer ref
-	 * @deprecated
+	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
 	public $ref_client;
@@ -2664,7 +2664,7 @@ class Facture extends CommonInvoice
 			$facligne->desc = $remise->description; // Description ligne
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-			$facligne->subprice = -$remise->amount_ht;
+			$facligne->subprice = -(float) $remise->amount_ht;
 			$facligne->fk_product = 0; // Id produit predefini
 			$facligne->qty = 1;
 			$facligne->remise_percent = 0;
@@ -2689,14 +2689,14 @@ class Facture extends CommonInvoice
 				$facligne->pa_ht = $arraytmp['pa_total'];
 			}
 
-			$facligne->total_ht  = -$remise->amount_ht;
-			$facligne->total_tva = -$remise->amount_tva;
-			$facligne->total_ttc = -$remise->amount_ttc;
+			$facligne->total_ht  = -(float) $remise->amount_ht;
+			$facligne->total_tva = -(float) $remise->amount_tva;
+			$facligne->total_ttc = -(float) $remise->amount_ttc;
 
-			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
-			$facligne->multicurrency_total_ht = -$remise->multicurrency_amount_ht;
-			$facligne->multicurrency_total_tva = -$remise->multicurrency_amount_tva;
-			$facligne->multicurrency_total_ttc = -$remise->multicurrency_amount_ttc;
+			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
+			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_amount_ht;
+			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_amount_tva;
+			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_amount_ttc;
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
@@ -5042,7 +5042,7 @@ class Facture extends CommonInvoice
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
+					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_late=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}
 

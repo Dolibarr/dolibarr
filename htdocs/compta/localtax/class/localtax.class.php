@@ -45,10 +45,22 @@ class Localtax extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int
+	 */
 	public $ltt;
 
+	/**
+	 * @var int|string
+	 */
 	public $datep;
+	/**
+	 * @var int|string
+	 */
 	public $datev;
+	/**
+	 * @var string
+	 */
 	public $amount;
 
 	/**
@@ -61,6 +73,9 @@ class Localtax extends CommonObject
 	 */
 	public $fk_type;
 
+	/**
+	 * @var string
+	 */
 	public $paymenttype;
 
 	/**
@@ -535,7 +550,7 @@ class Localtax extends CommonObject
 						dol_print_error($this->db);
 					}
 
-					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs((float) $this->amount), '', '', $user);
+					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs((float) $this->amount), '', 0, $user);
 
 					// Update fk_bank into llx_localtax so we know the line of localtax used to generate the bank entry.
 					if ($bank_line_id > 0) {

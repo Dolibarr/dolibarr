@@ -304,7 +304,7 @@ $moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_medias');
 
-$head = ecm_prepare_dasboard_head(null);
+$head = ecm_prepare_dasboard_head();
 print dol_get_fiche_head($head, 'index_medias', '', -1, '');
 
 

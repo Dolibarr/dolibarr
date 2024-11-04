@@ -359,9 +359,9 @@ foreach ($demoprofiles as $profilearray) {
 		print '</a>';
 
 
-		// Modules (a profile you must choose modules)
+		// Modules (a profile to customize by selecting modules)
 		if (empty($profilearray['url'])) {
-			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; padding-bottom: 8px">';
+			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="text-align: justify; font-size:0.75em; padding-bottom: 8px">';
 
 			print '<span class="opacitymedium small">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
 

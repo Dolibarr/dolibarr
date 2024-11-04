@@ -195,7 +195,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	}
 } elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
-	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }
 
 // Update extrafields
@@ -689,7 +689,7 @@ if ($action == 'create') {
 				$shipment->fetch($object->origin_id);
 
 				// Show links to link elements
-				//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
 				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 

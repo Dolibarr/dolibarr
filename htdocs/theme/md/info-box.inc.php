@@ -610,6 +610,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+.kanban .box-flex-item-5lines {
+	line-height: 1.18em;
+}
 
 /* css for small kanban */
 .box-flex-item-small {

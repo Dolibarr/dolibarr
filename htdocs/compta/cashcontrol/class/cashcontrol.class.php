@@ -300,7 +300,7 @@ class CashControl extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
 		$sql .= " SET status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

@@ -17,6 +17,7 @@ ContactsCategoriesArea=Contact tags/categories area
 AccountsCategoriesArea=Bank account tags/categories area
 ProjectsCategoriesArea=Project tags/categories area
 UsersCategoriesArea=User tags/categories area
+Bank_linesCategoriesArea==Bank lines tags/categories area
 SubCats=Sub-categories
 CatList=List of tags/categories
 CatListAll=List of tags/categories (all types)

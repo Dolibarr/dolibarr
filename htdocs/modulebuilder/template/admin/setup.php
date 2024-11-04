@@ -104,7 +104,7 @@ if (!$user->admin) {
 
 // Setup conf for selection of an URL
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+$item->fieldAttr['placeholder'] = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
 // Setup conf for selection of a simple string input
@@ -116,20 +116,20 @@ $item->fieldAttr['placeholder'] = 'A placeholder here';
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf for a selection of a thirdparty
+// Setup conf for a selection of a Thirdparty
 $item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
 // Setup conf for a selection of a boolean
 $formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
 
-// Setup conf for a selection of an email template of type thirdparty
+// Setup conf for a selection of an Email template of type thirdparty
 $formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');
 
 // Setup conf for a selection of a secured key
 //$formSetup->newItem('MYMODULE_MYPARAM7')->setAsSecureKey();
 
-// Setup conf for a selection of a product
+// Setup conf for a selection of a Product
 $formSetup->newItem('MYMODULE_MYPARAM8')->setAsProduct();
 
 // Add a title for a new section
@@ -159,14 +159,25 @@ $formSetup->newItem('MYMODULE_CATEGORY_ID_XXX')->setAsCategory('product');
 $item = $formSetup->newItem('MYMODULE_MYPARAM10');
 $item->setAsColor();
 $item->defaultFieldValue = '#FF0000';
-$item->nameText = $item->getNameText().' more html text ';
-$item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');
 //$item->fieldValue = '';
 //$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
 //$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
 //$item->fieldInputOverride = false; // set this var to override field input
 //$item->fieldOutputOverride = false; // set this var to override field output
+
+$item = $formSetup->newItem('MYMODULE_MYPARAM11')->setAsHtml();
+$item->nameText = $item->getNameText().' more html text ';
+$item->fieldInputOverride = '';
+$item->helpText = $langs->transnoentities('HelpMessage');
+$item->cssClass = 'minwidth500';
+
+$item = $formSetup->newItem('MYMODULE_MYPARAM12');
+$item->fieldOverride = "Value forced, can't be modified";
+$item->cssClass = 'minwidth500';
+
+//$item = $formSetup->newItem('MYMODULE_MYPARAM13')->setAsDate();	// Not yet implemented
+
+// End of definition of parameters
 
 
 $setupnotempty += count($formSetup->items);

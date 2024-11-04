@@ -1087,9 +1087,42 @@ class BonPrelevement extends CommonObject
 		}
 
 		$error = 0;
+		// Pre-store some values into variables to simplify following sql requests
+		if ($sourcetype != 'salary') {
+			$entity = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$socOrUser = 'fk_soc';
+			$societeOrUser = 'societe';
+		} else {
+			$entity = getEntity('salary');
+			$sqlTable = 'salary';
+			$socOrUser = 'fk_user';
+			$societeOrUser = 'user';
+		}
+
+		$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
+
+		// Check if there is an iban associated to bank transfer or if we take the default
+		$sql = "SELECT fk_societe_rib";
+		$sql .= " FROM " . $this->db->prefix() . "prelevement_demande as pd";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->escape($sqlTable) . " as f ON f.rowid = pd.fk_".$this->db->escape($sqlTable);
+		$sql .= " WHERE f.entity IN (" . $this->db->escape($entity) . ')';
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__ . " Read fk_societe_rib error " . $this->db->lasterror(), LOG_ERR);
+			return -1;
+		}
+		$societeRibID = 0;
+		if ($resql->num_rows) {
+			$obj = $this->db->fetch_object($resql);
+			$societeRibID = $obj->fk_societe_rib;
+			$this->db->free($resql);
+		}
 
 		$datetimeprev = dol_now('gmt');
-		// Choice the date of the execution direct debit
+		// Choice of the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
 		}
@@ -1106,15 +1139,12 @@ class BonPrelevement extends CommonObject
 		$factures_result = array();
 		$factures_prev_id = array();
 		$factures_errors = array();
+
 		if (!$error) {
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
-			if ($sourcetype != 'salary') {
-				$sql .= ", f.fk_soc";
-			} else {
-				$sql .= ", f.fk_user";
-			}
+			$sql .= ", f.".$this->db->escape($socOrUser);
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
@@ -1124,33 +1154,20 @@ class BonPrelevement extends CommonObject
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
+			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->escape($sqlTable);
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser." as s ON s.rowid = f.".$this->db->escape($socOrUser);
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser."_rib as sr ON s.rowid = sr.".$this->db->escape($socOrUser);
 			if ($sourcetype != 'salary') {
-				if ($type != 'bank-transfer') {
-					$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
+				if (!empty($societeRibID)) {
+					$sql .= " AND sr.rowid = " . intval($societeRibID);
 				} else {
-					$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
+					$sql .= " AND sr.default_rib = 1";
 				}
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
-			} else {
-				$sql .= " FROM " . MAIN_DB_PREFIX . "salary as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";
-				// TODO Add 'AND sr.default_rib = 1' here. Note: the column has been created in v21 in llx_user_rib and default to 0
+				// TODO Add 'AND sr.default_rib = 1' in sourcetype salary too Note: the column has been created in v21 in llx_user_rib and default to 0
 				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			}
-			if ($sourcetype != 'salary') {
-				if ($type != 'bank-transfer') {
-					$sql .= " WHERE f.entity IN (" . getEntity('invoice') . ')';
-				} else {
-					$sql .= " WHERE f.entity IN (" . getEntity('supplier_invoice') . ')';
-				}
-			} else {
-				$sql .= " WHERE f.entity IN (" . getEntity('salary') . ')';
-			}
+			$sql .= " WHERE f.entity IN (" . $this->db->escape($entity) . ')';
 			if ($sourcetype != 'salary') {
 				$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";
@@ -1176,6 +1193,7 @@ class BonPrelevement extends CommonObject
 
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
+					'@phan-var-force array<int<0,12>,string> $row';
 					$factures[$i] = $row; // All fields
 
 					if ($row[7] == 0) {
@@ -1190,7 +1208,6 @@ class BonPrelevement extends CommonObject
 				$this->db->free($resql);
 				dol_syslog(__METHOD__ . " Read invoices/salary, " . $i . " invoices/salary to withdraw", LOG_DEBUG);
 			} else {
-				$error++;
 				$this->error = $this->db->lasterror();
 				dol_syslog(__METHOD__ . " Read invoices/salary error " . $this->db->lasterror(), LOG_ERR);
 				return -1;
@@ -1247,7 +1264,7 @@ class BonPrelevement extends CommonObject
 							//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 						} else {
 							if ($type != 'bank-transfer') {
-								$tmpsoc->id = $fac[2];
+								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/compta/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
@@ -1255,7 +1272,7 @@ class BonPrelevement extends CommonObject
 								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-								$tmpsoc->id = $fac[2];
+								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
@@ -1263,7 +1280,7 @@ class BonPrelevement extends CommonObject
 								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype == 'salary') {
-								$tmpuser->id = $fac[2];
+								$tmpuser->id = (int) $fac[2];
 								$tmpuser->firstname = $fac[8];
 								$salary_url = "<a href='" . DOL_URL_ROOT . '/salaries/card.php?id=' . $fac[0] . "'>" . $fac[0] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
@@ -1458,7 +1475,7 @@ class BonPrelevement extends CommonObject
 
 						$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);	// Example "FR78ZZZ123456"
 
-						$this->raison_sociale = $account->proprio;
+						$this->raison_sociale = $account->owner_name;
 					}
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
@@ -1468,7 +1485,7 @@ class BonPrelevement extends CommonObject
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
-					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid);
+					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, $societeRibID);
 					if ($result < 0) {
 						//var_dump($this->error);
 						//var_dump($this->invoice_in_error);
@@ -1773,14 +1790,15 @@ class BonPrelevement extends CommonObject
 	 * - Others countries: Warning message
 	 * File is generated with name this->filename
 	 *
-	 * @param	string	$format				FRST, RCUR or ALL
+	 * @param   string  $format				FRST, RCUR or ALL
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
-	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 * @param   int     $fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @param   int  	$forsalary          If the SEPA is to pay salaries
+	 * @param   string  $societeRibID		If defined, will use this ID to get the RIB. Otherwise, the default RIB will be taken.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0)
+	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, string $societeRibID = '')
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1851,7 +1869,11 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
-				$sql .= " AND rib.default_rib = 1";
+				if (!empty($societeRibID)) {
+					$sql .= " AND rib.rowid = " . intval($societeRibID);
+				} else {
+					$sql .= " AND rib.default_rib = 1";
+				}
 				$sql .= " AND rib.type = 'ban'";
 
 				// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.
@@ -1990,7 +2012,11 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND p.fk_facture_fourn = f.rowid";
 					$sql .= " AND f.fk_soc = soc.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
-					$sql .= " AND rib.default_rib = 1";
+					if (!empty($societeRibID)) {
+						$sql .= " AND rib.rowid = " . intval($societeRibID);
+					} else {
+						$sql .= " AND rib.default_rib = 1";
+					}
 					$sql .= " AND rib.type = 'ban'";
 				}
 				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
@@ -2533,7 +2559,7 @@ class BonPrelevement extends CommonObject
 
 			$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);  // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
-			$this->raison_sociale = $account->proprio;
+			$this->raison_sociale = $account->owner_name;
 		}
 
 		// Get pending payments

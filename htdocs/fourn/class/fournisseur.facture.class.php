@@ -1361,7 +1361,7 @@ class FactureFournisseur extends CommonInvoice
 			$facligne->desc = $remise->description; // Description ligne
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-			$facligne->subprice = -$remise->amount_ht;
+			$facligne->subprice = -(float) $remise->amount_ht;
 			$facligne->fk_product = 0; // Id produit predefini
 			$facligne->product_type = 0;
 			$facligne->qty = 1;
@@ -1388,9 +1388,9 @@ class FactureFournisseur extends CommonInvoice
 				$facligne->pa_ht = $arraytmp['pa_total'];
 			}
 
-			$facligne->total_ht  = -$remise->amount_ht;
-			$facligne->total_tva = -$remise->amount_tva;
-			$facligne->total_ttc = -$remise->amount_ttc;
+			$facligne->total_ht  = -(float) $remise->amount_ht;
+			$facligne->total_tva = -(float) $remise->amount_tva;
+			$facligne->total_ttc = -(float) $remise->amount_ttc;
 
 			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
@@ -3132,7 +3132,7 @@ class FactureFournisseur extends CommonInvoice
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." f.entity = ".$conf->entity;
+		$sql .= " ".$clause." f.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3551,7 +3551,7 @@ class FactureFournisseur extends CommonInvoice
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $tmpinvoice);
 
 						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
 
