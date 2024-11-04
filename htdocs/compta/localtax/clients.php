@@ -113,8 +113,6 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
-	// @phan-suppress-next-line PhanPluginUnreachableCode
-	exit;  // accessforbidden already exits @phpstan-ignore-line
 }
 
 $calc = 0;

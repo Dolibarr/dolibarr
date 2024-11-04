@@ -4308,6 +4308,13 @@ div.liste_titre_bydiv {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
+div.liste_titre_bydiv_nothingafter {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	border-bottom-width: 1px;
+	border-bottom-color: var(--colortopbordertitle1);
+	border-bottom-style: solid;
+}
 table.liste tr:last-child td:first-child,
 table.liste tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
@@ -5258,7 +5265,7 @@ img.boxhandle, img.boxclose {
 .search-component-assistance {
 	display: none;
 	position: absolute;
-	background: var(--colorbacktitle1);
+	background: var(--colorbackbody);
 	border-width: 1px 1px 2px;
 	border-style: solid;
 	border-color: rgb(204, 204, 204);
@@ -5268,6 +5275,7 @@ img.boxhandle, img.boxclose {
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
+	min-width: 600px
 }
 .search-component-assistance .assistance-title {
 	font-size: 15px;

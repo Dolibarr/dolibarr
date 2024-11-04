@@ -552,8 +552,8 @@ if (is_array($search_groupby) && count($search_groupby)) {
 					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
 				}
 			}
-			//var_dump($object->fields);
-			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
+			//var_dump($labeloffield);
+			setEventMessages($langs->transnoentitiesnoconv("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
 
@@ -599,7 +599,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
 	}
 
-	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock centpercent">';
+	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock liste_titre_bydiv_nothingafter centpercent">';
 
 	// Select object
 	print '<div class="divadvancedsearchfield center floatnone">';
@@ -1237,12 +1237,13 @@ if ($mode == 'graph') {
 	}
 }
 
+print '</div>';
+
 if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Show admin info
 	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, '1', '', 'TechnicalInformation');
 }
 
-print '<div>';
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	print dol_get_fiche_end();

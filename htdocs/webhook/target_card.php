@@ -228,8 +228,6 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-web
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
-		// @phan-suppress-next-line PhanPluginUnreachableCode
-		exit;  // accessforbidden already exits @phpstan-ignore-line
 	}
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Target")), '', 'object_'.$object->picto);
