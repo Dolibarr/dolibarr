@@ -8381,11 +8381,6 @@ parameters:
 			path: ../../htdocs/core/ajax/selectobject.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/ajax/vatrates.php
-
-		-
 			message: "#^Constructor of class box_accountancy_last_manual_entries has an unused parameter \\$param\\.$#"
 			count: 1
 			path: ../../htdocs/core/boxes/box_accountancy_last_manual_entries.php
@@ -21396,11 +21391,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
-			message: "#^Variable \\$modulelowercase might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
 			message: "#^Variable \\$moduleobj might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/modulebuilder/index.php
@@ -28546,11 +28536,6 @@ parameters:
 			path: ../../htdocs/stripe/admin/stripe.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/stripe/admin/stripe.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/stripe/charge.php
@@ -28658,11 +28643,6 @@ parameters:
 		-
 			message: "#^Variable \\$fournprice might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 20
 			path: ../../htdocs/supplier_proposal/card.php
 
 		-
@@ -28836,11 +28816,6 @@ parameters:
 			path: ../../htdocs/takepos/admin/bar.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/takepos/admin/printqr.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/takepos/admin/receipt.php
@@ -28863,11 +28838,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/takepos/admin/terminal.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/takepos/admin/terminal.php
 
 		-
@@ -29054,26 +29024,6 @@ parameters:
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/printbox.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/takepos/public/menu.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/public/menu.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/public/menu.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/takepos/public/menu.php
 
 		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"

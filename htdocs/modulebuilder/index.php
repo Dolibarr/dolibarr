@@ -96,6 +96,7 @@ $family = GETPOST('family', 'alpha');
 $picto = GETPOST('idpicto', 'alpha');
 $idmodule = GETPOST('idmodule', 'alpha');
 $format = '';  // Prevent undefined in css tab
+$modulelowercase = '';
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
