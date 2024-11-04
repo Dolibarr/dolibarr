@@ -18,8 +18,8 @@
  */
 
 /**
- * @var Conf $conf
  * @var Adherent $object
+ * @var Conf $conf
  * @var Translate $langs
  */
 

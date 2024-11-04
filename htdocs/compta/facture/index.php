@@ -29,9 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
-// Security check
-restrictedArea($user, 'facture');
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +36,9 @@ restrictedArea($user, 'facture');
  * @var Translate $langs
  * @var User $user
  */
+
+// Security check
+restrictedArea($user, 'facture');
 
 // Load translation files required by the page
 $langs->load('bills');

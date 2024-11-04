@@ -41,6 +41,7 @@
  * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  *
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete

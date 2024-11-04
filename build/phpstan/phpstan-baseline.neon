@@ -826,11 +826,6 @@ parameters:
 			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_edit.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_edit.tpl.php
-
-		-
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 26
 			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_edit.tpl.php
@@ -838,11 +833,6 @@ parameters:
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
 			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
 
 		-
@@ -2731,23 +2721,8 @@ parameters:
 			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$i might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
-
-		-
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
 
 		-
@@ -5651,11 +5626,6 @@ parameters:
 			path: ../../htdocs/compta/facture/document.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/index.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/compta/facture/invoicetemplate_list.php
@@ -7301,16 +7271,6 @@ parameters:
 			path: ../../htdocs/contact/canvas/default/tpl/contactcard_create.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/contact/canvas/default/tpl/contactcard_create.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/contact/canvas/default/tpl/contactcard_create.tpl.php
-
-		-
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 24
 			path: ../../htdocs/contact/canvas/default/tpl/contactcard_create.tpl.php
@@ -7318,11 +7278,6 @@ parameters:
 		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/contact/canvas/default/tpl/contactcard_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
 			path: ../../htdocs/contact/canvas/default/tpl/contactcard_edit.tpl.php
 
 		-
@@ -7336,18 +7291,8 @@ parameters:
 			path: ../../htdocs/contact/canvas/default/tpl/contactcard_view.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/contact/canvas/default/tpl/contactcard_view.tpl.php
-
-		-
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 32
-			path: ../../htdocs/contact/canvas/default/tpl/contactcard_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/contact/canvas/default/tpl/contactcard_view.tpl.php
 
 		-
@@ -8226,19 +8171,9 @@ parameters:
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: "#^Variable \\$year might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_printing.inc.php
 
 		-
 			message: "#^Variable \\$classfile might not be defined\\.$#"
@@ -8247,21 +8182,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_printing.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/actions_printing.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/core/actions_printing.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_printing.inc.php
 
@@ -8276,18 +8196,8 @@ parameters:
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: "#^Variable \\$contact might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -8312,21 +8222,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$id might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
