@@ -37,6 +37,7 @@
 // $diroutputmassaction may be defined
 // $confirm
 /**
+ * @var CommonObject $object
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var HookManager $hookmanager

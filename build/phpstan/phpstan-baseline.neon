@@ -8106,11 +8106,6 @@ parameters:
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 33
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: "#^Variable \\$pagecount might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_massactions.inc.php
@@ -14246,17 +14241,7 @@ parameters:
 			path: ../../htdocs/core/tpl/admin_extrafields_view.tpl.php
 
 		-
-			message: "#^Variable \\$array_query might not be defined\\.$#"
-			count: 44
-			path: ../../htdocs/core/tpl/advtarget.tpl.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/advtarget.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/advtarget.tpl.php
 
@@ -14266,16 +14251,6 @@ parameters:
 			path: ../../htdocs/core/tpl/ajaxrow.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
@@ -14283,26 +14258,6 @@ parameters:
 		-
 			message: "#^Variable \\$idcomment might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
-
-		-
-			message: "#^Variable \\$withproject might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
 
 		-
@@ -28061,21 +28016,6 @@ parameters:
 			path: ../../htdocs/societe/card.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/societe/checkvat/checkVatPopup.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/societe/checkvat/checkVatPopup.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 30
-			path: ../../htdocs/societe/checkvat/checkVatPopup.php
-
-		-
 			message: "#^Variable \\$messagetoshow might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/checkvat/checkVatPopup.php
@@ -31896,94 +31836,24 @@ parameters:
 			path: ../../scripts/invoices/rebuild_merge_pdf.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 6
-			path: ../../scripts/members/sync_members_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../scripts/members/sync_members_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/members/sync_members_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/members/sync_members_dolibarr2ldap.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 2
 			path: ../../scripts/members/sync_members_dolibarr2ldap.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 33
-			path: ../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
+			message: "#^Unable to resolve the template type T in call to function array_values$#"
 			count: 1
-			path: ../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
 			path: ../../scripts/members/sync_members_ldap2dolibarr.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/members/sync_members_types_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/members/sync_members_types_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../scripts/members/sync_members_types_dolibarr2ldap.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 2
 			path: ../../scripts/members/sync_members_types_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../scripts/members/sync_members_types_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../scripts/members/sync_members_types_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/members/sync_members_types_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../scripts/members/sync_members_types_ldap2dolibarr.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
