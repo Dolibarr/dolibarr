@@ -52,8 +52,8 @@ if (!empty($user->socid) && $user->socid > 0) {
 
 // Maximum elements of the tables
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', $max);
+$maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', $max);
 
 
 /*
