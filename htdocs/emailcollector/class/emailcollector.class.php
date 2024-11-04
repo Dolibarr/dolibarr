@@ -1144,7 +1144,7 @@ class EmailCollector extends CommonObject
 				} else {
 					$keyforprovider = '';
 				}
-				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
 				if (!empty($supportedoauth2array)) {
@@ -1185,11 +1185,22 @@ class EmailCollector extends CommonObject
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
-						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+
+						$scopes = array();
+						if (preg_match('/^Microsoft/', $OAUTH_SERVICENAME)) {
+							//$extraparams = $tokenobj->getExtraParams();
+							$tmp = explode('-', $OAUTH_SERVICENAME);
+							$scopes = explode(',', getDolGlobalString('OAUTH_'.strtoupper($tmp[0]).(empty($tmp[1]) ? '' : '-'.$tmp[1]).'_SCOPE'));
+						}
+
+						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $scopes);
+
 						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
-						// We have to save the token because Google give it only once
+
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
+
+						// We have to save the token because answer give it only once
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
