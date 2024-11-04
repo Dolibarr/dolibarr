@@ -616,11 +616,11 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '</td><td>';
 		if ($action == 'editaccountancycodeusergeneral' && $user->hasRight('user', 'user', 'creer')) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_user_general, 'accountancycodeusergeneral', 0, 1, '', 1);
-        } else {
+		} else {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $object->accountancy_code_user_general, 1);
 			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
-        }
+		}
 		$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
 		print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
 		print '</td>';
