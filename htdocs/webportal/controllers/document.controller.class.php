@@ -118,13 +118,9 @@ class DocumentController extends Controller
 		// Security check
 		if (empty($modulepart)) {
 			httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
-			// @phan-suppress-next-line PhanPluginUnreachableCode
-			exit;  // httponly_accessforbidden already exits @phpstan-ignore-line
 		}
 		if (empty($original_file)) {
 			httponly_accessforbidden('Bad link. Missing identification to find file (original_file)', 400);
-			// @phan-suppress-next-line PhanPluginUnreachableCode
-			exit;  // httponly_accessforbidden already exits @phpstan-ignore-line
 		}
 
 		// get original file
