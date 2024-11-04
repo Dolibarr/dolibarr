@@ -47,7 +47,7 @@ parameters:
 	polluteScopeWithAlwaysIterableForeach: true
 	reportMagicMethods: false
 	reportMagicProperties: false
-	treatPhpDocTypesAsCertain: true
+	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
 		- '#.*phan-var#'
 	internalErrorsCountLimit: 50
