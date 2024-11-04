@@ -841,11 +841,6 @@ parameters:
 			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/card.php
@@ -7856,28 +7851,13 @@ parameters:
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 14
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$extrafields might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
@@ -7888,11 +7868,6 @@ parameters:
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 4
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
@@ -7911,11 +7886,6 @@ parameters:
 			path: ../../htdocs/core/actions_comments.inc.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_comments.inc.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/core/actions_comments.inc.php
@@ -7923,16 +7893,6 @@ parameters:
 		-
 			message: "#^Variable \\$idcomment might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/core/actions_comments.inc.php
 
 		-
@@ -8181,18 +8141,13 @@ parameters:
 			path: ../../htdocs/core/actions_printing.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_printing.inc.php
-
-		-
 			message: "#^Parameter \\#1 \\$filenb of function dol_remove_file_process expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
+			message: "#^Right side of \\|\\| is always true\\.$#"
+			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-

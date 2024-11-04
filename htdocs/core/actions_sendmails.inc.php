@@ -38,6 +38,7 @@
  * @var Societe $mysoc
  * @var Translate $langs
  *
+ * @var string $action
  * @var ?string $subject
  */
 '

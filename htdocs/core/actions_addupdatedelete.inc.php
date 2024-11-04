@@ -41,10 +41,15 @@
 @phan-var-force string $hideref
 ';
 /**
+ * @var CommonObject $object
  * @var CommonObject $this
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ * @var User $user
+ *
  * @var ?string $action
  * @var ?string $cancel
- * @var CommonObject $object
  * @var string $permissiontoadd
  * @var ?string $permissionedit
  * @var string $permissiontodelete
