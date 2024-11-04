@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Juanjo Menent			<jmenent@2byte.es>
@@ -266,6 +266,30 @@ if ($action == 'install' && $allowonlineinstall) {
 			$error++;
 		}
 	}
+
+	/*
+	if (!$error) {
+		if (GETPOST('checkforcompliance')) {
+			$dir = $dirins;
+			$file = $modulenameval;
+			// $installedmodule
+			try {
+				$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+				$modName = substr($file, 0, dol_strlen($file) - 10);
+				if ($modName) {
+					if (class_exists($modName)) {
+						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
+
+						//var_dump($objMod);
+					}
+				}
+			} catch(Exception $e) {
+				// Nothing done
+			}
+		}
+	}
+	*/
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")), null, 'warnings');
@@ -837,11 +861,19 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
 			)
 		) {
-			$checkRes = $objMod->checkForUpdate();
+			$checkRes = $objMod->checkForUpdate();	// Check for update version
 			if ($checkRes > 0) {
 				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
 			} elseif ($checkRes < 0) {
-				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+				setEventMessage($objMod->getName().': '.$langs->trans('CheckVersionFail'), 'warnings');
+			}
+		}
+
+		if ($objMod->isCoreOrExternalModule() == 'external' && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
+			if (!is_numeric($checkRes) && $checkRes != '') {
+				$langs->load("errors");
+				setEventMessages($objMod->getName().' : '.$langs->trans($checkRes), null, 'errors');
 			}
 		}
 
@@ -1305,7 +1337,7 @@ if ($mode == 'deploy') {
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
 						if(this.files[0].size > '.($maxmin * 1024).') {
-							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
+							alert("'.dol_escape_js($langs->transnoentitiesnoconv("ErrorFileSizeTooLarge")).'");
 							this.value = "";
 						}
 					});
