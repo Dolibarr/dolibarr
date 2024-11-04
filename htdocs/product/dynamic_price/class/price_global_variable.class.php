@@ -52,7 +52,7 @@ class PriceGlobalVariable
 	public $id;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $code;
 

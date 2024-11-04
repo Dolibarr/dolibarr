@@ -71,7 +71,7 @@ class Dolresource extends CommonObject
 	public $fk_code_type_resource;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $type_label;
 

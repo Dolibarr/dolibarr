@@ -125,7 +125,7 @@ class PaymentDonation extends CommonObject
 	 */
 	public $type_label;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $chid;
 	/**

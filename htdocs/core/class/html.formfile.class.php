@@ -1943,8 +1943,8 @@ class FormFile
 				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
-						if (class_exists($hookmanager->resArray['classname'])) {
-							$tmpclassname = $hookmanager->resArray['classname'];
+						$tmpclassname = $hookmanager->resArray['classname'];
+						if (is_string($tmpclassname) && class_exists($tmpclassname)) {
 							$object_instance = new $tmpclassname($this->db);
 						}
 					}

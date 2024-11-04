@@ -60,11 +60,11 @@ class ProductStockEntrepot extends CommonObject
 	public $fk_entrepot;
 
 	/**
-	 * @var float|string
+	 * @var null|float|string
 	 */
 	public $seuil_stock_alerte;
 	/**
-	 * @var float|string
+	 * @var null|float|string
 	 */
 	public $desiredstock;
 	/**
