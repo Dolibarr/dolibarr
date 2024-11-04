@@ -64,15 +64,15 @@ if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 }
 if (isModEnabled('accounting')) {
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 if (isModEnabled('accounting')) {
-    $langs->load('compta');
+	$langs->load('compta');
 }
 
 $id = GETPOSTINT('id');
@@ -302,10 +302,10 @@ if (empty($reshook)) {
 			$object->job = GETPOST("job", 'alphanohtml');
 			$object->signature = GETPOST("signature", 'restricthtml');
 
-            $object->accountancy_code_user_general = GETPOST("accountancy_code_user_general", 'alphanohtml');
+			$object->accountancy_code_user_general = GETPOST("accountancy_code_user_general", 'alphanohtml');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 
-            $object->note_public = GETPOST("note_public", 'restricthtml');
+			$object->note_public = GETPOST("note_public", 'restricthtml');
 			$object->note_private = GETPOST("note_private", 'restricthtml');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
@@ -488,10 +488,10 @@ if (empty($reshook)) {
 				$object->job = GETPOST("job", 'alphanohtml');
 				$object->signature = GETPOST("signature", 'restricthtml');
 
-                $object->accountancy_code_user_general = GETPOST("accountancy_code_user_general", 'alphanohtml');
+				$object->accountancy_code_user_general = GETPOST("accountancy_code_user_general", 'alphanohtml');
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 
-                $object->openid = GETPOST("openid", 'alphanohtml');
+				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
 				$object->fk_user_expense_validator = GETPOSTINT("fk_user_expense_validator") > 0 ? GETPOSTINT("fk_user_expense_validator") : 0;
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
@@ -1430,28 +1430,28 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	print "</table>\n";
 
-    if (isModEnabled('accounting')) {
-        $formaccounting = new FormAccounting($db);
+	if (isModEnabled('accounting')) {
+		$formaccounting = new FormAccounting($db);
 
-        print '<hr><table class="border centpercent">';
+		print '<hr><table class="border centpercent">';
 
-        // Accountancy code user general
-        print '<tr><td class="titlefieldcreate">';
-        print $langs->trans("UserAccountancyCodeGeneral");
-        print '</td><td>';
-        print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 1, 1, 'minwidth200');
-        $accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
-        print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
-        print '</td>';
+		// Accountancy code user general
+		print '<tr><td class="titlefieldcreate">';
+		print $langs->trans("UserAccountancyCodeGeneral");
+		print '</td><td>';
+		print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 1, 1, 'minwidth200');
+		$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
+		print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
+		print '</td>';
 
-        // Accountancy code user auxiliary
-        print '<tr><td>'.$langs->trans("UserAccountancyCode").'</td>';
-        print '<td>';
-        print '<input type="text" class="maxwidthonsmartphone" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
-        print '</td></tr>';
+		// Accountancy code user auxiliary
+		print '<tr><td>'.$langs->trans("UserAccountancyCode").'</td>';
+		print '<td>';
+		print '<input type="text" class="maxwidthonsmartphone" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
+		print '</td></tr>';
 
-        print "</table>\n";
-    }
+		print "</table>\n";
+	}
 
 	print dol_get_fiche_end();
 
@@ -2959,42 +2959,42 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '</table>';
 
-            // Accountancy
-            if (isModEnabled('accounting')) {
-            print '<hr><table class="border centpercent">';
-                $formaccounting = new FormAccounting($db);
+			// Accountancy
+			if (isModEnabled('accounting')) {
+				print '<hr><table class="border centpercent">';
+				$formaccounting = new FormAccounting($db);
 
-                print '<tr>';
-                print '<td>';
-                print $langs->trans("UserAccountancyCodeGeneral");
-                print '</td><td>';
-                if ($permissiontoedit) {
-                    print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 1, 1, 'minwidth200');
-                } else {
-                    print length_accountg($object->accountancy_code_user_general);
-                }
-                $accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
-                print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
-                print '</td>';
+				print '<tr>';
+				print '<td>';
+				print $langs->trans("UserAccountancyCodeGeneral");
+				print '</td><td>';
+				if ($permissiontoedit) {
+					print $formaccounting->select_account($object->accountancy_code_user_general, 'accountancy_code_user_general', 1, [], 1, 1, 'minwidth200');
+				} else {
+					print length_accountg($object->accountancy_code_user_general);
+				}
+				$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
+				print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
+				print '</td>';
 
-                // Accountancy code
-                print "<tr>";
-                print '<td class="titlefieldcreate">'.$langs->trans("UserAccountancyCode").'</td>';
-                print '<td>';
-                if ($permissiontoedit) {
-                    print '<input type="text" class="flat maxwidth300" name="accountancy_code" value="'.$object->accountancy_code.'">';
-                } else {
-                    print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-                    print $object->accountancy_code;
-                }
-                print '</td>';
-                print "</tr>";
-            }
+				// Accountancy code
+				print "<tr>";
+				print '<td class="titlefieldcreate">'.$langs->trans("UserAccountancyCode").'</td>';
+				print '<td>';
+				if ($permissiontoedit) {
+					print '<input type="text" class="flat maxwidth300" name="accountancy_code" value="'.$object->accountancy_code.'">';
+				} else {
+					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print $object->accountancy_code;
+				}
+				print '</td>';
+				print "</tr>";
+			}
 
-            print '</td>';
-            print "</tr>\n";
+			print '</td>';
+			print "</tr>\n";
 
-            print '</table>';
+			print '</table>';
 
 			print dol_get_fiche_end();
 

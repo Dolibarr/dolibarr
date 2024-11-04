@@ -308,7 +308,7 @@ if ($result) {
 		// Set accountancy code for user
 		// $obj->accountancy_code is the accountancy_code of table u=user (but it is defined only if
 		// a link with type 'user' exists and user as a subledger account)
-        $accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+		$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
 		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
@@ -317,7 +317,7 @@ if ($result) {
 			'lastname' => $obj->lastname,
 			'firstname' => $obj->firstname,
 			'email' => $obj->useremail,
-            'accountancy_code_general' => $accountancy_code_user_general,
+			'accountancy_code_general' => $accountancy_code_user_general,
 			'accountancy_code' => $compta_user,
 			'status' => $obj->userstatus
 		);
