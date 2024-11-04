@@ -806,11 +806,6 @@ parameters:
 			path: ../../htdocs/adherents/admin/member.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/admin/website.php
-
-		-
 			message: "#^Variable \\$canvas might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
@@ -29211,11 +29206,6 @@ parameters:
 			path: ../../htdocs/theme/eldy/manifest.json.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/theme/eldy/manifest.json.php
-
-		-
 			message: "#^Variable \\$badgeDanger might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/theme/eldy/progress.inc.php
@@ -29291,26 +29281,6 @@ parameters:
 			path: ../../htdocs/theme/md/badges.inc.php
 
 		-
-			message: "#^Variable \\$butactionbg might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: "#^Variable \\$colortextlink might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: "#^Variable \\$dol_optimize_smallscreen might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/theme/md/btn.inc.php
-
-		-
 			message: "#^Variable \\$fontlist might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/theme/md/btn.inc.php
@@ -29327,11 +29297,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$right might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: "#^Variable \\$textbutaction might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/theme/md/btn.inc.php
 

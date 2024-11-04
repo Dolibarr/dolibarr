@@ -397,6 +397,7 @@ if ($modulepart == 'barcode') {
 
 	$module = new $classname($db);
 	'@phan-var-force ModeleBarCode $module';
+	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}
