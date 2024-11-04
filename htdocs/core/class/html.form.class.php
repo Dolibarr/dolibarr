@@ -5259,7 +5259,7 @@ class Form
 	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
 	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
-	public function selectComptesCustomer($selected = '', $htmlname = 'accountcustomerid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
+	public function selectAccountCustomer($selected = '', $htmlname = 'accountcustomerid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5447,7 +5447,7 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setbankaccountcustomer">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$nbaccountfound = $this->selectComptesCustomer($selected, $htmlname, '', $addempty);
+			$nbaccountfound = $this->selectAccountCustomer($selected, $htmlname, '', $addempty);
 			if ($nbaccountfound > 0) {
 				print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			}

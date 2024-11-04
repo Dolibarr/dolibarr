@@ -1098,7 +1098,7 @@ if ($action == 'create') {
 
 		// Customer Bank Account
 		print "<tr><td>".$langs->trans('BankAccountCustomer')."</td><td>";
-		$form->selectComptesCustomer(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', '', 1);
+		$form->selectAccountCustomer(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', '', 1);
 		print "</td></tr>";
 
 		print '<script>
