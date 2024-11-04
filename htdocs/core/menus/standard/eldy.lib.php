@@ -2431,7 +2431,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  */
 function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $conf, $langs;
+	global $user, $langs;
 
 	if ($mainmenu == 'tools') {
 		if (empty($user->socid)) { // limit to internal users
@@ -2464,6 +2464,8 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
 			//$newmenu->add("/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->hasRight('export',  'lire'));
 		}
+
+		$newmenu->add("/core/customreports.php?leftmenu=customreports", $langs->trans("CustomReports"), 0, 1, '', $mainmenu, 'customreports', 0, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
 	}
 }
 

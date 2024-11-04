@@ -1329,6 +1329,6 @@ IsAfter=Is after
 IsOnOrBefore=Is on or before
 IsOnOrAfter=Is on or after
 addToFilter=Add to filter
-FilterAssistance=Filter Assistance
+FilterAssistance=Filter editor
 Operator=Operator
 AllFieldsRequired=All fields are required.
