@@ -22,6 +22,7 @@ ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_code_client(code_client, ent
 ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_code_fournisseur(code_fournisseur, entity);
 
 ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_barcode (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_nom(nom, entity);
 
 ALTER TABLE llx_societe ADD INDEX idx_societe_nom(nom);
 
