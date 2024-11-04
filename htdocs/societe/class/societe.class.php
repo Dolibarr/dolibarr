@@ -2392,7 +2392,6 @@ class Societe extends CommonObject
 	 */
 	public function set_as_client()
 	{
-		global $conf;
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_as_client is deprecated use setAsCustomer instead", LOG_NOTICE);
 		return $this->setAsCustomer();

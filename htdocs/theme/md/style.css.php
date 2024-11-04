@@ -2713,6 +2713,10 @@ div.fichehalfright {
 	}
 }
 
+div.secondcolumn > div > table.noborder {
+	margin-bottom:14px;
+}
+
 /*div.firstcolumn div.box {
 	padding-right: 10px;
 }
@@ -4425,7 +4429,7 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 	border-bottom-width: 1px;
-	border-bottom-color: var(--colortopbordertitle1);
+	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
@@ -4844,10 +4848,14 @@ div.liste_titre_bydiv {
 	border-top-style: solid;
 	<?php } ?>
 	border-collapse: collapse;
-	display: table;
+	/* display: table; */
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
 	width: calc(100% - 2px);	/* -2px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
+}
+div.liste_titre_bydiv_inlineblock {
+	display: inline-block;
+	width: 100%;
 }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
@@ -4877,7 +4885,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 28px;
+	/* height: 28px; */
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -4904,9 +4912,11 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 }
 tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
+/*
 div.liste_titre {
 	padding-left: 3px;
 }
+*/
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
 	font-family: <?php print $fontlist ?>;

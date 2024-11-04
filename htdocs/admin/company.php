@@ -524,6 +524,8 @@ if (isModEnabled('barcode')) {
 }
 
 // Tooltip for both Logo and LogSquarred
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
 $tooltiplogo = $langs->trans('AvailableFormats').' : png, jpg, jpeg';
 $tooltiplogo .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
 
