@@ -493,7 +493,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		}
 
 		//call to get_busy_resource_during in resource.lib.php
-		$busyResources = get_busy_resource_during($eventDateStart, $eventDateEnd, $assigned_ressources);
+		$busyResources = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, $assigned_ressources);
 
 		/// === false because it can return an empty array
 		if ($busyResources === false) {
