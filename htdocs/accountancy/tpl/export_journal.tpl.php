@@ -39,7 +39,7 @@
  * @var int<-1,1> $downloadMode
  */
 
- // Protection to avoid direct call of template
+// Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);

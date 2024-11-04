@@ -96,7 +96,6 @@ $family = GETPOST('family', 'alpha');
 $picto = GETPOST('idpicto', 'alpha');
 $idmodule = GETPOST('idmodule', 'alpha');
 $format = '';  // Prevent undefined in css tab
-$modulelowercase = '';
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
@@ -3485,7 +3484,7 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="module" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'" value="" autofocus>';
 	print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Delete").'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
-} elseif (!empty($module)) {
+} elseif (!empty($module) && isset($modulelowercase)) {
 	// Tabs for module
 	if (!$error) {
 		$dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
