@@ -123,7 +123,6 @@ CustomerAccountancyCode=Customer accounting code
 SupplierAccountancyCodeGeneral=General accounting code
 SupplierAccountancyCode=Vendor accounting code
 UserAccountancyCodeGeneral=General accounting code
-UserAccountancyCode=User accounting code
 CustomerAccountancyCodeShort=Cust. account. code
 SupplierAccountancyCodeShort=Sup. account. code
 UserAccountancyCodeShort=User account. code
