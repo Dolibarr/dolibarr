@@ -224,7 +224,7 @@ $tabmoreinfo = array();
 
 '
 @phan-var-force array<array{id:mixed,name:mixed,code_compta_client:string,email:string}> $tabcompany
-@phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code:string,status:int> $tabuser
+@phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code_user_general,accountancy_code:string,status:int> $tabuser
 @phan-var-force array<int,array{date:string,type_payment:string,ref:string,fk_bank:int,ban_account_ref:string,fk_bank_account:int,lib:string,type:string}> $tabpay
 @phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
 ';
@@ -538,8 +538,8 @@ if ($result) {
 							$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen
 						}
 
-						if (empty($obj->typeop_user)) {	// Add test to avoid to add amount twice if a link already exists also on user.
-							$accountancy_code_user_general = $accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+						if (empty($obj->typeop_user)) {	// Add test to avoid adding amount twice if a link already exists also on user.
+							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
                             $compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
 								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
