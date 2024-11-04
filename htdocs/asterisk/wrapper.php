@@ -97,8 +97,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Security check
 if (!isModEnabled('clicktodial')) {
 	accessforbidden();
-	// @phan-suppress-next-line PhanPluginUnreachableCode
-	exit;  // accessforbidden already terminates @phpstan-ignore-line
 }
 
 
