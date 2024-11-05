@@ -22046,6 +22046,11 @@ parameters:
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
+			message: "#^Property Opensurveysondage\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
+
+		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php

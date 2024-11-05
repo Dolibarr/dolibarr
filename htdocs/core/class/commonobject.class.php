@@ -344,7 +344,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int|array<int, string>      The object's status. Use status instead.
+	 * @var null|int|array<int, string>      The object's status. Use status instead.
 	 * @deprecated  Use $status instead.
 	 * @see $status
 	 * @see setStatut(), $status
@@ -352,9 +352,10 @@ abstract class CommonObject
 	public $statut;
 
 	/**
-	 * @var int|array<int, string>   The object's status (an int).
+	 * @var null|int|array<int, string>   The object's status (an int).
 	 *                 						Or an array listing all the potential status of the object:
 	 *                                    	array: int of the status => translated label of the status
+	 *                                    	In some classes status must be able to be null.
 	 *                                    	See for example the Account class.
 	 * @see setStatut()
 	 */

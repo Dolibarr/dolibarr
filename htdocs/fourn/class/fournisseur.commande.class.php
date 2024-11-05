@@ -83,7 +83,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
-	 * @var integer
+	 * @var int<0,1>
 	 */
 	public $restrictiononfksoc = 1;
 
@@ -115,7 +115,7 @@ class CommandeFournisseur extends CommonOrder
 	public $ref_fourn;
 
 	/**
-	 * @var int<0,5>
+	 * @var ?int<0,9>
 	 */
 	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running
