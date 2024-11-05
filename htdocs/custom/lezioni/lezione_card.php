@@ -86,7 +86,7 @@ if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 // Load translation files required by the page
-$langs->loadLangs(array("lezioni@lezioni", "other"));
+$langs->loadLangs(array("lezioni@lezioni", "other",'bills', 'banks', 'trips'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -101,6 +101,7 @@ $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page 
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
+$accountid = GETPOSTINT('bank_account');
 
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
@@ -127,7 +128,12 @@ foreach ($object->fields as $key => $val) {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
 }
-
+if(GETPOSTISSET("bank_account")){
+	$object->bank_account = $accountid;
+}
+if(GETPOSTISSET("bank_transaction")){
+	$object->bank_transaction = GETPOSTINT('bank_transaction');;
+}
 if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
@@ -297,6 +303,24 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
+	print '<br>';
+
+	//payment info
+	if (isModEnabled("bank")) {
+		print '<tr>';
+		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+		print '<td colspan="2">';
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		$form->select_comptes(GETPOSTISSET("bank_account") ? GETPOSTINT("bank_account") : 0, "bank_account", 0, '', 2); // Show open bank account list
+		print '</td></tr>';
+	}
+
+	// payment Number
+	print '<tr><td>'.$langs->trans('Numero');
+	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print '</td>';
+	print '<td colspan="2"><input name="bank_transaction" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
+
 	print '</table>'."\n";
 
 	print dol_get_fiche_end();
@@ -333,6 +357,23 @@ if (($id || $ref) && $action == 'edit') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
+	print '<br>';
+
+	//payment info
+	if (isModEnabled("bank")) {
+		print '<tr>';
+		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+		print '<td colspan="2">';
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		$form->select_comptes($object->bank_account, "bank_account", 0, '', 2); // Show open bank account list
+		print '</td></tr>';
+	}
+
+	// payment Number
+	print '<tr><td>'.$langs->trans('Numero');
+	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print '</td>';
+	print '<td colspan="2"><input name="bank_transaction" type="text" value="'.$object->bank_transaction.'"></td></tr>'."\n";
 	print '</table>';
 
 	print dol_get_fiche_end();

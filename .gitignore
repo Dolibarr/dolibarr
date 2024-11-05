@@ -92,3 +92,4 @@ phpstan_custom.neon
 /.cache
 htdocs/adherents/admin/error_log
 htdocs/adherents/error_log
+htdocs/custom/lezioni/error_log
