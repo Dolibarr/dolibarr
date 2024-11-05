@@ -98,12 +98,12 @@ class mailing_advthirdparties extends MailingTargets
 							if (!array_key_exists($obj->email, $cibles)) {
 								$cibles[$obj->email] = array(
 									'email' => $obj->email,
-									'fk_contact' => $obj->fk_contact,
+									'fk_contact' => (int) $obj->fk_contact,
 									'name' => $obj->name,
 									'firstname' => $obj->firstname,
 									'other' => '',
 									'source_url' => $this->url($obj->id, 'thirdparty'),
-									'source_id' => $obj->id,
+									'source_id' => (int) $obj->id,
 									'source_type' => 'thirdparty'
 								);
 							}
@@ -151,12 +151,12 @@ class mailing_advthirdparties extends MailingTargets
 							if (!array_key_exists($obj->email, $cibles)) {
 								$cibles[$obj->email] = array(
 									'email' => $obj->email,
-									'fk_contact' => $obj->id,
+									'fk_contact' => (int) $obj->id,
 									'lastname' => $obj->lastname,
 									'firstname' => $obj->firstname,
 									'other' => '',
 									'source_url' => $this->url($obj->id, 'contact'),
-									'source_id' => $obj->id,
+									'source_id' => (int) $obj->id,
 									'source_type' => 'contact'
 								);
 							}

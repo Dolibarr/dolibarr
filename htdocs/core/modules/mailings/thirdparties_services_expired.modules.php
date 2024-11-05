@@ -141,7 +141,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
-					'source_id' => $obj->id,
+					'source_id' => (int) $obj->id,
 					'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;
