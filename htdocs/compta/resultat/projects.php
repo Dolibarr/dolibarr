@@ -44,6 +44,13 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
 
@@ -174,6 +181,10 @@ $exportlink = '';
 
 $total_ht = 0;
 $total_ttc = 0;
+
+$builddate = '';
+$name = '';
+$period = '';
 
 // Affiche en-tete de rapport
 if ($modecompta == "CREANCES-DETTES") {
@@ -328,7 +339,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			} else {
 				echo $langs->trans("None");
 			}
-			$detailed_list_url = '?search_project_ref='.urlencode($search_project_ref);
+			//$detailed_list_url = '?search_project_ref='.urlencode($search_project_ref);
 			$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
 			$detailed_list_url .= $search_date_url;
 			echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
@@ -525,7 +536,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				} else {
 					echo $langs->trans("None");
 				}
-				$detailed_list_url = '?search_project='.urlencode($search_project_ref);
+				//$detailed_list_url = '?search_project='.urlencode($search_project_ref);
 				$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
 				$detailed_list_url .= $search_date_url;
 				echo ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";

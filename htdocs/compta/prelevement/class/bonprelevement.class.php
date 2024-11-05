@@ -1926,7 +1926,7 @@ class BonPrelevement extends CommonObject
 				fwrite($this->file, '	<CstmrDrctDbtInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
-				fwrite($this->file, '			<MsgId>' . ('DD/' . $dateTime_YMD . '/REF' . $this->id) . '</MsgId>' . $CrLf);
+				fwrite($this->file, '			<MsgId>' . ('DOL/' . $dateTime_YMD . '/DD' . $this->id) . '</MsgId>' . $CrLf);
 				fwrite($this->file, '			<CreDtTm>' . $dateTime_ECMA . '</CreDtTm>' . $CrLf);
 				fwrite($this->file, '			<NbOfTxs>' . $i . '</NbOfTxs>' . $CrLf);
 				fwrite($this->file, '			<CtrlSum>' . $this->total . '</CtrlSum>' . $CrLf);
@@ -2072,7 +2072,7 @@ class BonPrelevement extends CommonObject
 				fwrite($this->file, '	<CstmrCdtTrfInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
-				fwrite($this->file, '			<MsgId>' . ('TRF/' . $dateTime_YMD . '/REF' . $this->id) . '</MsgId>' . $CrLf);
+				fwrite($this->file, '			<MsgId>' . ('DOL/' . $dateTime_YMD . '/CT' . $this->id) . '</MsgId>' . $CrLf);
 				fwrite($this->file, '			<CreDtTm>' . $dateTime_ECMA . '</CreDtTm>' . $CrLf);
 				fwrite($this->file, '			<NbOfTxs>' . $i . '</NbOfTxs>' . $CrLf);
 				fwrite($this->file, '			<CtrlSum>' . $this->total . '</CtrlSum>' . $CrLf);
@@ -2449,6 +2449,7 @@ class BonPrelevement extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Write sender of request (me).
+	 *  TODO This method seems not used anymore. What is it for ?
 	 *
 	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
 	 *	@return	void
@@ -2530,7 +2531,6 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *	@return	string						String with SEPA Sender
-	 *  @see EnregEmetteur()
 	 */
 	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
 	{
@@ -2583,7 +2583,7 @@ class BonPrelevement extends CommonObject
 				// SEPA Paiement Information of my company for Direct Debit
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>' . $CrLf;
-				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DD/' . $dateTime_YMD . '/ID' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/DD' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
 				$XML_SEPA_INFO .= '			<PmtMtd>DD</PmtMtd>' . $CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>' . $total . '</CtrlSum>' . $CrLf;
@@ -2646,7 +2646,7 @@ class BonPrelevement extends CommonObject
 				// SEPA Paiement Information of my company for Credit Transfer
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>' . $CrLf;
-				$XML_SEPA_INFO .= '			<PmtInfId>' . ('TRF/' . $dateTime_YMD . '/ID' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/CT' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
 				$XML_SEPA_INFO .= '			<PmtMtd>TRF</PmtMtd>' . $CrLf;
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
