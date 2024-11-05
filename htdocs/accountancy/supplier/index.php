@@ -33,6 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
@@ -59,6 +68,7 @@ if ($month_end < 1) {
 $search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
 $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
+$error = 0;
 
 // Validate History
 $action = GETPOST('action', 'aZ09');

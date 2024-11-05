@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Philippe Grand <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @var Adherent $object
+ * @var Conf $conf
+ * @var Translate $langs
  */
 
 // Protection to avoid direct call of template

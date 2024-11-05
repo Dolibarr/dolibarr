@@ -678,6 +678,7 @@ class Adherent extends CommonObject
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname();
 						'@phan-var-force ModeleNumRefMembers $modCodeMember';
+						/** @var ModeleNumRefMembers $modCodeMember */
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);

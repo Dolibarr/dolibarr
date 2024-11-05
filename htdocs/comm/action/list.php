@@ -39,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 

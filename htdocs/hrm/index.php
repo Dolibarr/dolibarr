@@ -53,13 +53,21 @@ if (isModEnabled('holiday')) {
 }
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('hrmindex'));
-
-// Load translation files required by the page
-$langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 // Get Parameters
 $socid = GETPOSTINT("socid");

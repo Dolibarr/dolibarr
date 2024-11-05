@@ -35,7 +35,16 @@
  * $canchangeproduct (0 by default, 1 to allow to change the product if it is a predefined product)
  */
 
-// Protection to avoid direct call of template
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+ // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
@@ -145,6 +154,7 @@ $coldisplay++;
 
 	$situationinvoicelinewithparent = 0;
 	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		/** @var CommonInvoice $object */
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle

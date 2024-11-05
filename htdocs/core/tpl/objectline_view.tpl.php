@@ -40,6 +40,22 @@
  *
  * $text, $description, $line
  */
+/**
+ * @var CommonObject $object
+ * @var CommonObject $this
+ * @var CommonObjectLine $line
+ * @var HookManager $hookmanager
+ * @var ?Product $product_static
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var 0|1 $forceall
+ * @var int $num
+ * @var 0|1 $senderissupplier
+ * @var string $text
+ * @var string $description
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -88,9 +104,12 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $sign = 1;
-// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
-	$sign = -1;
+if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+	if ($object->type == $object::TYPE_CREDIT_NOTE) {
+		$sign = -1;
+	}
 }
 
 
@@ -381,7 +400,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	print dol_print_reduction($line->remise_percent, $langs);
+	print dol_print_reduction((float) $line->remise_percent, $langs);
 	print '</td>';
 } else {
 	print '<td class="linecoldiscount">&nbsp;</td>';
@@ -458,6 +477,7 @@ $tmppermtoedit = $objectRights->creer;
 if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
+		/** @var CommonInvoice $object */
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle

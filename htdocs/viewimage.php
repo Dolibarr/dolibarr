@@ -149,6 +149,14 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09', 1);
@@ -389,6 +397,7 @@ if ($modulepart == 'barcode') {
 
 	$module = new $classname($db);
 	'@phan-var-force ModeleBarCode $module';
+	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}

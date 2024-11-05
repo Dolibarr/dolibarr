@@ -30,6 +30,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT . '/eventorganization/lib/eventorganization_conferenceorboothattendee.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('eventorganization', 'companies'));
 

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2009-2015 	Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2022 	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2009-2015 	Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2022 	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,29 @@
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $captcha
+ * @var int<0,1> $dol_hide_leftmenu
+ * @var int<0,1> $dol_hide_topmenu
+ * @var int<0,1> $dol_no_mouse_hover
+ * @var int<0,1> $dol_optimize_smallscreen
+ * @var int<0,1> $dol_use_jmobile
+ * @var string $focus_element
+ * @var string $login
+ * @var string $main_authentication
+ * @var string $main_home
+ * @var string $password
+ * @var string $session_name
+ * @var string $title
+ * @var string $titletruedolibarrversion
+ * @var string $urllogo
+ * @var int<0,1> $forgetpasslink
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -55,7 +78,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 @phan-var-force string $session_name
 @phan-var-force string $titletruedolibarrversion
 @phan-var-force string $urllogo
-
 @phan-var-force int<0,1> $forgetpasslink
 ';
 

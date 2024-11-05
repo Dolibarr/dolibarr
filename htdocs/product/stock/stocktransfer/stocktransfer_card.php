@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
 if (isModEnabled('incoterm')) {

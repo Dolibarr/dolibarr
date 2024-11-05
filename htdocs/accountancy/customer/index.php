@@ -34,6 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
@@ -83,6 +92,7 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
  */
 
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
+	$error = 0;
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
 	$sql1 = "UPDATE ".$db->prefix()."facturedet as fd";

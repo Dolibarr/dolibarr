@@ -60,6 +60,16 @@ if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 if (isModEnabled('paypal')) {
@@ -114,7 +124,7 @@ if (empty($validpaymentmethod)) {
 
 
 $object = new stdClass(); // For triggers
-
+/** @var CommonObject $object */
 
 /*
  * Actions
@@ -147,6 +157,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
 // Set $appli for emails title
 $appli = $mysoc->name;
+$error = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice

@@ -49,6 +49,14 @@ if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 use OAuth\Common\Storage\DoliStorage;
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));

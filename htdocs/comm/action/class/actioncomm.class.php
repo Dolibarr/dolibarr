@@ -256,7 +256,7 @@ class ActionComm extends CommonObject
 	public $contact_id;
 
 	/**
-	 * @var int 	task ID
+	 * @var ?int 	task ID
 	 */
 	public $fk_task;
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();

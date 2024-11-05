@@ -46,6 +46,14 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 include '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $objectType = GETPOST('objectType', 'aZ09');
 $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');

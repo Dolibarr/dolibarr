@@ -32,7 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other','admin'));

@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,13 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 $langs->loadLangs(array("main", "errors"));
 

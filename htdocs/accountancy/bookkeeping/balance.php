@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
@@ -386,14 +394,12 @@ if ($action != 'export_csv') {
 		$moreforfilter .= '</div>';
 	}
 
-	if (!empty($moreforfilter)) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		print '</div>';
-	}
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 
 
 	$colspan = (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE') ? 5 : 4);

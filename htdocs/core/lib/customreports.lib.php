@@ -545,6 +545,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
 		if (empty($val['measure'])) {
+			// Exclude some fields
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
