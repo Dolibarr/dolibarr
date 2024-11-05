@@ -1097,8 +1097,8 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Customer Bank Account
-		print "<tr><td>".$langs->trans('BankAccountCustomer')."</td><td>";
-		$form->selectAccountCustomer(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', '', 1);
+		print "<tr><td>".$langs->trans('CustomerIBAN')."</td><td>";
+		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1);
 		print "</td></tr>";
 
 		print '<script>
@@ -1447,7 +1447,7 @@ if ($action == 'create') {
 		if ($object->mode_reglement_code == $object::PAYMENTCODETOEDITSOCIETERIB) {
 			print '<tr><td class="nowrap">';
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-			print $langs->trans('BankAccountCustomer');
+			print $langs->trans('CustomerIBAN');
 			print '<td>';
 
 			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
@@ -1455,10 +1455,11 @@ if ($action == 'create') {
 			}
 			print '</tr></table>';
 			print '</td><td>';
+
 			if ($action == 'editbankaccountcustomer') {
-				$form->formSelectAccountCustomer($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'accountcustomerid', 1);
+				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1);
 			} else {
-				$form->formSelectAccountCustomer($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'none');
+				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'none');
 			}
 			print "</td>";
 			print '</tr>';

@@ -5259,7 +5259,7 @@ class Form
 	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
 	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
-	public function selectAccountCustomer($selected = '', $htmlname = 'accountcustomerid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
+	public function selectRib($selected = '', $htmlname = 'accountcustomerid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5271,6 +5271,7 @@ class Form
 
 		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
 		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
+		$sql.=  " WHERE 1=1";
 		if ($filtre) {	// TODO Support USF
 			$sql .= " AND " . $filtre;
 		}
@@ -5437,17 +5438,18 @@ class Form
 	 * @param string 	$page 		Page
 	 * @param string 	$selected 	Id of bank customer account
 	 * @param string 	$htmlname 	Name of select html field
+	 * @param string 	$filtre 	filtre for rib selected
 	 * @param int 		$addempty 	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @return    					void
 	 */
-	public function formSelectAccountCustomer($page, $selected = '', $htmlname = 'fk_account_customer', $addempty = 0)
+	public function formRib($page, $selected = '', $htmlname = 'fk_account_customer', $filtre = '', $addempty = 0,)
 	{
 		global $langs;
 		if ($htmlname != "none") {
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setbankaccountcustomer">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$nbaccountfound = $this->selectAccountCustomer($selected, $htmlname, '', $addempty);
+			$nbaccountfound = $this->selectRib($selected, $htmlname, $filtre, $addempty);
 			if ($nbaccountfound > 0) {
 				print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			}
@@ -6450,41 +6452,6 @@ class Form
 				print 1;
 			}
 		}
-	}
-
-	/**
-	 *    Show form with IBAN
-	 *
-	 * @param   string   $selected Id mode pre-selectionne
-	 * @param   string   $htmlname Name of select html field
-	 * @param   int      $addempty 1=Add empty entry
-	 * @param   string   $type Type ('direct-debit' or 'bank-transfer')
-	 * @param   int      $nooutput 1=Return string, no output
-	 * @param   string[] $ribForSelection Array of RIBs (IBAN / BIC))
-	 * @return  string   HTML output or ''
-	 */
-	public function formIban(string $selected = '', string $htmlname = 'ribList', int $addempty = 0, string $type = '', int $nooutput = 0, $ribForSelection = [])
-	{
-		$out = '';
-		if ($htmlname != "none") {
-			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
-			if ($type) {
-				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
-			}
-			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
-		} else {
-			if ($selected) {
-				$out .= $selected;
-			} else {
-				$out .= "&nbsp;";
-			}
-		}
-
-		if ($nooutput) {
-			return $out;
-		}
-		print $out;
-		return array_search($selected, $ribForSelection);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
