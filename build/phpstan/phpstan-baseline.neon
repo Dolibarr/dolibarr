@@ -16326,16 +16326,6 @@ parameters:
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$deliveryreceipt might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
@@ -16361,28 +16351,13 @@ parameters:
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$listofobjectref in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$massaction might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: "#^Variable \\$toselect might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-

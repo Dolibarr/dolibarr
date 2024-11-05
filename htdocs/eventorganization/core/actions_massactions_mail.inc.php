@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
- * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  */
 
 /**
- *    \file            htdocs/core/actions_massactions.inc.php
+ *  \file             htdocs/core/actions_massactions.inc.php
  *  \brief            Code for actions done with massaction button (send by email, merge pdf, delete, ...)
  */
 
@@ -35,8 +35,18 @@
 // $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
-
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $massaction
+ * @var string $objectclass
+ * @var ?string $diroutputmassaction
+ * @var ?string $uploaddir
+ * @var string[] $toselect
+ * @var array<string,mixed> $parameters
+ */
 // Protection
 if (empty($objectclass) || empty($uploaddir)) {
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
