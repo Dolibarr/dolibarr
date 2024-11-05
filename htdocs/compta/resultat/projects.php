@@ -175,7 +175,11 @@ $exportlink = '';
 $total_ht = 0;
 $total_ttc = 0;
 
-// Affiche en-tete de rapport
+$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$builddate = dol_now();
+
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -200,10 +204,12 @@ if ($modecompta == "CREANCES-DETTES") {
 
 // Define $calcmode line
 $calcmode = '';
+/*
 if (isModEnabled('accounting')) {
 	$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPING"'.($modecompta == 'BOOKKEEPING' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
 	$calcmode .= '<br>';
 }
+*/
 $calcmode .= '<input type="radio" name="modecompta" id="modecompta1" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta1"> '.$langs->trans("CalcModePayment");
 if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
@@ -270,7 +276,7 @@ print "</tr>\n";
 $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 0;
 
 if ($modecompta == 'BOOKKEEPING') {
-	echo "<p>BOOKKEEPING mode not implemented for this report type by project. Contribute to Dolibarr source code :)</p>";
+	echo "<p>BOOKKEEPING mode not implemented for this report type by project.</p>";
 } else {
 	/*
 	 * Customer invoices
