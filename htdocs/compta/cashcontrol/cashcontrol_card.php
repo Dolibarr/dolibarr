@@ -7,6 +7,7 @@
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   Abbes Bahfir			<contact@01consulting.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -602,6 +603,9 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 if (empty($action) || $action == "view" || $action == "close") {
 	$result = $object->fetch($id);
 
+	// fetch optionals attributes and labels
+	$extrafields->fetch_name_optionals_label($object->table_element);
+
 	if ($result <= 0) {
 		print $langs->trans("ErrorRecordNotFound");
 	} else {
@@ -642,6 +646,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '<tr><td class="nowrap">';
 		print $langs->trans("Period");
 		print '</td><td>';
+
+		// Other attributes
+		$cols = 2;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 		print $object->year_close;
 		print($object->month_close ? "-" : "").$object->month_close;
 		print($object->day_close ? "-" : "").$object->day_close;
@@ -672,15 +681,18 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 		print "</table>\n";
 
-		print '</div></div>';
-		print '<div class="clearboth"></div>';
+        print '</div></div>';
+        print '<div class="clearboth"></div>';
 
-		print dol_get_fiche_end();
+        print dol_get_fiche_end();
 
-		if ($action != 'close') {
-			print '<div class="tabsAction">';
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
-			// Print ticket
+        if ($action != 'close') {
+            print '<div class="tabsAction">';
+
+            // Print ticket
 			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintReport').'</a></div>';
 
 			// Print ticket (no detail)
