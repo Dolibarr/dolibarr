@@ -344,6 +344,7 @@ abstract class CommonObjectLine extends CommonObject
 		$parent_element_properties = getElementProperties($this->parent_element);
 		$parent_classname = $parent_element_properties['classname'];
 
+		// TODO Avoid a fetch inside a getNomUrl
 		$parent_element = new $parent_classname($this->db);
 		$parentattribute = $this->fk_parent_attribute;
 		if ($parentattribute && method_exists($parent_element, 'fetch')) {
