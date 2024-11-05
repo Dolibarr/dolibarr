@@ -21951,11 +21951,6 @@ parameters:
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
@@ -21964,21 +21959,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/canvas/product/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/canvas/product/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/product/canvas/product/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/product/tpl/card_view.tpl.php
 
 		-
 			message: "#^Property ActionsCardService\\:\\:\\$field_list has no type specified\\.$#"
@@ -22001,11 +21981,6 @@ parameters:
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
@@ -22019,21 +21994,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/canvas/service/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/product/canvas/service/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/canvas/service/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/tpl/card_view.tpl.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
