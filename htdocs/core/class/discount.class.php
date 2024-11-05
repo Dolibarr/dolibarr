@@ -778,7 +778,7 @@ class DiscountAbsolute extends CommonObject
 	 *  @param	string		$option			Where to link to ('invoice' or 'discount')
 	 *  @return	string						String with URL
 	 */
-	public function getNomUrl($withpicto, $option = 'invoice')
+	public function getNomUrl($withpicto = 0, $option = 'invoice')
 	{
 		global $langs;
 
