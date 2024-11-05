@@ -63,6 +63,8 @@ $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'yes';
 
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -654,7 +656,13 @@ if ($modecompta == 'BOOKKEEPING') {
 					$subtotal_ttc += $obj->amount;
 
 					echo '<tr class="oddeven"><td>&nbsp;</td>';
-					echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($project_name)."\">".$project_name."</a></td>\n";
+					echo "<td>".$langs->trans("Project")." ";
+					if (!empty($objp->project_name)) {
+						echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
+					} else {
+						echo $langs->trans("None");
+					}
+					echo "</td>\n";
 					echo '<td class="right">';
 					if ($modecompta == 'CREANCES-DETTES') {
 						echo '<span class="amount">'.price(-$obj->amount).'</span>';
