@@ -38,6 +38,7 @@
 // $confirm
 /**
  * @var CommonObject $object
+ * @var Conf $conf
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var HookManager $hookmanager

@@ -24,6 +24,7 @@
  *  \brief			Code for actions on comments pages
  */
 /**
+ * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
  * @var User $user

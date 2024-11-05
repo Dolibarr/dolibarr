@@ -7721,11 +7721,6 @@ parameters:
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$confirm might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
@@ -7758,11 +7753,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_comments.inc.php
 
 		-
@@ -7821,16 +7811,6 @@ parameters:
 			path: ../../htdocs/core/actions_fetchobject.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
 			message: "#^Variable \\$hidedesc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_lineupdown.inc.php
@@ -7846,18 +7826,8 @@ parameters:
 			path: ../../htdocs/core/actions_lineupdown.inc.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/core/actions_lineupdown.inc.php
 
 		-
@@ -7871,48 +7841,8 @@ parameters:
 			path: ../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$confirm might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$upload_dir might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
@@ -7938,11 +7868,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 14
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
@@ -28536,33 +28461,13 @@ parameters:
 			path: ../../htdocs/takepos/split.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/split.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/split.php
-
-		-
 			message: "#^Variable \\$invoice might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/takepos/split.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/takepos/split.php
-
-		-
 			message: "#^Variable \\$placeid might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/takepos/split.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/takepos/split.php
 
 		-
@@ -28612,16 +28517,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$steps of function colorAdjustBrightness expects int, string given\\.$#"
-			count: 1
-			path: ../../htdocs/theme/eldy/global.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/theme/eldy/global.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/theme/eldy/global.inc.php
 
@@ -28808,11 +28703,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/theme/md/manifest.json.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/theme/md/manifest.json.php
 
 		-
