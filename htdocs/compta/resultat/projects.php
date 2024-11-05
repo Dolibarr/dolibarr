@@ -185,7 +185,11 @@ $exportlink = '';
 $total_ht = 0;
 $total_ttc = 0;
 
-// Affiche en-tete de rapport
+$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$builddate = dol_now();
+
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
