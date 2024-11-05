@@ -4715,7 +4715,7 @@ class Form
 			}
 
 			if ($format == 0) {
-				$out .= '<option value="' . $id . '"';
+				$out .= '<option value="' . $id . '" data-code="'.$arraytypes['code'].'"';
 			} elseif ($format == 1) {
 				$out .= '<option value="' . $arraytypes['code'] . '"';
 			} elseif ($format == 2) {
