@@ -51,7 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
  * @var Translate $langs
  * @var User $user
  */
-
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
 
@@ -185,11 +184,11 @@ $exportlink = '';
 $total_ht = 0;
 $total_ttc = 0;
 
-$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$builddate = dol_now();
+$builddate = '';
+$name = '';
+$period = '';
 
-// Display report header
+// Affiche en-tete de rapport
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -342,7 +341,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			} else {
 				echo $langs->trans("None");
 			}
-			$detailed_list_url = '?search_project_ref='.urlencode($search_project_ref);
+			//$detailed_list_url = '?search_project_ref='.urlencode($search_project_ref);
 			$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
 			$detailed_list_url .= $search_date_url;
 			echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
@@ -539,7 +538,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				} else {
 					echo $langs->trans("None");
 				}
-				$detailed_list_url = '?search_project='.urlencode($search_project_ref);
+				//$detailed_list_url = '?search_project='.urlencode($search_project_ref);
 				$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
 				$detailed_list_url .= $search_date_url;
 				echo ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
