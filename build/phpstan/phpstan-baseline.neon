@@ -28551,26 +28551,6 @@ parameters:
 			path: ../../htdocs/takepos/receipt.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/takepos/reduction.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/reduction.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/takepos/reduction.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/send.php
