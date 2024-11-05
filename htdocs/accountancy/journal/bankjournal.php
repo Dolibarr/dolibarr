@@ -557,6 +557,7 @@ if ($result) {
 								'lastname' => $userstatic->lastname,
 								'firstname' => $userstatic->firstname,
 								'email' => $userstatic->email,
+								'accountancy_code_general' => $accountancy_code_user_general,
 								'accountancy_code' => $compta_user,
 								'status' => $userstatic->status
 								);
@@ -804,7 +805,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 						} elseif ($tabtype[$key] == 'payment_salary') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
-							$bookkeeping->numero_compte = $tabuser[$key]['accountancy_code_user_general'];
+							$bookkeeping->numero_compte = $tabuser[$key]['accountancy_code_general'];
 							$bookkeeping->label_compte = $accountingaccountpayment->label;
 						} elseif (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
