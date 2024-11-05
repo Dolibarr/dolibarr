@@ -13956,11 +13956,6 @@ parameters:
 			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/bloc_showhide.tpl.php
-
-		-
 			message: "#^Variable \\$title might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/bloc_showhide.tpl.php
