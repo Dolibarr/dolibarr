@@ -4760,41 +4760,6 @@ class Form
 		}
 	}
 
-	/**
-	 * Return list of payment methods
-	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
-	 *
-	 * @param 	string 	 $selected 		    Id or code or preselected payment mode
-	 * @param 	string 	 $htmlname 		    Name of select field
-	 * @param 	int 	 $empty 			1=can be empty, 0 otherwise
-	 * @param 	string 	 $morecss 		    Add more CSS on select tag
-	 * @param 	int 	 $nooutput 		    1=Return string, do not send to output
-	 * @param   string[] $ribForSelection   Array of RIBs (IBAN / BIC))
-	 * @return  string|void                 String for the HTML select component
-	 */
-	public function selectTypesIban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
-	{
-		$out = '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
-		if ($empty) {
-			$out .= '<option value="">&nbsp;</option>';
-		}
-
-		foreach ($ribForSelection as $rib) {
-			$selectedAttribute = $selected == $rib ? 'selected' : '';
-			$out .= '<option value="' . $rib . '" '.$selectedAttribute.'>';
-			$out .= $rib;
-			$out .= '</option>';
-		}
-		$out .= '</select>';
-		$out .= ajax_combobox('select' . $htmlname);
-
-		if (empty($nooutput)) {
-			print $out;
-		} else {
-			return $out;
-		}
-	}
-
 
 	/**
 	 *  Selection HT or TTC

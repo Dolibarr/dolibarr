@@ -800,18 +800,18 @@ if ($object->id > 0) {
 				//print '<td class="left nowraponall">';
 
 				// if societe rib in model invoice, we preselect it
-				$selectedIban = '';
+				$selectedRib = '';
 				if ($object->element = 'invoice' && $object->fk_fac_rec_source) {
 					$facturerec = new FactureRec($db);
 					$facturerec->fetch($object->fk_fac_rec_source);
 					if ($facturerec->fk_societe_rib) {
 						$companyBankAccount = new CompanyBankAccount($db);
 						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
-						$selectedIban = $companyBankAccount->id;
+						$selectedRib = $companyBankAccount->id;
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedIban, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
 
 				$defaultRibId = $object->thirdparty->getDefaultRib();
 				if ($defaultRibId) {
