@@ -28541,26 +28541,6 @@ parameters:
 			path: ../../htdocs/takepos/pay.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/takepos/phone.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/takepos/phone.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/takepos/phone.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/takepos/phone.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/printbox.php
