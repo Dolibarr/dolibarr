@@ -51,7 +51,11 @@ if (!isset($action)) {
 }
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 /**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
  * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
  */
 $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 

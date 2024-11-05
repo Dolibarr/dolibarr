@@ -28557,26 +28557,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/takepos/reduction.php
 
