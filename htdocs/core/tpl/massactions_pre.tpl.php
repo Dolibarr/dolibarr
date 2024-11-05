@@ -2,7 +2,8 @@
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C)    2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C)    2024	  Abbes Bahfir		  <contact@01consulting.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,10 @@ if ($massaction == 'predeletedraft') {
 
 if ($massaction == 'predelete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
+}
+
+if ($massaction == 'preclose') {
+    print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassClosing"), $langs->trans("ConfirmMassClosingQuestion", count($toselect)), "close", null, '', 0, 200, 500, 1);
 }
 
 if ($massaction == 'preclonetasks') {

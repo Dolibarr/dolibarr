@@ -5,6 +5,7 @@
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2024 Frédéric France <frederic.france@netlogic.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	  Abbes Bahfir	    <contact@01consulting.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1131,6 +1132,30 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	}
 
 	//var_dump($listofobjectthirdparties);exit;
+}
+
+// close cashpoint from mass action
+if (!$error && $objectclass=='CashControl' && ($massaction == 'close' || ($action == 'close' && $confirm == 'yes')) && $permissiontoadd) {
+	$objecttmp = new $objectclass($db);
+	$db->begin();
+	$unique_arr = array_unique($toselect);
+	foreach ($unique_arr as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$objecttmp->cash = price2num(GETPOST('cash_amount', 'alpha'));
+			$objecttmp->card = price2num(GETPOST('card_amount', 'alpha'));
+			$objecttmp->cheque = price2num(GETPOST('cheque_amount', 'alpha'));
+
+			$result = $objecttmp->valid($user);
+		}
+		if ($result <= 0) {
+			setEventMessages($langs->trans("CashpointAlreadyClosed",$objecttmp->id), null, 'errors');
+			$db->rollback();
+		} else {
+			setEventMessages($langs->trans("CashFenceDone"), null);
+			$db->commit();
+		}
+	}
 }
 
 // Generate document foreach object according to model linked to object
