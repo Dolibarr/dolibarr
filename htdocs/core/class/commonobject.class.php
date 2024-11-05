@@ -1062,6 +1062,16 @@ abstract class CommonObject
 		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
+	/**
+	 * Method getNomUrl
+	 *
+	 * @param int $withtpicto Return url with picto
+	 * @return string
+	 */
+	public function getNomUrl($withtpicto)
+	{
+		return '';
+	}
 
 	/**
 	 * Return customer ref for screen output.
