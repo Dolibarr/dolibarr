@@ -29961,11 +29961,6 @@ parameters:
 			path: ../../htdocs/webportal/class/webportalpropal.class.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/admin/index.php
-
-		-
 			message: "#^Function createActionComm\\(\\) has parameter \\$actioncomm with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_actioncomm.php
