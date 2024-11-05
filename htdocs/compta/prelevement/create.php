@@ -538,7 +538,7 @@ if ($resql) {
 		print $langs->trans("AmountTTC");
 	}
 	print '</td>';
-	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="right">'.$langs->trans("PendingSince").'</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

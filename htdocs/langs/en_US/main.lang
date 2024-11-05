@@ -310,6 +310,7 @@ DateBuild=Report build date
 DatePayment=Date of payment
 DateApprove=Approving date
 DateApprove2=Approving date (second approval)
+PendingSince=Pending since
 RegistrationDate=Registration date
 UserCreation=Creation user
 UserModification=Modification user
