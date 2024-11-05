@@ -2,15 +2,15 @@
 /* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2012		Cédric csalvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014	Raphaël rdoursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2016	Ferran fmarcet				<fmarcet@2byte.es>
- * Copyright (C) 2014		Juanjo jmenent				<jmenent@2byte.es>
+ * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014-2016	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2004		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021		Yoan ymollard				<ymollard@users.noreply.github.com>
+ * Copyright (C) 2024		Yoan Mollard				<ymollard@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
