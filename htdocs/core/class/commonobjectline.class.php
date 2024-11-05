@@ -341,10 +341,18 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0)
 	{
+		$parentattribute = $this->fk_parent_attribute;
+
+		/*
+		if ($parentattribute) {
+			return 'Parent #'.$this->$parentattribute.' - Line #'.$this->id;
+		} else {
+			return 'Line #'.$this->id;
+		}
+		*/
+
 		$parent_element_properties = getElementProperties($this->parent_element);
 		$parent_classname = $parent_element_properties['classname'];
-
-		// TODO Avoid a fetch inside a getNomUrl
 		$parent_element = new $parent_classname($this->db);
 		/** @var CommonObject $parent_element */
 		$parentattribute = $this->fk_parent_attribute;

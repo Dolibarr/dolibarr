@@ -742,7 +742,7 @@ if ($resql) {
 				// Active
 				print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print $langs->trans("AlwaysActive");
 				}
@@ -796,11 +796,7 @@ $db->close();
  */
 function fieldListAccountingReport($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $db;
 	global $form, $mysoc;
-
-	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
 
 	foreach ($fieldlist as $field => $value) {
 		if ($fieldlist[$field] == 'country') {
