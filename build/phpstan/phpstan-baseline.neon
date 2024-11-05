@@ -20256,21 +20256,6 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
 
 		-
-			message: "#^Parameter \\#1 \\$mens of function loanCalcMonthlyPayment expects float, string given\\.$#"
-			count: 1
-			path: ../../htdocs/loan/calcmens.php
-
-		-
-			message: "#^Parameter \\#2 \\$capital of function loanCalcMonthlyPayment expects float, string given\\.$#"
-			count: 1
-			path: ../../htdocs/loan/calcmens.php
-
-		-
-			message: "#^Parameter \\#3 \\$rate of function loanCalcMonthlyPayment expects float, string given\\.$#"
-			count: 1
-			path: ../../htdocs/loan/calcmens.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/loan/card.php
