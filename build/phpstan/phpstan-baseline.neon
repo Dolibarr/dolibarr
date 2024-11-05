@@ -1526,11 +1526,6 @@ parameters:
 			path: ../../htdocs/admin/security.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/security.php
-
-		-
 			message: "#^Variable \\$max in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/admin/security_file.php
@@ -1589,11 +1584,6 @@ parameters:
 			message: "#^Variable \\$conffiletoshowshort might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/system/constall.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/system/database.php
 
 		-
 			message: "#^Variable \\$row might not be defined\\.$#"
@@ -19611,31 +19601,6 @@ parameters:
 			path: ../../htdocs/install/check.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_db_host might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_name might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_port might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/install/fileconf.php
@@ -19701,11 +19666,6 @@ parameters:
 			path: ../../htdocs/install/repair.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/repair.php
-
-		-
 			message: "#^Variable \\$conffile might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/install/repair.php
@@ -19726,43 +19686,8 @@ parameters:
 			path: ../../htdocs/install/repair.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_db_host might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_name might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_port might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/repair.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_db_type might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_document_root might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
 			path: ../../htdocs/install/repair.php
 
 		-

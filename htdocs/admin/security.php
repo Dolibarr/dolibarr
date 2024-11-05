@@ -38,6 +38,8 @@ $action = GETPOST('action', 'aZ09');
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_db_pass
  */
 
 // Load translation files required by the page

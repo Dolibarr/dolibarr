@@ -31,6 +31,18 @@ include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ */
+
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
