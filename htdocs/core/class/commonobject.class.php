@@ -1068,7 +1068,7 @@ abstract class CommonObject
 	 * @param int $withtpicto Return url with picto
 	 * @return string
 	 */
-	public function getNomUrl($withtpicto)
+	public function getNomUrl($withtpicto = 0)
 	{
 		return '';
 	}
