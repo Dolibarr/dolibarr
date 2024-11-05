@@ -344,6 +344,7 @@ abstract class CommonObjectLine extends CommonObject
 		$parent_element_properties = getElementProperties($this->parent_element);
 		$parent_classname = $parent_element_properties['classname'];
 		$parent_element = new $parent_classname($this->db);
+		/** @var CommonObject $parent_element */
 		$parentattribute = $this->fk_parent_attribute;
 		if ($parentattribute) {
 			$parent_element->fetch($this->$parentattribute);
