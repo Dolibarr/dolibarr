@@ -300,6 +300,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON f.fk_projet = p.rowid";
 		$sql .= " WHERE f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND f.fk_statut IN (1,2)";
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$sql .= " AND f.type IN (0,1,2,5)";
@@ -319,11 +320,11 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= " WHERE pa.rowid = pf.fk_paiement";
 		$sql .= " AND pf.fk_facture = f.rowid";
 		$sql .= " AND f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
 	}
-	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
