@@ -1206,7 +1206,7 @@ class Expedition extends CommonObject
 		if (isset($this->model_pdf)) {
 			$this->model_pdf = trim($this->model_pdf);
 		}
-		if (isset($this->date_expedition)) {
+		if (!empty($this->date_expedition)) {
 			$this->date_shipping = $this->date_expedition;
 		}
 
