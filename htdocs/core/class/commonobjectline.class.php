@@ -355,9 +355,11 @@ abstract class CommonObjectLine extends CommonObject
 		$parent_classname = $parent_element_properties['classname'];
 		$parent_element = new $parent_classname($this->db);
 		if ($parentattribute && method_exists($parent_element, 'fetch')) {
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			$parent_element->fetch($this->$parentattribute);	/* @phpstan-ignore-line */
 		}
 
+		// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id;	/* @phpstan-ignore-line */
 	}
 }
