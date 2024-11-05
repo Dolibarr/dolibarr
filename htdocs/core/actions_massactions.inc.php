@@ -36,7 +36,27 @@
 // $toselect may be defined
 // $diroutputmassaction may be defined
 // $confirm
-
+/**
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var ?string $permissiontoread
+ * @var ?string $permissiontodelete
+ * @var ?string $permissiontoclose
+ * @var ?string $permissiontoapprove
+ * @var ?int[] $toselect
+ * @var ?string $diroutputmassaction
+ * @var ?string $objectlabel
+ * @var ?string $option
+ * @var ?int $deliveryreceipt
+ * @var string $massaction
+ * @var string $uploaddir
+ * @var string $confirm
+ */
 '
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
@@ -1786,7 +1806,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 			if ($result > 0) {
 				$nbok++;
 			} else {
-				setEventMessages("", $langs->trans("ErrorUpdatingUsersCP"), 'errors');
+				setEventMessages($langs->trans("ErrorUpdatingUsersCP"), null, 'errors');
 				$error++;
 				break;
 			}

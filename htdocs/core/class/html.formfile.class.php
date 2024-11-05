@@ -67,6 +67,87 @@ class FormFile
 		$this->numoffiles = 0;
 	}
 
+	/**
+	 * Show an image with feature to edit it
+	 *
+	 * @param	string	$htmlname				HTML name
+	 * @param 	string 	$modulepart				Module part
+	 * @param 	string 	$dirformainimage		Main directory of module
+	 * @param 	string 	$subdirformainimage		Subdirectory into main directory. Often ''.
+	 * @param 	string 	$fileformainimage		File name of image to show
+	 * @return	string							HTML code to show and edit image
+	 */
+	public function showImageToEdit(string $htmlname, string $modulepart, string $dirformainimage, string $subdirformainimage, string $fileformainimage)
+	{
+		global $langs;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+
+		$tmparraysize = getDefaultImageSizes();
+		$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+		$maxheightsmall = $tmparraysize['maxheightsmall'];
+		$maxwidthmini = $tmparraysize['maxwidthmini'];
+		$maxheightmini = $tmparraysize['maxheightmini'];
+		$quality = $tmparraysize['quality'];
+
+		$imgheight = 80;
+		$imgwidth = 200;
+		$max = 'max-';
+		if ($htmlname == 'logo_squarred') {
+			$imgheight = 80;
+			$imgwidth = 80;
+			$max = '';
+		}
+
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		$fileformainimagesmall = getImageFileNameForSize($fileformainimage, '_small');
+		$fileformainimagemini = getImageFileNameForSize($fileformainimage, '_mini');
+
+		$out = '';
+
+		$out .= '<div class="centpercent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
+		if ($maxmin > 0) {
+			$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$out .= '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="'.$htmlname.'" id="'.$htmlname.'" accept="image/*">';
+		$out .= '</div>';
+		if (!empty($fileformainimagesmall)) {
+			$out .= '<div class="inline-block valignmiddle marginrightonly">';
+			$out .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=remove'.$htmlname.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
+			$out .= '</div>';
+			if (file_exists($dirformainimage.'/'.$subdirformainimage.'thumbs/'.$fileformainimagesmall)) {
+				$out .= '<div class="inline-block valignmiddle marginrightonly">';
+				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.'thumbs/'.$fileformainimagesmall).'">';
+				$out .= '</div>';
+			} elseif (!empty($fileformainimage)) {
+				// Regenerate the thumbs
+				if (!file_exists($dirformainimage.'/'.$subdirformainimage.'thumbs/'.$fileformainimagemini)) {
+					$imgThumbMini = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthmini, $maxheightmini, '_mini', $quality);
+				}
+				$imgThumbSmall = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthmini, $maxheightmini, '_small', $quality);
+				$out .= '<div class="inline-block valignmiddle">';
+				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.'thumbs/'.basename($imgThumbSmall)).'">';
+				$out .= '</div>';
+			}
+		} elseif (!empty($fileformainimage)) {
+			if (file_exists($dirformainimage.'/'.$subdirformainimage.$fileformainimage)) {
+				$out .= '<div class="inline-block valignmiddle">';
+				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.$fileformainimage).'">';
+				$out .= '</div>';
+				$out .= '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=remove'.$htmlname.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+			} else {
+				$out .= '<div class="inline-block valignmiddle">';
+				$out .= '<img id="'.$htmlname.'" height="'.$imgheight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="File has been removed from disk">';
+				$out .= '</div>';
+			}
+		}
+		$out .= '</div>';
+
+		return $out;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

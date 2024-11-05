@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,10 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
 
 /*
  * View
@@ -1102,41 +1106,42 @@ function getParameterByName(name, valueifnotfound)
  * Get the list of operators for a given field type
  */
 function getOperatorsForFieldType(type) {
-
 	// Define the list of operators for each general field category
 	const operatorList = {
 		text: {
-			Contains: "<?php print $langs->trans('Contains'); ?>",
-			DoesNotContain: "<?php print $langs->trans('DoesNotContain'); ?>",
-			Is: "<?php print $langs->trans('Is'); ?>",
-			IsNot: "<?php print $langs->trans('IsNot'); ?>",
-			StartsWith: "<?php print $langs->trans('StartsWith'); ?>",
-			EndsWith: "<?php print $langs->trans('EndsWith'); ?>"
+			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
+			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			StartsWith: '<?php print dol_escape_js($langs->trans('StartsWith')); ?>',
+			EndsWith: '<?php print dol_escape_js($langs->trans('EndsWith')); ?>'
 		},
 		number: {
-			"=": "=",
-			"!=": "!=",
-			"<": "<",
-			">": ">",
-			"<=": "<=",
-			">=": ">="
+			'=': '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			'!=': '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			'<': '<?php print dol_escape_js($langs->trans('IsLowerThan')); ?>',
+			'>': '<?php print dol_escape_js($langs->trans('IsHigherThan')); ?>',
+			'<=': '<?php print dol_escape_js($langs->trans('IsLowerThanOrEqual')); ?>',
+			'>=': '<?php print dol_escape_js($langs->trans('IsHigherThanOrEqual')); ?>',
 		},
 		date: {
-			Is: "<?php print $langs->trans('Is'); ?>",
-			IsNot: "<?php print $langs->trans('IsNot'); ?>",
-			IsBefore: "<?php print $langs->trans('IsBefore'); ?>",
-			IsAfter: "<?php print $langs->trans('IsAfter'); ?>",
-			IsOnOrBefore: "<?php print $langs->trans('IsOnOrBefore'); ?>",
-			IsOnOrAfter: "<?php print $langs->trans('IsOnOrAfter'); ?>"
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			IsBefore: '<?php print dol_escape_js($langs->trans('IsBefore')); ?>',
+			IsAfter: '<?php print dol_escape_js($langs->trans('IsAfter')); ?>',
+			IsOnOrBefore: '<?php print dol_escape_js($langs->trans('IsOnOrBefore')); ?>',
+			IsOnOrAfter: '<?php print dol_escape_js($langs->trans('IsOnOrAfter')); ?>'
 		},
 		html: {
-			Contains: "<?php print $langs->trans('Contains'); ?>"
+			Contains: '<?php print $langs->trans('Contains'); ?>'
 		}
 	};
 
 
 	// Determine the general category for the given type using regex
 	let generalType = "";
+
+	console.log('Get list of operators for type='+type);
 
 	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
 		generalType = "text";

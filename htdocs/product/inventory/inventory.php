@@ -32,6 +32,14 @@ include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
 

@@ -672,11 +672,11 @@ class ContratLigne extends CommonObjectLine
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
 		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
-		$this->total_ht  = $tabprice[0];
-		$this->total_tva = $tabprice[1];
-		$this->total_ttc = $tabprice[2];
-		$this->total_localtax1 = $tabprice[9];
-		$this->total_localtax2 = $tabprice[10];
+		$this->total_ht  = (float) $tabprice[0];
+		$this->total_tva = (float) $tabprice[1];
+		$this->total_ttc = (float) $tabprice[2];
+		$this->total_localtax1 = (float) $tabprice[9];
+		$this->total_localtax2 = (float) $tabprice[10];
 
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;

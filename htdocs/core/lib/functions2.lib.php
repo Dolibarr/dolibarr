@@ -1832,7 +1832,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 /**
  *	Returns formatted reduction
  *
- *	@param	int			$reduction		Reduction percentage
+ *	@param	int|float	$reduction		Reduction percentage
  *	@param	Translate	$langs			Output language
  *	@return	string						Formatted reduction
  */

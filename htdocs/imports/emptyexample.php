@@ -71,6 +71,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $datatoimport = GETPOST('datatoimport');
 $format = GETPOST('format');
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,10 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+/**
+ * @var HookManager $hookmanager
+ */
 
 if (!is_object($form)) {
 	$form = new Form($db);

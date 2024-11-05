@@ -75,10 +75,14 @@ class Conf extends stdClass
 	public $expedition_bon;
 	public $delivery_note;
 
-
-	//! To store if javascript/ajax is enabled
+	/**
+	 * @var int To store if javascript/ajax is enabled
+	 */
 	public $use_javascript_ajax;
-	//! To store if compute is enabled
+
+	/**
+	 * @var int To store if compute is enabled
+	 */
 	public $disable_compute;
 
 	/**
@@ -871,7 +875,7 @@ class Conf extends stdClass
 			// conf->use_javascript_ajax
 			$this->use_javascript_ajax = 1;
 			if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) {
-				$this->use_javascript_ajax = !$this->global->MAIN_DISABLE_JAVASCRIPT;
+				$this->use_javascript_ajax = (int) !$this->global->MAIN_DISABLE_JAVASCRIPT;
 			}
 			// If no javascript_ajax, Ajax features are disabled.
 			if (empty($this->use_javascript_ajax)) {

@@ -72,6 +72,9 @@ class UserGroup extends CommonObject
 	 */
 	public $name; // Name of group
 
+	/**
+	 * @var int<0,1> global group
+	 */
 	public $globalgroup; // Global group
 
 	/**

@@ -32,6 +32,10 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
+/**
+ * @var HookManager $hookmanager
+ */
+
 if (!is_object($form)) {
 	$form = new Form($db);
 }

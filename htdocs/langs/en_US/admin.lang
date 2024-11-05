@@ -1106,6 +1106,7 @@ DictionaryStaff=Number of Employees
 DictionaryAvailability=Delivery delay
 DictionaryOrderMethods=Order methods
 DictionarySource=Origin of proposals/orders
+DictionaryAccountancyReport=Personalized accounting reports
 DictionaryAccountancyCategory=Personalized groups for reports
 DictionaryAccountancysystem=Models for chart of accounts
 DictionaryAccountancyJournal=Accounting journals

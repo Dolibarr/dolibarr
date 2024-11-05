@@ -40,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 '
 @phan-var-force array{0:string,1:string} $bctag From main.inc
 ';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var array{0:string,1:string} $bctag From main.inc
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
