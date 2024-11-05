@@ -347,9 +347,9 @@ abstract class CommonObjectLine extends CommonObject
 		/** @var CommonObject $parent_element */
 		$parentattribute = $this->fk_parent_attribute;
 		if ($parentattribute) {
-			$parent_element->fetch($this->$parentattribute);
+			$parent_element->fetch($this->$parentattribute); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 		}
 
-		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id;
+		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id; // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 	}
 }
