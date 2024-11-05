@@ -5547,11 +5547,10 @@ div.fiche > table.table-fiche-title:first-of-type div {
 div.titre {
 	color: var(--colortexttitlenotab);
 }
-/*
-div.subtitle {
 
+td.subtitle {
+	line-height: 1.1em;
 }
-*/
 
 .secondary {
 	color: var(--colortexttitlenotab);

@@ -1176,6 +1176,7 @@ NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), yo
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
+LabelTranslatedInCurrentLanguage=Label translated in current language
 TranslationFound=Translation found
 TheTranslationIsSearchedFromKey=The translation is searched from the translation key: <b>%s</b>
 TranslationKey=Translation key
