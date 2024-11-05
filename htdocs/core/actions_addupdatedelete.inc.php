@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,27 @@
 @phan-var-force string $hidedesc
 @phan-var-force string $hideref
 ';
-
+/**
+ * @var CommonObject $object
+ * @var CommonObject $this
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var ?string $action
+ * @var ?string $cancel
+ * @var string $permissiontoadd
+ * @var ?string $permissionedit
+ * @var string $permissiontodelete
+ * @var string $backurlforlist
+ * @var ?string $backtopage
+ * @var ?string $noback
+ * @var ?string $triggermodname
+ * @var string $hidedetails
+ * @var string $hidedesc
+ * @var string $hideref
+ */
 // $action or $cancel must be defined
 // $object must be defined
 // $permissiontoadd must be defined
@@ -312,7 +333,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		$object->$key = $value;
-		if ($val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}

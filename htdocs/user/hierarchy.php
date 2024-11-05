@@ -31,6 +31,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
@@ -137,7 +145,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	//var_dump($fulltree);
 	// Define data (format for treeview)
 	$data = array();
-	$data[0] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+	$data[0] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
@@ -255,9 +263,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 						$li = '<span class="opacitymedium">'.$langs->trans("WarningParentIDDoesNotExistAnymore").'</span>';
 						$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="usertddisabled">'.$li.'</td><td align="right" class="usertddisabled"></td></tr></table>';
 						$data[-2] = array(
-							'rowid' => '-2',
+							'rowid' => -2,
 							'fk_menu' => null,
-							'statut' => '1',
+							'statut' => 1,
 							'entry' => $entry
 						);
 					}

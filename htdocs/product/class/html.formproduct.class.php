@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,17 @@ class FormProduct
 	public $error = '';
 
 	// Cache arrays
+	/**
+	 * @var array<int,array{id:int,label:string,parent_id:int,description:string,stock:string,full_label:string}>
+	 */
 	public $cache_warehouses = array();
+	/**
+	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float}>>
+	 */
 	public $cache_lot = array();
+	/**
+	 * @var array<int,array{id:int,ref:string,label:string,type:string,nb_operators_required:int,thm_operator_estimated:float,thm_machine_estimated:float}>
+	 */
 	public $cache_workstations = array();
 
 
@@ -69,7 +78,7 @@ class FormProduct
 	 *                      				    'warehouseclosed' = select products from closed warehouses,
 	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
-	 * @param	array       $exclude            warehouses ids to exclude
+	 * @param	int[]       $exclude            warehouses ids to exclude
 	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
@@ -180,7 +189,7 @@ class FormProduct
 	 * If fk_product is not 0, we do not use cache
 	 *
 	 * @param	int		    $fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 * @param	array       $exclude            warehouses ids to exclude
+	 * @param	int[]       $exclude            warehouses ids to exclude
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
@@ -239,7 +248,7 @@ class FormProduct
 	 *   0 : Default behavior, display parents of warehouse
 	 *   1 : Display only current warehouse label only
 	 *   2 : Display last parent warehouse label
-	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
+	 * @param	array{id:int,label:string,parent_id:int,description:string,stock:string,full_label:string}	$tab			warehouse data in $this->cache_warehouses line
 	 * @param	string	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	string					full label with all parents, separated by ' >> '
 	 */
@@ -268,25 +277,25 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int|array  $selected     Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  ''|'-1'|'ifone'|'ifonenodefault'|'-2'|string|int|int[]  $selected     Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
 	 *                                          'warehouseclosed' = select products from closed warehouses,
 	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int		    $empty			    1=Can be empty, 0 if not
-	 * 	@param	int		    $disabled		    1=Select is disabled
+	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
-	 *  @param	int		    $showstock		    1=Show stock count
-	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
-	 *  @param	array	    $events			    Events to add to select2
+	 *  @param	int<0,1>    $showstock		    1=Show stock count
+	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
+	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
 	 *  @param  string      $morecss            Add more css classes to HTML select
-	 *  @param	array	    $exclude            Warehouses ids to exclude
+	 *  @param	int[]	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
-	 *  @param	int			$multiselect		1=Allow multiselect
+	 *  @param	int<0,1>	$multiselect		1=Allow multiselect
 	 * 	@return string					        HTML select
 	 *
 	 *  @throws Exception
@@ -298,7 +307,7 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if (!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
+		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus==="warehouseinternal")) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -401,15 +410,15 @@ class FormProduct
 	 *
 	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
-	 *  @param  int		    $empty			    1=Can be empty, 0 if not
-	 * 	@param	int		    $disabled		    1=Select is disabled
+	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
-	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
-	 *  @param	array	    $events			            Events to add to select2
-	 *  @param  string      $morecss                    Add more css classes to HTML select
-	 *  @param	array	    $exclude            Warehouses ids to exclude
-	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
+	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
+	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
+	 *  @param  string      $morecss            Add more css classes to HTML select
+	 *  @param	int[]	    $exclude            Warehouses ids to exclude
+	 *  @param  int<0,1>	$showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 * 	@return string					        HTML select
 	 *
@@ -501,7 +510,7 @@ class FormProduct
 	 *    @param    string      $page        Page
 	 *    @param    string|int  $selected    Id of warehouse
 	 *    @param    string      $htmlname    Name of select html field
-	 *    @param    int         $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *    @param    int<0,2>	$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *    @return   void
 	 */
 	public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
@@ -556,9 +565,9 @@ class FormProduct
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
 	 *  @param  string		$selected            Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
-	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
+	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
-	 *  @return string|-1
+	 *  @return string|int<-1,-1>
 	 */
 	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'minwidth75 maxwidth125')
 	{
@@ -580,7 +589,7 @@ class FormProduct
 
 		$result = $measuringUnits->fetchAll(
 			'',
-			'',
+			'scale',
 			0,
 			0,
 			$filter
@@ -706,10 +715,10 @@ class FormProduct
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
 	 * 	@param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
-	 * 	@param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 * 	@param	CommonObjectLine[]	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
 	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
-	 *  @param	array	$events			Events to add to select2
+	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
 	 *  @param  string  $morecss		Add more css classes to HTML select
 	 *
 	 * 	@return	string					HTML select
@@ -794,7 +803,7 @@ class FormProduct
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 *  @param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
 	 *  @param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
-	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 *  @param	CommonObjectLine[]	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *  @return	string					HTML datalist
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
@@ -864,7 +873,7 @@ class FormProduct
 	/**
 	 * Load in cache array list of lot available in stock from a given list of products
 	 *
-	 * @param	array	$productIdArray		array of product id's from who to get lot numbers. A
+	 * @param	int[]	$productIdArray		array of product id's from who to get lot numbers. A
 	 *
 	 * @return	int							Nb of loaded lines, 0 if nothing loaded, <0 if KO
 	 */

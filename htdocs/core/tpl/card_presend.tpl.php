@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022	    Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2022	    Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
@@ -53,7 +53,7 @@ if ($action == 'presend') {
 
 	$titreform = 'SendMail';
 
-	$object->fetch_projet();
+	$object->fetchProject();
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -197,7 +197,7 @@ if ($action == 'presend') {
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'email';
 	$formmail->withaiprompt = 'html';
 
 	// Define $liste, a list of recipients with email inside <>.

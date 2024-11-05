@@ -83,12 +83,12 @@ class Task extends CommonObjectLine
 	public $description;
 
 	/**
-	 * @var float|'' total of time spent on this task
+	 * @var int|'' total of time spent on this task (in seconds)
 	 */
 	public $duration_effective;
 
 	/**
-	 * @var float|'' planned workload
+	 * @var int|'' planned workload (in seconds)
 	 */
 	public $planned_workload;
 
@@ -161,26 +161,80 @@ class Task extends CommonObjectLine
 	 */
 	public $rang;
 
+	/**
+	 * @var int|string
+	 */
 	public $timespent_min_date;
+	/**
+	 * @var int|string
+	 */
 	public $timespent_max_date;
+	/**
+	 * @var int
+	 */
 	public $timespent_total_duration;
+	/**
+	 * @var float
+	 */
 	public $timespent_total_amount;
+	/**
+	 * @var int
+	 */
 	public $timespent_nblinesnull;
+	/**
+	 * @var int
+	 */
 	public $timespent_nblines;
 	// For detail of lines of timespent record, there is the property ->lines in common
 
 	// Var used to call method addTimeSpent(). Bad practice.
+	/**
+	 * @var int
+	 */
 	public $timespent_id;
+	/**
+	 * @var int
+	 */
 	public $timespent_duration;
+	/**
+	 * @var int
+	 */
 	public $timespent_old_duration;
+	/**
+	 * @var int|string
+	 */
 	public $timespent_date;
+	/**
+	 * @var int|string
+	 */
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+	/**
+	 * @var int
+	 */
 	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
+	/**
+	 * @var int
+	 */
 	public $timespent_fk_user;
+	/**
+	 * @var float
+	 */
 	public $timespent_thm;
+	/**
+	 * @var string
+	 */
 	public $timespent_note;
+	/**
+	 * @var int
+	 */
 	public $timespent_fk_product;
+	/**
+	 * @var int
+	 */
 	public $timespent_invoiceid;
+	/**
+	 * @var int
+	 */
 	public $timespent_invoicelineid;
 
 	public $comments = array();
@@ -227,6 +281,9 @@ class Task extends CommonObjectLine
 	 */
 	public $fk_opp_status;
 
+	/**
+	 * @var int<0,1> Set to 1 if time spent must be converted into invoices
+	 */
 	public $usage_bill_time;
 
 	/**
@@ -234,13 +291,16 @@ class Task extends CommonObjectLine
 	 */
 	public $public;
 
+	/**
+	 * @var array<string,mixed>
+	 */
 	public $array_options_project;
 
 	// Properties to store thirdparty of project information
 
 	/**
 	 * @var int ID of thirdparty
-	 * @deprecated
+	 * @deprecated Use $thirdparty_id
 	 * @see $thirdparty_id
 	 */
 	public $socid;
@@ -1316,12 +1376,12 @@ class Task extends CommonObjectLine
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
 	 *
-	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
-	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
+	 * @param	?User		$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+	 * @param	?User		$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
 	 * @param 	string		$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
-	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
-	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+	 * @param	int			$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+	 * @return 	array<int,string>|int<-1,-1>      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	public function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
@@ -1429,7 +1489,7 @@ class Task extends CommonObjectLine
 	 * 	Return list of id of contacts of task
 	 *
 	 *	@param	string	$source		Source
-	 *  @return array				Array of id of contacts
+	 *  @return array<int,int>		Array of id of contacts
 	 */
 	public function getListContactId($source = 'internal')
 	{
@@ -1729,9 +1789,9 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate total of time spent for task
 	 *
-	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
+	 *  @param  null|User|int<0,0>	$userobj			Filter on user. null or 0=No filter
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array|int	 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
+	 *  @return int<-1,-1>|array{}|array{min_date:int|string,max_date:int|string,total_duration:int}		Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
 	public function getSummaryOfTimeSpent($userobj = null, $morewherefilter = '')
 	{
@@ -1794,10 +1854,10 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
 	 *
-	 *	@param		User|string	$fuser		Filter on a dedicated user
-	 *  @param		string		$dates		Start date (ex 00:00:00)
-	 *  @param		string		$datee		End date (ex 23:59:59)
-	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
+	 *	@param	User|string	$fuser		Filter on a dedicated user
+	 *  @param	string		$dates		Start date (ex 00:00:00)
+	 *  @param	string		$datee		End date (ex 23:59:59)
+	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int}	Array of info for task array('amount','nbseconds','nblinesnull')
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
@@ -1876,7 +1936,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User		$userobj			User object
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array|int						Return integer <0 if KO, array of time spent if OK
+	 *  @return stdClass[]|int						Return integer <0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
@@ -2670,9 +2730,9 @@ class Task extends CommonObjectLine
 			//$return .= '<br><span class="info-box-status ">'.$tmpproject->getNomProject().'</span>';
 			$return .= '<br><span class="info-box-status ">'.$arraydata['projectlink'].'</span>';
 		}
-		if (property_exists($this, 'budget_amount')) {
-			//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
-		}
+		//if (property_exists($this, 'budget_amount')) {
+		//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+		//}
 		if (property_exists($this, 'duration_effective')) {
 			$return .= '<br><div class="info-box-label progressinkanban paddingtop">'.getTaskProgressView($this, false, true).'</div>';
 		}

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011-2014 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,14 +39,28 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $field = GETPOST('field', 'alpha');
 $element = GETPOST('element', 'alpha');
 $table_element = GETPOST('table_element', 'alpha');
 $fk_element = GETPOST('fk_element', 'alpha');
-$id = $fk_element;
 
 // Load object according to $id and $element
-$object = fetchObjectByElement($id, $element);
+$element_ref = '';
+if (is_numeric($fk_element)) {
+	$id = (int) $fk_element;
+} else {
+	$element_ref = $fk_element;
+	$id = 0;
+}
+$object = fetchObjectByElement($id, $element, $element_ref);
 
 $module = $object->module;
 $element = $object->element;

@@ -1,7 +1,13 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var Conf $conf
+ */
+?>
 /* <style type="text/css" > */
 
 /*
@@ -580,6 +586,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .kanban .box-flex-item {
 	line-height: 1.4em;
+}
+.kanban .box-flex-item-5lines {
+	line-height: 1.2em;
 }
 
 /* css for small kanban */

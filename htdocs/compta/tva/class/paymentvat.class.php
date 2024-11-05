@@ -54,8 +54,14 @@ class PaymentVAT extends CommonObject
 	 */
 	public $fk_tva;
 
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
+	/**
+	 * @var int|''
+	 */
 	public $datep = '';
 
 	/**
@@ -597,7 +603,7 @@ class PaymentVAT extends CommonObject
 				$label,
 				$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

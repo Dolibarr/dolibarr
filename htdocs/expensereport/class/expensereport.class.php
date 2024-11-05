@@ -622,9 +622,9 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " total_ht = ".$this->total_ht;
-		$sql .= " , total_ttc = ".$this->total_ttc;
-		$sql .= " , total_tva = ".$this->total_tva;
+		$sql .= " total_ht = ".((float) $this->total_ht);
+		$sql .= " , total_ttc = ".((float) $this->total_ttc);
+		$sql .= " , total_tva = ".((float) $this->total_tva);
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport)) {
@@ -633,7 +633,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
 		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
 		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
-		$sql .= " , fk_user_modif = ".$user->id;
+		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut : '0');
 		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement : "null");
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
@@ -1906,9 +1906,9 @@ class ExpenseReport extends CommonObject
 		$this->total_ttc += $this->total_tva;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " total_ht = ".$this->total_ht;
-		$sql .= " , total_ttc = ".$this->total_ttc;
-		$sql .= " , total_tva = ".$this->total_tva;
+		$sql .= " total_ht = ".((float) $this->total_ht);
+		$sql .= " , total_ttc = ".((float) $this->total_ttc);
+		$sql .= " , total_tva = ".((float) $this->total_tva);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
@@ -1997,11 +1997,11 @@ class ExpenseReport extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			$this->line->fk_expensereport = $this->id;
 			$this->line->qty = $qty;
@@ -2104,11 +2104,11 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($this->line->qty, $new_current_total_ttc / $this->line->qty, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			return false;
 		} else {
@@ -2165,11 +2165,11 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			return true;
 		}
@@ -2277,11 +2277,11 @@ class ExpenseReport extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			$this->line->fk_ecm_files = $fk_ecm_files;
 
@@ -2314,18 +2314,9 @@ class ExpenseReport extends CommonObject
 			$this->applyOffset();
 			$this->checkRules();
 
-			$result = $this->line->update($user);
+			$result = $this->line->update($user, $notrigger);
 			if ($result < 0) {
 				$error++;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
 			}
 
 			if (!$error) {

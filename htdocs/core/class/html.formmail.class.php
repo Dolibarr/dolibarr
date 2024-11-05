@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,7 +164,7 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
-	 * @var int<0,1>		1=Add a button "Fill with layout"
+	 * @var string					Use case string to a button "Fill with layout" for this use case. Example 'wesitepage', 'emailing', 'email', ...
 	 */
 	public $withlayout;
 
@@ -244,10 +244,12 @@ class FormMail extends Form
 	 * @var array<string,string>
 	 */
 	public $substit = array();
+
 	/**
-	 * @var string[]
+	 * @var array<int,array<string,string>>
 	 */
 	public $substit_lines = array();
+
 	/**
 	 * @var array{}|array{models:string,langsmodels?:string,fileinit?:string[],returnurl:string}
 	 */
@@ -610,9 +612,7 @@ class FormMail extends Form
 				// If list of template is filled
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
 
-				$out .= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> ';
-
-				$out .= $this->selectarray('modelmailselected', $modelmail_array, $model_mail_selected_id, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1, '', 0, 1);
+				$out .= $this->selectarray('modelmailselected', $modelmail_array, $model_mail_selected_id, $langs->trans('SelectMailModel'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 1, '', 0, 1);
 				if ($user->admin) {
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
@@ -1090,7 +1090,7 @@ class FormMail extends Form
 				$out .= '<td class="tdtop">';
 
 				$formmail = $this;
-				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT');
+				$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
@@ -1499,12 +1499,16 @@ class FormMail extends Form
 
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<div id="ai_input'.$htmlContent.'" class="hidden">';
+		$out = '<div id="ai_input'.$htmlContent.'" class="hidden paddingtop paddingbottom">';
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
 		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 		$out .= '</div>';
+
+		if ($function == 'imagegeneration') {
+			$out .= '<div id="ai_image_result" class="margintoponly"></div>'; // Div for displaying the generated image
+		}
 
 		$out .= "</div>\n";
 
@@ -1534,11 +1538,43 @@ class FormMail extends Form
 						}
 					}, 2000);
 
-					// set editor in readonly
-        			if (CKEDITOR.instances.".$htmlContent.") {
-						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
-					}
+					if ('".$function."' === 'imagegeneration') {
+						// Handle image generation request
+						$.ajax({
+							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								'format': '".dol_escape_js($format)."',			/* the format for output */
+								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
+								'instructions': instructions,					/* the prompt string */
+							}),
+							success: function(response) {
+								console.log('Received image URL: '+response);
+								// Assuming response is the URL of the generated image
+								var imageUrl = response;
+								$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');
 
+								// Clear the input field
+								$('#ai_instructions').val('');
+
+								apicallfinished = 1;
+								if (timeoutfinished) {
+									$('#ai_status_message').hide();
+								}
+							},
+							error: function(xhr, status, error) {
+								alert(error);
+								console.error('error ajax', status, error);
+								$('#ai_status_message').hide();
+							}
+						});
+					} else {
+
+						// set editor in readonly
+						if (CKEDITOR.instances.".$htmlContent.") {
+							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
+						}
 
 					$.ajax({
 						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
@@ -1593,12 +1629,13 @@ class FormMail extends Form
 	/**
 	 * Return HTML code for selection of email layout
 	 *
-	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
-	 * @return  string                      HTML for model email boxes
+	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill
+	 * @param	string		$showlinktolayout	Show link to layout
+	 * @return  string                      	HTML for model email boxes
 	 */
-	public function getModelEmailTemplate($htmlContent = 'message')
+	public function getModelEmailTemplate($htmlContent = 'message', $showlinktolayout = 'email')
 	{
-		global $websitepage, $langs, $user;
+		global $websitepage, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1608,24 +1645,35 @@ class FormMail extends Form
 		$websitepage = new WebsitePage($this->db);
 		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
 
-		$out = '<div id="template-selector" class="template-container">';
-		$templates = array(
+		$out = '<div id="template-selector" class="email-layout-container hidden" style="display:none;">';
+
+		// Define list of email layouts to use
+		$layouts = array(
 			'empty' => 'empty',
 		);
-
+		// Search available layouts on disk
 		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
 		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
 			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
-			$templates[$layoutname] = ucfirst($layoutname);
+
+			// Exclude some layouts for some use cases
+			if ($layoutname == 'news' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+				continue;
+			}
+			if ($layoutname == 'products' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+				continue;
+			}
+
+			$layouts[$layoutname] = ucfirst($layoutname);
 		}
 		//}
 		// TODO Add a hook to allow to complete the list
 
-		foreach ($templates as $template => $templateFunction) {
-			$contentHtml = getHtmlOfLayout($template);
+		foreach ($layouts as $layout => $templateFunction) {
+			$contentHtml = getHtmlOfLayout($layout);
 
-			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
-			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			$out .= '<div class="template-option" data-template="'.$layout.'" data-content="'.htmlentities($contentHtml).'">';
+			$out .= '<img class="maillayout" alt="'.$layout.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$layout.'.png" />';
 			$out .= '<span class="template-option-text">'.$langs->trans($templateFunction).'</span>';
 			$out .= '</div>';
 		}
@@ -1640,7 +1688,7 @@ class FormMail extends Form
 		}
 
 		// Use the multiselect array function to create the dropdown
-		$out .= '<div id="post-dropdown-container" style="display:none;">';
+		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
 		$out .= self::multiselectarray('blogpost-select', $blogArray);
 		$out .= '</div>';
@@ -1677,10 +1725,13 @@ class FormMail extends Form
 					$.ajax({
 						type: "POST",
 						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: {  content: contentHtml, token: csrfToken },
-						url: "/core/ajax/mailtemplate.php",
 						data: {
-              template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc,
+							template: template,
+							subject: subject,
+							fromtype: fromtype,
+							sendto: sendto,
+							sendtocc: sendtocc,
+							sendtoccc: sendtoccc,
 							content: contentHtml,
 							selectedPosts: "[]",
 							token: csrfToken

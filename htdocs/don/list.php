@@ -5,6 +5,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -497,15 +506,21 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr class="oddeven">';
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td></td>';
-		}
 		$donationstatic->id = $obj->rowid;
 		$donationstatic->ref = $obj->rowid;
 		$donationstatic->lastname = $obj->lastname;
 		$donationstatic->firstname = $obj->firstname;
+
+		// Action
+		print '<tr class="oddeven">';
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
+
+		// Ref
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
+
+		// Company
 		if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 			if (!empty($obj->socid) && $company->id > 0) {
 				print "<td>".$company->getNomUrl(1)."</td>";
@@ -515,8 +530,13 @@ while ($i < $imaxinloop) {
 		} else {
 			print "<td>".((string) $obj->societe)."</td>";
 		}
+
+		// Donator
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
+
+		// Date donation
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datedon), 'day').'</td>';
+
 		if (isModEnabled('project')) {
 			print "<td>";
 			if ($obj->pid) {
@@ -535,9 +555,12 @@ while ($i < $imaxinloop) {
 
 		// Status
 		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+
+		// Action
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
+
 		print "</tr>";
 	}
 	$i++;

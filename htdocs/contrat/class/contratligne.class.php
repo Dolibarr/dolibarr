@@ -672,11 +672,11 @@ class ContratLigne extends CommonObjectLine
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
 		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
-		$this->total_ht  = $tabprice[0];
-		$this->total_tva = $tabprice[1];
-		$this->total_ttc = $tabprice[2];
-		$this->total_localtax1 = $tabprice[9];
-		$this->total_localtax2 = $tabprice[10];
+		$this->total_ht  = (float) $tabprice[0];
+		$this->total_tva = (float) $tabprice[1];
+		$this->total_ttc = (float) $tabprice[2];
+		$this->total_localtax1 = (float) $tabprice[9];
+		$this->total_localtax2 = (float) $tabprice[10];
 
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;
@@ -722,11 +722,11 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? $this->fk_remise_except : "null").",";
 		$sql .= " subprice = ".($this->subprice != '' ? $this->subprice : "null").",";
 		$sql .= " price_ht = ".($this->price_ht != '' ? $this->price_ht : "null").",";
-		$sql .= " total_ht = ".$this->total_ht.",";
-		$sql .= " total_tva = ".$this->total_tva.",";
-		$sql .= " total_localtax1 = ".$this->total_localtax1.",";
-		$sql .= " total_localtax2 = ".$this->total_localtax2.",";
-		$sql .= " total_ttc = ".$this->total_ttc.",";
+		$sql .= " total_ht = ".((float) $this->total_ht).",";
+		$sql .= " total_tva = ".((float) $this->total_tva).",";
+		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
+		$sql .= " total_localtax2 = ".((float) $this->total_localtax2).",";
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
 		$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";

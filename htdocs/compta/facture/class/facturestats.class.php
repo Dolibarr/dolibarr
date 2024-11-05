@@ -34,7 +34,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureStats extends Stats
 {
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $userid;
 
 	/**
@@ -42,9 +48,21 @@ class FactureStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $where = '';
+	/**
+	 * @var string
+	 */
 	public $join;
 
 

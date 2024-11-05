@@ -48,22 +48,64 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $discount_type; // 0 => customer discount, 1 => supplier discount
 
+	/**
+	 * @var float
+	 */
 	public $total_ht;
+	/**
+	 * @var float
+	 */
 	public $total_tva;
+	/**
+	 * @var float
+	 */
 	public $total_ttc;
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $amount_ht; 	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $amount_tva; // deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $amount_ttc; // deprecated
 
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $multicurrency_amount_ht;	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $multicurrency_amount_tva;	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $multicurrency_amount_ttc;	// deprecated
 
 	/**
-	 * @var double
+	 * @var float
 	 */
 	public $multicurrency_subprice;
 
@@ -77,8 +119,13 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $fk_invoice_supplier_line;
 
-	// Vat rate
+	/**
+	 * @var string|float Vat rate
+	 */
 	public $tva_tx;
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
 
 	/**
@@ -94,7 +141,7 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 * Date creation record (datec)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datec;
 
@@ -112,11 +159,26 @@ class DiscountAbsolute extends CommonObject
 	 * @var int ID credit note or deposit used to create the discount
 	 */
 	public $fk_facture_source;
+	/**
+	 * @var string
+	 */
 	public $ref_facture_source; // Ref credit note or deposit used to create the discount
+	/**
+	 * @var int
+	 */
 	public $type_facture_source;
 
+	/**
+	 * @var int
+	 */
 	public $fk_invoice_supplier_source;
+	/**
+	 * @var string
+	 */
 	public $ref_invoice_supplier_source; // Ref credit note or deposit used to create the discount
+	/**
+	 * @var int
+	 */
 	public $type_invoice_supplier_source;
 
 	/**
@@ -716,7 +778,7 @@ class DiscountAbsolute extends CommonObject
 	 *  @param	string		$option			Where to link to ('invoice' or 'discount')
 	 *  @return	string						String with URL
 	 */
-	public function getNomUrl($withpicto, $option = 'invoice')
+	public function getNomUrl($withpicto = 0, $option = 'invoice')
 	{
 		global $langs;
 

@@ -49,6 +49,15 @@ if (isModEnabled('salaries')) {
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
@@ -130,10 +139,10 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('address', 'alpha');
 	$account->address         = GETPOST('address', 'alpha');
-	$account->owner_name = GETPOST('proprio', 'alpha');
-	$account->proprio = $account->owner_name;
+
+	$account->owner_name      = GETPOST('proprio', 'alpha');
+	$account->proprio         = $account->owner_name;
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
@@ -163,9 +172,9 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('address', 'alpha');
 	$account->address         = GETPOST('address', 'alpha');
-	$account->proprio         = GETPOST('proprio', 'alpha');
+	$account->owner_name      = GETPOST('proprio', 'alpha');
+	$account->proprio         = $account->owner_name;
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
@@ -1018,7 +1027,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+	print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->owner_name.'"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';

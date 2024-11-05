@@ -342,7 +342,7 @@ function getIbanHumanReadable(Account $account)
 /**
  * 		Check account number information for a bank account
  *
- * 		@param	Account		$account    A bank account
+ * 		@param	Account|CompanyBankAccount	$account    A bank account
  * 		@return boolean           		True if information are valid, false otherwise
  */
 function checkBanForAccount($account)
@@ -353,7 +353,7 @@ function checkBanForAccount($account)
 	// account of type CompanyBankAccount class (we use number, cle_rib)
 	// account of type Account class (we use num_compte, cle)
 	if (empty($account->number)) {
-		$account->number = $account->num_compte;
+		$account->number = $account->num_compte;  // @phan-suppress-current-line PhanUndeclaredProperty
 	}
 	if (empty($account->cle)) {
 		$account->cle = $account->cle_rib;
@@ -383,8 +383,10 @@ function checkBanForAccount($account)
 		return false;
 	}
 
-	if ($country_code == 'BE') { // Belgium rules
+	/*
+	if ($country_code == 'BE') { // Belgian rules
 	}
+	*/
 
 	if ($country_code == 'ES') { // Spanish rules
 		$CCC = strtolower(trim($account->number));

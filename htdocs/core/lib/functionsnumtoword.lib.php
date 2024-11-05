@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Víctor Ortiz Pérez   <victor@accett.com.mx>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Víctor Ortiz Pérez      <victor@accett.com.mx>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +37,6 @@
  */
 function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 {
-	global $conf;
-
 	//$num = str_replace(array(',', ' '), '', trim($num));	This should be useless since $num MUST be a php numeric value
 	if (!$num) {
 		return false;
@@ -48,13 +47,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 	}
 
 	if (isModEnabled('numberwords')) {
-		if ($currency) {
-			$type = '1';
-		} else {
-			$type = '0';
-		}
-
-		$concatWords = $langs->getLabelFromNumber($num, $type);
+		$concatWords = $langs->getLabelFromNumber($num, $currency);
 		return $concatWords;
 	} else {
 		$TNum = explode('.', (string) $num);
@@ -147,7 +140,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 				$concatWords .= ' '.$langs->transnoentities('and');
 			}
 
-			$concatWords .= ' '.dol_convertToWord($decimalpart, $langs, '', true);
+			$concatWords .= ' '.dol_convertToWord((float) $decimalpart, $langs, '', true);
 			if (!empty($currency)) {
 				$concatWords .= ' '.$langs->transnoentities('centimes');
 			}
@@ -179,6 +172,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	// Get 2 decimals to cents, another functions round or truncate
 	$strnumber = number_format($numero, 10);
 	$len = strlen($strnumber);
+	$parte_decimal = '00';  // For static analysis, strnumber should contain '.'
 	for ($i = 0; $i < $len; $i++) {
 		if ($strnumber[$i] == '.') {
 			$parte_decimal = $strnumber[$i + 1].$strnumber[$i + 2];
@@ -186,8 +180,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 		}
 	}
 
-	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
-	in case exist why ask $lang like a parameter?*/
+	/* Dolibarr 3.6.2 doesn't have $langs->default, why ask $lang like a parameter in case it exists? */
 	if (((is_object($langs) && $langs->getDefaultLang(0) == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
@@ -209,6 +202,10 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$numero -= $UdMMillon * 1000000000;
 				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
 				$entexto .= " MIL ";
+			} else {
+				$CdMMillon = 0;
+				$DdMMillon = 0;
+				$UdMMillon = 0;
 			}
 			if ($number >= 1000000) {
 				$CdMILLON = (int) ($numero / 100000000);
@@ -224,6 +221,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 					$entexto .= " MILLONES ";
 				}
 			}
+
 			if ($number >= 1000) {
 				$cdm = (int) ($numero / 100000);
 				$numero -= $cdm * 100000;
@@ -235,6 +233,10 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				if ($cdm || $ddm || $udm) {
 					$entexto .= " MIL ";
 				}
+			} else {
+				$ddm = 0;
+				$cdm = 0;
+				$udm = 0;
 			}
 			$c = (int) ($numero / 100);
 			$numero -= $c * 100;

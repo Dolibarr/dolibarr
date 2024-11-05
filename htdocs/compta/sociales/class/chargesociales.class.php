@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $element = 'chargesociales';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 * @deprecated Use $table_element
+	 * @see $table_element
+	 */
 	public $table = 'chargesociales';
 
 	/**
@@ -65,18 +70,22 @@ class ChargeSociales extends CommonObject
 	 * @var string label
 	 */
 	public $label;
+
 	/**
 	 * @var int
 	 */
 	public $type;
+
 	/**
 	 * @var string
 	 */
 	public $type_label;
+
 	/**
 	 * @var string
 	 */
 	public $type_code;
+
 	/**
 	 * @var string
 	 */
@@ -86,15 +95,18 @@ class ChargeSociales extends CommonObject
 	 * @var int|string
 	 */
 	public $amount;
+
 	/**
 	 * @var int<0,1>
 	 */
 	public $paye;
+
 	/**
 	 * @deprecated Use $period
 	 * @var int|string
 	 */
 	public $periode;
+
 	/**
 	 * @var int|string
 	 */
@@ -102,7 +114,7 @@ class ChargeSociales extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use label instead
+	 * @deprecated Use $label instead
 	 */
 	public $lib;
 
@@ -125,10 +137,12 @@ class ChargeSociales extends CommonObject
 	 * @var int ID
 	 */
 	public $mode_reglement_id;
+
 	/**
 	 * @var string
 	 */
 	public $mode_reglement_code;
+
 	/**
 	 * @var string
 	 */
@@ -154,8 +168,14 @@ class ChargeSociales extends CommonObject
 	 */
 	public $totalpaid;
 
-
+	/**
+	 * @var int
+	 */
 	const STATUS_UNPAID = 0;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_PAID = 1;
 
 

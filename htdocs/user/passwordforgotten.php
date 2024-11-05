@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2008-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014       Teddy Andreotti    		<125155@supinfo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
@@ -186,8 +195,18 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
-// Select templates
-if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php")) {
+// Select templates dir
+$template_dir = '';
+if (!empty($conf->modules_parts['tpl'])) {	// Using this feature slow down application
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl/'));
+	foreach ($dirtpls as $reldir) {
+		$tmp = dol_buildpath($reldir.'passwordforgotten.tpl.php');
+		if (file_exists($tmp)) {
+			$template_dir = preg_replace('/passwordforgotten\.tpl\.php$/', '', $tmp);
+			break;
+		}
+	}
+} elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php")) {
 	$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 } else {
 	$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
@@ -224,9 +243,9 @@ if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/log
 }
 
 // Security graphical code
-if (function_exists("imagecreatefrompng") && !$disabled) {
-	$captcha = 1;
-	$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+$captcha = '';
+if (!$disabled) {
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)

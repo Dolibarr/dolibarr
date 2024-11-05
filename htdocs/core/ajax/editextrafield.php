@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,13 +46,28 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 include '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $objectType = GETPOST('objectType', 'aZ09');
 $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');
 $value = GETPOST('value', 'aZ09');
 
 $module = getElementProperties($objectType)['module'];
-$object = fetchObjectByElement($objectId, $objectType);
+$element_ref = '';
+if (is_numeric($objectId)) {
+	$objectId = (int) $objectId;
+} else {
+	$element_ref = $objectId;
+	$objectId = 0;
+}
+$object = fetchObjectByElement($objectId, $objectType, $element_ref);
 
 // Security check
 if (!$user->hasRight($module, $object->element, 'write') && !$user->hasRight($module, 'write')) {

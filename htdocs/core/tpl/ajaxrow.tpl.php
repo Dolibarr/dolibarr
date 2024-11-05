@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,17 +15,27 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Javascript code to activate drag and drop on lines
- * You can use this if you want to be able to drag and drop rows of a table.
- * You must add id="tablelines" on table level tag
- * and $object and $object->id is defined
- * and $object->fk_element or $fk_element is defined
- * and have ($nboflines or count($object->lines) or count($taskarray) > 0)
- * and have $table_element_line = 'tablename' or $object->table_element_line with line to move
- *
  */
 
+/**
+ * Javascript code to activate the drag and drop on lines
+ * You can use this if you want to be able to drag and drop rows of a HTML table.
+ * You must add id="tablelines" on table level tag
+ * $object and $object->id must be defined
+ * $object->fk_element or $fk_element must be defined
+ * you must have ($nboflines or count($object->lines) or count($taskarray) > 0)
+ * you must have $table_element_line = 'tablename' or $object->table_element_line with line to move
+ *
+ */
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ *
+ * @var ?string $filepath
+ * @var ?string $fk_element
+ * @var ?int $nboflines
+ * @var ?string $tagidfortablednd
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page ".basename(__FILE__)." can't be called with no object defined.";

@@ -68,7 +68,7 @@ ClickToAdd=Click here to add.
 NoRecordedCustomers=No customers recorded
 NoRecordedContacts=No contacts recorded
 NoActionsToDo=No actions to do
-NoRecordedOrders=No financial account registered
+NoRecordedOrders=No sales orders recorded
 NoRecordedProposals=No proposals recorded
 NoRecordedInvoices=No customer invoices recorded
 NoUnpaidCustomerBills=No unpaid customer invoices
@@ -121,7 +121,7 @@ BoxTitleLastFediverseInfos=Last %s posts from %s
 BoxLastFediverseInfos=Latest Fediverse Updates: News and Trends
 NoOpenedProjectsOpportunities=No open opportunities
 NoOpenedProjects=No open projects
-NoScheduledJobs=No Scheduled jobs 
+NoScheduledJobs=No Scheduled jobs
 # Pages
 UsersHome=Home users and groups
 MembersHome=Home Membership

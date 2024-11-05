@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Buscar facturas de proveedores impagas c
 SendEmailsRemindersOnSupplierInvoiceDueDate=Enviar recordatorio por correo electrónico de facturas de proveedores validadas y pendientes de pago
 PaymentMadeForSeveralInvoices=Pago realizado por varias facturas
 SituationInvoiceProgressCurrent=Progreso de la factura
+INVOICE_ADD_EPC_QR_CODEPay=Escanee este código QR para pagar con un teléfono inteligente que admita pagos con código QR EPC.
