@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la ou les com
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classer le bon de commande source liée comme reçu lorsqu'une réception est validée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classer le bon de commande source lié comme reçu lorsqu'une réception est clôturée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classer les réceptions en "facturées" lorsqu'une facture d'achat liée est validée (et si le montant de la facture est égal au montant total des réceptions liées)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classer les réceptions en "facturées" lorsqu'une facture d'achat liée est validée (et si le montant de la facture est égal au montant total des réceptions liées)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=A la création d'un ticket, les contacts liés à au tiers sont liés au ticket.
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Les contacts liés au tiers du ticket sont utilisés pour le ticket

@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassificer købt kø
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klassificer linket kildeindkøbsordre som modtaget, når en modtagelse er valideret (og hvis mængden modtaget af alle modtagelser er den samme som i indkøbsordren, der skal opdateres)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Klassificer tilknyttet kildeindkøbsordre som modtaget, når en modtagelse lukkes (og hvis mængden modtaget af alle modtagelser er den samme som i indkøbsordren for at opdatere)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Klassificer modtagelser til "faktureret", når en tilknyttet købsfaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de tilknyttede modtagelser)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Klassificer modtagelser til "faktureret", når en tilknyttet købsfaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de tilknyttede modtagelser)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Når du opretter en billet, skal du linke tilgængelige kontrakter fra matchende tredjepart
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Når du sammenkæder kontrakter, søg blandt moderselskabers
