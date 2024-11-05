@@ -44,6 +44,7 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var string $dolibarr_main_url_root
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose

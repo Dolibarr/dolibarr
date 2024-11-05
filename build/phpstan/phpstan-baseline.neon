@@ -1131,11 +1131,6 @@ parameters:
 			path: ../../htdocs/admin/dav.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/dav.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/dav.php
@@ -1239,11 +1234,6 @@ parameters:
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 18
 			path: ../../htdocs/admin/fichinter.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/fichinter_xcal.php
 
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
@@ -1476,11 +1466,6 @@ parameters:
 			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/oauthlogintokens.php
@@ -1691,11 +1676,6 @@ parameters:
 			path: ../../htdocs/admin/system/security.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ticket_public.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: ../../htdocs/admin/tools/dolibarr_export.php
@@ -1849,11 +1829,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/ai/admin/setup.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/api/admin/index.php
 
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
@@ -7971,11 +7946,6 @@ parameters:
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: "#^Variable \\$errors might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_massactions.inc.php
@@ -8053,11 +8023,6 @@ parameters:
 		-
 			message: "#^Variable \\$contact might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -10246,21 +10211,6 @@ parameters:
 			path: ../../htdocs/core/filemanagerdol/browser/default/frmupload.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/connectors/php/config.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_data_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/connectors/php/config.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/connectors/php/config.inc.php
-
-		-
 			message: "#^Variable \\$_FILES in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/filemanagerdol/connectors/php/connector.lib.php
@@ -10279,16 +10229,6 @@ parameters:
 			message: "#^Variable \\$Config might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/filemanagerdol/connectors/php/connector.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/js/timepicker.js.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/js/timepicker.js.php
 
 		-
 			message: "#^Variable \\$var in isset\\(\\) always exists and is not nullable\\.$#"
@@ -10364,11 +10304,6 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/core/lib/files.lib.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/lib/format_cards.lib.php
 
 		-
 			message: "#^Parameter \\#1 \\$ftp of function ftp_cdup expects FTP\\\\Connection, resource given\\.$#"
@@ -17122,11 +17057,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$date might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/expensereport/card.php
 
