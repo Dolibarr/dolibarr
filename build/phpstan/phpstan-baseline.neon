@@ -12506,43 +12506,8 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
 
 		-
@@ -12551,77 +12516,12 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
 
@@ -12631,52 +12531,12 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
 
