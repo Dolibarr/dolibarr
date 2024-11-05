@@ -5435,21 +5435,22 @@ class Form
 	/**
 	 * Display form to select bank customer account
 	 *
-	 * @param string 	$page 		Page
-	 * @param string 	$selected 	Id of bank customer account
-	 * @param string 	$htmlname 	Name of select html field
-	 * @param string 	$filtre 	filtre for rib selected
-	 * @param int 		$addempty 	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @return    					void
+	 * @param string 	$page 			Page
+	 * @param string 	$selected 		Id of bank customer account
+	 * @param string 	$htmlname 		Name of select html field
+	 * @param string 	$filtre 		filtre for rib selected
+	 * @param int 		$addempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param int 		$showibanbic 	Show iban/bic in label
+	 * @return    						void
 	 */
-	public function formRib($page, $selected = '', $htmlname = 'fk_account_customer', $filtre = '', $addempty = 0,)
+	public function formRib($page, $selected = '', $htmlname = 'fk_account_customer', $filtre = '', $addempty = 0, $showibanbic = 0)
 	{
 		global $langs;
 		if ($htmlname != "none") {
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setbankaccountcustomer">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$nbaccountfound = $this->selectRib($selected, $htmlname, $filtre, $addempty);
+			$nbaccountfound = $this->selectRib($selected, $htmlname, $filtre, $addempty, '', $showibanbic);
 			if ($nbaccountfound > 0) {
 				print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			}
@@ -5463,6 +5464,7 @@ class Form
 				$result = $bankstatic->fetch($selected);
 				if ($result) {
 					print $bankstatic->label;
+					if ($showibanbic) print ' (' . $bankstatic->iban . '/' .$bankstatic->bic. ')';
 				}
 			} else {
 				print "&nbsp;";

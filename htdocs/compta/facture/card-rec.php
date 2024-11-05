@@ -1107,7 +1107,7 @@ if ($action == 'create') {
 
 		// Customer Bank Account
 		print "<tr><td>".$langs->trans('CustomerIBAN')."</td><td>";
-		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1);
+		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
 		print "</td></tr>";
 
 		print '<script>
@@ -1466,9 +1466,9 @@ if ($action == 'create') {
 			print '</td><td>';
 
 			if ($action == 'editbankaccountcustomer') {
-				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1);
+				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, 1);
 			} else {
-				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'none');
+				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'none', '', 0, 1);
 			}
 			print "</td>";
 			print '</tr>';

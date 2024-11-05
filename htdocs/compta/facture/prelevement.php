@@ -811,7 +811,7 @@ if ($object->id > 0) {
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedIban, 'accountcustomerid', 'fk_soc='.$object->socid, 1);
+				$selectedRib = $form->selectRib($selectedIban, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
 
 				$defaultRibId = $object->thirdparty->getDefaultRib();
 				if ($defaultRibId) {
