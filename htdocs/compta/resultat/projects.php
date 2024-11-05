@@ -352,7 +352,8 @@ if ($modecompta == 'BOOKKEEPING') {
 			} else {
 				echo $langs->trans("None");
 			}
-			$detailed_list_url = '?search_project_ref='.urlencode($search_project_ref);
+			$detailed_list_url = '';
+			//$detailed_list_url .= '?search_project_ref='.urlencode($search_project_ref);
 			$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
 			$detailed_list_url .= $search_date_url;
 			echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
@@ -549,7 +550,8 @@ if ($modecompta == 'BOOKKEEPING') {
 				} else {
 					echo $langs->trans("None");
 				}
-				$detailed_list_url = '?search_project='.urlencode($search_project_ref);
+				$detailed_list_url = '';
+				//$detailed_list_url .= '?search_project='.urlencode($search_project_ref);
 				$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
 				$detailed_list_url .= $search_date_url;
 				echo ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";

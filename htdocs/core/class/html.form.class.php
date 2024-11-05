@@ -6357,7 +6357,7 @@ class Form
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
+			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, 'minwidth100', 1, $ribForSelection);
 		} else {
 			if ($selected) {
 				$out .= $selected;
