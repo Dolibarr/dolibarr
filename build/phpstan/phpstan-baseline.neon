@@ -29986,23 +29986,8 @@ parameters:
 			path: ../../htdocs/webservices/server_actioncomm.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
 			message: "#^Parameter \\#1 \\$authentication of function check_authentication expects array\\{login\\: string, password\\: string, entity\\: int\\|null, dolibarrkey\\: string\\}, array\\{login\\: string, entity\\: int\\} given\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_category.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/webservices/server_category.php
 
 		-
@@ -30031,16 +30016,6 @@ parameters:
 			path: ../../htdocs/webservices/server_contact.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
 			message: "#^Function createInvoice\\(\\) has parameter \\$invoice with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_invoice.php
@@ -30063,11 +30038,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/webservices/server_invoice.php
 
 		-
@@ -30111,29 +30081,9 @@ parameters:
 			path: ../../htdocs/webservices/server_order.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_order.php
-
-		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_other.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_payment.php
 
 		-
 			message: "#^Function createProductOrService\\(\\) has parameter \\$product with no value type specified in iterable type array\\.$#"
@@ -30176,16 +30126,6 @@ parameters:
 			path: ../../htdocs/webservices/server_productorservice.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
 			message: "#^Function createProject\\(\\) has parameter \\$project with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_project.php
@@ -30206,16 +30146,6 @@ parameters:
 			path: ../../htdocs/webservices/server_project.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_project.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_project.php
-
-		-
 			message: "#^Function getSupplierInvoice\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_supplier_invoice.php
@@ -30223,11 +30153,6 @@ parameters:
 		-
 			message: "#^Function getSupplierInvoicesForThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_supplier_invoice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/webservices/server_supplier_invoice.php
 
 		-
@@ -30271,16 +30196,6 @@ parameters:
 			path: ../../htdocs/webservices/server_thirdparty.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
 			message: "#^Function createUserFromThirdparty\\(\\) has parameter \\$thirdpartywithuser with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_user.php
@@ -30288,16 +30203,6 @@ parameters:
 		-
 			message: "#^Function getListOfGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_user.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_user.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/webservices/server_user.php
 
 		-
