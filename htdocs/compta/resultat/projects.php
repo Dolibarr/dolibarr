@@ -294,6 +294,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 */
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
+	$sql = '';
 	if ($modecompta == 'CREANCES-DETTES') {
 		$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -310,6 +311,11 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
+		if ($socid) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+		$sql .= " GROUP BY p.rowid, project_name";
+		$sql .= $db->order($sortfield, $sortorder);
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -324,12 +330,12 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
+		if ($socid) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+		$sql .= " GROUP BY p.rowid, project_name";
+		$sql .= $db->order($sortfield, $sortorder);
 	}
-	if ($socid) {
-		$sql .= " AND f.fk_soc = ".((int) $socid);
-	}
-	$sql .= " GROUP BY p.rowid, project_name";
-	$sql .= $db->order($sortfield, $sortorder);
 
 	dol_syslog("by project, get customer invoices", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -358,7 +364,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			echo "</td>\n";
 			echo '<td class="right"><span class="amount">'.price($objp->amount_ttc)."</span></td>\n";
 
-			$total_ht += (isset($objp->amount_ht) ? $objp->amount_ht : 0);
+			$total_ht += ($objp->amount_ht ?? 0);
 			$total_ttc += $objp->amount_ttc;
 			echo "</tr>\n";
 			$i++;
