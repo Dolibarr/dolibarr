@@ -33,6 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
 
@@ -207,7 +216,7 @@ if (empty($reshook)) {
 		// We check if we're allowed to add this bom
 		$TParentBom = array();
 		$object->getParentBomTreeRecursive($TParentBom);
-		if ($bom_child_id > 0 && !empty($TParentBom) && in_array($bom_child_id, $TParentBom)) {
+		if ($bom_child_id > 0 && in_array($bom_child_id, $TParentBom)) {
 			$n_child = new BOM($db);
 			$n_child->fetch($bom_child_id);
 			setEventMessages($langs->transnoentities('BomCantAddChildBom', $n_child->getNomUrl(1), $object->getNomUrl(1)), null, 'errors');

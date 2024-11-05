@@ -40,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 
@@ -621,43 +630,60 @@ if ($object->id > 0) {
 	print '</div>';
 
 	print '<div class="fichehalfright">';
-	print '<div class="underbanner clearboth"></div>';
+	print '<!-- amounts -->'."\n";
+	print '<div class="underbanner clearboth"></div>'."\n";
 
-	print '<table class="border centpercent tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
-	if (isModEnabled('multicurrency') && ($object->multicurrency_code != $conf->currency)) {
-		// Multicurrency Amount HT
-		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_ht, 0, $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-		print '</tr>';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
 
-		// Multicurrency Amount VAT
-		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_tva, 0, $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-		print '</tr>';
-
-		// Multicurrency Amount TTC
-		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_ttc, 0, $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-		print '</tr>';
+	$sign = 1;
+	if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && $object->type == $object::TYPE_CREDIT_NOTE) {
+		$sign = -1; // We invert sign for output
 	}
+	print '<tr>';
+	// Amount HT
+	print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		// Multicurrency Amount HT
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
+	print '</tr>';
 
-	// Amount
-	print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td>';
-	print '<td class="nowrap right">'.price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-
-	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td class="nowrap right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr>';
+	// Amount VAT
+	print '<td>' . $langs->trans('AmountVAT') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		// Multicurrency Amount VAT
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
 	print '</tr>';
 
 	// Amount Local Taxes
-	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
-		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td class="nowrap right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) {
+		print '<tr>';
+		print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($sign * $object->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			$object->multicurrency_total_localtax1 = (float) price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
+
+			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
+		print '</tr>';
 	}
-	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) { 	// Localtax2
-		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td class=nowrap right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+
+	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) {
+		print '<tr>';
+		print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($sign * $object->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			$object->multicurrency_total_localtax2 = (float) price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
+
+			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
+		print '</tr>';
 	}
 
 	// Revenue stamp
@@ -675,8 +701,16 @@ if ($object->id > 0) {
 		print '</td></tr>';
 	}
 
-	// Total with tax
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr>';
+	// Amount TTC
+	print '<td>' . $langs->trans('AmountTTC') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		// Multicurrency Amount TTC
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
+	print '</tr>';
+
 
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
@@ -691,7 +725,11 @@ if ($object->id > 0) {
 	}
 
 	// TODO Replace this by an include with same code to show already done payment visible in invoice card
-	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap right">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap right">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		print '<td></td>';
+	}
+	print '</tr>';
 
 	print '</table>';
 
@@ -746,23 +784,24 @@ if ($object->id > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
-				print("</div>");
-
 				$title = $langs->trans("NewStandingOrder");
 				if ($type == 'bank-transfer') {
 					$title = $langs->trans("NewPaymentByBankTransfer");
 				}
 
-				print load_fiche_titre($title);
-				print dol_get_fiche_head();
-				print '<table class="border centpercent tableforfield">';
-				print '<form method="POST" action="">';
+				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
-				print '<tr><td class="titlefield">'.$langs->trans('CustomerIBAN').'</td>';
-				print '<td class="nowraponall">';
+
+				print '<div class="center formconsumeproduce">';
+
+				//print '<table class="">';
+				//print '<tr><td class="left">'.
+				print $langs->trans('CustomerIBAN').' ';
+				//print '</td>';
+				//print '<td class="left nowraponall">';
 
 				$ribList = $object->thirdparty->get_all_rib();
 				$ribForSelection = [];
@@ -787,22 +826,23 @@ if ($object->id > 0) {
 						print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
-				print '</td></tr>';
+				//print '</td></tr>';
 
 				// Bank Transfer Amount
-				print '<tr><td class="nowrap">';
-				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-				print '</td></tr></table>';
-				print '</td><td colspan="3">';
-				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-				print '</td>';
-				print '</table>';
-				print '</div>';
+				//print '<tr><td class="nowrap left">';
+				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').'</label>';
+				//print '</td><td class="left">';
+				print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
+				//print '</td></tr>';
+
+				//print '</table>';
 
 				// Button
-				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '<br><br>';
+				print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
+				print '<br><br>';
+
+				print '</div>';
 
 				print '</form>';
 
@@ -819,10 +859,9 @@ if ($object->id > 0) {
 					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+					print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
 					print '</form>';
 				}
-				print '<div class="fichecenter">';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
@@ -850,14 +889,14 @@ if ($object->id > 0) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
-		print '</div><br>';
+		print '</div><br><br>';
 	} else {
 		print '<div class="opacitymedium justify">'.$langs->trans("DoStandingOrdersBeforePayments");
 		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
-		print '</div><br>';
+		print '</div><br><br>';
 	}
 
 	/*
@@ -875,12 +914,12 @@ if ($object->id > 0) {
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("IBAN").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
-	print '<td class="center">'.$langs->trans("CustomerIBAN").'</td>';
 	if ($type == 'bank-transfer') {
-		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
+		print '<td class="">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
-		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
+		print '<td class="">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
 	print '<td>&nbsp;</td>';
 	// Action column
@@ -950,11 +989,17 @@ if ($object->id > 0) {
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
+			// Iban
+			print '<td class="center"><span class="iban">';
+			print $obj->iban;
+			if ($obj->iban && $obj->bic) {
+				print " / ";
+			}
+			print $obj->bic;
+			print '</span></td>';
+
 			// Date process
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
-
-			// Iban
-			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
 
 			// Link to make payment now
 			print '<td class="minwidth75">';
@@ -992,8 +1037,10 @@ if ($object->id > 0) {
 			}
 			print '</td>';
 
-			//
-			print '<td class="center">-</td>';
+			// Withraw ref
+			print '<td class="">';
+			//print '<span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span>';
+			print '</td>';
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1071,14 +1118,20 @@ if ($object->id > 0) {
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
+			// Iban
+			print '<td class="center"><span class="iban">';
+			print $obj->iban;
+			if ($obj->iban && $obj->bic) {
+				print " / ";
+			}
+			print $obj->bic;
+			print '</span></td>';
+
 			// Date process
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
 
-			// Iban
-			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
-
 			// Link to payment request done
-			print '<td class="center minwidth75">';
+			print '<td class="minwidth75">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
@@ -1125,7 +1178,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($resql);

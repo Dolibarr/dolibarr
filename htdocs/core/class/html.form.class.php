@@ -6357,7 +6357,7 @@ class Form
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
+			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, 'minwidth100', 1, $ribForSelection);
 		} else {
 			if ($selected) {
 				$out .= $selected;
@@ -8778,7 +8778,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 * @param string 				$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
-	 * @param array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param array<int|string,array{label:string,data-html:string,disable?:int<0,1>,css?:string}>|string[]	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param string|string[]|int 	$id					Preselected key or array of preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
 	 * @param int<0,1>|string 		$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If 'Placeholder string': key is -1 and value is the string), <0 to add an empty value with key that is this value.
 	 * @param int<0,1>				$key_in_label 		1 to show key into label with format "[key] value"
@@ -11243,31 +11243,34 @@ class Form
 
 		// Adding the div for search assistance
 		$ret .= '<div class="search-component-assistance">';
+		$ret .= '<div>';
 
-		$ret .= '<table><tbody>';
-
-		$ret .= '<p class="assistance-title">' . img_picto('', 'help') . ' ' . $langs->trans('FilterAssistance') . ' </p>';
+		$ret .= '<p class="assistance-title">' . img_picto('', 'filter') . ' ' . $langs->trans('FilterAssistance') . ' </p>';
 
 		$ret .= '<p class="assistance-errors error" style="display:none">' . $langs->trans('AllFieldsRequired') . ' </p>';
 
-		$ret .= '<tr><td>';
-		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
-		$ret .= '</td>';
+		$ret .= '<div class="inline-block">';
+		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width250', 1);
+		$ret .= '</div>';
 
-		$ret .= '<td><span class="separator"></span>';
+		$ret .= '<span class="separator"></span>';
+
 		// Operator selector (will be populated dynamically)
-		$ret .= '<select class="operator-selector" id="operator-selector"">';
+		$ret .= '<div class="inline-block">';
+		$ret .= '<select class="operator-selector width150" id="operator-selector"">';
 		$ret .= '</select>';
 		$ret .= '<script>$(document).ready(function() {';
 		$ret .= '   $(".operator-selector").select2({';
-		$ret .= '       placeholder: "' . $langs->trans('Operator') . '"';
+		$ret .= '       placeholder: \'' . dol_escape_js($langs->trans('Operator')) . '\'';
 		$ret .= '   });';
 		$ret .= '});</script>';
-		$ret .= '</td>';
+		$ret .= '</div>';
 
-		$ret .= '<td><span class="separator"></span>';
+		$ret .= '<span class="separator"></span>';
+
+		$ret .= '<div class="inline-block">';
 		// Input field for entering values
-		$ret .= '<input type="text" class="flat width100 value-input" placeholder="' . $langs->trans('Value') . '">';
+		$ret .= '<input type="text" class="flat width100 value-input" placeholder="' . dolPrintHTML($langs->trans('Value')) . '">';
 
 		// Date selector
 		$dateOne = '';
@@ -11275,14 +11278,14 @@ class Form
 		$ret .=  $form->selectDate(($dateOne ? $dateOne : -1), 'dateone', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '');
 		$ret .= '</span>';
 
-		$ret .= '<span class="end-separator"></span> </td>';
+		$ret .= '</div>';
 
-		$ret .= '<td>';
+		$ret .= '<div class="inline-block">';
 		$ret .= '<button class="button buttongen button-save small add-filter-btn" type="button">' . $langs->trans("addToFilter") . '</button>';
-		$ret .= '</td>';
+		$ret .= '</div>';
 
-		$ret .= '</tr>';
-		$ret .= '</tbody></table>';
+		$ret .= '</div>';
+		//$ret .= '</tbody></table>';
 
 		// End of the assistance div
 		$ret .= '</div>';

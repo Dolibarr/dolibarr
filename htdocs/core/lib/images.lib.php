@@ -40,7 +40,7 @@ if (!defined('IMAGETYPE_WEBP')) {
 /**
  *      Return default values for image sizes
  *
- *      @return array		Array of default values
+ *      @return array{maxwidthsmall:int,maxheightsmall:int,maxwidthmini:int,maxheightmini:int,quality:int}		Array of default values
  */
 function getDefaultImageSizes()
 {
@@ -140,7 +140,7 @@ function image_format_supported($file, $acceptsvg = 0)
  *
  * 		@param	string	$file		Full path name of file
  * 		@param	bool	$url		Image with url (true or false)
- * 		@return	array				array('width'=>width, 'height'=>height)
+ * 		@return	array{width:int,height:int}|array{}|array{width:'',height:''}	array('width'=>width, 'height'=>height)
  */
 function dol_getImageSize($file, $url = false)
 {
@@ -290,6 +290,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Read source image file
+	$img = null;
+	$extImg = null;
 	switch ($infoImg[2]) {
 		case 1:	// Gif
 			$img = imagecreatefromgif($filetoread);
@@ -396,8 +398,12 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	dolChmod($imgTargetName);
 
 	// Free memory. This does not delete image.
-	imagedestroy($img);
-	imagedestroy($imgTarget);
+	if ($img) {
+		imagedestroy($img);
+	}
+	if ($imgTarget) {
+		imagedestroy($imgTarget);
+	}
 
 	clearstatcache(); // File was replaced by a modified one, so we clear file caches.
 
@@ -730,6 +736,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	// Variable initialization according to image extension
 	// $targetformat is 0 by default, in such case, we keep original extension
+	$extImgTarget = null;
+	$trans_colour = false;
+	$newquality = null;
 	switch ($targetformat) {
 		case IMAGETYPE_GIF:	    // 1
 			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // The GIF format works differently
@@ -765,7 +774,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$newquality = $quality;
 			break;
 	}
-	if (function_exists("imagefill")) {
+	if (function_exists("imagefill") && $trans_colour !== false) {
 		imagefill($imgThumb, 0, 0, $trans_colour);
 	}
 
@@ -789,10 +798,10 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagegif($imgThumb, $imgThumbName);
 			break;
 		case IMAGETYPE_JPEG:    // 2
-			imagejpeg($imgThumb, $imgThumbName, $newquality);
+			imagejpeg($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 		case IMAGETYPE_PNG:	    // 3
-			imagepng($imgThumb, $imgThumbName, $newquality);
+			imagepng($imgThumb, $imgThumbName, $newquality);  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 			break;
 		case IMAGETYPE_BMP:	    // 6
 			// Not supported by PHP GD
@@ -801,7 +810,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagewbmp($imgThumb, $imgThumbName);
 			break;
 		case IMAGETYPE_WEBP:    // 18
-			imagewebp($imgThumb, $imgThumbName, $newquality);
+			imagewebp($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 	}
 
