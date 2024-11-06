@@ -2246,21 +2246,6 @@ parameters:
 			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
@@ -2271,21 +2256,6 @@ parameters:
 			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
@@ -2293,11 +2263,6 @@ parameters:
 		-
 			message: "#^Variable \\$assetdepreciationoptions might not be defined\\.$#"
 			count: 11
-			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
 
 		-

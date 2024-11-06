@@ -614,7 +614,7 @@ class EcmDirectory extends CommonObject
 	public static function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+
 		return '';
 	}
 
