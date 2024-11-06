@@ -80,7 +80,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	$arrayofmembers = array();
 
 	// request taking into account member with up to date subscriptions
-	$sql = "SELECT d.rowid, d.ref, ci.label AS civility, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
+	$sql = "SELECT d.rowid, d.ref, d.civility, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
 	$sql .= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
 	$sql .= " t.libelle as type,";
 	$sql .= " c.code as country_code, c.label as country";
@@ -92,7 +92,6 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_civility as ci ON d.civility = ci.code";
 	if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
 	}
@@ -142,7 +141,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__ID__' => $objp->rowid,
 				'__REF__' => $objp->ref,
 				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
-				'__MEMBER_CIVILITY__' => empty($objp->civility) ? '' : $objp->civility,
+				'__MEMBER_CIVILITY__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
 				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
 				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
 				'__FULLNAME__' => $adherentstatic->getFullName($langs),
