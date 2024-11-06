@@ -85,8 +85,11 @@ dol_include_once('/lezioni/lib/lezioni_lezione.lib.php');
 if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
+if (isModEnabled("bank")) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 // Load translation files required by the page
-$langs->loadLangs(array("lezioni@lezioni", "other",'bills', 'banks', 'trips'));
+$langs->loadLangs(array("lezioni@lezioni", "other",'bills', 'banks', 'trips', 'members'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -506,7 +509,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	}
     
     	// Discard if extrafield is a hidden field on form
-    	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4 && abs($val['visible']) != 5) {
+    	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4 && abs($val['visible']) != 5 && $key != 'bank_transaction') {
     		continue;
     	}
     
@@ -565,24 +568,49 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
     				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
     				print showValueWithClipboardCPButton($out, 0, $out);
-    			}elseif (isModEnabled('adherent')) {
-    				$langs->load("members");
-    				if($key == 'istruttore') {
-    					$adh->fetch($value);
-    					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
-    					print $adh->getNomUrl(-1);
-    				}
-    				elseif($key == 'allievo')
-    				{
-    					$adh->fetch($value);
-    					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
-    					print $adh->getNomUrl(-1);
-    				}else {
-    				    print $object->showOutputField($val, $key, $value, '', '', '', 0);
-    			    }
-				}else {
-    				print $object->showOutputField($val, $key, $value, '', '', '', 0);
     			}
+				else{
+
+					if(isModEnabled('adherent') && $key == 'istruttore') {
+						$adh->fetch($value);
+						$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
+						print $adh->getNomUrl(-1);
+					}
+					elseif(isModEnabled('adherent') && $key == 'allievo') {
+						$adh->fetch($value);
+						$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
+						print $adh->getNomUrl(-1);
+					}
+					elseif(isModEnabled('bank') && $key == 'bank_transaction'){
+						if ($object->bank_account) {
+							$bankline = new AccountLine($db);
+							$bankline->fetch($object->bank_transaction);
+							if ($bankline->rappro) {
+								$disable_delete = 1;
+								$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+							}
+					
+							//print '<tr>';
+							//print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+							//print '<td colspan="3">';
+							print $bankline->getNomUrl(1, 0, 'showconciliated');
+							print '</td>';
+							print '</tr>';
+					
+							print '<tr>';
+							print '<td>'.$langs->trans('BankAccount').'</td>';
+							print '<td colspan="3">';
+							$accountstatic = new Account($db);
+							$accountstatic->fetch($bankline->fk_account);
+							print $accountstatic->getNomUrl(1);
+							print '</td>';
+							print '</tr>';
+						}
+					}
+					else {
+						print $object->showOutputField($val, $key, $value, '', '', '', 0);
+					}
+				}
     		}
     		//print dol_escape_htmltag($object->$key, 1, 1);
     		if (preg_match('/^(text|html)/', $val['type'])) {
