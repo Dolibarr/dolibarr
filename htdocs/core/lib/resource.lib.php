@@ -176,7 +176,7 @@ function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, $resource_
 		$escaped_ids = array_map(function (int $v) : string {
 			global $db;
 			return $db->sanitize($db->escape($v));
-		}, array_keys($resource_ids));
+		}, $resource_ids);
 		$sql .= " AND er.resource_id IN (". implode(", ", $escaped_ids) . ")";
 	}
 
