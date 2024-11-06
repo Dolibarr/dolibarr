@@ -7873,7 +7873,6 @@ abstract class CommonObject
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
-					//print $sql;
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
 					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
@@ -9383,7 +9382,7 @@ abstract class CommonObject
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this->id, $this->table_element);
 								break;
 						}
 

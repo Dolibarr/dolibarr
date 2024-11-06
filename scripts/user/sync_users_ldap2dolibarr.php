@@ -239,7 +239,7 @@ if ($result >= 0) {
 			$fuser->contact_id = 0;
 			$fuser->fk_member = 0;
 
-			$fuser->statut = 1;
+			$fuser->status = 1;
 			// TODO : revoir la gestion du status
 			/*
 			 * if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
