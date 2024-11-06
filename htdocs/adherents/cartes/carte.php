@@ -158,8 +158,11 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__MONTH__' => $month,
 				'__DAY__' => $day,
 				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
-				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/" //TODO for member extrafield
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
+			foreach  ($adherentstatic->array_options as $key => $val) {
+				$substitutionarray['__'.strtoupper($key).'__']=$val;
+			}
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
 			// For business cards
