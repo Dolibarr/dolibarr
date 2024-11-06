@@ -5224,7 +5224,7 @@ class Form
 	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
 	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
-	public function selectRib($selected = '', $htmlname = 'accountcustomerid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
+	public function selectRib($selected = '', $htmlname = 'ribcompanyid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5408,7 +5408,7 @@ class Form
 	 * @param int 		$showibanbic 	Show iban/bic in label
 	 * @return    						void
 	 */
-	public function formRib($page, $selected = '', $htmlname = 'fk_account_customer', $filtre = '', $addempty = 0, $showibanbic = 0)
+	public function formRib($page, $selected = '', $htmlname = 'ribcompanyid', $filtre = '', $addempty = 0, $showibanbic = 0)
 	{
 		global $langs;
 		if ($htmlname != "none") {

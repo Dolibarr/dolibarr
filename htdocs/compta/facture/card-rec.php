@@ -364,7 +364,7 @@ if (empty($reshook)) {
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 	} elseif ($action == 'setbankaccountcustomer' && $usercancreate) {
 		// Set bank account customer
-		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("BankCustomer"));
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("DebitBankAccount"));
 		$fk_societe_rib = (GETPOSTINT('accountcustomerid') != "-1") ? GETPOSTINT('accountcustomerid') : 0;
 		$result = $object->setValueFrom('fk_societe_rib', $fk_societe_rib);
 	} elseif ($action == 'setfrequency' && $usercancreate) {
@@ -1106,7 +1106,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Customer Bank Account
-		print "<tr><td>".$langs->trans('CustomerIBAN')."</td><td>";
+		print "<tr><td>".$langs->trans('DebitBankAccount')."</td><td>";
 		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
 		print "</td></tr>";
 
@@ -1456,11 +1456,11 @@ if ($action == 'create') {
 		if ($object->mode_reglement_code == $object::PAYMENTCODETOEDITSOCIETERIB) {
 			print '<tr><td class="nowrap">';
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-			print $langs->trans('CustomerIBAN');
+			print $langs->trans('DebitBankAccount');
 			print '<td>';
 
 			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
-				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccountcustomer&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetBankAccountCustomer'), 1) . '</a></td>';
+				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccountcustomer&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetDebitBankAccount'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
