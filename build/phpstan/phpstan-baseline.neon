@@ -536,11 +536,6 @@ parameters:
 			path: ../../htdocs/accountancy/closure/index.php
 
 		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/closure/index.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/closure/index.php
@@ -554,11 +549,6 @@ parameters:
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/customer/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/customer/index.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -594,11 +584,6 @@ parameters:
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/expensereport/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/expensereport/index.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -759,11 +744,6 @@ parameters:
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/supplier/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/supplier/index.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -1209,11 +1189,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/fckeditor.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 1
-			path: ../../htdocs/admin/fediverse.php
 
 		-
 			message: "#^Variable \\$result might not be defined\\.$#"
@@ -19183,11 +19158,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 1
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
