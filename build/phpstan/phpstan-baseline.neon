@@ -396,11 +396,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountingjournal.class.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountingjournal.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/class/bookkeeping.class.php
