@@ -14631,11 +14631,6 @@ parameters:
 			path: ../../htdocs/core/tpl/originproductline.tpl.php
 
 		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/core/tpl/originproductline.tpl.php
-
-		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
@@ -21404,21 +21399,6 @@ parameters:
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
-
-		-
-			message: "#^Variable \\$line might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/mrp/tpl/originproductline.tpl.php
-
-		-
-			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/mrp/tpl/originproductline.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/mrp/tpl/originproductline.tpl.php
 
 		-
 			message: "#^Method MultiCurrencies\\:\\:delete\\(\\) return type has no value type specified in iterable type array\\.$#"
