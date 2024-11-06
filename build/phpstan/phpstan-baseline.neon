@@ -10331,11 +10331,6 @@ parameters:
 			path: ../../htdocs/core/lib/pdf.lib.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/lib/pdf.lib.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 4
 			path: ../../htdocs/core/lib/pdf.lib.php
@@ -10676,32 +10671,12 @@ parameters:
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
@@ -10743,16 +10718,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_sepamandate\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
@@ -10801,16 +10766,6 @@ parameters:
 			path: ../../htdocs/core/modules/bom/mod_bom_standard.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
 			message: "#^Property mod_chequereceipt_mint\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/cheque/mod_chequereceipt_mint.php
@@ -10822,11 +10777,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Commande given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
@@ -10856,11 +10806,6 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
@@ -10868,11 +10813,6 @@ parameters:
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
@@ -10901,11 +10841,6 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
@@ -10926,17 +10861,7 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
@@ -10976,23 +10901,8 @@ parameters:
 			path: ../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_strato\\:\\:tabSignature\\(\\) expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
 
 		-
@@ -11007,11 +10917,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Delivery given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
@@ -11031,16 +10936,6 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
@@ -11051,19 +10946,9 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: "#^Variable \\$realpath might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_typhon\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
@@ -11076,16 +10961,6 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
@@ -11093,11 +10968,6 @@ parameters:
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
@@ -11136,11 +11006,6 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$columnText of method CommonDocGenerator\\:\\:printStdColumnContent\\(\\) expects string, float given\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
@@ -11156,32 +11021,12 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
@@ -11206,28 +11051,13 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_rouget\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
 
 		-
@@ -11241,11 +11071,6 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/mod_expedition_safor.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_standard_expensereport\\:\\:tablePayments\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
@@ -11253,21 +11078,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_expensereport\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
 
 		-
@@ -11331,11 +11141,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
@@ -11361,11 +11166,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
@@ -11373,11 +11173,6 @@ parameters:
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
@@ -11436,11 +11231,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 7
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -11476,17 +11266,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
@@ -11531,11 +11311,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 6
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
@@ -11561,17 +11336,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -11656,21 +11421,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/modules_facture.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
@@ -11688,16 +11438,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_evaluation\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
 
 		-
@@ -12081,28 +11821,8 @@ parameters:
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
@@ -12171,17 +11891,7 @@ parameters:
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
@@ -12366,32 +12076,12 @@ parameters:
 			path: ../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
 
@@ -12431,16 +12121,6 @@ parameters:
 			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
-
-		-
 			message: "#^Comparison operation \"\\>\\=\" between int\\<0, max\\> and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
@@ -12456,27 +12136,7 @@ parameters:
 			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
-
-		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
 
@@ -12576,11 +12236,6 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 6
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
@@ -12606,18 +12261,8 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
@@ -12637,11 +12282,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Propal given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
@@ -12671,16 +12311,6 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$multicurrency_tx \\(array\\<float\\>\\|float\\) in isset\\(\\) is not nullable\\.$#"
 			count: 5
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
@@ -12706,28 +12336,13 @@ parameters:
 			path: ../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_squille\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
 
 		-
@@ -12816,32 +12431,12 @@ parameters:
 			path: ../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
 
@@ -12861,33 +12456,13 @@ parameters:
 			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_eagle\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
 
 		-
@@ -12911,11 +12486,6 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
@@ -12926,22 +12496,7 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
@@ -13001,11 +12556,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
@@ -13013,11 +12563,6 @@ parameters:
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
@@ -13091,17 +12636,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -13146,11 +12681,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
@@ -13158,11 +12688,6 @@ parameters:
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
@@ -13198,16 +12723,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_supplierpayment\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
 
 		-
@@ -13261,11 +12776,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 5
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
@@ -13286,11 +12796,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
@@ -13298,11 +12803,6 @@ parameters:
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
@@ -13341,17 +12841,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -20131,11 +19621,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_myobject\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
@@ -20146,22 +19631,7 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
@@ -25531,32 +25001,12 @@ parameters:
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 

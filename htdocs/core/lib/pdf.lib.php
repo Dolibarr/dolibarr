@@ -776,8 +776,8 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  *
  *      @param	TCPDF      	$pdf            Object PDF
  *      @param  Translate	$outputlangs	Object lang
- *      @param  int		    $h		        Height of PDF
- *      @param  int		    $w		        Width of PDF
+ *      @param  float	    $h		        Height of PDF
+ *      @param  float	    $w		        Width of PDF
  *      @param  string	    $unit           Unit of height (mm, pt, ...)
  *      @param  string		$text           Text to show
  *      @return	void
@@ -815,9 +815,9 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$pdf->SetFont('', 'B', 40);
 	$pdf->SetTextColor(255, 0, 0);
 
-	//rotate
+	// rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
-	//print watermark
+	// print watermark
 	$pdf->SetAlpha(0.5);
 	$pdf->SetXY($watermark_x_pos, $watermark_y_pos);
 
@@ -825,7 +825,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$pdf->SetAlpha(0.3);
 	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", 0);
 
-	//antirotate
+	// antirotate
 	$pdf->_out('Q');
 
 	$pdf->SetXY($savx, $savy);
@@ -1014,13 +1014,13 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	?Societe	$fromcompany	Object company
- * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
- * 	@param	int			$marge_gauche	Margin left (no more used)
+ * 	@param	float		$marge_basse	Margin bottom we use for the autobreak
+ * 	@param	float		$marge_gauche	Margin left (no more used)
  * 	@param	float		$page_hauteur	Page height
  * 	@param	CommonObject	$object			Object shown in PDF
  * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
- *  @param	int			$page_largeur	Page width
+ *  @param	float		$page_largeur	Page width
  *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
  */
