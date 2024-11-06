@@ -137,8 +137,8 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="tagtable nobottomiftotal liste">'."\n";
 //title
 print '<tr class="liste_titre">';
-print '<th colspan="4">Compensi Istruttori '.$year.'</th>';
-print '<th colspan="4">'.dolGetButtonTitle('Export to CSV', '', 'fa fa-share-square', $csvDownloadUrl, '', 1).'</th>';
+print '<th colspan="5">Compensi Istruttori '.$year.'</th>';
+print '<th colspan="5">'.dolGetButtonTitle('Export to CSV', '', 'fa fa-share-square', $csvDownloadUrl, '', 1).'</th>';
 print '</tr>';
 //header
 print '<tr class="liste_titre">';
@@ -148,6 +148,7 @@ print '<th class="wrapcolumntitle liste_titre" title="Istruttore">Istruttore</a>
 print '<th class="wrapcolumntitle liste_titre" title="Compenso Totale">Totale (€)</a></th>';
 print '<th class="wrapcolumntitle liste_titre" title="Compenso Pagato">Pagato (€)</a></th>';
 print '<th class="wrapcolumntitle liste_titre" title="Compenso Da Pagare">Da Pagare(€)</a></th>';
+print '<th class="wrapcolumntitle liste_titre" title="Compenso Coordinatore">Coordinatore(€)</a></th>';
 print '</tr>';
 
 $exportLine = "Mese,Istruttore,Totale,Pagato,Da Pagare\n";
@@ -179,8 +180,10 @@ foreach ($compensi as $row) {
     print '<td>'.$row[3].'</td>';
     //compenso rimanente
     print '<td>'.$row[4].'</td>';
+    //compenso coordinatore
+    print '<td>'.$row[5].'</td>';
 
-	$exportLine .= $row[0].','.$adh->ref.','.$row[2].','.$row[3].','.$row[4]."\n";
+	$exportLine .= $row[0]."\t".$adh->ref."\t".$row[2]."\t".$row[3]."\t".$row[4]."\t".$row[5]."\n";
 print '</tr>';
 $i++;
 }

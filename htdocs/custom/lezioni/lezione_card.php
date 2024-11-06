@@ -585,14 +585,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($object->bank_account) {
 							$bankline = new AccountLine($db);
 							$bankline->fetch($object->bank_transaction);
-							if ($bankline->rappro) {
-								$disable_delete = 1;
-								$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-							}
-					
-							//print '<tr>';
-							//print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-							//print '<td colspan="3">';
+							
 							print $bankline->getNomUrl(1, 0, 'showconciliated');
 							print '</td>';
 							print '</tr>';

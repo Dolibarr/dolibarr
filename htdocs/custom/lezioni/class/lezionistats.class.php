@@ -87,18 +87,37 @@ class LezioniStats // extends Stats
 	 */
 	public function getIstrCompensiByMonth($year, $format = 0)
 	{
-	    //group fields
-		$sql = "SELECT date_format(p.datalezione,'%M %y') as dm, istruttore";
-		//aggregations
-		$sql .= ", sum(p.compensoistruttore) as CompensoTot";
-		$sql .= ", sum(if(p.pagato = 1, p.compensoistruttore, 0)) as CompensoPagato";
-		$sql .= ", sum(if(p.pagato = 0, p.compensoistruttore, 0)) as CompensoDaPagare";
-		//from
-		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
-		$sql .= " AND ".$this->where;
-		$sql .= " GROUP BY dm, istruttore";
+
+		$sql = "SELECT dm";
+		$sql .= ", istruttore";
+		$sql .= ", sum(CompensoTot + CompensoCoordinatore) as CompensoTot";
+		$sql .= ", sum(CompensoPagato) as CompensoPagato";
+		$sql .= ", sum(CompensoDaPagare) as CompensoDaPagare";
+		$sql .= ", sum(CompensoCoordinatore) as CompensoCoordinatore ";
+		$sql .= " FROM ";
+		$sql .= "( ";
+		$sql .= "    SELECT date_format(p.datalezione,'%M %y') as dm ";
+		$sql .= "        , istruttore ";
+		$sql .= "        , p.compensoistruttore as CompensoTot";
+		$sql .= "        , if(p.pagato = 1, p.compensoistruttore, 0) as CompensoPagato";
+		$sql .= "        , if(p.pagato = 0, p.compensoistruttore, 0) as CompensoDaPagare";
+		$sql .= "        , 0 as CompensoCoordinatore";
+		$sql .= "    FROM `o5d2_lezioni_lezione` p";
+		$sql .= "   WHERE ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
+		$sql .= "   AND ".$this->where;
+		$sql .= "  UNION ";
+		$sql .= "    SELECT date_format(p.datalezione,'%M %y') as dm";
+		$sql .= "        , coordinatore as istruttore";
+		$sql .= "        , 0 as Compenso";
+		$sql .= "        , 0 as CompensoPagato";
+		$sql .= "        , 0 as CompensoDaPagare";
+		$sql .= "        , compenso_coordinatore as CompensoCoordinatore";
+		$sql .= "    FROM `o5d2_lezioni_lezione` p";
+		$sql .= "   WHERE ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
+		$sql .= "   AND ".$this->where;
+		$sql .= ") a ";
+		$sql .= " WHERE istruttore is not null ";
+		$sql .= " GROUP BY dm, istruttore ";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		// phpcs:enable

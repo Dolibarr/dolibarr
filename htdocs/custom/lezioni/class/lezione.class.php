@@ -140,6 +140,8 @@ class Lezione extends CommonObject
 		"bank_transaction" => array("type"=>"integer", "label"=>"Transazione Bancaria", "enabled"=>"1", 'position'=>12, 'notnull'=>0, "visible"=>"0", "index"=>"1", "help"=>"Transazione bancaria associata al pagamento lezione",),
 		"luogo" => array("type"=>"varchar(99)", "label"=>"Luogo", "enabled"=>"1", 'position'=>4, 'notnull'=>0, "visible"=>"1", "searchall"=>"1", "help"=>"Luogo dove si è tenuta la lezione",),
 		"bank_account" => array("type"=>"integer", "label"=>"bank_account", "enabled"=>"1", 'position'=>11, 'notnull'=>0, "visible"=>"0", "comment"=>"Id Conto Bancario"),
+		"coordinatore" => array("type"=>"integer:member:adherents/class/adherent.class.php:0:((fk_adherent_type:=:2) or (fk_adherent_type:=:3) or (fk_adherent_type:=:4))", "label"=>"Coordinatore", "enabled"=>"1", 'position'=>13, 'notnull'=>0, "visible"=>"3", "searchall"=>"1", "help"=>"Coordinatore della lezione",),
+		"compenso_coordinatore" => array("type"=>"price", "label"=>"Compenso Coordinatore", "enabled"=>"1", 'position'=>14, 'notnull'=>0, "visible"=>"3", "isameasure"=>"1", "comment"=>"Compenso del coordinatore"),
 	);
 	public $rowid;
 	public $ref;
@@ -168,6 +170,8 @@ class Lezione extends CommonObject
 	public $bank_transaction;
 	public $luogo;
 	public $bank_account;
+	public $coordinatore;
+	public $compenso_coordinatore;
 	// END MODULEBUILDER PROPERTIES
 
 
