@@ -350,7 +350,7 @@ class Loan extends CommonObject
 		// Get bank transaction lines for this loan
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account = new Account($this->db);
-		$lines_url = $account->get_url('', $this->id, 'loan');
+		$lines_url = $account->get_url(0, $this->id, 'loan');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url) {

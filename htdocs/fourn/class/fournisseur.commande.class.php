@@ -83,7 +83,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
-	 * @var integer
+	 * @var int<0,1>
 	 */
 	public $restrictiononfksoc = 1;
 
@@ -115,7 +115,7 @@ class CommandeFournisseur extends CommonOrder
 	public $ref_fourn;
 
 	/**
-	 * @var int
+	 * @var ?int<0,9>
 	 */
 	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running
@@ -123,6 +123,9 @@ class CommandeFournisseur extends CommonOrder
 	//  		                                      -> 9=Refused  -> (reopen) 1=Validated
 	//  Note: billed or not is on another field "billed"
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $billed;
 
 	/**
@@ -161,9 +164,18 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $date_commande;
 
-	//For backward compatibility
+	/**
+	 * @deprecated Provided or backward compatibility
+	 * @var float
+	 */
 	public $remise_percent;
+	/**
+	 * @var int
+	 */
 	public $methode_commande_id;
+	/**
+	 * @var int
+	 */
 	public $methode_commande;
 
 	/**
@@ -196,6 +208,9 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $total_ttc;
 
+	/**
+	 * @var int
+	 */
 	public $source;
 
 	/**
@@ -259,6 +274,9 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $user_approve_id2;
 
+	/**
+	 * @var string
+	 */
 	public $refuse_note;
 
 	/**
@@ -276,8 +294,13 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $line;
 
-	// Add for supplier_proposal
+	/**
+	 * @var CommonObject Add for supplier_proposal
+	 */
 	public $origin;
+	/**
+	 * @var int
+	 */
 	public $origin_id;
 	public $linked_objects = array();
 
@@ -969,7 +992,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$datas['picto'] = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
-			if (isset($this->statut)) {
+			if ($this->statut) {
 				$datas['picto'] .= ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
@@ -2523,7 +2546,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @since 8.0 Return dispatched quantity (qty).
 	 *
 	 * @param	int		$status		Filter on stats (-1 = no filter, 0 = lines draft to be approved, 1 = approved lines)
-	 * @return	array				Array of lines
+	 * @return array<array{id:int,productid:int,warehouseid:int,qty:float,orderlineid:int}>		Array of lines
 	 */
 	public function getDispachedLines($status = -1)
 	{
@@ -2574,8 +2597,8 @@ class CommandeFournisseur extends CommonOrder
 	 * 	Set a delivery in database for this supplier order
 	 *
 	 *	@param	User	$user		User that input data
-	 *	@param	integer	$date		Date of reception
-	 *	@param	string	$type		Type of receipt ('tot' = total/done, 'par' = partial, 'nev' = never, 'can' = cancel)
+	 *	@param	int		$date		Date of reception
+	 *	@param	'tot'|'par'|'nev'|'can'		$type	Type of receipt ('tot' = total/done, 'par' = partial, 'nev' = never, 'can' = cancel)
 	 *	@param	string	$comment	Comment
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
@@ -2586,6 +2609,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$result = 0;
 		$error = 0;
+		$dispatchedlinearray = array();
 
 		dol_syslog(get_class($this)."::Livraison");
 
@@ -2925,9 +2949,9 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		int			$info_bits			Miscellaneous information
 	 *	@param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$notrigger			Disable triggers
-	 *  @param      integer     $date_start     	Date start of service
-	 *  @param      integer     $date_end       	Date end of service
-	 *  @param		array		$array_options		Extrafields array
+	 *  @param      int			$date_start     	Date start of service
+	 *  @param      int			$date_end       	Date end of service
+	 *  @param		array<string,mixed|mixed[]>		$array_options		Extrafields array
 	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		int|float	$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
@@ -3379,10 +3403,10 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	Object lang to use for traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int          				Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
