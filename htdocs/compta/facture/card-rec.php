@@ -1107,7 +1107,8 @@ if ($action == 'create') {
 
 		// Customer Bank Account
 		print "<tr><td>".$langs->trans('DebitBankAccount')."</td><td>";
-		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+		$defaultRibId = $object->thirdparty->getDefaultRib();
+		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $defaultRibId, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
 		print "</td></tr>";
 
 		print '<script>
