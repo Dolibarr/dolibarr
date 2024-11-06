@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -539,7 +540,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	Return datas as an array
 	 *
 	 *	@param	SQLite3Result	$resultset  Resultset of request
-	 *	@return	false|array					Array or false if KO or end of cursor
+	 *	@return	array<int|string,mixed>|null|false	Array or null if KO or end of cursor
 	 */
 	public function fetch_array($resultset)
 	{
@@ -558,7 +559,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	Return datas as an array
 	 *
 	 *	@param	SQLite3Result	$resultset  Resultset of request
-	 *	@return	false|array					Array or false if KO or end of cursor
+	 *	@return	array<int,mixed>|null|int<0,0>  Array or null if KO or end of cursor or 0 if resultset is bool
 	 */
 	public function fetch_row($resultset)
 	{
@@ -571,7 +572,7 @@ class DoliDBSqlite3 extends DoliDB
 			return $resultset->fetchArray(SQLITE3_NUM);
 		} else {
 			// si le curseur est un boolean on retourne la valeur 0
-			return false;
+			return 0;
 		}
 	}
 
@@ -591,7 +592,9 @@ class DoliDBSqlite3 extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
+		// Ignore Phan - queryString is added as dynamic property @phan-suppress-next-line PhanUndeclaredProperty
 		if (preg_match("/^SELECT/i", $resultset->queryString)) {
+			// Ignore Phan - queryString is added as dynamic property @phan-suppress-next-line PhanUndeclaredProperty
 			return $this->db->querySingle("SELECT count(*) FROM (".$resultset->queryString.") q");
 		}
 		return 0;
@@ -872,7 +875,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	string[]				List of tables in an array
 	 */
 	public function DDLListTables($database, $table = '')
 	{
@@ -904,7 +907,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	array<array{0:string,1:string}>		List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '')
 	{
@@ -935,7 +938,8 @@ class DoliDBSqlite3 extends DoliDB
 	 *  List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des information des champs de la table
+	 *	@return	array<array<mixed>>	Table with information of columns in the table
+
 	 *	TODO modify for sqlite
 	 */
 	public function DDLInfoTable($table)
@@ -965,9 +969,9 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>,value?:string,attribute?:string,null?:string,extra?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
-	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
+	 *	@param	    ?array<string,mixed>	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	@param	    string[]	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
+	 *	@param	    array<string,mixed>	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
@@ -1016,7 +1020,10 @@ class DoliDBSqlite3 extends DoliDB
 		}
 		if ($primary_key != "") {
 			$pk = "PRIMARY KEY(".$this->sanitize($primary_key).")";
+		} else {
+			$pk = "";
 		}
+
 
 		if (is_array($unique_keys)) {
 			$i = 0;
@@ -1245,7 +1252,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		array		List of Charset
+	 *	@return	?array<int,array{charset:string,description:string}>	List of Charset
 	 */
 	public function getListOfCharacterSet()
 	{
@@ -1269,7 +1276,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array		List of Collation
+	 *	@return		?array<int,array{collation:string}>		List of Collation
 	 */
 	public function getListOfCollation()
 	{
@@ -1321,8 +1328,8 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * Return value of server parameters
 	 *
-	 * @param	string	$filter		Filter list on a particular value
-	 * @return	array				Array of key-values (key=>value)
+	 * @param	string	$filter			Filter list on a particular value
+	 * @return	array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerParametersValues($filter = '')
 	{
@@ -1369,7 +1376,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * Return value of server status
 	 *
 	 * @param	string	$filter		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @return	array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerStatusValues($filter = '')
 	{

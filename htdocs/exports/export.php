@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank', 'bills'));
 
@@ -729,7 +737,7 @@ if ($step == 3 && $datatoexport) {
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -767,7 +775,7 @@ if ($step == 3 && $datatoexport) {
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
+	print '<br><br>';
 
 	// Combo list of export models
 	print '<span class="opacitymedium">'.$langs->trans("SelectFilterFields").'</span><br><br>';

@@ -376,7 +376,9 @@ class Boms extends DolibarrApi
 			$request_data->position,
 			$request_data->fk_bom_child,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {
@@ -425,7 +427,9 @@ class Boms extends DolibarrApi
 			$request_data->efficiency,
 			$request_data->position,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {

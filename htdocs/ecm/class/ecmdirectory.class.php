@@ -303,7 +303,7 @@ class EcmDirectory extends CommonObject
 		if (preg_match('/[0-9]+/', $value)) {
 			$sql .= " cachenbofdoc = ".(int) $value;
 		} else {
-			$sql .= " cachenbofdoc = cachenbofdoc ".$value." 1";
+			$sql .= " cachenbofdoc = cachenbofdoc ".preg_replace('/[^\-\+]/', '', $value)." 1";
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

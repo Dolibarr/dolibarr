@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('categories', 'languages'));
 
@@ -41,6 +49,7 @@ $id     = GETPOSTINT('id');
 $label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$langtodelete = GETPOST('langtodelete', 'alpha');
 
 if ($id == '' && $label == '') {
 	dol_print_error(null, 'Missing parameter id');
@@ -76,6 +85,17 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
+// delete a translation
+if ($action == 'delete' && $langtodelete && $user->hasRight('categorie', 'creer')) {
+	$res = $object->delMultiLangs($langtodelete, $user);
+	if ($res < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	} else {
+		unset($object->multilangs[$langtodelete]);
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	}
+	$action = '';
+}
 
 // validation of addition
 if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {

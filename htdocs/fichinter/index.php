@@ -36,13 +36,20 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 	accessforbidden();
 }
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->load("interventions");
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('interventionindex'));
 
-// Load translation files required by the page
-$langs->load("interventions");
 
 // Security check
 $socid = GETPOSTINT('socid');

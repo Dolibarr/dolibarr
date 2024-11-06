@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,13 +358,13 @@ class FormActions
 	/**
 	 *  Output html select list of type of event
 	 *
-	 *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
+	 *  @param	string[]|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
 	 *  @param  string		    $htmlname       Name of select field
 	 *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
-	 *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
-	 *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
-	 *  @param  int		        $multiselect    1=Allow multiselect of action type
-	 *  @param  int             $nooutput       1=No output
+	 *  @param	int<-2,1>	    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
+	 *  @param	int<-1,1>		$hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
+	 *  @param  int<0,1>        $multiselect    1=Allow multiselect of action type
+	 *  @param  int<0,1>		$nooutput       1=No output
 	 *  @param	string			$morecss		More css to add to SELECT component.
 	 *  @param	int<0,1>|string	$showempty		0 or 1 or 'Placeholder string'
 	 * 	@return	string
@@ -383,13 +384,6 @@ class FormActions
 
 		// Suggest a list with manual events or all auto events
 		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot, '', 0);		// If we use param 'all' instead of 'code', there is no group by include in answer but the key 'type' of answer array contains the key for the group by.
-		/* Removed. The empty line must now be managed with param showempty
-		if (empty($multiselect)) {
-			// Add empty line at start only if no multiselect
-			array_unshift($arraylist, '&nbsp;');
-		}
-		*/
-		//asort($arraylist);
 
 		if ($selected == 'manual') {
 			$selected = 'AC_OTH';
@@ -398,7 +392,7 @@ class FormActions
 			$selected = 'AC_OTH_AUTO';
 		}
 
-		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
+		if (array_key_exists('AC_OTH_AUTO', $arraylist) && getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
 			unset($arraylist['AC_OTH_AUTO']);
 		}
 
@@ -411,6 +405,7 @@ class FormActions
 			if (strpos($key, 'AC_ALL_') !== false && strpos($key, 'AC_ALL_AUTO') === false) {
 				$disabled = 'disabled';
 			}
+
 			$newarraylist[$key] = array('id' => $key, 'label' => $value, 'disabled' => $disabled);
 		}
 

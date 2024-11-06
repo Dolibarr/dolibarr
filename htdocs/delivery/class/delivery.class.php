@@ -273,7 +273,7 @@ class Delivery extends CommonObject
 	 *	Create a line
 	 *
 	 *	@param	int 	$origin_id				Id of order
-	 *	@param	string	$qty					Quantity
+	 *	@param	float	$qty					Quantity
 	 *	@param	int 	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array<string,?mixed>	$array_options	Array options
@@ -450,7 +450,7 @@ class Delivery extends CommonObject
 					$sql .= " ref='".$this->db->escape($numref)."'";
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
-					$sql .= ", fk_user_valid = ".$user->id;
+					$sql .= ", fk_user_valid = ".((int) $user->id);
 					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
 
@@ -637,8 +637,6 @@ class Delivery extends CommonObject
 	 */
 	public function addline($origin_id, $qty, $array_options = [])
 	{
-		global $conf;
-
 		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
@@ -763,8 +761,8 @@ class Delivery extends CommonObject
 
 		$datas = [];
 
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
-		$datas['picto'] .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly').' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$datas['ref'] = '<b>'.$langs->trans("Ref").'</b>: '.$this->ref;
 
 		return $datas;
 	}

@@ -576,7 +576,7 @@ class PriceGlobalVariableUpdater
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " next_update = ".$this->next_update;
+		$sql .= " next_update = ".((int) $this->next_update);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
@@ -199,7 +208,6 @@ function pt($db, $sql, $date)
 
 if (empty($localTaxType)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
 
 
@@ -480,7 +488,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				}
 			}
 			//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-			$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+			$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 			$temp_vat = $fields['localtax'.$localTaxType] * $ratiopaymentinvoice;
 			$subtot_coll_total_ht += $temp_ht;
 			$subtot_coll_vat      += $temp_vat;

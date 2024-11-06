@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,8 @@
  *		\brief      File to manage captcha generation according to dolibarr native code
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/security/captcha/modules_captcha.php';
+ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/captcha/modules_captcha.php';
+ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
 
 
 /**
@@ -74,7 +75,24 @@ class modCaptchaStandard extends ModeleCaptcha
 	 */
 	public function getExample()
 	{
-		return '';
+		global $db, $conf, $langs, $user;
+
+		$generator = new modGeneratePassStandard($db, $conf, $langs, $user);
+		$example = $generator->getExample();
+		$img = imagecreate(80, 32);
+		if (!$img) {
+			return "Problem with GD creation";
+		}
+		$background_color = imagecolorallocate($img, 250, 250, 250);
+		$ecriture_color = imagecolorallocate($img, 0, 0, 0);
+		imagestring($img, 4, 15, 8, $example, $ecriture_color);
+
+		ob_start();
+		imagepng($img);
+		$image_data = ob_get_contents();
+		ob_end_clean();
+
+		return '<img class="inline-block valignmiddle" src="data:image/png;base64,' . base64_encode($image_data) . '" border="0" width="80" height="32" />';
 	}
 
 

@@ -113,6 +113,9 @@ class WebPortalInvoice extends Facture
 	);
 	//public $rowid;
 	//public $ref;
+	/**
+	 * @var int date invoice
+	 */
 	public $datef;
 	//public $date_lim_reglement;
 	//public $total_ht;
@@ -146,7 +149,7 @@ class WebPortalInvoice extends Facture
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDb	 $db	Database handler
+	 * @param	DoliDB	 $db	Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

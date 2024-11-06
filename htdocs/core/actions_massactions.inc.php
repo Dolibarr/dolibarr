@@ -36,7 +36,27 @@
 // $toselect may be defined
 // $diroutputmassaction may be defined
 // $confirm
-
+/**
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var ?string $permissiontoread
+ * @var ?string $permissiontodelete
+ * @var ?string $permissiontoclose
+ * @var ?string $permissiontoapprove
+ * @var ?int[] $toselect
+ * @var ?string $diroutputmassaction
+ * @var ?string $objectlabel
+ * @var ?string $option
+ * @var ?int $deliveryreceipt
+ * @var string $massaction
+ * @var string $uploaddir
+ * @var string $confirm
+ */
 '
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
@@ -503,8 +523,8 @@ if (!$error && $massaction == 'confirm_presend') {
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 					// Make substitution in email content
-					if (isModEnabled('project') && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
-						$objecttmp->fetch_projet();
+					if (isModEnabled('project') && method_exists($objecttmp, 'fetchProject') && is_null($objecttmp->project)) {
+						$objecttmp->fetchProject();
 					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? implode(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
@@ -1786,7 +1806,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 			if ($result > 0) {
 				$nbok++;
 			} else {
-				setEventMessages("", $langs->trans("ErrorUpdatingUsersCP"), 'errors');
+				setEventMessages($langs->trans("ErrorUpdatingUsersCP"), null, 'errors');
 				$error++;
 				break;
 			}
@@ -1890,7 +1910,10 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	}
 }
 
-$parameters['toselect'] = (empty($toselect) ? array() : $toselect);
+if (empty($toselect)) {
+	$toselect=[];
+}
+$parameters['toselect'] = &$toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;

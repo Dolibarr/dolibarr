@@ -40,6 +40,14 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'other', 'interventions'));
 
@@ -506,6 +514,7 @@ if (!$ret) {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
 			'@phan-var-force Societe $socstatic';
+			/** @var Societe $socstatic */
 			$savobject = $object;
 			$object = $socstatic;
 

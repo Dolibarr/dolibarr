@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
@@ -66,7 +74,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 // Security check
 $socid = 0;
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');

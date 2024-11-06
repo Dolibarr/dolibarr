@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -46,6 +47,13 @@ if (!defined('NOREQUIREMENU')) {
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -53,19 +61,19 @@ if (GETPOST('lang', 'aZ09')) {
 
 $langs->loadLangs(array("main", "other"));
 
-$action = GETPOST('action', 'aZ09');
-
-/*$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
+//$action = GETPOST('action', 'aZ09');
 
 
 /*
  * Actions
  */
 
-// if ($action == 'aaa') {	// Test on permission not required here. Test will be done on the targeted page.
+if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+	$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 
-// }
+	header("Location: ".$urlforuploadpage);
+	exit(1);
+}
 
 
 /*
@@ -97,7 +105,7 @@ $arrayofcss = array();
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-upload page-card');
 //top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($title, '', 'user');
+print load_fiche_titre('', '', '', 0, '', '', '<h2>'.$title.'</h2>');
 
 
 // Instantiate hooks of thirdparty module
@@ -134,7 +142,7 @@ $uploadform .= '</div>';
 
 
 // Execute hook printSearchForm
-$parameters = array('uploadform'=>$uploadform);
+$parameters = array('uploadform' => $uploadform);
 $reshook = $hookmanager->executeHooks('printUploadForm', $parameters); // Note that $action and $object may have been modified by some hooks
 if (empty($reshook)) {
 	$uploadform .= $hookmanager->resPrint;
@@ -158,7 +166,7 @@ print '<div id="blockupload" class="center">'."\n";
 //print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
 print $uploadform;
 
-print '<input type="file" id="fileInput" class="hideobject" accept=".pdf">';
+print '<input type="file" id="fileInput" class="hideobject" accept=".pdf, image/*">';
 
 print "<script>
 $(document).ready(function() {

@@ -19,6 +19,8 @@ ListOfTrackedEvents=List of tracked events
 Fingerprint=Fingerprint
 DownloadLogCSV=Export archived logs (CSV)
 DataOfArchivedEvent=Full data of archived event
+DataOfArchivedEventHelp=This field contains the unalterable and structured data that was archived on real time. Even if some parent business event could have been purged or modified, the data archived here is the original data, and it can't be modified.
+DataOfArchivedEventHelp2=Its integrity is guaranteed if the status of the line is OK
 ImpossibleToReloadObject=Original object (type %s, id %s) not linked (see 'Full datas' column to get unalterable saved data)
 BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs module was activated because of the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they cannot be validated by a tax audit.
@@ -30,6 +32,7 @@ BlockedLogEnabled=System to track events into unalterable logs has been enabled
 BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
 BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.
 LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
+SavedOnLine=Saved on line
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
@@ -56,3 +59,4 @@ logPAYMENT_CUSTOMER_DELETE=Customer payment logical deletion
 logPAYMENT_VARIOUS_CREATE=Payment (not assigned to an invoice) created
 logPAYMENT_VARIOUS_DELETE=Payment (not assigned to an invoice) logical deletion
 logPAYMENT_VARIOUS_MODIFY=Payment (not assigned to an invoice) modified
+logBLOCKEDLOG_EXPORT=Export of unalterable logs into a file

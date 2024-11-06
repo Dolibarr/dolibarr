@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,27 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+/**
+ * @var CommonObject $objecttmp
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var FormCompany $formcompany
+ * @var HookManager $hookmanager
+ * @var ?Task $taskstatic
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $massaction
+ * @var string $modelmail
+ * @var string $sendto
+ * @var string $topicmail
+ * @var string $trackid
+ * @var int[] $toselect
+ * @var int[] $arrayofselected
+ */
 '
 @phan-var-force CommonObject $objecttmp
 @phan-var-force int[] $toselect
@@ -415,8 +436,11 @@ if ($massaction == 'preapproveleave') {
 }
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
+if (empty($toselect)) {
+	$toselect=[];
+}
 $parameters = array(
-	'toselect' => isset($toselect) ? $toselect : array(),
+	'toselect' => &$toselect,
 	'uploaddir' => isset($uploaddir) ? $uploaddir : null,
 	'massaction' => $massaction
 );

@@ -47,14 +47,14 @@
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			'HT'=Unit price parameter $pu is HT, 'TTC'=Unit price parameter $pu is TTC (HT+VAT but not Localtax. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
  *		@param	int		$info_bits					Miscellaneous information on line
- *		@param	int		$type						0/1=Product/service
+ *		@param	int<0,1>	$type						0/1=Product/service
  *		@param  Societe|string $seller				Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
- *		@param  array	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
- *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
- *		@param  double	$multicurrency_tx           Currency rate (1 by default)
- * 		@param  double	$pu_devise					Amount in currency
+ *		@param  array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+ *		@param  float	$progress					Situation invoices progress (value from 0 to 100, 100 by default)
+ *		@param  float	$multicurrency_tx           Currency rate (1 by default)
+ * 		@param  float	$pu_devise					Amount in currency
  *      @param  string  $multicurrency_code			Value of the foreign currency if multicurrency is used ('EUR', 'USD', ...). It will be used for rounding according to currency.
- *		@return         array [
+ *		@return array{}|array<int<0,26>,string>		Array [
  *                       0=total_ht,
  *						 1=total_vat, (main vat only)
  *						 2=total_ttc, (total_ht + main vat + local taxes)
@@ -84,8 +84,10 @@
  * 						24=multicurrency_total_ttc_without_discount
  * 						25=multicurrency_total_tax1 for total_ht
  *                      26=multicurrency_total_tax2 for total_ht
+ *
+ * @phan-suppress PhanTypeMismatchDefault
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = [], $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = [], $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '') // @phpstan-ignore-line
 {
 	global $conf, $mysoc, $db;
 
@@ -140,6 +142,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// Now we search localtaxes information ourself (rates and types).
 	$localtax1_type = 0;
 	$localtax2_type = 0;
+	$localtax1_rate = 1000;  // For static analysis, exaggerated value to help detect bugs
+	$localtax2_rate = 1000;  // For static analysis, exaggerated value to help detect bugs
 
 	if (is_array($localtaxes_array) && count($localtaxes_array)) {
 		$localtax1_type = $localtaxes_array[0];
@@ -408,7 +412,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		}
 
 		// Recall function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
-		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');
+		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');  // pu_devise is normally arg#15, here as arg#2 @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 
 		if ($multicurrency_code) {
 			// Restore setup of currency accurency

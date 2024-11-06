@@ -47,8 +47,7 @@ class FichinterLigne extends CommonObjectLine
 	public $error = '';
 
 	/**
-	 * From llx_fichinterdet
-	 * @var int ID
+	 * @var int ID of intervention (field from llx_fichinterdet)
 	 */
 	public $fk_fichinter;
 

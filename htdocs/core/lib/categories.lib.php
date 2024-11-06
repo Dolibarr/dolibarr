@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011       Regis Houssin     	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW				    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,10 @@ function categories_prepare_head(Categorie $object, $type)
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
 		$head[$h][1] = $langs->trans("Translation");
+		$nbTranslations = (!is_null($object->multilangs) && is_countable($object->multilangs)) ? count($object->multilangs) : 0;
+		if ($nbTranslations > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTranslations.'</span>';
+		}
 		$head[$h][2] = 'translation';
 		$h++;
 	}

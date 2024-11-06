@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
 
@@ -635,7 +643,7 @@ if ($resql) {
 	}
 
 	// Title line with search boxes
-	print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
+	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -900,7 +908,7 @@ if ($resql) {
 				// Active
 				print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					print '<a class="reposition" href="'.$url.'action='.urlencode($acts[$obj->active]).'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print $langs->trans("AlwaysActive");
 				}
@@ -954,14 +962,7 @@ $db->close();
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
 	global $form, $mysoc;
-
-	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
-	if (isModEnabled('accounting')) {
-		$formaccounting = new FormAccounting($db);
-	}
 
 	foreach ($fieldlist as $field => $value) {
 		if ($fieldlist[$field] == 'country') {

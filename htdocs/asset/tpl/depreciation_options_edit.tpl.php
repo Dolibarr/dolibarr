@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+/* Copyright (C) 2021  		Open-Dsi  				<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		José					<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,10 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+/**
+ * @var HookManager $hookmanager
+ */
 
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -137,7 +142,7 @@ if (empty($reshook)) {
 				}
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, $check) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'price') {
-				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? $field_info['default'] : 0));
+				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? dol_eval($field_info['default'], 1) : 0));
 			} elseif ($field_key == 'lang') {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : $assetdepreciationoptions->lang;
 			} else {

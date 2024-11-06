@@ -32,14 +32,14 @@ require_once __DIR__ . '/webPortalTheme.class.php';
 class Context
 {
 	/**
-	 * @var Context Singleton
+	 * @var ?Context Singleton
 	 * @access private
 	 * @static
 	 */
 	private static $_instance = null;
 
 	/**
-	 * @var	DoliDb	$db		Database handler
+	 * @var	DoliDB	$db		Database handler
 	 */
 	public $db;
 
@@ -125,6 +125,9 @@ class Context
 	 */
 	public $rootUrl;
 
+	/**
+	 * @var string[]
+	 */
 	public $menu_active = array();
 
 	/**

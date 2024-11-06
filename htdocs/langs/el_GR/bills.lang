@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Αναζήτηση απλήρωτων τ
 SendEmailsRemindersOnSupplierInvoiceDueDate=Αποστολή υπενθύμισης μέσω email για επικυρωμένα και απλήρωτα τιμολόγια προμηθευτών
 PaymentMadeForSeveralInvoices=Πληρωμή που έγινε για αρκετά τιμολόγια
 SituationInvoiceProgressCurrent=Πρόοδος τιμολογίου
+INVOICE_ADD_EPC_QR_CODEPay=Σαρώστε αυτόν τον κωδικό QR για να πληρώσετε με ένα smartphone που υποστηρίζει πληρωμή με κωδικό EPC QR.

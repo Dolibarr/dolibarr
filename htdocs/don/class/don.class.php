@@ -163,6 +163,9 @@ class Don extends CommonObject
 	 */
 	public $modepaymentid = 0;
 
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
 
 	const STATUS_DRAFT = 0;
