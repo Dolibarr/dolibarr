@@ -2407,7 +2407,7 @@ $db->close();
 /**
  * Function to put the movable box of a source field
  *
- * @param	array	$fieldssource	List of source fields
+ * @param	array<int,array{label:string,example1:string,required:bool,bool|int<0,1>,position:int}>		$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
  * @return	void
@@ -2490,9 +2490,9 @@ function show_elem($fieldssource, $pos, $key)
 /**
  * Return not used field number
  *
- * @param 	array	$fieldssource	Array of field source
- * @param	array	$listofkey		Array of keys
- * @return	integer
+ * @param 	array<int,mixed|mixed[]>	$fieldssource	Array of field source
+ * @param	array<int,mixed|mixed[]>	$listofkey		Array of keys
+ * @return	int
  */
 function getnewkey(&$fieldssource, &$listofkey)
 {
@@ -2517,10 +2517,10 @@ function getnewkey(&$fieldssource, &$listofkey)
 /**
  * Return array with element inserted in it at position $position
  *
- * @param 	array	$array			Array of field source
- * @param	mixed	$position		key of position to insert to
- * @param	array	$insertArray	Array to insert
- * @return	array
+ * @param 	array<int,array{label:string,example1:string,required:bool,bool,position:int}>	$array			Array of field source
+ * @param	int		$position		key of position to insert to
+ * @param	array{label:string,example1:string,required:bool,bool,position:int}	$insertArray	Array to insert
+ * @return	array<int,array{label:string,example1:string,required:bool,bool,position:int}>
  */
 function arrayInsert($array, $position, $insertArray)
 {
