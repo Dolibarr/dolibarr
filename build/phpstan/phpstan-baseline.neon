@@ -1316,11 +1316,6 @@ parameters:
 			path: ../../htdocs/admin/limits.php
 
 		-
-			message: "#^Parameter \\#2 \\$pu of function calcul_price_total expects float, string given\\.$#"
-			count: 3
-			path: ../../htdocs/admin/limits.php
-
-		-
 			message: "#^Variable \\$aCurrencies in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/admin/limits.php
@@ -19531,11 +19526,6 @@ parameters:
 			path: ../../htdocs/imports/import.php
 
 		-
-			message: "#^Variable \\$relativepath might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/index.php
@@ -27754,11 +27744,6 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/societe/price.php
-
-		-
-			message: "#^Variable \\$arrayofmassactions might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/societe/project.php
 
 		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"

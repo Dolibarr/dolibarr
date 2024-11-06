@@ -303,7 +303,7 @@ if (empty($mysoc->country_code)) {
 				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);
 
 				$s = 10 / 3;
-				$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+				$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
@@ -314,13 +314,13 @@ if (empty($mysoc->country_code)) {
 			}
 
 			if (getDolGlobalString('MAIN_ADD_MORE_EXAMPLE_IN_ACCURANCY_SETUP')) {
-				$qty = '1.234';
+				$qty = 1.234;
 				$vattxt = $vat.($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
 
 				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);
 
 				$s = 10 / 3;
-				$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+				$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
@@ -340,7 +340,7 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3;
 		$qty = 1;
 		$vat = 10;
-		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+		$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -349,7 +349,7 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3;
 		$qty = 2;
 		$vat = 10;
-		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+		$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
