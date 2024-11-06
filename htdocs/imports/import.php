@@ -788,6 +788,15 @@ if ($step == 4 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	'@phan-var-force ModeleImports $obj';
+
+	if (!empty($obj->error)) {
+		$langs->load("errors");
+		$param = '&datatoimport='.$datatoimport.'&format='.$format;
+		setEventMessages($obj->error, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+		exit;
+	}
+
 	if ($model == 'csv') {
 		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;

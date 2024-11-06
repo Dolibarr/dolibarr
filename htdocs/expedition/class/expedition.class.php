@@ -2164,6 +2164,12 @@ class Expedition extends CommonObject
 			$line->qty_shipped = 4;
 			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
 
+			$line->weight = 1.123456;
+			$line->weight_units = 0;		// kg
+
+			$line->volume = 2.34567;
+			$line->volume_unit = 0;
+
 			$this->lines[] = $line;
 			$xnbp++;
 		}

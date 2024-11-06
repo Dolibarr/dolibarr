@@ -2890,7 +2890,7 @@ function top_menu_quickadd()
 
 /**
  * Build the tooltip on top menu quick add.
- * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set.
+ * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set to 1 or to an URL string.
  *
  * @return  string                  HTML content
  */
@@ -2920,10 +2920,16 @@ function top_menu_importfile()
 		}
 	}
 
+
 	if (!empty($conf->use_javascript_ajax)) {
-		$html .= '<!-- div for upload file link -->
+		$urlforuploadpage = DOL_URL_ROOT.'/core/upload_page.php';
+		if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
+		}
+
+		$html .= '<!-- div for link to upload file -->
     <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
+        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.$urlforuploadpage.'" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
     </div>';
 	}
 
