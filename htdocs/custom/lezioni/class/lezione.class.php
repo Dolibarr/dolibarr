@@ -137,8 +137,9 @@ class Lezione extends CommonObject
 		"pagato" => array("type"=>"boolean", "label"=>"Lezione Pagata", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"1", "default"=>"0", "searchall"=>"1",),
 		"compensoistruttore" => array("type"=>"price", "label"=>"Compenso Istruttore", "enabled"=>"1", 'position'=>9, 'notnull'=>1, "visible"=>"1", "default"=>"15", "isameasure"=>"1", "help"=>"Ammontare compenso istruttore (deve essere minore o uguale al prezzo totale della lezione)", "validate"=>"1",),
 		"numero_allievi" => array("type"=>"integer", "label"=>"Numero Allievi", "enabled"=>"1", 'position'=>7, 'notnull'=>1, "visible"=>"1", "default"=>"1", "isameasure"=>"1", "help"=>"Numero allievi", "validate"=>"1",),
-		"bank_transaction" => array("type"=>"integer:paymentvarious:compta/bank/class/paymentvarious.class.php:1", "label"=>"Transazione Bancaria", "enabled"=>"1", 'position'=>11, 'notnull'=>0, "visible"=>"0", "index"=>"1", "help"=>"Transazione bancaria associata al pagamento lezione",),
+		"bank_transaction" => array("type"=>"integer", "label"=>"Transazione Bancaria", "enabled"=>"1", 'position'=>12, 'notnull'=>0, "visible"=>"0", "index"=>"1", "help"=>"Transazione bancaria associata al pagamento lezione",),
 		"luogo" => array("type"=>"varchar(99)", "label"=>"Luogo", "enabled"=>"1", 'position'=>4, 'notnull'=>0, "visible"=>"1", "searchall"=>"1", "help"=>"Luogo dove si è tenuta la lezione",),
+		"bank_account" => array("type"=>"integer", "label"=>"bank_account", "enabled"=>"1", 'position'=>11, 'notnull'=>0, "visible"=>"0", "comment"=>"Id Conto Bancario"),
 	);
 	public $rowid;
 	public $ref;
@@ -166,6 +167,7 @@ class Lezione extends CommonObject
 	public $numero_allievi;
 	public $bank_transaction;
 	public $luogo;
+	public $bank_account;
 	// END MODULEBUILDER PROPERTIES
 
 
