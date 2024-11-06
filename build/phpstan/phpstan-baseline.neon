@@ -29626,59 +29626,9 @@ parameters:
 			path: ../../scripts/user/migrate_picture_path.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 2
 			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
@@ -29686,51 +29636,11 @@ parameters:
 			path: ../../scripts/user/sync_users_dolibarr2ldap.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 23
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
+			message: "#^Unable to resolve the template type T in call to function array_values$#"
 			count: 1
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
 			path: ../../scripts/user/sync_users_ldap2dolibarr.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 2
 			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../scripts/website/regenerate-pages.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/website/regenerate-pages.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/website/regenerate-pages.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../scripts/withdrawals/build_withdrawal_file.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/withdrawals/build_withdrawal_file.php
