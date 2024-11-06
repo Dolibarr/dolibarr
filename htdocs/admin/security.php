@@ -373,7 +373,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '		}';
 	print '	}';
 
-	print '	$("#minlenght").change(function(){valuePatternChange();});';
+	print '	$("#minlength").change(function(){valuePatternChange();});';
 	print '	$("#NbMajMin").change(function(){valuePatternChange();});';
 	print '	$("#NbNumMin").change(function(){valuePatternChange();});';
 	print '	$("#NbSpeMin").change(function(){valuePatternChange();});';
