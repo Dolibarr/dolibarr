@@ -840,8 +840,8 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *
  *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
- *  @param  int			$curx            		X
- *  @param  int			$cury            		Y
+ *  @param  float		$curx            		X
+ *  @param  float		$cury            		Y
  *  @param  Account		$account         		Bank account object
  *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and address)
  *  @param	int			$default_font_size		Default font size
@@ -1394,8 +1394,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	@param	TCPDF		$pdf				Object PDF
  *	@param	CommonObject	$object				Object
  *	@param  Translate	$outputlangs		Object lang
- *	@param  int			$posx				X
- *	@param  int			$posy				Y
+ *	@param  float			$posx				X
+ *	@param  float			$posy				Y
  *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	string		$align				Align

@@ -10671,16 +10671,6 @@ parameters:
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: "#^Variable \\$carac_client_name might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
@@ -10786,27 +10776,12 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_einstein\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_einstein\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
@@ -10841,27 +10816,12 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_eratosthene\\:\\:drawInfoTable\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_eratosthene\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
@@ -10931,16 +10891,6 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
@@ -10952,16 +10902,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_typhon\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
@@ -11024,16 +10964,6 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
 			message: "#^Property pdf_merou\\:\\:\\$destinataire has no type specified\\.$#"
@@ -11141,17 +11071,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_crabe\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
@@ -11162,11 +11082,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#5 \\$heightforfooter of method pdf_crabe\\:\\:_tableau_versements\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
@@ -11236,11 +11151,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_octopus\\:\\:drawInfoTable\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -11256,17 +11166,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_octopus\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
@@ -11316,27 +11216,12 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_sponge\\:\\:drawInfoTable\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_sponge\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -11886,16 +11771,6 @@ parameters:
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$multicurrency_tx \\(array\\<float\\>\\|float\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
@@ -12076,16 +11951,6 @@ parameters:
 			path: ../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
 			message: "#^Property Product\\:\\:\\$weight_units \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
@@ -12241,17 +12106,7 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_azur\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
@@ -12291,17 +12146,7 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_cyan\\:\\:drawInfoTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
@@ -12431,16 +12276,6 @@ parameters:
 			path: ../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
 			message: "#^Property pdf_standard_stock\\:\\:\\$wref has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
@@ -12481,22 +12316,7 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_eagle_proforma\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
@@ -12541,22 +12361,12 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_canelle\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$heightforfooter of method pdf_canelle\\:\\:_tableau_versements\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
@@ -12626,17 +12436,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_cornas\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -12671,17 +12471,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_muscadet\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
@@ -12781,26 +12571,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$cury of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
@@ -12831,17 +12601,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_zenith\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -19626,16 +19386,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/modulebuilder/template/core/tpl/linkedobjectblock_myobject.tpl.php
@@ -24997,16 +24747,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, RecruitmentJobPosition given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
