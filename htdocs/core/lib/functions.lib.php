@@ -7540,7 +7540,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
- *   VATRULE 2: If buyer state has a VAT rule from dictionary then it's the default VAT rate . End of rule.
+ *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
  *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
  *	 VATRULE 4: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
  *	 VATRULE 5: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
@@ -7596,11 +7596,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		return 0;
 	}
 
-	// 'VATRULE 2' - Force VAT if a rate is defined on state dictionary
+	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
 	if (isset($thirdparty_buyer->state_id) && $thirdparty_buyer->state_id > 0) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
-		$sql .= " FROM ".$db->prefix()."c_departements as d";
-		$sql .= " INNER JOIN ".$db->prefix()."c_tva as t ON d.fk_tva = t.rowid";
+		$sql .= " FROM ".$db->prefix()."c_tva as t";
+		$sql .= " INNER JOIN ".$db->prefix()."c_departements as d ON t.fk_department_buyer = d.rowid";
 		$sql .= " WHERE d.rowid = ".((int) $thirdparty_buyer->state_id);
 
 		$res = $db->query($sql);
