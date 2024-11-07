@@ -23,6 +23,16 @@
  * $parameters
  */
 
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ *
+ * @var array<string,mixed> $parameters
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
