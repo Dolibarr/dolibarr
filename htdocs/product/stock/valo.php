@@ -42,7 +42,7 @@ $langs->load("stocks");
 
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');

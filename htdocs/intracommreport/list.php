@@ -51,7 +51,7 @@ $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements sele
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 
@@ -277,7 +277,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOST('search_current_entity', 'int') ? 0 : 1)).")";
+	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }

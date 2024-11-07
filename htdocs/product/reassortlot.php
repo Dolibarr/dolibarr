@@ -58,7 +58,7 @@ $mode       = GETPOST('mode', 'aZ');
 
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
