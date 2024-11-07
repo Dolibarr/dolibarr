@@ -120,7 +120,7 @@ function print_actions_filter(
 			// Resource
 			print '<div class="divsearchfield">';
 			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
-			print $formresource->select_resource_list($resourceid, "search_resourceid", [], 1, 0, 0, [], '', 2, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
+			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, [], '', 2, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 			print '</div>';
 		}
 	}
