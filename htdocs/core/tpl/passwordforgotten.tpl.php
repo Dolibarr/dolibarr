@@ -62,7 +62,10 @@ if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
 
-// $captcha is defined
+/**
+ * @var string $captcha
+ * @var string $message
+ */
 
 
 /*
@@ -306,7 +309,7 @@ if ($message) {
 		?>
 		<div class="center login_main_message">
 		<?php
-		print dol_htmloutput_mesg($message, [], '', 1);
+		dol_htmloutput_mesg($message, [], '', 1);
 		?>
 		</div>
 		<?php

@@ -32,6 +32,8 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var User $user
  *
  * @var string $captcha
+ * @var string $message
+ *
  * @var int<0,1> $dol_hide_leftmenu
  * @var int<0,1> $dol_hide_topmenu
  * @var int<0,1> $dol_no_mouse_hover

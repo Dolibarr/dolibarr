@@ -783,7 +783,7 @@ if (empty($reshook)) {
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
+		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
 			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOSTINT('qty')), $line->fk_product, 'none', GETPOSTINT('socid')) < 0) {
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
@@ -2394,8 +2394,8 @@ if ($action == 'create') {
 		$dateSelector = 0;
 		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = 1;
+		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
+			$senderissupplier = getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY');
 		}
 
 		// Show object lines
