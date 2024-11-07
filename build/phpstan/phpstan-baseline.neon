@@ -22141,16 +22141,6 @@ parameters:
 			path: ../../htdocs/projet/ganttchart.inc.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
 			message: "#^Variable \\$task_dependencies might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/projet/ganttchart.inc.php
@@ -22159,11 +22149,6 @@ parameters:
 			message: "#^Variable \\$tasks might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Variable \\$arrayofjs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttview.php
 
 		-
 			message: "#^Variable \\$param might not be defined\\.$#"
