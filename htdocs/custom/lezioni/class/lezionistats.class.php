@@ -109,12 +109,12 @@ class LezioniStats // extends Stats
 		$sql .= "             , p.compenso_coordinatore as CompensoCoordinatore ";
 		$sql .= "         FROM ".$this->from;
 		$sql .= "         WHERE coordinatore is not null";
-		$sql .= "         AND ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
+		$sql .= "         AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month"; //get last 13 month from the first of the month
 		$sql .= "         AND ".$this->where;
 		$sql .= "         ) AS c";
 		$sql .= "     ON p.istruttore = c.istruttore AND dm = c.dm";
 		$sql .= "   WHERE ".$this->where;
-		$sql .= "   AND ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
+		$sql .= "   AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month"; //get last 13 month from the first of the month
 		$sql .= " ) a ";
 		$sql .= "  GROUP BY dm, istruttore";
 		$sql .= $this->db->order('dm', 'DESC');
