@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always '' except when 'print')
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'listevents';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
@@ -286,7 +286,7 @@ if ($result) {
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
