@@ -7603,7 +7603,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (isset($thirdparty_buyer->state_id) && $thirdparty_buyer->state_id > 0) {
+	if (!empty($thirdparty_buyer->state_id)) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM ".$db->prefix()."c_tva as t";
 		$sql .= " INNER JOIN ".$db->prefix()."c_departements as d ON t.fk_department_buyer = d.rowid";
