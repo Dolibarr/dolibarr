@@ -138,7 +138,7 @@ class PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array	list of printers
+	 *  @return array<int|string,string|array<string|int,string>>	list of printers
 	 */
 	public function getlistAvailablePrinters()
 	{

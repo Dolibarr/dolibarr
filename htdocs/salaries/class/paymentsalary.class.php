@@ -69,7 +69,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @var int|string		Date of payment
-	 * @deprecated
+	 * @deprecated Use $datep
 	 * @see $datep
 	 */
 	public $datepaye = '';
@@ -92,7 +92,7 @@ class PaymentSalary extends CommonObject
 	public $amount;
 
 	/**
-	 * @var array			Array of amounts
+	 * @var array<float|string>	Array of amounts
 	 */
 	public $amounts = array();
 
@@ -115,6 +115,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @inheritdoc
+	 * @var int
 	 */
 	public $fk_bank;
 
@@ -639,7 +640,7 @@ class PaymentSalary extends CommonObject
 				$label,
 				-$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
@@ -770,9 +771,6 @@ class PaymentSalary extends CommonObject
 			if (!$result) {
 				$error++;
 				$this->error = 'Error -1 '.$this->db->error();
-			}
-
-			if (!$error) {
 			}
 
 			if (!$error) {

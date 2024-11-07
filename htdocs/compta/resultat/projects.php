@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Dourseanud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2106  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Yoan Mollard            <ymollard@users.noreply.github.com>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014-2016	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Yoan Mollard				<ymollard@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
 
@@ -61,6 +62,8 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'yes';
+
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -146,7 +149,8 @@ $nbofyear = ($year_end - $year_start) + 1;
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (isModEnabled('accounting')) {
-	$modecompta = 'BOOKKEEPING';
+	// $modecompta = 'BOOKKEEPING';
+	$modecompta = 'CREANCES-DETTES';
 }
 if (GETPOST("modecompta", 'alpha')) {
 	$modecompta = GETPOST("modecompta", 'alpha');
@@ -182,11 +186,11 @@ $exportlink = '';
 $total_ht = 0;
 $total_ttc = 0;
 
-$builddate = '';
-$name = '';
-$period = '';
+$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$builddate = dol_now();
 
-// Affiche en-tete de rapport
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -211,10 +215,12 @@ if ($modecompta == "CREANCES-DETTES") {
 
 // Define $calcmode line
 $calcmode = '';
+/*
 if (isModEnabled('accounting')) {
 	$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPING"'.($modecompta == 'BOOKKEEPING' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
 	$calcmode .= '<br>';
 }
+*/
 $calcmode .= '<input type="radio" name="modecompta" id="modecompta1" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta1"> '.$langs->trans("CalcModePayment");
 if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
@@ -281,7 +287,7 @@ print "</tr>\n";
 $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 0;
 
 if ($modecompta == 'BOOKKEEPING') {
-	echo "<p>BOOKKEEPING mode not implemented for this report type by project. Contribute to Dolibarr source code :)</p>";
+	echo "<p>BOOKKEEPING mode not implemented for this report type by project.</p>";
 } else {
 	/*
 	 * Customer invoices
@@ -295,6 +301,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON f.fk_projet = p.rowid";
 		$sql .= " WHERE f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND f.fk_statut IN (1,2)";
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$sql .= " AND f.type IN (0,1,2,5)";
@@ -304,6 +311,11 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
+		if ($socid) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+		$sql .= " GROUP BY p.rowid, project_name";
+		$sql .= $db->order($sortfield, $sortorder);
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -314,16 +326,16 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= " WHERE pa.rowid = pf.fk_paiement";
 		$sql .= " AND pf.fk_facture = f.rowid";
 		$sql .= " AND f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
+		if ($socid) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+		$sql .= " GROUP BY p.rowid, project_name";
+		$sql .= $db->order($sortfield, $sortorder);
 	}
-	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if ($socid) {
-		$sql .= " AND f.fk_soc = ".((int) $socid);
-	}
-	$sql .= " GROUP BY p.rowid, project_name";
-	$sql .= $db->order($sortfield, $sortorder);
 
 	dol_syslog("by project, get customer invoices", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -353,7 +365,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			echo "</td>\n";
 			echo '<td class="right"><span class="amount">'.price($objp->amount_ttc)."</span></td>\n";
 
-			$total_ht += (isset($objp->amount_ht) ? $objp->amount_ht : 0);
+			$total_ht += ($objp->amount_ht ?? 0);
 			$total_ttc += $objp->amount_ttc;
 			echo "</tr>\n";
 			$i++;
@@ -653,7 +665,13 @@ if ($modecompta == 'BOOKKEEPING') {
 					$subtotal_ttc += $obj->amount;
 
 					echo '<tr class="oddeven"><td>&nbsp;</td>';
-					echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($project_name)."\">".$project_name."</a></td>\n";
+					echo "<td>".$langs->trans("Project")." ";
+					if (!empty($objp->project_name)) {
+						echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
+					} else {
+						echo $langs->trans("None");
+					}
+					echo "</td>\n";
 					echo '<td class="right">';
 					if ($modecompta == 'CREANCES-DETTES') {
 						echo '<span class="amount">'.price(-$obj->amount).'</span>';

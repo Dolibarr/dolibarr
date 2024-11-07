@@ -29,6 +29,9 @@ $leftmenuwidth = 240;
 
 // Variables defined in style.css.php (includes this file).
 /**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
  * @var int<0,1> $dol_hide_topmenu
  * @var int<0,1> $dol_hide_leftmenu
  * @var int<0,1> $dol_optimize_smallscreen
@@ -5547,11 +5550,10 @@ div.fiche > table.table-fiche-title:first-of-type div {
 div.titre {
 	color: var(--colortexttitlenotab);
 }
-/*
-div.subtitle {
 
+td.subtitle {
+	line-height: 1.1em;
 }
-*/
 
 .secondary {
 	color: var(--colortexttitlenotab);

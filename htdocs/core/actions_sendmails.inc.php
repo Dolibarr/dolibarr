@@ -38,6 +38,7 @@
  * @var Societe $mysoc
  * @var Translate $langs
  *
+ * @var string $dolibarr_main_url_root
  * @var string $action
  * @var ?string $subject
  */

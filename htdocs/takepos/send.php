@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */

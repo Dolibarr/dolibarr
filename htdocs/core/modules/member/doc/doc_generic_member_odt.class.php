@@ -295,6 +295,7 @@ class doc_generic_member_odt extends ModelePDFMember
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
+				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
@@ -426,7 +427,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	 * @param CommonObject  $object         member
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
-	 * @return array                        array of substitutions
+	 * @return array<string,string>			Array of substitutions
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{

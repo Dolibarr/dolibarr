@@ -970,6 +970,9 @@ class FormFile
 				$i = 0;
 				foreach ($file_list as $file) {
 					$i++;
+					require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+					$ecmfile = new EcmFiles($this->db);
+					$ecmfile->fetch($file['rowid']);
 
 					// Define relative path for download link (depends on module)
 					$relativepath = (string) $file["name"]; // Cas general
@@ -996,21 +999,22 @@ class FormFile
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}
-					$out .= '<a class="documentdownload paddingright" ';
-					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-						$out .= 'target="_blank" ';
-					}
-					$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					// $out .= '<a class="documentdownload paddingright" ';
+					// if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+					// 	$out .= 'target="_blank" ';
+					// }
+					// $out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
-					$mime = dol_mimetype($relativepath, '', 0);
-					if (preg_match('/text/', $mime)) {
-						$out .= ' target="_blank" rel="noopener noreferrer"';
-					}
-					$out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
-					$out .= '>';
-					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
-					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>';
+					// $mime = dol_mimetype($relativepath, '', 0);
+					// if (preg_match('/text/', $mime)) {
+					// 	$out .= ' target="_blank" rel="noopener noreferrer"';
+					// }
+					// $out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
+					// $out .= '>';
+					// $out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
+					// $out .= dol_trunc($file["name"], 150);
+					// $out .= '</a>';
+					$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
 					$out .= '</span>'."\n";
 					$out .= $imgpreview;
 					$out .= '</td>';
@@ -1943,8 +1947,8 @@ class FormFile
 				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
-						if (class_exists($hookmanager->resArray['classname'])) {
-							$tmpclassname = $hookmanager->resArray['classname'];
+						$tmpclassname = $hookmanager->resArray['classname'];
+						if (is_string($tmpclassname) && class_exists($tmpclassname)) {
 							$object_instance = new $tmpclassname($this->db);
 						}
 					}
