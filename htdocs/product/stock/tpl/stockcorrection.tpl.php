@@ -25,6 +25,7 @@
  * @var Product|Entrepot|MouvementStock $object
  * @var FormProduct $formproduct
  * @var FormProjets $formproject
+ *
  * @var string $backtopage
  */
 // Protection to avoid direct call of template

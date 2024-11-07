@@ -21696,11 +21696,6 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$backtopage might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
@@ -21711,18 +21706,8 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
-			message: "#^Variable \\$formproduct might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 14
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
