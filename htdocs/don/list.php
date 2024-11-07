@@ -56,7 +56,7 @@ $mode = GETPOST('mode', 'alpha');
 $type = GETPOST('type', 'aZ');
 
 $search_status = (GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-4";
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
