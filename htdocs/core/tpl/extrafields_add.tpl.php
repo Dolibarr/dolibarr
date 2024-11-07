@@ -30,6 +30,8 @@
  * @var ExtraFields $extrafields
  * @var Translate $langs
  *
+ * @var Societe $thirdpartytopropagateextrafieldsfrom
+ * @var string $action
  * @var array<string,mixed> $parameters
  */
 
