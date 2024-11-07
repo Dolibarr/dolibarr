@@ -21656,23 +21656,8 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
 			message: "#^Variable \\$extrafields might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
 
 		-
