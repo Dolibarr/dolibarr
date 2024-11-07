@@ -996,7 +996,7 @@ class EcmFiles extends CommonObject
 			if (empty($this->filename)) {
 				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
-				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : $label), ($notooltip ? '' : 'class="paddingright"')).$linkend);
+				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			}
 			if ($withpicto != 2) {
 				$result .= ' ';
