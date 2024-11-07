@@ -32,6 +32,8 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var User $user
  *
  * @var string $captcha
+ * @var string $message
+ *
  * @var int<0,1> $dol_hide_leftmenu
  * @var int<0,1> $dol_hide_topmenu
  * @var int<0,1> $dol_no_mouse_hover
@@ -81,7 +83,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 @phan-var-force int<0,1> $forgetpasslink
 ';
 
-
 header('Cache-Control: Public, must-revalidate');
 
 if (GETPOST('dol_hide_topmenu')) {
@@ -104,6 +105,13 @@ if (GETPOST('dol_use_jmobile')) {
 if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
+
+// $captcha is defined
+
+
+/*
+ * View
+ */
 
 $php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
 if (!empty($_SERVER["QUERY_STRING"]) && dol_escape_htmltag($_SERVER["QUERY_STRING"])) {
@@ -301,37 +309,37 @@ if (!empty($captcha)) {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
 
-	$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$captchaobj = null;
-	if (dol_is_file($classfile)) {
-		// Charging the numbering class
-		$classname = "modCaptcha".ucfirst($captcha);
-		require_once $classfile;
-
-		$captchaobj = new $classname($db, $conf, $langs, $user);
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
 	}
 
-	if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
-		// TODO: get this code using a method of captcha
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		$captchaobj = null;
+
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			/** @var ModeleCaptcha $captchaobj */
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+
+			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+				print $captchaobj->getCaptchaCodeForForm($php_self); // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+			}
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
 	} else {
-		?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tagtd none valignmiddle tdinputlogin nowrap">
-
-	<span class="fa fa-unlock"></span>
-	<span class="span-icon-security inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
-	</span>
-	<span class="nowrap inline-block">
-	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
-	</span>
-
-	</div>
-	</div>
-		<?php
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
 	}
 }
 
@@ -484,6 +492,8 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
+}
+if ($message) {
 	if (!empty($conf->use_javascript_ajax)) {
 		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
 			$message = str_replace('<!-- warning -->', '', $message);
@@ -554,9 +564,8 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
 <?php
-if (getDolGlobalString('MAIN_HTML_FOOTER')) {
-	print $conf->global->MAIN_HTML_FOOTER;
-}
+
+print getDolGlobalString('MAIN_HTML_FOOTER');
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option) {
@@ -570,8 +579,9 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
+
 // TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
+// Google Analytics
 if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
 	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 	foreach ($tmptagarray as $tmptag) {
@@ -590,7 +600,6 @@ if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
 		print "\n";
 	}
 }
-
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
 if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
@@ -598,10 +607,10 @@ if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && get
 		?>
 	<div class="center"><br>
 		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+			google_ad_client = "<?php echo getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') ?>";
+			google_ad_slot = "<?php echo getDolGlobalString('MAIN_GOOGLE_AD_SLOT') ?>";
+			google_ad_width = <?php echo getDolGlobalString('MAIN_GOOGLE_AD_WIDTH') ?>;
+			google_ad_height = <?php echo getDolGlobalString('MAIN_GOOGLE_AD_HEIGHT') ?>;
 			//-->
 		</script>
 		<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>

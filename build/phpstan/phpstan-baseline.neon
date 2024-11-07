@@ -1131,11 +1131,6 @@ parameters:
 			path: ../../htdocs/admin/dav.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/dav.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/dav.php
@@ -1241,11 +1236,6 @@ parameters:
 			path: ../../htdocs/admin/fichinter.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/fichinter_xcal.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/fichinter_xcal.php
@@ -1323,11 +1313,6 @@ parameters:
 		-
 			message: "#^Parameter \\#12 \\$localtaxes_array of function calcul_price_total expects array\\{string, int\\|string, string, int\\|string, string, string\\}\\|array\\{string, int\\|string, string, string\\}, array\\{\\} given\\.$#"
 			count: 2
-			path: ../../htdocs/admin/limits.php
-
-		-
-			message: "#^Parameter \\#2 \\$pu of function calcul_price_total expects float, string given\\.$#"
-			count: 3
 			path: ../../htdocs/admin/limits.php
 
 		-
@@ -1476,11 +1461,6 @@ parameters:
 			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/oauthlogintokens.php
@@ -1537,11 +1517,6 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
-			count: 2
-			path: ../../htdocs/admin/security.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/security.php
 
@@ -1604,11 +1579,6 @@ parameters:
 			message: "#^Variable \\$conffiletoshowshort might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/system/constall.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/system/database.php
 
 		-
 			message: "#^Variable \\$row might not be defined\\.$#"
@@ -1689,11 +1659,6 @@ parameters:
 			message: "#^Variable \\$dolibarr_main_prod might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/system/security.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/ticket_public.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -1849,11 +1814,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/ai/admin/setup.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/api/admin/index.php
 
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
@@ -4971,11 +4931,6 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/report.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/cashcontrol/report.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/charges/index.php
@@ -5876,11 +5831,6 @@ parameters:
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
 			message: "#^Variable \\$period might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/clients.php
@@ -5921,17 +5871,7 @@ parameters:
 			path: ../../htdocs/compta/localtax/index.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
 			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/localtax/list.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/list.php
 
@@ -6301,11 +6241,6 @@ parameters:
 			path: ../../htdocs/compta/prelevement/create.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/prelevement/create.php
-
-		-
 			message: "#^Variable \\$massaction might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/demandes.php
@@ -6381,11 +6316,6 @@ parameters:
 			path: ../../htdocs/compta/resultat/clientfourn.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
 			message: "#^Variable \\$name might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/resultat/clientfourn.php
@@ -6452,11 +6382,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$description might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/resultat/result.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/resultat/result.php
 
@@ -7086,11 +7011,6 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
 			message: "#^Variable \\$year_current might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/tva/clients.php
@@ -7201,11 +7121,6 @@ parameters:
 			path: ../../htdocs/compta/tva/quadri_detail.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
 			message: "#^Variable \\$year_current might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/tva/quadri_detail.php
@@ -7268,11 +7183,6 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 4
-			path: ../../htdocs/contact/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/contact/card.php
 
 		-
@@ -7453,11 +7363,6 @@ parameters:
 		-
 			message: "#^Variable \\$canchangeproduct in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
 			path: ../../htdocs/contrat/card.php
 
 		-
@@ -7801,11 +7706,6 @@ parameters:
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$confirm might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
@@ -7838,11 +7738,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_comments.inc.php
 
 		-
@@ -7901,16 +7796,6 @@ parameters:
 			path: ../../htdocs/core/actions_fetchobject.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
 			message: "#^Variable \\$hidedesc might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_lineupdown.inc.php
@@ -7926,18 +7811,8 @@ parameters:
 			path: ../../htdocs/core/actions_lineupdown.inc.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 2
-			path: ../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/core/actions_lineupdown.inc.php
 
 		-
@@ -7951,48 +7826,8 @@ parameters:
 			path: ../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$confirm might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 25
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$upload_dir might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
@@ -8018,16 +7853,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 14
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
@@ -8108,11 +7933,6 @@ parameters:
 		-
 			message: "#^Variable \\$contact might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -10301,21 +10121,6 @@ parameters:
 			path: ../../htdocs/core/filemanagerdol/browser/default/frmupload.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/connectors/php/config.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_data_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/connectors/php/config.inc.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/connectors/php/config.inc.php
-
-		-
 			message: "#^Variable \\$_FILES in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/core/filemanagerdol/connectors/php/connector.lib.php
@@ -10334,16 +10139,6 @@ parameters:
 			message: "#^Variable \\$Config might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/filemanagerdol/connectors/php/connector.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/js/timepicker.js.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/js/timepicker.js.php
 
 		-
 			message: "#^Variable \\$var in isset\\(\\) always exists and is not nullable\\.$#"
@@ -10419,11 +10214,6 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/core/lib/files.lib.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/lib/format_cards.lib.php
 
 		-
 			message: "#^Parameter \\#1 \\$ftp of function ftp_cdup expects FTP\\\\Connection, resource given\\.$#"
@@ -11226,11 +11016,6 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
@@ -11693,11 +11478,6 @@ parameters:
 		-
 			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
-			count: 6
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
@@ -12626,43 +12406,8 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
 
 		-
@@ -12671,77 +12416,12 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/google_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
 
@@ -12751,52 +12431,12 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
 
@@ -14216,11 +13856,6 @@ parameters:
 			path: ../../htdocs/core/tpl/bloc_comment.tpl.php
 
 		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/bloc_showhide.tpl.php
-
-		-
 			message: "#^Variable \\$title might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/bloc_showhide.tpl.php
@@ -14487,7 +14122,7 @@ parameters:
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
+			count: 4
 			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
 
 		-
@@ -14988,11 +14623,6 @@ parameters:
 		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/originproductline.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/core/tpl/originproductline.tpl.php
 
 		-
@@ -15712,11 +15342,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$hideref might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/don/card.php
 
@@ -16591,16 +16216,6 @@ parameters:
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$deliveryreceipt might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
@@ -16626,28 +16241,13 @@ parameters:
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$listofobjectref in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$massaction might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: "#^Variable \\$toselect might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
@@ -17126,11 +16726,6 @@ parameters:
 			path: ../../htdocs/expedition/shipment.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/expedition/shipment.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/shipment.php
@@ -17191,11 +16786,6 @@ parameters:
 			path: ../../htdocs/expensereport/card.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 10
 			path: ../../htdocs/expensereport/card.php
@@ -17203,11 +16793,6 @@ parameters:
 		-
 			message: "#^Variable \\$fk_project might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/expensereport/card.php
 
 		-
@@ -17788,11 +17373,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/fourn/card.php
 
 		-
@@ -18581,11 +18161,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 7
 			path: ../../htdocs/fourn/commande/card.php
@@ -18731,11 +18306,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/list.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/fourn/commande/list.php
-
-		-
 			message: "#^Variable \\$searchCategoryProductList in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/commande/list.php
@@ -18826,11 +18396,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/card-rec.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 2
 			path: ../../htdocs/fourn/facture/card-rec.php
@@ -18901,11 +18466,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/fourn/facture/card.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 6
 			path: ../../htdocs/fourn/facture/card.php
@@ -18928,11 +18488,6 @@ parameters:
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/document.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/fourn/facture/document.php
 
 		-
@@ -18986,11 +18541,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
 			message: "#^Variable \\$numprlv might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/list.php
@@ -19018,11 +18568,6 @@ parameters:
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/facture/note.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/fourn/facture/note.php
 
 		-
@@ -19746,11 +19291,6 @@ parameters:
 			path: ../../htdocs/hrm/establishment/card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/establishment/card.php
-
-		-
 			message: "#^Property Establishment\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/establishment/info.php
@@ -19762,11 +19302,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$k might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/evaluation_card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/evaluation_card.php
 
@@ -19798,11 +19333,6 @@ parameters:
 		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/hrm/job_card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/hrm/job_card.php
 
 		-
@@ -19996,11 +19526,6 @@ parameters:
 			path: ../../htdocs/imports/import.php
 
 		-
-			message: "#^Variable \\$relativepath might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/index.php
@@ -20057,31 +19582,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$dolibarr_main_db_encrypted_pass might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_host might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_name might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_port might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/check.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/install/check.php
 
@@ -20151,11 +19651,6 @@ parameters:
 			path: ../../htdocs/install/repair.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/repair.php
-
-		-
 			message: "#^Variable \\$conffile might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/install/repair.php
@@ -20176,43 +19671,8 @@ parameters:
 			path: ../../htdocs/install/repair.php
 
 		-
-			message: "#^Variable \\$dolibarr_main_db_host might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_name might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_pass might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_port might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/repair.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_db_type might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_document_root might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/install/repair.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 22
 			path: ../../htdocs/install/repair.php
 
 		-
@@ -20621,11 +20081,6 @@ parameters:
 			path: ../../htdocs/intracommreport/card.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/card.php
-
-		-
 			message: "#^Variable \\$soc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/intracommreport/card.php
@@ -20784,21 +20239,6 @@ parameters:
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
-
-		-
-			message: "#^Parameter \\#1 \\$mens of function loanCalcMonthlyPayment expects float, string given\\.$#"
-			count: 1
-			path: ../../htdocs/loan/calcmens.php
-
-		-
-			message: "#^Parameter \\#2 \\$capital of function loanCalcMonthlyPayment expects float, string given\\.$#"
-			count: 1
-			path: ../../htdocs/loan/calcmens.php
-
-		-
-			message: "#^Parameter \\#3 \\$rate of function loanCalcMonthlyPayment expects float, string given\\.$#"
-			count: 1
-			path: ../../htdocs/loan/calcmens.php
 
 		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
@@ -21951,21 +21391,6 @@ parameters:
 			path: ../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$line might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/mrp/tpl/originproductline.tpl.php
-
-		-
-			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/mrp/tpl/originproductline.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 20
-			path: ../../htdocs/mrp/tpl/originproductline.tpl.php
-
-		-
 			message: "#^Method MultiCurrencies\\:\\:delete\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/multicurrency/class/api_multicurrencies.class.php
@@ -22042,6 +21467,11 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
+
+		-
+			message: "#^Property Opensurveysondage\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
@@ -22441,11 +21871,6 @@ parameters:
 			path: ../../htdocs/product/admin/product.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/admin/product_lot.php
-
-		-
 			message: "#^Comparison operation \"\\<\" between 0 and 0 is always false\\.$#"
 			count: 1
 			path: ../../htdocs/product/admin/product_tools.php
@@ -22486,11 +21911,6 @@ parameters:
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
@@ -22499,21 +21919,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/canvas/product/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/product/canvas/product/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/product/canvas/product/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/product/tpl/card_view.tpl.php
 
 		-
 			message: "#^Property ActionsCardService\\:\\:\\$field_list has no type specified\\.$#"
@@ -22536,11 +21941,6 @@ parameters:
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
@@ -22554,21 +21954,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/canvas/service/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/product/canvas/service/tpl/card_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/product/canvas/service/tpl/card_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/canvas/service/tpl/card_view.tpl.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -23613,11 +22998,6 @@ parameters:
 		-
 			message: "#^Variable \\$lastmovementdate might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/product/stock/card.php
 
 		-
@@ -24671,11 +24051,6 @@ parameters:
 			path: ../../htdocs/projet/activity/perday.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/activity/perday.php
-
-		-
 			message: "#^Variable \\$ref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perday.php
@@ -24732,11 +24107,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/projet/activity/perweek.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perweek.php
 
@@ -24748,11 +24118,6 @@ parameters:
 		-
 			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/projet/admin/project.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/projet/admin/project.php
 
 		-
@@ -25068,11 +24433,6 @@ parameters:
 		-
 			message: "#^Variable \\$margin in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 2
-			path: ../../htdocs/projet/element.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/projet/element.php
 
 		-
@@ -25591,11 +24951,6 @@ parameters:
 			path: ../../htdocs/projet/tasks/time.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/time.php
@@ -25953,31 +25308,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/public/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 10
-			path: ../../htdocs/public/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/public/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/public/opensurvey/index.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/public/opensurvey/index.php
 
 		-
@@ -27836,11 +27166,6 @@ parameters:
 			path: ../../htdocs/societe/admin/societe.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/societe/admin/societe.php
-
-		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/admin/societe.php
@@ -28336,11 +27661,6 @@ parameters:
 			path: ../../htdocs/societe/document.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/societe/list.php
-
-		-
 			message: "#^Variable \\$newcardbutton might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/list.php
@@ -28416,11 +27736,6 @@ parameters:
 			path: ../../htdocs/societe/price.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/societe/price.php
-
-		-
 			message: "#^Variable \\$prodcustprice might not be defined\\.$#"
 			count: 36
 			path: ../../htdocs/societe/price.php
@@ -28434,11 +27749,6 @@ parameters:
 			message: "#^Variable \\$sortorder in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/societe/price.php
-
-		-
-			message: "#^Variable \\$arrayofmassactions might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/societe/project.php
 
 		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"
@@ -28911,11 +28221,6 @@ parameters:
 			path: ../../htdocs/takepos/invoice.php
 
 		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 13
-			path: ../../htdocs/takepos/invoice.php
-
-		-
 			message: "#^Variable \\$printer might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/takepos/invoice.php
@@ -28961,26 +28266,6 @@ parameters:
 			path: ../../htdocs/takepos/pay.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/takepos/phone.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/takepos/phone.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 26
-			path: ../../htdocs/takepos/phone.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/takepos/phone.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/printbox.php
@@ -28991,57 +28276,7 @@ parameters:
 			path: ../../htdocs/takepos/receipt.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 23
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/takepos/receipt.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/takepos/reduction.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/reduction.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/takepos/reduction.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/takepos/send.php
-
-		-
-			message: "#^Variable \\$mysoc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/takepos/send.php
 
@@ -29056,33 +28291,13 @@ parameters:
 			path: ../../htdocs/takepos/split.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/split.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/takepos/split.php
-
-		-
 			message: "#^Variable \\$invoice might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/takepos/split.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/takepos/split.php
-
-		-
 			message: "#^Variable \\$placeid might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/takepos/split.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/takepos/split.php
 
 		-
@@ -29132,16 +28347,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$steps of function colorAdjustBrightness expects int, string given\\.$#"
-			count: 1
-			path: ../../htdocs/theme/eldy/global.inc.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 17
-			path: ../../htdocs/theme/eldy/global.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/theme/eldy/global.inc.php
 
@@ -29328,11 +28533,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/theme/md/manifest.json.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/theme/md/manifest.json.php
 
 		-
@@ -30391,11 +29591,6 @@ parameters:
 			path: ../../htdocs/webportal/class/webportalpropal.class.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/admin/index.php
-
-		-
 			message: "#^Function createActionComm\\(\\) has parameter \\$actioncomm with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_actioncomm.php
@@ -30416,23 +29611,8 @@ parameters:
 			path: ../../htdocs/webservices/server_actioncomm.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
 			message: "#^Parameter \\#1 \\$authentication of function check_authentication expects array\\{login\\: string, password\\: string, entity\\: int\\|null, dolibarrkey\\: string\\}, array\\{login\\: string, entity\\: int\\} given\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_category.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/webservices/server_category.php
 
 		-
@@ -30461,16 +29641,6 @@ parameters:
 			path: ../../htdocs/webservices/server_contact.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
 			message: "#^Function createInvoice\\(\\) has parameter \\$invoice with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_invoice.php
@@ -30493,11 +29663,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/webservices/server_invoice.php
 
 		-
@@ -30541,29 +29706,9 @@ parameters:
 			path: ../../htdocs/webservices/server_order.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_order.php
-
-		-
 			message: "#^Variable \\$socid might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_other.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_payment.php
 
 		-
 			message: "#^Function createProductOrService\\(\\) has parameter \\$product with no value type specified in iterable type array\\.$#"
@@ -30606,16 +29751,6 @@ parameters:
 			path: ../../htdocs/webservices/server_productorservice.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
 			message: "#^Function createProject\\(\\) has parameter \\$project with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_project.php
@@ -30636,16 +29771,6 @@ parameters:
 			path: ../../htdocs/webservices/server_project.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_project.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_project.php
-
-		-
 			message: "#^Function getSupplierInvoice\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_supplier_invoice.php
@@ -30653,11 +29778,6 @@ parameters:
 		-
 			message: "#^Function getSupplierInvoicesForThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_supplier_invoice.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/webservices/server_supplier_invoice.php
 
 		-
@@ -30701,16 +29821,6 @@ parameters:
 			path: ../../htdocs/webservices/server_thirdparty.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
 			message: "#^Function createUserFromThirdparty\\(\\) has parameter \\$thirdpartywithuser with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_user.php
@@ -30718,16 +29828,6 @@ parameters:
 		-
 			message: "#^Function getListOfGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_user.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_user.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/webservices/server_user.php
 
 		-

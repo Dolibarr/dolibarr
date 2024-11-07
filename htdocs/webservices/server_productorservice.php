@@ -56,7 +56,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 

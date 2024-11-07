@@ -993,6 +993,7 @@ class FormCompany extends Form
 		}
 
 		$maxlength = $formlength;
+		$maxlength += getDolGlobalInt("MAIN_PROFID_MAXLENGTH_PLUS");
 		if (empty($formlength)) {
 			$formlength = 24;
 			$maxlength = 128;

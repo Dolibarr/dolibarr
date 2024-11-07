@@ -84,15 +84,42 @@ class EmailCollectorAction extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 1000, 'notnull' => 1, 'default' => 1, 'arrayofkeyval' => array('0' => 'Disabled', '1' => 'Enabled')),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $fk_emailcollector;
+	/**
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * @var string
+	 */
 	public $actionparam;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $position;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 

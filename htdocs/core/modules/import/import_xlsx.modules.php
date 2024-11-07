@@ -149,6 +149,13 @@ class ImportXlsx extends ModeleImports
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
 
+		$arrayofstreams = stream_get_wrappers();
+		if (!in_array('zip', $arrayofstreams)) {
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorStreamMustBeEnabled', 'zip');
+			return;
+		}
+
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
 			$this->thirdpartyobject = new Societe($this->db);

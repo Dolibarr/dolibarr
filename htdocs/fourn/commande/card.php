@@ -70,6 +70,7 @@ if (isModEnabled('variants')) {
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -84,8 +85,8 @@ if (isModEnabled('incoterm')) {
 // Get Parameters
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$action      = GETPOST('action', 'alpha');
-$confirm     = GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -782,7 +783,7 @@ if (empty($reshook)) {
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
+		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
 			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOSTINT('qty')), $line->fk_product, 'none', GETPOSTINT('socid')) < 0) {
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
@@ -1305,7 +1306,7 @@ if (empty($reshook)) {
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects [$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin] = $object->origin_id;
 					$other_linked_objects = GETPOST('other_linked_objects', 'array');
 					if (!empty($other_linked_objects)) {
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
@@ -1520,7 +1521,7 @@ if (empty($reshook)) {
  * View
  */
 
-$form = new	Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 $productstatic = new Product($db);
@@ -1933,7 +1934,7 @@ if ($action == 'create') {
 			$text = $langs->trans('ConfirmValidateOrder', $newref);
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-				$notify = new	Notify($db);
+				$notify = new Notify($db);
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
 			}
@@ -1970,7 +1971,7 @@ if ($action == 'create') {
 		$text = $langs->trans("ConfirmApproveThisOrder", $object->ref);
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new	Notify($db);
+			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
 		}
@@ -2005,7 +2006,7 @@ if ($action == 'create') {
 		);
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new	Notify($db);
+			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_CANCEL', $object->socid, $object);
 		}
@@ -2017,7 +2018,7 @@ if ($action == 'create') {
 		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new	Notify($db);
+			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_SUBMIT', $object->socid, $object);
 		}
@@ -2393,8 +2394,8 @@ if ($action == 'create') {
 		$dateSelector = 0;
 		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = 1;
+		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
+			$senderissupplier = getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY');
 		}
 
 		// Show object lines

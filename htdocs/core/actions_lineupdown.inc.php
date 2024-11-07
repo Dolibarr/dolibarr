@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,13 @@
 // $object must be defined
 // $langs must be defined
 // $hidedetails, $hidedesc, $hideref must de defined
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
 if ($action == 'up' && $permissiontoedit) {
 	$object->line_up(GETPOST('rowid'));
 

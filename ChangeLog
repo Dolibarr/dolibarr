@@ -27,6 +27,8 @@ The following changes may create regressions for some external modules, but were
 * The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
 * The trigger code CATEGORY_LINK and CATEGORY_UNLINK has been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff' to detect we want to make a link or unlink.
 * The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name
+* If you were using the substitution key __MEMBER_CIVILITY__, you must now use __MEMBER_TITLE__
+
 
 ***** ChangeLog for 20.0.1 compared to 20.0.0 *****
 

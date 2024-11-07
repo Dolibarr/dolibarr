@@ -61,7 +61,7 @@ class Dolresource extends CommonObject
 	public $phone;
 
 	/**
-	 * @var int|null 	Maximum users
+	 * @var ?int		Maximum users
 	 */
 	public $max_users;
 
@@ -70,6 +70,9 @@ class Dolresource extends CommonObject
 	 */
 	public $fk_code_type_resource;
 
+	/**
+	 * @var ?string
+	 */
 	public $type_label;
 
 	/**
@@ -119,7 +122,7 @@ class Dolresource extends CommonObject
 	public $fk_user_create;
 
 	/**
-	 * Used by fetchElementResource() to return an object
+	 * @var CommonObject	Used by fetchElementResource() to return an object
 	 */
 	public $objelement;
 
