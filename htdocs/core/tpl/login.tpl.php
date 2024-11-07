@@ -32,7 +32,6 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var User $user
  *
  * @var string $captcha
- * @var string $message
  *
  * @var int<0,1> $dol_hide_leftmenu
  * @var int<0,1> $dol_hide_topmenu
@@ -489,6 +488,7 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 
 
 <?php
+$message = '';
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
