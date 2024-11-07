@@ -35,13 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
 $massaction = GETPOST('massaction', 'aZ09');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -780,12 +788,13 @@ while ($i < $imaxinloop) {
 
 		// Type
 		if ($arrayfields['type']['checked']) {
-			print '<td class="center">';
+			$labeltoshow = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code);
-				print ' ';
+				$labeltoshow = $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->payment_code).' ';
 			}
-			print $obj->num_payment;
+			$labeltoshow .= $obj->num_payment;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTML($labeltoshow).'">';
+			print $labeltoshow;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

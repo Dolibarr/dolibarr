@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,15 @@
  * you must have $table_element_line = 'tablename' or $object->table_element_line with line to move
  *
  */
-
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ *
+ * @var ?string $filepath
+ * @var ?string $fk_element
+ * @var ?int $nboflines
+ * @var ?string $tagidfortablednd
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page ".basename(__FILE__)." can't be called with no object defined.";

@@ -78,7 +78,7 @@ class PaymentDonation extends CommonObject
 
 	/**
 	 * @var int  Payment mode ID
-	 * @deprecated
+	 * @deprecated Use $paymenttype
 	 * @see $paymenttype
 	 */
 	public $fk_typepayment;
@@ -110,16 +110,35 @@ class PaymentDonation extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_label;
+	/**
+	 * @var ?int
+	 */
 	public $chid;
+	/**
+	 * @var int|''
+	 */
 	public $datepaid;
+	/**
+	 * @var int
+	 */
 	public $bank_account;
+	/**
+	 * @var int
+	 */
 	public $bank_line;
 
 	/**
@@ -147,7 +166,7 @@ class PaymentDonation extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user			User making payment
-	 *  @param      int 		$notrigger 		0=launch triggers after, 1=disable triggers
+	 *  @param      int<0,1>	$notrigger 		0=launch triggers after, 1=disable triggers
 	 *  @return     int     					Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $notrigger = 0)
@@ -603,6 +622,7 @@ class PaymentDonation extends CommonObject
 		global $conf;
 
 		$error = 0;
+		$amount = 0;
 
 		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -621,7 +641,7 @@ class PaymentDonation extends CommonObject
 				$label,
 				$amount,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

@@ -35,6 +35,16 @@ use OAuth\Common\Consumer\Credentials;
 
 $supportedoauth2array = getSupportedOauth2Array();
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 

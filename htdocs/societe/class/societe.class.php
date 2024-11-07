@@ -854,9 +854,14 @@ class Societe extends CommonObject
 
 	// Multicurrency
 	/**
-	 * @var int ID
+	 * @var int Multicurrency ID
 	 */
 	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	// Warehouse
 	/**
@@ -865,9 +870,10 @@ class Societe extends CommonObject
 	public $fk_warehouse;
 
 	/**
-	 * @var string Multicurrency code
+	 * @var string	Name of file with terms of sales
 	 */
-	public $multicurrency_code;
+	public $termsofsale;
+
 
 	// Fields loaded by fetchPartnerships()
 
@@ -1366,6 +1372,11 @@ class Societe extends CommonObject
 							$error++;
 							$this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 						}
+					}
+					if ($this->tva_assuj && !$vallabel && getDolGlobalString('SOCIETE_VAT_INTRA_MANDATORY')) {
+						$langs->load("errors");
+						$error++;
+						$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").')';
 					}
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
 					// Check for unicity
@@ -2387,7 +2398,6 @@ class Societe extends CommonObject
 	 */
 	public function set_as_client()
 	{
-		global $conf;
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_as_client is deprecated use setAsCustomer instead", LOG_NOTICE);
 		return $this->setAsCustomer();

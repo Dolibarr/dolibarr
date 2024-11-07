@@ -805,8 +805,8 @@ class FactureRec extends CommonInvoice
 
 				$line->buyprice			= $marginInfos[0];
 				$line->pa_ht			= $marginInfos[0]; // For backward compatibility
-				$line->marge_tx			= $marginInfos[1];
-				$line->marque_tx		= $marginInfos[2];
+				$line->marge_tx			= (string) $marginInfos[1];
+				$line->marque_tx		= (string) $marginInfos[2];
 				$line->rang				= $objp->rang;
 				$line->special_code		= $objp->special_code;
 				$line->fk_unit			= $objp->fk_unit;

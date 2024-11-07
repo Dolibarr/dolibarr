@@ -47,6 +47,13 @@ if (!defined('NOREQUIREMENU')) {
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -54,19 +61,19 @@ if (GETPOST('lang', 'aZ09')) {
 
 $langs->loadLangs(array("main", "other"));
 
-$action = GETPOST('action', 'aZ09');
-
-/*$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
+//$action = GETPOST('action', 'aZ09');
 
 
 /*
  * Actions
  */
 
-// if ($action == 'aaa') {	// Test on permission not required here. Test will be done on the targeted page.
+if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+	$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 
-// }
+	header("Location: ".$urlforuploadpage);
+	exit(1);
+}
 
 
 /*

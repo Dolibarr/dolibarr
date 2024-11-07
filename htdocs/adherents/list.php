@@ -39,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
 
@@ -195,8 +203,8 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
-			'position' => $val['position'],
+			'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => (int) $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}

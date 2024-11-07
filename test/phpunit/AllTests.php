@@ -131,6 +131,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
+		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
+		$suite->addTestSuite('SecurityGETPOSTTest');
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');

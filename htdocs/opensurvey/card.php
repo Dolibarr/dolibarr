@@ -33,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
@@ -89,7 +97,7 @@ if (empty($reshook)) {
 			accessforbidden();
 		}
 
-		$result = $object->delete($user, '', $numsondage);
+		$result = $object->delete($user, 0, $numsondage);
 
 		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
 		exit();
@@ -209,7 +217,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -342,7 +350,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 //if ($action != 'edit') {
-	print ajax_autoselect("opensurveyurl", $url, 'image');
+print ajax_autoselect("opensurveyurl", $url, 'image');
 //}
 
 print '</td></tr>';

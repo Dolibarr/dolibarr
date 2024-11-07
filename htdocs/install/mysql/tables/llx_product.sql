@@ -38,7 +38,7 @@ create table llx_product
   description                   text,
   note_public                   text,
   note                          text,
-  customcode                    varchar(32),                        -- Optional custom code
+  customcode                    varchar(32),                        -- Customs|Commodity|HS|TARIC code see https://github.com/Dolibarr/dolibarr/issues/31679
   fk_country                    integer DEFAULT NULL,               -- Optional id of original country
   fk_state                      integer DEFAULT NULL,               -- Optional id of original state/province
   price                         double(24,8) DEFAULT 0,				-- price without tax

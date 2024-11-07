@@ -1021,7 +1021,7 @@ class RecruitmentCandidature extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
-				'@phan-var-force ModeleNumRefRecruitmentCandidature $module';
+				'@phan-var-force ModeleNumRefRecruitmentCandidature $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

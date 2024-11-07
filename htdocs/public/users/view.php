@@ -41,6 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
 
@@ -357,6 +365,8 @@ if ($usersection) {
 	// Show photo
 	if ($urllogo) {
 		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	} else {
+		print '<br>';
 	}
 
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";

@@ -223,7 +223,7 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
-		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string,orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>',
+		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>',
 		'action' => 'string',
 		'actioncode' => 'string',
 		'badgeStatus0' => 'string',
@@ -272,6 +272,8 @@ return [
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
 		'senderissupplier' => 'int<0,2>',
+		'shmkeys' => 'array<string,int>', // memory.lib
+		'shmoffset' => 'int', // memory.lib
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
@@ -418,8 +420,8 @@ return [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
-		// 'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
-		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
+		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
+		'PhanTypeArraySuspiciousNullable',	// Was All fixed, but a lot of occurrences again because of properties made nullable for phpstan.
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is

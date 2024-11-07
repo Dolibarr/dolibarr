@@ -55,6 +55,15 @@ if (isModEnabled('project')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
 
@@ -2243,7 +2252,7 @@ if ($action == 'create') {
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddOrder'),
 						'lang' => 'orders',
-						'perm' => $user->hasRight('commande', 'creer'),
+						'perm' => $user->hasRight('commande', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2252,7 +2261,7 @@ if ($action == 'create') {
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('CreateBill'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('facture', 'creer'),
+						'perm' => $user->hasRight('facture', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2262,7 +2271,7 @@ if ($action == 'create') {
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('fournisseur', 'facture', 'creer'),
+						'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2286,7 +2295,7 @@ if ($action == 'create') {
 						'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
 						'label' => $langs->trans('CloseAllContracts'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('contrat', 'desactiver'),
+						'perm' => $user->hasRight('contrat', 'desactiver') ? true : false,
 						'enabled' => true,
 					);
 				}

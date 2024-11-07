@@ -3,6 +3,7 @@
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@
 
 
 global $_Avery_Labels;
+/**
+ * @var DoliDB $db
+ */
 
 // Unit of metric are defined into field 'metric' in mm.
 // To get into inch, just /25.4

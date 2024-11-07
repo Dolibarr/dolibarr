@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
 
@@ -350,7 +358,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 				print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
-				print '<td class="right">'.dol_escape_htmltag($value['qty']).'</td>';
+				print '<td class="right">'.dol_escape_htmltag((string) $value['qty']).'</td>';
 				print '</tr>';
 			}
 		} else {

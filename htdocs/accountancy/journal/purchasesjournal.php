@@ -40,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "errors"));
 
@@ -197,30 +206,30 @@ $sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY f.datef";
 
 dol_syslog('accountancy/journal/purchasesjournal.php', LOG_DEBUG);
+$tabfac = array();
+$tabht = array();
+$tabtva = array();
+$def_tva = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+$tabcompany = array();
+$tabother = array();
+$tabrctva = array();
+$tabrclocaltax1 = array();
+$tabrclocaltax2 = array();
+$vatdata_cache = array();
+
+// Variables
+$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', 'NotDefined');
+$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
+$rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
+$rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
+$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
+
 $result = $db->query($sql);
 if ($result) {
-	$tabfac = array();
-	$tabht = array();
-	$tabtva = array();
-	$def_tva = array();
-	$tabttc = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabcompany = array();
-	$tabother = array();
-	$tabrctva = array();
-	$tabrclocaltax1 = array();
-	$tabrclocaltax2 = array();
-	$vatdata_cache = array();
-
 	$num = $db->num_rows($result);
-
-	// Variables
-	$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', 'NotDefined');
-	$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
-	$rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
-	$rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
-	$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
 
 	$i = 0;
 	while ($i < $num) {
