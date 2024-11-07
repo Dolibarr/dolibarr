@@ -1451,7 +1451,7 @@ if (empty($reshook)) {
 
 		if (GETPOST('productid') > 0) {
 			$productsupplier = new ProductFournisseur($db);
-			if (getDolGlobalString('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
+			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
 				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
@@ -3953,8 +3953,8 @@ if ($action == 'create') {
 			$inputalsopricewithtax = 1;
 			$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 			//if (!empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
-			if (getDolGlobalString('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
-				$senderissupplier = 1;
+			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
+				$senderissupplier = getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY');
 			}
 
 			// Show object lines (result may vary according to hidden option MAIN_NO_INPUT_PRICE_WITH_TAX)

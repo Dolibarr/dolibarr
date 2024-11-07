@@ -5,7 +5,7 @@
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class Entrepot extends CommonObject
 
 	/**
 	 * @var string	Label
-	 * @deprecated
+	 * @deprecated Use $label
 	 * @see $label
 	 */
 	public $libelle;
@@ -67,6 +67,9 @@ class Entrepot extends CommonObject
 	 */
 	public $description;
 
+	/**
+	 * @var int
+	 */
 	public $statut;
 
 	/**
@@ -608,7 +611,7 @@ class Entrepot extends CommonObject
 	 *  Return list of all warehouses
 	 *
 	 *	@param	int		$status		Status
-	 * 	@return array				Array list of warehouses
+	 * 	@return array<int,string>	Array list of warehouses
 	 */
 	public function list_array($status = 1)
 	{
@@ -638,7 +641,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
-	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array{nb:int}|int<-1,-1>		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_different_products()
 	{
@@ -667,9 +670,9 @@ class Entrepot extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return stock and value of warehosue
+	 *	Return stock and value of warehouse
 	 *
-	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return	array{nb:int,value:float}|int<-1,-1>	Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_products()
 	{
@@ -716,7 +719,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of status of object
 	 *
-	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param      int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -729,7 +732,7 @@ class Entrepot extends CommonObject
 	 *	Return label of a given status
 	 *
 	 *	@param	int		$status     Id status
-	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param  int<0,5>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -770,7 +773,7 @@ class Entrepot extends CommonObject
 			return ['optimize' => $langs->trans("Warehouse")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
-		if (isset($this->statut)) {
+		if (!empty($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
@@ -952,9 +955,9 @@ class Entrepot extends CommonObject
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
-	 * @param   int         $id					id parent warehouse
-	 * @param   integer[]	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return  integer[]   $TChildWarehouses	array which will contain all children
+	 * @param   int     $id					id parent warehouse
+	 * @param   int[]	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return  int[]   $TChildWarehouses	array which will contain all children
 	 */
 	public function get_children_warehouses($id, &$TChildWarehouses)
 	{

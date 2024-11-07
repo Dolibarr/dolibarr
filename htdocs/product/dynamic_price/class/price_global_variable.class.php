@@ -51,6 +51,9 @@ class PriceGlobalVariable
 	 */
 	public $id;
 
+	/**
+	 * @var ?string
+	 */
 	public $code;
 
 	/**
@@ -58,6 +61,9 @@ class PriceGlobalVariable
 	 */
 	public $description;
 
+	/**
+	 * @var int|string|float
+	 */
 	public $value;
 
 	/**
@@ -110,6 +116,7 @@ class PriceGlobalVariable
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
+			/*
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
@@ -119,6 +126,7 @@ class PriceGlobalVariable
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			}
+			*/
 		}
 
 		// Commit or rollback
@@ -320,7 +328,7 @@ class PriceGlobalVariable
 	/**
 	 *    List all price global variables
 	 *
-	 *    @return	array|int				Array of price global variables, <0 if ko
+	 *    @return	PriceGlobalVariable[]|int<-1,-1>	Array of price global variables, <0 if ko
 	 */
 	public function listGlobalVariables()
 	{

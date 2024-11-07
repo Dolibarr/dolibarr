@@ -2140,7 +2140,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->db->begin();
 
 			if ($fk_product > 0) {
-				if (getDolGlobalString('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
+				if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
 					$prod = new ProductFournisseur($this->db);

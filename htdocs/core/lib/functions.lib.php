@@ -8978,7 +8978,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 			if (isModEnabled('member') && (!is_object($object) || $object->element == 'adherent') && (empty($exclude) || !in_array('member', $exclude)) && (empty($include) || in_array('member', $include))) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
-				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
+				$substitutionarray['__MEMBER_TITLE__'] = '__MEMBER_TITLE__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
 				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = 'Login and pass of the external user account';
@@ -9081,7 +9081,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 				$substitutionarray['__MEMBER_ID__'] = (isset($object->id) ? $object->id : '');
 				if (method_exists($object, 'getCivilityLabel')) {
-					$substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
+					$substitutionarray['__MEMBER_TITLE__'] = $object->getCivilityLabel();
 				}
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = (isset($object->firstname) ? $object->firstname : '');
 				$substitutionarray['__MEMBER_LASTNAME__'] = (isset($object->lastname) ? $object->lastname : '');
@@ -13229,6 +13229,13 @@ function getElementProperties($elementType)
 		$classfile = 'ccountry';
 		$classname = 'Ccountry';
 		$table_element = 'c_country';
+		$subelement = '';
+	} elseif ($elementType == 'ecmfiles') {
+		$module = 'ecm';
+		$classpath = 'ecm/class';
+		$classfile = 'ecmfiles';
+		$classname = 'Ecmfiles';
+		$table_element = 'ecmfiles';
 		$subelement = '';
 	} elseif ($elementType == 'knowledgerecord') {
 		$module = '';

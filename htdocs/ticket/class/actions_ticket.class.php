@@ -3,6 +3,7 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,9 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public $dao;
 
+	/**
+	 * @var string
+	 */
 	public $mesg;
 
 	/**
@@ -63,10 +67,18 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public $errors = array();
 
-	//! Numero de l'erreur
+	/**
+	 * @var int Error number
+	 */
 	public $errno = 0;
 
+	/**
+	 * @var string
+	 */
 	public $template_dir;
+	/**
+	 * @var string
+	 */
 	public $template;
 
 	/**
