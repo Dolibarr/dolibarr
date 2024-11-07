@@ -258,7 +258,7 @@ $tablib[DICT_ASSET_DISPOSAL_TYPE] = "DictionaryAssetDisposalType";
 // Requests to extract data
 $tabsql = array();
 $tabsql[DICT_FORME_JURIDIQUE] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
-$tabsql[DICT_DEPARTEMENTS] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.fk_tva, d.active, t.taux FROM ".MAIN_DB_PREFIX."c_departements as d INNER JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region=r.code_region INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON r.fk_pays=c.rowid LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON d.fk_tva=t.rowid WHERE r.active=1 and c.active=1";
+$tabsql[DICT_DEPARTEMENTS] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
 $tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
@@ -352,7 +352,7 @@ $tabsqlsort[DICT_ASSET_DISPOSAL_TYPE] = "code ASC";
 // Field names in select result for dictionary display
 $tabfield = array();
 $tabfield[DICT_FORME_JURIDIQUE] = "code,libelle,country";
-$tabfield[DICT_DEPARTEMENTS] = "code,libelle,region_id,region,country,fk_tva"; // "code,libelle,region,country_code-country,fk_tva"
+$tabfield[DICT_DEPARTEMENTS] = "code,libelle,region_id,region,country"; // "code,libelle,region,country_code-country"
 $tabfield[DICT_REGIONS] = "code,libelle,country_id,country";
 $tabfield[DICT_COUNTRY] = "code,label";
 $tabfield[DICT_CIVILITY] = "code,label";
@@ -399,7 +399,7 @@ $tabfield[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
 // Edit field names for editing a record
 $tabfieldvalue = array();
 $tabfieldvalue[DICT_FORME_JURIDIQUE] = "code,libelle,country";
-$tabfieldvalue[DICT_DEPARTEMENTS] = "code,libelle,region,fk_tva"; // "code,libelle,region,fk_tva"
+$tabfieldvalue[DICT_DEPARTEMENTS] = "code,libelle,region"; // "code,libelle,region"
 $tabfieldvalue[DICT_REGIONS] = "code,libelle,country";
 $tabfieldvalue[DICT_COUNTRY] = "code,label";
 $tabfieldvalue[DICT_CIVILITY] = "code,label";
@@ -446,7 +446,7 @@ $tabfieldvalue[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
 // Field names in the table for inserting a record (add field "entity" only here when dictionary is ready to personalized by entity)
 $tabfieldinsert = array();
 $tabfieldinsert[DICT_FORME_JURIDIQUE] = "code,libelle,fk_pays";
-$tabfieldinsert[DICT_DEPARTEMENTS] = "code_departement,nom,fk_region,fk_tva";
+$tabfieldinsert[DICT_DEPARTEMENTS] = "code_departement,nom,fk_region";
 $tabfieldinsert[DICT_REGIONS] = "code_region,nom,fk_pays";
 $tabfieldinsert[DICT_COUNTRY] = "code,label";
 $tabfieldinsert[DICT_CIVILITY] = "code,label";
@@ -800,9 +800,6 @@ if (empty($reshook)) {
 			}
 			if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) {
 				continue; // For some pages, country is not mandatory
-			}
-			if ($value == 'fk_tva' && $tablib[$id] == 'DictionaryCanton') {
-				continue; // For some pages, VAT rate is not mandatory
 			}
 			// Discard check of mandatory fields for other fields
 			if ($value == 'localtax1' && !GETPOST('localtax1_type')) {
@@ -2866,7 +2863,7 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'fk_tva') {
 			print '<td>';
-			print $form->load_tva('fk_tva', $obj->taux ?? '', $mysoc, new Societe($db), 0, 0, '', false, -1, 0, 1);
+			print $form->load_tva('fk_tva', $obj->taux, $mysoc, new Societe($db), 0, 0, '', false, -1);
 			print '</td>';
 		} elseif ($value == 'fk_c_exp_tax_cat') {
 			print '<td>';
