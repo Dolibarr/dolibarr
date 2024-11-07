@@ -2,6 +2,7 @@
 /* Copyright (C) 2009-2010  Regis Houssin 			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2024  Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,9 +194,10 @@ if (!empty($captcha)) {
 		if (class_exists($classname)) {
 			/** @var ModeleCaptcha $captchaobj */
 			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
 
 			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
-				print $captchaobj->getCaptchaCodeForForm($php_self);
+				print $captchaobj->getCaptchaCodeForForm($php_self);  // @phan-suppress-current-line PhanUndeclaredMethod
 			} else {
 				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
 			}

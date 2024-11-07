@@ -326,9 +326,10 @@ if (!empty($captcha)) {
 		if (class_exists($classname)) {
 			/** @var ModeleCaptcha $captchaobj */
 			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
 
 			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
-				print $captchaobj->getCaptchaCodeForForm($php_self);
+				print $captchaobj->getCaptchaCodeForForm($php_self); // @phan-suppress-current-line PhanUndeclaredMethod
 			} else {
 				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
 			}
