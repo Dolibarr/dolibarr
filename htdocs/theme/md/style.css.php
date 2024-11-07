@@ -5526,6 +5526,11 @@ div.titre.small {
 div.titre {
 	color: var(--colortexttitlenotab);
 }
+
+td.subtitle {
+	line-height: 1.1em;
+}
+
 .secondary {
 	color: var(--colortexttitlenotab);
 }

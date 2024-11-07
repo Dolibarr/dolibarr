@@ -36,6 +36,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page
@@ -504,10 +506,15 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br><br>';
 
 
-	print load_fiche_titre($langs->trans("Emails"));
+	//print load_fiche_titre($langs->trans("Emails"));
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre"><td>'.$langs->trans("Emails").'</td>';
+	print '<td class="left">';
+	print '</td>';
+	print '</tr>';
 
 	// Activate email creation to user
 	print '<tr class="oddeven"><td>';

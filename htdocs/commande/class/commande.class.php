@@ -3788,7 +3788,7 @@ class Commande extends CommonOrder
 		}
 
 		if ($user->hasRight('commande', 'lire')) {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
+			$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly').'<u>'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}

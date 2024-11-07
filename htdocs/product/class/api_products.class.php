@@ -818,7 +818,7 @@ class Products extends DolibarrApi
 	 * @param	int			$availability					Product availability
 	 * @param	string		$ref_fourn						Supplier ref
 	 * @param	float		$tva_tx							New VAT Rate (For example 8.5. Should not be a string)
-	 * @param	string|float $charges						costs affering to product
+	 * @param	float 		$charges						costs affering to product
 	 * @param	float		$remise_percent					Discount  regarding qty (percent)
 	 * @param	float		$remise							Discount  regarding qty (amount)
 	 * @param	int			$newnpr							Set NPR or not

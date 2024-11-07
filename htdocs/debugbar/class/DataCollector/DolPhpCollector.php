@@ -44,7 +44,8 @@ class PhpCollector extends DataCollector implements Renderable
 	 * List of messages. Each item includes:
 	 *  'message', 'message_html', 'is_string', 'label', 'time'.
 	 *
-	 * @var array
+	 *
+	 * @var array<array{message:string,message_html:?string,is_string:bool,label:string,time:float}>
 	 */
 	protected $messages = [];
 
@@ -62,7 +63,7 @@ class PhpCollector extends DataCollector implements Renderable
 	/**
 	 * Called by the DebugBar when data needs to be collected.
 	 *
-	 * @return array 	Array of collected data
+	 * @return array{count:int,messages:array<array{message:string,message_html:?string,is_string:bool,label:string,time:float}>}		Array of collected data
 	 */
 	public function collect()
 	{
@@ -76,7 +77,7 @@ class PhpCollector extends DataCollector implements Renderable
 	/**
 	 * Returns a list of messages ordered by their timestamp.
 	 *
-	 * @return array<array{time:int}> A list of messages ordered by time.
+	 * @return array<array{message:string,message_html:?string,is_string:bool,label:string,time:float}>		A list of messages ordered by time.
 	 */
 	public function getMessages()
 	{
@@ -104,7 +105,7 @@ class PhpCollector extends DataCollector implements Renderable
 	 * Returns a hash where keys are control names and their values an array of options as defined in
 	 * {@see DebugBar\JavascriptRenderer::addControl()}
 	 *
-	 * @return array 	Array of details to render the widget.
+	 * @return array<array{icon:string,widget:string,map:string,default:string}|array{map:string,default:string}> 	Array of details to render the widget.
 	 */
 	public function getWidgets()
 	{

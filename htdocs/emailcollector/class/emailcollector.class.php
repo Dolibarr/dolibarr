@@ -1179,6 +1179,8 @@ class EmailCollector extends CommonObject
 			return -1;
 		}
 
+		$client = null;
+
 		$sourcedir = $this->source_directory;
 		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
