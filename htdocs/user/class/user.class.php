@@ -930,7 +930,8 @@ class User extends CommonObject
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
-		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
+		//if ($module == 'fournisseur') { var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2); }
+
 		if (!isModEnabled($module)) {
 			return 0;
 		}

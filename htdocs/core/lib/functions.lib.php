@@ -12908,7 +12908,7 @@ function getElementProperties($elementType)
 
 	//$element_type='facture';
 
-	$classfile = $classname = $classpath = $subdir = $dir_output = $parent_element = '';
+	$classfile = $classname = $classpath = $subdir = $dir_output = $dir_temp = $parent_element = '';
 
 	// Parse element/subelement
 	$module = $elementType;
@@ -13267,15 +13267,25 @@ function getElementProperties($elementType)
 		} elseif (!empty($conf->$module->dir_output)) {
 			$dir_output = $conf->$module->dir_output;
 		}
+		if (!empty($conf->$module->multidir_temp[$conf->entity])) {
+			$dir_temp = $conf->$module->multidir_temp[$conf->entity];
+		} elseif (!empty($conf->$module->temp[$conf->entity])) {
+			$dir_temp = $conf->$module->temp[$conf->entity];
+		} elseif (!empty($conf->$module->dir_temp)) {
+			$dir_temp = $conf->$module->dir_temp;
+		}
 	}
 
 	// Overwrite value for special cases
 	if ($element == 'order_supplier') {
 		$dir_output = $conf->fournisseur->commande->dir_output;
+		$dir_temp = $conf->fournisseur->commande->dir_temp;
 	} elseif ($element == 'invoice_supplier') {
 		$dir_output = $conf->fournisseur->facture->dir_output;
+		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
 	$dir_output .= $subdir;
+	$dir_temp .= $subdir;
 
 	$elementProperties = array(
 		'module' => $module,
@@ -13286,6 +13296,7 @@ function getElementProperties($elementType)
 		'classfile' => $classfile,
 		'classname' => $classname,
 		'dir_output' => $dir_output,
+		'dir_temp' => $dir_temp,
 		'parent_element' => $parent_element,
 	);
 
