@@ -56,7 +56,7 @@ class printing_printgcp extends PrintingDriver
 	public $active = 'PRINTING_PRINTGCP';
 
 	/**
-	 * @var array module parameters
+	 * @var array<string|int,string|array{varname:string,info:string,type:'info',renew?:string,delete?:string}|array{enabled:int<0,1>,type:'submit'}> module parameters
 	 */
 	public $conf = array();
 
@@ -75,6 +75,9 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	private $OAUTH_SERVICENAME_GOOGLE = 'Google';
 
 	const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
@@ -242,7 +245,7 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array{available:array}	list of printers
+	 *  @return array{available:array{name:string,displayname:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}}	list of printers
 	 */
 	public function getlistAvailablePrinters()
 	{
@@ -366,7 +369,7 @@ class printing_printgcp extends PrintingDriver
 	 *  @param  string      $printjobtitle  Job Title
 	 *  @param  string      $filepath       File Path to be send to Google Cloud Print
 	 *  @param  string      $contenttype    File content type by example application/pdf, image/png
-	 *  @return array                       status array
+	 *  @return array{status:int<0,1>,errorcode:string,errormessage:string}  status array
 	 */
 	public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
 	{

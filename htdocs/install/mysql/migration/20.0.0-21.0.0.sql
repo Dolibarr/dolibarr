@@ -289,3 +289,24 @@ ALTER TABLE llx_facture ADD COLUMN payment_reference varchar(25) AFTER date_lim_
 ALTER TABLE llx_societe ADD COLUMN tp_payment_reference varchar(25) AFTER code_fournisseur;
 
 ALTER TABLE llx_actioncomm ADD COLUMN fk_task integer;
+
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_commandedet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_contratdet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_deliverydet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_expensereport_det ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facture_fourn_det_rec ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facturedet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facturedet_rec ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_fichinterdet_rec ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_propaldet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;

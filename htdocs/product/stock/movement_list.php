@@ -77,7 +77,7 @@ $idproduct = GETPOST('idproduct', 'intcomma');
 $product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');

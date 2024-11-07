@@ -86,7 +86,7 @@ print img_picto('A-Z', '1downarrow.png');
 print '</span>';
 print '</td>';
 print '<td>'.$langs->trans("LabelOrTranslationKey").'</td>';
-print '<td>'.$langs->trans("TranslationString").'</td>';
+//print '<td>'.$langs->trans("TranslationString").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td class="right">'.$langs->trans("Size").'</td>';
@@ -134,10 +134,17 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		}
 		// Position
 		print "<td>".dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
-		// Label
-		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key])."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
+		// Label and label translated
+		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150 subtitle">';
+		print dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]);
+		if ($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]) != $extrafields->attributes[$elementtype]['label'][$key]) {
+			print '<br><span class="subtitle small opacitymedium inline-block" title="'.dolPrintHTMLForAttribute($langs->trans("LabelTranslatedInCurrentLanguage")).'">';
+			print $langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]);
+		}
+		print '</span>';
+		print "</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
 		// Label translated
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
+		//print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
 		// Key
 		print '<td title="'.dol_escape_htmltag($key).'" class="tdoverflowmax100">'.dol_escape_htmltag($key)."</td>\n";
 		// Type

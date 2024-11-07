@@ -1070,7 +1070,7 @@ class RecruitmentJobPosition extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
-				'@phan-var-force ModeleNumRefRecruitmentJobPosition $module';
+				'@phan-var-force ModeleNumRefRecruitmentJobPosition $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

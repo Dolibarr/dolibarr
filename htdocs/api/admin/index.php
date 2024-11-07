@@ -38,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page

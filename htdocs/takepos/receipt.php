@@ -6,6 +6,7 @@
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,14 @@ if (!isset($action)) {
 	require '../main.inc.php'; // If this file is called from send.php avoid load again
 }
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant

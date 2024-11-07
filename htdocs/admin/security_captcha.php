@@ -46,7 +46,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-
+$handler = GETPOST('handler', 'aZ09');
 
 
 /*
@@ -70,32 +70,11 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'updateform') {
-	$res1 = 1;
-	$res2 = 1;
-	$res3 = 1;
-	$res4 = 1;
-	$res5 = 1;
-	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
-		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
-		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS')) {
-		$res4 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", GETPOST("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 'alphanohtml'), 'int', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS')) {
-		$res5 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", GETPOST("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 'alphanohtml'), 'int', 0, '', $conf->entity);
-	}
-	if ($res1 && $res2 && $res3 && $res4 && $res5) {
-		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+} elseif ($action == 'setcaptchahandler') {
+	if (!dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_HANDLER', GETPOST("value", "aZ09"), 'chaine', 0, '', $conf->entity)) {
+		dol_print_error($db);
 	}
 }
-
 
 
 /*
@@ -112,28 +91,33 @@ print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("CaptchaDesc")."</span><br>\n";
 print "<br>\n";
 
+$dirModCaptcha = array_merge(array('/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
 
 // Load array with all captcha generation modules
-$dir = DOL_DOCUMENT_ROOT."/core/modules/security/captcha";
-clearstatcache();
-$handle = opendir($dir);
-$i = 1;
 $arrayhandler = array();
-if (is_resource($handle)) {
-	while (($file = readdir($handle)) !== false) {
-		$reg = array();
-		if (preg_match('/(modCaptcha[a-z]+)\.class\.php$/i', $file, $reg)) {
-			// Charging the numbering class
-			$classname = $reg[1];
-			require_once $dir.'/'.$file;
 
-			$obj = new $classname($db, $conf, $langs, $user);
-			'@phan-var-force ModeleCaptcha $obj';
-			$arrayhandler[$obj->id] = $obj;
-			$i++;
+foreach ($dirModCaptcha as $dirroot) {
+	$dir = dol_buildpath($dirroot, 0);
+
+	$handle = @opendir($dir);
+
+	$i = 1;
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
+			$reg = array();
+			if (preg_match('/(modCaptcha[a-z]+)\.class\.php$/i', $file, $reg)) {
+				// Charging the numbering class
+				$classname = $reg[1];
+				require_once $dir.'/'.$file;
+
+				$obj = new $classname($db, $conf, $langs, $user);
+				'@phan-var-force ModeleCaptcha $obj';
+				$arrayhandler[$obj->id] = $obj;
+				$i++;
+			}
 		}
+		closedir($handle);
 	}
-	closedir($handle);
 }
 asort($arrayhandler);
 
@@ -215,13 +199,11 @@ if ($showavailablecaptcha) {
 
 		if (function_exists("imagecreatefrompng")) {
 			if ($key != $selectedcaptcha) {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=enabledcaptchahandler&token='.newToken().'&handler=standard"><input type="checkbox"></a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcaptchahandler&token='.newToken().'&value='.$key.'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
 			} else {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=disablecaptchahandler&token='.newToken().'&handler=standard"><input type="checkbox" checked="checked"';
-				if (count($arrayhandler) <= 1) {
-					print 'disabled="disabled"';
-				}
-				print '></a>';
+				print img_picto($langs->trans("Enabled"), 'switch_on');
 			}
 		} else {
 			$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
