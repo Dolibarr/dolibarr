@@ -287,8 +287,3 @@ CREATE TABLE llx_product_customer_price_extrafields (
 ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);
 ALTER TABLE llx_facture ADD COLUMN payment_reference varchar(25) AFTER date_lim_reglement;
 ALTER TABLE llx_societe ADD COLUMN tp_payment_reference varchar(25) AFTER code_fournisseur;
-
--- Add VAT by state
-ALTER TABLE llx_c_departements ADD COLUMN fk_tva integer DEFAULT NULL AFTER nom;
-ALTER TABLE llx_c_departements ADD INDEX idx_departements_fk_tva (fk_tva);
-ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_tva FOREIGN KEY (fk_tva) REFERENCES llx_c_tva (rowid);

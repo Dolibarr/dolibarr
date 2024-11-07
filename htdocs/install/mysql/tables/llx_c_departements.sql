@@ -26,7 +26,6 @@ create table llx_c_departements
   tncc             integer,
   ncc              varchar(50),
   nom              varchar(50),
-  fk_tva           integer DEFAULT NULL,
   active           tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
