@@ -925,7 +925,7 @@ class EcmFiles extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (!empty($this->gen_or_uploaded)) {
-			$datas['gen_or_upload'] .= '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+			$datas['gen_or_upload'] = '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
 		}
 
 		return $datas;
