@@ -844,7 +844,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$sessionkey = 'dol_antispam_value';
 			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 
@@ -3978,7 +3978,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		// A div for the address popup
+		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 

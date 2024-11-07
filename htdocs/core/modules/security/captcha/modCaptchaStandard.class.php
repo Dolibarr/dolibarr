@@ -121,11 +121,27 @@ class modCaptchaStandard extends ModeleCaptcha
 		</span>
 		<span class="nowrap inline-block">
 		<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-		<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>
+		<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button" onclick="submitFormFromCaptcha(event)">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>
 		</span>
 
 		</div>
 		</div>
+
+		<script>
+		function submitFormFromCaptcha(event) {
+			console.log("submitFormFromCaptcha");
+
+	      	// Prevent the default action of the link
+    		event.preventDefault();
+      		// Search the form
+			const form = event.target.closest("form");
+
+      		// Submit the form if found
+      		if (form) {
+        		form.submit();
+      		}
+    	}
+		</script>
 		<!-- End code for Captcha -->'."\n";
 
 		return $out;

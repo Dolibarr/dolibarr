@@ -133,6 +133,8 @@ if (empty($reshook)) {
 
 		// Verify code
 		if (!$ok) {
+			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
+
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -143,8 +145,7 @@ if (empty($reshook)) {
 				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
 			}
 
-			// Set the message to show (must be the same if login/email exists or not
-			// to avoid to guess them.
+			// Set the message to show (must be the same if login/email exists or not to avoid to guess them.
 			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
 				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");

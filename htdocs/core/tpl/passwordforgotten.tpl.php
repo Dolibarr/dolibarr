@@ -266,7 +266,7 @@ if (!empty($morelogincontent)) {
 
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
-	if ($action != 'validatenewpassword' && empty($message)) {
+	if ($action != 'validatenewpassword') {
 		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('SendNewPasswordDesc');
@@ -280,24 +280,45 @@ if ($mode == 'dolibarr' || !$disabled) {
 	print '</div>';
 	print '</div>';
 }
+
+print "\n".'<br>'."\n";
+
+
+//$conf->use_javascript_ajax = 0;
+
+// Show error message if defined
+if ($message) {
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message) || preg_match('/<div class="warning/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			$message = preg_replace('/<div class="[^"]*">/', '', $message);
+			$message = preg_replace('/<\/div>/', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
+	} else {
+		?>
+		<div class="center login_main_message">
+		<?php
+		print dol_htmloutput_mesg($message, [], '', 1);
+		?>
+		</div>
+		<?php
+	}
+}
 ?>
-
-
-<br>
-
-<?php if (!empty($message)) { ?>
-	<div class="center login_main_message">
-	<?php dol_htmloutput_mesg($message, [], '', 1); ?>
-	</div>
-<?php } ?>
-
 
 <!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
 
 <?php
-if (getDolGlobalString('MAIN_HTML_FOOTER')) {
-	print $conf->global->MAIN_HTML_FOOTER;
-}
+
+print getDolGlobalString('MAIN_HTML_FOOTER');
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option) {

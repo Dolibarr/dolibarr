@@ -490,6 +490,8 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
+}
+if ($message) {
 	if (!empty($conf->use_javascript_ajax)) {
 		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
 			$message = str_replace('<!-- warning -->', '', $message);
@@ -560,9 +562,8 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
 <?php
-if (getDolGlobalString('MAIN_HTML_FOOTER')) {
-	print $conf->global->MAIN_HTML_FOOTER;
-}
+
+print getDolGlobalString('MAIN_HTML_FOOTER');
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option) {
@@ -576,8 +577,9 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
+
 // TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
+// Google Analytics
 if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
 	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 	foreach ($tmptagarray as $tmptag) {
@@ -596,7 +598,6 @@ if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
 		print "\n";
 	}
 }
-
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
 if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
@@ -604,10 +605,10 @@ if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && get
 		?>
 	<div class="center"><br>
 		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+			google_ad_client = "<?php echo getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') ?>";
+			google_ad_slot = "<?php echo getDolGlobalString('MAIN_GOOGLE_AD_SLOT') ?>";
+			google_ad_width = <?php echo getDolGlobalString('MAIN_GOOGLE_AD_WIDTH') ?>;
+			google_ad_height = <?php echo getDolGlobalString('MAIN_GOOGLE_AD_HEIGHT') ?>;
 			//-->
 		</script>
 		<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
