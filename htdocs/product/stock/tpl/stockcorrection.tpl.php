@@ -22,9 +22,11 @@
 
 /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var Product|MouvementStock $object
  * @var FormProduct $formproduct
  * @var FormProjets $formproject
+ * @var Translate $langs
  *
  * @var string $backtopage
  */

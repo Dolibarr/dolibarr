@@ -22,8 +22,10 @@
 
 /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var Product|MouvementStock $object
  * @var FormProduct $formproduct
+ * @var Translate $langs
  *
  * @var string $backtopage
  */

@@ -21681,33 +21681,13 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
