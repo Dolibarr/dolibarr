@@ -20526,11 +20526,6 @@ parameters:
 			path: ../../htdocs/product/composition/card.php
 
 		-
-			message: "#^Variable \\$resql might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/composition/card.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/document.php
