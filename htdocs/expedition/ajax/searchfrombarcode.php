@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,13 @@ if (!defined('NOREQUIRESOC')) {
 }
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");

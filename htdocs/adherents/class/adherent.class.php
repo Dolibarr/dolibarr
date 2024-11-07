@@ -678,6 +678,7 @@ class Adherent extends CommonObject
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname();
 						'@phan-var-force ModeleNumRefMembers $modCodeMember';
+						/** @var ModeleNumRefMembers $modCodeMember */
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -1835,6 +1836,13 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
+				// set customer's bank account on the invoice
+				if (!empty($customer->fk_account)) {
+					$invoice->fk_account = $customer->fk_account;
+				} elseif (getDolGlobalString('FACTURE_RIB_NUMBER')) {
+					// set default bank account from invoice module settings
+					$invoice->fk_account = (int) getDolGlobalString('FACTURE_RIB_NUMBER');
+				}
 				//$invoice->date = $datesubscription;
 				$invoice->date = dol_now();
 

@@ -43,7 +43,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $error = '';
 
 	/**
-	 * @var array of errors
+	 * @var string[] of errors
 	 */
 	public $errors;
 

@@ -61,7 +61,7 @@ class Dolresource extends CommonObject
 	public $phone;
 
 	/**
-	 * @var int|null 	Maximum users
+	 * @var ?int		Maximum users
 	 */
 	public $max_users;
 
@@ -70,6 +70,9 @@ class Dolresource extends CommonObject
 	 */
 	public $fk_code_type_resource;
 
+	/**
+	 * @var ?string
+	 */
 	public $type_label;
 
 	/**
@@ -119,7 +122,7 @@ class Dolresource extends CommonObject
 	public $fk_user_create;
 
 	/**
-	 * Used by fetchElementResource() to return an object
+	 * @var CommonObject	Used by fetchElementResource() to return an object
 	 */
 	public $objelement;
 
@@ -923,7 +926,7 @@ class Dolresource extends CommonObject
 	 *  @param		int		$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl(int $withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager, $action;
 

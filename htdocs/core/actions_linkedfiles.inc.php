@@ -24,9 +24,18 @@
 // Variable $confirm must be defined.
 // If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
 
-//var_dump($upload_dir);
-//var_dump($upload_dirold);
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $upload_dir
+ * @var string $upload_dirold
+ * @var string $confirm
+ */
 
 // Protection to understand what happen when submitting files larger than post_max_size
 if (GETPOSTINT('uploadform') && empty($_POST) && empty($_FILES)) {

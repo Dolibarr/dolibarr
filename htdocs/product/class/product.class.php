@@ -611,47 +611,47 @@ class Product extends CommonObject
 	public $barcode_type_code;
 
 	/**
-	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats propales
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats propales
 	 */
 	public $stats_propale = array();
 
 	/**
-	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats orders
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats orders
 	 */
 	public $stats_commande = array();
 
 	/**
-	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats contracts
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats contracts
 	 */
 	public $stats_contrat = array();
 
 	/**
-	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats invoices
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats invoices
 	 */
 	public $stats_facture = array();
 
 	/**
-	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int} stats supplier propales
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:float} stats supplier propales
 	 */
 	public $stats_proposal_supplier = array();
 
 	/**
-	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float} stats supplier orders
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:float} stats supplier orders
 	 */
 	public $stats_commande_fournisseur = array();
 
 	/**
-	 * @var array{}|array{customers:int,nb:int,rows:int,qty:int} stats shipping
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats shipping
 	 */
 	public $stats_expedition = array();
 
 	/**
-	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:int|float} stats receptions
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:float} stats receptions
 	 */
 	public $stats_reception = array();
 
 	/**
-	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
+	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:float,customers_consumed:int,nb_consumed:int,qty_consumed:float,customers_toproduce:int,nb_toproduce:int,qty_toproduce:float,customers_produced:int,nb_produced:int,qty_produced:float} stats by role toconsume, consumed, toproduce, produced
 	 */
 	public $stats_mo = array();
 	public $stats_bom = array();
@@ -687,7 +687,9 @@ class Product extends CommonObject
 	 */
 	public $nbphoto = 0;
 
-	//! Contains detail of stock of product into each warehouse
+	/**
+	 * @var array<int,stdClass> Contains detail of stock of product into each warehouse
+	 */
 	public $stock_warehouse = array();
 
 	/**
@@ -1475,7 +1477,7 @@ class Product extends CommonObject
 						$ObjBatch = new Productbatch($this->db);
 						$ObjBatch->batch = $valueforundefinedlot;
 						$ObjBatch->qty = ($ObjW->real - $qty_batch);
-						$ObjBatch->fk_product_stock = $ObjW->id;
+						$ObjBatch->fk_product_stock = (int) $ObjW->id;
 
 						if ($ObjBatch->create($user, 1) < 0) {
 							$error++;
@@ -5287,7 +5289,7 @@ class Product extends CommonObject
 	 *  Function recursive, used only by get_arbo_each_prod(), to build tree of subproducts into ->res
 	 *  Define value of this->res
 	 *
-	 * @param  array  $prod       			Products array
+	 * @param  array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>	$prod		Products array
 	 * @param  string $compl_path 			Directory path of parents to add before
 	 * @param  int    $multiply   			Because each sublevel must be multiplicated by parent nb
 	 * @param  int    $level      			Init level
@@ -5459,7 +5461,7 @@ class Product extends CommonObject
 	/**
 	 *  Return all parent products for current product (first level only)
 	 *
-	 * @return array|int         Array of product
+	 * @return array<int,array{id:int,ref:string,label:string,qty:float,incdec:int<0,1>,fk_product_type:int,entity:int,status:int,status_buy:int}>|int<-1,-1>		Array of product
 	 * @see hasFatherOrChild()
 	 */
 	public function getFather()
@@ -5476,6 +5478,7 @@ class Product extends CommonObject
 			$prods = array();
 			while ($record = $this->db->fetch_array($res)) {
 				// $record['id'] = $record['rowid'] = id of father
+				$prods[$record['id']] = array();
 				$prods[$record['id']]['id'] = $record['rowid'];
 				$prods[$record['id']]['ref'] = $record['ref'];
 				$prods[$record['id']]['label'] = $record['label'];

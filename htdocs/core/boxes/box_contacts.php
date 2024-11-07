@@ -69,7 +69,7 @@ class box_contacts extends ModeleBoxes
 	{
 		global $user, $langs, $conf, $hookmanager;
 
-		$langs->load("boxes");
+		$langs->loadLangs(array("boxes", "contracts"));
 
 		$this->max = $max;
 

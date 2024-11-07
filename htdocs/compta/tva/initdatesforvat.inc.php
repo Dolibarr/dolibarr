@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,11 @@
  *  \file           htdocs/compta/tva/initdatesforvat.inc.php
  *  \brief          Set value for date_start and date_end
  */
+
+ /**
+ * @var Conf $conf
+ */
+
 
 $now = dol_now();
 $current_date = dol_getdate($now);
