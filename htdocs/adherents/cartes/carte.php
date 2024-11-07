@@ -205,7 +205,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			// For labels
 			if ($mode == 'label') {
 				if (!getDolGlobalString('ADHERENT_ETIQUETTE_TEXT')) {
-					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__MEMBER_CIVILITY__\n__MEMBER_FULLNAME__\n__MEMBER_ADDRESS__\n__MEMBER_ZIP__ __MEMBER_TOWN__\n__MEMBER_COUNTRY__";
+					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__MEMBER_TITLE__\n__MEMBER_FULLNAME__\n__MEMBER_ADDRESS__\n__MEMBER_ZIP__ __MEMBER_TOWN__\n__MEMBER_COUNTRY__";
 				}
 				$textleft = make_substitutions(getDolGlobalString('ADHERENT_ETIQUETTE_TEXT'), $substitutionarray);
 				$textheader = '';

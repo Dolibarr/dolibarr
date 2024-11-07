@@ -396,11 +396,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountingjournal.class.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountingjournal.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/class/bookkeeping.class.php
@@ -541,11 +536,6 @@ parameters:
 			path: ../../htdocs/accountancy/closure/index.php
 
 		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/closure/index.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/closure/index.php
@@ -559,11 +549,6 @@ parameters:
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/customer/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/customer/index.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -599,11 +584,6 @@ parameters:
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/expensereport/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/expensereport/index.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -766,11 +746,6 @@ parameters:
 			path: ../../htdocs/accountancy/supplier/card.php
 
 		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 3
-			path: ../../htdocs/accountancy/supplier/index.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/accountancy/supplier/index.php
@@ -873,11 +848,6 @@ parameters:
 		-
 			message: "#^Property Adherent\\:\\:\\$societe \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
@@ -1219,11 +1189,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/fckeditor.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 1
-			path: ../../htdocs/admin/fediverse.php
 
 		-
 			message: "#^Variable \\$result might not be defined\\.$#"
@@ -2246,21 +2211,6 @@ parameters:
 			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
@@ -2271,21 +2221,6 @@ parameters:
 			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
@@ -2293,11 +2228,6 @@ parameters:
 		-
 			message: "#^Variable \\$assetdepreciationoptions might not be defined\\.$#"
 			count: 11
-			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
 
 		-
@@ -4536,11 +4466,6 @@ parameters:
 			path: ../../htdocs/compta/bank/class/account.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/class/account.class.php
-
-		-
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/class/account.class.php
@@ -5091,11 +5016,6 @@ parameters:
 			path: ../../htdocs/compta/facture/card.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/compta/facture/card.php
-
-		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/facture/card.php
@@ -5406,11 +5326,6 @@ parameters:
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: "#^Property Facture\\:\\:\\$fk_facture_source \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture.class.php
@@ -5467,11 +5382,6 @@ parameters:
 
 		-
 			message: "#^Result of && is always false\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
 			count: 3
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
@@ -6446,11 +6356,6 @@ parameters:
 			path: ../../htdocs/compta/sociales/card.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
 			message: "#^Variable \\$resteapayer might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/compta/sociales/card.php
@@ -6897,11 +6802,6 @@ parameters:
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/compta/tva/card.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/compta/tva/card.php
 
@@ -9861,11 +9761,6 @@ parameters:
 			path: ../../htdocs/core/class/timespent.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/timespent.class.php
-
-		-
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/timespent.class.php
@@ -10406,11 +10301,6 @@ parameters:
 			path: ../../htdocs/core/lib/pdf.lib.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/lib/pdf.lib.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 4
 			path: ../../htdocs/core/lib/pdf.lib.php
@@ -10726,11 +10616,6 @@ parameters:
 			path: ../../htdocs/core/modules/DolibarrModules.class.php
 
 		-
-			message: "#^Property pdf_standard_actions\\:\\:\\$format type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/action/doc/pdf_standard_actions.class.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/action/doc/pdf_standard_actions.class.php
@@ -10756,41 +10641,6 @@ parameters:
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: "#^Variable \\$carac_client_name might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
@@ -10811,22 +10661,12 @@ parameters:
 			path: ../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_ban\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
@@ -10838,16 +10678,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_sepamandate\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
@@ -10896,26 +10726,6 @@ parameters:
 			path: ../../htdocs/core/modules/bom/mod_bom_standard.php
 
 		-
-			message: "#^Parameter \\#2 \\$object of method BordereauChequeBlochet\\:\\:_pagefoot\\(\\) expects object, string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: "#^Property BordereauChequeBlochet\\:\\:\\$ref_ext has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
 			message: "#^Property mod_chequereceipt_mint\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/cheque/mod_chequereceipt_mint.php
@@ -10931,32 +10741,12 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 6
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_einstein\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
@@ -10966,23 +10756,8 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
@@ -11011,47 +10786,12 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_eratosthene\\:\\:drawInfoTable\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_eratosthene\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
@@ -11091,28 +10831,8 @@ parameters:
 			path: ../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_strato\\:\\:tabSignature\\(\\) expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
 
 		-
@@ -11131,16 +10851,6 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_storm\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
@@ -11151,33 +10861,8 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
@@ -11186,48 +10871,13 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_typhon\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
@@ -11266,16 +10916,6 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$columnText of method CommonDocGenerator\\:\\:printStdColumnContent\\(\\) expects string, float given\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
@@ -11291,44 +10931,9 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
 			message: "#^Property pdf_merou\\:\\:\\$destinataire has no type specified\\.$#"
@@ -11346,33 +10951,13 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_rouget\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
 
 		-
@@ -11386,11 +10971,6 @@ parameters:
 			path: ../../htdocs/core/modules/expedition/mod_expedition_safor.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_standard_expensereport\\:\\:tablePayments\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
@@ -11398,21 +10978,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_expensereport\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
 
 		-
@@ -11476,27 +11041,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_crabe\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
@@ -11511,23 +11056,8 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
@@ -11586,23 +11116,8 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 7
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
@@ -11621,27 +11136,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_octopus\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
@@ -11686,23 +11181,8 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
@@ -11711,27 +11191,7 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_sponge\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -11816,26 +11276,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/modules_facture.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
@@ -11853,16 +11293,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_evaluation\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
 
 		-
@@ -12136,17 +11566,7 @@ parameters:
 			path: ../../htdocs/core/modules/mailings/xinputuser.modules.php
 
 		-
-			message: "#^Method doc_generic_member_odt\\:\\:get_substitutionarray_object\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/member/doc/doc_generic_member_odt.class.php
-
-		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/member/doc/doc_generic_member_odt.class.php
-
-		-
-			message: "#^Variable \\$contactobject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/member/doc/doc_generic_member_odt.class.php
 
@@ -12161,11 +11581,6 @@ parameters:
 			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
-			message: "#^Method pdf_standard_member\\:\\:addSticker\\(\\) has parameter \\$param with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
-
-		-
 			message: "#^Method pdf_standard_member\\:\\:write_file\\(\\) has parameter \\$object with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
@@ -12177,11 +11592,6 @@ parameters:
 
 		-
 			message: "#^Property Adherent\\:\\:\\$photo \\(string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
-
-		-
-			message: "#^Property CommonStickerGenerator\\:\\:\\$Tformat \\(array\\<string, float\\|int\\|string\\>\\) in empty\\(\\) is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
@@ -12266,33 +11676,8 @@ parameters:
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
@@ -12353,26 +11738,6 @@ parameters:
 		-
 			message: "#^Parameter \\#4 \\$columnText of method CommonDocGenerator\\:\\:printStdColumnContent\\(\\) expects string, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
@@ -12501,22 +11866,7 @@ parameters:
 			path: ../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
 
 		-
-			message: "#^Method pdf_standardlabel\\:\\:addSticker\\(\\) has parameter \\$param with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
-
-		-
-			message: "#^Method pdf_standardlabel\\:\\:write_file\\(\\) has parameter \\$arrayofrecords with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
-
-		-
 			message: "#^Parameter \\#6 \\$epaisseur of method CommonStickerGenerator\\:\\:_Croix\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
-
-		-
-			message: "#^Property CommonStickerGenerator\\:\\:\\$Tformat \\(array\\<string, float\\|int\\|string\\>\\) in empty\\(\\) is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
 
@@ -12528,16 +11878,6 @@ parameters:
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: "#^Method pdf_tcpdflabel\\:\\:addSticker\\(\\) has parameter \\$param with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: "#^Method pdf_tcpdflabel\\:\\:write_file\\(\\) has parameter \\$arrayofrecords with no value type specified in iterable type array\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
 
 		-
@@ -12553,11 +11893,6 @@ parameters:
 		-
 			message: "#^Parameter \\#8 \\$h of method pdf_tcpdflabel\\:\\:writeBarcode\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: "#^Property CommonStickerGenerator\\:\\:\\$Tformat \\(array\\<string, float\\|int\\|string\\>\\) in empty\\(\\) is not falsy\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
 
 		-
@@ -12584,41 +11919,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/pdf_standard.modules.php
 
 		-
 			message: "#^Property Product\\:\\:\\$weight_units \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
@@ -12656,21 +11956,6 @@ parameters:
 			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
-
-		-
 			message: "#^Comparison operation \"\\>\\=\" between int\\<0, max\\> and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
@@ -12686,37 +11971,7 @@ parameters:
 			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
-
-		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
 
@@ -12816,32 +12071,12 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 6
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$posy of method pdf_azur\\:\\:_tableau_info\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
@@ -12851,18 +12086,8 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
@@ -12886,23 +12111,8 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 5
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
@@ -12911,22 +12121,7 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_cyan\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
@@ -12951,94 +12146,9 @@ parameters:
 			path: ../../htdocs/core/modules/propale/mod_propale_marbre.php
 
 		-
-			message: "#^Method pdf_paiement\\:\\:Body\\(\\) has parameter \\$lines with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$doc_type has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$line_height has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$line_per_page has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$posxbankaccount has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$posxdate has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$posxinvoice has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$posxinvoiceamount has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$posxpaymentamount has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$posxpaymenttype has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$tab_height has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Property pdf_paiement\\:\\:\\$tab_top has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Variable \\$mod might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Variable \\$numpaiement might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
-			message: "#^Variable \\$total_mod might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
-
-		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
 
 		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_squille\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
@@ -13046,18 +12156,8 @@ parameters:
 			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
 
 		-
@@ -13146,41 +12246,6 @@ parameters:
 			path: ../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
 			message: "#^Property pdf_standard_stock\\:\\:\\$wref has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
@@ -13196,38 +12261,13 @@ parameters:
 			path: ../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_eagle\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
 
 		-
@@ -13246,47 +12286,7 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_eagle_proforma\\:\\:drawTotalTable\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
@@ -13331,11 +12331,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_canelle\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
@@ -13346,23 +12341,8 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
@@ -13426,27 +12406,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_cornas\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -13481,33 +12441,13 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_muscadet\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
@@ -13543,16 +12483,6 @@ parameters:
 		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_supplierpayment\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
 
 		-
@@ -13606,53 +12536,13 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: "#^Parameter \\#11 \\$page_largeur of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$addpercent of function vatrate expects bool, int given\\.$#"
 			count: 5
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$curx of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$cury of function pdf_bank expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: "#^Parameter \\#5 \\$w of function pdf_writelinedesc expects int, float given\\.$#"
 			count: 2
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
@@ -13681,27 +12571,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
 		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
 			message: "#^Parameter \\#4 \\$posy of method pdf_zenith\\:\\:_tableau_tot\\(\\) expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -14826,17 +13696,7 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php
 
 		-
-			message: "#^Method InterfaceNotification\\:\\:getListOfManagedEvents\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/triggers/interface_50_modNotification_Notification.class.php
-
-		-
 			message: "#^Property Conf\\:\\:\\$notification \\(stdClass\\) in empty\\(\\) is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/core/triggers/interface_50_modNotification_Notification.class.php
-
-		-
-			message: "#^Property InterfaceNotification\\:\\:\\$listofmanagedevents has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/triggers/interface_50_modNotification_Notification.class.php
 
@@ -14852,7 +13712,7 @@ parameters:
 
 		-
 			message: "#^Variable \\$old_MAIN_MAIL_AUTOCOPY_TO might not be defined\\.$#"
-			count: 2
+			count: 1
 			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
 
 		-
@@ -14911,18 +13771,8 @@ parameters:
 			path: ../../htdocs/cron/card.php
 
 		-
-			message: "#^Method Cronjob\\:\\:fetchAll\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$note_private \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: "#^Property Cronjob\\:\\:\\$classesname has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/cron/class/cronjob.class.php
 
 		-
@@ -14991,38 +13841,8 @@ parameters:
 			path: ../../htdocs/cron/class/cronjob.class.php
 
 		-
-			message: "#^Property Cronjob\\:\\:\\$md5params has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: "#^Property Cronjob\\:\\:\\$methodename has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: "#^Property Cronjob\\:\\:\\$module_name has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
 			message: "#^Property Cronjob\\:\\:\\$nbrun \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: "#^Property Cronjob\\:\\:\\$objectname has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: "#^Property Cronjob\\:\\:\\$params has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: "#^Property Cronjob\\:\\:\\$priority has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/cron/class/cronjob.class.php
 
 		-
@@ -15112,16 +13932,6 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/class/datapolicycron.class.php
-
-		-
-			message: "#^Property DataPolicyCron\\:\\:\\$error has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/class/datapolicycron.class.php
-
-		-
-			message: "#^Property DataPolicyCron\\:\\:\\$output has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/datapolicy/class/datapolicycron.class.php
 
@@ -15242,11 +14052,6 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/delivery/card.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/delivery/card.php
 
@@ -15402,11 +14207,6 @@ parameters:
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/don/class/don.class.php
 
@@ -15956,59 +14756,9 @@ parameters:
 			path: ../../htdocs/emailcollector/class/emailcollector.class.php
 
 		-
-			message: "#^Variable \\$client might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
-			message: "#^Property EmailCollectorAction\\:\\:\\$actionparam has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectoraction.class.php
-
-		-
-			message: "#^Property EmailCollectorAction\\:\\:\\$fk_emailcollector has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectoraction.class.php
-
-		-
-			message: "#^Property EmailCollectorAction\\:\\:\\$position has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectoraction.class.php
-
-		-
-			message: "#^Property EmailCollectorAction\\:\\:\\$rowid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectoraction.class.php
-
-		-
-			message: "#^Property EmailCollectorAction\\:\\:\\$type has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectoraction.class.php
-
-		-
-			message: "#^Property EmailCollectorFilter\\:\\:\\$fk_emailcollector has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectorfilter.class.php
-
-		-
-			message: "#^Property EmailCollectorFilter\\:\\:\\$rowid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectorfilter.class.php
-
-		-
-			message: "#^Property EmailCollectorFilter\\:\\:\\$rulevalue has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectorfilter.class.php
-
-		-
-			message: "#^Property EmailCollectorFilter\\:\\:\\$type has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/emailcollector/class/emailcollectorfilter.class.php
 
 		-
 			message: "#^Left side of && is always false\\.$#"
@@ -16411,11 +15161,6 @@ parameters:
 			path: ../../htdocs/expedition/class/expedition.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 3
-			path: ../../htdocs/expedition/class/expedition.class.php
-
-		-
 			message: "#^Property Expedition\\:\\:\\$fk_user_author \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/expedition/class/expedition.class.php
@@ -16511,52 +15256,7 @@ parameters:
 			path: ../../htdocs/expedition/class/expeditionligne.class.php
 
 		-
-			message: "#^Method ExpeditionLineBatch\\:\\:fetchAll\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$batch has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$dluo_qty has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$eatby has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$entrepot_id has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$fk_expeditiondet has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$fk_origin_stock has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$fk_warehouse has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
 			message: "#^Property ExpeditionLineBatch\\:\\:\\$qty \\(float\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
-
-		-
-			message: "#^Property ExpeditionLineBatch\\:\\:\\$sellby has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/class/expeditionlinebatch.class.php
 
@@ -16707,11 +15407,6 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/shipment.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/shipment.php
 
@@ -16921,11 +15616,6 @@ parameters:
 			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
 			message: "#^Property PaymentExpenseReport\\:\\:\\$amount \\(float\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
 			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
@@ -16958,11 +15648,6 @@ parameters:
 		-
 			message: "#^Property PaymentExpenseReport\\:\\:\\$num_payment \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
-			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: "#^Variable \\$amount might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
 
 		-
@@ -17251,11 +15936,6 @@ parameters:
 			path: ../../htdocs/fichinter/class/fichinter.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/class/fichinter.class.php
-
-		-
 			message: "#^Property Fichinter\\:\\:\\$ref_client \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/fichinter/class/fichinter.class.php
@@ -17289,16 +15969,6 @@ parameters:
 			message: "#^Parameter \\#3 \\$remise_percent_ligne of function calcul_price_total expects float, string given\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
-			message: "#^Property FichinterStats\\:\\:\\$socid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/class/fichinterstats.class.php
-
-		-
-			message: "#^Property FichinterStats\\:\\:\\$userid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/class/fichinterstats.class.php
 
 		-
 			message: "#^Right side of && is always false\\.$#"
@@ -17441,11 +16111,6 @@ parameters:
 			path: ../../htdocs/fourn/class/api_supplier_invoices.class.php
 
 		-
-			message: "#^Property SupplierInvoices\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
 			message: "#^Method SupplierOrders\\:\\:_validate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/api_supplier_orders.class.php
@@ -17526,32 +16191,12 @@ parameters:
 			path: ../../htdocs/fourn/class/api_supplier_orders.class.php
 
 		-
-			message: "#^Method Fournisseur\\:\\:ListArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.class.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 3
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Method CommandeFournisseur\\:\\:generateDocument\\(\\) has parameter \\$moreparams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Method CommandeFournisseur\\:\\:getDispachedLines\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Method CommandeFournisseur\\:\\:updateline\\(\\) has parameter \\$array_options with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
@@ -17591,27 +16236,12 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$billed has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: "#^Property CommandeFournisseur\\:\\:\\$cond_reglement_id \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
 			message: "#^Property CommandeFournisseur\\:\\:\\$fk_project \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$methode_commande has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$methode_commande_id has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
@@ -17631,28 +16261,8 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$refuse_note has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$remise_percent has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: "#^Property CommandeFournisseur\\:\\:\\$socid \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$source has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$statut \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
@@ -17716,11 +16326,6 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: "#^Variable \\$dispatchedlinearray might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/fournisseur.facture-rec.class.php
@@ -17774,16 +16379,6 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/fourn/class/fournisseur.facture-rec.ligne.class.php
-
-		-
-			message: "#^Method FactureFournisseur\\:\\:list_qualified_avoir_supplier_invoices\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: "#^Method FactureFournisseur\\:\\:list_replacable_supplier_invoices\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -18056,33 +16651,13 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.product.class.php
 
 		-
-			message: "#^Method PaiementFourn\\:\\:generateDocument\\(\\) has parameter \\$moreparams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/paiementfourn.class.php
-
-		-
-			message: "#^Method PaiementFourn\\:\\:getBillsArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/paiementfourn.class.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/class/paiementfourn.class.php
-
-		-
-			message: "#^Variable \\$mtotal might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/class/paiementfourn.class.php
 
 		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
-			path: ../../htdocs/fourn/class/paiementfourn.class.php
-
-		-
-			message: "#^Variable \\$total might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/fourn/class/paiementfourn.class.php
 
 		-
@@ -18128,11 +16703,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 8
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Property CommandeFournisseur\\:\\:\\$statut \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
@@ -18851,11 +17421,6 @@ parameters:
 			path: ../../htdocs/holiday/class/holiday.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/holiday/class/holiday.class.php
-
-		-
 			message: "#^Property Holiday\\:\\:\\$events has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/holiday/class/holiday.class.php
@@ -19006,11 +17571,6 @@ parameters:
 			path: ../../htdocs/hrm/class/evaluationdet.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/job.class.php
@@ -19037,11 +17597,6 @@ parameters:
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$ismultientitymanaged \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/class/job.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/job.class.php
 
@@ -19076,11 +17631,6 @@ parameters:
 			path: ../../htdocs/hrm/class/position.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/class/position.class.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skill.class.php
@@ -19106,11 +17656,6 @@ parameters:
 			path: ../../htdocs/hrm/class/skill.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/class/skill.class.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skilldet.class.php
@@ -19122,11 +17667,6 @@ parameters:
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$ismultientitymanaged \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/class/skilldet.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skilldet.class.php
 
@@ -19147,11 +17687,6 @@ parameters:
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$ismultientitymanaged \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/class/skillrank.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/class/skillrank.class.php
 
@@ -20076,11 +18611,6 @@ parameters:
 			path: ../../htdocs/intracommreport/card.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/card.php
-
-		-
 			message: "#^Variable \\$soc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/intracommreport/card.php
@@ -20091,38 +18621,8 @@ parameters:
 			path: ../../htdocs/intracommreport/class/intracommreport.class.php
 
 		-
-			message: "#^Method IntracommReport\\:\\:addItemFraisDePort\\(\\) has parameter \\$TLinesFraisDePort with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
 			message: "#^Parameter \\#3 \\$period_reference of method IntracommReport\\:\\:addItemsFact\\(\\) expects int, string given\\.$#"
 			count: 2
-			path: ../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: "#^Property IntracommReport\\:\\:\\$datec has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: "#^Property IntracommReport\\:\\:\\$declaration has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: "#^Property IntracommReport\\:\\:\\$period has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: "#^Variable \\$categ_fraisdeport might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/intracommreport/class/intracommreport.class.php
 
 		-
@@ -20207,11 +18707,6 @@ parameters:
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$ismultientitymanaged \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/knowledgemanagement/class/knowledgerecord.class.php
 
@@ -20311,11 +18806,6 @@ parameters:
 			path: ../../htdocs/loan/class/loan.class.php
 
 		-
-			message: "#^Method LoanSchedule\\:\\:paimenttorecord\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/loan/class/loanschedule.class.php
@@ -20328,36 +18818,6 @@ parameters:
 		-
 			message: "#^Property CommonObject\\:\\:\\$note_public \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$amount_capital has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$amount_insurance has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$amount_interest has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$amounts has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$bank_account has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$bank_line has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/loan/class/loanschedule.class.php
 
 		-
@@ -20396,21 +18856,6 @@ parameters:
 			path: ../../htdocs/loan/class/loanschedule.class.php
 
 		-
-			message: "#^Property LoanSchedule\\:\\:\\$total has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$type_code has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: "#^Property LoanSchedule\\:\\:\\$type_label has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/loan/class/paymentloan.class.php
@@ -20433,21 +18878,6 @@ parameters:
 		-
 			message: "#^Property PaymentLoan\\:\\:\\$amount_insurance \\(float\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
-			path: ../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: "#^Property PaymentLoan\\:\\:\\$amount_interest \\(float\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 3
-			path: ../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: "#^Property PaymentLoan\\:\\:\\$bank_line has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: "#^Property PaymentLoan\\:\\:\\$chid has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/loan/class/paymentloan.class.php
 
 		-
@@ -20564,26 +18994,6 @@ parameters:
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/loan/schedule.php
-
-		-
-			message: "#^Property MailmanSpip\\:\\:\\$mladded_ko type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/mailmanspip/class/mailmanspip.class.php
-
-		-
-			message: "#^Property MailmanSpip\\:\\:\\$mladded_ok type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/mailmanspip/class/mailmanspip.class.php
-
-		-
-			message: "#^Property MailmanSpip\\:\\:\\$mlremoved_ko type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/mailmanspip/class/mailmanspip.class.php
-
-		-
-			message: "#^Property MailmanSpip\\:\\:\\$mlremoved_ok type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/mailmanspip/class/mailmanspip.class.php
 
 		-
 			message: "#^Elseif condition is always true\\.$#"
@@ -20748,11 +19158,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/modulebuilder/index.php
-
-		-
-			message: "#^Parameter \\#2 \\$page of function print_barre_liste expects int\\|null, string given\\.$#"
-			count: 1
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
@@ -20941,43 +19346,8 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
 			message: "#^Parameter \\#3 \\$tab_height of method pdf_standard_myobject\\:\\:_tableau\\(\\) expects int, float given\\.$#"
 			count: 6
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
@@ -21471,11 +19841,6 @@ parameters:
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
-			message: "#^Property Opensurveysondage\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
@@ -21526,8 +19891,8 @@ parameters:
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
-			message: "#^Property Opensurveysondage\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
+			message: "#^Property Opensurveysondage\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
@@ -21717,11 +20082,6 @@ parameters:
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$ismultientitymanaged \\(int\\<0, 1\\>\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/partnership/class/partnership_type.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/partnership/class/partnership_type.class.php
 
@@ -22111,16 +20471,6 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: "#^Method Product\\:\\:fetch_prod_arbo\\(\\) has parameter \\$prod with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
-			message: "#^Method Product\\:\\:getFather\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/product.class.php
@@ -22206,11 +20556,6 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: "#^Property Product\\:\\:\\$stock_warehouse has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
 			message: "#^Property Product\\:\\:\\$type \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/product.class.php
@@ -22246,16 +20591,6 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: "#^Method Productbatch\\:\\:findAll\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: "#^Method Productbatch\\:\\:findAllForProduct\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/productbatch.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/productbatch.class.php
@@ -22266,22 +20601,12 @@ parameters:
 			path: ../../htdocs/product/class/productbatch.class.php
 
 		-
-			message: "#^Property Productbatch\\:\\:\\$_table_element has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/productbatch.class.php
-
-		-
 			message: "#^Property Productbatch\\:\\:\\$batch \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
 			path: ../../htdocs/product/class/productbatch.class.php
 
 		-
 			message: "#^Property Productbatch\\:\\:\\$eatby \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: "#^Property Productbatch\\:\\:\\$fk_product_stock has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/productbatch.class.php
 
@@ -22406,22 +20731,12 @@ parameters:
 			path: ../../htdocs/product/class/productfournisseurprice.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 3
 			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
 
 		-
 			message: "#^Property CommonObject\\:\\:\\$import_key \\(string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: "#^Property Propalmergepdfproduct\\:\\:\\$datec has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
 
@@ -22448,11 +20763,6 @@ parameters:
 		-
 			message: "#^Property Propalmergepdfproduct\\:\\:\\$lang \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
-			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: "#^Property PropalmergepdfproductLine\\:\\:\\$datec has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
 
 		-
@@ -22507,7 +20817,7 @@ parameters:
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 2
+			count: 1
 			path: ../../htdocs/product/dynamic_price/class/price_global_variable.class.php
 
 		-
@@ -22534,91 +20844,6 @@ parameters:
 			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$description \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
 			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$last_status has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$next_update has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$parameters has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$type has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$types has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$update_interval has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Property PriceGlobalVariableUpdater\\:\\:\\$update_min has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: "#^Method PriceParser\\:\\:parseExpression\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Method PriceParser\\:\\:parseProduct\\(\\) has parameter \\$extra_values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Method PriceParser\\:\\:parseProductSupplier\\(\\) has parameter \\$extra_values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Method PriceParser\\:\\:testExpression\\(\\) has parameter \\$extra_values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Property PriceParser\\:\\:\\$db has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Property PriceParser\\:\\:\\$error_expr has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Property PriceParser\\:\\:\\$error_parser has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Property PriceParser\\:\\:\\$limit has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Property PriceParser\\:\\:\\$separator_chr has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
-
-		-
-			message: "#^Property PriceParser\\:\\:\\$special_chr has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_parser.class.php
 
 		-
 			message: "#^Property PriceExpression\\:\\:\\$expression \\(string\\) in isset\\(\\) is not nullable\\.$#"
@@ -23073,11 +21298,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: "#^Property Entrepot\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
 			path: ../../htdocs/product/stock/class/entrepot.class.php
 
 		-
@@ -23801,11 +22021,6 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/class/stocktransferline.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/stocktransfer/class/stocktransferline.class.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
@@ -24226,18 +22441,8 @@ parameters:
 			path: ../../htdocs/projet/class/project.class.php
 
 		-
-			message: "#^Offset 'picto' on array\\{picto\\: non\\-falsy\\-string\\} in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/project.class.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: ../../htdocs/projet/class/project.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
 			path: ../../htdocs/projet/class/project.class.php
 
 		-
@@ -26106,11 +24311,6 @@ parameters:
 			path: ../../htdocs/reception/class/reception.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: ../../htdocs/reception/class/reception.class.php
-
-		-
 			message: "#^Property Reception\\:\\:\\$model_pdf \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/reception/class/reception.class.php
@@ -26516,41 +24716,6 @@ parameters:
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
 		-
-			message: "#^Parameter \\#3 \\$h of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#3 \\$page_height of function pdf_pagehead expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$posx of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#4 \\$w of function pdf_watermark expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$marge_basse of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#5 \\$posy of function pdf_writeLinkedObjects expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: "#^Parameter \\#6 \\$marge_gauche of function pdf_pagefoot expects int, float given\\.$#"
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
 			message: "#^Variable \\$outputlangsbis might not be defined\\.$#"
 			count: 7
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
@@ -26871,11 +25036,6 @@ parameters:
 			path: ../../htdocs/salaries/card.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/card.php
-
-		-
 			message: "#^Variable \\$resteapayer might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/card.php
@@ -26956,11 +25116,6 @@ parameters:
 			path: ../../htdocs/salaries/class/paymentsalary.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/class/paymentsalary.class.php
-
-		-
 			message: "#^Property PaymentSalary\\:\\:\\$amount \\(float\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
 			path: ../../htdocs/salaries/class/paymentsalary.class.php
@@ -27026,29 +25181,9 @@ parameters:
 			path: ../../htdocs/salaries/class/salary.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/class/salary.class.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/document.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/info.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -27123,11 +25258,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
-			path: ../../htdocs/salaries/virement_request.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
 			path: ../../htdocs/salaries/virement_request.php
 
 		-
@@ -27973,11 +26103,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$uselocaltax2_rate of function calcul_price_total expects float, string given\\.$#"
 			count: 2
-			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
 			path: ../../htdocs/supplier_proposal/class/supplier_proposal.class.php
 
 		-
@@ -29226,11 +27351,6 @@ parameters:
 			path: ../../htdocs/variants/class/ProductAttribute.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/variants/class/ProductAttribute.class.php
-
-		-
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/variants/class/ProductAttribute.class.php
@@ -29551,24 +27671,9 @@ parameters:
 			path: ../../htdocs/webportal/class/webportalinvoice.class.php
 
 		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/webportalmember.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$statut \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/webportalmember.class.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/webportalmember.class.php
-
-		-
-			message: "#^Property CommonObject\\:\\:\\$status \\(array\\<int, string\\>\\|int\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/webportalorder.class.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -30531,59 +28636,9 @@ parameters:
 			path: ../../scripts/user/migrate_picture_path.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 2
 			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 9
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 8
-			path: ../../scripts/user/sync_groups_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 5
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
@@ -30591,51 +28646,11 @@ parameters:
 			path: ../../scripts/user/sync_users_dolibarr2ldap.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 23
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 8
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
+			message: "#^Unable to resolve the template type T in call to function array_values$#"
 			count: 1
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
 			path: ../../scripts/user/sync_users_ldap2dolibarr.php
 
 		-
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 2
 			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../scripts/website/regenerate-pages.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/website/regenerate-pages.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/website/regenerate-pages.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../scripts/withdrawals/build_withdrawal_file.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
-			path: ../../scripts/withdrawals/build_withdrawal_file.php

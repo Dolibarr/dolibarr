@@ -26,15 +26,19 @@
  * $parameters
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-/**
- * @var HookManager $hookmanager
- */
-
 
 if (!is_object($form)) {
 	$form = new Form($db);

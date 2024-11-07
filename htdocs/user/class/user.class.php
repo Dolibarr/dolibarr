@@ -2591,7 +2591,7 @@ class User extends CommonObject
 					// Call trigger for the "security events" log
 					$user->context['audit'] = 'login='.$user->login;
 					if (!empty($flagdelsessionsbefore)) {
-						$user->context['audit'] .= ' - flagdelsessionsbefore set to '.$this->db->idate($now - 5, 'gmt');
+						$user->context['audit'] .= " - flagdelsessionsbefore set to '".$this->db->idate($now - 5, 'gmt')."'";
 					}
 
 					if (!$error && !$notrigger) {
