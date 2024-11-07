@@ -88,38 +88,37 @@ class LezioniStats // extends Stats
 	public function getIstrCompensiByMonth($year, $format = 0)
 	{
 
-		$sql = "SELECT dm";
-		$sql .= ", istruttore";
-		$sql .= ", sum(CompensoTot + CompensoCoordinatore) as CompensoTot";
-		$sql .= ", sum(CompensoPagato) as CompensoPagato";
-		$sql .= ", sum(CompensoDaPagare) as CompensoDaPagare";
-		$sql .= ", sum(CompensoCoordinatore) as CompensoCoordinatore ";
-		$sql .= " FROM ";
-		$sql .= "( ";
-		$sql .= "    SELECT date_format(p.datalezione,'%M %y') as dm ";
-		$sql .= "        , istruttore ";
-		$sql .= "        , p.compensoistruttore as CompensoTot";
-		$sql .= "        , if(p.pagato = 1, p.compensoistruttore, 0) as CompensoPagato";
-		$sql .= "        , if(p.pagato = 0, p.compensoistruttore, 0) as CompensoDaPagare";
-		$sql .= "        , 0 as CompensoCoordinatore";
-		$sql .= "    FROM `o5d2_lezioni_lezione` p";
-		$sql .= "   WHERE ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
-		$sql .= "   AND ".$this->where;
-		$sql .= "  UNION ";
-		$sql .= "    SELECT date_format(p.datalezione,'%M %y') as dm";
-		$sql .= "        , coordinatore as istruttore";
-		$sql .= "        , 0 as Compenso";
-		$sql .= "        , 0 as CompensoPagato";
-		$sql .= "        , 0 as CompensoDaPagare";
-		$sql .= "        , compenso_coordinatore as CompensoCoordinatore";
-		$sql .= "    FROM `o5d2_lezioni_lezione` p";
-		$sql .= "   WHERE ".dolSqlDateFilter('p.datalezione', 0, 0, (int) $year, 1);
-		$sql .= "   AND ".$this->where;
-		$sql .= ") a ";
-		$sql .= " WHERE istruttore is not null ";
-		$sql .= " GROUP BY dm, istruttore ";
+		$sql = "SELECT a.dm ";
+		$sql .= " , a.istruttore ";
+		$sql .= " , sum(a.CompensoTot + a.CompensoCoordinatore) as CompensoTot ";
+		$sql .= " , sum(a.CompensoPagato) as CompensoPagato ";
+		$sql .= " , sum(a.CompensoDaPagare) as CompensoDaPagare ";
+		$sql .= " , sum(a.CompensoCoordinatore) as CompensoCoordinatore  ";
+		$sql .= "  FROM  ";
+		$sql .= " (  ";
+		$sql .= "     SELECT date_format(p.datalezione,'%M %y') as dm  ";
+		$sql .= "         , p.istruttore  ";
+		$sql .= "         , p.compensoistruttore as CompensoTot ";
+		$sql .= "         , if(p.pagato = 1, p.compensoistruttore, 0) as CompensoPagato ";
+		$sql .= "         , if(p.pagato = 0, p.compensoistruttore, 0) as CompensoDaPagare ";
+		$sql .= "         , COALESCE(c.CompensoCoordinatore,0) as CompensoCoordinatore ";
+		$sql .= "     FROM ".$this->from;
+		$sql .= "   	LEFT JOIN (";
+		$sql .= "         SELECT date_format(p.datalezione,'%M %y') as dm ";
+		$sql .= "             , p.coordinatore as istruttore ";
+		$sql .= "             , p.compenso_coordinatore as CompensoCoordinatore ";
+		$sql .= "         FROM ".$this->from;
+		$sql .= "         WHERE coordinatore is not null";
+		$sql .= "         AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month"; //get last 13 month from the first of the month
+		$sql .= "         AND ".$this->where;
+		$sql .= "         ) AS c";
+		$sql .= "     ON p.istruttore = c.istruttore AND dm = c.dm";
+		$sql .= "   WHERE ".$this->where;
+		$sql .= "   AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month"; //get last 13 month from the first of the month
+		$sql .= " ) a ";
+		$sql .= "  GROUP BY dm, istruttore";
 		$sql .= $this->db->order('dm', 'DESC');
-
+		
 		// phpcs:enable
 		global $langs;
 
