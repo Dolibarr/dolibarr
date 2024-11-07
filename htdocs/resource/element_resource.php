@@ -136,7 +136,7 @@ if (empty($reshook)) {
 					$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
 				}
 
-				// Get the ressources busy during the period with the id "id"
+				// Get the resources busy during the period with the id "id"
 				$busyResources = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, array((int) $resource_id));
 
 				// sql error
@@ -190,7 +190,7 @@ if (empty($reshook)) {
 					$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
 				}
 
-				// Get the ressources busy during the period with the id "id"
+				// Get the resources busy during the period with the id "id"
 				$_busyResources = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, array((int) $resource_id));
 
 				// sql error
