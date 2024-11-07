@@ -801,7 +801,7 @@ if ($object->id > 0) {
 
 				// if societe rib in model invoice, we preselect it
 				$selectedRib = '';
-				if ($object->element = 'invoice' && $object->fk_fac_rec_source) {
+				if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
 					$facturerec = new FactureRec($db);
 					$facturerec->fetch($object->fk_fac_rec_source);
 					if ($facturerec->fk_societe_rib) {
