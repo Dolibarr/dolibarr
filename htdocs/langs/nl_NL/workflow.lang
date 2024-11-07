@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classificeer gekoppel
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classificeer inkooporder met gekoppelde bron als ontvangen wanneer een ontvangst is gevalideerd (en als de hoeveelheid die door alle ontvangsten is ontvangen hetzelfde is als in de inkooporder die moet worden bijgewerkt)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classificeer inkooporder met gekoppelde bron als ontvangen wanneer een ontvangst wordt gesloten (en als de hoeveelheid die door alle ontvangsten wordt ontvangen hetzelfde is als in de inkooporder die moet worden bijgewerkt)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde aankoopfactuur gevalideerd is (en als het bedrag van de factuur gelijk is aan het totaalbedrag van de gekoppelde ontvangsten)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde aankoopfactuur gevalideerd is (en als het bedrag van de factuur gelijk is aan het totaalbedrag van de gekoppelde ontvangsten)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Koppel bij het aanmaken van een ticket beschikbare contracten van bijpassende derde partijen
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Zoek bij het koppelen van contracten onder die van moederbedrijven

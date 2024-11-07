@@ -422,8 +422,8 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$paiementAmount = $facture->getSommePaiement();
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
-						$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
-						$remaintopay = price2num($facture->total_ttc - $totalpay);
+						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
+						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
@@ -1821,7 +1821,7 @@ if ($resql) {
 		$totalarray['val']['f.total_tva'] = 0;
 		$totalarray['val']['f.total_ht'] = 0;
 		$totalarray['val']['f.total_ttc'] = 0;
-		$totalarray['val']['totalam'] = 0;
+		$totalarray['val']['dynamount_payed'] = 0;
 		$totalarray['val']['rtp'] = 0;
 
 
@@ -1910,8 +1910,8 @@ if ($resql) {
 			$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
 
-			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
+			$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
+			$remaintopay = $obj->total_ttc - $totalallpayments;
 
 			$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
@@ -1923,13 +1923,16 @@ if ($resql) {
 			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consumed
 				$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
-				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
+				$totalallpayments = price2num($facturestatic->total_ttc - $remaintopay);
 				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 				$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
 				$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 			}
 
 			$facturestatic->alreadypaid = $paiement;
+			$facturestatic->totalpaid = $paiement;
+			$facturestatic->totalcreditnotes = $totalcreditnotes;
+			$facturestatic->totaldeposits = $totaldeposits;
 
 			$marginInfo = array();
 			if ($with_margin_info === true) {
@@ -2382,14 +2385,14 @@ if ($resql) {
 				}
 
 				if (!empty($arrayfields['dynamount_payed']['checked'])) {
-					print '<td class="right nowraponall amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+					print '<td class="right nowraponall amount">'.(!empty($totalallpayments) ? price($totalallpayments, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 					if (!$i) {
-						$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
+						$totalarray['pos'][$totalarray['nbfield']] = 'dynamount_payed';
 					}
-					$totalarray['val']['totalam'] += $totalpay;
+					$totalarray['val']['dynamount_payed'] += $totalallpayments;
 				}
 
 				// Pending amount
@@ -2580,7 +2583,7 @@ if ($resql) {
 				// Status
 				if (!empty($arrayfields['f.fk_statut']['checked'])) {
 					print '<td class="nowrap right">';
-					print $facturestatic->getLibStatut(5, $paiement);
+					print $facturestatic->getLibStatut(5, $totalallpayments);
 					print "</td>";
 					if (!$i) {
 						$totalarray['nbfield']++;

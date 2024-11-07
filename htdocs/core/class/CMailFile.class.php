@@ -894,7 +894,7 @@ class CMailFile
 				}
 			} elseif ($this->sendmode == 'smtps') {
 				if (!is_object($this->smtps)) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
+					$this->error = "Failed to send mail with smtps lib to HOST=".ini_get('SMTP').", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					return false;
 				}
@@ -1190,9 +1190,10 @@ class CMailFile
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->error = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = $this->error;
 					}
-					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					dol_syslog("CMailFile::sendfile: mail end error=". join(' ', $this->errors), LOG_ERR);
 					$res = false;
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {

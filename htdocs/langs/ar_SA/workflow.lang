@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=تصنيف أمر ش�
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=تصنيف أمر شراء المصدر المرتبط على أنه تم استلامه عند التحقق من صحة الاستلام (وإذا كانت الكمية المستلمة من قبل جميع الاستقبالات هي نفسها الموجودة في أمر الشراء للتحديث)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=تصنيف أمر شراء المصدر المرتبط كما تم استلامه عند إغلاق الاستلام (وإذا كانت الكمية المستلمة من قبل جميع الاستدعاءات هي نفسها الموجودة في أمر الشراء للتحديث)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=عند إنشاء تذكرة ، قم بربط العقود المتاحة لمطابقة الطرف الثالث
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=عند ربط العقود ، ابحث بين تلك الخاصة بالشركات الأم

@@ -79,6 +79,7 @@ $permissiontoadd = $user->hasRight('facture', 'creer');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('invoicedocument', 'globalcard'));
 $result = restrictedArea($user, 'facture', $object->id, '');
 
 $usercancreate = $user->hasRight("facture", "creer");

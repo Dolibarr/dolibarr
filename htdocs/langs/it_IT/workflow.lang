@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classifica "fatturato
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classificare l'ordine di acquisto di origine collegato come ricevuto quando viene convalidato un ricevimento (e se la quantità ricevuta da tutti i ricevimenti è la stessa dell'ordine di acquisto da aggiornare)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classificare l'ordine di acquisto di origine collegata come ricevuto alla chiusura di un ricevimento (e se la quantità ricevuta da tutti i ricevimenti è la stessa dell'ordine di acquisto da aggiornare)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Quando crei un biglietto, collega i contratti disponibili di terze parti corrispondenti
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Quando si collegano i contratti, cercare tra quelli delle società madri

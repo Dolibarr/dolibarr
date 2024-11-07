@@ -55,11 +55,10 @@ $object = new Facture($db);
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
-
+$hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
 $result = restrictedArea($user, 'facture', $object->id);
 
 $usercancreate = $user->hasRight("facture", "creer");
-
 
 /*
  * Add a new contact

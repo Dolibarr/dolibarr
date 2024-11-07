@@ -13,6 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3614,6 +3615,7 @@ class Commande extends CommonOrder
 			$response->label = $langs->trans("OrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
 			$response->url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
+			$response->url_late = DOL_URL_ROOT.'/commande/list.php?search_option=late&mainmenu=commercial&leftmenu=orders';
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
