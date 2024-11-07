@@ -141,7 +141,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__ID__' => $objp->rowid,
 				'__REF__' => $objp->ref,
 				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
-				'__MEMBER_CIVILITY__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
+				'__TITLE__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
 				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
 				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
 				'__FULLNAME__' => $adherentstatic->getFullName($langs),
