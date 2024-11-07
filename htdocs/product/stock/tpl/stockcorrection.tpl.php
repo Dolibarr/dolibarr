@@ -22,7 +22,7 @@
 
 /**
  * @var Conf $conf
- * @var Product|Entrepot|MouvementStock $object
+ * @var Product|MouvementStock $object
  * @var FormProduct $formproduct
  * @var FormProjets $formproject
  *
@@ -207,6 +207,7 @@ if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stockmouvement'))
 ) {
+	/** @var Product|MouvementStock $object */
 	print '<tr>';
 	print '<td'.($object->element == 'stockmouvement' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {
