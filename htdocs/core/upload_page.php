@@ -91,7 +91,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 	$permissiontoadd = $user->hasRight($module, $permlevel1, 'read');
 	$upload_dir = $dir_temp.'/import';
-	var_dump($upload_dir);
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
