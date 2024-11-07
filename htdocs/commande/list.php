@@ -98,7 +98,7 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedeliver
 
 $socid = GETPOSTINT('socid');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');

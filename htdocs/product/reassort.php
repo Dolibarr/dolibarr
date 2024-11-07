@@ -49,7 +49,7 @@ $langs->loadLangs(array('products', 'stocks'));
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_toolowstock = GETPOST('search_toolowstock');
