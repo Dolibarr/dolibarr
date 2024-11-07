@@ -161,7 +161,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			foreach ($adherentstatic->array_options as $key => $val) {
-				$substitutionarray['__'.strtoupper($key).'__']=$val;
+				$substitutionarray['__'.strtoupper($key).'__'] = $val;
 			}
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
