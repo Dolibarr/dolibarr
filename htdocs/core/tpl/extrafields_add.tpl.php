@@ -32,6 +32,7 @@ if (empty($conf) || !is_object($conf)) {
 '
 @phan-var-force CommonObject $object
 @phan-var-force string $action
+@phan-var-force DoliDB $db
 @phan-var-force Conf $conf
 @phan-var-force Translate $langs
 @phan-var-force array<string,mixed> $parameters
@@ -64,7 +65,7 @@ if (empty($reshook)) {
 	// We can have it set to a thirdparty object to propagate also the extrafields from thirdparty to object.
 	if (!empty($thirdpartytopropagateextrafieldsfrom) && $thirdpartytopropagateextrafieldsfrom instanceof Societe && !empty($thirdpartytopropagateextrafieldsfrom->id)) {
 		// copy from thirdparty
-		$tpExtrafields = new Extrafields($db);
+		$tpExtrafields = new ExtraFields($db);
 		$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($thirdpartytopropagateextrafieldsfrom->table_element);
 		if ($thirdpartytopropagateextrafieldsfrom->fetch_optionals() > 0) {
 			$object->array_options = array_merge($object->array_options, $thirdpartytopropagateextrafieldsfrom->array_options);

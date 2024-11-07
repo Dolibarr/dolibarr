@@ -45,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
 
 // Load translation files required by the page
@@ -554,7 +555,6 @@ if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 	$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
 }
 $modulepart = 'mycompany';
-$param = '';
 
 print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TERMSOFSALE"), $tooltiptermsofsale).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
@@ -562,7 +562,7 @@ print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone"
 
 if (!empty($mysoc->termsofsale)) {
 	if (file_exists($conf->mycompany->dir_output.'/'.$mysoc->termsofsale)) {
-		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($mysoc->termsofsale).(!empty($param) ? '&'.$param : '').'">'.$mysoc->termsofsale.'</a>'.$formfile->showPreview($mysoc->termsofsale, $modulepart, $mysoc->termsofsale, 0, $param);
+		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($mysoc->termsofsale).'">'.$mysoc->termsofsale.'</a>'.$formfile->showPreview($mysoc->termsofsale, $modulepart, $mysoc->termsofsale, 0, '');
 		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	}
 }
