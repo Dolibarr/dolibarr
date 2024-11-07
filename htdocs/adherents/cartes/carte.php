@@ -160,7 +160,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
-			foreach  ($adherentstatic->array_options as $key => $val) {
+			foreach ($adherentstatic->array_options as $key => $val) {
 				$substitutionarray['__'.strtoupper($key).'__']=$val;
 			}
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
