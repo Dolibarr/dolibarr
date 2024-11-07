@@ -21661,11 +21661,6 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
@@ -21686,11 +21681,6 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$backtopage might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
@@ -21698,16 +21688,6 @@ parameters:
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$formproduct might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$formproject might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
