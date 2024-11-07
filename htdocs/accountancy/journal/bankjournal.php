@@ -232,7 +232,7 @@ $tabmoreinfo = array();
 
 '
 @phan-var-force array<array{id:mixed,name:mixed,code_compta_client:string,email:string}> $tabcompany
-@phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code_user_general,accountancy_code:string,status:int> $tabuser
+@phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code:string,status:int> $tabuser
 @phan-var-force array<int,array{date:string,type_payment:string,ref:string,fk_bank:int,ban_account_ref:string,fk_bank_account:int,lib:string,type:string}> $tabpay
 @phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
 ';
@@ -992,7 +992,6 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 	print '"'.$langs->transnoentitiesnoconv("Date").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("PaymentMode").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("AccountAccounting").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("LedgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("SubledgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Label").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("AccountingDebit").'"'.$sep;
@@ -1022,7 +1021,6 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["type_payment"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print "  ".$sep;
 				print '"'.$reflabel.'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
@@ -1050,21 +1048,20 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
-
-                    $account_ledger = '';
                     if ($tabtype[$key] == 'payment_supplier') {
                         $account_ledger = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $account_supplier;
+                        print '"'.length_accountg($account_ledger).'"'.$sep;
                     } elseif ($tabtype[$key] == 'payment') {
                         $account_ledger = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $account_customer;
+                        print '"'.length_accountg($account_ledger).'"'.$sep;
                     } elseif ($tabtype[$key] == 'payment_expensereport') {
-                        $account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT');
+                        print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT')).'"'.$sep;
                     } elseif ($tabtype[$key] == 'payment_salary') {
                         $account_ledger = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+                        print '"'.length_accountg($account_ledger).'"'.$sep;
                     } else {
-                        $account_ledger = html_entity_decode($k);
+                        print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
                     }
-
-					print '"'.length_accountg($account_ledger).'"'.$sep;
 					print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 					print '"'.$reflabel.'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
@@ -1087,7 +1084,6 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
 					print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE')).'"'.$sep;
-					print '"'.length_accounta(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE')).'"'.$sep;
 					print $sep;
 					print '"'.$reflabel.'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
