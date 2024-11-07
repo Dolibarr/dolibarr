@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -203,6 +203,7 @@ $max = $maxfilesizearray['max'];
 $maxmin = $maxfilesizearray['maxmin'];
 $maxphptoshow = $maxfilesizearray['maxphptoshow'];
 $maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
+$out = '';
 if ($maxmin > 0) {
 	$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }

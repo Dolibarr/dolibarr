@@ -13631,6 +13631,26 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
 
 		-
+			message: "#^Right side of \\|\\| is always true\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
+			message: "#^Variable \\$accept in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
+			message: "#^Variable \\$capture in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
+			message: "#^Variable \\$perm in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/core/website.inc.php
