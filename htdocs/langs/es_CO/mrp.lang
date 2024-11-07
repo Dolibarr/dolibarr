@@ -44,7 +44,6 @@ AutoCloseMO=Cerrar automáticamente la Orden de Fabricación si se alcanzan las 
 NoStockChangeOnServices=Sin cambio de stock en los servicios
 ProductsToProduce=Productos a producir
 BOMTotalCost=El costo de producir esta lista de materiales en función del costo de cada cantidad y producto a consumir (use el precio de costo si está definido, de lo contrario, el precio promedio ponderado si está definido, de lo contrario, el mejor precio de compra)
-BOMTotalCostService=Si el módulo "Estación de trabajo" está activado y una estación de trabajo está definida por defecto en la línea, entonces el cálculo es "cantidad (convertida en horas) x estación de trabajo ahr", de lo contrario, "cantidad (convertida en horas) x precio de costo del servicio"
 ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit no se puede utilizar en una lista de materiales o un MO
 CollapseBOMHelp=Puede definir la visualización predeterminada de los detalles de la nomenclatura en la configuración del módulo BOM
 MoChildGenerate=Generar hijo MO

@@ -2,7 +2,7 @@
 ContractsArea=Področje pogodb
 ListOfContracts=Seznam pogodb
 AllContracts=Vse pogodbe
-ContractCard=Kartica pogodbe
+ContractCard=Pogodba
 ContractStatusNotRunning=Neaktivna
 ContractStatusDraft=Osnutek
 ContractStatusValidated=Potrjena

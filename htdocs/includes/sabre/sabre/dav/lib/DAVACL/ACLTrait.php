@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL;
 
 /**
@@ -14,32 +16,30 @@ namespace Sabre\DAVACL;
  * @author Evert Pot (https://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-trait ACLTrait {
-
+trait ACLTrait
+{
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return null;
-
     }
 
     /**
-     * Returns a group principal
+     * Returns a group principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getGroup() {
-
+    public function getGroup()
+    {
         return null;
-
     }
 
     /**
@@ -54,28 +54,24 @@ trait ACLTrait {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return [
             [
                 'privilege' => '{DAV:}all',
                 'principal' => '{DAV:}owner',
                 'protected' => true,
-            ]
+            ],
         ];
-
     }
 
     /**
-     * Updates the ACL
+     * Updates the ACL.
      *
      * This method will receive a list of new ACE's as an array argument.
-     *
-     * @param array $acl
-     * @return void
      */
-    function setACL(array $acl) {
-
+    public function setACL(array $acl)
+    {
         throw new \Sabre\DAV\Exception\Forbidden('Setting ACL is not supported on this node');
     }
 
@@ -91,10 +87,8 @@ trait ACLTrait {
      *
      * @return array|null
      */
-    function getSupportedPrivilegeSet() {
-
+    public function getSupportedPrivilegeSet()
+    {
         return null;
-
     }
-
 }

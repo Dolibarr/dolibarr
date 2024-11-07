@@ -5,6 +5,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,25 +24,21 @@
 /**
  *      \file       htdocs/product/admin/stock_mouvement_extrafields.php
  *		\ingroup    stock
- *		\brief      Page to setup extra fields of stock mouvement
+ *		\brief      Page to setup extra fields of stock movement
  */
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-// Try main.inc.php using relative path
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
-
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('stock@stock', 'admin'));
@@ -50,15 +47,15 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
+$type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'stock_mouvement'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -75,7 +72,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("StockMovement");
 
-llxHeader('', $langs->trans("StockSetup"), $help_url);
+llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_stock_mouvement_extrafields');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

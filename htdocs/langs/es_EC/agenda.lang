@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 ActionsOwnedBy=Evento propiedad de
-Event=Evento
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
@@ -36,7 +35,6 @@ MemberSubscriptionAddedInDolibarr=Suscripción %s para miembro %s agregado
 MemberSubscriptionModifiedInDolibarr=Suscripción %s para miembro %s modificado
 MemberSubscriptionDeletedInDolibarr=Suscripción %s para miembro %s eliminado
 ShipmentValidatedInDolibarr=Se ha validado el envío%s
-ShipmentClassifyClosedInDolibarr=Envío%s clasificados facturados
 ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado reabrir
 ShipmentBackToDraftInDolibarr=Envío %s volver al estado de borrador
 ShipmentDeletedInDolibarr=Se ha eliminado el envío%s
@@ -57,6 +55,7 @@ ORDER_SUPPLIER_DELETEInDolibarr=Pedido de compra %s eliminado
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated= Se ha validado el envío%s
+ProjectDeletedInDolibarr=Proyecto%s eliminado
 ProposalDeleted=Propuesta eliminada
 InvoiceDeleted=Se eliminó la factura
 PRODUCT_CREATEInDolibarr=Producto%s creado
@@ -83,14 +82,13 @@ BOM_REOPENInDolibarr=BOM reabrir
 MRP_MO_VALIDATEInDolibarr=MO validado
 MRP_MO_PRODUCEDInDolibarr=MO producido
 MRP_MO_DELETEInDolibarr=MO eliminado
+CANCELInDolibarr=Cancelado
 AgendaModelModule=Plantillas de documento para el evento
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros a la salida del filtro:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a acciones propiedad de un usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir la salida a acciones que no pertenecen al usuario <b>%s</b>.
 AgendaUrlOptions4=<b> logint =%s </ b> para restringir la salida a las acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> para restringir el resultado a acciones vinculadas al proyecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir eventos automáticos.
 AgendaUrlOptionsIncludeHolidays= <b>includeholidays=1</b> para incluir eventos de vacaciones.
 AgendaHideBirthdayEvents=Ocultar los cumpleaños de los contactos
 ExportDataset_event1=Lista de eventos de la agenda

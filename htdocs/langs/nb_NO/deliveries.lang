@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Leveranse ref.
-DeliveryCard=Kvitteringskort
+DeliveryCard=Leveringsbekreftelse
 DeliveryOrder=Leveringsbekreftelse
 DeliveryDate=Leveringsdato
 CreateDeliveryOrder=Generer leveringskvittering

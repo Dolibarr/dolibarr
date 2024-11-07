@@ -1,17 +1,20 @@
 # Dolibarr language file - Source file is en_US - propal
 ProposalCard=Angebotskarte
-Prospect=Lead
 LastPropals=%s neueste Angebote
 LastModifiedProposals=%s neueste geänderte Offerten
 ProposalsStatistics=Angebote Statistiken
 PropalStatusSigned=Unterzeichnet (ist zu verrechnen)
 PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
+PropalStatusBilled=Verrechnet
+PropalStatusCanceledShort=widerrufen
 PropalStatusClosedShort=Geschlossen
 PropalStatusSignedShort=Unterzeichnet
 PropalStatusNotSignedShort=Nicht unterzeichnet
+PropalStatusBilledShort=Verrechnet
 PropalsToClose=Zu schliessende Angebote
 ListOfProposals=Liste der Angebote
 ActionsOnPropal=Ereignisse zum Angebot
+RefProposal=Angebots-Nr.
 AddToDraftProposals=Zu Angebots-Entwurf hinzufügen
 DefaultProposalDurationValidity=Standardmässige Gültigkeitsdatuer (Tage)
 AvailabilityPeriod=Verfügbarkeitszeitraum

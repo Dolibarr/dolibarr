@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Entrega
 DeliveryRef=Ref. Entrega
-DeliveryCard=Ficha del comprobante
+DeliveryCard=Comprobantede Entrega
 DeliveryOrder=Comprobantede Entrega
 CreateDeliveryOrder=Generar comprobante de entrega
 SetDeliveryDate=Establecer fecha de envío

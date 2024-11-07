@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -65,7 +67,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -75,88 +77,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RepositoryTest extends PHPUnit\Framework\TestCase
+class RepositoryTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return SecurityTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testJqueryOnce
 	 *
@@ -168,13 +90,13 @@ class RepositoryTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		// Scan dir to guarante we don't have library jquery twice
-		$foundfiles=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
+		// Scan dir to guarantee we don't have library jquery twice
+		$foundfiles = dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
 		print __METHOD__." count(founddirs)=".count($foundfiles)."\n";
 		$this->assertEquals(1, count($foundfiles), 'We found jquery lib (jquery.js) twice');
 
-		// Scan dir to guarante we don't have library jquery twice
-		$foundfiles=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.min\.js', array('ckeditor'));
+		// Scan dir to guarantee we don't have library jquery twice
+		$foundfiles = dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.min\.js', array('ckeditor'));
 		print __METHOD__." count(founddirs)=".count($foundfiles)."\n";
 		$this->assertEquals(1, count($foundfiles), 'We found jquery lib (jquery.min.js) twice '.(empty($foundfiles[0]) ? '' : $foundfiles[0]['fullname']).' '.(empty($foundfiles[1]) ? '' : $foundfiles[1]['fullname']));
 	}
@@ -188,10 +110,10 @@ class RepositoryTest extends PHPUnit\Framework\TestCase
 	public function testRepository()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'directories', 1, '', array('\/custom\/'), 'fullname', SORT_ASC, 0, 1, '', 1);

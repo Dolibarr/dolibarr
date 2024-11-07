@@ -3,7 +3,7 @@
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
- * Copyright (C) 2022       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();
@@ -91,7 +99,7 @@ if ($action == "save" && empty($cancel)) {
 	foreach ($triggers as $trigger) {
 		$keyparam = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam)) {
-			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ? GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 			if (!($res > 0)) {
 				$error++;
 			}
@@ -113,11 +121,12 @@ if ($action == "save" && empty($cancel)) {
  * View
  */
 
-// $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$form = new Form($db);
 
+$title = $langs->trans("AgendaSetup");
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 
-llxHeader('', $langs->trans("AgendaSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-agenda');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
@@ -136,7 +145,7 @@ print dol_get_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'act
 print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
@@ -188,10 +197,10 @@ if (!empty($triggers)) {
 		//print 'module='.$module.' code='.$trigger['code'].'<br>';
 		if (isModEnabled($module)) {
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
-			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && !getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 				continue;
 			}
-			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && !getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 				continue;
 			}
 			if ($trigger['code'] == 'ACTION_CREATE') {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP;
 
 /**
@@ -15,8 +17,8 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface HttpException {
-
+interface HttpException
+{
     /**
      * The http status code for the error.
      *
@@ -25,6 +27,5 @@ interface HttpException {
      *
      * @return string|null
      */
-    function getHttpStatus();
-
+    public function getHttpStatus();
 }

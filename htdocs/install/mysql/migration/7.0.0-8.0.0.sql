@@ -180,7 +180,7 @@ ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
 
 -- VMYSQL4.3 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
--- VPGSQL8.2 CREATE SEQUENCE llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;
+-- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;
 -- VPGSQL8.2 ALTER TABLE llx_c_paiement ADD PRIMARY KEY (id);
 -- VPGSQL8.2 ALTER TABLE llx_c_paiement ALTER COLUMN id SET DEFAULT nextval('llx_c_paiement_id_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_paiement_id_seq', MAX(id)) FROM llx_c_paiement;
@@ -188,8 +188,9 @@ ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
 -- Add missing keys and primary key
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
+
 -- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
--- VPGSQL8.2 CREATE SEQUENCE llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;

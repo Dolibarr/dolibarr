@@ -12,8 +12,8 @@ WithdrawalsReceipts=أوامر الخصم المباشر
 WithdrawalReceipt=أمر الخصم المباشر
 BankTransferReceipts=أوامر تحويل الرصيد
 BankTransferReceipt=أمر تحويل رصيد
-LatestBankTransferReceipts=أحدث %s أوامر تحويل الرصيد 
-LastWithdrawalReceipts=أحدث %s ملفات الخصم المباشر 
+LatestBankTransferReceipts=أحدث %s أوامر تحويل الرصيد
+LastWithdrawalReceipts=أحدث %s ملفات الخصم المباشر
 WithdrawalsLine=بند أمر الخصم المباشر
 CreditTransfer=تحويل الرصيد
 CreditTransferLine=بند تحويل الرصيد
@@ -33,21 +33,22 @@ InvoiceWaitingPaymentByBankTransfer=فاتورة بانتظار تحويل ال�
 AmountToWithdraw=سحب المبلغ
 AmountToTransfer=المبلغ لنقل
 NoInvoiceToWithdraw=لا توجد فاتورة مفتوحة لـ "%s" في الانتظار. انتقل إلى علامة التبويب "%s" في بطاقة الفاتورة لتقديم طلب.
-NoSupplierInvoiceToWithdraw=No supplier invoice with open '%s' is waiting. Go on tab '%s' on invoice card to make a request.
+NoSupplierInvoiceToWithdraw=لا يوجد مورد فاتورة مع فتح '%s' في الانتظار. انتقل إلى علامة التبويب '%s' على بطاقة فاتورة لتقديم طلب.
 ResponsibleUser=المستخدم المسؤول
 WithdrawalsSetup=إعداد دفع الخصم المباشر
 CreditTransferSetup=إعداد تحويل الرصيد
 WithdrawStatistics=إحصائيات دفع الخصم المباشر
 CreditTransferStatistics=إحصاءات تحويل الائتمان
-Rejects=ترفض
-LastWithdrawalReceipt=أحدث %s إيصالات الخصم المباشر 
+LastWithdrawalReceipt=أحدث %s إيصالات الخصم المباشر
 MakeWithdrawRequest=تقديم طلب دفع الخصم المباشر
-MakeWithdrawRequestStripe=Make a direct debit payment request via Stripe
+MakeWithdrawRequestStripe=قم بإجراء طلب دفع بالخصم المباشر عبر Stripe
 MakeBankTransferOrder=قدم طلب تحويل رصيد
 WithdrawRequestsDone=%s تم تسجيل طلبات الدفع بالخصم المباشر
 BankTransferRequestsDone=%s تم تسجيل طلبات تحويل الرصيد
 ThirdPartyBankCode=كود بنك الطرف الثالث
-NoInvoiceCouldBeWithdrawed=لم يتم الخصم من فاتورة بنجاح. تحقق من أن الفواتير موجودة في الشركات التي لديها رقم IBAN صالح وأن IBAN يحتوي على UMR (مرجع تفويض فريد) بالوضع <strong> %s </strong>.
+NoInvoiceCouldBeWithdrawed=لم تتم معالجة فاتورة بنجاح. تأكد من أن الفواتير موجودة في الشركات التي لديها رقم IBAN صالح و وأن رقم IBAN يحتوي على UMR (مرجع التفويض الفريد) مع الوضع <strong>%s</strong>.
+NoInvoiceCouldBeWithdrawedSupplier=لم تتم معالجة فاتورة بنجاح. التأكد من وجود الفواتير على الشركات التي لديها رقم IBAN صالح.
+NoSalariesCouldBeWithdrawed=لم تتم معالجة راتب بنجاح. تأكد من أن راتب موجود على المستخدمين الذين لديهم رقم IBAN صالح.
 WithdrawalCantBeCreditedTwice=تم بالفعل تمييز إيصال السحب هذا على أنه مدين ؛ لا يمكن القيام بذلك مرتين ، حيث من المحتمل أن يؤدي ذلك إلى إنشاء مدفوعات وإدخالات بنكية مكررة.
 ClassCredited=تصنيف حساب
 ClassDebited=تصنيف الخصم
@@ -56,7 +57,7 @@ TransData=تاريخ الإرسال
 TransMetod=طريقة الإرسال
 Send=إرسال
 Lines=بنود
-StandingOrderReject=إصدار رفض
+StandingOrderReject=سجل الرفض
 WithdrawsRefused=رفض الخصم المباشر
 WithdrawalRefused=رفض السحب
 CreditTransfersRefused=رفض تحويلات الائتمان
@@ -64,8 +65,9 @@ WithdrawalRefusedConfirm=هل أنت متأكد أنك تريد الدخول ف�
 RefusedData=تاريخ الرفض
 RefusedReason=أسباب الرفض
 RefusedInvoicing=فوترة الرفض
-NoInvoiceRefused=لا تتهم الرفض
-InvoiceRefused=تم رفض الفاتورة (فرض رسوم الرفض على العميل)
+NoInvoiceRefused=لا تقم بتحميل العميل مقابل الرفض
+InvoiceRefused=توجيه الاتهام إلى العميل بسبب الرفض
+DirectDebitRefusedInvoicingDesc=قم بتعيين علامة للإشارة إلى أنه يجب تحميل هذا الرفض على العميل
 StatusDebitCredit=حالة الخصم | الائتمان
 StatusWaiting=انتظار
 StatusTrans=أحال
@@ -101,11 +103,11 @@ CreditDate=الائتمان على
 WithdrawalFileNotCapable=تعذر إنشاء ملف إيصال السحب لبلدك %s (بلدك غير مدعوم)
 ShowWithdraw=عرض أمر الخصم المباشر
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=ومع ذلك ، إذا كانت الفاتورة تحتوي على أمر دفع خصم مباشر واحد على الأقل لم تتم معالجته بعد ، فلن يتم تعيينها على أنها مدفوعة للسماح بإدارة السحب المسبق.
-DoStandingOrdersBeforePayments=This tab allows you to request a direct debit payment order. Once done, you can go into menu "Bank->Payment by direct debit" to generate and manage a Direct debit order file.
-DoStandingOrdersBeforePayments2=You can also send a request directly to a SEPA payment processor like Stripe, ...
-DoStandingOrdersBeforePayments3=When direct debit order is closed, payment on invoices will be automatically recorded, and invoices closed if remainder to pay is null.
-DoCreditTransferBeforePayments=This tab allows you to request a credit transfer order. Once done, go into menu "Bank->Payment by credit transfer" to generate and manage a Credit transfer order file.
-DoCreditTransferBeforePayments3=When credit transfer order is closed, payment on invoices will be automatically recorded, and invoices closed if remainder to pay is null.
+DoStandingOrdersBeforePayments=تسمح لك علامة التبويب هذه بطلب الدفع بالخصم المباشر طلب. بمجرد الانتهاء، يمكنك الانتقال إلى القائمة "البنك->الدفع عن طريق الخصم المباشر" لإنشاء ملف و لإدارة ملف طلب. .
+DoStandingOrdersBeforePayments2=يمكنك أيضًا إرسال طلب مباشرةً إلى معالج دفع SEPA مثل Stripe، ...
+DoStandingOrdersBeforePayments3=عند إغلاق الطلب، سيتم تسجيل الدفع على الفواتير تلقائيًا، ويتم إغلاق الفواتير و إذا كان المبلغ المتبقي للدفع فارغًا.
+DoCreditTransferBeforePayments=تتيح لك علامة التبويب هذه طلب تحويل رصيد طلب. بمجرد الانتهاء، انتقل إلى القائمة "البنك->الدفع عن طريق تحويل الائتمان" لإنشاء ملف و لإدارة ملف تحويل الائتمان طلب.
+DoCreditTransferBeforePayments3=عند إغلاق تحويل الائتمان طلب، سيتم تسجيل الدفع على الفواتير تلقائيًا، ويتم إغلاق الفواتير و إذا كان المبلغ المتبقي للدفع فارغًا.
 WithdrawalFile=ملف أمر الخصم
 CreditTransferFile=ملف تحويل رصيد
 SetToStatusSent=تعيين إلى الحالة "ملف مرسل"
@@ -115,14 +117,14 @@ RUM=UMR
 DateRUM=تاريخ توقيع التفويض
 RUMLong=مرجع التفويض الفريد
 RUMWillBeGenerated=إذا كانت فارغة ، فسيتم إنشاء UMR (مرجع التفويض الفريد) بمجرد حفظ معلومات الحساب المصرفي.
-WithdrawMode=وضع الخصم المباشر (FRST أو RECUR)
+WithdrawMode=وضع الخصم المباشر (FRST أو RCUR)
 WithdrawRequestAmount=مبلغ طلب الخصم المباشر:
 BankTransferAmount=مبلغ طلب تحويل الرصيد:
 WithdrawRequestErrorNilAmount=تعذر إنشاء طلب الخصم المباشر لمبلغ فارغ.
 SepaMandate=تفويض الخصم المباشر لمنطقة الدفعات الأوروبية الموحدة (SEPA)
 SepaMandateShort=تفويض SEPA
 PleaseReturnMandate=يرجى إعادة نموذج التفويض هذا بالبريد الإلكتروني إلى %s أو بالبريد إلى
-SEPALegalText=By signing this mandate form, you authorize (A) %s and its payment service provider to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %s. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. Your rights regarding the above mandate are explained in a statement that you can obtain from your bank.
+SEPALegalText=من خلال التوقيع على نموذج التفويض هذا، فإنك تسمح لـ (أ) %s و مزود خدمة الدفع الخاص به بإرسال تعليمات إلى البنك الذي تتعامل معه لخصم أموالك حساب و (ب) البنك الذي تتعامل معه للخصم من حسابك وفقًا للتعليمات الواردة من %s. كجزء من حقوقك، يحق لك استرداد الأموال من البنك الذي تتعامل معه بموجب شروط و الواردة في اتفاقيتك مع البنك الذي تتعامل معه. حقوقك فيما يتعلق بالتفويض المذكور أعلاه موضحة في بيان يمكنك الحصول عليه من البنك الذي تتعامل معه. أنت توافق على تلقي إشعارات حول الرسوم المستقبلية قبل يومين من حدوثها.
 CreditorIdentifier=معرف الدائن
 CreditorName=اسم الدائن
 SEPAFillForm=(ب) الرجاء استكمال جميع الحقول المعلمة *
@@ -131,10 +133,11 @@ SEPAFormYourBAN=اسم حسابك المصرفي (IBAN)
 SEPAFormYourBIC=كود معرف البنك الخاص بك (BIC)
 SEPAFrstOrRecur=طريقة السداد
 ModeRECUR=السداد المتكرر
+ModeRCUR=السداد المتكرر
 ModeFRST=السداد مرة واحدة
 PleaseCheckOne=يرجى تحديد واحد فقط
-CreditTransferOrderCreated=تم إنشاء %s أمر تحويل الرصيد 
-DirectDebitOrderCreated=تم إنشاء %s أمر الخصم المباشر 
+CreditTransferOrderCreated=تم إنشاء %s أمر تحويل الرصيد
+DirectDebitOrderCreated=تم إنشاء %s أمر الخصم المباشر
 AmountRequested=المبلغ المطلوب
 SEPARCUR=SEPA CUR
 SEPAFRST=SEPA FRST
@@ -147,7 +150,7 @@ USTRD="Unstructured" SEPA XML tag
 ADDDAYS=أضف أيام إلى تاريخ التنفيذ
 NoDefaultIBANFound=لم يتم العثور على رقم IBAN افتراضي لهذا الطرف الثالث
 ### Notifications
-InfoCreditSubject=دفع البنك لأمر الدفع %s بالخصم المباشر 
+InfoCreditSubject=دفع البنك لأمر الدفع %s بالخصم المباشر
 InfoCreditMessage=تم دفع أمر الدفع بالخصم المباشر %s من قبل البنك <br> بيانات الدفع: %s
 InfoTransSubject=تحويل أمر الدفع بالخصم المباشر %s إلى البنك
 InfoTransMessage=تم إرسال أمر الدفع بالخصم المباشر %s إلى البنك عن طريق %s %s. <br> <br>
@@ -155,9 +158,15 @@ InfoTransData=المبلغ: %s <br> Metode: %s <br> تاريخ: %s
 InfoRejectSubject=تم رفض أمر الدفع بالخصم المباشر
 InfoRejectMessage=مرحبًا ، <br> <br> رفض البنك أمر الدفع بالخصم المباشر للفاتورة %s المتعلقة بالشركة %s ، مع مبلغ %s من قبل البنك. <br> <br> - <br> %s
 ModeWarning=لم يتم تعيين خيار الوضع الحقيقي ، نتوقف بعد هذه المحاكاة
-ErrorCompanyHasDuplicateDefaultBAN=تمتلك الشركة ذات المعرف %s أكثر من حساب مصرفي افتراضي. لا توجد طريقة لمعرفة أي واحد يستخدم.
+ErrorCompanyHasDuplicateDefaultBAN=شركة بالمعرف %s لديه أكثر من حساب مصرفي افتراضي. لا توجد وسيلة لمعرفة أي واحد للاستخدام.
 ErrorICSmissing=ICS مفقود في الحساب المصرفي %s
 TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=يختلف المبلغ الإجمالي لأمر الخصم المباشر عن مجموع البنود
 WarningSomeDirectDebitOrdersAlreadyExists=تحذير: هناك بالفعل بعض أوامر الخصم المباشر المعلقة (%s) المطلوبة لمبلغ %s
 WarningSomeCreditTransferAlreadyExists=تحذير: هناك بالفعل بعض عمليات تحويل الرصيد المعلقة (%s) المطلوبة لمبلغ %s
 UsedFor=تستخدم ل %s
+Societe_ribSigned=SEPA mandate signed
+NbOfInvoiceToPayByBankTransferForSalaries=عدد رواتب المؤهلين الذين ينتظرون الدفع عن طريق تحويل الرصيد
+SalaryWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
+RefSalary=الراتب
+NoSalaryInvoiceToWithdraw=لا يوجد راتب في انتظار '%s'. انتقل إلى علامة التبويب '%s' على بطاقة راتب لتقديم طلب.
+SalaryInvoiceWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد

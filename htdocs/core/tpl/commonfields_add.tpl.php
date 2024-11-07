@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -22,10 +24,12 @@
  * $form
  */
 
+'@phan-var-force FormAdmin $formAdmin';
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -36,7 +40,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 
 foreach ($object->fields as $key => $val) {
 	// Discard if field is a hidden field on form
-	if (abs($val['visible']) != 1 && abs($val['visible']) != 3) {
+	// Ensure $val['visible'] is treated as an integer
+	$visible = (int) $val['visible'];
+	if (abs($visible) != 1 && abs($visible) != 3) {
 		continue;
 	}
 
@@ -63,10 +69,10 @@ foreach ($object->fields as $key => $val) {
 	print '</td>';
 	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
-		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+		print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOST($key, 'int');
+		$value = GETPOSTINT($key);
 	} elseif ($val['type'] == 'double') {
 		$value = price2num(GETPOST($key, 'alphanohtml'));
 	} elseif (preg_match('/^text/', $val['type'])) {
@@ -86,9 +92,9 @@ foreach ($object->fields as $key => $val) {
 		}
 		$value = GETPOST($key, $check);
 	} elseif ($val['type'] == 'date') {
-		$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+		$value = dol_mktime(12, 0, 0, GETPOSTINT($key.'month'), GETPOSTINT($key.'day'), GETPOSTINT($key.'year'));
 	} elseif ($val['type'] == 'datetime') {
-		$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+		$value = dol_mktime(GETPOSTINT($key.'hour'), GETPOSTINT($key.'min'), 0, GETPOSTINT($key.'month'), GETPOSTINT($key.'day'), GETPOSTINT($key.'year'));
 	} elseif ($val['type'] == 'boolean') {
 		$value = (GETPOST($key) == 'on' ? 1 : 0);
 	} elseif ($val['type'] == 'price') {
@@ -103,7 +109,7 @@ foreach ($object->fields as $key => $val) {
 	} else {
 		if ($key == 'lang') {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
-			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}

@@ -4,7 +4,7 @@ if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';
 ob_start();
-if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ 
+if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */
 header('Cache-Control: max-age=3600, public, must-revalidate');
 header('Content-type: text/css');
 }
@@ -12474,7 +12474,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  TYPOGRAPHY               
+  TYPOGRAPHY
 -----------------------------------------*/
 
 .bodywebsite h2,
@@ -12573,7 +12573,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  CUSTOM BUTTON              
+  CUSTOM BUTTON
 -----------------------------------------*/
 .bodywebsite .custom-btn {
     border: 0;
@@ -12583,7 +12583,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  NAVIGATION              
+  NAVIGATION
 -----------------------------------------*/
 .bodywebsite .navbar {
     background: var(--white-color);
@@ -12690,7 +12690,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  SITE HEADER              
+  SITE HEADER
 -----------------------------------------*/
 .bodywebsite .site-header {
     background-repeat: no-repeat;
@@ -12740,7 +12740,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  HERO              
+  HERO
 -----------------------------------------*/
 .bodywebsite .hero {
     position: relative;
@@ -12772,7 +12772,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  HERO SLIDE               
+  HERO SLIDE
 -----------------------------------------*/
 .bodywebsite .carousel-image {
     width: 100%;
@@ -12873,7 +12873,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  MENU               
+  MENU
 -----------------------------------------*/
 .bodywebsite .menu,
 .bodywebsite .about,
@@ -12931,7 +12931,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  CUSTOM FORM            
+  CUSTOM FORM
 -----------------------------------------*/
 .bodywebsite .custom-form .form-control {
     margin-bottom: 20px;
@@ -12951,7 +12951,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  SUBSCRIBE FORM            
+  SUBSCRIBE FORM
 -----------------------------------------*/
 .bodywebsite .subscribe-form .form-control {
     margin-top: 20px;
@@ -12979,7 +12979,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
     background: var(--primary-color);
 }
 /*---------------------------------------
-  FOOTER              
+  FOOTER
 -----------------------------------------*/
 .bodywebsite .site-footer {
     background-image: url("../images/daan-evers-tKN1WXrzQ3s-unsplash.jpg");
@@ -13033,7 +13033,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  SOCIAL ICON               
+  SOCIAL ICON
 -----------------------------------------*/
 .bodywebsite .social-icon {
     margin: 0;
@@ -13066,7 +13066,7 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 /*---------------------------------------
-  RESPONSIVE STYLES               
+  RESPONSIVE STYLES
 -----------------------------------------*/
 @media screen and (max-width: 1180px) {
     h1 {
@@ -13156,4 +13156,4 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");
-// END PHP ?>
+// END PHP

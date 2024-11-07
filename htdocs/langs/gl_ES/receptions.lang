@@ -52,3 +52,7 @@ ReceptionExist=Xa hai unha recepción
 ReceptionBackToDraftInDolibarr=A recepción %s volta a borrador 
 ReceptionClassifyClosedInDolibarr=Recepción %s clasificada Pechada 
 ReceptionUnClassifyCloseddInDolibarr=A recepción %s volta a abrirse 
+RestoreWithCurrentQtySaved=Complete as cantidades cos últimos valores gardados
+ReceptionsRecorded=Recepcións gardadas
+ReceptionUpdated=A recepción actualizouse correctamente
+ReceptionDistribution=Distribución de recepción

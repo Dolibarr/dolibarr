@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +41,18 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $block = new BlockedLog($db);
 
-if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
+if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 

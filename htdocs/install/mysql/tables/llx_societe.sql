@@ -31,25 +31,37 @@ create table llx_societe
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
 
-  statut                   tinyint        DEFAULT 0,            		-- statut
+  statut                   tinyint        DEFAULT 0,            		-- statut (deprecated)
   parent                   integer,
 
-  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
+  status            	   tinyint 		  DEFAULT 1,			        -- active or not ( 1 -- active, 0 -- closed or not open)
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code fournisseur
-  code_compta              varchar(24),                         		-- customer accountancy auxiliary account
-  code_compta_fournisseur  varchar(24),                         		-- supplier accountancy auxiliary account
+  tp_payment_reference     varchar(25),                                 -- SEPA and any other national or custom payment id
+  accountancy_code_customer_general	varchar(32) DEFAULT NULL,			-- customer accountancy general account
+  code_compta              			varchar(32),                        -- customer accountancy auxiliary account
+  accountancy_code_supplier_general varchar(32) DEFAULT NULL,			-- supplier accountancy general account
+  code_compta_fournisseur  			varchar(32),                        -- supplier accountancy auxiliary account
+
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
-  fk_departement           integer        DEFAULT 0,            		--
-  fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		-- default bank account
+  fk_departement           integer        DEFAULT 0,            		-- state
+  fk_pays                  integer        DEFAULT 0,            		-- country
+
+  geolat                   double(24,8)   DEFAULT NULL,
+  geolong                  double(24,8)   DEFAULT NULL,
+  geopoint                 point DEFAULT NULL,
+  georesultcode            varchar(16),
+
   phone                    varchar(20),                         		-- phone number
+  phone_mobile             varchar(20),                         		-- mobile phone number
   fax                      varchar(20),                         		-- fax number
-  url                      varchar(255),                        		--
-  email                    varchar(128),                        		--
+  url                      varchar(255),                        		-- web site
+  email                    varchar(128),                        		-- main email
+
+  fk_account               integer        DEFAULT 0,                    -- default bank account
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
 
@@ -120,6 +132,8 @@ create table llx_societe
 
   fk_multicurrency		   integer,
   multicurrency_code	   varchar(3),
+
+  ip                     varchar(250),                              --ip used to create record (for public submission page)
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

@@ -10,5 +10,4 @@ ConfirmReOpenProp=Weet u zeker dat u offerte <b>%s</b> opnieuw wil openen?
 TypeContact_propal_internal_SALESREPFOLL=Vertegenwoordiger die de offerte opvolgt
 TypeContact_propal_external_BILLING=Contactpersoon afnemersfactuur
 TypeContact_propal_external_SHIPPING=Klantcontact voor leveringen
-NoSign=Refuse
 ProposalCustomerSignature=Stempel, datum en handtekening met vermelding "Voor Akkoord"

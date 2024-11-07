@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL;
 
 use Sabre\DAV;
@@ -15,7 +17,7 @@ use Sabre\HTTP\ResponseInterface;
 use Sabre\Uri;
 
 /**
- * SabreDAV ACL Plugin
+ * SabreDAV ACL Plugin.
  *
  * This plugin provides functionality to enforce ACL permissions.
  * ACL is defined in RFC3744.
@@ -28,24 +30,24 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends DAV\ServerPlugin {
-
+class Plugin extends DAV\ServerPlugin
+{
     /**
-     * Recursion constants
+     * Recursion constants.
      *
      * This only checks the base node
      */
     const R_PARENT = 1;
 
     /**
-     * Recursion constants
+     * Recursion constants.
      *
      * This checks every node in the tree
      */
     const R_RECURSIVE = 2;
 
     /**
-     * Recursion constants
+     * Recursion constants.
      *
      * This checks every parentnode in the tree, but not leaf-nodes.
      */
@@ -70,7 +72,7 @@ class Plugin extends DAV\ServerPlugin {
 
     /**
      * By default nodes that are inaccessible by the user, can still be seen
-     * in directory listings (PROPFIND on parent with Depth: 1)
+     * in directory listings (PROPFIND on parent with Depth: 1).
      *
      * In certain cases it's desirable to hide inaccessible nodes. Setting this
      * to true will cause these nodes to be hidden from directory listings.
@@ -88,7 +90,7 @@ class Plugin extends DAV\ServerPlugin {
      * @var array
      */
     public $principalSearchPropertySet = [
-        '{DAV:}displayname'                     => 'Display name',
+        '{DAV:}displayname' => 'Display name',
         '{http://sabredav.org/ns}email-address' => 'Email address',
     ];
 
@@ -120,22 +122,21 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['access-control', 'calendarserver-principal-property-search'];
-
     }
 
     /**
-     * Returns a list of available methods for a given url
+     * Returns a list of available methods for a given url.
      *
      * @param string $uri
+     *
      * @return array
      */
-    function getMethods($uri) {
-
+    public function getMethods($uri)
+    {
         return ['ACL'];
-
     }
 
     /**
@@ -146,10 +147,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'acl';
-
     }
 
     /**
@@ -160,19 +160,18 @@ class Plugin extends DAV\ServerPlugin {
      * implement them
      *
      * @param string $uri
+     *
      * @return array
      */
-    function getSupportedReportSet($uri) {
-
+    public function getSupportedReportSet($uri)
+    {
         return [
             '{DAV:}expand-property',
             '{DAV:}principal-match',
             '{DAV:}principal-property-search',
             '{DAV:}principal-search-property-set',
         ];
-
     }
-
 
     /**
      * Checks if the current user has the specified privilege(s).
@@ -181,27 +180,29 @@ class Plugin extends DAV\ServerPlugin {
      * This method will throw an exception if the privilege is not available
      * and return true otherwise.
      *
-     * @param string $uri
+     * @param string       $uri
      * @param array|string $privileges
-     * @param int $recursion
-     * @param bool $throwExceptions if set to false, this method won't throw exceptions.
+     * @param int          $recursion
+     * @param bool         $throwExceptions if set to false, this method won't throw exceptions
+     *
      * @throws NeedPrivileges
      * @throws NotAuthenticated
+     *
      * @return bool
      */
-    function checkPrivileges($uri, $privileges, $recursion = self::R_PARENT, $throwExceptions = true) {
-
-        if (!is_array($privileges)) $privileges = [$privileges];
+    public function checkPrivileges($uri, $privileges, $recursion = self::R_PARENT, $throwExceptions = true)
+    {
+        if (!is_array($privileges)) {
+            $privileges = [$privileges];
+        }
 
         $acl = $this->getCurrentUserPrivilegeSet($uri);
 
         $failed = [];
         foreach ($privileges as $priv) {
-
             if (!in_array($priv, $acl)) {
                 $failed[] = $priv;
             }
-
         }
 
         if ($failed) {
@@ -213,17 +214,16 @@ class Plugin extends DAV\ServerPlugin {
                     $this->server->httpRequest,
                     $this->server->httpResponse
                 );
-                throw new notAuthenticated(implode(', ', $reasons) . '. Login was needed for privilege: ' . implode(', ', $failed) . ' on ' . $uri);
+                throw new NotAuthenticated(implode(', ', $reasons).'. Login was needed for privilege: '.implode(', ', $failed).' on '.$uri);
             }
             if ($throwExceptions) {
-
                 throw new NeedPrivileges($uri, $failed);
             } else {
                 return false;
             }
         }
-        return true;
 
+        return true;
     }
 
     /**
@@ -234,17 +234,16 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return string|null
      */
-    function getCurrentUserPrincipal() {
-
+    public function getCurrentUserPrincipal()
+    {
         /** @var $authPlugin \Sabre\DAV\Auth\Plugin */
         $authPlugin = $this->server->getPlugin('auth');
         if (!$authPlugin) {
             return null;
         }
+
         return $authPlugin->getCurrentPrincipal();
-
     }
-
 
     /**
      * Returns a list of principals that's associated to the current
@@ -252,31 +251,28 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getCurrentUserPrincipals() {
-
+    public function getCurrentUserPrincipals()
+    {
         $currentUser = $this->getCurrentUserPrincipal();
 
-        if (is_null($currentUser)) return [];
+        if (is_null($currentUser)) {
+            return [];
+        }
 
         return array_merge(
             [$currentUser],
             $this->getPrincipalMembership($currentUser)
         );
-
     }
 
     /**
      * Sets the default ACL rules.
      *
      * These rules are used for all nodes that don't implement the IACL interface.
-     *
-     * @param array $acl
-     * @return void
      */
-    function setDefaultAcl(array $acl) {
-
+    public function setDefaultAcl(array $acl)
+    {
         $this->defaultAcl = $acl;
-
     }
 
     /**
@@ -286,10 +282,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getDefaultAcl() {
-
+    public function getDefaultAcl()
+    {
         return $this->defaultAcl;
-
     }
 
     /**
@@ -317,15 +312,15 @@ class Plugin extends DAV\ServerPlugin {
      */
     protected $principalMembershipCache = [];
 
-
     /**
      * Returns all the principal groups the specified principal is a member of.
      *
      * @param string $mainPrincipal
+     *
      * @return array
      */
-    function getPrincipalMembership($mainPrincipal) {
-
+    public function getPrincipalMembership($mainPrincipal)
+    {
         // First check our cache
         if (isset($this->principalMembershipCache[$mainPrincipal])) {
             return $this->principalMembershipCache[$mainPrincipal];
@@ -335,31 +330,23 @@ class Plugin extends DAV\ServerPlugin {
         $principals = [];
 
         while (count($check)) {
-
             $principal = array_shift($check);
 
             $node = $this->server->tree->getNodeForPath($principal);
             if ($node instanceof IPrincipal) {
                 foreach ($node->getGroupMembership() as $groupMember) {
-
                     if (!in_array($groupMember, $principals)) {
-
                         $check[] = $groupMember;
                         $principals[] = $groupMember;
-
                     }
-
                 }
-
             }
-
         }
 
         // Store the result in the cache
         $this->principalMembershipCache[$mainPrincipal] = $principals;
 
         return $principals;
-
     }
 
     /**
@@ -381,23 +368,26 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @param string $checkPrincipal
      * @param string $currentPrincipal
+     *
      * @return bool
      */
-    function principalMatchesPrincipal($checkPrincipal, $currentPrincipal = null) {
-
+    public function principalMatchesPrincipal($checkPrincipal, $currentPrincipal = null)
+    {
         if (is_null($currentPrincipal)) {
             $currentPrincipal = $this->getCurrentUserPrincipal();
         }
         if ($currentPrincipal === $checkPrincipal) {
             return true;
         }
+        if (is_null($currentPrincipal)) {
+            return false;
+        }
+
         return in_array(
             $checkPrincipal,
             $this->getPrincipalMembership($currentPrincipal)
         );
-
     }
-
 
     /**
      * Returns a tree of supported privileges for a resource.
@@ -436,10 +426,11 @@ class Plugin extends DAV\ServerPlugin {
      * ]
      *
      * @param string|INode $node
+     *
      * @return array
      */
-    function getSupportedPrivilegeSet($node) {
-
+    public function getSupportedPrivilegeSet($node)
+    {
         if (is_string($node)) {
             $node = $this->server->tree->getNodeForPath($node);
         }
@@ -450,35 +441,34 @@ class Plugin extends DAV\ServerPlugin {
         }
 
         if (is_null($supportedPrivileges)) {
-
             // Default
             $supportedPrivileges = [
                 '{DAV:}read' => [
-                    'abstract'   => false,
+                    'abstract' => false,
                     'aggregates' => [
                         '{DAV:}read-acl' => [
-                            'abstract'   => false,
+                            'abstract' => false,
                             'aggregates' => [],
                         ],
                         '{DAV:}read-current-user-privilege-set' => [
-                            'abstract'   => false,
+                            'abstract' => false,
                             'aggregates' => [],
                         ],
                     ],
                 ],
                 '{DAV:}write' => [
-                    'abstract'   => false,
+                    'abstract' => false,
                     'aggregates' => [
                         '{DAV:}write-properties' => [
-                            'abstract'   => false,
+                            'abstract' => false,
                             'aggregates' => [],
                         ],
                         '{DAV:}write-content' => [
-                            'abstract'   => false,
+                            'abstract' => false,
                             'aggregates' => [],
                         ],
                         '{DAV:}unlock' => [
-                            'abstract'   => false,
+                            'abstract' => false,
                             'aggregates' => [],
                         ],
                     ],
@@ -486,21 +476,20 @@ class Plugin extends DAV\ServerPlugin {
             ];
             if ($node instanceof DAV\ICollection) {
                 $supportedPrivileges['{DAV:}write']['aggregates']['{DAV:}bind'] = [
-                    'abstract'   => false,
+                    'abstract' => false,
                     'aggregates' => [],
                 ];
                 $supportedPrivileges['{DAV:}write']['aggregates']['{DAV:}unbind'] = [
-                    'abstract'   => false,
+                    'abstract' => false,
                     'aggregates' => [],
                 ];
             }
             if ($node instanceof IACL) {
                 $supportedPrivileges['{DAV:}write']['aggregates']['{DAV:}write-acl'] = [
-                    'abstract'   => false,
+                    'abstract' => false,
                     'aggregates' => [],
                 ];
             }
-
         }
 
         $this->server->emit(
@@ -509,11 +498,10 @@ class Plugin extends DAV\ServerPlugin {
         );
 
         return $supportedPrivileges;
-
     }
 
     /**
-     * Returns the supported privilege set as a flat list
+     * Returns the supported privilege set as a flat list.
      *
      * This is much easier to parse.
      *
@@ -524,54 +512,44 @@ class Plugin extends DAV\ServerPlugin {
      *   - concrete
      *
      * @param string|INode $node
+     *
      * @return array
      */
-    final function getFlatPrivilegeSet($node) {
-
+    final public function getFlatPrivilegeSet($node)
+    {
         $privs = [
-            'abstract'   => false,
-            'aggregates' => $this->getSupportedPrivilegeSet($node)
+            'abstract' => false,
+            'aggregates' => $this->getSupportedPrivilegeSet($node),
         ];
 
         $fpsTraverse = null;
-        $fpsTraverse = function($privName, $privInfo, $concrete, &$flat) use (&$fpsTraverse) {
-
+        $fpsTraverse = function ($privName, $privInfo, $concrete, &$flat) use (&$fpsTraverse) {
             $myPriv = [
-                'privilege'  => $privName,
-                'abstract'   => isset($privInfo['abstract']) && $privInfo['abstract'],
+                'privilege' => $privName,
+                'abstract' => isset($privInfo['abstract']) && $privInfo['abstract'],
                 'aggregates' => [],
-                'concrete'   => isset($privInfo['abstract']) && $privInfo['abstract'] ? $concrete : $privName,
+                'concrete' => isset($privInfo['abstract']) && $privInfo['abstract'] ? $concrete : $privName,
             ];
 
             if (isset($privInfo['aggregates'])) {
-
                 foreach ($privInfo['aggregates'] as $subPrivName => $subPrivInfo) {
-
                     $myPriv['aggregates'][] = $subPrivName;
-
                 }
-
             }
 
             $flat[$privName] = $myPriv;
 
             if (isset($privInfo['aggregates'])) {
-
                 foreach ($privInfo['aggregates'] as $subPrivName => $subPrivInfo) {
-
                     $fpsTraverse($subPrivName, $subPrivInfo, $myPriv['concrete'], $flat);
-
                 }
-
             }
-
         };
 
         $flat = [];
         $fpsTraverse('{DAV:}all', $privs, null, $flat);
 
         return $flat;
-
     }
 
     /**
@@ -582,10 +560,11 @@ class Plugin extends DAV\ServerPlugin {
      * null will be returned if the node doesn't support ACLs.
      *
      * @param string|DAV\INode $node
+     *
      * @return array
      */
-    function getAcl($node) {
-
+    public function getAcl($node)
+    {
         if (is_string($node)) {
             $node = $this->server->tree->getNodeForPath($node);
         }
@@ -600,8 +579,8 @@ class Plugin extends DAV\ServerPlugin {
                 'protected' => true,
             ];
         }
-        return $acl;
 
+        return $acl;
     }
 
     /**
@@ -613,10 +592,11 @@ class Plugin extends DAV\ServerPlugin {
      * null will be returned if the node doesn't support ACLs.
      *
      * @param string|DAV\INode $node
+     *
      * @return array
      */
-    function getCurrentUserPrivilegeSet($node) {
-
+    public function getCurrentUserPrivilegeSet($node)
+    {
         if (is_string($node)) {
             $node = $this->server->tree->getNodeForPath($node);
         }
@@ -625,50 +605,44 @@ class Plugin extends DAV\ServerPlugin {
 
         $collected = [];
 
-        $isAuthenticated = $this->getCurrentUserPrincipal() !== null;
+        $isAuthenticated = null !== $this->getCurrentUserPrincipal();
 
         foreach ($acl as $ace) {
-
             $principal = $ace['principal'];
 
             switch ($principal) {
-
-                case '{DAV:}owner' :
+                case '{DAV:}owner':
                     $owner = $node->getOwner();
                     if ($owner && $this->principalMatchesPrincipal($owner)) {
                         $collected[] = $ace;
                     }
                     break;
 
-
                 // 'all' matches for every user
-                case '{DAV:}all' :
+                case '{DAV:}all':
                     $collected[] = $ace;
                     break;
 
-                case '{DAV:}authenticated' :
+                case '{DAV:}authenticated':
                     // Authenticated users only
                     if ($isAuthenticated) {
                         $collected[] = $ace;
                     }
                     break;
 
-                case '{DAV:}unauthenticated' :
+                case '{DAV:}unauthenticated':
                     // Unauthenticated users only
                     if (!$isAuthenticated) {
                         $collected[] = $ace;
                     }
                     break;
 
-                default :
+                default:
                     if ($this->principalMatchesPrincipal($ace['principal'])) {
                         $collected[] = $ace;
                     }
                     break;
-
             }
-
-
         }
 
         // Now we deduct all aggregated privileges.
@@ -676,26 +650,22 @@ class Plugin extends DAV\ServerPlugin {
 
         $collected2 = [];
         while (count($collected)) {
-
             $current = array_pop($collected);
             $collected2[] = $current['privilege'];
 
             if (!isset($flat[$current['privilege']])) {
                 // Ignoring privileges that are not in the supported-privileges list.
-                $this->server->getLogger()->debug('A node has the "' . $current['privilege'] . '" in its ACL list, but this privilege was not reported in the supportedPrivilegeSet list. This will be ignored.');
+                $this->server->getLogger()->debug('A node has the "'.$current['privilege'].'" in its ACL list, but this privilege was not reported in the supportedPrivilegeSet list. This will be ignored.');
                 continue;
             }
             foreach ($flat[$current['privilege']]['aggregates'] as $subPriv) {
                 $collected2[] = $subPriv;
                 $collected[] = $flat[$subPriv];
             }
-
         }
 
         return array_values(array_unique($collected2));
-
     }
-
 
     /**
      * Returns a principal based on its uri.
@@ -703,14 +673,14 @@ class Plugin extends DAV\ServerPlugin {
      * Returns null if the principal could not be found.
      *
      * @param string $uri
-     * @return null|string
+     *
+     * @return string|null
      */
-    function getPrincipalByUri($uri) {
-
+    public function getPrincipalByUri($uri)
+    {
         $result = null;
         $collections = $this->principalCollectionSet;
         foreach ($collections as $collection) {
-
             try {
                 $principalCollection = $this->server->tree->getNodeForPath($collection);
             } catch (NotFound $e) {
@@ -728,36 +698,35 @@ class Plugin extends DAV\ServerPlugin {
             if ($result) {
                 return $result;
             }
-
         }
-
     }
 
     /**
-     * Principal property search
+     * Principal property search.
      *
      * This method can search for principals matching certain values in
      * properties.
      *
      * This method will return a list of properties for the matched properties.
      *
-     * @param array $searchProperties    The properties to search on. This is a
-     *                                   key-value list. The keys are property
-     *                                   names, and the values the strings to
-     *                                   match them on.
-     * @param array $requestedProperties This is the list of properties to
-     *                                   return for every match.
-     * @param string $collectionUri      The principal collection to search on.
-     *                                   If this is ommitted, the standard
-     *                                   principal collection-set will be used.
-     * @param string $test               "allof" to use AND to search the
-     *                                   properties. 'anyof' for OR.
-     * @return array     This method returns an array structure similar to
-     *                  Sabre\DAV\Server::getPropertiesForPath. Returned
-     *                  properties are index by a HTTP status code.
+     * @param array  $searchProperties    The properties to search on. This is a
+     *                                    key-value list. The keys are property
+     *                                    names, and the values the strings to
+     *                                    match them on.
+     * @param array  $requestedProperties this is the list of properties to
+     *                                    return for every match
+     * @param string $collectionUri       the principal collection to search on.
+     *                                    If this is ommitted, the standard
+     *                                    principal collection-set will be used
+     * @param string $test                "allof" to use AND to search the
+     *                                    properties. 'anyof' for OR.
+     *
+     * @return array This method returns an array structure similar to
+     *               Sabre\DAV\Server::getPropertiesForPath. Returned
+     *               properties are index by a HTTP status code.
      */
-    function principalSearch(array $searchProperties, array $requestedProperties, $collectionUri = null, $test = 'allof') {
-
+    public function principalSearch(array $searchProperties, array $requestedProperties, $collectionUri = null, $test = 'allof')
+    {
         if (!is_null($collectionUri)) {
             $uris = [$collectionUri];
         } else {
@@ -766,7 +735,6 @@ class Plugin extends DAV\ServerPlugin {
 
         $lookupResults = [];
         foreach ($uris as $uri) {
-
             $principalCollection = $this->server->tree->getNodeForPath($uri);
             if (!$principalCollection instanceof IPrincipalCollection) {
                 // Not a principal collection, we're simply going to ignore
@@ -776,33 +744,26 @@ class Plugin extends DAV\ServerPlugin {
 
             $results = $principalCollection->searchPrincipals($searchProperties, $test);
             foreach ($results as $result) {
-                $lookupResults[] = rtrim($uri, '/') . '/' . $result;
+                $lookupResults[] = rtrim($uri, '/').'/'.$result;
             }
-
         }
 
         $matches = [];
 
         foreach ($lookupResults as $lookupResult) {
-
             list($matches[]) = $this->server->getPropertiesForPath($lookupResult, $requestedProperties, 0);
-
         }
 
         return $matches;
-
     }
 
     /**
-     * Sets up the plugin
+     * Sets up the plugin.
      *
      * This method is automatically called by the server class.
-     *
-     * @param DAV\Server $server
-     * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         if ($this->allowUnauthenticatedAccess) {
             $authPlugin = $server->getPlugin('auth');
             if (!$authPlugin) {
@@ -812,22 +773,22 @@ class Plugin extends DAV\ServerPlugin {
         }
 
         $this->server = $server;
-        $server->on('propFind',            [$this, 'propFind'], 20);
-        $server->on('beforeMethod',        [$this, 'beforeMethod'], 20);
-        $server->on('beforeBind',          [$this, 'beforeBind'], 20);
-        $server->on('beforeUnbind',        [$this, 'beforeUnbind'], 20);
-        $server->on('propPatch',           [$this, 'propPatch']);
-        $server->on('beforeUnlock',        [$this, 'beforeUnlock'], 20);
-        $server->on('report',              [$this, 'report']);
-        $server->on('method:ACL',          [$this, 'httpAcl']);
-        $server->on('onHTMLActionsPanel',  [$this, 'htmlActionsPanel']);
-        $server->on('getPrincipalByUri',  function($principal, &$uri) {
-
+        $server->on('propFind', [$this, 'propFind'], 20);
+        $server->on('beforeMethod:*', [$this, 'beforeMethod'], 20);
+        $server->on('beforeBind', [$this, 'beforeBind'], 20);
+        $server->on('beforeUnbind', [$this, 'beforeUnbind'], 20);
+        $server->on('propPatch', [$this, 'propPatch']);
+        $server->on('beforeUnlock', [$this, 'beforeUnlock'], 20);
+        $server->on('report', [$this, 'report']);
+        $server->on('method:ACL', [$this, 'httpAcl']);
+        $server->on('onHTMLActionsPanel', [$this, 'htmlActionsPanel']);
+        $server->on('getPrincipalByUri', function ($principal, &$uri) {
             $uri = $this->getPrincipalByUri($principal);
 
             // Break event chain
-            if ($uri) return false;
-
+            if ($uri) {
+                return false;
+            }
         });
 
         array_push($server->protectedProperties,
@@ -858,39 +819,35 @@ class Plugin extends DAV\ServerPlugin {
         $server->xml->elementMap['{DAV:}principal-property-search'] = 'Sabre\\DAVACL\\Xml\\Request\\PrincipalPropertySearchReport';
         $server->xml->elementMap['{DAV:}principal-search-property-set'] = 'Sabre\\DAVACL\\Xml\\Request\\PrincipalSearchPropertySetReport';
         $server->xml->elementMap['{DAV:}principal-match'] = 'Sabre\\DAVACL\\Xml\\Request\\PrincipalMatchReport';
-
     }
 
     /* {{{ Event handlers */
 
     /**
-     * Triggered before any method is handled
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
+     * Triggered before any method is handled.
      */
-    function beforeMethod(RequestInterface $request, ResponseInterface $response) {
-
+    public function beforeMethod(RequestInterface $request, ResponseInterface $response)
+    {
         $method = $request->getMethod();
         $path = $request->getPath();
 
         $exists = $this->server->tree->nodeExists($path);
 
         // If the node doesn't exists, none of these checks apply
-        if (!$exists) return;
+        if (!$exists) {
+            return;
+        }
 
         switch ($method) {
-
-            case 'GET' :
-            case 'HEAD' :
-            case 'OPTIONS' :
+            case 'GET':
+            case 'HEAD':
+            case 'OPTIONS':
                 // For these 3 we only need to know if the node is readable.
                 $this->checkPrivileges($path, '{DAV:}read');
                 break;
 
-            case 'PUT' :
-            case 'LOCK' :
+            case 'PUT':
+            case 'LOCK':
                 // This method requires the write-content priv if the node
                 // already exists, and bind on the parent if the node is being
                 // created.
@@ -898,20 +855,20 @@ class Plugin extends DAV\ServerPlugin {
                 $this->checkPrivileges($path, '{DAV:}write-content');
                 break;
 
-            case 'UNLOCK' :
+            case 'UNLOCK':
                 // Unlock is always allowed at the moment.
                 break;
 
-            case 'PROPPATCH' :
+            case 'PROPPATCH':
                 $this->checkPrivileges($path, '{DAV:}write-properties');
                 break;
 
-            case 'ACL' :
+            case 'ACL':
                 $this->checkPrivileges($path, '{DAV:}write-acl');
                 break;
 
-            case 'COPY' :
-            case 'MOVE' :
+            case 'COPY':
+            case 'MOVE':
                 // Copy requires read privileges on the entire source tree.
                 // If the target exists write-content normally needs to be
                 // checked, however, we're deleting the node beforehand and
@@ -925,9 +882,7 @@ class Plugin extends DAV\ServerPlugin {
                 // the sourcenode can be deleted.
                 $this->checkPrivileges($path, '{DAV:}read', self::R_RECURSIVE);
                 break;
-
         }
-
     }
 
     /**
@@ -937,54 +892,44 @@ class Plugin extends DAV\ServerPlugin {
      * new node, such as PUT, MKCOL, MKCALENDAR, LOCK, COPY and MOVE.
      *
      * @param string $uri
-     * @return void
      */
-    function beforeBind($uri) {
-
+    public function beforeBind($uri)
+    {
         list($parentUri) = Uri\split($uri);
         $this->checkPrivileges($parentUri, '{DAV:}bind');
-
     }
 
     /**
-     * Triggered before a node is deleted
+     * Triggered before a node is deleted.
      *
      * This allows us to check permissions for any operation that will delete
      * an existing node.
      *
      * @param string $uri
-     * @return void
      */
-    function beforeUnbind($uri) {
-
+    public function beforeUnbind($uri)
+    {
         list($parentUri) = Uri\split($uri);
         $this->checkPrivileges($parentUri, '{DAV:}unbind', self::R_RECURSIVEPARENTS);
-
     }
 
     /**
      * Triggered before a node is unlocked.
      *
      * @param string $uri
-     * @param DAV\Locks\LockInfo $lock
      * @TODO: not yet implemented
-     * @return void
      */
-    function beforeUnlock($uri, DAV\Locks\LockInfo $lock) {
-
-
+    public function beforeUnlock($uri, DAV\Locks\LockInfo $lock)
+    {
     }
 
     /**
      * Triggered before properties are looked up in specific nodes.
      *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode $node
      * @TODO really should be broken into multiple methods, or even a class.
-     * @return bool
      */
-    function propFind(DAV\PropFind $propFind, DAV\INode $node) {
-
+    public function propFind(DAV\PropFind $propFind, DAV\INode $node)
+    {
         $path = $propFind->getPath();
 
         // Checking the read permission
@@ -1004,82 +949,83 @@ class Plugin extends DAV\ServerPlugin {
             }
 
             return;
-
         }
 
         /* Adding principal properties */
         if ($node instanceof IPrincipal) {
-
-            $propFind->handle('{DAV:}alternate-URI-set', function() use ($node) {
+            $propFind->handle('{DAV:}alternate-URI-set', function () use ($node) {
                 return new Href($node->getAlternateUriSet());
             });
-            $propFind->handle('{DAV:}principal-URL', function() use ($node) {
-                return new Href($node->getPrincipalUrl() . '/');
+            $propFind->handle('{DAV:}principal-URL', function () use ($node) {
+                return new Href($node->getPrincipalUrl().'/');
             });
-            $propFind->handle('{DAV:}group-member-set', function() use ($node) {
+            $propFind->handle('{DAV:}group-member-set', function () use ($node) {
                 $members = $node->getGroupMemberSet();
                 foreach ($members as $k => $member) {
-                    $members[$k] = rtrim($member, '/') . '/';
+                    $members[$k] = rtrim($member, '/').'/';
                 }
+
                 return new Href($members);
             });
-            $propFind->handle('{DAV:}group-membership', function() use ($node) {
+            $propFind->handle('{DAV:}group-membership', function () use ($node) {
                 $members = $node->getGroupMembership();
                 foreach ($members as $k => $member) {
-                    $members[$k] = rtrim($member, '/') . '/';
+                    $members[$k] = rtrim($member, '/').'/';
                 }
+
                 return new Href($members);
             });
             $propFind->handle('{DAV:}displayname', [$node, 'getDisplayName']);
-
         }
 
-        $propFind->handle('{DAV:}principal-collection-set', function() {
-
+        $propFind->handle('{DAV:}principal-collection-set', function () {
             $val = $this->principalCollectionSet;
             // Ensuring all collections end with a slash
-            foreach ($val as $k => $v) $val[$k] = $v . '/';
-            return new Href($val);
+            foreach ($val as $k => $v) {
+                $val[$k] = $v.'/';
+            }
 
+            return new Href($val);
         });
-        $propFind->handle('{DAV:}current-user-principal', function() {
+        $propFind->handle('{DAV:}current-user-principal', function () {
             if ($url = $this->getCurrentUserPrincipal()) {
-                return new Xml\Property\Principal(Xml\Property\Principal::HREF, $url . '/');
+                return new Xml\Property\Principal(Xml\Property\Principal::HREF, $url.'/');
             } else {
                 return new Xml\Property\Principal(Xml\Property\Principal::UNAUTHENTICATED);
             }
         });
-        $propFind->handle('{DAV:}supported-privilege-set', function() use ($node) {
+        $propFind->handle('{DAV:}supported-privilege-set', function () use ($node) {
             return new Xml\Property\SupportedPrivilegeSet($this->getSupportedPrivilegeSet($node));
         });
-        $propFind->handle('{DAV:}current-user-privilege-set', function() use ($node, $propFind, $path) {
+        $propFind->handle('{DAV:}current-user-privilege-set', function () use ($node, $propFind, $path) {
             if (!$this->checkPrivileges($path, '{DAV:}read-current-user-privilege-set', self::R_PARENT, false)) {
                 $propFind->set('{DAV:}current-user-privilege-set', null, 403);
             } else {
                 $val = $this->getCurrentUserPrivilegeSet($node);
+
                 return new Xml\Property\CurrentUserPrivilegeSet($val);
             }
         });
-        $propFind->handle('{DAV:}acl', function() use ($node, $propFind, $path) {
+        $propFind->handle('{DAV:}acl', function () use ($node, $propFind, $path) {
             /* The ACL property contains all the permissions */
             if (!$this->checkPrivileges($path, '{DAV:}read-acl', self::R_PARENT, false)) {
                 $propFind->set('{DAV:}acl', null, 403);
             } else {
                 $acl = $this->getACL($node);
+
                 return new Xml\Property\Acl($this->getACL($node));
             }
         });
-        $propFind->handle('{DAV:}acl-restrictions', function() {
+        $propFind->handle('{DAV:}acl-restrictions', function () {
             return new Xml\Property\AclRestrictions();
         });
 
         /* Adding ACL properties */
         if ($node instanceof IACL) {
-            $propFind->handle('{DAV:}owner', function() use ($node) {
-                return new Href($node->getOwner() . '/');
+            $propFind->handle('{DAV:}owner', function () use ($node) {
+                return new Href($node->getOwner().'/');
             });
         }
-
     }
 
     /**
@@ -1087,12 +1033,10 @@ class Plugin extends DAV\ServerPlugin {
      * group-member-set is updated correctly.
      *
      * @param string $path
-     * @param DAV\PropPatch $propPatch
-     * @return void
      */
-    function propPatch($path, DAV\PropPatch $propPatch) {
-
-        $propPatch->handle('{DAV:}group-member-set', function($value) use ($path) {
+    public function propPatch($path, DAV\PropPatch $propPatch)
+    {
+        $propPatch->handle('{DAV:}group-member-set', function ($value) use ($path) {
             if (is_null($value)) {
                 $memberSet = [];
             } elseif ($value instanceof Href) {
@@ -1116,55 +1060,53 @@ class Plugin extends DAV\ServerPlugin {
 
             return true;
         });
-
     }
 
     /**
-     * This method handles HTTP REPORT requests
+     * This method handles HTTP REPORT requests.
      *
      * @param string $reportName
-     * @param mixed $report
-     * @param mixed $path
-     * @return bool
+     * @param mixed  $report
+     * @param mixed  $path
      */
-    function report($reportName, $report, $path) {
-
+    public function report($reportName, $report, $path)
+    {
         switch ($reportName) {
-
-            case '{DAV:}principal-property-search' :
+            case '{DAV:}principal-property-search':
                 $this->server->transactionType = 'report-principal-property-search';
                 $this->principalPropertySearchReport($path, $report);
+
                 return false;
-            case '{DAV:}principal-search-property-set' :
+            case '{DAV:}principal-search-property-set':
                 $this->server->transactionType = 'report-principal-search-property-set';
                 $this->principalSearchPropertySetReport($path, $report);
+
                 return false;
-            case '{DAV:}expand-property' :
+            case '{DAV:}expand-property':
                 $this->server->transactionType = 'report-expand-property';
                 $this->expandPropertyReport($path, $report);
+
                 return false;
-            case '{DAV:}principal-match' :
+            case '{DAV:}principal-match':
                 $this->server->transactionType = 'report-principal-match';
                 $this->principalMatchReport($path, $report);
+
                 return false;
-            case '{DAV:}acl-principal-prop-set' :
+            case '{DAV:}acl-principal-prop-set':
                 $this->server->transactionType = 'acl-principal-prop-set';
                 $this->aclPrincipalPropSetReport($path, $report);
+
                 return false;
-
         }
-
     }
 
     /**
      * This method is responsible for handling the 'ACL' event.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpAcl(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpAcl(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
         $body = $request->getBodyAsString();
 
@@ -1192,8 +1134,9 @@ class Plugin extends DAV\ServerPlugin {
         /* Checking if protected principals from the existing principal set are
            not overwritten. */
         foreach ($oldAcl as $oldAce) {
-
-            if (!isset($oldAce['protected']) || !$oldAce['protected']) continue;
+            if (!isset($oldAce['protected']) || !$oldAce['protected']) {
+                continue;
+            }
 
             $found = false;
             foreach ($newAcl as $newAce) {
@@ -1201,36 +1144,35 @@ class Plugin extends DAV\ServerPlugin {
                     $newAce['privilege'] === $oldAce['privilege'] &&
                     $newAce['principal'] === $oldAce['principal'] &&
                     $newAce['protected']
-                )
-                $found = true;
+                ) {
+                    $found = true;
+                }
             }
 
-            if (!$found)
+            if (!$found) {
                 throw new Exception\AceConflict('This resource contained a protected {DAV:}ace, but this privilege did not occur in the ACL request');
-
+            }
         }
 
         foreach ($newAcl as $newAce) {
-
             // Do we recognize the privilege
             if (!isset($supportedPrivileges[$newAce['privilege']])) {
-                throw new Exception\NotSupportedPrivilege('The privilege you specified (' . $newAce['privilege'] . ') is not recognized by this server');
+                throw new Exception\NotSupportedPrivilege('The privilege you specified ('.$newAce['privilege'].') is not recognized by this server');
             }
 
             if ($supportedPrivileges[$newAce['privilege']]['abstract']) {
-                throw new Exception\NoAbstract('The privilege you specified (' . $newAce['privilege'] . ') is an abstract privilege');
+                throw new Exception\NoAbstract('The privilege you specified ('.$newAce['privilege'].') is an abstract privilege');
             }
 
             // Looking up the principal
             try {
                 $principal = $this->server->tree->getNodeForPath($newAce['principal']);
             } catch (NotFound $e) {
-                throw new Exception\NotRecognizedPrincipal('The specified principal (' . $newAce['principal'] . ') does not exist');
+                throw new Exception\NotRecognizedPrincipal('The specified principal ('.$newAce['principal'].') does not exist');
             }
             if (!($principal instanceof IPrincipal)) {
-                throw new Exception\NotRecognizedPrincipal('The specified uri (' . $newAce['principal'] . ') is not a principal');
+                throw new Exception\NotRecognizedPrincipal('The specified uri ('.$newAce['principal'].') is not a principal');
             }
-
         }
         $node->setACL($newAcl);
 
@@ -1238,7 +1180,6 @@ class Plugin extends DAV\ServerPlugin {
 
         // Breaking the event chain, because we handled this method.
         return false;
-
     }
 
     /* }}} */
@@ -1253,13 +1194,11 @@ class Plugin extends DAV\ServerPlugin {
      * principal belongs to.
      *
      * @param string $path
-     * @param Xml\Request\PrincipalMatchReport $report
-     * @return void
      */
-    protected function principalMatchReport($path, Xml\Request\PrincipalMatchReport $report) {
-
+    protected function principalMatchReport($path, Xml\Request\PrincipalMatchReport $report)
+    {
         $depth = $this->server->getHTTPDepth(0);
-        if ($depth !== 0) {
+        if (0 !== $depth) {
             throw new BadRequest('The principal-match report is only defined on Depth: 0');
         }
 
@@ -1267,20 +1206,15 @@ class Plugin extends DAV\ServerPlugin {
 
         $result = [];
 
-        if ($report->type === Xml\Request\PrincipalMatchReport::SELF) {
-
+        if (Xml\Request\PrincipalMatchReport::SELF === $report->type) {
             // Finding all principals under the request uri that match the
             // current principal.
             foreach ($currentPrincipals as $currentPrincipal) {
-
-                if ($currentPrincipal === $path || strpos($currentPrincipal, $path . '/') === 0) {
+                if ($currentPrincipal === $path || 0 === strpos($currentPrincipal, $path.'/')) {
                     $result[] = $currentPrincipal;
                 }
-
             }
-
         } else {
-
             // We need to find all resources that have a property that matches
             // one of the current principals.
             $candidates = $this->server->getPropertiesForPath(
@@ -1290,7 +1224,6 @@ class Plugin extends DAV\ServerPlugin {
             );
 
             foreach ($candidates as $candidate) {
-
                 if (!isset($candidate[200][$report->principalProperty])) {
                     continue;
                 }
@@ -1308,23 +1241,19 @@ class Plugin extends DAV\ServerPlugin {
                     }
                 }
             }
-
         }
 
         $responses = [];
 
         foreach ($result as $item) {
-
             $properties = [];
 
             if ($report->properties) {
-
                 $foo = $this->server->getPropertiesForPath($item, $report->properties);
                 $foo = $foo[0];
                 $item = $foo['href'];
                 unset($foo['href']);
                 $properties = $foo;
-
             }
 
             $responses[] = new DAV\Xml\Element\Response(
@@ -1332,7 +1261,6 @@ class Plugin extends DAV\ServerPlugin {
                 $properties,
                 '200'
             );
-
         }
 
         $this->server->httpResponse->setHeader('Content-Type', 'application/xml; charset=utf-8');
@@ -1344,8 +1272,6 @@ class Plugin extends DAV\ServerPlugin {
                 $this->server->getBaseUri()
             )
         );
-
-
     }
 
     /**
@@ -1359,12 +1285,11 @@ class Plugin extends DAV\ServerPlugin {
      * Other rfc's, such as ACL rely on this report, so it made sense to put
      * it in this plugin.
      *
-     * @param string $path
+     * @param string                           $path
      * @param Xml\Request\ExpandPropertyReport $report
-     * @return void
      */
-    protected function expandPropertyReport($path, $report) {
-
+    protected function expandPropertyReport($path, $report)
+    {
         $depth = $this->server->getHTTPDepth(0);
 
         $result = $this->expandProperties($path, $report->properties, $depth);
@@ -1377,34 +1302,36 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->server->httpResponse->setStatus(207);
         $this->server->httpResponse->setBody($xml);
-
     }
 
     /**
      * This method expands all the properties and returns
-     * a list with property values
+     * a list with property values.
      *
      * @param array $path
      * @param array $requestedProperties the list of required properties
-     * @param int $depth
+     * @param int   $depth
+     *
      * @return array
      */
-    protected function expandProperties($path, array $requestedProperties, $depth) {
-
+    protected function expandProperties($path, array $requestedProperties, $depth)
+    {
         $foundProperties = $this->server->getPropertiesForPath($path, array_keys($requestedProperties), $depth);
 
         $result = [];
 
         foreach ($foundProperties as $node) {
-
             foreach ($requestedProperties as $propertyName => $childRequestedProperties) {
-
                 // We're only traversing if sub-properties were requested
-                if (count($childRequestedProperties) === 0) continue;
+                if (!is_array($childRequestedProperties) || 0 === count($childRequestedProperties)) {
+                    continue;
+                }
 
                 // We only have to do the expansion if the property was found
                 // and it contains an href element.
-                if (!array_key_exists($propertyName, $node[200])) continue;
+                if (!array_key_exists($propertyName, $node[200])) {
+                    continue;
+                }
 
                 if (!$node[200][$propertyName] instanceof DAV\Xml\Property\Href) {
                     continue;
@@ -1416,39 +1343,35 @@ class Plugin extends DAV\ServerPlugin {
                 foreach ($childHrefs as $href) {
                     // Gathering the result of the children
                     $childProps[] = [
-                        'name'  => '{DAV:}response',
-                        'value' => $this->expandProperties($href, $childRequestedProperties, 0)[0]
+                        'name' => '{DAV:}response',
+                        'value' => $this->expandProperties($href, $childRequestedProperties, 0)[0],
                     ];
                 }
 
                 // Replacing the property with its expanded form.
                 $node[200][$propertyName] = $childProps;
-
             }
             $result[] = new DAV\Xml\Element\Response($node['href'], $node);
-
         }
 
         return $result;
-
     }
 
     /**
-     * principalSearchPropertySetReport
+     * principalSearchPropertySetReport.
      *
      * This method responsible for handing the
      * {DAV:}principal-search-property-set report. This report returns a list
      * of properties the client may search on, using the
      * {DAV:}principal-property-search report.
      *
-     * @param string $path
+     * @param string                                       $path
      * @param Xml\Request\PrincipalSearchPropertySetReport $report
-     * @return void
      */
-    protected function principalSearchPropertySetReport($path, $report) {
-
+    protected function principalSearchPropertySetReport($path, $report)
+    {
         $httpDepth = $this->server->getHTTPDepth(0);
-        if ($httpDepth !== 0) {
+        if (0 !== $httpDepth) {
             throw new DAV\Exception\BadRequest('This report is only defined when Depth: 0');
         }
 
@@ -1459,7 +1382,6 @@ class Plugin extends DAV\ServerPlugin {
         $writer->startElement('{DAV:}principal-search-property-set');
 
         foreach ($this->principalSearchPropertySet as $propertyName => $description) {
-
             $writer->startElement('{DAV:}principal-search-property');
             $writer->startElement('{DAV:}prop');
 
@@ -1469,15 +1391,13 @@ class Plugin extends DAV\ServerPlugin {
 
             if ($description) {
                 $writer->write([[
-                    'name'       => '{DAV:}description',
-                    'value'      => $description,
-                    'attributes' => ['xml:lang' => 'en']
+                    'name' => '{DAV:}description',
+                    'value' => $description,
+                    'attributes' => ['xml:lang' => 'en'],
                 ]]);
             }
 
             $writer->endElement(); // principal-search-property
-
-
         }
 
         $writer->endElement(); // principal-search-property-set
@@ -1485,11 +1405,10 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->server->httpResponse->setStatus(200);
         $this->server->httpResponse->setBody($writer->outputMemory());
-
     }
 
     /**
-     * principalPropertySearchReport
+     * principalPropertySearchReport.
      *
      * This method is responsible for handing the
      * {DAV:}principal-property-search report. This report can be used for
@@ -1497,15 +1416,13 @@ class Plugin extends DAV\ServerPlugin {
      * or more properties.
      *
      * @param string $path
-     * @param Xml\Request\PrincipalPropertySearchReport $report
-     * @return void
      */
-    protected function principalPropertySearchReport($path, Xml\Request\PrincipalPropertySearchReport $report) {
-
+    protected function principalPropertySearchReport($path, Xml\Request\PrincipalPropertySearchReport $report)
+    {
         if ($report->applyToPrincipalCollectionSet) {
             $path = null;
         }
-        if ($this->server->getHttpDepth('0') !== 0) {
+        if (0 !== $this->server->getHttpDepth('0')) {
             throw new BadRequest('Depth must be 0');
         }
         $result = $this->principalSearch(
@@ -1520,12 +1437,11 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setStatus(207);
         $this->server->httpResponse->setHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->server->httpResponse->setHeader('Vary', 'Brief,Prefer');
-        $this->server->httpResponse->setBody($this->server->generateMultiStatus($result, $prefer['return'] === 'minimal'));
-
+        $this->server->httpResponse->setBody($this->server->generateMultiStatus($result, 'minimal' === $prefer['return']));
     }
 
     /**
-     * aclPrincipalPropSet REPORT
+     * aclPrincipalPropSet REPORT.
      *
      * This method is responsible for handling the {DAV:}acl-principal-prop-set
      * REPORT, as defined in:
@@ -1538,12 +1454,10 @@ class Plugin extends DAV\ServerPlugin {
      * to show names for principals for every entry.
      *
      * @param string $path
-     * @param Xml\Request\AclPrincipalPropSetReport $report
-     * @return void
      */
-    protected function aclPrincipalPropSetReport($path, Xml\Request\AclPrincipalPropSetReport $report) {
-
-        if ($this->server->getHTTPDepth(0) !== 0) {
+    protected function aclPrincipalPropSetReport($path, Xml\Request\AclPrincipalPropSetReport $report)
+    {
+        if (0 !== $this->server->getHTTPDepth(0)) {
             throw new BadRequest('The {DAV:}acl-principal-prop-set REPORT only supports Depth 0');
         }
 
@@ -1558,14 +1472,12 @@ class Plugin extends DAV\ServerPlugin {
 
         $principals = [];
         foreach ($acl['{DAV:}acl']->getPrivileges() as $ace) {
-
-            if ($ace['principal'][0] === '{') {
+            if ('{' === $ace['principal'][0]) {
                 // It's not a principal, it's one of the special rules such as {DAV:}authenticated
                 continue;
             }
 
             $principals[] = $ace['principal'];
-
         }
 
         $properties = $this->server->getPropertiesForMultiplePaths(
@@ -1578,9 +1490,7 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setBody(
             $this->server->generateMultiStatus($properties)
         );
-
     }
-
 
     /* }}} */
 
@@ -1589,14 +1499,15 @@ class Plugin extends DAV\ServerPlugin {
      * DAV\Browser\Plugin. This allows us to generate an interface users
      * can use to create new calendars.
      *
-     * @param DAV\INode $node
      * @param string $output
+     *
      * @return bool
      */
-    function htmlActionsPanel(DAV\INode $node, &$output) {
-
-        if (!$node instanceof PrincipalCollection)
+    public function htmlActionsPanel(DAV\INode $node, &$output)
+    {
+        if (!$node instanceof PrincipalCollection) {
             return;
+        }
 
         $output .= '<tr><td colspan="2"><form method="post" action="">
             <h3>Create new principal</h3>
@@ -1610,7 +1521,6 @@ class Plugin extends DAV\ServerPlugin {
             </td></tr>';
 
         return false;
-
     }
 
     /**
@@ -1624,13 +1534,12 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
-            'name'        => $this->getPluginName(),
+            'name' => $this->getPluginName(),
             'description' => 'Adds support for WebDAV ACL (rfc3744)',
-            'link'        => 'http://sabre.io/dav/acl/',
+            'link' => 'http://sabre.io/dav/acl/',
         ];
-
     }
 }

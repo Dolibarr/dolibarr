@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +18,12 @@
 
 // variable $listofopplabel and $listofoppstatus should be defined
 
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls ON p.fk_opp_status = cls.rowid"; // If lead status has been removed, we must show it in stats as unknown
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
 	$sql .= " AND p.fk_statut = 1"; // Opend projects only
-	if ($mine || empty($user->rights->projet->all->lire)) {
+	if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
 	}
 	if ($socid > 0) {
@@ -63,7 +64,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		}
 		$db->free($resql);
 
-		$ponderated_opp_amount = $ponderated_opp_amount / 100;
+		$ponderated_opp_amount /= 100;
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
@@ -87,7 +88,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 					$labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code).' ('.$langs->transnoentitiesnoconv("NotClosedYet").")";
 				}
 			}
-			if (empty($labelStatus)) {
+			if (empty($labelStatus) && isset($listofopplabel[$status])) {
 				$labelStatus = $listofopplabel[$status];
 			}
 			if (empty($labelStatus)) {

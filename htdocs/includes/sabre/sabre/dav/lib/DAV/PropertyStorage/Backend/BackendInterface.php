@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\PropertyStorage\Backend;
 
 use Sabre\DAV\PropFind;
@@ -15,8 +17,8 @@ use Sabre\DAV\PropPatch;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
-
+interface BackendInterface
+{
     /**
      * Fetches properties for a path.
      *
@@ -31,13 +33,11 @@ interface BackendInterface {
      * case, you should check for $propFind->isAllProps().
      *
      * @param string $path
-     * @param PropFind $propFind
-     * @return void
      */
-    function propFind($path, PropFind $propFind);
+    public function propFind($path, PropFind $propFind);
 
     /**
-     * Updates properties for a path
+     * Updates properties for a path.
      *
      * This method received a PropPatch object, which contains all the
      * information about the update.
@@ -46,10 +46,8 @@ interface BackendInterface {
      * a list of all properties that need to be stored.
      *
      * @param string $path
-     * @param PropPatch $propPatch
-     * @return void
      */
-    function propPatch($path, PropPatch $propPatch);
+    public function propPatch($path, PropPatch $propPatch);
 
     /**
      * This method is called after a node is deleted.
@@ -60,12 +58,11 @@ interface BackendInterface {
      * tree.
      *
      * @param string $path
-     * @return void
      */
-    function delete($path);
+    public function delete($path);
 
     /**
-     * This method is called after a successful MOVE
+     * This method is called after a successful MOVE.
      *
      * This should be used to migrate all properties from one path to another.
      * Note that entire collections may be moved, so ensure that all properties
@@ -73,8 +70,6 @@ interface BackendInterface {
      *
      * @param string $source
      * @param string $destination
-     * @return void
      */
-    function move($source, $destination);
-
+    public function move($source, $destination);
 }

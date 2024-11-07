@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +33,22 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "loan"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -46,14 +56,23 @@ $result = restrictedArea($user, 'loan', $id, '', '');
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
+$morehtmlright = '';
 $form = new Form($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Info");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_info');
 
 $object = new Loan($db);
 $object->fetch($id);
@@ -61,7 +80,7 @@ $object->info($id);
 
 $head = loan_prepare_head($object);
 
-print dol_get_fiche_head($head, 'info', $langs->trans("Loan"), -1, 'bill');
+print dol_get_fiche_head($head, 'info', $langs->trans("Loan"), -1, 'money-bill-alt');
 
 $morehtmlref = '<div class="refidno">';
 // Ref loan
@@ -71,7 +90,7 @@ $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-	if ($user->rights->loan->write) {
+	if ($user->hasRight('loan', 'write')) {
 		//if ($action != 'classify')
 		//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		if ($action == 'classify') {
@@ -102,7 +121,8 @@ $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+$morehtmlstatus = $morehtmlright;
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

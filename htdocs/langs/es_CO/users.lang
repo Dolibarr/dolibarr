@@ -65,7 +65,6 @@ LoginToCreate=Iniciar sesión para crear
 YourRole=Tus roles
 YourQuotaOfUsersIsReached=¡Se alcanzó su cuota de usuarios activos!
 NbOfPermissions=Numero de permisos
-DontDowngradeSuperAdmin=Solo un superadmin puede degradar a un superadmin
 UseTypeFieldToChange=Utilice el tipo de campo para cambiar
 OpenIDURL=URL de OpenID
 LoginUsingOpenID=Utilice OpenID para iniciar sesión

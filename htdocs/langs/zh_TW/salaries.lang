@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=默認支付薪資的會計帳戶
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=預設,當建立薪資時將"自動建立所有支付"選項留空
 Salary=薪資
@@ -24,4 +24,10 @@ SalariesStatistics=薪資統計
 SalariesAndPayments=薪資與支付
 ConfirmDeleteSalaryPayment=您要刪除此筆薪資支付嗎?
 FillFieldFirst=先填寫員工欄位
-UpdateAmountWithLastSalary=使用上次薪資設定金額
+UpdateAmountWithLastSalary=設定為最新一筆薪資的金額
+MakeTransferRequest=建立匯款請求
+VirementOrder=匯款請求
+BankTransferAmount=匯款金額
+WithdrawalReceipt=貸方轉帳訂單
+OrderWaiting=待處理訂單
+FillEndOfMonth=填寫至月底

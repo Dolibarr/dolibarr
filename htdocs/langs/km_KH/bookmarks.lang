@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Bookmark
-Bookmarks=Bookmarks
-ListOfBookmarks=List of bookmarks
-EditBookmarks=List/edit bookmarks
-NewBookmark=New bookmark
-ShowBookmark=Show bookmark
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Create bookmark
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Bookmarks management
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = បន្ថែមទំព័របច្ចុប្បន្នទៅចំណាំ
+BehaviourOnClick = ឥរិយាបថនៅពេល URL ចំណាំត្រូវបានជ្រើសរើស
+Bookmark = ចំណាំ
+Bookmarks = ចំណាំ
+BookmarkTargetNewWindowShort = ផ្ទាំងថ្មី។
+BookmarkTargetReplaceWindowShort = ផ្ទាំងបច្ចុប្បន្ន
+BookmarkTitle = ឈ្មោះចំណាំ
+BookmarksManagement = ការគ្រប់គ្រងចំណាំ
+BookmarksMenuShortCut = បញ្ជា (Ctrl) + ប្ដូរ (Shift) + ម៉ែ
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = ជ្រើសរើសថាតើទំព័រដែលបានភ្ជាប់គួរតែបើកនៅក្នុងផ្ទាំងបច្ចុប្បន្ន ឬផ្ទាំងថ្មីមួយ
+CreateBookmark = បង្កើតចំណាំ
+EditBookmarks = បញ្ជី/កែសម្រួលចំណាំ
+ListOfBookmarks = បញ្ជីចំណាំ
+NewBookmark = ចំណាំថ្មី។
+NoBookmarkFound = រកមិនឃើញចំណាំទេ។
+NoBookmarks = គ្មានកំណត់ចំណាំទេ។
+OpenANewWindow = បើកផ្ទាំងថ្មី។
+ReplaceWindow = ជំនួសផ្ទាំងបច្ចុប្បន្ន
+SetHereATitleForLink = កំណត់ឈ្មោះសម្រាប់ចំណាំ
+ShowBookmark = បង្ហាញចំណាំ
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = ប្រើតំណខាងក្រៅ/ដាច់ខាត (https://externalurl.com) ឬតំណខាងក្នុង/ទាក់ទង (/mypage.php)។ អ្នកក៏អាចប្រើទូរស័ព្ទដូចជា tel: 0123456។

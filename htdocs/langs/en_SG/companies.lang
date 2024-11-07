@@ -1,5 +1,9 @@
 # Dolibarr language file - Source file is en_US - companies
-ProfId3CM=Id. prof. 3 (Decree of creation)
-ProfId4CM=Id. prof. 4 (Certificate of deposits)
-ProfId3ShortCM=Decree of creation
-ProfId4ShortCM=Certificate of deposits
+VATReverseCharge=GST reverse-charge
+VATReverseChargeByDefault=GST reverse-charge by default
+VATReverseChargeByDefaultDesc=On supplier invoice, GST reverse-charge is used by default
+OverAllOrders=Sales Orders
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId2ShortCM=Taxpayer No.
+VATIntra=GST Reg No
+VATIntraShort=GST No

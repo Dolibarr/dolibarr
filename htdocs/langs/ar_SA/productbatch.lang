@@ -1,11 +1,14 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
-ManageLotSerial=استخدام حصة / الرقم التسلسلي
+ManageLotSerial=استخدم رقم الدُفعة/السيريال
 ProductStatusOnBatch=نعم (الحصة مطلوبة)
 ProductStatusOnSerial=نعم (رقم تسلسلي فريد من نوعه مطلوب)
 ProductStatusNotOnBatch=رقم (حصة / الرقم التسلسلي لم يستخدم)
 ProductStatusOnBatchShort=حصة
 ProductStatusOnSerialShort=الرقم التسلسلي
 ProductStatusNotOnBatchShort=لا
+BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryNone=لا أحد
+BatchSellOrEatByMandatoryAll=%s و %s
 Batch=الكثير / المسلسل
 atleast1batchfield=أكل حسب التاريخ أو بيع حسب التاريخ أو لوط / الرقم التسلسلي
 batch_number=الكثير / الرقم التسلسلي
@@ -19,9 +22,9 @@ printSellby=بيع عن طريق:٪ الصورة
 printQty=الكمية:٪ د
 printPlannedWarehouse=المخازن
 AddDispatchBatchLine=إضافة سطر لالصلاحية إيفاد
-WhenProductBatchModuleOnOptionAreForced=عندما تكون دفعة الوحدة / المسلسل قيد التشغيل ، يتم إجبار خفض المخزون التلقائي على "تقليل المخزونات الحقيقية عند التحقق من صحة الشحن" ويتم فرض وضع الزيادة التلقائية على "زيادة المخزونات الحقيقية في الإرسال اليدوي إلى المستودعات" ولا يمكن تحريرها. يمكن تحديد الخيارات الأخرى كما تريد.
+WhenProductBatchModuleOnOptionAreForced=عند تشغيل نموذج، يتم فرض التخفيض التلقائي للمخزون على '%s' و  يتم فرض وضع الزيادة التلقائية على '%s'. قد لا تكون بعض الاختيارات متاحة. يمكن تحديد خيارات أخرى كما تريد.
 ProductDoesNotUseBatchSerial=هذا المنتج لا يستخدم الكثير / الرقم التسلسلي
-ProductLotSetup=إعدادات الحصة / الرقم التسلسلي 
+ProductLotSetup=إعدادات الحصة / الرقم التسلسلي
 ShowCurrentStockOfLot=عرض المخزون الحالي للمنتجات/الحصص.
 ShowLogOfMovementIfLot=عرض سجل الحركات للمنتجات/ الحصص .
 StockDetailPerBatch=تفاصيل المخزون لكل قطعة
@@ -45,3 +48,5 @@ OutOfOrder=خارج عن السيطرة
 InWorkingOrder=عمل الأمر بسلاسة
 ToReplace=يحل محل
 CantMoveNonExistantSerial=خطأ. أنت تطلب نقلًا على سجل لمسلسل لم يعد موجودًا بعد الآن. قد تأخذ نفس المسلسل في نفس المستودع عدة مرات في نفس الشحنة أو تم استخدامه بواسطة شحنة أخرى. قم بإزالة هذه الشحنة وإعداد واحدة أخرى.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=إصلاح تشغيل جدول الدفعة غير مكتمل باستخدام المعلمة '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= مطلوب تصحيح المخزون بسبب الرقم التسلسلي الفريد.

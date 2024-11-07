@@ -8,8 +8,6 @@ LocalAgenda=デフォルトのカレンダ
 ActionsOwnedBy=が所有するイベント
 ActionsOwnedByShort=所有者
 AffectedTo=影響を受ける
-Event=イベント
-Events=イベント
 EventsNb=イベント数
 ListOfActions=イベントのリスト
 EventReports=イベント報告書s
@@ -23,7 +21,6 @@ MenuDoneMyActions=私の終了イベント
 ListOfEvents=イベントのリスト（デフォルトのカレンダ）
 ActionsAskedBy=によって報告されたイベント
 ActionsToDoBy=イベントへの影響を受けた
-ActionsDoneBy=によって行われたイベント
 ActionAssignedTo=イベントに影響を受けた
 ViewCal=月間表示
 ViewDay=日表示
@@ -62,7 +59,7 @@ MemberSubscriptionAddedInDolibarr=構成員%sのサブスクリプション%sは
 MemberSubscriptionModifiedInDolibarr=構成員%sのサブスクリプション%sは変更済
 MemberSubscriptionDeletedInDolibarr=構成員%sのサブスクリプション%sは削除済
 ShipmentValidatedInDolibarr=出荷%sは検証済
-ShipmentClassifyClosedInDolibarr=出荷%s請求済指定
+ShipmentClassifyClosedInDolibarr=出荷 %s はクローズ済として分類された
 ShipmentUnClassifyCloseddInDolibarr=出荷%s指定再開
 ShipmentBackToDraftInDolibarr=出荷%sは下書き状態に戻る
 ShipmentDeletedInDolibarr=出荷%sは削除済
@@ -89,6 +86,8 @@ ShippingSentByEMail=電子メールで送信された出荷%s
 ShippingValidated= 出荷%sは検証済
 InterventionSentByEMail=電子メールで送信された介入%s
 ProjectSentByEMail=電子メールで送信されたプロジェクト %s
+ProjectDeletedInDolibarr=プロジェクト%sは削除済
+ProjectClosedInDolibarr=プロジェクト %s 終結
 ProposalDeleted=提案は削除済
 OrderDeleted=注文は削除済
 InvoiceDeleted=請求書は削除済
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MOプロデュース
 MRP_MO_DELETEInDolibarr=MOは削除済
 MRP_MO_CANCELInDolibarr=MOは取消済
 PAIDInDolibarr=%s有料
+ENABLEDISABLEInDolibarr=ユーザ 有効または無効
+CANCELInDolibarr=キャンセル
 ##### End agenda events #####
 AgendaModelModule=イベントのドキュメントテンプレート
 DateActionStart=開始日
 DateActionEnd=終了日
 AgendaUrlOptions1=また、出力をフィルタリングするには、次のパラメータを追加することができる。
-AgendaUrlOptions3= <b> logina = %s </b>は、出力をユーザが所有するアクションに制限する<b>%s</b>。
-AgendaUrlOptionsNotAdmin= <b> logina =！%s </b>は、出力をユーザが所有していないアクションに制限する<b> %s</b>。
+AgendaUrlOptions3=<b>logina=%s</b> を使用すると、出力を ユーザ <b>%s</b> が所有するアクションに制限できる (<b>logina=! %s</b> を使用すること、ただしユーザ が所有していないイベント)。
 AgendaUrlOptions4= <b> logint = %s </b>は、出力をユーザ<b> %s </b>(所有者など)に割り当てられたアクションに制限する。
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b>は、出力をプロジェクト<b> __PROJECT_ID__</b>にリンクされたアクションに制限する。
-AgendaUrlOptionsNotAutoEvent= 自動イベントを除外するには、<b> notactiontype = systemauto</b>。
+AgendaUrlOptionsType=<b>actiontype=%s</b> で自動または手動のイベントを取得
+AgendaUrlOptionsCode=<b>actioncode=%s</b> は、指定された コード のイベントのみを取得。
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b>は、休日のイベントを含む。
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> を指定すると、過去 %s 日間のイベントに制限される (デフォルトは %s)。
+AgendaUrlOptionsLimit=<b>limit=50</b> と指定すると、最新の 50 件のイベントに制限される (デフォルトおよび最大値は %s  )。
 AgendaShowBirthdayEvents=連絡先の誕生日
 AgendaHideBirthdayEvents=連絡先の誕生日を非表示にする
 Busy=忙しい
@@ -180,3 +183,25 @@ BrowserPush=ブラウザのポップアップ通知
 Reminders=リマインダー
 ActiveByDefault=デフォルトで有効
 Until=それまで
+DataFromWasMerged=%s のデータがマージされました
+AgendaShowBookcalCalendar=予約カレンダー: %s
+MenuBookcalIndex=オンライン予約
+BookcalLabelAvailabilityHelp=利用可能範囲のラベル。例::<br>一般利用可能<br>クリスマス休暇中に利用可能
+DurationOfRange=範囲の継続時間
+BookCalSetup = オンライン予約の設定
+BookCalSetupPage = オンライン予約設定ページ
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = インターフェースのタイトル
+BookCalAbout = BookCalについて
+BookCalAboutPage = BookCal についてのページ
+Calendars=カレンダー
+Availabilities=可用性
+NewAvailabilities=新しい利用可能性
+NewCalendar=新しいカレンダー
+ThirdPartyBookCalHelp=このカレンダーで予約されたイベントは、この 取引先 に自動的にリンクされる。
+AppointmentDuration = 予約期間 : %s
+BookingSuccessfullyBooked=予約が保存された
+BookingReservationHourAfter=私たちは %s の日付での会議を 確定 予約する。
+BookcalBookingTitle=オンライン予約
+Transparency = 透明性
+ReadMore = より多く読む
+ReadLess = より少なく読む

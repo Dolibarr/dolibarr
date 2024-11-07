@@ -69,7 +69,6 @@ WithNoSlashAtTheEnd=Sin la barra "/" al final
 DirectoryRecommendation=<span class="warning"> IMPORTANTE </span>: Debe usar un directorio que esté fuera de las páginas web (por lo tanto, no use un subdirectorio del parámetro anterior).
 AdminLoginAlreadyExists=La cuenta de administrador de Dolibarr '<b> %s </b>' ya existe. Vuelve si quieres crear otro.
 FailedToCreateAdminLogin=Error al crear la cuenta de administrador de Dolibarr.
-WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
 ChoosedMigrateScript=Elegir script de migración
 DataMigration=Migración de base de datos (datos)
 DatabaseMigration=Migración de base de datos (estructura + algunos datos)
@@ -106,7 +105,6 @@ MigrationCustomerOrderShipping=Migrar el envío para el almacenamiento de pedido
 MigrationShippingDelivery=Actualizar el almacenamiento de envío
 MigrationShippingDelivery2=Actualización de almacenamiento de envío 2
 MigrationFinished=Migración terminada
-LastStepDesc=<strong> Último paso </strong>: defina aquí el nombre de usuario y la contraseña que desea utilizar para conectarse a Dolibarr. <b> No pierda esto, ya que es la cuenta maestra para administrar todas las demás cuentas de usuario / adicionales. </b>
 ActivateModule=Activar módulo %s
 ShowEditTechnicalParameters=Haga clic aquí para mostrar / editar parámetros avanzados (modo experto)
 WarningUpgrade=Advertencia:\n¿Ejecutó primero una copia de seguridad de la base de datos?\nEsto es muy recomendable. La pérdida de datos (debido a, por ejemplo, errores en mysql versión 5.5.40 / 41/42/43) puede ser posible durante este proceso, por lo que es esencial realizar un volcado completo de su base de datos antes de iniciar cualquier migración.\n\nHaga clic en Aceptar para iniciar el proceso de migración ...
@@ -116,7 +114,6 @@ KeepDefaultValuesDeb=Usó el asistente de configuración de Dolibarr de un paque
 KeepDefaultValuesMamp=Utilizó el asistente de configuración de Dolibarr de DoliMamp, por lo que los valores propuestos aquí ya están optimizados. Cámbialas solo si sabes lo que estás haciendo.
 KeepDefaultValuesProxmox=Utilizó el asistente de configuración de Dolibarr desde un dispositivo virtual Proxmox, por lo que los valores propuestos aquí ya están optimizados. Cámbialas solo si sabes lo que estás haciendo.
 UpgradeExternalModule=Ejecutar proceso de actualización dedicado de módulo externo
-SetAtLeastOneOptionAsUrlParameter=Establecer al menos una opción como parámetro en la URL. Por ejemplo: '... repair.php? Standard = confirmado'
 NothingToDelete=Nada que limpiar / borrar
 MigrationFixData=Arreglo para datos desnormalizados
 MigrationOrder=Migración de datos para pedidos del cliente.

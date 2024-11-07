@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
@@ -8,10 +10,10 @@ namespace Sabre\DAV;
  * It contains the type of PROPFIND request, which properties were requested
  * and also the returned items.
  */
-class PropFind {
-
+class PropFind
+{
     /**
-     * A normal propfind
+     * A normal propfind.
      */
     const NORMAL = 0;
 
@@ -33,21 +35,20 @@ class PropFind {
     const PROPNAME = 2;
 
     /**
-     * Creates the PROPFIND object
+     * Creates the PROPFIND object.
      *
      * @param string $path
-     * @param array $properties
-     * @param int $depth
-     * @param int $requestType
+     * @param int    $depth
+     * @param int    $requestType
      */
-    function __construct($path, array $properties, $depth = 0, $requestType = self::NORMAL) {
-
+    public function __construct($path, array $properties, $depth = 0, $requestType = self::NORMAL)
+    {
         $this->path = $path;
         $this->properties = $properties;
         $this->depth = $depth;
         $this->requestType = $requestType;
 
-        if ($requestType === self::ALLPROPS) {
+        if (self::ALLPROPS === $requestType) {
             $this->properties = [
                 '{DAV:}getlastmodified',
                 '{DAV:}getcontentlength',
@@ -60,13 +61,10 @@ class PropFind {
         }
 
         foreach ($this->properties as $propertyName) {
-
             // Seeding properties with 404's.
             $this->result[$propertyName] = [404, null];
-
         }
         $this->itemsLeft = count($this->result);
-
     }
 
     /**
@@ -88,68 +86,65 @@ class PropFind {
      * It's also possible to not pass a callback, but immediately pass a value
      *
      * @param string $propertyName
-     * @param mixed $valueOrCallBack
-     * @return void
+     * @param mixed  $valueOrCallBack
      */
-    function handle($propertyName, $valueOrCallBack) {
-
-        if ($this->itemsLeft && isset($this->result[$propertyName]) && $this->result[$propertyName][0] === 404) {
+    public function handle($propertyName, $valueOrCallBack)
+    {
+        if ($this->itemsLeft && isset($this->result[$propertyName]) && 404 === $this->result[$propertyName][0]) {
             if (is_callable($valueOrCallBack)) {
                 $value = $valueOrCallBack();
             } else {
                 $value = $valueOrCallBack;
             }
             if (!is_null($value)) {
-                $this->itemsLeft--;
+                --$this->itemsLeft;
                 $this->result[$propertyName] = [200, $value];
             }
         }
-
     }
 
     /**
-     * Sets the value of the property
+     * Sets the value of the property.
      *
      * If status is not supplied, the status will default to 200 for non-null
      * properties, and 404 for null properties.
      *
      * @param string $propertyName
-     * @param mixed $value
-     * @param int $status
-     * @return void
+     * @param mixed  $value
+     * @param int    $status
      */
-    function set($propertyName, $value, $status = null) {
-
+    public function set($propertyName, $value, $status = null)
+    {
         if (is_null($status)) {
             $status = is_null($value) ? 404 : 200;
         }
         // If this is an ALLPROPS request and the property is
         // unknown, add it to the result; else ignore it:
         if (!isset($this->result[$propertyName])) {
-            if ($this->requestType === self::ALLPROPS) {
+            if (self::ALLPROPS === $this->requestType) {
                 $this->result[$propertyName] = [$status, $value];
             }
+
             return;
         }
-        if ($status !== 404 && $this->result[$propertyName][0] === 404) {
-            $this->itemsLeft--;
-        } elseif ($status === 404 && $this->result[$propertyName][0] !== 404) {
-            $this->itemsLeft++;
+        if (404 !== $status && 404 === $this->result[$propertyName][0]) {
+            --$this->itemsLeft;
+        } elseif (404 === $status && 404 !== $this->result[$propertyName][0]) {
+            ++$this->itemsLeft;
         }
         $this->result[$propertyName] = [$status, $value];
-
     }
 
     /**
      * Returns the current value for a property.
      *
      * @param string $propertyName
+     *
      * @return mixed
      */
-    function get($propertyName) {
-
+    public function get($propertyName)
+    {
         return isset($this->result[$propertyName]) ? $this->result[$propertyName][1] : null;
-
     }
 
     /**
@@ -159,24 +154,22 @@ class PropFind {
      * null will be returned.
      *
      * @param string $propertyName
+     *
      * @return int|null
      */
-    function getStatus($propertyName) {
-
+    public function getStatus($propertyName)
+    {
         return isset($this->result[$propertyName]) ? $this->result[$propertyName][0] : null;
-
     }
 
     /**
      * Updates the path for this PROPFIND.
      *
      * @param string $path
-     * @return void
      */
-    function setPath($path) {
-
+    public function setPath($path)
+    {
         $this->path = $path;
-
     }
 
     /**
@@ -184,10 +177,9 @@ class PropFind {
      *
      * @return string
      */
-    function getPath() {
-
+    public function getPath()
+    {
         return $this->path;
-
     }
 
     /**
@@ -195,22 +187,19 @@ class PropFind {
      *
      * @return int
      */
-    function getDepth() {
-
+    public function getDepth()
+    {
         return $this->depth;
-
     }
 
     /**
      * Updates the depth of this propfind request.
      *
      * @param int $depth
-     * @return void
      */
-    function setDepth($depth) {
-
+    public function setDepth($depth)
+    {
         $this->depth = $depth;
-
     }
 
     /**
@@ -219,19 +208,19 @@ class PropFind {
      *
      * @return array
      */
-    function get404Properties() {
-
-        if ($this->itemsLeft === 0) {
+    public function get404Properties()
+    {
+        if (0 === $this->itemsLeft) {
             return [];
         }
         $result = [];
         foreach ($this->result as $propertyName => $stuff) {
-            if ($stuff[0] === 404) {
+            if (404 === $stuff[0]) {
                 $result[] = $propertyName;
             }
         }
-        return $result;
 
+        return $result;
     }
 
     /**
@@ -241,10 +230,9 @@ class PropFind {
      *
      * @return array
      */
-    function getRequestedProperties() {
-
+    public function getRequestedProperties()
+    {
         return $this->properties;
-
     }
 
     /**
@@ -252,10 +240,9 @@ class PropFind {
      *
      * @return bool
      */
-    function isAllProps() {
-
-        return $this->requestType === self::ALLPROPS;
-
+    public function isAllProps()
+    {
+        return self::ALLPROPS === $this->requestType;
     }
 
     /**
@@ -270,8 +257,8 @@ class PropFind {
      *
      * @return array
      */
-    function getResultForMultiStatus() {
-
+    public function getResultForMultiStatus()
+    {
         $r = [
             200 => [],
             404 => [],
@@ -284,9 +271,11 @@ class PropFind {
             }
         }
         // Removing the 404's for multi-status requests.
-        if ($this->requestType === self::ALLPROPS) unset($r[404]);
-        return $r;
+        if (self::ALLPROPS === $this->requestType) {
+            unset($r[404]);
+        }
 
+        return $r;
     }
 
     /**
@@ -307,12 +296,12 @@ class PropFind {
     protected $depth = 0;
 
     /**
-     * The type of request. See the TYPE constants
+     * The type of request. See the TYPE constants.
      */
     protected $requestType;
 
     /**
-     * A list of requested properties
+     * A list of requested properties.
      *
      * @var array
      */
@@ -343,5 +332,4 @@ class PropFind {
      * @var int
      */
     protected $itemsLeft;
-
 }

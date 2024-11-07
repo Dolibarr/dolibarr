@@ -69,6 +69,7 @@ ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
 
 UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Ticket_Requests' WHERE ref = 'Collect_Ticket_Requets';
 UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Responses_In' WHERE ref = 'Collect_Responses';
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 UPDATE llx_document_model set nom = 'standard' where nom = 'Standard' and type ='stock';
@@ -369,6 +370,7 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
 
 ALTER TABLE llx_inventorydet ADD COLUMN fk_warehouse integer DEFAULT 0;
+ALTER TABLE llx_inventorydet ADD COLUMN batch varchar(128) DEFAULT NULL;
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
 ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;

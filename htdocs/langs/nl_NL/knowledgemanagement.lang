@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Kennisbeheersysteem
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Beheer een Knowledge Management (KM) of helpdeskbasis
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Kennisbeheersysteem instellen
-Settings = Instellingen
 KnowledgeManagementSetupPage = Kennisbeheersysteem opstartpagina
-
-
-#
 # About page
-#
-About = Over
 KnowledgeManagementAbout = Over Kennis Management
 KnowledgeManagementAboutPage = Over Kennis Management pagina
-
 KnowledgeManagementArea = Kennis Management
 MenuKnowledgeRecord = Kennis basis
+MenuKnowledgeRecordShort = Kennis basis
 ListKnowledgeRecord = Lijst met artikelen
 NewKnowledgeRecord = Nieuw artikel
 ValidateReply = Valideer oplossing
-KnowledgeRecords = Lidwoord
+KnowledgeRecords = Artikelen
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extravelden voor Artikel
 GroupOfTicket=Groep van tickets
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Aanbevolen voor tickets wanneer groep is
-
+YouCanLinkArticleToATicketCategory=Je kunt het artikel koppelen aan een ticketgroep (zodat het artikel wordt uitgelicht op alle tickets in deze groep)
+SuggestedForTicketsInGroup=Aanbevolen bij het maken van tickets
 SetObsolete=Markeer als overbodig
 ConfirmCloseKM=Wilt u bevestigen dat het sluiten van dit artikel overbodig is?
 ConfirmReopenKM=Wilt u de status terugzetten naar "gevalideerd"?
+BoxLastKnowledgerecordDescription=Laatste %s artikelen
+BoxLastKnowledgerecord=Laatste artikelen
+BoxLastKnowledgerecordContent=Laatste artikelen
+BoxLastKnowledgerecordModifiedContent=Laatst gewijzigde artikelen
+BoxLastModifiedKnowledgerecordDescription=Laatste %s gewijzigde artikelen
+BoxLastModifiedKnowledgerecord=Laatst gewijzigde artikelen

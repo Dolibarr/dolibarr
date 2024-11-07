@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Element;
 
 use Sabre\DAV\Exception\BadRequest;
@@ -18,8 +20,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Sharee implements Element {
-
+class Sharee implements Element
+{
     /**
      * A URL. Usually a mailto: address, could also be a principal url.
      * This uniquely identifies the sharee.
@@ -79,24 +81,19 @@ class Sharee implements Element {
     public $inviteStatus;
 
     /**
-     * Creates the object
+     * Creates the object.
      *
      * $properties will be used to populate all internal properties.
-     *
-     * @param array $properties
      */
-    function __construct(array $properties = []) {
-
+    public function __construct(array $properties = [])
+    {
         foreach ($properties as $k => $v) {
-
             if (property_exists($this, $k)) {
                 $this->$k = $v;
             } else {
-                throw new \InvalidArgumentException('Unknown property: ' . $k);
+                throw new \InvalidArgumentException('Unknown property: '.$k);
             }
-
         }
-
     }
 
     /**
@@ -114,33 +111,28 @@ class Sharee implements Element {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->write([
             new Href($this->href),
-            '{DAV:}prop'         => $this->properties,
+            '{DAV:}prop' => $this->properties,
             '{DAV:}share-access' => new ShareAccess($this->access),
         ]);
         switch ($this->inviteStatus) {
-            case Plugin::INVITE_NORESPONSE :
+            case Plugin::INVITE_NORESPONSE:
                 $writer->writeElement('{DAV:}invite-noresponse');
                 break;
-            case Plugin::INVITE_ACCEPTED :
+            case Plugin::INVITE_ACCEPTED:
                 $writer->writeElement('{DAV:}invite-accepted');
                 break;
-            case Plugin::INVITE_DECLINED :
+            case Plugin::INVITE_DECLINED:
                 $writer->writeElement('{DAV:}invite-declined');
                 break;
-            case Plugin::INVITE_INVALID :
+            case Plugin::INVITE_INVALID:
                 $writer->writeElement('{DAV:}invite-invalid');
                 break;
         }
-
     }
 
     /**
@@ -161,11 +153,10 @@ class Sharee implements Element {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         // Temporarily override configuration
         $reader->pushContext();
         $reader->elementMap['{DAV:}share-access'] = 'Sabre\DAV\Xml\Property\ShareAccess';
@@ -192,8 +183,7 @@ class Sharee implements Element {
             throw new BadRequest('Every {DAV:}sharee must have a {DAV:}share-access child element');
         }
         $sharee->access = $elems['share-access']->getValue();
+
         return $sharee;
-
     }
-
 }

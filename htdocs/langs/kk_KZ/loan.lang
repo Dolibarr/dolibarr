@@ -23,12 +23,12 @@ AddLoan=Несие құру
 FinancialCommitment=Қаржылық міндеттеме
 InterestAmount=Қызығушылық
 CapitalRemain=Капитал қалады
-TermPaidAllreadyPaid = Бұл мерзім толығымен төленген
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = Бұл мерзім бұрыннан төленген
+CantUseScheduleWithLoanStartedToPaid = Төлем басталған несие үшін уақыт кестесін жасау мүмкін емес
 CantModifyInterestIfScheduleIsUsed = Егер сіз кестені қолдансаңыз, қызығушылықты өзгерте алмайсыз
 # Admin
 ConfigLoan=Кредиттік модульді конфигурациялау
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Капитал үшін әдепкі бойынша пайдаланылатын шот (шот жоспарынан) (несие модулі)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Пайыз үшін әдепкі бойынша пайдаланылатын шот (шот жоспарынан) (Несие модулі)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Сақтандыру үшін әдепкі бойынша пайдаланылатын шот (шот жоспарынан) (Несие модулі)
 CreateCalcSchedule=Қаржылық міндеттемені өңдеу

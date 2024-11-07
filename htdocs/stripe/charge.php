@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,21 +32,29 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -68,10 +77,10 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
@@ -115,7 +124,7 @@ if (!$rowid) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("StripePaymentId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("StripeCustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -132,6 +141,7 @@ if (!$rowid) {
 			$list = \Stripe\Charge::all($option);
 		}
 
+		'@phan-var-force \Stripe\Charge $list';  // TStripeObject suggested, but is a template
 		$num = count($list->data);
 
 
@@ -142,13 +152,14 @@ if (!$rowid) {
 		$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 		//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 	} catch (Exception $e) {
-		print '<tr><td colspan="6">'.$e->getMessage().'</td></td>';
+		print '<tr><td colspan="8">'.$e->getMessage().'</td></td>';
 	}
 
 	//print $list;
 	$i = 0;
 	if (!empty($list)) {
 		foreach ($list->data as $charge) {
+			'@phan-var-force \Stripe\Charge $charge';  // TStripeObject suggested, but is a template
 			if ($i >= $limit) {
 				break;
 			}

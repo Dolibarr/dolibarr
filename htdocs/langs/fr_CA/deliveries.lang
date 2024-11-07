@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=A livraison
 DeliveryRef=Livraison de remise
-DeliveryCard=Carte de réception
 CreateDeliveryOrder=Gérer le reçu de livraison
 DeliveryStateSaved=Etat de livraison enregistré
 SetDeliveryDate=Date d'expédition prévue

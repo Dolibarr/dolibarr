@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Санҷида шуд
 StatusSendingProcessedShort=Коркард
 SendingSheet=Варақаи интиқол
 ConfirmDeleteSending=Шумо мутмаин ҳастед, ки ин интиқолро нест кардан мехоҳед?
-ConfirmValidateSending=Шумо мутмаин ҳастед, ки ин интиқолро бо истинод <b> %s </b> тасдиқ кардан мехоҳед?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Шумо мутмаин ҳастед, ки ин интиқолро бекор кардан мехоҳед?
 DocumentModelMerou=Модели Merou A5
 WarningNoQtyLeftToSend=Огоҳӣ, ягон маҳсулот интизори интиқол нест.
@@ -48,12 +48,12 @@ DateDeliveryPlanned=Санаи ба нақша гирифташуда
 RefDeliveryReceipt=Қабули расонидани интиқол
 StatusReceipt=Қабули расонидани мақом
 DateReceived=Санаи расонидани қабул
-ClassifyReception=Қабулро тасниф кунед
+ClassifyReception=Таснифоти гирифташуда
 SendShippingByEMail=Интиқолро тавассути почтаи электронӣ фиристед
 SendShippingRef=Пешниҳоди интиқол %s
 ActionsOnShipping=Ҳодисаҳо оид ба интиқол
 LinkToTrackYourPackage=Истинод барои пайгирии бастаи шумо
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Дар айни замон, эҷоди интиқоли нав аз сабти фармоиши фурӯш анҷом дода мешавад.
 ShipmentLine=Хатти интиқол
 ProductQtyInCustomersOrdersRunning=Миқдори маҳсулот аз фармоишҳои фурӯш
 ProductQtyInSuppliersOrdersRunning=Миқдори маҳсулот аз фармоишҳои харид
@@ -62,6 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Миқдори маҳсулот а�
 NoProductToShipFoundIntoStock=Дар анбор <b> %s </b> ягон маҳсулот барои фиристодан ёфт нашуд. Ҳиссаи дуруст ё баргаштан барои интихоби анбори дигар.
 WeightVolShort=Вазн/ҷ.
 ValidateOrderFirstBeforeShipment=Пеш аз он ки шумо интиқол диҳед, шумо бояд аввал фармоишро тасдиқ кунед.
+NoLineGoOnTabToAddSome=Сатр нест, барои илова кардан ба ҷадвали "%s" гузаред
+CreateInvoiceForThisCustomerFromSendings=Bill sendings
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
 
 # Sending methods
 # ModelDocument
@@ -70,7 +74,12 @@ DocumentModelStorm=Модели мукаммалтари ҳуҷҷатҳо бар
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER доимӣ муайян карда нашудааст
 SumOfProductVolumes=Ҳаҷми ҳаҷми маҳсулот
 SumOfProductWeights=Миқдори вазнҳои маҳсулот
-
 # warehouse details
 DetailWarehouseNumber= Тафсилоти анбор
 DetailWarehouseFormat= W: %s (Миқдор: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Намоиши санаи охирини воридшавӣ дар саҳҳомӣ ҳангоми эҷоди интиқол барои рақами силсилавӣ ё партия
+CreationOptions=Имкониятҳои дастрас ҳангоми эҷоди интиқол
+ShipmentDistribution=Тақсимоти интиқол
+ErrorTooManyCombinationBatchcode=Ягон ирсол барои сатри %s, зеро комбинатсияи аз ҳад зиёди анбор, маҳсулот, коди партия ёфт нашуд (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+ErrorTooMuchShipped=Миқдори фиристодашуда набояд аз миқдори фармоиш барои сатри %s зиёд бошад.

@@ -8,8 +8,6 @@ LocalAgenda=預設行事曆
 ActionsOwnedBy=事件承辦人
 ActionsOwnedByShort=承辦人
 AffectedTo=指定給
-Event=事件
-Events=事件集
 EventsNb=事件集數量
 ListOfActions=事件清單
 EventReports=事件報表
@@ -23,7 +21,6 @@ MenuDoneMyActions=我的已完成事件
 ListOfEvents=事件清單(預設行事曆)
 ActionsAskedBy=誰的事件報表
 ActionsToDoBy=事件指定給
-ActionsDoneBy=由誰完成事件
 ActionAssignedTo=事件指定給
 ViewCal=月檢視
 ViewDay=日檢視
@@ -57,17 +54,18 @@ MemberValidatedInDolibarr=會員 %s 已驗證
 MemberModifiedInDolibarr=會員 %s 已修改
 MemberResiliatedInDolibarr=會員 %s 已終止
 MemberDeletedInDolibarr=會員 %s 已刪除
-MemberExcludedInDolibarr=Member %s excluded
+MemberExcludedInDolibarr=已排除會員 %s
 MemberSubscriptionAddedInDolibarr=會員 %s 已新增 %s 的訂閱
 MemberSubscriptionModifiedInDolibarr=會員 %s 已修改 %s 訂閱
 MemberSubscriptionDeletedInDolibarr=會員 %s 已刪除 %s 訂閱
 ShipmentValidatedInDolibarr=裝運%s已驗證
-ShipmentClassifyClosedInDolibarr=裝運%s已歸類為開票
+ShipmentClassifyClosedInDolibarr=發貨%s已分類為關閉
 ShipmentUnClassifyCloseddInDolibarr=發貨%s已分類為重新打開
 ShipmentBackToDraftInDolibarr=裝運%s回到草稿狀態
 ShipmentDeletedInDolibarr=裝運%s已刪除
 ShipmentCanceledInDolibarr=發貨%s已取消
 ReceptionValidatedInDolibarr=接收%s已驗證
+ReceptionDeletedInDolibarr=收貨%s已刪除
 ReceptionClassifyClosedInDolibarr=接收 %s 已分類為已關閉
 OrderCreatedInDolibarr=訂單 %s 已建立
 OrderValidatedInDolibarr=訂單 %s 已驗證
@@ -87,6 +85,9 @@ SupplierInvoiceSentByEMail=以電子郵件發送的供應商發票%s
 ShippingSentByEMail=以電子郵件發送的裝運%s
 ShippingValidated= 裝運%s 已驗證
 InterventionSentByEMail=以電子郵件發送的干預措施%s
+ProjectSentByEMail=以電子郵件發送的專案%s
+ProjectDeletedInDolibarr=專案 %s 已刪除
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=提案/建議書已刪除
 OrderDeleted=訂單已刪除
 InvoiceDeleted=發票已刪除
@@ -126,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO已生產
 MRP_MO_DELETEInDolibarr=MO已刪除
 MRP_MO_CANCELInDolibarr=MO已取消
 PAIDInDolibarr=%s已付款
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=已取消
 ##### End agenda events #####
 AgendaModelModule=事件的文件範本
 DateActionStart=開始日期
 DateActionEnd=結束日期
 AgendaUrlOptions1=您可以增加以下參數來篩選輸出：
-AgendaUrlOptions3=<b>logina = %s</b>將限制輸出用戶<b>%s</b>擁有的操作。
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> 將限制輸出非用戶<b>%s</b>擁有的操作。
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint = %s</b>將限制輸出分配給用戶<b>%s</b> （所有者和其他用戶）的操作。
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 將限制輸出為已連結專案操作 <b>PROJECT_ID</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>排除自動事件。
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=設定<b>includeholidays=1</b>以包括假期活動。
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=聯絡人生日
 AgendaHideBirthdayEvents=隱藏連絡人生日
 Busy=忙錄
@@ -160,7 +165,7 @@ DateActionBegin=事件開始日期
 ConfirmCloneEvent=您確定要複製事件 <b>%s</b>?
 RepeatEvent=重覆事件
 OnceOnly=只有一次
-EveryDay=Every day
+EveryDay=每天
 EveryWeek=每周
 EveryMonth=每月
 DayOfMonth=一個月中的某天
@@ -175,5 +180,28 @@ ReminderType=回調類型
 AddReminder=為此事件建立自動提醒通知
 ErrorReminderActionCommCreation=為此事件建立提醒通知時出現錯誤
 BrowserPush=查看彈出通知
+Reminders=提醒
 ActiveByDefault=預設為啟用
-Until=until
+Until=直到
+DataFromWasMerged=來自 %s 的資料已合併
+AgendaShowBookcalCalendar=預訂行事曆：%s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = 界面標題
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=日歷
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

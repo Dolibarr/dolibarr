@@ -1,5 +1,3 @@
 # Dolibarr language file - Source file is en_US - exports
-ErrorMissingMandatoryValue=Mandatory data is empty in the source file for field <b>%s</b>.
-DataComeFromFileFieldNb=Value to insert comes from field number <b>%s</b> in source file.
-DataComeFromIdFoundFromRef=Value that comes from field number <b>%s</b> of source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database).
-DataComeFromIdFoundFromCodeId=Code that comes from field number <b>%s</b> of source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
+LineVATRate=Tasa de IGV de la línea
+LineTotalVAT=Importe de IGV por línea

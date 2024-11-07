@@ -25,9 +25,11 @@
 
 $(document).ready(function () {
 
-    var timezone = jstz.determine();
-	console.log("Timezone detected for user: "+timezone.name());
-	
+    //var timezone = jstz.determine(); // old method using jstimezonedetect library
+	//console.log("Timezone detected for user: "+timezone.name());
+	var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+	console.log("Timezone detected by Intl for user: "+timezone);
+
     // Detect and save TZ and DST
 	var rightNow = new Date();
 	var jan1 = new Date(rightNow.getFullYear(), 0, 1, 0, 0, 0, 0);
@@ -49,8 +51,8 @@ $(document).ready(function () {
 	var dst_first=DisplayDstSwitchDates('first');
 	var dst_second=DisplayDstSwitchDates('second');
 	//alert(dst);
+    $('#tz_string').val(timezone);										// returns TZ string
 	$('#tz').val(std_time_offset);   				  					// returns TZ
-    $('#tz_string').val(timezone.name());		// returns TZ string
 	$('#dst_observed').val(dst);   				  						// returns if DST is observed on summer
 	$('#dst_first').val(dst_first);   									// returns DST first switch in year
 	$('#dst_second').val(dst_second);   								// returns DST second switch in year

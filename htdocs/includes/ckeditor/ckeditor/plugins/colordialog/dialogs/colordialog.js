@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.dialog.add("colordialog",function(w){function l(){h.getById(p).removeStyle("background-color");m.getContentElement("picker","selectedColor").setValue("");x()}function y(a){a=a.data.getTarget();var c;"td"==a.getName()&&(c=a.getChild(0).getHtml())&&(x(),e=a,e.setAttribute("aria-selected",!0),e.addClass("cke_colordialog_selected"),m.getContentElement("picker","selectedColor").setValue(c))}function x(){e&&(e.removeClass("cke_colordialog_selected"),e.removeAttribute("aria-selected"),e=null)}function D(a){a=

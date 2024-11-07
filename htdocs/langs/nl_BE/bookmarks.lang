@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - bookmarks
-AddThisPageToBookmarks=Voeg huidige pagina toe aan de bladwijzers
-Bookmark=Bladwijzer
-Bookmarks=Bladwijzers
-ListOfBookmarks=Lijst van bladwijzers
-EditBookmarks=Bladwijzers oplijsten/bewerken
-NewBookmark=Nieuwe bladwijzer
-ShowBookmark=Toon bladwijzer
-BehaviourOnClick=Gedrag wanneer een bladwijzer URL geselecteerd is
-CreateBookmark=Bladwijzer aanmaken
-BookmarksManagement=Bladwijzerbeheer
+AddThisPageToBookmarks =Voeg huidige pagina toe aan de bladwijzers
+BehaviourOnClick =Gedrag wanneer een bladwijzer URL geselecteerd is
+Bookmark =Bladwijzer
+Bookmarks =Bladwijzers
+BookmarksManagement =Bladwijzerbeheer
+CreateBookmark =Bladwijzer aanmaken
+EditBookmarks =Bladwijzers oplijsten/bewerken
+ListOfBookmarks =Lijst van bladwijzers
+NewBookmark =Nieuwe bladwijzer
+ShowBookmark =Toon bladwijzer

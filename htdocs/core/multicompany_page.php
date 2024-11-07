@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -19,8 +21,8 @@
  */
 
 /**
- *       \file       htdocs/core/multicompany_page.php
- *       \brief      File to return a page with the list of all entities user can switch to
+ *  \file       htdocs/core/multicompany_page.php
+ *  \brief      File to return a page with the list of all entities user can switch to
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -40,9 +42,16 @@ if (!defined('NOREQUIREMENU')) {
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ');
-$entityid = GETPOST('entity', 'int');
+$entityid = GETPOSTINT('entity');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
 	$backtourl = DOL_URL_ROOT;
@@ -57,13 +66,16 @@ $langs->load("main");
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
+if (!isModEnabled('multicompany')) {
+	httponly_accessforbidden('No multicompany module enabled');
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'switchentity') {
+if ($action == 'switchentity') {	// Test on permission not required here. Test will be done on the targeted page.
 	if (is_object($mc)) {
 		$mc->switchEntity($entityid);
 	}
@@ -91,62 +103,102 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
+// Define $multicompanyList
+$multicompanyList = '';
 
+$bookmarkList = '';
 if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
-	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
-	$bookmarkList .= '<br><br>';
+	$multicompanyList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
+	$multicompanyList .= '<br><br>';
+} elseif (!empty($user->entity) && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) { // Should not be accessible if the option to centralize users on the main entity is not activated
+	$langs->load("errors");
+	$multicompanyList .= '<br><span class="opacitymedium">'.$langs->trans("ErrorForbidden").'</span>';
+	$multicompanyList .= '<br><br>';
 } else {
 	// Instantiate hooks of thirdparty module
 	$hookmanager->initHooks(array('multicompany'));
 
-	// Define $bookmarks
-	$multicompanyList = '';
-	$searchForm = '';
-
-
 	if (is_object($mc)) {
-		$listofentities = $mc->getEntitiesList($user->login, false, true);
+		$listofentities = $mc->getEntitiesList(true, false, true);
+	} else {
+		$listofentities = array();
 	}
 
-	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
+	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none; padding: 10px; padding-top: 20px;">';
+
+	// Get list of all images for all entities
+	// Logo is inside MAIN_INFO_SOCIETE_LOGO_SQUARRED/_MINI/_SMALL else MAIN_INFO_SOCIETE_LOGO/_MINI/_SMALL
+	$imagesofentities = array();
+	$sql = "SELECT entity, name, value FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE name in ('MAIN_INFO_SOCIETE_LOGO', 'MAIN_INFO_SOCIETE_LOGO_MINI', 'MAIN_INFO_SOCIETE_LOGO_SQUARRED', 'MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI')";
+	$sql .= " GROUP BY entity, name, value";
+	$sql .= " ORDER BY entity, name, value";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			// The ...LOGO_MINI is after ...LOGO in list and the SQUARRED is after the normal, so the mini squarred is at end
+			// and will overwrite the main image.
+			// We ignore the ...LOGO_SMALL that will overwrite the mini.
+			if ($obj->name == 'MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') {
+				$imagesofentities[$obj->entity] = array('file' => $obj->value, 'type' => 'mini');
+			} elseif ($obj->name == 'MAIN_INFO_SOCIETE_LOGO_MINI') {
+				$imagesofentities[$obj->entity] = array('file' => $obj->value, 'type' => 'mini');
+			} elseif ($obj->name == 'MAIN_INFO_SOCIETE_LOGO_SQUARRED') {
+				$imagesofentities[$obj->entity] = array('file' => $obj->value, 'type' => 'normal');
+			} elseif ($obj->name == 'MAIN_INFO_SOCIETE_LOGO') {
+				$imagesofentities[$obj->entity] = array('file' => $obj->value, 'type' => 'normal');
+			}
+		}
+	}
+
 	foreach ($listofentities as $entityid => $entitycursor) {
+		// Check if the user has the right to access the entity
+		if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')	&& !empty($user->entity) && $mc->checkRight($user->id, $entityid) < 0) {
+			continue;
+		}
 		$url = DOL_URL_ROOT.'/core/multicompany_page.php?action=switchentity&token='.newToken().'&entity='.((int) $entityid).($backtourl ? '&backtourl='.urlencode($backtourl) : '');
-		$multicompanyList .= '<li class="lilistonly" style="height: 2.5em; font-size: 1.15em;">';
-		$multicompanyList .= '<a class="dropdown-item multicompany-item" id="multicompany-item-'.$entityid.'" data-id="'.$entityid.'" href="'.dol_escape_htmltag($url).'">';
-		$multicompanyList .= img_picto('', 'entity', 'class="pictofixedwidth"');
+		$multicompanyList .= '<li class="lilistonly" style="height: 4em; font-size: 1.5em;">';
+		$multicompanyList .= '<a class="dropdown-item multicompany-item paddingtopimp paddingbottomimp" id="multicompany-item-'.$entityid.'" data-id="'.$entityid.'" href="'.dol_escape_htmltag($url).'">';
+
+		$urlforimage = DOL_URL_ROOT.'/public/theme/common/company.png';
+		if (!empty($imagesofentities[$entityid])) {
+			if ($imagesofentities[$entityid]['type'] == 'mini') {
+				$urlforimage = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&entity='.$entityid.'&file='.urlencode('logos/thumbs/'.$imagesofentities[$entityid]['file']);
+			} else {
+				$urlforimage = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&entity='.$entityid.'&file='.urlencode('logos/'.$imagesofentities[$entityid]['file']);
+			}
+		}
+		$multicompanyList .= '<img class="photocontact photorefnoborder valignmiddle marginrightonly" alt="" src="'.$urlforimage.'">';
+
 		$multicompanyList .= dol_escape_htmltag($entitycursor);
 		if ($conf->entity == $entityid) {
-			$multicompanyList .= ' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+			$multicompanyList .= ' <span class="opacitymedium">'.img_picto($langs->trans("Currently"), 'tick').'</span>';
 		}
 		$multicompanyList .= '</a>';
 		$multicompanyList .= '</li>';
 	}
 	$multicompanyList .= '</ul>';
 
-	$searchForm .= '<input name="bookmark" id="top-multicompany-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Entity').'" autocomplete="off" >';
-
-
 	// Execute hook printBookmarks
-	$parameters = array('multicompany'=>$multicompanyList);
+	$parameters = array('multicompany' => $multicompanyList);
 	$reshook = $hookmanager->executeHooks('printMultiCompanyEntities', $parameters); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		$multicompanyList .= $hookmanager->resPrint;
 	} else {
 		$multicompanyList = $hookmanager->resPrint;
 	}
-
-
-	print "\n";
-	print "<!-- Begin Multicompany list -->\n";
-	print '<div class="center"><div class="center" style="padding: 6px;">';
-	print '<style>.menu_titre { padding-top: 7px; }</style>';
-	print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
-	print $multicompanyList;
-	print '</div>'."\n";
-	print '</div></div>';
-	print "\n<!-- End SearchForm -->\n";
 }
+
+print "\n";
+print "<!-- Begin Multicompany list -->\n";
+print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<style>.menu_titre { padding-top: 7px; }</style>';
+print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
+print $multicompanyList;
+print '</div>'."\n";
+print '</div></div>';
+print "\n<!-- End Multicompany list -->\n";
 
 print '</div>';
 print '</body></html>'."\n";

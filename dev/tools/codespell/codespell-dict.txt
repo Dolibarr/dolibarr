@@ -1,0 +1,50 @@
+# Please add in alphabetical order->(`sort -u` like).
+EPR->ERP
+alpah->alpha
+alphanothtml->alphanohtml
+alpahnothtml->alphanohtml
+aplha->alpha
+aplhanothtml->alphanohtml
+aploha->alpha
+aplohanothtml->alphanohtml
+aplphanothtml->alphanohtml
+centpecent->centpercent
+choosed->chosen
+cumuled->cumulative
+dokument->document
+dolibar->dolibarr
+dolibarrr->dolibarr
+dollibar->dolibarr
+dollibarr->dolibarr
+extrafeild->extrafield
+thoose->those
+# fiche->card
+maringbottomonly->marginbottomonly
+maxwidthonsmartpone->maxwidthonsmartphone
+maxwidthonspartphone->maxwidthonsmartphone
+minwith100->minwidth100
+minwith200->minwidth200
+mot de passe->password
+multicurreny->multicurrency
+nempty->an empty, empty, not empty,
+nocellnopadding->nocellnopadd
+nodrap->nodrag, nodrop,
+not de passe->password
+nothtml->nohtml
+notoptoleftroright->notoptoleftnoright
+nowraponalls->nowraponall
+oddevene->oddeven
+oddseven->oddeven
+opacitymediuem->opacitymedium
+pictofiwedwidth->pictofixedwidth
+pictofixedwith->pictofixedwidth
+shippin->shipping
+tableau de bord->state board
+tagret->target
+tdoverflowmax100aaa->tdoverflowmax100
+tdoverlowmax200->tdoverflowmax200
+thirparty->thirdparty, third party,
+thridparty->thirdparty, third party,
+with100->width100
+with75->width75
+wysiwig->wysiwyg

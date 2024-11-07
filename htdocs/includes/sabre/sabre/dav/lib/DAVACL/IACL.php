@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL;
 
 use Sabre\DAV;
 
 /**
- * ACL-enabled node
+ * ACL-enabled node.
  *
  * If you want to add WebDAV ACL to a node, you must implement this class
  *
@@ -13,25 +15,25 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IACL extends DAV\INode {
-
+interface IACL extends DAV\INode
+{
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner();
+    public function getOwner();
 
     /**
-     * Returns a group principal
+     * Returns a group principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getGroup();
+    public function getGroup();
 
     /**
      * Returns a list of ACE's for this node.
@@ -45,17 +47,14 @@ interface IACL extends DAV\INode {
      *
      * @return array
      */
-    function getACL();
+    public function getACL();
 
     /**
-     * Updates the ACL
+     * Updates the ACL.
      *
      * This method will receive a list of new ACE's as an array argument.
-     *
-     * @param array $acl
-     * @return void
      */
-    function setACL(array $acl);
+    public function setACL(array $acl);
 
     /**
      * Returns the list of supported privileges for this node.
@@ -69,6 +68,5 @@ interface IACL extends DAV\INode {
      *
      * @return array|null
      */
-    function getSupportedPrivilegeSet();
-
+    public function getSupportedPrivilegeSet();
 }

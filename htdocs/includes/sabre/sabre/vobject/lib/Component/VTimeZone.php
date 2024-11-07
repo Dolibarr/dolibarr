@@ -14,8 +14,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VTimeZone extends VObject\Component {
-
+class VTimeZone extends VObject\Component
+{
     /**
      * Returns the PHP DateTimeZone for this VTIMEZONE component.
      *
@@ -24,10 +24,9 @@ class VTimeZone extends VObject\Component {
      *
      * @return \DateTimeZone
      */
-    function getTimeZone() {
-
-        return VObject\TimeZoneUtil::getTimeZone((string)$this->TZID, $this->root);
-
+    public function getTimeZone()
+    {
+        return VObject\TimeZoneUtil::getTimeZone((string) $this->TZID, $this->root);
     }
 
     /**
@@ -45,13 +44,13 @@ class VTimeZone extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'TZID' => 1,
 
             'LAST-MODIFIED' => '?',
-            'TZURL'         => '?',
+            'TZURL' => '?',
 
             // At least 1 STANDARD or DAYLIGHT must appear.
             //
@@ -60,7 +59,5 @@ class VTimeZone extends VObject\Component {
             'STANDARD' => '*',
             'DAYLIGHT' => '*',
         ];
-
     }
-
 }

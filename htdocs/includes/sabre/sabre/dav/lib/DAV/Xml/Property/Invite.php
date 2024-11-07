@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\DAV\Xml\Element\Sharee;
@@ -20,10 +22,10 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Invite implements XmlSerializable {
-
+class Invite implements XmlSerializable
+{
     /**
-     * A list of sharees
+     * A list of sharees.
      *
      * @var Sharee[]
      */
@@ -34,10 +36,9 @@ class Invite implements XmlSerializable {
      *
      * @param Sharee[] $sharees
      */
-    function __construct(array $sharees) {
-
+    public function __construct(array $sharees)
+    {
         $this->sharees = $sharees;
-
     }
 
     /**
@@ -55,16 +56,11 @@ class Invite implements XmlSerializable {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->sharees as $sharee) {
             $writer->writeElement('{DAV:}sharee', $sharee);
         }
-
     }
-
 }

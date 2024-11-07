@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +27,25 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -49,6 +59,19 @@ if (!$sortorder) {
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
+$error = 0;
+$errors = array();
+
+// List of status
+static $tmpstatut2label = array(
+	'0' => 'OpenFiscalYear',
+	'1' => 'CloseFiscalYear'
+);
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$object = new Fiscalyear($db);
+$hookmanager->initHooks(array('fiscalyearlist'));
+
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
@@ -56,25 +79,6 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 }
-
-$error = 0;
-
-// List of status
-static $tmpstatut2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
-);
-$statut2label = array(
-		''
-);
-foreach ($tmpstatut2label as $key => $val) {
-	$statut2label[$key] = $langs->trans($val);
-}
-
-$errors = array();
-
-$object = new Fiscalyear($db);
-
 
 /*
  * Actions
@@ -93,9 +97,9 @@ $fiscalyearstatic = new Fiscalyear($db);
 
 $title = $langs->trans('AccountingPeriods');
 
-$help_url = "EN:Module_Double_Entry_Accounting";
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_fiscalyear');
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut as status, f.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";
@@ -118,18 +122,25 @@ $sql .= $db->plimit($limit + 1, $offset);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
+	$param = '';
 
-	$i = 0;
+	$parameters = array('param' => $param);
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
+	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
-	$addbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
-
+	if (empty($reshook)) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
+	}
 
 	$title = $langs->trans('AccountingPeriods');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'calendar', 0, $newcardbutton, '', $limit, 1);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste centpercent">';
+	print '<table class="tagtable liste centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Ref").'</td>';
 	print '<td>'.$langs->trans("Label").'</td>';
@@ -140,6 +151,9 @@ if ($result) {
 	print '<td class="right">'.$langs->trans("Status").'</td>';
 	print '</tr>';
 
+	// Loop on record
+	// --------------------------------------------------------------------
+	$i = 0;
 	if ($num) {
 		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
@@ -165,7 +179,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 	print '</table>';
 	print '</div>';

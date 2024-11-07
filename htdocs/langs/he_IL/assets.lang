@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+NewAsset=נכס חדש
+AccountancyCodeAsset=קוד הנהלת חשבונות (נכס)
+AccountancyCodeDepreciationAsset=קוד חשבונאות (חשבון נכס פחת)
+AccountancyCodeDepreciationExpense=קוד הנהלת חשבונות (חשבון הוצאות פחת)
+AssetsLines=נכסים
+DeleteType=לִמְחוֹק
+DeleteAnAssetType=מחק מודל נכס
+ConfirmDeleteAssetType=האם אתה בטוח שברצונך למחוק את מודל הנכס הזה?
+ShowTypeCard=הצג את הדגם '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=נכסים
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=תיאור הנכסים
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=הגדרת נכסים
+AssetSetupPage=דף הגדרת נכסים
+ExtraFieldsAssetModel=מאפיינים משלימים (המודל של הנכס)
+
+AssetsType=מודל נכס
+AssetsTypeId=מזהה דגם נכס
+AssetsTypeLabel=תווית דגם נכס
+AssetsTypes=מודלים של נכסים
+ASSET_ACCOUNTANCY_CATEGORY=קבוצת הנהלת חשבונות רכוש קבוע
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets=נכסים
+MenuNewAsset=נכס חדש
+MenuAssetModels=נכסי מודל
+MenuListAssets=רשימה
+MenuNewAssetModel=דגם חדש של נכס
+MenuListAssetModels=רשימה
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=האם אתה באמת רוצה להסיר את הנכס הזה?
+
+#
+# Tab
+#
+AssetDepreciationOptions=אפשרויות פחת
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=פְּחָת
+
+#
+# Asset
+#
+Asset=נכס
+Assets=נכסים
+AssetReversalAmountHT=סכום ביטול (ללא מיסים)
+AssetAcquisitionValueHT=סכום רכישה (ללא מיסים)
+AssetRecoveredVAT=מע"מ מוחזר
+AssetReversalDate=תאריך היפוך
+AssetDateAcquisition=תאריך רכישה
+AssetDateStart=תאריך ההפעלה
+AssetAcquisitionType=סוג הרכישה
+AssetAcquisitionTypeNew=חָדָשׁ
+AssetAcquisitionTypeOccasion=בשימוש
+AssetType=סוג הנכס
+AssetTypeIntangible=בלתי מוחשי
+AssetTypeTangible=מוּחָשִׁי
+AssetTypeInProgress=בתהליך
+AssetTypeFinancial=כַּספִּי
+AssetNotDepreciated=לא מופחת
+AssetDisposal=רְשׁוּת
+AssetConfirmDisposalAsk=האם אתה בטוח שברצונך להיפטר מהנכס <b> %s</b>?
+AssetConfirmReOpenAsk=האם אתה בטוח שברצונך לפתוח מחדש את הנכס <b> %s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=בתהליך
+AssetDisposed=נפטר
+AssetRecorded=חשבונאות
+
+#
+# Asset disposal
+#
+AssetDisposalDate=תאריך סילוק
+AssetDisposalAmount=ערך סילוק
+AssetDisposalType=סוג השלכה
+AssetDisposalDepreciated=הפחת את שנת ההעברה
+AssetDisposalSubjectToVat=השלכה חייבת במע"מ
+
+#
+# Asset model
+#
+AssetModel=הדגם של הנכס
+AssetModels=הדגמים של נכס
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=פחת כלכלי
+AssetDepreciationOptionAcceleratedDepreciation=פחת מואץ (מס)
+AssetDepreciationOptionDepreciationType=סוג פחת
+AssetDepreciationOptionDepreciationTypeLinear=ליניארי
+AssetDepreciationOptionDepreciationTypeDegressive=דגרסיבי
+AssetDepreciationOptionDepreciationTypeExceptional=יוֹצֵא דוֹפֶן
+AssetDepreciationOptionDegressiveRate=שיעור דגרסיבי
+AssetDepreciationOptionAcceleratedDepreciation=פחת מואץ (מס)
+AssetDepreciationOptionDuration=מֶשֶׁך
+AssetDepreciationOptionDurationType=סוג משך
+AssetDepreciationOptionDurationTypeAnnual=שנתי
+AssetDepreciationOptionDurationTypeMonthly=יַרחוֹן
+AssetDepreciationOptionDurationTypeDaily=יום יומי
+AssetDepreciationOptionRate=דירוג (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=בסיס פחת (לא כולל מע"מ)
+AssetDepreciationOptionAmountBaseDeductibleHT=בסיס השתתפות עצמית (לא כולל מע"מ)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=סכום כולל הפחת האחרון (לא כולל מע"מ)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=פחת כלכלי
+AssetAccountancyCodeAsset=נכס
+AssetAccountancyCodeDepreciationAsset=פְּחָת
+AssetAccountancyCodeDepreciationExpense=הוצאות פחת
+AssetAccountancyCodeValueAssetSold=שווי הנכס שנפטר
+AssetAccountancyCodeReceivableOnAssignment=חייב בסילוק
+AssetAccountancyCodeProceedsFromSales=ההכנסות מסילוק
+AssetAccountancyCodeVatCollected=מע"מ שנגבה
+AssetAccountancyCodeVatDeductible=מע"מ מוחזר על נכסים
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=פחת מואץ (מס)
+AssetAccountancyCodeAcceleratedDepreciation=Account
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=הוצאות פחת
+AssetAccountancyCodeProvisionAcceleratedDepreciation=החזקה/הגשה
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=בסיס פחת (לא כולל מע"מ)
+AssetDepreciationBeginDate=תחילת הפחת ב
+AssetDepreciationDuration=מֶשֶׁך
+AssetDepreciationRate=דירוג (%%)
+AssetDepreciationDate=תאריך פחת
+AssetDepreciationHT=פחת (לא כולל מע"מ)
+AssetCumulativeDepreciationHT=פחת מצטבר (לא כולל מע"מ)
+AssetResidualHT=ערך שייר (לא כולל מע"מ)
+AssetDispatchedInBookkeeping=פחת נרשם
+AssetFutureDepreciationLine=פחת עתידי
+AssetDepreciationReversal=הִתְהַפְּכוּת
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=מזהה הנכס או הדגם שנמצא לא סופק
+AssetErrorFetchAccountancyCodesForMode=שגיאה בעת אחזור החשבונות החשבונאיים עבור מצב הפחת '%s'
+AssetErrorDeleteAccountancyCodesForMode=שגיאה בעת מחיקת חשבונות חשבונאיים ממצב הפחת '%s'
+AssetErrorInsertAccountancyCodesForMode=שגיאה בעת הכנסת החשבונות החשבונאיים של מצב הפחת '%s'
+AssetErrorFetchDepreciationOptionsForMode=שגיאה בעת אחזור אפשרויות עבור מצב הפחת '%s'
+AssetErrorDeleteDepreciationOptionsForMode=שגיאה בעת מחיקת אפשרויות מצב הפחת '%s'
+AssetErrorInsertDepreciationOptionsForMode=שגיאה בעת הוספת אפשרויות מצב הפחת '%s'
+AssetErrorFetchDepreciationLines=שגיאה בעת אחזור שורות פחת רשומות
+AssetErrorClearDepreciationLines=שגיאה בעת טיהור שורות פחת רשומות (היפוך ועתיד)
+AssetErrorAddDepreciationLine=שגיאה בעת הוספת שורת פחת
+AssetErrorCalculationDepreciationLines=שגיאה בעת חישוב שורות הפחת (התאוששות ועתיד)
+AssetErrorReversalDateNotProvidedForMode=תאריך ההיפוך אינו מסופק עבור שיטת הפחת '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=תאריך הביטול חייב להיות גדול או שווה לתחילת שנת הכספים הנוכחית עבור שיטת הפחת '%s'
+AssetErrorReversalAmountNotProvidedForMode=סכום ההיפוך אינו מסופק עבור מצב הפחת '%s'.
+AssetErrorFetchCumulativeDepreciation=שגיאה בעת שליפת סכום הפחת שנצבר משורת הפחת
+AssetErrorSetLastCumulativeDepreciation=שגיאה בעת רישום סכום הפחת האחרון שנצבר

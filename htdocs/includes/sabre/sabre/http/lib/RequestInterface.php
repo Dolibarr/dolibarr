@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP;
 
 /**
@@ -9,59 +11,42 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface RequestInterface extends MessageInterface {
+interface RequestInterface extends MessageInterface
+{
+    /**
+     * Returns the current HTTP method.
+     */
+    public function getMethod(): string;
 
     /**
-     * Returns the current HTTP method
-     *
-     * @return string
+     * Sets the HTTP method.
      */
-    function getMethod();
-
-    /**
-     * Sets the HTTP method
-     *
-     * @param string $method
-     * @return void
-     */
-    function setMethod($method);
+    public function setMethod(string $method);
 
     /**
      * Returns the request url.
-     *
-     * @return string
      */
-    function getUrl();
+    public function getUrl(): string;
 
     /**
      * Sets the request url.
-     *
-     * @param string $url
-     * @return void
      */
-    function setUrl($url);
+    public function setUrl(string $url);
 
     /**
      * Returns the absolute url.
-     *
-     * @return string
      */
-    function getAbsoluteUrl();
+    public function getAbsoluteUrl(): string;
 
     /**
      * Sets the absolute url.
-     *
-     * @param string $url
-     * @return void
      */
-    function setAbsoluteUrl($url);
+    public function setAbsoluteUrl(string $url);
 
     /**
      * Returns the current base url.
-     *
-     * @return string
      */
-    function getBaseUrl();
+    public function getBaseUrl(): string;
 
     /**
      * Sets a base url.
@@ -69,11 +54,8 @@ interface RequestInterface extends MessageInterface {
      * This url is used for relative path calculations.
      *
      * The base url should default to /
-     *
-     * @param string $url
-     * @return void
      */
-    function setBaseUrl($url);
+    public function setBaseUrl(string $url);
 
     /**
      * Returns the relative path.
@@ -85,32 +67,26 @@ interface RequestInterface extends MessageInterface {
      * If the full path is equal to the base url, this method will return an
      * empty string.
      *
-     * This method will also urldecode the path, and if the url was incoded as
+     * This method will also urldecode the path, and if the url was encoded as
      * ISO-8859-1, it will convert it to UTF-8.
      *
      * If the path is outside of the base url, a LogicException will be thrown.
-     *
-     * @return string
      */
-    function getPath();
+    public function getPath(): string;
 
     /**
      * Returns the list of query parameters.
      *
      * This is equivalent to PHP's $_GET superglobal.
-     *
-     * @return array
      */
-    function getQueryParameters();
+    public function getQueryParameters(): array;
 
     /**
      * Returns the POST data.
      *
      * This is equivalent to PHP's $_POST superglobal.
-     *
-     * @return array
      */
-    function getPostData();
+    public function getPostData(): array;
 
     /**
      * Sets the post data.
@@ -119,29 +95,20 @@ interface RequestInterface extends MessageInterface {
      *
      * This would not have been needed, if POST data was accessible as
      * php://input, but unfortunately we need to special case it.
-     *
-     * @param array $postData
-     * @return void
      */
-    function setPostData(array $postData);
+    public function setPostData(array $postData);
 
     /**
      * Returns an item from the _SERVER array.
      *
      * If the value does not exist in the array, null is returned.
      *
-     * @param string $valueName
      * @return string|null
      */
-    function getRawServerValue($valueName);
+    public function getRawServerValue(string $valueName);
 
     /**
      * Sets the _SERVER array.
-     *
-     * @param array $data
-     * @return void
      */
-    function setRawServerData(array $data);
-
-
+    public function setRawServerData(array $data);
 }

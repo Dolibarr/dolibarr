@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
  */
 
 /**
- * \file    webhook/lib/webhook.lib.php
+ * \file    htdocs/webhook/lib/webhook.lib.php
  * \ingroup webhook
  * \brief   Library files with common functions for Webhook
  */
@@ -24,7 +26,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function webhookAdminPrepareHead()
 {
@@ -32,12 +34,12 @@ function webhookAdminPrepareHead()
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = dol_buildpath("/admin/webhook.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/admin/webhook.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/webhook/target_list.php?mode=modulesetup", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/webhook/target_list.php?mode=modulesetup';
 	$head[$h][1] = $langs->trans("Targets");
 	$head[$h][2] = 'targets';
 	$h++;

@@ -24,5 +24,6 @@ create table llx_c_ziptown
   fk_pays           integer NOT NULL DEFAULT 0,     -- Country id in llx_c_country
   zip	 			varchar(10) NOT NULL,			-- Zip code
   town				varchar(180) NOT NULL,			-- Town name
+  town_up			varchar(180),					-- Town name in upper case
   active 			tinyint NOT NULL DEFAULT 1
 )ENGINE=innodb;

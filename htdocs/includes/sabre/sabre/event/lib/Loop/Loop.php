@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Event\Loop;
 
 /**
@@ -11,26 +13,23 @@ namespace Sabre\Event\Loop;
  *   * setInterval for repeating functions
  *   * stream events using stream_select
  *
- * @copyright Copyright (C) 2007-2015 fruux GmbH. (https://fruux.com/)
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Loop {
-
+class Loop
+{
     /**
      * Executes a function after x seconds.
-     *
-     * @param callable $cb
-     * @param float $timeout timeout in seconds
-     * @return void
      */
-    function setTimeout(callable $cb, $timeout) {
-
+    public function setTimeout(callable $cb, float $timeout)
+    {
         $triggerTime = microtime(true) + ($timeout);
 
         if (!$this->timers) {
             // Special case when the timers array was empty.
             $this->timers[] = [$triggerTime, $cb];
+
             return;
         }
 
@@ -48,14 +47,12 @@ class Loop {
                     [[$triggerTime, $cb]]
                 );
                 break;
-            } elseif ($index === 0) {
+            } elseif (0 === $index) {
                 array_unshift($this->timers, [$triggerTime, $cb]);
                 break;
             }
-            $index--;
-
+            --$index;
         }
-
     }
 
     /**
@@ -63,17 +60,13 @@ class Loop {
      *
      * The value this function returns can be used to stop the interval with
      * clearInterval.
-     *
-     * @param callable $cb
-     * @param float $timeout
-     * @return array
      */
-    function setInterval(callable $cb, $timeout) {
-
+    public function setInterval(callable $cb, float $timeout): array
+    {
         $keepGoing = true;
         $f = null;
 
-        $f = function() use ($cb, &$f, $timeout, &$keepGoing) {
+        $f = function () use ($cb, &$f, $timeout, &$keepGoing) {
             if ($keepGoing) {
                 $cb();
                 $this->setTimeout($f, $timeout);
@@ -88,33 +81,23 @@ class Loop {
         // Because I'm worried people will be confused by using a boolean as a
         // sort of identifier, I added an extra string.
         return ['I\'m an implementation detail', &$keepGoing];
-
     }
 
     /**
-     * Stops a running internval.
-     *
-     * @param array $intervalId
-     * @return void
+     * Stops a running interval.
      */
-    function clearInterval($intervalId) {
-
+    public function clearInterval(array $intervalId)
+    {
         $intervalId[1] = false;
-
     }
 
     /**
      * Runs a function immediately at the next iteration of the loop.
-     *
-     * @param callable $cb
-     * @return void
      */
-    function nextTick(callable $cb) {
-
+    public function nextTick(callable $cb)
+    {
         $this->nextTick[] = $cb;
-
     }
-
 
     /**
      * Adds a read stream.
@@ -126,14 +109,11 @@ class Loop {
      * prevent the eventloop from never stopping.
      *
      * @param resource $stream
-     * @param callable $cb
-     * @return void
      */
-    function addReadStream($stream, callable $cb) {
-
-        $this->readStreams[(int)$stream] = $stream;
-        $this->readCallbacks[(int)$stream] = $cb;
-
+    public function addReadStream($stream, callable $cb)
+    {
+        $this->readStreams[(int) $stream] = $stream;
+        $this->readCallbacks[(int) $stream] = $cb;
     }
 
     /**
@@ -146,66 +126,53 @@ class Loop {
      * prevent the eventloop from never stopping.
      *
      * @param resource $stream
-     * @param callable $cb
-     * @return void
      */
-    function addWriteStream($stream, callable $cb) {
-
-        $this->writeStreams[(int)$stream] = $stream;
-        $this->writeCallbacks[(int)$stream] = $cb;
-
+    public function addWriteStream($stream, callable $cb)
+    {
+        $this->writeStreams[(int) $stream] = $stream;
+        $this->writeCallbacks[(int) $stream] = $cb;
     }
 
     /**
      * Stop watching a stream for reads.
      *
      * @param resource $stream
-     * @return void
      */
-    function removeReadStream($stream) {
-
+    public function removeReadStream($stream)
+    {
         unset(
-            $this->readStreams[(int)$stream],
-            $this->readCallbacks[(int)$stream]
+            $this->readStreams[(int) $stream],
+            $this->readCallbacks[(int) $stream]
         );
-
     }
 
     /**
      * Stop watching a stream for writes.
      *
      * @param resource $stream
-     * @return void
      */
-    function removeWriteStream($stream) {
-
+    public function removeWriteStream($stream)
+    {
         unset(
-            $this->writeStreams[(int)$stream],
-            $this->writeCallbacks[(int)$stream]
+            $this->writeStreams[(int) $stream],
+            $this->writeCallbacks[(int) $stream]
         );
-
     }
-
 
     /**
      * Runs the loop.
      *
-     * This function will run continiously, until there's no more events to
+     * This function will run continuously, until there's no more events to
      * handle.
-     *
-     * @return void
      */
-    function run() {
-
+    public function run()
+    {
         $this->running = true;
 
         do {
-
             $hasEvents = $this->tick(true);
-
         } while ($this->running && $hasEvents);
         $this->running = false;
-
     }
 
     /**
@@ -219,12 +186,9 @@ class Loop {
      *
      * This function will return true if there are _any_ events left in the
      * loop after the tick.
-     *
-     * @param bool $block
-     * @return bool
      */
-    function tick($block = false) {
-
+    public function tick(bool $block = false): bool
+    {
         $this->runNextTicks();
         $nextTimeout = $this->runTimers();
 
@@ -245,19 +209,15 @@ class Loop {
 
         $this->runStreams($streamWait);
 
-        return ($this->readStreams || $this->writeStreams || $this->nextTick || $this->timers);
-
+        return $this->readStreams || $this->writeStreams || $this->nextTick || $this->timers;
     }
 
     /**
-     * Stops a running eventloop
-     *
-     * @return void
+     * Stops a running eventloop.
      */
-    function stop() {
-
+    public function stop()
+    {
         $this->running = false;
-
     }
 
     /**
@@ -265,15 +225,14 @@ class Loop {
      *
      * return void
      */
-    protected function runNextTicks() {
-
+    protected function runNextTicks()
+    {
         $nextTick = $this->nextTick;
         $this->nextTick = [];
 
         foreach ($nextTick as $cb) {
             $cb();
         }
-
     }
 
     /**
@@ -284,10 +243,10 @@ class Loop {
      *
      * If there's no more pending timers, this function returns null.
      *
-     * @return float
+     * @return float|null
      */
-    protected function runTimers() {
-
+    protected function runTimers()
+    {
         $now = microtime(true);
         while (($timer = array_pop($this->timers)) && $timer[0] < $now) {
             $timer[1]();
@@ -295,46 +254,46 @@ class Loop {
         // Add the last timer back to the array.
         if ($timer) {
             $this->timers[] = $timer;
-            return $timer[0] - microtime(true);
-        }
 
+            return max(0, $timer[0] - microtime(true));
+        }
     }
 
     /**
      * Runs all pending stream events.
      *
-     * @param float $timeout
+     * If $timeout is 0, it will return immediately. If $timeout is null, it
+     * will wait indefinitely.
+     *
+     * @param float|null timeout
      */
-    protected function runStreams($timeout) {
-
+    protected function runStreams($timeout)
+    {
         if ($this->readStreams || $this->writeStreams) {
-
             $read = $this->readStreams;
             $write = $this->writeStreams;
             $except = null;
-            if (stream_select($read, $write, $except, null, $timeout)) {
-
+            // stream_select changes behavior in 8.1 to forbid passing non-null microseconds when the seconds are null.
+            // Older versions of php don't allow passing null to microseconds.
+            if (null !== $timeout ? stream_select($read, $write, $except, 0, (int) ($timeout * 1000000)) : stream_select($read, $write, $except, null)) {
                 // See PHP Bug https://bugs.php.net/bug.php?id=62452
                 // Fixed in PHP7
                 foreach ($read as $readStream) {
-                    $readCb = $this->readCallbacks[(int)$readStream];
+                    $readCb = $this->readCallbacks[(int) $readStream];
                     $readCb();
                 }
                 foreach ($write as $writeStream) {
-                    $writeCb = $this->writeCallbacks[(int)$writeStream];
+                    $writeCb = $this->writeCallbacks[(int) $writeStream];
                     $writeCb();
                 }
-
             }
-
         } elseif ($this->running && ($this->nextTick || $this->timers)) {
-            usleep($timeout !== null ? $timeout * 1000000 : 200000);
+            usleep(null !== $timeout ? intval($timeout * 1000000) : 200000);
         }
-
     }
 
     /**
-     * Is the main loop active
+     * Is the main loop active.
      *
      * @var bool
      */
@@ -371,16 +330,14 @@ class Loop {
     /**
      * List of read callbacks, indexed by stream id.
      *
-     * @var callback[]
+     * @var callable[]
      */
     protected $readCallbacks = [];
 
     /**
      * List of write callbacks, indexed by stream id.
      *
-     * @var callback[]
+     * @var callable[]
      */
     protected $writeCallbacks = [];
-
-
 }

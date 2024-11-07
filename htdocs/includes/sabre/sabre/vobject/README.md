@@ -4,7 +4,7 @@ sabre/vobject
 The VObject library allows you to easily parse and manipulate [iCalendar](https://tools.ietf.org/html/rfc5545)
 and [vCard](https://tools.ietf.org/html/rfc6350) objects using PHP.
 
-The goal of the VObject library is to create a very complete library, with an easy to use API.
+The goal of the VObject library is to create a very complete library, with an easy-to-use API.
 
 
 Installation
@@ -33,12 +33,12 @@ Build status
 
 | branch | status |
 | ------ | ------ |
-| master | [![Build Status](https://travis-ci.org/fruux/sabre-vobject.svg?branch=master)](https://travis-ci.org/fruux/sabre-vobject) |
-| 3.5    | [![Build Status](https://travis-ci.org/fruux/sabre-vobject.svg?branch=3.5)](https://travis-ci.org/fruux/sabre-vobject) |
-| 3.4    | [![Build Status](https://travis-ci.org/fruux/sabre-vobject.svg?branch=3.4)](https://travis-ci.org/fruux/sabre-vobject) |
-| 3.1    | [![Build Status](https://travis-ci.org/fruux/sabre-vobject.svg?branch=3.1)](https://travis-ci.org/fruux/sabre-vobject) |
-| 2.1    | [![Build Status](https://travis-ci.org/fruux/sabre-vobject.svg?branch=2.1)](https://travis-ci.org/fruux/sabre-vobject) |
-| 2.0    | [![Build Status](https://travis-ci.org/fruux/sabre-vobject.svg?branch=2.0)](https://travis-ci.org/fruux/sabre-vobject) |
+| master | [![Build Status](https://travis-ci.org/sabre-io/vobject.svg?branch=master)](https://travis-ci.org/sabre-io/vobject) |
+| 3.5    | [![Build Status](https://travis-ci.org/sabre-io/vobject.svg?branch=3.5)](https://travis-ci.org/sabre-io/vobject) |
+| 3.4    | [![Build Status](https://travis-ci.org/sabre-io/vobject.svg?branch=3.4)](https://travis-ci.org/sabre-io/vobject) |
+| 3.1    | [![Build Status](https://travis-ci.org/sabre-io/vobject.svg?branch=3.1)](https://travis-ci.org/sabre-io/vobject) |
+| 2.1    | [![Build Status](https://travis-ci.org/sabre-io/vobject.svg?branch=2.1)](https://travis-ci.org/sabre-io/vobject) |
+| 2.0    | [![Build Status](https://travis-ci.org/sabre-io/vobject.svg?branch=2.0)](https://travis-ci.org/sabre-io/vobject) |
 
 
 

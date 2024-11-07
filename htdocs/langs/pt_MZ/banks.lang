@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 BankAccounts=Contas bancárias
 StatusAccountClosed=Fechado
-WithdrawalPayment=Pedido com pagamento por débito
+BankLineNotReconciled=Não conciliada
 SocialContributionPayment=Pagamento de imposto social / fiscal

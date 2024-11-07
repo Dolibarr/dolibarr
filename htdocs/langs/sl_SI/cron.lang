@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Preberi načrtovano delo
 Permission23102 = Ustvari/posodobi načrtovano delo
 Permission23103 = Izbriši načrtovano delo
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Ukazna vrstica za preverjanje in zagon kvalificiranih cron 
 CronExplainHowToRunUnix=V okolju Unix morate uporabiti naslednji vnos v crontab za zagon ukazne vrstice vsakih 5 minut
 CronExplainHowToRunWin=V okolju Microsoft(tm) Windows lahko z orodji Scheduled Task zaženete ukazno vrstico vsakih 5 minut
 CronMethodDoesNotExists=Razred %s ne vsebuje nobene metode %s
-CronMethodNotAllowed=Metoda %s razreda %s je na črnem seznamu prepovedanih metod
+CronMethodNotAllowed=Metoda %s razreda %s je na seznamu blokiranih prepovedanih metod
 CronJobDefDesc=Profili opravil Cron so definirani v datoteki deskriptorja modula. Ko je modul aktiviran, so naloženi in na voljo, tako da lahko upravljate opravila iz menija skrbniških orodij %s.
 CronJobProfiles=Seznam vnaprej določenih profilov opravil cron
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Ukaz
 CronList=Načrtovana delovna mesta
 CronDelete=Izbrišite načrtovana opravila
 CronConfirmDelete=Ali ste prepričani, da želite izbrisati ta načrtovana opravila?
-CronExecute=Launch now
+CronExecute=Zaženi zdaj
 CronConfirmExecute=Ali ste prepričani, da želite ta načrtovana opravila izvesti zdaj?
 CronInfo=Modul za razporejena opravila omogoča načrtovanje opravil za njihovo samodejno izvedbo. Dela se lahko zaženejo tudi ročno.
 CronTask=Naloga
-CronNone=Nič
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Ne prej
 CronDtEnd=Ne po
 CronDtNextLaunch=Naslednja izvedba
@@ -49,8 +49,8 @@ CronEach=vsak
 JobFinished=Delo začeto in končano
 Scheduled=Načrtovano
 #Page card
-CronAdd= Dodaj naloge
-CronEvery=Izvedite delo vsak
+CronAdd=Dodaj naloge
+CronEvery=Run job every
 CronObject=Primerek/predmet za ustvarjanje
 CronArgs=Parametri
 CronSaveSucess=Uspešno shranjevanje
@@ -58,7 +58,7 @@ CronNote=Komentar
 CronFieldMandatory=Polja %s so obvezna
 CronErrEndDateStartDt=Končni datum ne more biti pred začetnim datumom
 StatusAtInstall=Stanje ob namestitvi modula
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=Omogoči razporejanje
 CronStatusInactiveBtn=Onemogoči
 CronTaskInactive=To opravilo je onemogočeno (ni načrtovano)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Ime imenika modulov Dolibarr (deluje tudi z zunanjim modulom Doli
 CronClassFileHelp=Relativna pot in ime datoteke za nalaganje (pot je relativna glede na korenski imenik spletnega strežnika). <BR> Na primer, če želite poklicati metodo pridobivanja predmeta Dolibarr Product htdocs/product/class/ <u> product.class.php </u> , je vrednost za ime datoteke razreda <br> <i> product/class/product.bace363z.php a058
 CronObjectHelp=Ime predmeta za nalaganje. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je vrednost za ime datoteke razreda <br> <i> Product </i>
 CronMethodHelp=Objektna metoda za zagon. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je vrednost za metodo <br> <i> pridobivanje </i>
-CronArgsHelp=Argumenti metode. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je lahko vrednost za parametre <br> <i> 0, ProductRef </i>
+CronArgsHelp=Argumenti metode. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je lahko vrednost za parametre<br><i>0, ProductRef</i>
 CronCommandHelp=Sistemska ukazna vrstica za izvedbo.
 CronCreateJob=Ustvari novo načrtovano opravilo
 CronFrom=Od
@@ -91,6 +91,7 @@ WarningCronDelayed=Pozor, zaradi zmogljivosti, ne glede na naslednji datum izved
 DATAPOLICYJob=Čistilec in anonimizator podatkov
 JobXMustBeEnabled=Opravilo %s mora biti omogočeno
 EmailIfError=E-pošta za opozorilo o napaki
+JobNotFound=Opravila %s ni mogoče najti na seznamu opravil (poskusite onemogočiti/omogočiti modul)
 ErrorInBatch=Napaka pri izvajanju opravila %s
 
 # Cron Boxes

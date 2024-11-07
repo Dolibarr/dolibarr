@@ -29,3 +29,5 @@ LDAPPasswordHashType=パスワードハッシュタイプ
 LDAPPasswordHashTypeExample=サーバーで使用されるパスワードハッシュのタイプ
 SupportedForLDAPExportScriptOnly=LDAPエクスポートスクリプトでのみサポートされる
 SupportedForLDAPImportScriptOnly=LDAPインポートスクリプトでのみサポートされる
+LDAPUserAccountControl = 作成時の userAccountControl (アクティブ ディレクトリ)
+LDAPUserAccountControlExample = 512 通常アカウント / 546 通常アカウント + パスワードなし + 無効 (参照: https://fr.wikipedia.org/wiki/Active_Directory)

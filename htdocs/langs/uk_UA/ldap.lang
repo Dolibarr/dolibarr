@@ -29,3 +29,5 @@ LDAPPasswordHashType=Тип хешування пароля
 LDAPPasswordHashTypeExample=Тип хешу пароля, що використовується на сервері
 SupportedForLDAPExportScriptOnly=Підтримується лише сценарієм експорту ldap
 SupportedForLDAPImportScriptOnly=Підтримується лише сценарієм імпорту ldap
+LDAPUserAccountControl = userAccountControl під час створення (активний каталог)
+LDAPUserAccountControlExample = 512 Звичайний обліковий запис / 546 Звичайний обліковий запис + Без пароля + Вимкнено (див.: https://fr.wikipedia.org/wiki/Active_Directory)

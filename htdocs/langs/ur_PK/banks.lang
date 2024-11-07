@@ -16,6 +16,7 @@ CashAccounts=کیش اکاؤنٹس
 CurrentAccounts=موجودہ کھاتہ
 SavingAccounts=بچت اکاؤنٹس
 ErrorBankLabelAlreadyExists=مالیاتی اکاؤنٹ کا لیبل پہلے سے موجود ہے۔
+ErrorBankReceiptAlreadyExists=بینک کی رسید کا حوالہ پہلے سے موجود ہے۔
 BankBalance=بقیہ
 BankBalanceBefore=پہلے بیلنس
 BankBalanceAfter=کے بعد بیلنس
@@ -49,6 +50,9 @@ BankAccountDomiciliation=بینک کا پتہ
 BankAccountCountry=اکاؤنٹ ملک
 BankAccountOwner=اکاؤنٹ کے مالک کا نام
 BankAccountOwnerAddress=اکاؤنٹ کے مالک کا پتہ
+BankAccountOwnerZip=اکاؤنٹ کا مالک زپ
+BankAccountOwnerTown=اکاؤنٹ مالک ٹاؤن
+BankAccountOwnerCountry=اکاؤنٹ کا مالک ملک
 CreateAccount=اکاؤنٹ بنائیں
 NewBankAccount=نیا کھاتہ
 NewFinancialAccount=نیا مالیاتی اکاؤنٹ
@@ -57,13 +61,12 @@ EditFinancialAccount=اکاؤنٹ میں ترمیم کریں۔
 LabelBankCashAccount=بینک یا کیش لیبل
 AccountType=اکاؤنٹ کی اقسام
 BankType0=بچت اکاونٹ
-BankType1=کرنٹ یا کریڈٹ کارڈ اکاؤنٹ
+BankType1=کرنٹ، چیک یا کریڈٹ کارڈ اکاؤنٹ
 BankType2=کیش اکاؤنٹ
 AccountsArea=اکاؤنٹس کا علاقہ
 AccountCard=اکاؤنٹ کارڈ
 DeleteAccount=کھاتہ مٹا دو
 ConfirmDeleteAccount=کیا آپ واقعی اس اکاؤنٹ کو حذف کرنا چاہتے ہیں؟
-Account=کھاتہ
 BankTransactionByCategories=زمرہ جات کے لحاظ سے بینک اندراجات
 BankTransactionForCategory=زمرہ <b> %s </b> کے لیے بینک اندراجات
 RemoveFromRubrique=زمرہ کے ساتھ لنک کو ہٹا دیں۔
@@ -95,15 +98,18 @@ LineRecord=لین دین
 AddBankRecord=اندراج شامل کریں۔
 AddBankRecordLong=دستی طور پر اندراج شامل کریں۔
 Conciliated=صلح کر لی
-ReConciliedBy=Reconciled by
+ReConciliedBy=کی طرف سے مصالحت
 DateConciliating=مصالحت کی تاریخ
 BankLineConciliated=اندراج بینک کی رسید کے ساتھ ہم آہنگ
-BankLineReconciled=Reconciled
-BankLineNotReconciled=Not reconciled
+TransfertOnlyConciliatedBankLine=Transfer only reconciled lines from bank
+TransfertAllBankLines=Transfer all lines from bank even if they are not reconciled
+BankLineReconciled=صلح کر لی
+BankLineNotReconciled=صلح نہیں ہوئی۔
 CustomerInvoicePayment=گاہک کی ادائیگی
 SupplierInvoicePayment=وینڈر کی ادائیگی
 SubscriptionPayment=رکنیت کی ادائیگی
-WithdrawalPayment=ڈیبٹ ادائیگی کا آرڈر
+WithdrawalPayment=براہ راست ڈیبٹ ادائیگی
+BankTransferPayment=کریڈٹ ٹرانسفر ادائیگی
 SocialContributionPayment=سماجی/مالیاتی ٹیکس کی ادائیگی
 BankTransfer=کریڈٹ ٹرانسفر
 BankTransfers=کریڈٹ ٹرانسفر
@@ -117,6 +123,7 @@ ValidateCheckReceipt=اس چیک کی رسید کی توثیق کریں؟
 ConfirmValidateCheckReceipt=کیا آپ واقعی اس چیک کی رسید کو توثیق کے لیے جمع کرانا چاہتے ہیں؟ ایک بار توثیق کے بعد کوئی تبدیلی ممکن نہیں ہوگی۔
 DeleteCheckReceipt=اس چیک کی رسید کو حذف کریں؟
 ConfirmDeleteCheckReceipt=کیا آپ واقعی اس چیک کی رسید کو حذف کرنا چاہتے ہیں؟
+DocumentsForDeposit=بینک میں جمع کرنے کے لیے دستاویزات
 BankChecks=بینک چیک
 BankChecksToReceipt=چیک ڈپازٹ کے منتظر ہیں۔
 BankChecksToReceiptShort=چیک ڈپازٹ کے منتظر ہیں۔
@@ -142,8 +149,10 @@ BackToAccount=اکاؤنٹ پر واپس جائیں۔
 ShowAllAccounts=تمام اکاؤنٹس کے لیے دکھائیں۔
 FutureTransaction=مستقبل کا لین دین۔ مصالحت سے قاصر۔
 SelectChequeTransactionAndGenerate=ان چیکوں کو منتخب/فلٹر کریں جنہیں چیک ڈپازٹ کی رسید میں شامل کیا جانا ہے۔ پھر، "تخلیق" پر کلک کریں.
-InputReceiptNumber=مفاہمت سے متعلق بینک اسٹیٹمنٹ کا انتخاب کریں۔ ترتیب دینے والی عددی قدر استعمال کریں: YYYYMM یا YYYYMMDD
-EventualyAddCategory=آخر کار، ایک زمرہ کی وضاحت کریں جس میں ریکارڈز کی درجہ بندی کی جائے۔
+SelectPaymentTransactionAndGenerate=ان دستاویزات کو منتخب/فلٹر کریں جنہیں %s جمع کرنے کی رسید میں شامل کیا جانا ہے۔ پھر، "تخلیق" پر کلک کریں.
+InputReceiptNumber=مفاہمت سے متعلق بینک اسٹیٹمنٹ کا انتخاب کریں۔ ترتیب دینے والی عددی قدر کا استعمال کریں۔
+InputReceiptNumberBis=YYYYMM یا YYYYMMDD
+EventualyAddCategory=Optionally, a category in which to classify the operations
 ToConciliate=صلح کرنے کے لیے؟
 ThenCheckLinesAndConciliate=پھر، بینک اسٹیٹمنٹ میں موجود لائنوں کو چیک کریں اور کلک کریں۔
 DefaultRIB=پہلے سے طے شدہ پابندی
@@ -172,8 +181,8 @@ SEPAMandate=SEPA مینڈیٹ
 YourSEPAMandate=آپ کا SEPA مینڈیٹ
 FindYourSEPAMandate=یہ آپ کا SEPA مینڈیٹ ہے کہ وہ ہماری کمپنی کو آپ کے بینک کو براہ راست ڈیبٹ آرڈر کرنے کی اجازت دیتا ہے۔ اسے دستخط شدہ واپس کریں (دستخط شدہ دستاویز کو اسکین کریں) یا اسے بذریعہ ڈاک بھیجیں۔
 AutoReportLastAccountStatement=مفاہمت کرتے وقت آخری سٹیٹمنٹ نمبر کے ساتھ فیلڈ 'بینک اسٹیٹمنٹ کا نمبر' خودکار طور پر پُر کریں۔
-CashControl=POS cash control
-NewCashFence=New cash control (opening or closing)
+CashControl=POS کیش کنٹرول
+NewCashFence=نیا کیش کنٹرول (کھولنا یا بند کرنا)
 BankColorizeMovement=حرکات کو رنگین کریں۔
 BankColorizeMovementDesc=اگر یہ فنکشن فعال ہے، تو آپ ڈیبٹ یا کریڈٹ کی نقل و حرکت کے لیے مخصوص پس منظر کا رنگ منتخب کر سکتے ہیں۔
 BankColorizeMovementName1=ڈیبٹ حرکت کے لیے پس منظر کا رنگ
@@ -182,6 +191,7 @@ IfYouDontReconcileDisableProperty=اگر آپ کچھ بینک اکاؤنٹس پ�
 NoBankAccountDefined=کوئی بینک اکاؤنٹ متعین نہیں ہے۔
 NoRecordFoundIBankcAccount=بینک اکاؤنٹ میں کوئی ریکارڈ نہیں ملا۔ عام طور پر، ایسا اس وقت ہوتا ہے جب بینک اکاؤنٹ میں لین دین کی فہرست سے ریکارڈ کو دستی طور پر حذف کر دیا جاتا ہے (مثال کے طور پر بینک اکاؤنٹ کی مصالحت کے دوران)۔ دوسری وجہ یہ ہے کہ ادائیگی اس وقت ریکارڈ کی گئی تھی جب ماڈیول "%s" غیر فعال تھا۔
 AlreadyOneBankAccount=پہلے ہی ایک بینک اکاؤنٹ کی وضاحت کی گئی ہے۔
-SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=SEPA transfer: 'Payment Type' at 'Credit Transfer' level
-SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=When generatin a SEPA XML file for Credit transfers, the section "PaymentTypeInformation" can now be placed inside the "CreditTransferTransactionInformation" section (instead of "Payment" section). We strongly recommend to keep this unchecked to place PaymentTypeInformation at Payment level, as all banks will not necessarily accept it at CreditTransferTransactionInformation level. Contact your bank before placing PaymentTypeInformation at CreditTransferTransactionInformation level.
-ToCreateRelatedRecordIntoBank=To create missing related bank record
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=SEPA فائل کا مختلف قسم
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=ہاں = SEPA فائل کے 'کریڈٹ ٹرانسفر' سیکشن میں 'ادائیگی کی قسم' اسٹور کریں<br><br>کریڈٹ کے لیے SEPA XML فائل تیار کرتے وقت منتقلی، سیکشن "PaymentTypeInformation" کو اب "CreditTransferTransactionInformation" سیکشن ("ادائیگی" سیکشن کی بجائے) کے اندر رکھا جا سکتا ہے۔ ہم پرزور مشورہ دیتے ہیں کہ PaymentTypeInformation کو ادائیگی کی سطح پر رکھنے کے لیے اسے چیک نہ کیا جائے، کیونکہ تمام بینک ضروری طور پر اسے کریڈٹ ٹرانسفرٹرانسیکشن انفارمیشن کی سطح پر قبول نہیں کریں گے۔ CreditTransferTransactionInformation کی سطح پر PaymentTypeInformation رکھنے سے پہلے اپنے بینک سے رابطہ کریں۔
+ToCreateRelatedRecordIntoBank=لاپتہ متعلقہ بینک ریکارڈ بنانے کے لیے
+XNewLinesConciliated=%s نئی لائن (زبانیں) کی سمجھوتہ

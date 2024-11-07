@@ -180,8 +180,8 @@ class Segment implements IteratorAggregate, Countable
 						 '/__CURRENTMONTH__/u','/__CURRENTMONTHLONG__/u',
 						 '/__NEXTMONTH__/u','/__NEXTMONTHLONG__/u',
 						 '/__CURRENTYEAR__/u','/__NEXTYEAR__/u' );
-		$values=array( $hoy['mday'], $langs->transnoentitiesnoconv($hoy['weekday']),
-					   $hoy['mon'], $langs->transnoentitiesnoconv($hoy['month']),
+		$values=array( $hoy['mday'], $langs->transnoentitiesnoconv($hoy['wday']),
+					   $hoy['mon'], monthArray($langs)[$hoy['mon']],
 					   $nextMonth, monthArray($langs)[$nextMonth],
 					   $hoy['year'], $hoy['year']+1 );
 

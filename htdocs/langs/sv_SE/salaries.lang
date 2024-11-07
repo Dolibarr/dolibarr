@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (från kontoplanen) används som standard för "användare" tredje part
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Det dedikerade kontot som definieras på användarkortet kommer endast att användas för underreskontra. Denna kommer att användas för huvudbok och som standardvärde för underreskontra om ett dedikerat användarkonto för användare inte är definierat.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Redovisningskonto som standard för lönebetalningar
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lämna som standard tomt alternativet "Skapa en total betalning automatiskt" när du skapar en lön
 Salary=Lön
@@ -24,4 +24,10 @@ SalariesStatistics=Lönestatistik
 SalariesAndPayments=Löner och betalningar
 ConfirmDeleteSalaryPayment=Vill du ta bort den här lönen?
 FillFieldFirst=Fyll i fällt om den anställda först
-UpdateAmountWithLastSalary=Sätt belopp med senaste lön
+UpdateAmountWithLastSalary=Fastställt belopp för senaste lön
+MakeTransferRequest=Gör överföringsbegäran
+VirementOrder=Begäran om kreditöverföring
+BankTransferAmount=Kreditöverföringsbelopp
+WithdrawalReceipt=Kreditöverföringsorder
+OrderWaiting=Väntande beställning
+FillEndOfMonth=Fyll med slutet av månaden

@@ -50,10 +50,10 @@ $listoflastname = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Doroth
 
 
 /*
- * Parametre
+ * Parameter
  */
 
-define(GEN_NUMBER_SOCIETE, 10);
+define('GEN_NUMBER_SOCIETE', $argv[1] ?? 10);
 
 
 $ret=$user->fetch('', 'admin');
@@ -67,7 +67,8 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$productsid[$i] = $row[0];
@@ -78,7 +79,8 @@ if ($resql) {
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$societesid[$i] = $row[0];
@@ -91,7 +93,8 @@ if ($resql) {
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$commandesid[$i] = $row[0];
@@ -117,12 +120,13 @@ for ($s = 0; $s < GEN_NUMBER_SOCIETE; $s++) {
 	$soc->country_id=1;
 	$soc->country_code='FR';
 	// Un client sur 3 a une remise de 5%
-	$user_remise=mt_rand(1, 3); if ($user_remise==3) {
+	$user_remise=mt_rand(1, 3);
+	if ($user_remise==3) {
 		$soc->remise_percent=5;
 	}
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
 	$soc->note_private = 'Company created by the script generate-societe.php';
-	$socid = $soc->create();
+	$socid = $soc->create($user);
 
 	if ($socid >= 0) {
 		$rand = mt_rand(1, 4);

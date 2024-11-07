@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\Xml\Writer;
@@ -18,8 +20,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedLock implements XmlSerializable {
-
+class SupportedLock implements XmlSerializable
+{
     /**
      * The xmlSerialize method is called during xml writing.
      *
@@ -35,20 +37,16 @@ class SupportedLock implements XmlSerializable {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->writeElement('{DAV:}lockentry', [
             '{DAV:}lockscope' => ['{DAV:}exclusive' => null],
-            '{DAV:}locktype'  => ['{DAV:}write' => null],
+            '{DAV:}locktype' => ['{DAV:}write' => null],
         ]);
         $writer->writeElement('{DAV:}lockentry', [
             '{DAV:}lockscope' => ['{DAV:}shared' => null],
-            '{DAV:}locktype'  => ['{DAV:}write' => null],
+            '{DAV:}locktype' => ['{DAV:}write' => null],
         ]);
-
     }
 }

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=HR
-Holidays=Ferien
+Holiday=Ferien
 CPTitreMenu=Ferien
 MenuReportMonth=Monatsauszug
 MenuAddCP=Neuer Ferienantrag
@@ -56,7 +56,6 @@ ErrorAddEventToUserCP=Ein Fehler ist beim Erstellen der Sonderferien aufgetreten
 AddEventToUserOkCP=Das Hinzufügen der Sonderferien wurde abgeschlossen.
 PrevSoldeCP=Vorherige Übersicht
 alreadyCPexist=Ein Ferienantrag wurde für diese Periode bereits erstellt.
-BoxTitleLastLeaveRequests=Die %s zuletzt bearbeiteten Ferienanträge
 HolidaysCancelation=Stornierte Ferienanträge
 EmployeeLastname=Nachname Mitarbeiter
 EmployeeFirstname=Vorname Mitarbeiter

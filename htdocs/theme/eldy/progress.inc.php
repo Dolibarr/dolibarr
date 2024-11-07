@@ -4,7 +4,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 } ?>
 /* <style type="text/css" > */
 /*
- progress style is based on boostrap and admin lte framework
+ progress style is based on bootstrap and admin lte framework
  */
 
 

@@ -10,15 +10,15 @@ SendNewPasswordLink=أرسل رابطًا لإعادة تعيين كلمة ال�
 ReinitPassword=تجديد كلمة المرور
 PasswordChangedTo=تغيير كلمة السر : ٪ ق
 SubjectNewPassword=كلمة مرورك الجديدة لـ %s
-GroupRights=مجموعة الاذونات
-UserRights=أذونات المستخدم
-Credentials=أوراق اعتماد
-UserGUISetup=إعداد عرض المستخدم
-DisableUser=يعطل
-DisableAUser=تعطيل المستخدم
+GroupRights=صلاحيات المجموعة
+UserRights=صلاحيات المستخدم
+Credentials=بيانات الدخول
+UserGUISetup=إعداد شاشة المستخدم
+DisableUser=تعطيل
+DisableAUser=إيقاف المستخدم
 DeleteUser=حذف
 DeleteAUser=حذف المستخدم
-EnableAUser=وتمكن المستخدم
+EnableAUser=تفعيل المستخدم
 DeleteGroup=حذف
 DeleteAGroup=حذف مجموعة
 ConfirmDisableUser=هل أنت متأكد من أنك تريد تعطيل المستخدم <b> %s </b>؟
@@ -32,9 +32,8 @@ CreateUser=إنشاء مستخدم
 LoginNotDefined=ادخل ليست محددة.
 NameNotDefined=اسم غير محدد.
 ListOfUsers=قائمة المستخدمين
-SuperAdministrator=مدير السوبر
-SuperAdministratorDesc=مدير كل الحقوق
-AdministratorDesc=مدير
+SuperAdministrator=مدير شركات متعددة
+SuperAdministratorDesc=مسؤول نظام متعدد الشركات (يمكنه تغيير مستخدمي الإعداد و)
 DefaultRights=الأذونات الافتراضية
 DefaultRightsDesc=حدد هنا أذونات <u> الافتراضية </u> التي يتم منحها تلقائيًا لمستخدم </u> الجديد (لتعديل الأذونات للمستخدمين الحاليين ، انتقل إلى بطاقة المستخدم).
 DolibarrUsers=Dolibarr المستخدمين
@@ -47,8 +46,8 @@ RemoveFromGroup=إزالة من المجموعة
 PasswordChangedAndSentTo=تم تغيير كلمة المرور وترسل إلى <b>٪ ق.</b>
 PasswordChangeRequest=طلب تغيير كلمة المرور لـ <b> %s </b>
 PasswordChangeRequestSent=طلب تغيير كلمة السر لإرسالها إلى <b>٪ ق ٪ ق.</b>
-IfLoginExistPasswordRequestSent=If this login is a valid account (with a valid email), an email to reset password has been sent.
-IfEmailExistPasswordRequestSent=إذا كان هذا البريد الإلكتروني حسابًا صالحًا ، فقد تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور.
+IfLoginExistPasswordRequestSent=إذا كان تسجيل الدخول هذا حسابًا صالحًا (ببريد إلكتروني صالح)، فقد تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور.
+IfEmailExistPasswordRequestSent=إذا كان هذا البريد الإلكتروني حسابًا صالحًا، فقد تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور (تذكر التحقق من مجلد الرسائل غير المرغوب فيها (SPAM) إذا لم تتلق أي شيء)
 ConfirmPasswordReset=تأكيد إعادة تعيين كلمة المرور
 MenuUsersAndGroups=مجموعات المستخدمين
 LastGroupsCreated=تم إنشاء أحدث مجموعات %s
@@ -66,8 +65,8 @@ LinkedToDolibarrUser=ارتباط بالمستخدم
 LinkedToDolibarrThirdParty=رابط لطرف ثالث
 CreateDolibarrLogin=انشاء مستخدم
 CreateDolibarrThirdParty=إيجاد طرف ثالث
-LoginAccountDisableInDolibarr=Account disabled in Dolibarr
-PASSWORDInDolibarr=Password modified in Dolibarr
+LoginAccountDisableInDolibarr=تم تعطيل الحساب في Dolibarr
+PASSWORDInDolibarr=تم تعديل كلمة المرور في Dolibarr
 UsePersonalValue=استخدام الشخصي قيمة
 ExportDataset_user_1=المستخدمون وخصائصهم
 DomainUser=النطاق المستخدم ق ٪
@@ -99,7 +98,7 @@ YourRole=الأدوار الخاص
 YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من المستخدمين النشطين!
 NbOfUsers=عدد المستخدمين
 NbOfPermissions=عدد الأذونات
-DontDowngradeSuperAdmin=يمكن فقط superadmin تقليله a superadmin
+DontDowngradeSuperAdmin=يمكن لمسؤول آخر فقط الرجوع إلى إصدار أقدم من مسؤول
 HierarchicalResponsible=المشرف
 HierarchicView=الهرمي
 UseTypeFieldToChange=استخدام نوع الحقل لتغيير
@@ -110,8 +109,9 @@ ExpectedWorkedHours=ساعات العمل المتوقعة في الأسبوع
 ColorUser=اللون المستخدم
 DisabledInMonoUserMode=معطل في وضع الصيانة
 UserAccountancyCode=كود محاسبة المستخدم
-UserLogoff=خروج المستخدم
-UserLogged=قام المستخدم بتسجيل الدخول
+UserLogoff=تسجيل خروج المستخدم: %s
+UserLogged=قام المستخدم بتسجيل الدخول: %s
+UserLoginFailed=فشل تسجيل دخول المستخدم: %s
 DateOfEmployment=تاريخ التوظيف
 DateEmployment=توظيف
 DateEmploymentStart=تاريخ بدء التوظيف
@@ -120,16 +120,17 @@ RangeOfLoginValidity=نطاق تاريخ صلاحية الوصول
 CantDisableYourself=لا يمكنك تعطيل سجل المستخدم الخاص بك
 ForceUserExpenseValidator=فرض مصدق تقرير المصروفات
 ForceUserHolidayValidator=مدقق طلب الإجازة الإجباري
-ValidatorIsSupervisorByDefault=بشكل افتراضي ، المدقق هو المشرف على المستخدم. ابق فارغة للحفاظ على هذا السلوك.
+ValidatorIsSupervisorByDefault=بشكل افتراضي، المدقق هو المشرف على المستخدم. اتركها فارغة للحفاظ على هذا السلوك.
 UserPersonalEmail=البريد الإلكتروني الشخصي
 UserPersonalMobile=الهاتف المحمول الشخصي
-WarningNotLangOfInterface=تحذير ، هذه هي اللغة الرئيسية التي يتحدثها المستخدم ، وليست لغة الواجهة التي اختار أن يراها. لتغيير لغة الواجهة المرئية بواسطة هذا المستخدم ، انتقل إلى علامة التبويب %s
+WarningNotLangOfInterface=تحذير، هذه هي اللغة الرئيسية التي يتحدث بها المستخدم، وليست لغة الواجهة التي اختار رؤيتها. لتغيير لغة الواجهة التي يراها هذا المستخدم، انتقل إلى علامة التبويب %s
 DateLastLogin=تاريخ آخر تسجيل دخول
 DatePreviousLogin=تاريخ تسجيل الدخول السابق
 IPLastLogin=آخر تسجيل دخول إلى IP
 IPPreviousLogin=تسجيل الدخول السابق إلى IP
-ShowAllPerms=Show all permission rows
-HideAllPerms=Hide all permission rows
-UserPublicPageDesc=You can enable a virtual card for this user. An url with the user profile and a barcode will be available to allow anybody with a smartphone to scan it and add your contact to its address book.
-EnablePublicVirtualCard=Enable the public virtual user card
-PublicVirtualCardUrl=Public virtual user card
+ShowAllPerms=إظهار كافة صفوف الأذونات
+HideAllPerms=إخفاء كافة صفوف الأذونات
+UserPublicPageDesc=يمكنك تمكين بطاقة افتراضية لهذا المستخدم. عنوان url مع ملف تعريف المستخدم و سيكون الرمز الشريطي متاحًا للسماح لأي شخص لديه هاتف ذكي بمسحه ضوئيًا و أضف جهة الاتصال الخاصة بك إلى دفتر العناوين الخاص به.
+EnablePublicVirtualCard=تمكين بطاقة العمل الافتراضية للمستخدم
+UserEnabledDisabled=تم تغيير المستخدم حالة: %s
+AlternativeEmailForOAuth2=البريد الإلكتروني البديل لتسجيل الدخول إلى OAuth2

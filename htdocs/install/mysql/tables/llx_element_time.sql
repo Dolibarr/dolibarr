@@ -17,6 +17,7 @@
 CREATE TABLE llx_element_time(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref_ext varchar(32),                       -- reference into an external system (not used by dolibarr)
     fk_element integer NOT NULL,
     elementtype varchar(32) NOT NULL,
     element_date date,

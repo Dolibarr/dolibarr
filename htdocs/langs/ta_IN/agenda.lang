@@ -8,8 +8,6 @@ LocalAgenda=இயல்பு காலண்டர்
 ActionsOwnedBy=நிகழ்வுக்கு சொந்தமானது
 ActionsOwnedByShort=உரிமையாளர்
 AffectedTo=ஒதுக்கப்படும்
-Event=நிகழ்வு
-Events=நிகழ்வுகள்
 EventsNb=நிகழ்வுகளின் எண்ணிக்கை
 ListOfActions=நிகழ்வுகளின் பட்டியல்
 EventReports=நிகழ்வு அறிக்கைகள்
@@ -23,7 +21,6 @@ MenuDoneMyActions=எனது நிறுத்தப்பட்ட நிக
 ListOfEvents=நிகழ்வுகளின் பட்டியல் (இயல்பு காலண்டர்)
 ActionsAskedBy=நிகழ்வுகள் மூலம் தெரிவிக்கப்பட்டது
 ActionsToDoBy=நிகழ்வுகள் ஒதுக்கப்பட்டுள்ளன
-ActionsDoneBy=செய்த நிகழ்வுகள்
 ActionAssignedTo=நிகழ்வு ஒதுக்கப்பட்டது
 ViewCal=மாத பார்வை
 ViewDay=பகல் காட்சி
@@ -45,6 +42,7 @@ CONTRACT_DELETEInDolibarr=ஒப்பந்தம் %s நீக்கப்�
 PropalClosedSignedInDolibarr=முன்மொழிவு %s கையொப்பமிடப்பட்டது
 PropalClosedRefusedInDolibarr=முன்மொழிவு %s மறுக்கப்பட்டது
 PropalValidatedInDolibarr=முன்மொழிவு %s சரிபார்க்கப்பட்டது
+PropalBackToDraftInDolibarr=Proposal %s go back to draft status
 PropalClassifiedBilledInDolibarr=முன்மொழிவு %s வகைப்படுத்தப்பட்டது
 InvoiceValidatedInDolibarr=விலைப்பட்டியல் %s சரிபார்க்கப்பட்டது
 InvoiceValidatedInDolibarrFromPos=%s இன்வாய்ஸ் POS இலிருந்து சரிபார்க்கப்பட்டது
@@ -56,16 +54,19 @@ MemberValidatedInDolibarr=உறுப்பினர் %s சரிபார�
 MemberModifiedInDolibarr=உறுப்பினர் %s மாற்றப்பட்டது
 MemberResiliatedInDolibarr=உறுப்பினர் %s நீக்கப்பட்டது
 MemberDeletedInDolibarr=உறுப்பினர் %s நீக்கப்பட்டது
+MemberExcludedInDolibarr=Member %s excluded
 MemberSubscriptionAddedInDolibarr=%s உறுப்பினருக்கான சந்தா %s சேர்க்கப்பட்டது
 MemberSubscriptionModifiedInDolibarr=%s உறுப்பினருக்கான சந்தா %s மாற்றப்பட்டது
 MemberSubscriptionDeletedInDolibarr=%s உறுப்பினருக்கான சந்தா %s நீக்கப்பட்டது
 ShipmentValidatedInDolibarr=ஏற்றுமதி %s சரிபார்க்கப்பட்டது
-ShipmentClassifyClosedInDolibarr=ஷிப்மென்ட் %s வகைப்படுத்தப்பட்டது
+ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
 ShipmentUnClassifyCloseddInDolibarr=ஏற்றுமதி %s வகைப்படுத்தப்பட்டது மீண்டும் திறக்கப்பட்டது
 ShipmentBackToDraftInDolibarr=ஏற்றுமதி %s வரைவு நிலைக்குத் திரும்புக
 ShipmentDeletedInDolibarr=ஏற்றுமதி %s நீக்கப்பட்டது
 ShipmentCanceledInDolibarr=ஏற்றுமதி %s ரத்துசெய்யப்பட்டது
 ReceptionValidatedInDolibarr=வரவேற்பு %s சரிபார்க்கப்பட்டது
+ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionClassifyClosedInDolibarr=Reception %s classified closed
 OrderCreatedInDolibarr=ஆர்டர் %s உருவாக்கப்பட்டது
 OrderValidatedInDolibarr=ஆர்டர் %s சரிபார்க்கப்பட்டது
 OrderDeliveredInDolibarr=ஆர்டர் %s வகைப்படுத்தப்பட்டது
@@ -84,6 +85,9 @@ SupplierInvoiceSentByEMail=விற்பனையாளர் விலைப�
 ShippingSentByEMail=ஏற்றுமதி %s மின்னஞ்சல் மூலம் அனுப்பப்பட்டது
 ShippingValidated= ஏற்றுமதி %s சரிபார்க்கப்பட்டது
 InterventionSentByEMail=தலையீடு %s மின்னஞ்சல் மூலம் அனுப்பப்பட்டது
+ProjectSentByEMail=Project %s sent by email
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=முன்மொழிவு நீக்கப்பட்டது
 OrderDeleted=ஆர்டர் நீக்கப்பட்டது
 InvoiceDeleted=விலைப்பட்டியல் நீக்கப்பட்டது
@@ -123,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO தயாரித்தது
 MRP_MO_DELETEInDolibarr=MO நீக்கப்பட்டது
 MRP_MO_CANCELInDolibarr=MO ரத்து செய்யப்பட்டது
 PAIDInDolibarr=%s செலுத்தப்பட்டது
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=Canceled
 ##### End agenda events #####
 AgendaModelModule=நிகழ்வுக்கான ஆவண வார்ப்புருக்கள்
 DateActionStart=தொடக்க தேதி
 DateActionEnd=கடைசி தேதி
 AgendaUrlOptions1=வெளியீட்டை வடிகட்ட பின்வரும் அளவுருக்களையும் நீங்கள் சேர்க்கலாம்:
-AgendaUrlOptions3= <b> logina=%s </b> ஒரு பயனருக்குச் சொந்தமான செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்துகிறது <b> %s a0901b7.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> பயனருக்குச் சொந்தமில்லாத செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்தும்.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> பயனருக்கு ஒதுக்கப்பட்ட செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்த <b> %s %s a09fowner (மற்றும் பிற)
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b> திட்டத்துடன் இணைக்கப்பட்ட செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்த, <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> தானியங்கி நிகழ்வுகளை விலக்க.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> விடுமுறை நாட்கள்=1 </b> விடுமுறை நிகழ்வுகளைச் சேர்க்க.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=தொடர்புகளின் பிறந்தநாள்
 AgendaHideBirthdayEvents=தொடர்புகளின் பிறந்தநாளை மறை
 Busy=பரபரப்பு
@@ -157,6 +165,7 @@ DateActionBegin=நிகழ்வு தொடங்கும் தேதி
 ConfirmCloneEvent=<b> %s </b> நிகழ்வை நிச்சயமாக குளோன் செய்ய விரும்புகிறீர்களா?
 RepeatEvent=மீண்டும் நிகழ்வு
 OnceOnly=ஒருமுறை மட்டும்
+EveryDay=Every day
 EveryWeek=ஒவ்வொரு வாரமும்
 EveryMonth=ஒவ்வொரு மாதமும்
 DayOfMonth=மாதத்தின் நாள்
@@ -171,4 +180,28 @@ ReminderType=திரும்ப அழைக்கும் வகை
 AddReminder=இந்த நிகழ்விற்கான தானியங்கி நினைவூட்டல் அறிவிப்பை உருவாக்கவும்
 ErrorReminderActionCommCreation=இந்த நிகழ்விற்கான நினைவூட்டல் அறிவிப்பை உருவாக்குவதில் பிழை
 BrowserPush=உலாவி பாப்அப் அறிவிப்பு
+Reminders=Reminders
 ActiveByDefault=முன்னிருப்பாக இயக்கப்பட்டது
+Until=until
+DataFromWasMerged=Data from %s was merged
+AgendaShowBookcalCalendar=Booking calendar: %s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=Calendars
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

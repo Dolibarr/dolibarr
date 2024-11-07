@@ -1,20 +1,19 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Xem công việc theo lịch trình
 Permission23102 = Tạo/cập nhật công việc theo lịch trình
 Permission23103 = Xóa công việc theo lịch trình
 Permission23104 = Thực hiện công việc theo lịch trình
 # Admin
 CronSetup=Thiết lập quản lý công việc theo lịch trình
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+URLToLaunchCronJobs=URL để kiểm tra và khởi chạy các công việc định kỳ đủ điều kiện từ trình duyệt
+OrToLaunchASpecificJob=Hoặc để kiểm tra và khởi chạy một công việc cụ thể từ trình duyệt
 KeyForCronAccess=Khóa bảo mật cho URL để khởi chạy các công việc định kỳ
 FileToLaunchCronJobs=Dòng lệnh để kiểm tra và khởi chạy các công việc định kỳ đủ điều kiện
 CronExplainHowToRunUnix=Trên môi trường Unix, bạn nên sử dụng mục crontab sau để chạy dòng lệnh mỗi 5 phút
 CronExplainHowToRunWin=Trên môi trường Microsoft (tm) Windows, bạn có thể sử dụng các công cụ Tác vụ theo lịch để chạy dòng lệnh mỗi 5 phút
 CronMethodDoesNotExists=Lớp %s không chứa bất kỳ phương thức nào %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronMethodNotAllowed=Phương thức %s của lớp %s nằm trong danh sách chặn các phương thức bị cấm
 CronJobDefDesc=Hồ sơ công việc theo định kỳ được xác định vào tập tin mô tả mô-đun. Khi mô-đun được kích hoạt, chúng được tải và có sẵn để bạn có thể quản lý các công việc từ menu công cụ quản trị %s.
 CronJobProfiles=Danh sách hồ sơ công việc định kỳ được xác định trước
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Lệnh
 CronList=Công việc theo lịch trình
 CronDelete=Xóa công việc theo lịch trình
 CronConfirmDelete=Bạn có chắc chắn muốn xóa các công việc theo lịch trình này?
-CronExecute=Launch now
+CronExecute=Khởi chạy ngay bây giờ
 CronConfirmExecute=Bạn có chắc chắn muốn thực hiện các công việc theo lịch trình này ngay bây giờ?
 CronInfo=Mô-đun công việc được lên lịch cho phép lên lịch các công việc để thực hiện chúng tự động. Công việc cũng có thể được bắt đầu bằng tay.
 CronTask=Công việc
-CronNone=Không
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Không phải trước đây
 CronDtEnd=Không phải sau khi
 CronDtNextLaunch=Thực hiện tiếp theo
@@ -47,10 +47,10 @@ CronNbRun=Số lần khởi chạy
 CronMaxRun=Số lần khởi chạy tối đa
 CronEach=Mỗi
 JobFinished=Công việc khởi chạy và kết thúc
-Scheduled=Scheduled
+Scheduled=Lên kế hoạch
 #Page card
-CronAdd= Thêm công việc
-CronEvery=Thực hiện mỗi công việc
+CronAdd=Thêm công việc
+CronEvery=Run job every
 CronObject=Sao bản / Đối tượng để tạo
 CronArgs=Các thông số
 CronSaveSucess=Lưu lại thành công
@@ -58,16 +58,16 @@ CronNote=Nhận xét
 CronFieldMandatory=Các trường %s là bắt buộc
 CronErrEndDateStartDt=Ngày kết thúc không thể trước ngày bắt đầu
 StatusAtInstall=Trạng thái khi cài đặt mô-đun
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=Bật lập lịch
 CronStatusInactiveBtn=Vô hiệu hoá
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=Công việc này bị vô hiệu hóa (không được lên lịch)
 CronId=Id
 CronClassFile=Tên tệp với lớp
 CronModuleHelp=Tên của thư mục mô-đun Dolibarr (cũng hoạt động với mô-đun Dolibarr bên ngoài). <BR> Ví dụ: để gọi phương thức tìm nạp của đối tượng sản phẩm Dolibarr/htdocs/<u>product</u>/class/products.class.php, giá trị cho mô-đun là <br> <i>product</i>
 CronClassFileHelp=Đường dẫn tương đối và tên tệp để tải (đường dẫn có liên quan đến thư mục gốc của máy chủ web). <BR> Ví dụ: để gọi phương thức tìm nạp của đối tượng Sản phẩm Dolibarr htdocs/product/class/<u>product.class.php</u> , giá trị cho tên tệp lớp là <br> <i>product/class/product.class.php</i>
 CronObjectHelp=Tên đối tượng để tải. <BR> Ví dụ: để gọi phương thức tìm nạp của đối tượng Sản phẩm Dolibarr /htdocs/product/class/products.class.php, giá trị cho tên tệp lớp là <br> <i>Product</i>
 CronMethodHelp=Phương thức đối tượng để khởi chạy. <BR> Ví dụ: để gọi phương thức tìm nạp của đối tượng Sản phẩm Dolibarr /htdocs/product/class/products.class.php, giá trị của phương thức là <br> <i>fetch</i>
-CronArgsHelp=Các đối số phương thức. <BR> Ví dụ: để gọi phương thức tìm nạp của đối tượng Sản phẩm Dolibarr /htdocs/product/class/products.class.php, giá trị cho tham số có thể là <br> <i>0, ProductRef</i>
+CronArgsHelp=Các đối số của phương thức. <BR> Ví dụ để gọi phương thức tìm nạp của đối tượng Dolibarr Product /htdocs/product/class/product.class.php, giá trị cho tham số có thể là<br><i>0, ProductRef</i>
 CronCommandHelp=Dòng lệnh hệ thống để thực thi.
 CronCreateJob=Tạo công việc theo lịch trình mới
 CronFrom=Từ
@@ -82,19 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Đi vào menu " <a href="%s">Trang chủ - Công
 JobDisabled=Công việc bị vô hiệu hóa
 MakeLocalDatabaseDumpShort=Sao lưu cơ sở dữ liệu cục bộ
 MakeLocalDatabaseDump=Tạo một kết xuất cơ sở dữ liệu cục bộ. Các tham số là:  nén('gz' hoặc 'bz' hoặc 'none'), loại sao lưu ('mysql', 'pssql', 'auto'), 1, 'auto' hoặc tên tệp để tạo, số lượng tệp sao lưu cần giữ
-MakeSendLocalDatabaseDumpShort=Send local database backup
-MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+MakeSendLocalDatabaseDumpShort=Gửi bản sao lưu cơ sở dữ liệu cục bộ
+MakeSendLocalDatabaseDump=Gửi bản sao lưu cơ sở dữ liệu cục bộ qua email. Các tham số là: đến, từ, chủ đề, tin nhắn, tên tệp (Tên tệp được gửi), bộ lọc ('sql' chỉ để sao lưu cơ sở dữ liệu)
+BackupIsTooLargeSend=Xin lỗi, tệp sao lưu cuối cùng quá lớn để gửi qua email
+CleanUnfinishedCronjobShort=Làm sạch cronjob chưa hoàn thành
+CleanUnfinishedCronjob=Làm sạch cronjob bị kẹt trong quá trình xử lý khi tiến trình không còn chạy
 WarningCronDelayed=Chú ý, vì mục đích hiệu suất, bất kể ngày nào là ngày thực hiện các công việc được kích hoạt, công việc của bạn có thể bị trì hoãn tối đa là %s giờ trước khi được chạy.
 DATAPOLICYJob=Trình dọn dẹp dữ liệu và ẩn danh
-JobXMustBeEnabled=Job %s must be enabled
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+JobXMustBeEnabled=Công việc %s phải được bật
+EmailIfError=Email cảnh báo về lỗi
+JobNotFound=Không tìm thấy công việc %s trong danh sách công việc (cố gắng tắt/bật mô-đun)
+ErrorInBatch=Lỗi khi chạy công việc %s
 
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+LastExecutedScheduledJob=Công việc theo lịch trình được thực hiện lần cuối
+NextScheduledJobExecute=Công việc được lên lịch tiếp theo để thực hiện
+NumberScheduledJobError=Số lượng công việc đã lên lịch bị lỗi
+NumberScheduledJobNeverFinished=Số công việc đã lên lịch chưa bao giờ hoàn thành

@@ -7,6 +7,8 @@
 # Usage: txpush.sh (source|xx_XX) [-r dolibarr.file] [-f]
 #------------------------------------------------------
 
+# shellcheck disable=2006,2044,2086,2155,2164,2268
+
 export project='dolibarr'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -31,10 +33,10 @@ fi
 if [ "x$1" = "xsource" ]
 then
 	echo "tx push -s $2 $3"
-	tx push -s $2 $3 
+	tx push -s $2 $3
 else
-    if [ "x$1" = "xall" ]
-    then
+	if [ "x$1" = "xall" ]
+	then
 		for dir in `find htdocs/langs/* -type d`
 		do
 			shortdir=`basename $dir`
@@ -44,7 +46,7 @@ else
 			echo "tx push --skip -t -l $shortdir $2 $3 $4"
 			tx push --skip -t -l $shortdir $2 $3 $4
 		done
-    else
+	else
 		for file in `find htdocs/langs/$1/*.lang -type f`
 		do
 			echo $file

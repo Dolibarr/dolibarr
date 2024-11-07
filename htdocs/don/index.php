@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +30,19 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('donationindex'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load("donations");
+
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('donationindex'));
 
 $donation_static = new Don($db);
 
@@ -56,7 +65,7 @@ $donstatic = new Don($db);
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $langs->trans("Donations"), $help_url);
+llxHeader('', $langs->trans("Donations"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-index');
 
 $nb = array();
 $somme = array();
@@ -90,9 +99,13 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a search into global search combo so we can remove this
-	if (isModEnabled('don') && $user->rights->don->lire) {
-		$listofsearchfields['search_donation'] = array('text'=>'Donation');
+if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+	// Ensure $listofsearchfields is an array
+	$listofsearchfields = array();
+}
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // TODO Add a search into global search combo so we can remove this
+	if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
+		$listofsearchfields['search_donation'] = array('text' => 'Donation');
 	}
 
 	if (count($listofsearchfields)) {
@@ -175,8 +188,8 @@ foreach ($listofstatus as $status) {
 	print '<tr class="oddeven">';
 	print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
 	print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
-	print '<td class="right nowraponall amount">'.(!empty($nb[$status]) ? price($somme[$status], 'MT') : '&nbsp;').'</td>';
-	print '<td class="right nowraponall">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="right nowraponall amount">'.(!empty($nb[$status]) ? price($somme[$status], 1, '', 1, -1, 'MT') : '&nbsp;').'</td>';
+	print '<td class="right nowraponall">'.(!empty($nb[$status]) ? price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
 	$totalnb += (!empty($nb[$status]) ? $nb[$status] : 0);
 	$total += (!empty($somme[$status]) ? $somme[$status] : 0);
 	print "</tr>";
@@ -185,8 +198,8 @@ foreach ($listofstatus as $status) {
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td class="right nowraponall">'.$totalnb.'</td>';
-print '<td class="right nowraponall">'.price($total, 'MT').'</td>';
-print '<td class="right nowraponall">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
+print '<td class="right nowraponall">'.price($total, 1, "", 1, -1, 'MT').'</td>';
+print '<td class="right nowraponall">'.($totalnb ? price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
@@ -194,7 +207,8 @@ print "</table>";
 print '</div><div class="fichetwothirdright">';
 
 
-$max = 10;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
 
 /*
  * Last modified donations
@@ -202,7 +216,7 @@ $max = 10;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.lastname, c.firstname, c.tms as datem, c.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as c";
-$sql .= " WHERE c.entity = ".$conf->entity;
+$sql .= " WHERE c.entity IN (".getEntity("don").")";
 //$sql.= " AND c.fk_statut > 2";
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -211,7 +225,11 @@ $resql = $db->query($sql);
 if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).'</th></tr>';
+	print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).' ';
+	print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.datem&sortorder=DESC">';
+	print '<span class="badge">...</span>';
+	print '</a>';
+	print '</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num) {
@@ -230,8 +248,8 @@ if ($resql) {
 
 			print '<td class="nobordernopadding">';
 			print $obj->societe;
-			print ($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
-			print dolGetFirstLastname($obj->lastname, $obj->firstname);
+			print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
+			print dolGetFirstLastname($obj->firstname, $obj->lastname);
 			print '</td>';
 
 			print '<td class="right nobordernopadding nowraponall amount">';

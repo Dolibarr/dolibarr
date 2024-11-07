@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = 資料數據隱私政策
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = 管理資料數據隱私的模組（符合 GDPR）
-
-#
 # Administration page
-#
 datapolicySetup = 資料數據隱私政策模組設定
 Deletion = 刪除資料
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s 個月
 ONE_YEAR = 1年
 NB_YEARS = %s 年
@@ -38,55 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = 潛在方/客戶
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 非潛在方或客戶
 DATAPOLICY_CONTACT_FOURNISSEUR = 供應商
 DATAPOLICY_ADHERENT = 會員
-DATAPOLICY_Tooltip_SETUP = 聯絡方式 - 說明您對每種類型的選擇。
-DATAPOLICYMail = 電子郵件設定
-DATAPOLICYSUBJECTMAIL = 電子郵件的主題
-DATAPOLICYCONTENTMAIL = 電子郵件的內容
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = 同意後的訊息
-DATAPOLICYREFUSE = 不同意後的訊息
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+SendAgreementText = 您可以向所有相關的聯絡人發送 GDPR 電子郵件（尚未收到過電子郵件且您尚未記錄有關其 GDPR 協議的任何信息）。要執行此操作，請使用以下按鈕。
 SendAgreement = 發送電子郵件
 AllAgreementSend = 所有電子郵件已發送
 TXTLINKDATAPOLICYACCEPT = “同意”的超連結文字
-TXTLINKDATAPOLICYREFUSE = “不同意”的超連結文字
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 # Extrafields
-#
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = 匿名合作方
-DATAPOLICY_POPUP_ANONYME_TEXTE = 您無法從 Dolibarr 刪除此聯絡人，因為已有相關項目。根據 GDPR，您將使這些所有資料匿名，以遵從您的義務。您想繼續嗎 ？
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = 匯出個人資料
-DATAPOLICY_PORTABILITE_CONFIRMATION = 您要匯出此聯絡人的個人資料。您確定嗎 ？
-
-#
+DATAPOLICY_BLOCKCHECKBOX = GDPR：個人數資料處理
+DATAPOLICY_consentement = 同意個人數據處理
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymised the %s
-
-# V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
-
-# ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+MailSent = 郵件已發送
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

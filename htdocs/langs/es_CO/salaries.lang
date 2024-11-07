@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta (del plan de cuentas) utilizada por defecto para terceros "usuarios"
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta dedicada definida en la tarjeta de usuario se usará solo para contabilidad auxiliar. Este se usará para el Libro mayor y como valor predeterminado de la contabilidad del Libro mayor auxiliar si no se define una cuenta de contabilidad de usuario dedicada en el usuario.
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Por defecto, deje vacía la opción "Crear automáticamente un pago total" al crear un salario.
 AddSalaryPayment=Agregar pago de salario
 THM=Tarifa por hora promedio

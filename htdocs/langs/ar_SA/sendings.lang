@@ -39,7 +39,7 @@ StatusSendingValidatedShort=صادق
 StatusSendingProcessedShort=معالجة
 SendingSheet=ورقة الشحن
 ConfirmDeleteSending=هل أنت متأكد أنك تريد حذف هذه الشحنة؟
-ConfirmValidateSending=هل أنت متأكد من أنك تريد التحقق من صحة هذه الشحنة بالمرجع <b> %s </b>؟
+ConfirmValidateSending=هل أنت متأكد أنك تريد التحقق من صحة هذه الشحنة باستخدام المرجع <b>%s</b>؟
 ConfirmCancelSending=هل أنت متأكد أنك تريد إلغاء هذه الشحنة؟
 DocumentModelMerou=Mérou A5 نموذج
 WarningNoQtyLeftToSend=تحذير ، لا تنتظر أن المنتجات المشحونة.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=التاريخ المحدد للتسليم
 RefDeliveryReceipt=إيصال تسليم المرجع
 StatusReceipt=إيصال تسليم الحالة
 DateReceived=تلقى تاريخ التسليم
-ClassifyReception=صنف الاستقبال
+ClassifyReception=تصنيف المستلمة
 SendShippingByEMail=إرسال الشحنة عبر البريد الإلكتروني
 SendShippingRef=تقديم شحنة٪ الصورة
 ActionsOnShipping=الأحداث على شحنة
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=تم استلام كمية المن
 NoProductToShipFoundIntoStock=لم يتم العثور على أي منتج للشحن في المستودع <b> %s </b>. تصحيح المخزون أو الرجوع لاختيار مستودع آخر.
 WeightVolShort=الوزن / المجلد.
 ValidateOrderFirstBeforeShipment=يجب عليك أولاً التحقق من صحة الطلب قبل التمكن من إجراء الشحنات.
+NoLineGoOnTabToAddSome=لا يوجد سطر، انتقل إلى علامة التبويب "%s" للإضافة
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=مجموع الأوزان المنتج
 # warehouse details
 DetailWarehouseNumber= تفاصيل مستودع
 DetailWarehouseFormat= W: %s (الكمية: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=عرض آخر تاريخ للدخول في المخزون أثناء إنشاء الشحنة للرقم التسلسلي أو الدفعة
+CreationOptions=الخيارات المتاحة أثناء إنشاء الشحنة
+
+ShipmentDistribution=توزيع الشحنة
+
+ErrorTooManyCombinationBatchcode=لا يوجد إرسال للسطر %s حيث تم العثور على مجموعات كثيرة جدًا من المستودع والمنتج ورمز الدفعة (%s).
+ErrorNoCombinationBatchcode=تعذر حفظ السطر %s كمجموعة من المستودع-منتج-lot/serial (%s, %s, %s) لم يتم العثور عليه في المخزون.
+
+ErrorTooMuchShipped=يجب ألا تكون الكمية المشحونة أكبر من الكمية المطلوبة للسطر %s

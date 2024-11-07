@@ -7,7 +7,6 @@ ob_start();
 header('Cache-Control: max-age=3600, public, must-revalidate');
 header('Content-type: application/manifest+json');
 // END PHP ?>
-
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");
 // END PHP

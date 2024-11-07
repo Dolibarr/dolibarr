@@ -8,8 +8,6 @@ LocalAgenda=Standardkalender
 ActionsOwnedBy=Händelse som ägs av
 ActionsOwnedByShort=Ägare
 AffectedTo=Tilldelad
-Event=Händelse
-Events=Händelser
 EventsNb=Antal händelser
 ListOfActions=Lista över händelser
 EventReports=Händelsesrapporter
@@ -23,7 +21,6 @@ MenuDoneMyActions=Min avslutade händelser
 ListOfEvents=Händelselista (standardkalender)
 ActionsAskedBy=Händelser rapporterade av
 ActionsToDoBy=Händelser tilldelade
-ActionsDoneBy=Händelser utförda av
 ActionAssignedTo=Händelse tilldelad
 ViewCal=Månadsvy
 ViewDay=Dagsvy
@@ -62,7 +59,7 @@ MemberSubscriptionAddedInDolibarr=Prenumeration %s för medlem %s tillagd
 MemberSubscriptionModifiedInDolibarr=Prenumeration %s för medlem %s ändrad
 MemberSubscriptionDeletedInDolibarr=Prenumeration %s för medlem %s raderad
 ShipmentValidatedInDolibarr=Leverans %s bekräftad
-ShipmentClassifyClosedInDolibarr=Leverans %s markerades som fakturerad
+ShipmentClassifyClosedInDolibarr=Försändelsen %s klassificeras som stängd
 ShipmentUnClassifyCloseddInDolibarr=Leverans %s markerades som återöppnad
 ShipmentBackToDraftInDolibarr=Leverans %s backades till utkast
 ShipmentDeletedInDolibarr=Frakten %s raderad
@@ -89,6 +86,8 @@ ShippingSentByEMail=Leverans %s skickades via e-post
 ShippingValidated= Leverans %s bekräftad
 InterventionSentByEMail=Intervention %s skickades via e-post
 ProjectSentByEMail=Projekt %s skickades via e-post
+ProjectDeletedInDolibarr=Projekt %s raderad
+ProjectClosedInDolibarr=Projekt %s stängt
 ProposalDeleted=Offert raderad
 OrderDeleted=Order raderad
 InvoiceDeleted=Faktura raderad
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO producerad
 MRP_MO_DELETEInDolibarr=MO raderad
 MRP_MO_CANCELInDolibarr=MO avbruten
 PAIDInDolibarr=%s betald
+ENABLEDISABLEInDolibarr=Användare aktiverad eller inaktiverad
+CANCELInDolibarr=Avbruten
 ##### End agenda events #####
 AgendaModelModule=Dokumentmallar för händelser
 DateActionStart=Startdatum
 DateActionEnd=Slutdatum
 AgendaUrlOptions1=Du kan också lägga till följande parametrar för att filtrera:
-AgendaUrlOptions3=<b>Logina =%s</b> ​​att begränsa till åtgärder som ägs av en användare<b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s </b> för att begränsa till åtgärder som inte ägs av användare <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=</b> för att begränsa till åtgärder som tilldelats användare <b>%s</b> (ägare och andra)
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID__ </b> för att begränsa till åtgärder länkade till projekt <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> för att utesluta automatiska händelser.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> för att inkludera helgdagar
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Kontakters födelsedagar
 AgendaHideBirthdayEvents=Dölj kontakters födelsedagar
 Busy=Upptagen
@@ -180,3 +183,25 @@ BrowserPush=Popup i webbläsare
 Reminders=Påminnelser
 ActiveByDefault=Aktiverad som standard
 Until=tills
+DataFromWasMerged=Data från %s slogs samman
+AgendaShowBookcalCalendar=Bokningskalender: %s
+MenuBookcalIndex=Onlinebokning
+BookcalLabelAvailabilityHelp=Etikett på tillgänglighetsintervallet. Till exempel:<br>Allmän tillgänglighet<br>Tillgänglighet under julhelgen
+DurationOfRange=Varaktighet för intervall
+BookCalSetup = Onlinebokning
+BookCalSetupPage = Onlinebokningssida
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Gränssnittstitel
+BookCalAbout = Om BookCal
+BookCalAboutPage = BookCal om sida
+Calendars=Kalendrar
+Availabilities=Tillgängligheter
+NewAvailabilities=Nya tillgångar
+NewCalendar=Ny kalender
+ThirdPartyBookCalHelp=Event som bokas i den här kalendern kommer automatiskt att länkas till denna tredje part.
+AppointmentDuration = Utnämningslängd : %s
+BookingSuccessfullyBooked=Din bokning har sparats
+BookingReservationHourAfter=Vi bekräftar bokningen av vårt möte vid datumet %s
+BookcalBookingTitle=Onlinebokning
+Transparency = Genomskinlighet
+ReadMore = Read more
+ReadLess = Read less

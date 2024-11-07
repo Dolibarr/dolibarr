@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Sustav upravljanja znanjem
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Upravljajte bazom upravljanja znanjem (KM) ili Help-Desk bazom
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Postavke
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Postavljanje sustava za upravljanje znanjem
+KnowledgeManagementSetupPage = Stranica za postavljanje sustava upravljanja znanjem
 # About page
-#
-About = O programu
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
+KnowledgeManagementAbout = O upravljanju znanjem
+KnowledgeManagementAboutPage = Upravljanje znanjem o stranici
+KnowledgeManagementArea = Upravljanje znanjem
+MenuKnowledgeRecord = Baza znanja
+MenuKnowledgeRecordShort = Baza znanja
 ListKnowledgeRecord = Popis članaka
 NewKnowledgeRecord = Novi članak
 ValidateReply = Potvrdite rješenje
 KnowledgeRecords = Članci
 KnowledgeRecord = Stavka
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
+KnowledgeRecordExtraFields = Dodatna polja za članak
+GroupOfTicket=Skupina ulaznica
+YouCanLinkArticleToATicketCategory=Možete povezati članak s grupom ulaznica (tako da će članak biti istaknut na svim ulaznicama u ovoj grupi)
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Postavi kao zastarjelo
 ConfirmCloseKM=Potvrđujete li zatvaranje ovog članka kao zastarjelog?
 ConfirmReopenKM=Želite li vratiti ovaj članak na status "Provjeren"?
+BoxLastKnowledgerecordDescription=Zadnjih %s članaka
+BoxLastKnowledgerecord=Zadnji članci
+BoxLastKnowledgerecordContent=Zadnji članci
+BoxLastKnowledgerecordModifiedContent=Zadnji izmijenjeni članci
+BoxLastModifiedKnowledgerecordDescription=Zadnji %s izmijenjeni članci
+BoxLastModifiedKnowledgerecord=Zadnji izmijenjeni članci

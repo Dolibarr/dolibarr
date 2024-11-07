@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Browser;
 
 use Sabre\DAV;
-use Sabre\DAV\Inode;
+use Sabre\DAV\INode;
 use Sabre\DAV\PropFind;
-use Sabre\HTTP\URLUtil;
+use Sabre\Uri;
 
 /**
- * GuessContentType plugin
+ * GuessContentType plugin.
  *
  * A lot of the built-in File objects just return application/octet-stream
  * as a content-type by default. This is a problem for some clients, because
@@ -22,17 +24,16 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class GuessContentType extends DAV\ServerPlugin {
-
+class GuessContentType extends DAV\ServerPlugin
+{
     /**
-     * List of recognized file extensions
+     * List of recognized file extensions.
      *
      * Feel free to add more
      *
      * @var array
      */
     public $extensionMap = [
-
         // images
         'jpg' => 'image/jpeg',
         'gif' => 'image/gif',
@@ -44,58 +45,49 @@ class GuessContentType extends DAV\ServerPlugin {
 
         // text
         'txt' => 'text/plain',
-
     ];
 
     /**
-     * Initializes the plugin
-     *
-     * @param DAV\Server $server
-     * @return void
+     * Initializes the plugin.
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         // Using a relatively low priority (200) to allow other extensions
         // to set the content-type first.
         $server->on('propFind', [$this, 'propFind'], 200);
-
     }
 
     /**
-     * Our PROPFIND handler
+     * Our PROPFIND handler.
      *
      * Here we set a contenttype, if the node didn't already have one.
-     *
-     * @param PropFind $propFind
-     * @param INode $node
-     * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
+    public function propFind(PropFind $propFind, INode $node)
+    {
+        $propFind->handle('{DAV:}getcontenttype', function () use ($propFind) {
+            list(, $fileName) = Uri\split($propFind->getPath());
 
-        $propFind->handle('{DAV:}getcontenttype', function() use ($propFind) {
-
-            list(, $fileName) = URLUtil::splitPath($propFind->getPath());
             return $this->getContentType($fileName);
-
         });
-
     }
 
     /**
-     * Simple method to return the contenttype
+     * Simple method to return the contenttype.
      *
      * @param string $fileName
+     *
      * @return string
      */
-    protected function getContentType($fileName) {
-
-        // Just grabbing the extension
-        $extension = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
-        if (isset($this->extensionMap[$extension])) {
-            return $this->extensionMap[$extension];
+    protected function getContentType($fileName)
+    {
+        if (null !== $fileName) {
+            // Just grabbing the extension
+            $extension = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
+            if (isset($this->extensionMap[$extension])) {
+                return $this->extensionMap[$extension];
+            }
         }
+
         return 'application/octet-stream';
-
     }
-
 }

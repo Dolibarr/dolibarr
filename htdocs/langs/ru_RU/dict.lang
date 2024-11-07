@@ -137,7 +137,7 @@ CountryLV=Латвия
 CountryLB=Ливан
 CountryLS=Лесото
 CountryLR=Либерия
-CountryLY=Ливийская
+CountryLY=Ливия
 CountryLI=Лихтенштейн
 CountryLT=Литва
 CountryLU=Люксембург
@@ -247,6 +247,7 @@ CountryJE=Джерси
 CountryME=Черногория
 CountryBL=Сен-Бартельми
 CountryMF=Сен-Мартен
+CountryXK=Косово
 
 ##### Civilities #####
 CivilityMME=Г-жа
@@ -294,8 +295,8 @@ CurrencyXPF=Тихоокеанские франки
 CurrencySingXPF=Тихоокеанский франк
 CurrencyCentEUR=центы
 CurrencyCentSingEUR=цент
-CurrencyCentINR=пайсы
-CurrencyCentSingINR=пайса
+CurrencyCentINR=пайса
+CurrencyCentSingINR=пайсы
 CurrencyThousandthSingTND=тысячный
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Интернет

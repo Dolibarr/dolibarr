@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=บัญชี (จากผังบัญชี) ใช้เป็นค่าเริ่มต้นสำหรับบุคคลที่สาม "ผู้ใช้"
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=บัญชีเฉพาะที่กำหนดไว้ในบัตรผู้ใช้จะใช้สำหรับบัญชีแยกประเภทย่อยเท่านั้น ค่านี้จะใช้สำหรับบัญชีแยกประเภททั่วไปและเป็นค่าเริ่มต้นของการบัญชีแยกประเภทย่อย หากไม่ได้กำหนดบัญชีผู้ใช้เฉพาะสำหรับผู้ใช้
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=บัญชีโดยปริยายสำหรับการจ่ายค่าจ้าง
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=ตามค่าเริ่มต้น ให้เว้นว่างตัวเลือก "สร้างการชำระเงินทั้งหมดโดยอัตโนมัติ" เมื่อสร้างเงินเดือน
 Salary=เงินเดือน
@@ -24,4 +24,10 @@ SalariesStatistics=สถิติเงินเดือน
 SalariesAndPayments=เงินเดือนและการจ่ายเงิน
 ConfirmDeleteSalaryPayment=คุณต้องการลบการจ่ายเงินเดือนนี้หรือไม่ ?
 FillFieldFirst=กรอกช่องพนักงานก่อน
-UpdateAmountWithLastSalary=กำหนดจำนวนเงินด้วยเงินเดือนล่าสุด
+UpdateAmountWithLastSalary=กำหนดจำนวนเงินเดือนสุดท้าย
+MakeTransferRequest=แจ้งขอโอน
+VirementOrder=ขอโอนเครดิต
+BankTransferAmount=จำนวนเงินโอนเครดิต
+WithdrawalReceipt=คำสั่งโอนเครดิต
+OrderWaiting=คำสั่งซื้อที่รอดำเนินการ
+FillEndOfMonth=เติมสิ้นเดือน.
