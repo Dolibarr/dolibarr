@@ -22161,47 +22161,7 @@ parameters:
 			path: ../../htdocs/projet/graph_opportunities.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$listofoppstatus might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
 			message: "#^Variable \\$mine might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$projectsListId might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$socid might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/graph_opportunities.inc.php
 
