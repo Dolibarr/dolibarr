@@ -509,7 +509,7 @@ class Expedition extends CommonObject
 							$line = $this->lines[$i];
 							if ($line->fk_product > 0) {
 								if (!isset($kits_list[$line->fk_product])) {
-									if (!isset($line->product)) {
+									if (!is_object($line->product)) {
 										$line_product = new Product($this->db);
 										$result = $line_product->fetch($line->fk_product, '', '', '', 1, 1, 1);
 										if ($result <= 0) {
@@ -1899,8 +1899,10 @@ class Expedition extends CommonObject
 
 				if ($originline > 0 && $originline == $obj->fk_elementdet) {
 					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
-					$line->entrepot_id = 0; // entrepod_id in details_entrepot
-					$line->qty_shipped += $obj->qty_shipped;
+					if (isset($line)) {
+						$line->entrepot_id = 0; // entrepod_id in details_entrepot
+						$line->qty_shipped += $obj->qty_shipped;
+					}
 				} else {
 					$line = new ExpeditionLigne($this->db);		// new group to start
 					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
@@ -2027,22 +2029,20 @@ class Expedition extends CommonObject
 					$line_child_list = array();
 					$res = $line->findAllChild($line->id, $line_child_list, 1);
 					if ($res > 0) {
-						if (!empty($line_child_list)) {
-							foreach ($line_child_list as $child_line) {
-								foreach ($child_line as $child_obj) {
-									$child_product_id = (int) $child_obj->fk_product;
-									$child_warehouse_id = (int) $child_obj->fk_warehouse;
+						foreach ($line_child_list as $child_line) {
+							foreach ($child_line as $child_obj) {
+								$child_product_id = (int) $child_obj->fk_product;
+								$child_warehouse_id = (int) $child_obj->fk_warehouse;
 
-									if ($child_warehouse_id > 0) {
-										// child quantities group by warehouses
-										if (!isset($detail_children[$child_product_id])) {
-											$detail_children[$child_product_id] = array();
-										}
-										if (!isset($detail_children[$child_product_id][$child_warehouse_id])) {
-											$detail_children[$child_product_id][$child_warehouse_id] = 0;
-										}
-										$detail_children[$child_product_id][$child_warehouse_id] += $child_obj->qty;
+								if ($child_warehouse_id > 0) {
+									// child quantities group by warehouses
+									if (!isset($detail_children[$child_product_id])) {
+										$detail_children[$child_product_id] = array();
 									}
+									if (!isset($detail_children[$child_product_id][$child_warehouse_id])) {
+										$detail_children[$child_product_id][$child_warehouse_id] = 0;
+									}
+									$detail_children[$child_product_id][$child_warehouse_id] += $child_obj->qty;
 								}
 							}
 						}
