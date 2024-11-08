@@ -89,7 +89,7 @@ class WorkstationResource extends CommonObject
 	 * Function used to get an array with all resources linked to a workstation
 	 *
 	 * @param	int		$fk_workstation		Id of workstation we need to get linked resources
-	 * @return 	array						Array of record
+	 * @return 	int[]						Array of record
 	 */
 	public static function getAllResourcesOfWorkstation($fk_workstation)
 	{

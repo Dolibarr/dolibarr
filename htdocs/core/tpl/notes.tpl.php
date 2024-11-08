@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2020 Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+/**
+ * @var CommonObject $object
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $permissionnote
+ * @var string $cssclass
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";

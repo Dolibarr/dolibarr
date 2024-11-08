@@ -1,7 +1,18 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var Conf $conf
+ *
+ * @var int $dol_optimize_smallscreen
+ * @var string $colortextlink
+ * @var string $butactionbg
+ * @var string $textbutaction
+ */
+?>
 /* <style type="text/css" > */
 
 :root {

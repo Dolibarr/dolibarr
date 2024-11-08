@@ -2,6 +2,7 @@
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024 MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/html.formadvtargetemailing.c
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/advthirdparties.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('mails', 'companies'));

@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("categories", "compta"));
 
@@ -278,10 +286,7 @@ $morehtmlref .= '</div>';
 dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.urlencode($type), 0, '', '', 1);
 
 
-/*
- * Confirmation suppression
- */
-
+// Confirmation of deletion
 if ($action == 'delete') {
 	if ($backtopage) {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&backtopage='.urlencode($backtopage), $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 2);
@@ -416,13 +421,13 @@ if ($cats < 0) {
 
 	// Define data (format for treeview)
 	$data = array();
-	$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+	$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 	foreach ($fulltree as $key => $val) {
 		$categstatic->id = $val['id'];
 		$categstatic->ref = $val['label'];
 		$categstatic->color = $val['color'];
 		$categstatic->type = $type;
-		$desc = dol_htmlcleanlastbr($val['description']);
+		//$desc = dol_htmlcleanlastbr($val['description']);
 
 		$counter = '';
 		if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
@@ -432,14 +437,18 @@ if ($cats < 0) {
 			$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 		}
 
-		$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
-		$li = $categstatic->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type));
+		if ($categstatic->color) {
+			$stylecolor = ' style="background: #'.sprintf("%06s", $categstatic->color).';"';
+		} else {
+			$stylecolor = ' style="background: #bbb;"';
+		}
+		$li = $categstatic->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $id).'&type='.urlencode($type)), 0);
 
 		$entry = '<table class="nobordernopadding centpercent">';
 		$entry .= '<tr>';
 
 		$entry .= '<td>';
-		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
+		$entry .= '<span class="noborderoncategories" '.$stylecolor.'>'.$li.'</span>';
 		$entry .= '</td>';
 
 		$entry .= $counter;
@@ -651,14 +660,14 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap tdtop">';
+					print '<td class="nowrap tdtop tdoverflowmax250">';
 					print $soc->getNomUrl(1);
 					print "</td>\n";
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id."'>";
-						print $langs->trans("DeleteFromCat");
+						print '<span class="hideonsmartphone">'.$langs->trans("DeleteFromCat").'</span>';
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}

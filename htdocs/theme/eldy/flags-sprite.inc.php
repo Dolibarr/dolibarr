@@ -1,7 +1,7 @@
 <?php
 /*
 /* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,12 @@
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by stylesheet');
-} ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+}
+/**
+ * @var string $path
+ */
+?>
+/* <style type="text/css" > */ /* don't remove this line it's an ide hack */
 
 .flag-sprite {
 	background:url(<?php echo dol_buildpath($path.'/theme/common/flags/flag-sprite.png', 1) ?>) no-repeat top left; display:inline-block;

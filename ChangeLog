@@ -21,12 +21,15 @@ The following changes may create regressions for some external modules, but were
 * Prepare your module for deprecation of triggers code XXX_INSERT to support also XXX_CREATE.
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
-* The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
+* The deprecated GET parameter "&sall=" has been removed, use now the "&search_all=".
+* The experimental and deprecated module WebserviceClient is completely removed (was never released and use deprecated architecture). May be replaced with the stable module Webhook.
 * The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
   be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
 * The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
-* The trigger code CATEGORY_LINK and CATEGORY_UNLINK has been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff' to detect we want to make a link or unlink.
-* The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name
+* The trigger code CATEGORY_LINK and CATEGORY_UNLINK has been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff' to detect if we want to make a link or unlink.
+* The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name everywhere.
+* If you were using the substitution key __MEMBER_CIVILITY__, you must now use __MEMBER_TITLE__
+
 
 ***** ChangeLog for 20.0.1 compared to 20.0.0 *****
 

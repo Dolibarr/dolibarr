@@ -176,10 +176,10 @@ function length_accounta($accounta)
  *	@param 	string				$description    Description
  *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into hidden fields of form
+ *	@param	array<string,mixed>	$moreparam		Array with list of params to add into hidden fields of form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
- *	@param	array				$moreoptions	Array with list of params to add to table
+ *	@param	array<string,mixed>	$moreoptions	Array with list of params to add to table
  *	@return	void
  */
 function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '', $moreoptions = array())
@@ -279,7 +279,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 /**
  * Return Default dates for transfer based on periodicity option in accountancy setup
  *
- * @return	array		Dates of periodicity by default
+ * @return array{date_start:int,date_end:int,pastmonthyear:int,pastmonth:int}	Dates of periodicity by default
  */
 function getDefaultDatesForTransfer()
 {
@@ -334,7 +334,6 @@ function getDefaultDatesForTransfer()
 			$pastmonthyear--;
 		}
 	}
-
 	return array(
 		'date_start' => $date_start,
 		'date_end' => $date_end,
@@ -348,10 +347,10 @@ function getDefaultDatesForTransfer()
  *
  * 	@param 	DoliDB		$db					Database handler
  * 	@param 	Conf		$conf				Config
- * 	@param 	int 		$from_time			[=null] Get current time or set time to find fiscal period
- *	@param	mixed		$gm					'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
+ * 	@param 	?int 		$from_time			[=null] Get current time or set time to find fiscal period
+ *	@param	'tzserver'|'gmt'	$gm			'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
  * 	@param	int			$withenddateonly	Do not return period if and date is not defined
- * 	@return array							Period of fiscal year : [date_start, date_end]
+ * 	@return array{date_start:int,date_end:int}	Period of fiscal year : [date_start, date_end]
  */
 function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
 {

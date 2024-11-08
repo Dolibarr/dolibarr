@@ -344,7 +344,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int|array<int, string>      The object's status. Use status instead.
+	 * @var null|int|array<int, string>      The object's status. Use status instead.
 	 * @deprecated  Use $status instead.
 	 * @see $status
 	 * @see setStatut(), $status
@@ -352,9 +352,10 @@ abstract class CommonObject
 	public $statut;
 
 	/**
-	 * @var int|array<int, string>   The object's status (an int).
+	 * @var null|int|array<int, string>   The object's status (an int).
 	 *                 						Or an array listing all the potential status of the object:
 	 *                                    	array: int of the status => translated label of the status
+	 *                                    	In some classes status must be able to be null.
 	 *                                    	See for example the Account class.
 	 * @see setStatut()
 	 */
@@ -3954,32 +3955,48 @@ abstract class CommonObject
 					$localtax_array = array($obj->localtax1_type, $obj->localtax1_tx, $obj->localtax2_type, $obj->localtax2_tx);
 					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
 
-					$diff_when_using_price_ht = price2num($tmpcal[1] - $obj->total_tva, 'MT', 1); // If price was set with tax price and unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
+					$diff_when_using_price_ht = price2num((float) $tmpcal[1] - $obj->total_tva, 'MT', 1); // If price was set with tax price and unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
 					$diff_on_current_total = price2num($obj->total_ttc - $obj->total_ht - $obj->total_tva - $obj->total_localtax1 - $obj->total_localtax2, 'MT', 1);
 					//var_dump($obj->total_ht.' '.$obj->total_tva.' '.$obj->total_localtax1.' '.$obj->total_localtax2.' => '.$obj->total_ttc);
 					//var_dump($diff_when_using_price_ht.' '.$diff_on_current_total);
 
 					if ($diff_on_current_total) {
 						// This should not happen, we should always have in table: total_ttc = total_ht + total_vat + total_localtax1 + total_localtax2
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
-						dol_syslog('We found inconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
+						$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+						$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
+						$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+						dol_syslog('Warn1: We found inconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
 						$resqlfix = $this->db->query($sqlfix);
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
 						}
 						$obj->total_tva = $tmpcal[1];
 						$obj->total_ttc = $tmpcal[2];
+						$obj->multicurrency_total_tva = $tmpcal[17];
+						$obj->multicurrency_total_ttc = $tmpcal[18];
 					} elseif ($diff_when_using_price_ht) {
-						// After calculation from HT, total is consistent but we have found a difference between VAT part in calculation and into database and
-						// we ask to force the use of rounding on line (like done on calculation) so we force update of line
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
-						dol_syslog('We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-						$resqlfix = $this->db->query($sqlfix);
-						if (!$resqlfix) {
-							dol_print_error($this->db, 'Failed to update line');
+						// If total_ht calculated from unit price is different than the one in database, we do nothing, this may be a regular case to have also a different VAT, that can be explained
+						// because price was entered included tax and we round the unit price without tax to store it in database (so recalculation will give different results).
+						if ((float) $tmpcal[0] == (float) $obj->total_ht) {
+							// After calculation from HT, total is consistent and total_ht is same, but we have found a difference between VAT part calculated from unit price and the VAT part into database,
+							// and we ask to force the use of rounding on line (like done on calculation) so this should not happen, so we force the update of line to fix.
+
+							// This part of code must be called only to fix corrupted data due to the use of the feature to round total instead of rounding lines.
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
+							$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+							$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
+							$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+							dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							$resqlfix = $this->db->query($sqlfix);
+							if (!$resqlfix) {
+								dol_print_error($this->db, 'Failed to update line');
+							}
+							$obj->total_tva = $tmpcal[1];
+							$obj->total_ttc = $tmpcal[2];
+							$obj->multicurrency_total_tva = $tmpcal[17];
+							$obj->multicurrency_total_ttc = $tmpcal[18];
 						}
-						$obj->total_tva = $tmpcal[1];
-						$obj->total_ttc = $tmpcal[2];
 					}
 				}
 
@@ -4311,8 +4328,8 @@ abstract class CommonObject
 
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->getElementType());
+		$targettype = (!empty($targettype) ? $targettype : $this->getElementType());
 
 		/*if (empty($sourceid) && empty($targetid))
 		 {
@@ -5307,7 +5324,7 @@ abstract class CommonObject
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  Societe	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	ID line selected
-	 *  @param  ?Extrafields		$extrafields		Object of extrafields
+	 *  @param  ?ExtraFields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
@@ -5375,7 +5392,7 @@ abstract class CommonObject
 			if (isset($this->expeditions[$line->id])) {
 				$qty_shipped = $this->expeditions[$line->id];
 			}
-			$disableedit = $qty_shipped >= $line->qty;
+			$disableedit = ($qty_shipped > 0) && ($qty_shipped >= $line->qty);
 
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
@@ -7856,7 +7873,6 @@ abstract class CommonObject
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
-					//print $sql;
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
 					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
@@ -9068,7 +9084,7 @@ abstract class CommonObject
 	 * Function to show lines of extrafields with output data.
 	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan'] or <div> according to $display_type
 	 *
-	 * @param 	Extrafields $extrafields    Extrafield Object
+	 * @param 	ExtraFields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output ('view') or input ('create' or 'edit') for extrafield
 	 * @param 	array<string,mixed>	$params	Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
@@ -9366,7 +9382,7 @@ abstract class CommonObject
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this->id, $this->table_element);
 								break;
 						}
 

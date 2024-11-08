@@ -552,6 +552,7 @@ class PartnershipUtils
 
 			$xpath = new DOMXPath($dom);
 			$hrefs = $xpath->evaluate("//a");
+			'@phan-var-force DOMNodeList $hrefs';
 
 			for ($i = 0; $i < $hrefs->length; $i++) {
 				$href = $hrefs->item($i);

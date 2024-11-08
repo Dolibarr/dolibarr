@@ -51,6 +51,8 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 -- V21 migration
 
+ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
+
 DROP TABLE llx_contratdet_log;
 
 ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
@@ -285,3 +287,31 @@ CREATE TABLE llx_product_customer_price_extrafields (
 ALTER TABLE llx_product_customer_price_extrafields ADD UNIQUE INDEX uk_product_customer_price_extrafields (fk_object);
 ALTER TABLE llx_facture ADD COLUMN payment_reference varchar(25) AFTER date_lim_reglement;
 ALTER TABLE llx_societe ADD COLUMN tp_payment_reference varchar(25) AFTER code_fournisseur;
+
+ALTER TABLE llx_actioncomm ADD COLUMN fk_task integer;
+
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_commandedet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_contratdet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_deliverydet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_expensereport_det ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facture_fourn_det_rec ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facturedet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_facturedet_rec ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_fichinterdet_rec ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_propaldet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+
+-- Add VAT by department
+ALTER TABLE llx_c_tva ADD COLUMN fk_department_buyer integer DEFAULT NULL AFTER fk_pays;
+ALTER TABLE llx_c_tva ADD INDEX idx_tva_fk_department_buyer (fk_department_buyer);
+ALTER TABLE llx_c_tva ADD CONSTRAINT fk_tva_fk_department_buyer FOREIGN KEY (fk_department_buyer) REFERENCES llx_c_departements (rowid);
