@@ -3221,11 +3221,6 @@ parameters:
 			path: ../../htdocs/comm/action/class/api_agendaevents.class.php
 
 		-
-			message: "#^Property AgendaEvents\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/comm/action/class/api_agendaevents.class.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/class/cactioncomm.class.php
@@ -5042,12 +5037,7 @@ parameters:
 
 		-
 			message: "#^Variable \\$i might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Variable \\$lines might not be defined\\.$#"
-			count: 2
+			count: 4
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -8646,11 +8636,6 @@ parameters:
 			path: ../../htdocs/core/class/commondocgenerator.class.php
 
 		-
-			message: "#^Property CommonHookActions\\:\\:\\$results type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/class/commonhookactions.class.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 3
 			path: ../../htdocs/core/class/commoninvoice.class.php
@@ -11486,11 +11471,6 @@ parameters:
 			path: ../../htdocs/core/modules/mailings/modules_mailings.php
 
 		-
-			message: "#^Property MailingTargets\\:\\:\\$errors type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/modules_mailings.php
-
-		-
 			message: "#^Property MailingTargets\\:\\:\\$evenunsubscribe has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/mailings/modules_mailings.php
@@ -11814,31 +11794,6 @@ parameters:
 			message: "#^Property mod_payment_cicada\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/payment/mod_payment_cicada.php
-
-		-
-			message: "#^Method PrintingDriver\\:\\:getlistAvailablePrinters\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printing/modules_printing.php
-
-		-
-			message: "#^Method printing_printgcp\\:\\:getlistAvailablePrinters\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printing/printgcp.modules.php
-
-		-
-			message: "#^Method printing_printgcp\\:\\:sendPrintToPrinter\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printing/printgcp.modules.php
-
-		-
-			message: "#^Property printing_printgcp\\:\\:\\$OAUTH_SERVICENAME_GOOGLE has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printing/printgcp.modules.php
-
-		-
-			message: "#^Property printing_printgcp\\:\\:\\$conf type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/printing/printgcp.modules.php
 
 		-
 			message: "#^Variable \\$response might not be defined\\.$#"
@@ -12976,29 +12931,9 @@ parameters:
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$extrafields might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
 
 		-
 			message: "#^Variable \\$extrafields might not be defined\\.$#"
@@ -13007,11 +12942,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
 
@@ -13496,11 +13426,6 @@ parameters:
 			path: ../../htdocs/core/tpl/originproductline.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
@@ -13522,17 +13447,12 @@ parameters:
 
 		-
 			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
+			count: 10
 			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
 
 		-
 			message: "#^Variable \\$mode might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: "#^Variable \\$title might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
 
 		-
@@ -13598,11 +13518,6 @@ parameters:
 		-
 			message: "#^Variable \\$setnewpassword might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: "#^Variable \\$title might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/tpl/passwordreset.tpl.php
 
 		-
@@ -13714,6 +13629,26 @@ parameters:
 			message: "#^Variable \\$old_MAIN_MAIL_AUTOCOPY_TO might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
+
+		-
+			message: "#^Right side of \\|\\| is always true\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
+			message: "#^Variable \\$accept in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
+			message: "#^Variable \\$capture in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
+
+		-
+			message: "#^Variable \\$perm in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ../../htdocs/core/upload_page.php
 
 		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
@@ -13976,22 +13911,7 @@ parameters:
 			path: ../../htdocs/debugbar/class/DataCollector/DolMemoryCollector.php
 
 		-
-			message: "#^Method PhpCollector\\:\\:collect\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolPhpCollector.php
-
-		-
-			message: "#^Method PhpCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolPhpCollector.php
-
-		-
 			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, array\\{\\$this\\(PhpCollector\\), 'errorHandler'\\} given\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolPhpCollector.php
-
-		-
-			message: "#^Property PhpCollector\\:\\:\\$messages type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/debugbar/class/DataCollector/DolPhpCollector.php
 
@@ -14241,26 +14161,6 @@ parameters:
 			path: ../../htdocs/don/class/paymentdonation.class.php
 
 		-
-			message: "#^Property PaymentDonation\\:\\:\\$bank_account has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: "#^Property PaymentDonation\\:\\:\\$bank_line has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: "#^Property PaymentDonation\\:\\:\\$chid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: "#^Property PaymentDonation\\:\\:\\$datepaid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
 			message: "#^Property PaymentDonation\\:\\:\\$fk_bank \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
 			path: ../../htdocs/don/class/paymentdonation.class.php
@@ -14291,28 +14191,8 @@ parameters:
 			path: ../../htdocs/don/class/paymentdonation.class.php
 
 		-
-			message: "#^Property PaymentDonation\\:\\:\\$total has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: "#^Property PaymentDonation\\:\\:\\$type_code has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: "#^Property PaymentDonation\\:\\:\\$type_label has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
 			message: "#^Result of && is always true\\.$#"
 			count: 2
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: "#^Variable \\$amount might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/don/class/paymentdonation.class.php
 
 		-
@@ -14436,46 +14316,6 @@ parameters:
 			path: ../../htdocs/don/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Method EcmDirectory\\:\\:get_full_arbo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Property EcmDirectory\\:\\:\\$cats type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Property EcmDirectory\\:\\:\\$forbiddenchars type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Property EcmDirectory\\:\\:\\$forbiddencharsdir type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Property EcmDirectory\\:\\:\\$motherof type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Variable \\$file might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Variable \\$relativepath might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/ecm/class/ecmdirectory.class.php
-
-		-
-			message: "#^Method EcmFiles\\:\\:fetchAll\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
 			message: "#^Property EcmFiles\\:\\:\\$acl \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
 			path: ../../htdocs/ecm/class/ecmfiles.class.php
@@ -14574,76 +14414,6 @@ parameters:
 			message: "#^Property EcmFiles\\:\\:\\$src_object_type \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
 			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$acl has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$cover has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$date_c has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$date_m has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$extraparams has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$filename has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$filepath has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$fullpath_orig has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$gen_or_uploaded has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$keywords has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$position has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$src_object_id has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Property EcmFilesLine\\:\\:\\$src_object_type has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: "#^Method FormEcm\\:\\:selectAllSections\\(\\) has parameter \\$ids_to_ignore with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/ecm/class/htmlecm.form.class.php
 
 		-
 			message: "#^Right side of && is always true\\.$#"
@@ -20776,11 +20546,6 @@ parameters:
 			path: ../../htdocs/product/composition/card.php
 
 		-
-			message: "#^Variable \\$resql might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/composition/card.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/product/document.php
@@ -20811,28 +20576,13 @@ parameters:
 			path: ../../htdocs/product/dynamic_price/class/price_expression.class.php
 
 		-
-			message: "#^Method PriceGlobalVariable\\:\\:listGlobalVariables\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable.class.php
-
-		-
-			message: "#^Property PriceGlobalVariable\\:\\:\\$code has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/product/dynamic_price/class/price_global_variable.class.php
 
 		-
 			message: "#^Property PriceGlobalVariable\\:\\:\\$description \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
-			path: ../../htdocs/product/dynamic_price/class/price_global_variable.class.php
-
-		-
-			message: "#^Property PriceGlobalVariable\\:\\:\\$value has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/product/dynamic_price/class/price_global_variable.class.php
 
 		-
@@ -20879,51 +20629,6 @@ parameters:
 			message: "#^Variable \\$text might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/inventory/card.php
-
-		-
-			message: "#^Method Inventory\\:\\:getChildWarehouse\\(\\) has parameter \\$TChildWarehouse with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property Inventory\\:\\:\\$date_inventory has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property Inventory\\:\\:\\$title has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property InventoryLine\\:\\:\\$batch has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property InventoryLine\\:\\:\\$datec has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property InventoryLine\\:\\:\\$fk_inventory has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property InventoryLine\\:\\:\\$fk_warehouse has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property InventoryLine\\:\\:\\$pmp_expected has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
-
-		-
-			message: "#^Property InventoryLine\\:\\:\\$pmp_real has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/inventory/class/inventory.class.php
 
 		-
 			message: "#^Variable \\$error in empty\\(\\) always exists and is always falsy\\.$#"
@@ -21281,79 +20986,14 @@ parameters:
 			path: ../../htdocs/product/stock/class/api_warehouses.class.php
 
 		-
-			message: "#^Method Entrepot\\:\\:list_array\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: "#^Method Entrepot\\:\\:nb_different_products\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: "#^Method Entrepot\\:\\:nb_products\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/entrepot.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/class/entrepot.class.php
 
 		-
-			message: "#^Method MouvementStock\\:\\:createBatch\\(\\) has parameter \\$dluo with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Property MouvementStock\\:\\:\\$line_id_object_origin has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Property MouvementStock\\:\\:\\$line_id_object_src has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Property MouvementStock\\:\\:\\$line_id_oject_origin has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Property MouvementStock\\:\\:\\$line_id_oject_src has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Property MouvementStock\\:\\:\\$price has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
 			message: "#^Variable \\$fk_product_stock might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Variable \\$vbatchnumber might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Variable \\$vfk_product_stock might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
-			message: "#^Method Productlot\\:\\:checkSellOrEatByMandatoryFromProductAndDates\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Method Productlot\\:\\:checkSellOrEatByMandatoryFromProductIdAndDates\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -21363,11 +21003,6 @@ parameters:
 		-
 			message: "#^Property Productlot\\:\\:\\$batch \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Property Productlot\\:\\:\\$datec has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/product/stock/class/productlot.class.php
 
 		-
@@ -21406,18 +21041,8 @@ parameters:
 			path: ../../htdocs/product/stock/class/productlot.class.php
 
 		-
-			message: "#^Property Productlot\\:\\:\\$lifetime has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
 			message: "#^Property Productlot\\:\\:\\$manufacturing_date \\(int\\|string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Property Productlot\\:\\:\\$qc_frequency has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/product/stock/class/productlot.class.php
 
 		-
@@ -21431,47 +21056,7 @@ parameters:
 			path: ../../htdocs/product/stock/class/productlot.class.php
 
 		-
-			message: "#^Property Productlot\\:\\:\\$stats_bom has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Property Productlot\\:\\:\\$stats_facture_fournisseur has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Property Productlot\\:\\:\\$stats_facturerec has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Property Productlot\\:\\:\\$stats_mrptoconsume has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Property Productlot\\:\\:\\$stats_mrptoproduce has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: "#^Method ProductStockEntrepot\\:\\:fetchAll\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: "#^Method ProductStockEntrepot\\:\\:fetchAll\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: "#^Property ProductStockEntrepot\\:\\:\\$desiredstock has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
 
@@ -21488,11 +21073,6 @@ parameters:
 		-
 			message: "#^Property ProductStockEntrepot\\:\\:\\$import_key \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 4
-			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: "#^Property ProductStockEntrepot\\:\\:\\$seuil_stock_alerte has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/product/stock/class/productstockentrepot.class.php
 
 		-
@@ -22096,29 +21676,9 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
 			message: "#^Variable \\$extrafields might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
@@ -22141,63 +21701,13 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$backtopage might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$formproduct might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$formproject might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 19
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$backtopage might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
-			message: "#^Variable \\$formproduct might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
@@ -22471,53 +21981,8 @@ parameters:
 			path: ../../htdocs/projet/class/project.class.php
 
 		-
-			message: "#^Method ProjectStats\\:\\:getAllProjectByStatus\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Method ProjectStats\\:\\:getTransformRateByMonthWithPrevYear\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Method ProjectStats\\:\\:getWeightedAmountByMonthWithPrevYear\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Property ProjectStats\\:\\:\\$opp_status has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Property ProjectStats\\:\\:\\$project has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Property ProjectStats\\:\\:\\$socid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Property ProjectStats\\:\\:\\$status has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Property ProjectStats\\:\\:\\$userid has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/projet/class/projectstats.class.php
-
-		-
-			message: "#^Variable \\$filedate might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/projet/class/projectstats.class.php
 
 		-
@@ -22589,16 +22054,6 @@ parameters:
 			message: "#^Property Task\\:\\:\\$timespent_note \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: "#^Method TaskStats\\:\\:getAllTaskByStatus\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/taskstats.class.php
-
-		-
-			message: "#^Method TaskStats\\:\\:getAverageByMonth\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/class/taskstats.class.php
 
 		-
 			message: "#^Variable \\$mode might not be defined\\.$#"
@@ -22686,16 +22141,6 @@ parameters:
 			path: ../../htdocs/projet/ganttchart.inc.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
 			message: "#^Variable \\$task_dependencies might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/projet/ganttchart.inc.php
@@ -22704,11 +22149,6 @@ parameters:
 			message: "#^Variable \\$tasks might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Variable \\$arrayofjs might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttview.php
 
 		-
 			message: "#^Variable \\$param might not be defined\\.$#"
@@ -22726,47 +22166,7 @@ parameters:
 			path: ../../htdocs/projet/graph_opportunities.inc.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$listofoppstatus might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
 			message: "#^Variable \\$mine might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$projectsListId might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$socid might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/graph_opportunities.inc.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/graph_opportunities.inc.php
 
@@ -24936,11 +24336,6 @@ parameters:
 			path: ../../htdocs/resource/class/dolresource.class.php
 
 		-
-			message: "#^Property Dolresource\\:\\:\\$objelement has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
 			message: "#^Property Dolresource\\:\\:\\$resource_id \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/resource/class/dolresource.class.php
@@ -24953,11 +24348,6 @@ parameters:
 		-
 			message: "#^Property Dolresource\\:\\:\\$town \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: "#^Property Dolresource\\:\\:\\$type_label has no type specified\\.$#"
-			count: 1
 			path: ../../htdocs/resource/class/dolresource.class.php
 
 		-
@@ -24977,36 +24367,6 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/html.formresource.class.php
-
-		-
-			message: "#^Method FormResource\\:\\:select_resource_list\\(\\) has parameter \\$event with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/html.formresource.class.php
-
-		-
-			message: "#^Method FormResource\\:\\:select_resource_list\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/html.formresource.class.php
-
-		-
-			message: "#^Method FormResource\\:\\:select_resource_list\\(\\) has parameter \\$filterkey with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/html.formresource.class.php
-
-		-
-			message: "#^Method FormResource\\:\\:select_resource_list\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/html.formresource.class.php
-
-		-
-			message: "#^Property FormResource\\:\\:\\$param has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/resource/class/html.formresource.class.php
-
-		-
-			message: "#^Property FormResource\\:\\:\\$substit has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/resource/class/html.formresource.class.php
 
@@ -25118,11 +24478,6 @@ parameters:
 		-
 			message: "#^Property PaymentSalary\\:\\:\\$amount \\(float\\) in isset\\(\\) is not nullable\\.$#"
 			count: 3
-			path: ../../htdocs/salaries/class/paymentsalary.class.php
-
-		-
-			message: "#^Property PaymentSalary\\:\\:\\$amounts type has no value type specified in iterable type array\\.$#"
-			count: 1
 			path: ../../htdocs/salaries/class/paymentsalary.class.php
 
 		-
@@ -25426,33 +24781,8 @@ parameters:
 			path: ../../htdocs/societe/checkvat/checkVatPopup.php
 
 		-
-			message: "#^Method Contacts\\:\\:createUser\\(\\) has parameter \\$request_data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/api_contacts.class.php
-
-		-
-			message: "#^Method Contacts\\:\\:delete\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/api_contacts.class.php
-
-		-
-			message: "#^Method Contacts\\:\\:post\\(\\) has parameter \\$request_data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/api_contacts.class.php
-
-		-
-			message: "#^Method Contacts\\:\\:put\\(\\) has parameter \\$request_data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/api_contacts.class.php
-
-		-
 			message: "#^Property Contact\\:\\:\\$no_email \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
-			path: ../../htdocs/societe/class/api_contacts.class.php
-
-		-
-			message: "#^Property Contacts\\:\\:\\$FIELDS type has no value type specified in iterable type array\\.$#"
-			count: 1
 			path: ../../htdocs/societe/class/api_contacts.class.php
 
 		-
@@ -25689,51 +25019,6 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/societe/class/societe.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$date_last_reset_password has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$date_previous_login has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$key_account has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$login has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$pass_crypted has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$pass_encoding has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$pass_temp has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$site has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
-
-		-
-			message: "#^Property SocieteAccount\\:\\:\\$site_account has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/societe/class/societeaccount.class.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -26711,26 +25996,6 @@ parameters:
 			path: ../../htdocs/ticket/card.php
 
 		-
-			message: "#^Property ActionsTicket\\:\\:\\$errno has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/actions_ticket.class.php
-
-		-
-			message: "#^Property ActionsTicket\\:\\:\\$mesg has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/actions_ticket.class.php
-
-		-
-			message: "#^Property ActionsTicket\\:\\:\\$template has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/actions_ticket.class.php
-
-		-
-			message: "#^Property ActionsTicket\\:\\:\\$template_dir has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/class/actions_ticket.class.php
-
-		-
 			message: "#^Method Tickets\\:\\:_validate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/class/api_tickets.class.php
@@ -27156,21 +26421,6 @@ parameters:
 			path: ../../htdocs/user/class/userbankaccount.class.php
 
 		-
-			message: "#^Method UserGroup\\:\\:_load_ldap_dn\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/user/class/usergroup.class.php
-
-		-
-			message: "#^Method UserGroup\\:\\:_load_ldap_info\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/user/class/usergroup.class.php
-
-		-
-			message: "#^Method UserGroup\\:\\:generateDocument\\(\\) has parameter \\$moreparams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/user/class/usergroup.class.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$lastname \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/user/class/usergroup.class.php
@@ -27342,11 +26592,6 @@ parameters:
 
 		-
 			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/variants/class/ProductAttribute.class.php
-
-		-
-			message: "#^Method ProductAttribute\\:\\:attributesAjaxOrder\\(\\) has parameter \\$rows with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/variants/class/ProductAttribute.class.php
 
@@ -27576,36 +26821,6 @@ parameters:
 			path: ../../htdocs/webportal/class/context.class.php
 
 		-
-			message: "#^Method Context\\:\\:getControllerUrl\\(\\) has parameter \\$moreParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/context.class.php
-
-		-
-			message: "#^Method Context\\:\\:getPublicControllerUrl\\(\\) has parameter \\$Tparams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/context.class.php
-
-		-
-			message: "#^Method Context\\:\\:getPublicControllerUrl\\(\\) has parameter \\$moreParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/context.class.php
-
-		-
-			message: "#^Method Context\\:\\:getRootUrl\\(\\) has parameter \\$moreParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/context.class.php
-
-		-
-			message: "#^Method Controller\\:\\:hookDoAction\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/controller.class.php
-
-		-
-			message: "#^Method Controller\\:\\:hookPrintPageView\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/controller.class.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/html.formcardwebportal.class.php
@@ -27631,32 +26846,7 @@ parameters:
 			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
 
 		-
-			message: "#^Property FormListWebPortal\\:\\:\\$arrayfields type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: "#^Property FormListWebPortal\\:\\:\\$companyStaticList type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: "#^Property FormListWebPortal\\:\\:\\$search type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: "#^Variable \\$nbpages might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: "#^Variable \\$remaintopay might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
 
@@ -28219,16 +27409,6 @@ parameters:
 			message: "#^Property Workstation\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: "#^Method WorkstationResource\\:\\:getAllResourcesOfWorkstation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/workstation/class/workstationresource.class.php
-
-		-
-			message: "#^Method WorkstationUserGroup\\:\\:getAllGroupsOfWorkstation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/workstation/class/workstationusergroup.class.php
 
 		-
 			message: "#^Property Workstation\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"

@@ -55,7 +55,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 * Return collected data
 	 *
-	 * @return array  Array of collected data
+	 * @return array<string,mixed>  Array of collected data
 	 */
 	public function collect()
 	{
@@ -102,7 +102,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array      Array
+	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:string}>      Array
 	 */
 	public function getWidgets()
 	{
@@ -127,7 +127,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return assets
 	 *
-	 *  @return array   Array
+	 *  @return array<string,string>   Array
 	 */
 	public function getAssets()
 	{
