@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2021	Andreu Bisquerra	<jove@bisquerra.com>
+/* Copyright (C) 2021		Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,12 @@ if (!defined('NOREQUIREAJAX')) {
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ */
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $action = GETPOST('action', 'aZ09');
@@ -56,7 +62,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action=="split") {
+if ($action=="split" && $user->hasRight('takepos', 'run')) {
 	$line = GETPOSTINT('line');
 	$split = GETPOSTINT('split');
 	if ($split==1) { // Split line
@@ -73,7 +79,7 @@ if ($action=="split") {
 			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 			if ($invoice->socid <= 0) {
 				$langs->load('errors');
-				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
 			} else {
 				$placeid = $invoice->create($user);
 				if ($placeid < 0) {
@@ -102,7 +108,7 @@ if ($action=="split") {
 			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 			if ($invoice->socid <= 0) {
 				$langs->load('errors');
-				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
 			} else {
 				$placeid = $invoice->create($user);
 				if ($placeid < 0) {

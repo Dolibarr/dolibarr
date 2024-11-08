@@ -3,6 +3,7 @@
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'errors'));
 
@@ -68,10 +80,10 @@ if (!isModEnabled('barcode')) {
 if (!$user->hasRight('barcode', 'read')) {
 	accessforbidden();
 }
-restrictedArea($user, 'barcode');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('printsheettools'));
+
+restrictedArea($user, 'barcode');
 
 $parameters = array();
 
@@ -140,6 +152,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		$stdobject = null;
 		if (!$error) {
 			// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
 			$stdobject = new GenericObject($db);
@@ -151,7 +164,12 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error) {
+		$encoding = null;
+		$diroutput = null;
+		$template = null;
+		$is2d = false;
+
+		if (!$error && $stdobject !== null) {
 			$code = $forbarcode;
 			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
 			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
@@ -179,12 +197,13 @@ if (empty($reshook)) {
 
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
+			// $module can be modTcpdfbarcode or modPhpbarcode that both extends ModeleBarCode
 			$module = new $classname($db);
-			'@phan-var-force ModeleBarCode $module';
-			if ($generator != 'tcpdfbarcode') {
-				// May be phpbarcode
+
+			// Build the file on disk for generator not able to return the document on the fly.
+			if ($generator != 'tcpdfbarcode') {		// $generator can be 'phpbarcode' (with this generator, barcode is generated on disk first) or 'tcpdfbarcode' (no need to enter this section with this generator).
+				'@phan-var-force modPhpbarcode $module';
 				$template = 'standardlabel';
-				$is2d = false;
 				if ($module->encodingIsSupported($encoding)) {
 					$barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 					dol_delete_file($barcodeimage);
@@ -200,6 +219,7 @@ if (empty($reshook)) {
 					setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 				}
 			} else {
+				'@phan-var-force modTcpdfbarcode $module';
 				$template = 'tcpdflabel';
 				$encoding = $module->getTcpdfEncodingType($encoding); //convert to TCPDF compatible encoding types
 				$is2d = $module->is2d;

@@ -5,7 +5,7 @@
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("categories");
 
@@ -57,6 +65,14 @@ $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtm
 $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
+
+$idProdOrigin = 0;
+$idSupplierOrigin = 0;
+$idCompanyOrigin = 0;
+$idMemberOrigin = 0;
+$idContactOrigin = 0;
+$idProjectOrigin = 0;
+$idProdOrigin = 0;
 
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {
@@ -91,7 +107,7 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;

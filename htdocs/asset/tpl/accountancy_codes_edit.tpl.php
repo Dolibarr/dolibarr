@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formAssetAccountancyCode. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
  * $object (asset, assetmodel, ...)
  * $assetaccountancycodes
  * $action
@@ -22,6 +23,14 @@
  * $langs
  *
  * $parameters
+ */
+
+/**
+ * @var DoliDB $db
+ * @var Form $form
+ * @var FormAccounting $formaccounting
+ * @var HookManager $hookmanager
+ * @var Translate $langs
  */
 
 // Protection to avoid direct call of template

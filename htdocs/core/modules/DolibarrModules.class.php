@@ -109,27 +109,28 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $dirs = array();
 
 	/**
-	 * @var array Module boxes
+	 * @var array<array{file?:string,note?:string,enabledbydefaulton:string,1?:string}> Module boxes
 	 */
 	public $boxes = array();
 
 	/**
-	 * @var array Module constants
+	 * @var	array<array{0:string,1:string,2:string|int,3:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
+	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
 
 	/**
-	 * @var array Module cron jobs entries
+	 * @var array<array{entity?:int,label?:string,jobtype?:string,class?:string,objectname?:string,method?:string,command?:string,parameters?:string,md5params?:string,comment?:string,frequency?:int,unitfrequency?:int,priority?:int,datestart?:int,dateend?:int,datenextrun?:string,status?:int,maxrun?:int,libname?:string,test?:string|bool}> Module cron jobs entries
 	 */
 	public $cronjobs = array();
 
 	/**
-	 * @var array 	Module access rights
+	 * @var array<int,array<int<0,7>,string|int>> 	Module access rights
 	 */
 	public $rights;
 
 	/**
-	 * @var int		1=Admin is always granted of permission of modules (even when module is disabled)
+	 * @var int<0,1>	1=Admin is always granted of permission of modules (even when module is disabled)
 	 */
 	public $rights_admin_allowed;
 
@@ -148,7 +149,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array|int 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
+	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
 
@@ -192,10 +193,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $errors;
 
 	/**
-	 * @var string Module version
+	 * @var string 	Module version ('x.y.z' or a reserved keyword)
 	 * @see http://semver.org
 	 *
-	 * The following keywords can also be used:
+	 * The following keywords that can also be used are:
 	 * 'development'
 	 * 'experimental'
 	 * 'dolibarr': only for core modules that share its version
@@ -231,19 +232,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $descriptionlong;
 
 	/**
-	 * @var array dictionaries description
+	 * @var array{}|array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<bool|int<0,1>>,tabhelp:array<array<string,string>>} dictionaries description
 	 */
 	public $dictionaries = array();
 
 	/**
-	 * @var array tabs description
+	 * @var array<string|array{data:string,entity:int}> tabs description
 	 */
 	public $tabs;
 
 	// For exports
 
 	/**
-	 * @var string Module export code
+	 * @var string[] Module export code
 	 */
 	public $export_code;
 
@@ -252,23 +253,68 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_label;
 
+	/**
+	 * @var string[]
+	 */
 	public $export_icon;
 
 	/**
-	 * @var array export enabled
+	 * @var string[] export enabled (list of php expressions, '1' or "isModEnabled('xxx')...")
 	 */
 	public $export_enabled;
+	/**
+	 * @var array<array<array{string,string}>>
+	 */
 	public $export_permission;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_fields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:fieldlabel:rowid'
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_entities_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_aggregate_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_examplevalues_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_help_array;
+	/**
+	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
+	 *
+	 * Other example:
+	 * modBanque: [<int>]=array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG')
+	 */
 	public $export_special_array; // special or computed field
+	/**
+	 * @var array<int,array<string,string|string[]>>
+	 *
+	 * Note: example from modAdherent: [<int]= array('subscription'=>'c.rowid');
+	 *       example from modResource: [<int]= array('resource' => array('r.rowid'));
+	 */
 	public $export_dependencies_array;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_start;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_end;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_order;
 
 
@@ -284,18 +330,57 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_label;
 
+	/**
+	 * @var string[]
+	 */
 	public $import_icon;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_entities_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_tables_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_tables_creator_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_fields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_fieldshidden_array;
+	/**
+	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 */
 	public $import_convertvalue_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_regex_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_examplevalues_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_updatekeys_array;
+	/**
+	 * @var array<int,array<int,string>>
+	 */
 	public $import_run_sql_after_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_TypeFields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_help_array;
 
 	/**
@@ -336,8 +421,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var array 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
+	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
+	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
+
 	 * @see $requiredby
 	 */
 	public $depends;
@@ -381,25 +469,34 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
+	/**
+	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 */
 	public $phpmax;
 
 	/**
-	 * @var array Minimum version of Dolibarr required by module.
+	 * @var int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $need_javascript_ajax;
 
+	/**
+	 * @var bool
+	 */
 	public $enabled_bydefault;
 
 	/**
-	 * @var bool|int Whether to hide the module.
+	 * @var bool|int<0,1> Whether to hide the module.
 	 */
 	public $hidden = false;
 
@@ -429,8 +526,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * Enables a module.
 	 * Inserts all information into database.
 	 *
-	 * @param array  $array_sql 	SQL requests to be executed when enabling module
-	 * @param string $options   	String with options when disabling module:
+	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|array<string,string>	$array_sql 	SQL requests to be executed when enabling module
+	 * @param string	$options   	String with options when disabling module:
 	 *                          	- 'noboxes' = Do all actions but do not insert boxes
 	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
 	 * @return int                  1 if OK, 0 if KO
@@ -722,7 +819,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($pathoffile) {     // Mostly for external modules
 			$content = file_get_contents($pathoffile, false, null, 0, 1024 * 1024);	// Max size loaded 1Mb
 
-			if ((float) DOL_VERSION >= 6.0) {
+			if ((float) DOL_VERSION >= 6.0) {  // @phpstan-ignore-line
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 				$content = dolMd2Html(
@@ -823,7 +920,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($filefound) {     // Mostly for external modules
 			$content = file_get_contents($pathoffile);
 
-			if ((float) DOL_VERSION >= 6.0) {
+			if ((float) DOL_VERSION >= 6.0) {  // @phpstan-ignore-line
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 				$content = dolMd2Html($content, 'parsedown', array('doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1)));
@@ -898,7 +995,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public function getModulePosition()
 	{
-		if (in_array($this->version, array('dolibarr', 'experimental', 'development'))) {	// core module
+		if (in_array($this->version, array('dolibarr', 'dolibarr_deprecated', 'experimental', 'development'))) {	// core module
 			return $this->module_position;
 		} else {																			// external module
 			if ($this->module_position >= 100000) {
@@ -912,8 +1009,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Tells if module is core or external.
-	 * 'dolibarr' and 'dolibarr_deprecated' is core
-	 * 'experimental' and 'development' is core
+	 * Version = 'dolibarr', 'dolibarr_deprecated', 'experimental' and 'development' means core modules
 	 *
 	 * @return string  'core', 'external' or 'unknown'
 	 */
@@ -1023,7 +1119,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Gives the last author of activation
 	 *
-	 * @return array       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
+	 * @return array{}|array{authorid:int|'',ip:string,lastactivationdate:int|'',lastactivationversion:string}       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
 	 */
 	public function getLastActivationInfo()
 	{
@@ -1047,10 +1143,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
-					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : (int) $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : (string) $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
-					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
+					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? (string) $tmp['lastactivationversion'] : 'unknown'),
 				);
 			}
 		}
@@ -1201,7 +1297,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1226,7 +1322,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1251,7 +1347,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1276,7 +1372,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1301,7 +1397,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1508,130 +1604,111 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_cronjobs()
 	{
 		// phpcs:enable
-		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
-		global $conf;
+		global $conf, $user;
 
 		$err = 0;
 
 		if (is_array($this->cronjobs)) {
-			dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
+			dol_syslog(get_class($this) . "::insert_cronjobs", LOG_DEBUG);
 
 			foreach ($this->cronjobs as $key => $value) {
-				$entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
-				$label  = isset($this->cronjobs[$key]['label']) ? $this->cronjobs[$key]['label'] : '';
-				$jobtype = isset($this->cronjobs[$key]['jobtype']) ? $this->cronjobs[$key]['jobtype'] : '';
-				$class  = isset($this->cronjobs[$key]['class']) ? $this->cronjobs[$key]['class'] : '';
-				$objectname  = isset($this->cronjobs[$key]['objectname']) ? $this->cronjobs[$key]['objectname'] : '';
-				$method = isset($this->cronjobs[$key]['method']) ? $this->cronjobs[$key]['method'] : '';
-				$command = isset($this->cronjobs[$key]['command']) ? $this->cronjobs[$key]['command'] : '';
-				$parameters  = isset($this->cronjobs[$key]['parameters']) ? $this->cronjobs[$key]['parameters'] : '';
-				$comment = isset($this->cronjobs[$key]['comment']) ? $this->cronjobs[$key]['comment'] : '';
-				$frequency = isset($this->cronjobs[$key]['frequency']) ? $this->cronjobs[$key]['frequency'] : '';
-				$unitfrequency = isset($this->cronjobs[$key]['unitfrequency']) ? $this->cronjobs[$key]['unitfrequency'] : '';
-				$priority = isset($this->cronjobs[$key]['priority']) ? $this->cronjobs[$key]['priority'] : '';
-				$datestart = isset($this->cronjobs[$key]['datestart']) ? $this->cronjobs[$key]['datestart'] : '';
-				$dateend = isset($this->cronjobs[$key]['dateend']) ? $this->cronjobs[$key]['dateend'] : '';
-				$status = isset($this->cronjobs[$key]['status']) ? $this->cronjobs[$key]['status'] : '';
-				$test = isset($this->cronjobs[$key]['test']) ? $this->cronjobs[$key]['test'] : ''; // Line must be enabled or not (so visible or not)
-
-				// Search if cron entry already present
-				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				//$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
-				$sql .= " WHERE label = '".$this->db->escape($label)."'";
-				/*if ($class) {
-					$sql .= " AND classesname = '".$this->db->escape($class)."'";
-				}
-				if ($objectname) {
-					$sql .= " AND objectname = '".$this->db->escape($objectname)."'";
-				}
-				if ($method) {
-					$sql .= " AND methodename = '".$this->db->escape($method)."'";
-				}
-				if ($command) {
-					$sql .= " AND command = '".$this->db->escape($command)."'";
-				}
-				if ($parameters) {
-					$sql .= " AND params = '".$this->db->escape($parameters)."'";
-				}*/
-				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
-
 				$now = dol_now();
 
+				$entity = isset($value['entity']) ? $value['entity'] : $conf->entity;
+				$label = isset($value['label']) ? $value['label'] : '';
+				$jobtype = isset($value['jobtype']) ? $value['jobtype'] : '';
+				$classesname = isset($value['class']) ? $value['class'] : '';
+				$objectname = isset($value['objectname']) ? $value['objectname'] : '';
+				$methodename = isset($value['method']) ? $value['method'] : '';
+				$command = isset($value['command']) ? $value['command'] : '';
+				$params = isset($value['parameters']) ? $value['parameters'] : '';
+				$md5params = isset($value['md5params']) ? $value['md5params'] : '';
+				$comment = isset($value['comment']) ? $value['comment'] : '';
+				$frequency = isset($value['frequency']) ? $value['frequency'] : '';
+				$unitfrequency = isset($value['unitfrequency']) ? $value['unitfrequency'] : '';
+				$priority = isset($value['priority']) ? $value['priority'] : '';
+				$datestart = isset($value['datestart']) ? $value['datestart'] : '';
+				$dateend = isset($value['dateend']) ? $value['dateend'] : '';
+				$datenextrun = isset($value['datenextrun']) ? $value['datenextrun'] : $now;
+				$status = isset($value['status']) ? $value['status'] : '';
+				$maxrun = isset($value['maxrun']) ? $value['maxrun'] : 0;
+				$libname = isset($value['libname']) ? $value['libname'] : '';
+				$test = isset($value['test']) ? $value['test'] : ''; // Line must be enabled or not (so visible or not)
+
+				// Search if cron entry already present
+				$sql = "SELECT count(*) as nb FROM " . MAIN_DB_PREFIX . "cronjob";
+				//$sql .= " WHERE module_name = '" . $this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class) . "'";
+				$sql .= " WHERE label = '".$this->db->escape($label)."'";
+				/* unique key is on label,entity so no need for this test
+				if ($classesname) {
+					$sql .= " AND classesname = '" . $this->db->escape($classesname) . "'";
+				}
+				if ($objectname) {
+					$sql .= " AND objectname = '" . $this->db->escape($objectname) . "'";
+				}
+				if ($methodename) {
+					$sql .= " AND methodename = '" . $this->db->escape($methodename) . "'";
+				}
+				if ($command) {
+					$sql .= " AND command = '" . $this->db->escape($command) . "'";
+				}
+				if ($params) {
+					$sql .= " AND params = '" . $this->db->escape($params) . "'";
+				}
+				*/
+				$sql .= " AND entity = " . ((int) $entity); // Must be exact entity
+
 				$result = $this->db->query($sql);
-				if ($result) {
-					$obj = $this->db->fetch_object($result);
-					if ($obj->nb == 0) {
-						$this->db->begin();
-
-						if (!$err) {
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
-							if (is_int($frequency)) {
-								$sql .= ' frequency,';
-							}
-							if (is_int($unitfrequency)) {
-								$sql .= ' unitfrequency,';
-							}
-							if (is_int($priority)) {
-								$sql .= ' priority,';
-							}
-							if (is_int($status)) {
-								$sql .= ' status,';
-							}
-							$sql .= " entity, test)";
-							$sql .= " VALUES (";
-							$sql .= "'".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."', ";
-							$sql .= "'".$this->db->idate($now)."', ";
-							$sql .= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
-							$sql .= ($dateend ? "'".$this->db->idate($dateend)."'" : "NULL").", ";
-							$sql .= "'".$this->db->escape($label)."', ";
-							$sql .= "'".$this->db->escape($jobtype)."', ";
-							$sql .= ($class ? "'".$this->db->escape($class)."'" : "null").",";
-							$sql .= ($objectname ? "'".$this->db->escape($objectname)."'" : "null").",";
-							$sql .= ($method ? "'".$this->db->escape($method)."'" : "null").",";
-							$sql .= ($command ? "'".$this->db->escape($command)."'" : "null").",";
-							$sql .= ($parameters ? "'".$this->db->escape($parameters)."'" : "null").",";
-							$sql .= ($comment ? "'".$this->db->escape($comment)."'" : "null").",";
-							if (is_int($frequency)) {
-								$sql .= "'".$this->db->escape($frequency)."', ";
-							}
-							if (is_int($unitfrequency)) {
-								$sql .= "'".$this->db->escape($unitfrequency)."', ";
-							}
-							if (is_int($priority)) {
-								$sql .= "'".$this->db->escape($priority)."', ";
-							}
-							if (is_int($status)) {
-								$sql .= ((int) $status).", ";
-							}
-							$sql .= $entity.",";
-							$sql .= "'".$this->db->escape($test)."'";
-							$sql .= ")";
-
-							$resql = $this->db->query($sql);
-							if (!$resql) {
-								$err++;
-							}
-						}
-
-						if (!$err) {
-							$this->db->commit();
-						} else {
-							$this->error = $this->db->lasterror();
-							$this->db->rollback();
-						}
-					}
-					// else box already registered into database
-				} else {
+				if (!$result) {
 					$this->error = $this->db->lasterror();
 					$err++;
+					break;
+					// else box already registered into database
+				}
+
+				$obj = $this->db->fetch_object($result);
+				if ($obj->nb > 0) {
+					continue;
+				}
+
+				$cronjob = new Cronjob($this->db);
+
+				$cronjob->entity = $entity;
+				$cronjob->label = $label;
+				$cronjob->jobtype = $jobtype;
+				$cronjob->classesname = $classesname;
+				$cronjob->objectname = $objectname;
+				$cronjob->methodename = $methodename;
+				$cronjob->command = $command;
+				$cronjob->params = $params;
+				$cronjob->md5params = $md5params;
+				$cronjob->comment = $comment;
+				$cronjob->frequency = $frequency;
+				$cronjob->unitfrequency = $unitfrequency;
+				$cronjob->priority = $priority;
+				$cronjob->datestart = $datestart;
+				$cronjob->dateend = $dateend;
+				$cronjob->datenextrun = $datenextrun;
+				$cronjob->maxrun = $maxrun;
+				$cronjob->status = $status;
+				$cronjob->test = $test;
+				$cronjob->libname = $libname;
+				$cronjob->module_name = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
+
+				$retCreate = $cronjob->create($user);
+
+				if ($retCreate < 0) {
+					$this->error = implode("\n", array_merge([$cronjob->error], $cronjob->errors));
+					return -1;
 				}
 			}
 		}
 
 		return $err;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1866,10 +1943,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Adds access rights
 	 *
-	 * @param  int $reinitadminperms 	If 1, we also grant them to all admin users
-	 * @param  int $force_entity     	Force current entity
-	 * @param  int $notrigger        	1=Does not execute triggers, 0= execute triggers
-	 * @return int                     	Error count (0 if OK)
+	 * @param  int<0,1>	$reinitadminperms 	If 1, we also grant them to all admin users
+	 * @param  ?int		$force_entity     	Force current entity
+	 * @param  int<0,1> $notrigger        	1=Does not execute triggers, 0= execute triggers
+	 * @return int		                	Error count (0 if OK)
 	 */
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
@@ -1967,7 +2044,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";
 							$sql .= ", '".$this->db->escape($r_enabled)."'";
-							$sql.= ")";
+							$sql .= ")";
 
 							$resqlinsert = $this->db->query($sql, 1);
 
@@ -2019,7 +2096,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if (!empty($reinitadminperms) && !empty($user->admin)) {  // Reload permission for current user if defined
 					// We reload permissions
 					$user->clearrights();
-					$user->getrights();
+					$user->loadRights();
 				}
 			}
 			$this->db->free($resql);
@@ -2606,9 +2683,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
-	 * Check for module update
-	 * TODO : store results for $this->url_last_version and $this->needUpdate
-	 * Add a cron task to monitor for updates
+	 * Check for module update.
+	 * Get URL content of $this->url_last_version and set $this->lastVersion and$this->needUpdate
+	 * TODO Store result in DB.
+	 * TODO Add a cron task to monitor for updates.
 	 *
 	 * @return int Return integer <0 if Error, 0 == no update needed,  >0 if need update
 	 */
@@ -2635,20 +2713,81 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
+	 * Check for module compliance with Dolibarr rules and law
+	 * If a module is reported by this function,it is surely a malware. Delete it as soon as possible.
+	 *
+	 * @param	string		$nametocheck		Name to check
+	 * @return 	int|string 						Return integer <0 if Error, 0 == not compliant, 'string' with message if module not compliant
+	 */
+	public function checkForCompliance($nametocheck = '')
+	{
+		global $conf, $langs;
+
+		if (empty($nametocheck)) {
+			$nametocheck = $this->name;
+		}
+
+		// Get list of illegal modules name or ID
+		if (empty($conf->cache['noncompliantmodules'])) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+			$urlforblacklistmodules = 'https://ping.dolibarr.org/modules-blacklist.txt';
+
+			$result = getURLContent($urlforblacklistmodules, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
+			if (isset($result['content']) && $result['http_code'] == 200) {
+				$langs->load("errors");
+
+				// Security warning :  be careful with remote data content, the module editor could be hacked (or evil) so limit to a-z A-Z 0-9 _ . -
+				$arrayoflines = preg_split("/[\n,]/", $result['content']);
+				foreach ($arrayoflines as $line) {
+					$tmpfieldsofline = explode(';', $line);
+					$modulekey = strtolower($tmpfieldsofline[0]);
+					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
+					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = $tmpfieldsofline[2];
+					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
+					if (!empty($tmpfieldsofline[4])) {
+						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');
+						$listofillegalurl = '';
+						foreach (explode(" ", $tmpfieldsofline[4]) as $illegalurl) {
+							$listofillegalurl .= ($listofillegalurl ? ' '.$langs->trans("or").' ' : '').'<b>'.preg_replace('/[^a-z0-9\.\-]/', '', $illegalurl).'</b>';
+						}
+						$message2 = str_replace('{s}', $listofillegalurl, $message2);
+						$conf->cache['noncompliantmodules'][$modulekey]['message2'] = $message2;
+					}
+				}
+			}
+		}
+
+		if (!empty($conf->cache['noncompliantmodules'])) {
+			$modulekey = strtolower($nametocheck);
+			if (in_array($modulekey, array_keys($conf->cache['noncompliantmodules']))) {
+				$answer = trim($conf->cache['noncompliantmodules'][$modulekey]['message']);
+				if (!empty($conf->cache['noncompliantmodules'][$modulekey]['message2'])) {
+					$answer .= '<br>'.$conf->cache['noncompliantmodules'][$modulekey]['message2'];
+				}
+				return $answer;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Helper method to declare dictionaries one at a time (rather than declaring dictionaries property by property).
 	 *
-	 * @param array $dictionaryArray Array describing one dictionary. Keys are:
-	 *                               'name',        table name (without prefix)
-	 *                               'lib',         dictionary label
-	 *                               'sql',         query for select
-	 *                               'sqlsort',     sort order
-	 *                               'field',       comma-separated list of fields to select
-	 *                               'fieldvalue',  list of columns used for editing existing rows
-	 *                               'fieldinsert', list of columns used for inserting new rows
-	 *                               'rowid',       name of the technical ID (primary key) column, usually 'rowid'
-	 *                               'cond',        condition for the dictionary to be shown / active
-	 *                               'help',        optional array of translation keys by column for tooltips
-	 *                               'fieldcheck'   (appears to be unused)
+	 * @param array{name:string,lib:string,sql:string,sqlsort:string,field:string,fieldvalue:string,fieldinsert:string,rowid:string,cond:bool,help:array<string,string>,fieldcheck?:null} $dictionaryArray Array describing one dictionary. Keys are:
+	 *                                                                                                                                                                                                     'name',        table name (without prefix)
+	 *                                                                                                                                                                                                     'lib',         dictionary label
+	 *                                                                                                                                                                                                     'sql',         query for select
+	 *                                                                                                                                                                                                     'sqlsort',     sort order
+	 *                                                                                                                                                                                                     'field',       comma-separated list of fields to select
+	 *                                                                                                                                                                                                     'fieldvalue',  list of columns used for editing existing rows
+	 *                                                                                                                                                                                                     'fieldinsert', list of columns used for inserting new rows
+	 *                                                                                                                                                                                                     'rowid',       name of the technical ID (primary key) column, usually 'rowid'
+	 *                                                                                                                                                                                                     'cond',        condition for the dictionary to be shown / active
+	 *                                                                                                                                                                                                     'help',        optional array of translation keys by column for tooltips
+	 *                                                                                                                                                                                                     'fieldcheck'   (appears to be unused)
 	 * @param string $langs Optional translation file to include (appears to be unused)
 	 * @return void
 	 */
@@ -2658,6 +2797,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		foreach ($fields as $field) {
 			if (isset($dictionaryArray[$field])) {
+				// @phan-suppress-next-line PhanTypeMismatchProperty
 				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
 			}
 		}

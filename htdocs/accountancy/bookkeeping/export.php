@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -40,6 +40,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
@@ -153,7 +161,7 @@ if ($sortfield == "") {
 	$sortfield = "t.piece_num,t.rowid";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array('bookkeepingexport'));
 
@@ -172,7 +180,7 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
@@ -203,7 +211,7 @@ $arrayfields = array(
 	't.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => 0),
 	't.tms' => array('label' => $langs->trans("DateModification"), 'checked' => 0),
 	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => 1),
-	't.date_validated' => array('label' => $langs->trans("DateValidationAndLock"), 'checked' => 1, 'enabled' => !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_validated' => array('label' => $langs->trans("DateValidationAndLock"), 'checked' => -1, 'enabled' => !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => 0, 'position' => 1100),
 );
 
@@ -825,7 +833,7 @@ if ($action == 'export_file') {
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
-		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE'));
+		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE');
 		$form_question['notifiedvalidationdate'] = array(
 			'name' => 'notifiedvalidationdate',
 			'type' => 'checkbox',
@@ -904,7 +912,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), $user->hasRight('accounting', 'mouvements', 'export'));
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), '', $user->hasRight('accounting', 'mouvements', 'export'));
 	}
 }
 
@@ -912,7 +920,7 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, 
 
 // Not display message when all the list of docs are included
 if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
-	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0, 'hideonsmartphone info');
+	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, '0', 'hideonsmartphone info');
 }
 
 //$topicmail = "Information";
@@ -966,7 +974,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 // Movement number
 if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="width50" name="search_mvt_num" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
@@ -987,7 +995,7 @@ if (!empty($arrayfields['t.doc_date']['checked'])) {
 }
 // Ref document
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_doc_ref" class="width75" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
 }
 // Accountancy account
 if (!empty($arrayfields['t.numero_compte']['checked'])) {
@@ -1243,7 +1251,7 @@ while ($i < min($num, $limit)) {
 	// Journal code
 	if (!empty($arrayfields['t.code_journal']['checked'])) {
 		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
+		$result = $accountingjournal->fetch(0, $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
@@ -1312,29 +1320,29 @@ while ($i < min($num, $limit)) {
 			// Other type
 		}
 
-		$labeltoshow = '';
+		$labeltoshowhtml = '';
 		$labeltoshowalt = '';
 		if (($objectstatic instanceof CommonObject)  && in_array($line->doc_type, array('customer_invoice', 'supplier_invoice', 'expense_report'))) {
 			if ($objectstatic->id > 0) {
-				$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
-				$labeltoshow .= $documentlink;
+				$labeltoshowhtml .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+				$labeltoshowhtml .= $documentlink;
 				$labeltoshowalt .= $objectstatic->ref;
 			} else {
-				$labeltoshow = '<span class="opacitymedium">'.$langs->trans("Deleted").'</span>';
+				$labeltoshowhtml = '<span class="opacitymedium">'.$langs->trans("Deleted").'</span>';
 			}
 		} elseif ($line->doc_type == 'bank') {
-			$labeltoshow .= $objectstatic->getNomUrl(1);
+			$labeltoshowhtml .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;
 			$bank_ref = strstr($line->doc_ref, '-');
-			$labeltoshow .= " " . $bank_ref;
+			$labeltoshowhtml .= " " . $bank_ref;
 			$labeltoshowalt .= " " . $bank_ref;
 		} else {
-			$labeltoshow .= $line->doc_ref;
+			$labeltoshowhtml .= $line->doc_ref;
 			$labeltoshowalt .= $line->doc_ref;
 		}
 
-		print '<td class="nowraponall tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshowalt).'">';
-		print $labeltoshow;
+		print '<td class="nowraponall tdoverflowmax150" title="'.dolPrintHTMLForAttribute($labeltoshowalt).'">';
+		print $labeltoshowhtml;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;

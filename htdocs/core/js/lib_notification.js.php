@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020-2023 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,9 @@ if (!defined('NOREQUIREHTML')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var Translate $langs
+ */
 
 /*
  * View
@@ -112,7 +115,7 @@ function first_execution() {
 function check_events() {
 	var result = 0;
 	dolnotif_nb_test_for_page += 1;
-	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jsnotification')); ?>';
+	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jnotify')); ?>';
 
 	permissionok = 0;
 	if (methodfornotification == "jsnotification" && Notification.permission == "granted") {

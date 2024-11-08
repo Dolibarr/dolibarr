@@ -6,6 +6,8 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -101,9 +103,11 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		}
 
 		// Prefix setting of deposit
-		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</span></td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_DEPOSIT").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipdownpaymentmercure').'</td>';
-		$texte .= '</tr>';
+		if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
+			$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</span></td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_DEPOSIT").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipdownpaymentmercure').'</td>';
+			$texte .= '</tr>';
+		}
 
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -124,7 +128,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -135,12 +139,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	}
 
 	/**
-	 * Return next value
+	 * Return next value not used or last value used
 	 *
-	 * @param	Societe			$objsoc     Object third party
-	 * @param   Facture			$invoice	Object invoice
-	 * @param   string			$mode       'next' for next value or 'last' for last value
-	 * @return  string|int      			Value if OK, 0 if KO
+	 * @param	Societe		$objsoc		Object third party
+	 * @param   ?Facture	$invoice	Object invoice
+	 * @param   string		$mode		'next' for next value or 'last' for last value
+	 * @return  string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -154,7 +158,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_REPLACEMENT', getDolGlobalString('FACTURE_MERCURE_MASK_INVOICE'));
 		} elseif (is_object($invoice) && $invoice->type == 2) {
 			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_CREDIT');
-		} elseif (is_object($invoice) && $invoice->type == 3) {
+		} elseif (is_object($invoice) && $invoice->type == 3 && !getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_DEPOSIT');
 		} else {
 			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_INVOICE');

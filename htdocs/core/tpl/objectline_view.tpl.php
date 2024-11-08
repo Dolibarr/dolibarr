@@ -7,8 +7,9 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024 Alexandre Spangaro <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France		  <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -35,10 +36,25 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
+ */
+/**
+ * @var CommonObject $object
+ * @var CommonObject $this
+ * @var CommonObjectLine $line
+ * @var HookManager $hookmanager
+ * @var ?Product $product_static
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var 0|1 $forceall
+ * @var int $num
+ * @var 0|1 $senderissupplier
+ * @var string $text
+ * @var string $description
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -46,9 +62,15 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object
- @phan-var-force 0|1 $forceall
+'
+@phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
+@phan-var-force CommonObject $this
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
+@phan-var-force 0|1 $forceall
+@phan-var-force int $num
+@phan-var-force ?Product $product_static
+@phan-var-force string $text
+@phan-var-force string $description
 ';
 
 global $mysoc;
@@ -82,9 +104,12 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $sign = 1;
-// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
-	$sign = -1;
+if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+	if ($object->type == $object::TYPE_CREDIT_NOTE) {
+		$sign = -1;
+	}
 }
 
 
@@ -330,7 +355,7 @@ if (empty($positiverates)) {
 	$positiverates = '0';
 }
 print $tooltiponprice;
-print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), '%', $line->info_bits);
+print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true, $line->info_bits);
 print $tooltiponpriceend;
 ?></td>
 
@@ -375,7 +400,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	print dol_print_reduction($line->remise_percent, $langs);
+	print dol_print_reduction((float) $line->remise_percent, $langs);
 	print '</td>';
 } else {
 	print '<td class="linecoldiscount">&nbsp;</td>';
@@ -387,7 +412,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-		$previous_progress = $line->get_allprev_progress($object->id);
+		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + floatval($line->situation_percent);
 		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
 		$coldisplay++;
@@ -395,13 +420,13 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-		print '<td class="linecolcycleref2 right nowrap">'.price($sign * $tmp[0]).'</td>';
+		print '<td class="linecolcycleref2 right nowrap">'.price($sign * (float) $tmp[0]).'</td>';
 	} else {
 		print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-		print '<td class="linecolcycleref2 right nowrap">'.price($sign * $tmp[0]).'</td>';
+		print '<td class="linecolcycleref2 right nowrap">'.price($sign * (float) $tmp[0]).'</td>';
 	}
 }
 
@@ -445,9 +470,14 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
+// TODO Replace this with $permissiontoedit ?
+$objectRights = $this->getRights();
+$tmppermtoedit = $objectRights->creer;
+
+if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
+		/** @var CommonInvoice $object */
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle
@@ -459,9 +489,14 @@ if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
-		if (!empty($product_static->accountancy_code_buy) ||
-			!empty($product_static->accountancy_code_buy_intra) ||
-			!empty($product_static->accountancy_code_buy_export)
+		if (
+			$product_static !== null
+			&&
+			(
+				!empty($product_static->accountancy_code_buy) ||
+				!empty($product_static->accountancy_code_buy_intra) ||
+				!empty($product_static->accountancy_code_buy_export)
+			)
 		) {
 			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$filters = array();
@@ -536,7 +571,7 @@ if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$colspan++;
 	}
 	print '<td colspan="'.$colspan.'"></td>';
-	$coldisplay = $coldisplay + $colspan;
+	$coldisplay += $colspan;
 }
 
 if ($action == 'selectlines') { ?>

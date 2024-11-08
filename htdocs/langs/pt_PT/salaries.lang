@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=conta (do gráfico de conta) usado por padrão para "utilizador " terceiros
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=O cartão conta dedicado definido em utilizador será usado para livro auxiliar Contabilista somente. Este será usado para livro razão e como valor padrão de livro auxiliar Contabilista se dedicado utilizador Contabilista conta em utilizador não está definido.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Conta contabilística usada por defeito para pagamentos de salários
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Por padrão, deixe em branco a opção "automaticamente criar um pagamento total" ao criar um Salário
 Salary=Salário

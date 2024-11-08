@@ -39,6 +39,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
 
@@ -52,7 +60,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
 $label = GETPOST("label", "alpha");
 $sens = GETPOSTINT("sens");
-$amount = GETPOSTFLOAT("amount");
+$amount = GETPOST("amount");
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
@@ -67,14 +75,16 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('variouscard', 'globalcard'));
+
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('variouscard', 'globalcard'));
-
 $permissiontoadd = $user->hasRight('banque', 'modifier');
+$permissiontodelete = $user->hasRight('banque', 'modifier');
 
 
 /**
@@ -106,7 +116,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
 
 		$datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
@@ -116,12 +126,14 @@ if (empty($reshook)) {
 		}
 
 		$object->ref = ''; // TODO
-		$object->accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
+		$object->fk_account = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
+		$object->accountid = $object->fk_account;
 		$object->datev = $datev;
 		$object->datep = $datep;
 		$object->amount = GETPOSTFLOAT("amount");
 		$object->label = GETPOST("label", 'restricthtml');
-		$object->note = GETPOST("note", 'restricthtml');
+		$object->note_private = GETPOST("note", 'restricthtml');
+		$object->note = $object->note_private;
 		$object->type_payment = dol_getIdFromCode($db, GETPOST('paymenttype'), 'c_paiement', 'code', 'id', 1);
 		$object->num_payment = GETPOST("num_payment", 'alpha');
 		$object->chqemetteur = GETPOST("chqemetteur", 'alpha');
@@ -129,7 +141,7 @@ if (empty($reshook)) {
 		$object->fk_user_author = $user->id;
 		$object->category_transaction = GETPOSTINT("category_transaction");
 
-		$object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
+		$object->accountancy_code = (GETPOST("accountancy_code") != '-1' ? GETPOST("accountancy_code", "alpha") : "");
 		$object->subledger_account = $subledger_account;
 
 		$object->sens = GETPOSTINT('sens');
@@ -166,6 +178,21 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		$bankaccount = new Account($db);
+		$bankaccount->fetch($object->fk_account);
+
+		// Check currency
+		$currencyofpayment = $conf->currency;	// The currency of various payment is not yet asked, so we suppose it is the main company currency
+
+		//var_dump($currencyofpayment); var_dump($bankaccount->currency_code);
+
+		if (isModEnabled('multicurrency') && $currencyofpayment != $bankaccount->currency_code) {
+			// TODO Support this feature the same way we do it for invoice payment
+			// using the $value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
+			setEventMessages($langs->trans("ErrorVariousPaymentOnBankAccountWithADifferentCurrencyNotYetSupported"), null, 'errors');
+			$error++;
+		}
+
 		if (!$error) {
 			$db->begin();
 
@@ -185,7 +212,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -219,7 +246,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setaccountancy_code') {
+	if ($action == 'setaccountancy_code' && $permissiontodelete) {
 		$db->begin();
 
 		$result = $object->fetch($id);
@@ -235,7 +262,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsubledger_account') {
+	if ($action == 'setsubledger_account' && $permissiontodelete) {
 		$db->begin();
 
 		$result = $object->fetch($id);
@@ -253,7 +280,7 @@ if (empty($reshook)) {
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm != 'yes') {
+if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required
 	$action = '';
 }
 
@@ -325,6 +352,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 /*
  *	View
  */
+
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -407,7 +435,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent">';
 
@@ -440,7 +468,7 @@ if ($action == 'create') {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes($accountid, "accountid", 0, '', 2, '', 0, '', 1); // Show list of main accounts (comptes courants)
+		print $form->select_comptes($accountid, "accountid", 0, '', 2, '', (isModEnabled('multicurrency') ? 1 : 0), '', 1); // Show list of main accounts (comptes courants)
 		print '</td></tr>';
 	}
 
@@ -469,6 +497,33 @@ if ($action == 'create') {
 		print '</label></td>';
 		print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 	}
+
+	// Project
+	if (isModEnabled('project')) {
+		$formproject = new FormProjets($db);
+
+		// Associated project
+		$langs->load("projects");
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print '</td></tr>';
+	}
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	// Category
+	if (is_array($options) && count($options) && $conf->categorie->enabled) {
+		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
+		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
+		print '</td></tr>';
+	}
+
+	print '<tr><td colspan="2"><hr></td></tr>';
 
 	// Accountancy account
 	if (isModEnabled('accounting')) {
@@ -507,31 +562,6 @@ if ($action == 'create') {
 	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 	print '</td></tr>';
 
-	// Project
-	if (isModEnabled('project')) {
-		$formproject = new FormProjets($db);
-
-		// Associated project
-		$langs->load("projects");
-
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
-		print '</td></tr>';
-	}
-
-	// Other attributes
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-	// Category
-	if (is_array($options) && count($options) && $conf->categorie->enabled) {
-		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
-		print '</td></tr>';
-	}
-
 	print '</table>';
 
 	print dol_get_fiche_end();
@@ -541,13 +571,7 @@ if ($action == 'create') {
 	print '</form>';
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* View mode                                                                  */
-/*                                                                            */
-/* ************************************************************************** */
-
+// View in read or edit mode
 if ($id) {
 	$alreadyaccounted = $object->getVentilExportCompta();
 
@@ -658,7 +682,7 @@ if ($id) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
 		} else {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $object->accountancy_code, 1);
+			$accountingaccount->fetch(0, $object->accountancy_code, 1);
 
 			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 		}

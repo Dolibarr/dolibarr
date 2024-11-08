@@ -15,14 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
+ * $db
  * $conf
  * $langs
- *
  * $parameters
- * $cols
+ * $thirdpartytopropagateextrafieldsfrom
+ */
+
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ *
+ * @var Societe $thirdpartytopropagateextrafieldsfrom
+ * @var string $action
+ * @var array<string,mixed> $parameters
  */
 
 // Protection to avoid direct call of template
@@ -30,6 +42,16 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+'
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force DoliDB $db
+@phan-var-force Conf $conf
+@phan-var-force Translate $langs
+@phan-var-force array<string,mixed> $parameters
+@phan-var-force Societe $thirdpartytopropagateextrafieldsfrom
+';
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_add.tpl.php -->
@@ -39,13 +61,6 @@ if (empty($conf) || !is_object($conf)) {
 if (!isset($parameters)) {
 	$parameters = array();
 }
-'
-@phan-var-force CommonObject $object
-@phan-var-force string $action
-@phan-var-force Conf $conf
-@phan-var-force Translate $conf
-@phan-var-force array<string,mixed> $parameters
-';
 
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -58,6 +73,17 @@ if (empty($reshook)) {
 	}
 	if (!empty($parameters['tpl_context'])) {
 		$params['tpl_context'] = $parameters['tpl_context'];
+	}
+
+	// By default $thirdpartytopropagateextrafieldsfrom is not set.
+	// We can have it set to a thirdparty object to propagate also the extrafields from thirdparty to object.
+	if (!empty($thirdpartytopropagateextrafieldsfrom) && $thirdpartytopropagateextrafieldsfrom instanceof Societe && !empty($thirdpartytopropagateextrafieldsfrom->id)) {
+		// copy from thirdparty
+		$tpExtrafields = new ExtraFields($db);
+		$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($thirdpartytopropagateextrafieldsfrom->table_element);
+		if ($thirdpartytopropagateextrafieldsfrom->fetch_optionals() > 0) {
+			$object->array_options = array_merge($object->array_options, $thirdpartytopropagateextrafieldsfrom->array_options);
+		}
 	}
 
 	print $object->showOptionals($extrafields, 'create', $params);

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013-2016      Jean-François Ferry  <hello@librethic.io>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket", "mails"));
@@ -224,6 +233,13 @@ if ($object->id) {
 			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
 			$file_msg = dol_dir_list($upload_msg_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 			if (count($file_msg)) {
+				// add specific module part and user rights for delete
+				foreach ($file_msg as $key => $file) {
+					$file_msg[$key]['modulepart'] = 'actions';
+					$file_msg[$key]['relativepath'] = $file['level1name'].'/'; // directory without file name
+					$file_msg[$key]['permtoedit'] = 0;
+					$file_msg[$key]['permonobject'] = 0;
+				}
 				$file_msg_array = array_merge($file_msg, $file_msg_array);
 			}
 		}

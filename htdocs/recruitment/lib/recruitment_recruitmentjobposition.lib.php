@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  * Prepare array of tabs for RecruitmentJobPosition
  *
  * @param	RecruitmentJobPosition	$object		RecruitmentJobPosition
- * @return 	array					Array of tabs
+ * @return 	array<array{0:string,1:string,2:string}>	Array of tabs
  */
 function recruitmentjobpositionPrepareHead($object)
 {
@@ -140,7 +141,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
 	{
 		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.urlencode($conf->global->RECRUITMENT_SECURITY_TOKEN);
-		else $out .= '&securekey='.urlencode(dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, 2));
+		else $out .= '&securekey='.urlencode(dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, '2'));
 	}*/
 
 	// For multicompany

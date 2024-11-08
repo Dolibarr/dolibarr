@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,38 +39,62 @@ class FormSms
 	 */
 	public $db;
 
+	/**
+	 * @var int
+	 */
 	public $fromid;
+	/**
+	 * @var string
+	 */
 	public $fromname;
+	/**
+	 * @var string
+	 */
 	public $fromsms;
 
 	/**
 	 * @var string
 	 */
 	public $fromtype;
+	/**
+	 * @var string
+	 */
 	public $replytoname;
+	/**
+	 * @var string
+	 */
 	public $replytomail;
+	/**
+	 * @var string
+	 */
 	public $toname;
+	/**
+	 * @var string
+	 */
 	public $tomail;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $withsubstit; // Show substitution array
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $withfrom;
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $withto;
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $withtopic;
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $withbody;
 
@@ -77,15 +102,38 @@ class FormSms
 	 * @var int 	Id of company
 	 */
 	public $withtosocid;
-
+	/**
+	 * @var int<0,1>
+	 */
 	public $withfromreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withreplytoreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtoreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtopicreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withbodyreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withcancel;
 
+	/**
+	 * @var array<string,string>
+	 */
 	public $substit = array();
+	/**
+	 * @var array{}|array{action:string,models:string,smsid:int,returnurl:string}
+	 */
 	public $param = array();
 
 	/**
@@ -206,6 +254,8 @@ function limitChars(textarea, limit, infodiv)
 				print "</td></tr>\n";
 			} else {
 				print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom")."</td><td>";
+				$resultsender = array();
+				$sms = null;
 				if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
 					$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
 					$classmoduleofsender = getDolGlobalString('MAIN_MODULE_'.strtoupper($sendmode).'_SMS', $sendmode);	// $conf->global->MAIN_MODULE_XXX_SMS looks like a value 'class@module'
@@ -221,7 +271,8 @@ function limitChars(textarea, limit, infodiv)
 						$classname = ucfirst($classfile);
 						if (class_exists($classname)) {
 							$sms = new $classname($this->db);
-							$resultsender = $sms->SmsSenderList();
+							'@phan-var-force CommonObject $sms';
+							$resultsender = $sms->SmsSenderList();  // @phan-suppress-current-line PhanUndeclaredMethod
 						} else {
 							$sms = new stdClass();
 							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
@@ -232,7 +283,7 @@ function limitChars(textarea, limit, infodiv)
 					}
 				} else {
 					dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
-					$resultsender = array();
+					$resultsender = array(0 => new stdClass());
 					$resultsender[0]->number = $this->fromsms;
 				}
 

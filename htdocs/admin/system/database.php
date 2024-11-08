@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio  	<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier       	<benoit.mortier@opensides.be>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,16 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_pass
+ */
+
 $langs->load("admin");
 
 $action = GETPOST('action', 'aZ09');
@@ -45,7 +56,7 @@ if ($action == 'convertutf8unicode') {			// Test on permission already done.
 	$db->query($sql);
 }
 if ($action == 'convertutf8mb4unicode') {		// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+	$sql = "ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8general') {			// Test on permission already done.
@@ -90,6 +101,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>';
 $defaultcollation = $db->getDefaultCollationDatabase();
 print dolPrintHTML($defaultcollation);
+global $dolibarr_main_db_collation;
 if ($db->type == 'mysqli') {
 	if ($defaultcollation != $conf->db->dolibarr_main_db_collation) {
 		print img_warning('The database default value of collation '.$defaultcollation.' differs from conf setup '.$conf->db->dolibarr_main_db_collation);
@@ -138,7 +150,7 @@ if (!count($listofvars) && !count($listofstatus)) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';
-		print '<td>'.$langs->trans("Value").'</td>';
+		print '<td></td>';
 		print '</tr>'."\n";
 
 		// arraytest is an array of test to do

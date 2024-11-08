@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014-2016 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,15 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
@@ -121,7 +130,6 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
 
 
@@ -472,7 +480,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="nowrap right">';
 					$temp_ht = $fields['totalht'];
 					if ($type == 1) {
-						$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+						$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					}
 					print price(price2num($temp_ht, 'MT'));
 					print '</td>';
@@ -505,7 +513,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		print '</tr>';
 	}
 
-	if (count($x_coll) == 0) {   // Show a total ine if nothing shown
+	if (count($x_coll) == 0) {   // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td>&nbsp;</td>';
 		print '<td class="right">'.$langs->trans("Total").':</td>';

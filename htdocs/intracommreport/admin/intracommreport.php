@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2015      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2019-2020 Open-DSI             <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +27,16 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/intracommreport.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/intracommreport/lib/intracommreport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "intracommreport"));
@@ -92,12 +102,12 @@ if ($action == 'update') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("IntracommReportSetup"));
+llxHeader('', $langs->trans("IntracommReportSetup"), '', '', 0, 0, '', '', '', 'mod-intracommreport page-admin_intracommreport');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("IntracommReportSetup"), $linkback, 'title_setup');
 
-$head = intracommReportAdminPrepareHead();
+$head = intracommreportAdminPrepareHead();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, "intracommreport");
 
@@ -129,7 +139,7 @@ foreach ($list_DEB as $key) {
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_TYPE_ACTEUR").'</td>';
-$arraychoices = array(''=>$langs->trans("None"), 'PSI'=>'Déclarant pour son compte', 'TDP'=>'Tiers déclarant');
+$arraychoices = array('' => $langs->trans("None"), 'PSI' => 'Déclarant pour son compte', 'TDP' => 'Tiers déclarant');
 print '<td>';
 print $form->selectarray('INTRACOMMREPORT_TYPE_ACTEUR', $arraychoices, $conf->global->INTRACOMMREPORT_TYPE_ACTEUR, 0);
 print '</td>';
@@ -137,7 +147,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_ROLE_ACTEUR").'</td>';
-$arraychoices = array(''=>$langs->trans("None"), 'sender'=>'Emetteur', 'PSI'=>'Déclarant');
+$arraychoices = array('' => $langs->trans("None"), 'sender' => 'Emetteur', 'PSI' => 'Déclarant');
 print '<td>';
 print $form->selectarray('INTRACOMMREPORT_ROLE_ACTEUR', $arraychoices, $conf->global->INTRACOMMREPORT_ROLE_ACTEUR, 0);
 print '</td>';
@@ -145,7 +155,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION").'</td>';
-$arraychoices = array(1=>'Seuil de 460 000 €', 2=>'En dessous de 460 000 €');
+$arraychoices = array(1 => 'Seuil de 460 000 €', 2 => 'En dessous de 460 000 €');
 print '<td>';
 print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION', $arraychoices, $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION, 0);
 print '</td>';
@@ -153,7 +163,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION").'</td>';
-$arraychoices = array(3=>'Seuil de 460 000 €', 4=>'En dessous de 460 000 €');
+$arraychoices = array(3 => 'Seuil de 460 000 €', 4 => 'En dessous de 460 000 €');
 print '<td>';
 print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION', $arraychoices, $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION, 0);
 print '</td>';

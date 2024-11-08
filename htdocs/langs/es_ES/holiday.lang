@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=RRHH
-Holidays=Hojas
-Holiday=Abandonar
+Holidays=Días libres
+Holiday=Día libre
 CPTitreMenu=Día libre
 MenuReportMonth=Estado mensual
 MenuAddCP=Nueva petición de vacaciones
@@ -109,7 +109,6 @@ TypeWasDisabledOrRemoved=El tipo de día libre (id %s) ha sido desactivado o eli
 LastHolidays=Últimas %s solicitudes de días libres
 AllHolidays=Todas las solicitudes de días libres
 HalfDay=Medio día
-NotTheAssignedApprover=Usted no es el aprobador asignado
 LEAVE_PAID=Vacación
 LEAVE_SICK=Baja por enfermedad
 LEAVE_OTHER=Otra petición

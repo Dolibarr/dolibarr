@@ -273,10 +273,9 @@ class Fiscalyear extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -301,7 +300,7 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip
@@ -461,7 +460,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 *	@param	int|string		$datestart	Date start to scan
 	 *	@param	int|string		$dateend	Date end to scan
-	 *	@return	string			Number of entries
+	 *	@return	int				Number of entries
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -479,10 +478,11 @@ class Fiscalyear extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
+		$nb = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}
@@ -495,7 +495,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 *  @param	int|string		$datestart	Date start to scan
 	 *  @param	int|string		$dateend	Date end to scan
-	 *  @return	string				Number of movements
+	 *  @return	int							Number of movements
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -513,10 +513,11 @@ class Fiscalyear extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
+		$nb = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}

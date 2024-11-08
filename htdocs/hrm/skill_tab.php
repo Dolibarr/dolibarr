@@ -6,6 +6,7 @@
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +31,28 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
-require_once DOL_DOCUMENT_ROOT .'/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/skillrank.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_skill.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
-$langs->loadLangs(array('hrm', 'other'));
+$langs->loadLangs(array('hrm', 'companies', 'other'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -66,7 +75,7 @@ if (empty($objecttype)) {
 $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);
 
-// Initialize technical objects
+// Initialize a technical objects
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
 		$object = new Job($db);
@@ -80,7 +89,7 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if (method_exists($object, 'loadPersonalConf')) {
 	$object->loadPersonalConf();
 }
@@ -127,7 +136,7 @@ if (empty($reshook)) {
 	}
 
 	// update national_registration_number
-	if ($action == 'setnational_registration_number') {
+	if ($action == 'setnational_registration_number' && $permissiontoadd) {
 		$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -135,7 +144,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'addSkill') {
+	if ($action == 'addSkill' && $permissiontoadd) {
+		$db->begin();
 		$error = 0;
 
 		if (empty($TSkillsToAdd)) {
@@ -143,6 +153,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (!$error) {
+			$ret = -1;
 			foreach ($TSkillsToAdd as $k => $v) {
 				$skillAdded = new SkillRank($db);
 				$skillAdded->fk_skill = $v;
@@ -150,38 +161,167 @@ if (empty($reshook)) {
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
 				if ($ret < 0) {
+					$error++;
 					setEventMessages($skillAdded->error, null, 'errors');
-				}
-				//else unset($TSkillsToAdd);
-			}
-			if ($ret > 0) {
-				setEventMessages($langs->trans("SaveAddSkill"), null);
-			}
-		}
-	} elseif ($action == 'saveSkill') {
-		if (!empty($TNote)) {
-			foreach ($TNote as $skillId => $rank) {
-				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
-				if (is_array($TSkills) && !empty($TSkills)) {
-					foreach ($TSkills as $tmpObj) {
-						$tmpObj->rankorder = $rank;
-						$tmpObj->update($user);
+					break;
+				} else {
+					// Create new EvaluationLine for each Skill to add in draft evaluation
+					$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+					$sql_eval .= " WHERE e.status = 0 ";
+					$sql_eval .= " AND e.entity = ".(int) getEntity($object->element);
+					$sql_eval .= " AND e.fk_job = ".(int) $object->id;
+					$result = $db->query($sql_eval);
+					$numEvals = $db->num_rows($result);
+					$i=0;
+					while ($i < $numEvals) {
+						$objEval = $db->fetch_object($result);
+						$line = new EvaluationLine($db);
+						$line->fk_evaluation = $objEval->rowid;
+						$line->fk_skill = $v;
+						$line->required_rank = 0;
+						$line->fk_rank = 0;
+
+						$res = $line->create($user);
+						if ($res < 0) {
+							$error++;
+							setEventMessages($line->error, null, 'errors');
+							break;
+						}
+						$i++;
 					}
 				}
 			}
-			setEventMessages($langs->trans("SaveLevelSkill"), null);
+			if (!$error) {
+				setEventMessages($langs->trans("SaveAddSkill"), null);
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+		}
+	} elseif ($action == 'saveSkill' && $permissiontoadd) {
+		if (!empty($TNote)) {
+			$db->begin();
+			$error = 0;
+			foreach ($TNote as $skillId => $rank) {
+				$rank = ($rank == "NA" ? -1 : $rank);
+				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
+				'@phan-var-force SkillRank[] $tSkills';
+				if (is_array($TSkills) && !empty($TSkills)) {
+					foreach ($TSkills as $tmpObj) {
+						$tmpObj->rankorder = $rank;
+						$ret = $tmpObj->update($user);
+						if ($ret < 0) {
+							$error++;
+							setEventMessages($tmpObj->error, null, 'errors');
+							break;
+						}
+						if (!$error) {
+							// Update draft Evaluations using this Skill
+							$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+							$sql_eval .= " WHERE e.status = 0 ";
+							$sql_eval .= " AND e.entity = ".getEntity($object->element);
+							$sql_eval .= " AND e.fk_job = ".(int) $object->id;
+							$result = $db->query($sql_eval);
+							$numEvals = $db->num_rows($result);
+							$i=0;
+							while ($i < $numEvals) {
+								$objEval = $db->fetch_object($result);
+								$line = new EvaluationLine($db);
+								$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $tmpObj->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
+								if (is_array($lines)) {
+									foreach ($lines as $key => $evalline) {
+										// Verify if fetchAll gave the right object
+										if (is_object($evalline) && $evalline instanceof EvaluationLine) {
+											$evalline->required_rank = $rank;
+											$ret = $evalline->update($user);
+											if ($ret <= 0) {
+												$error++;
+												setEventMessages($evalline->error, null, 'errors');
+												break;
+											}
+										}
+									}
+								} else {
+									$error++;
+									setEventMessages($line->error, null, 'errors');
+									break;
+								}
+								$i++;
+							}
+						}
+					}
+				} else {
+					$error++;
+					setEventMessages($skill->error, null, 'errors');
+					break;
+				}
+			}
+			if (!$error) {
+				setEventMessages($langs->trans("SaveLevelSkill"), null);
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
 			exit;
 		}
-	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
+	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes' && $permissiontoadd) {
+		$db->begin();
+		$error = 0;
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
-		setEventMessages($langs->trans("DeleteSkill"), null);
 		if ($ret > 0) {
-			$skillToDelete->delete($user);
+			// Remove EvaluationLine foreach draft Evaluations using this Skill
+			$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+			$sql_eval .= " WHERE e.status = 0 ";
+			$sql_eval .= " AND e.entity = ".getEntity($object->element);
+			$sql_eval .= " AND e.fk_job = ".(int) $object->id;
+			$result = $db->query($sql_eval);
+			$numEvals = $db->num_rows($result);
+			$i=0;
+			while ($i < $numEvals) {
+				$objEval = $db->fetch_object($result);
+				$line = new EvaluationLine($db);
+				$lines = $line->fetchAll('', '', 0, 0, '((fk_skill:=:'.((int) $skillToDelete->fk_skill).') AND (fk_evaluation:=:'.((int) $objEval->rowid).'))');
+				if (is_array($lines)) {
+					foreach ($lines as $key => $evalline) {
+						// Verify if fetchAll gave the right object
+						if (is_object($evalline) && $evalline instanceof EvaluationLine) {
+							$ret = $evalline->delete($user);
+							if ($ret <= 0) {
+								$error++;
+								setEventMessages($evalline->error, null, 'errors');
+								break;
+							}
+						}
+					}
+				} else {
+					$error++;
+					setEventMessages($line->error, null, 'errors');
+					break;
+				}
+				$i++;
+			}
+		} else {
+			$error++;
+			setEventMessages($skillToDelete->error, null, 'errors');
+		}
+		if (!$error) {
+			$ret = $skillToDelete->delete($user);
+			if ($ret <= 0) {
+				$error++;
+				setEventMessages($skillToDelete->error, null, 'errors');
+			}
+		}
+		if (!$error) {
+			setEventMessages($langs->trans("DeleteSkill"), null);
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 }
+
 
 /*
  * View
@@ -195,6 +335,7 @@ $title = $langs->trans("RequiredSkills");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
+$listLink = '';
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
@@ -216,15 +357,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$formconfirm = '';
 
 	// Confirmation to delete
-	/*if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteSkill'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	}*/
 	// Confirmation to delete line
 	if ($action == 'ask_deleteskill') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&objecttype=' . $objecttype . '&lineid=' . $lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteskill', '', 0, 1);
 	}
 	// Clone confirmation
-	/*if ($action == 'clone') {
+	/*if ($action == 'clone' && $permissiontoadd) {
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -253,7 +391,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtmlref .= '</div>';
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
-	} else {
+	} elseif ($listLink !== null) {
 		$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
@@ -442,7 +580,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($objecttype != 'user' && $permissiontoadd) {
 					print '<td class="linecoledit"></td>';
 					print '<td class="linecoldelete">';
-					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->rowid . '">';
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->rowid . '&amp;token='.newToken().'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -481,13 +619,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sqlEval = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 		$sqlEval .= " WHERE e.fk_user = ".((int) $id);
 		$rslt = $db->query($sqlEval);
-		$numEval = $db->num_rows($sqlEval);
+		$numEval = $db->num_rows($rslt);
 
 		$page = 0;
 		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder centpercent" width="100%">';
+		print '<table id="tablelines" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans('Label').'</th>';
 		print '<th>'.$langs->trans('Description').'</th>';
@@ -500,6 +638,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			$i = 0;
 			$sameRef = array();
+			/** @var array<Object|array> $objects */
 			$objects = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
@@ -523,7 +662,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 
 				print '<tr>';
-				print '<td>';
+				print '<td class="nowraponall">';
 				print $evaltmp->getNomUrl(1);
 				print '</td><td class="linecolfk_skill">';
 				print $job->getNomUrl(1);

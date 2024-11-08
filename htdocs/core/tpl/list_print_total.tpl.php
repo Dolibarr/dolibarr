@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ */
 
 '@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
 
@@ -11,7 +13,7 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 }
 // Show total line
 if (isset($totalarray['pos'])) {
-	print '<tfoot>';
+	//print '<tfoot>';
 	print '<tr class="liste_total">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
@@ -64,7 +66,8 @@ if (isset($totalarray['pos'])) {
 				while ($i < $totalarray['nbfield']) {
 					$i++;
 					if (!empty($totalarray['pos'][$i])) {
-						printTotalValCell($totalarray['type'][$i], $sumsarray[$totalarray['pos'][$i]]);
+						$fieldname = preg_replace('/[^a-z0-9]/', '', $totalarray['pos'][$i]);
+						printTotalValCell($totalarray['type'][$i], $sumsarray[$fieldname]);
 					} else {
 						if ($i == 1) {
 							print '<td>';
@@ -83,7 +86,7 @@ if (isset($totalarray['pos'])) {
 			}
 		}
 	}
-	print '</tfoot>';
+	//print '</tfoot>';
 }
 
 /** print a total cell value according to its type
@@ -102,7 +105,7 @@ function printTotalValCell($type, $val)
 	switch ($type) {
 		case 'duration':
 			print '<td class="right">';
-			print(!empty($val) ? convertSecondToTime($val, 'allhourmin') : 0);
+			print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
 			print '</td>';
 			break;
 		case 'string':	// This type is no more used. type is now varchar(x)

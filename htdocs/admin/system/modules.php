@@ -3,6 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,21 @@ if (empty($user->admin)) {
 	accessforbidden();
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
-$search_name		= GETPOST("search_name", 'alpha');
+$search_name = GETPOST("search_name", 'alpha');
 $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
@@ -52,7 +61,7 @@ if (!$sortorder) {
 	$sortorder = "asc";
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('moduleoverview'));
 $form = new Form($db);
 $object = new stdClass();
@@ -107,7 +116,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
 					if (in_array($file, $modules_files)) {
-						// File duplicate
+						// File duplicate @phan-suppress-next-line PhanTypeInvalidDimOffset
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					} else {
 						// File to load
@@ -390,7 +399,7 @@ foreach ($moduleList as $module) {
 
 			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
-					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
+					$tooltip = 'Missing translation (key '.$translationKey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 				}
 			}

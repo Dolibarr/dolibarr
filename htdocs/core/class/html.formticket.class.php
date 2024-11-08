@@ -66,61 +66,136 @@ class FormTicket
 	 */
 	public $fk_user_create;
 
+	/**
+	 * @var string
+	 */
 	public $message;
+	/**
+	 * @var string
+	 */
 	public $topic_title;
 
+	/**
+	 * @var string
+	 */
 	public $action;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtopic;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withemail;
 
 	/**
-	 * @var int $withsubstit Show substitution array
+	 * @var int<0,1> $withsubstit Show substitution array
 	 */
 	public $withsubstit;
 
+	/**
+	 * @var int<0,2>
+	 */
 	public $withfile;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withfilereadonly;
 
+	/**
+	 * @var string
+	 */
 	public $backtopage;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $ispublic;  // to show information or not into public form
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtitletopic;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtopicreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withreadid;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $withcompany;  // to show company drop-down list
+	/**
+	 * @var int<0,1>
+	 */
 	public $withfromsocid;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withfromcontactid;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withnotifytiersatcreate;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withusercreate;  // to show name of creating user in form
+	/**
+	 * @var int<0,1>
+	 */
 	public $withcreatereadonly;
 
 	/**
-	 * @var int withextrafields
+	 * @var int<0,1> withextrafields
 	 */
 	public $withextrafields;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $withref;  // to show ref field
+	/**
+	 * @var int<0,1>
+	 */
 	public $withcancel;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $category_code;
+	/**
+	 * @var string
+	 */
 	public $severity_code;
 
 
 	/**
 	 *
-	 * @var array $substit Substitutions
+	 * @var array<string,string> $substit Substitutions
 	 */
 	public $substit = array();
+	/**
+	 * @var array<string,mixed|array>
+	 */
 	public $param = array();
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error;
+	/**
+	 * @var string[]
+	 */
 	public $errors = array();
 
 
@@ -137,7 +212,7 @@ class FormTicket
 
 		$this->action = 'add';
 
-		$this->withcompany = !getDolGlobalInt("TICKETS_NO_COMPANY_ON_FORM") && isModEnabled("societe");
+		$this->withcompany = (int) (!getDolGlobalInt("TICKETS_NO_COMPANY_ON_FORM") && isModEnabled("societe"));
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		$this->withreadid = 0;
@@ -174,15 +249,15 @@ class FormTicket
 	/**
 	 * Show the form to input ticket
 	 *
-	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
-	 * @param	string			$mode					Mode ('create' or 'edit')
-	 * @param	int				$public					1=If we show the form for the public interface
-	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if it exists
-	 * @param	string			$action					[=''] Action in card
-	 * @param	?Ticket			$object					[=NULL] Ticket object
+	 * @param  	int	 		$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
+	 * @param	'create'|'edit'	$mode				Mode ('create' or 'edit')
+	 * @param	int<0,1>	$public					1=If we show the form for the public interface
+	 * @param	?Contact	$with_contact			[=NULL] Contact to link to this ticket if it exists
+	 * @param	string		$action					[=''] Action in card
+	 * @param	?Ticket		$object					[=NULL] Ticket object
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '', Ticket $object = null)
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, $with_contact = null, $action = '', $object = null)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -228,13 +303,15 @@ class FormTicket
 		print "\n<!-- Begin form TICKET -->\n";
 
 		if ($withdolfichehead) {
-			print dol_get_fiche_head(null, 'card', '', 0, '');
+			print dol_get_fiche_head([], 'card', '', 0, '');
 		}
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
-		if (!empty($object->id)) print '<input type="hidden" name="id" value="'. $object->id .'">';
+		if (!empty($object->id)) {
+			print '<input type="hidden" name="id" value="'. $object->id .'">';
+		}
 		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -369,6 +446,7 @@ class FormTicket
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($this->db);
+			'@phan-var-force CommonObject $objectsrc';
 			$objectsrc->fetch(GETPOSTINT('originid'));
 
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
@@ -491,19 +569,6 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
-			print '<span class="span-icon-security inline-block">';
-			print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" />';
-			print '</span>';
-			print '<span class="nowrap inline-block">';
-			print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-			print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
-			print '</span>';
-			print '</td></tr>';
-		}
-
 		// Categories
 		if (isModEnabled('category') && !$public) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -512,7 +577,7 @@ class FormTicket
 			if (count($cate_arbo)) {
 				// Categories
 				print '<tr><td class="wordbreak"></td><td>';
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', $langs->transnoentitiesnoconv("Categories"));
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', $langs->transnoentitiesnoconv("Categories"));
 				print "</td></tr>";
 			}
 		}
@@ -596,7 +661,7 @@ class FormTicket
 				$events = array();
 				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 				print img_picto('', 'company', 'class="paddingright"');
-				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
+				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth200');
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 					$htmlname = 'socid';
@@ -698,7 +763,7 @@ class FormTicket
 			}
 		}
 
-		if ($subelement != 'contract') {
+		if ($subelement != 'contract' && $subelement != 'contrat') {
 			if (isModEnabled('contract') && !$this->ispublic) {
 				$langs->load('contracts');
 				$formcontract = new FormContract($this->db);
@@ -718,6 +783,51 @@ class FormTicket
 			} else {
 				print $object->showOptionals($extrafields, 'edit');
 			}
+		}
+
+		// Show line with Captcha
+		$captcha = '';
+		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+			print '<tr><td class="titlefield"></td><td><br>';
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+
+			// List of directories where we can find captcha handlers
+			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+
+			$fullpathclassfile = '';
+			foreach ($dirModCaptcha as $dir) {
+				$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+				if ($fullpathclassfile) {
+					break;
+				}
+			}
+
+			if ($fullpathclassfile) {
+				include_once $fullpathclassfile;
+				$captchaobj = null;
+
+				// Charging the numbering class
+				$classname = "modCaptcha".ucfirst($captcha);
+				if (class_exists($classname)) {
+					/** @var ModeleCaptcha $captchaobj */
+					$captchaobj = new $classname($this->db, $conf, $langs, $user);
+					'@phan-var-force ModeleCaptcha $captchaobj';
+
+					if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+						print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
+					} else {
+						print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+					}
+				} else {
+					print 'Error, the captcha handler class '.$classname.' was not found after the include';
+				}
+			} else {
+				print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+			}
+
+			print '<br></td></tr>';
 		}
 
 		print '</table>';
@@ -755,7 +865,7 @@ class FormTicket
 	/**
 	 *      Return html list of tickets type
 	 *
-	 *      @param  string|array	$selected		Id of preselected field or array of Ids
+	 *      @param  string|int[]	$selected		Id of preselected field or array of Ids
 	 *      @param  string			$htmlname		Nom de la zone select
 	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
 	 *      @param  int				$format			0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
@@ -1514,7 +1624,7 @@ class FormTicket
 		// External users can't send message email
 		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$ticketstat = new Ticket($this->db);
-			$res = $ticketstat->fetch('', '', $this->track_id);
+			$res = $ticketstat->fetch(0, '', $this->track_id);
 
 			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL') ? 'checked' : ''));
@@ -1543,7 +1653,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, "", "", 0, 0, 0, '', 'minwidth200');
+				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, 0, "", 0, 0, 0, '', 'minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -1569,7 +1679,7 @@ class FormTicket
 			if (empty($topic)) {
 				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
 			} else {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+				print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
 			}
 			print '</td></tr>';
 

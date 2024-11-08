@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Wedi'i ddilysu
 StatusSendingProcessedShort=Wedi'i brosesu
 SendingSheet=Taflen cludo
 ConfirmDeleteSending=Ydych chi'n siŵr eich bod am ddileu'r llwyth hwn?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Ydych chi'n siŵr eich bod am ddilysu'r llwyth hwn gyda'r cyfeirnod <b>%s</b> >?
 ConfirmCancelSending=A ydych yn siŵr eich bod am ganslo'r llwyth hwn?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Rhybudd, dim cynhyrchion yn aros i gael eu cludo.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Dyddiad cyflwyno arfaethedig
 RefDeliveryReceipt=Cyf derbynneb danfon
 StatusReceipt=Derbynneb danfon statws
 DateReceived=Dyddiad derbyn y danfoniad
-ClassifyReception=Classify Received
+ClassifyReception=Dosbarthwch Derbyniwyd
 SendShippingByEMail=Anfon llwyth trwy e-bost
 SendShippingRef=Cyflwyno llwyth %s
 ActionsOnShipping=Digwyddiadau wrth gludo
@@ -62,7 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Swm cynnyrch o orchmynion prynu ago
 NoProductToShipFoundIntoStock=Ni ddarganfuwyd unrhyw gynnyrch i'w gludo yn y warws <b> %s </b> . Cywirwch y stoc neu ewch yn ôl i ddewis warws arall.
 WeightVolShort=Pwysau/Cyfrol.
 ValidateOrderFirstBeforeShipment=Rhaid i chi ddilysu'r archeb yn gyntaf cyn gallu cludo nwyddau.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Dim llinell, ewch ar y tab "%s" i ychwanegu
+CreateInvoiceForThisCustomerFromSendings=Bill sendings
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Model dogfen mwy cyflawn ar gyfer derbynebau dosbarthu a chyt
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Cyson EXPEDITION_ADDON_NUMBER heb ei ddiffinio
 SumOfProductVolumes=Swm cyfeintiau cynnyrch
 SumOfProductWeights=Swm pwysau'r cynnyrch
-
 # warehouse details
 DetailWarehouseNumber= Manylion y warws
 DetailWarehouseFormat= W:%s (Qty: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
-ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Arddangos dyddiad olaf mynediad mewn stoc yn ystod creu llwyth ar gyfer rhif cyfresol neu swp
+CreationOptions=Opsiynau sydd ar gael yn ystod creu cludo
+ShipmentDistribution=Dosbarthiad cludo
+ErrorTooManyCombinationBatchcode=Dim anfon am linell %s gan fod gormod o gyfuniadau o warws, cynnyrch, cod swp wedi'i ganfod (%s).
+ErrorNoCombinationBatchcode=Methu cadw'r llinell %s fel y cyfuniad o warws-product-lot/serial (%s, %s, %s) heb ei ddarganfod mewn stoc.
+ErrorTooMuchShipped=Ni ddylai'r swm a gludir fod yn fwy na'r swm a archebir ar gyfer llinell %s

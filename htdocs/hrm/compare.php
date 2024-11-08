@@ -45,6 +45,14 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load('hrm');
 
@@ -121,10 +129,10 @@ print dol_get_fiche_head($head, 'compare', '', 1);
 $fk_usergroup2 = 0;
 $fk_job = (int) GETPOST('fk_job');
 if ($fk_job <= 0) {
-	$fk_usergroup2 = GETPOST('fk_usergroup2');
+	$fk_usergroup2 = GETPOSTINT('fk_usergroup2');
 }
 
-$fk_usergroup1 = GETPOST('fk_usergroup1');
+$fk_usergroup1 = GETPOSTINT('fk_usergroup1');
 
 ?>
 
@@ -237,11 +245,11 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 							$job = new Job($db);
 							$job->fetch($fk_job);
 							$userlist2 = '<ul>
-											  <li>
-												  <h3>' . $job->label . '</h3>
-												  <p>'  . $job->description . '</p>
-											  </li>
-										  </ul>';
+											<li>
+												<h3>' . $job->label . '</h3>
+												<p>' . $job->description . '</p>
+											</li>
+										</ul>';
 						} else {
 							$userlist2 = displayUsersListWithPicto($TUser2, $fk_usergroup2, 'list2');
 							$TSkill2 = getSkillForUsers($TUser2);

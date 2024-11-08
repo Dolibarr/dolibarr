@@ -740,7 +740,7 @@ IMG;
 			// Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
 			$this->addImageToManifest($imageValue);
 		}
-		if (! $this->file->addFromString('./META-INF/manifest.xml', $this->manifestXml)) {
+		if (! $this->file->addFromString('META-INF/manifest.xml', $this->manifestXml)) {
 			throw new OdfException('Error during file export: manifest.xml');
 		}
 		$this->file->close();
@@ -843,7 +843,7 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:'.(getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').'\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 

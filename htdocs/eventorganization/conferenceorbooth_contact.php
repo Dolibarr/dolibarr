@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021	Florian HENRY	<florian.henry@scopen.fr>
+/* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian HENRY				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_confere
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'eventorganization', 'mails', 'others', 'projects'));
 
@@ -54,7 +64,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $withproject = GETPOSTINT('withproject');
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
@@ -67,7 +77,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {
@@ -148,14 +158,14 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 $title = $langs->trans('ConferenceOrBooth')." - ".$langs->trans('ContactsAddresses');
-$help_url = '';
-//$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+$help_url='EN:Module_Event_Organization';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card_contact');
 
 
 /* *************************************************************************** */
 /*                                                                             */
-/* View and edit mode                                                         */
+/* View and edit mode                                                          */
 /*                                                                             */
 /* *************************************************************************** */
 

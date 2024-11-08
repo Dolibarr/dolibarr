@@ -151,7 +151,7 @@ ADDDAYS=ወደ አፈፃፀም ቀን ቀናትን ይጨምሩ
 NoDefaultIBANFound=ለዚህ ሶስተኛ ወገን ምንም ነባሪ IBAN አልተገኘም።
 ### Notifications
 InfoCreditSubject=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s በባንኩ መክፈል
-InfoCreditMessage=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s በባንኩ ተከፍሏል<br>የክፍያ ውሂብ፡ b0ecb2ecz807fe49
+InfoCreditMessage=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s በባንኩ ተከፍሏል<br>የክፍያ ውሂብ፡ b0ecb2ecz807fe49 
 InfoTransSubject=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s ወደ ባንክ ማስተላለፍ
 InfoTransMessage=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s ወደ ባንክ በ%s b0ecb2ec87f49fez0 ተልኳል. .<br><br>
 InfoTransData=መጠን፡ %s<br>ዘዴ፡ %s='span><span' ><br>ቀን፡ %s

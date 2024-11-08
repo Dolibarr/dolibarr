@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
  * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
-global $conf, $db, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
@@ -53,7 +60,7 @@ $batch = GETPOST('batch', 'alpha');
 $productid = GETPOSTINT('productid');
 $ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -88,7 +95,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id || $ref) {
 	if ($ref) {
 		$tmp = explode('_', $ref);
@@ -105,7 +112,7 @@ if ($id || $ref) {
 	}
 }
 
-// Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
 $upload_dir = $conf->productbatch->multidir_output[$conf->entity];

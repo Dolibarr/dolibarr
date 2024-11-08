@@ -6,6 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,14 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
@@ -78,13 +87,18 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
-			//dol_print_error($db,$ecmdir->error);
-			//exit;
-		}
+		//if (!($result > 0)) {
+		//dol_print_error($db,$ecmdir->error);
+		//exit;
+		//}
 	}
 } else {
-	// For no ajax call
+	// When no an ajax call (include from other file)
+	'
+	@phan-var-force int $section
+	@phan-var-force string $module
+	@phan-var-force string $showonrightsize
+	';
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -291,8 +305,24 @@ if ($type == 'directory') {
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
-		$filter = preg_quote($search_doc_ref, '/');
+		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+
+		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
+		// This can be done by filtering on entries found into llx_ecm
+		if ($user->socid > 0) {
+			$filearrayallowedtoexternal = array();	// 'fullpath' => array(...)
+
+			// Search files in ECM with select filepath.filename where src_object_type = $module and src_object_type EXISTS in (select rowid from $objecttablename WERE fk_soc = '.$user->socid.' and entity in getEntity($objecttbalename)
+			// TODO
+
+			// Now clean $filearray to keep only record also found into $filearrayallowedtoexternal.
+			foreach ($filearray as $key => $val) {
+				if (!in_array($upload_dir.'/'.$val['relativename'], $filearrayallowedtoexternal)) {
+					unset($filearray[$key]);
+				}
+			}
+		}
 
 		$perm = $user->hasRight('ecm', 'upload');
 
@@ -355,6 +385,7 @@ if ($type == 'directory') {
 			$textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 		}
 
+		$useinecm = null;
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
@@ -389,7 +420,7 @@ if ($type == 'directory') {
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		// var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
 	}
 }
 

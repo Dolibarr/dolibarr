@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -300,7 +305,7 @@ $server->register(
 /**
  * Get invoice from id, ref or ref_ext.
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
@@ -330,7 +335,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('facture', 'lire')) {
 			$invoice = new Facture($db);
@@ -411,7 +416,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 /**
  * Get list of invoices for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
@@ -546,7 +551,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 /**
  * Create an invoice
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$invoice			Invoice
  * @return	array							Array result
  */
@@ -698,7 +703,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	//////////////////////
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
@@ -745,7 +750,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
  * Update an invoice, only change the state of an invoice
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @param	array{id:string,ref:string,ref_ext:string,status?:string}			$invoice			Invoice
+ * @param	array{id:string,ref:string,ref_ext:string,status?:string,close_code?:int,close_note?:int}	$invoice			Invoice
  * @return	array{result:array{result_code:string,result_label:string},id?:int,ref?:string,ref_ext?:string}	Array result
  */
 function updateInvoice($authentication, $invoice)
