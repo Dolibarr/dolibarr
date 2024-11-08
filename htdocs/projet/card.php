@@ -403,7 +403,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->projet->dir_output;
+			$upload_dir = (!empty($conf->project->multidir_output[$object->entity]) ? $conf->project->multidir_output[$object->entity] : $conf->projet->dir_output);
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -1398,12 +1398,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
+		$filedir = (!empty($conf->project->multidir_output[$object->entity]) ? $conf->project->multidir_output[$object->entity] : $conf->projet->dir_output)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
 		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
 
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1424,7 +1424,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Presend form
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
-	$diroutput = $conf->projet->dir_output;
+	$diroutput = (!empty($conf->project->multidir_output[$object->entity]) ? $conf->project->multidir_output[$object->entity] : $conf->projet->dir_output);
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 

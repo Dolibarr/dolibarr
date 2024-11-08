@@ -256,6 +256,7 @@ class Task extends CommonObject
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_projet as fk_project,";
 		$sql .= " t.fk_task_parent,";
 		$sql .= " t.label,";
@@ -299,6 +300,7 @@ class Task extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref;
+				$this->entity = $obj->entity;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_task_parent = $obj->fk_task_parent;
 				$this->label = $obj->label;

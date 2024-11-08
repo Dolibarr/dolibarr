@@ -2657,7 +2657,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
-	} elseif ($modulepart == 'project' && !empty($conf->projet->dir_output)) {
+	} elseif ($modulepart == 'project' && (!empty($conf->project->multidir_output[$entity]) || !empty($conf->projet->dir_output))) {
 		// Wrapping pour les projets
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -2669,9 +2669,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->projet->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->project->multidir_output[$entity]) ? $conf->project->multidir_output[$entity] : $conf->projet->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif ($modulepart == 'project_task' && !empty($conf->projet->dir_output)) {
+	} elseif ($modulepart == 'project_task' && (!empty($conf->project->multidir_output[$entity]) || !empty($conf->projet->dir_output))) {
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -2682,7 +2682,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->projet->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->project->multidir_output[$entity]) ? $conf->project->multidir_output[$entity] : $conf->projet->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les commandes fournisseurs

@@ -196,11 +196,11 @@ class pdf_timespent extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if (!empty($conf->project->multidir_output[$object->entity]) || !empty($conf->projet->dir_output)) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$dir = (!empty($conf->project->multidir_output[$object->entity]) ? $conf->project->multidir_output[$object->entity] : $conf->projet->dir_output);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}

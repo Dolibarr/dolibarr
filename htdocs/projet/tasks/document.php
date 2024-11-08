@@ -109,7 +109,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object->project = clone $projectstatic;
 
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = (!empty($conf->project->multidir_output[$projectstatic->entity]) ? $conf->project->multidir_output[$projectstatic->entity] : $conf->projet->dir_output).'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
