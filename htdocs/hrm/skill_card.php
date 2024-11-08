@@ -591,7 +591,7 @@ if ($action != "create" && $action != "edit") {
 	}
 
 	// Initialize array of search criteria
-	$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+	$search_all = GETPOST('search_all', 'alphanohtml');
 	$search = array();
 	foreach ($objectline->fields as $key => $val) {
 		if (GETPOST('search_' . $key, 'alpha') !== '') {

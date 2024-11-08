@@ -122,7 +122,7 @@ if (!$sortorder) {
 }*/
 
 // Initialize array of search criteria
-$search_all = (GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST("search_all", 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {

@@ -110,7 +110,7 @@ if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
 }
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 if ($search_status < -2) {
 	$search_status = '';
