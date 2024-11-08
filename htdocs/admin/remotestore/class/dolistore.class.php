@@ -302,6 +302,8 @@ class Dolistore
 
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
+		$dolibarrversiontouse = DOL_VERSION;
+		//$dolibarrversiontouse = 20.0;
 
 		$i = 0;
 		foreach ($this->products as $product) {
@@ -342,8 +344,8 @@ class Dolistore
 
 			// Set and check version
 			$version = '';
-			if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
-				if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
+			if ($this->version_compare($product->dolibarr_min, $dolibarrversiontouse) <= 0) {
+				if ($this->version_compare($product->dolibarr_max, $dolibarrversiontouse) >= 0) {
 					//compatible
 					$version = '<span class="compatible">'.$langs->trans(
 						'CompatibleUpTo',
@@ -356,7 +358,7 @@ class Dolistore
 					//never compatible, module expired
 					$version = '<span class="notcompatible">'.$langs->trans(
 						'NotCompatible',
-						DOL_VERSION,
+						$dolibarrversiontouse,
 						$product->dolibarr_min,
 						$product->dolibarr_max
 					).'</span>';
@@ -366,7 +368,7 @@ class Dolistore
 				//need update
 				$version = '<span class="compatibleafterupdate">'.$langs->trans(
 					'CompatibleAfterUpdate',
-					DOL_VERSION,
+					$dolibarrversiontouse,
 					$product->dolibarr_min,
 					$product->dolibarr_max
 				).'</span>';
