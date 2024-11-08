@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1759,7 +1760,11 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->fk_account > 0) {
 			$bankAccount->fetch($this->fk_account);
 			$lines[] = $bankAccount->bic; //BIC (required)
-			$lines[] = $mysoc->name; //Name (required)
+			if (!empty($bankAccount->owner_name)) {
+				$lines[] = $bankAccount->owner_name; //Owner of the bank account, if present (required)
+			} else {
+				$lines[] = $mysoc->name; //Name (required)
+			}
 			$lines[] = $bankAccount->iban; //IBAN (required)
 		} else {
 			$lines[] = ""; //BIC (required)
