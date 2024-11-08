@@ -3540,11 +3540,17 @@ abstract class CommonObject
 			}
 
 			// Clean total
-			$this->total_ht = (float) price2num($this->total_ht);
-			$this->total_tva = (float) price2num($this->total_tva);
+			if (isModEnabled('multicurrency') && !empty($multicurrency_tx) && $multicurrency_tx != 1) {
+				$this->total_ht  = (float) price2num($this->multicurrency_total_ht  / $multicurrency_tx);
+				$this->total_tva = (float) price2num($this->multicurrency_total_tva / $multicurrency_tx);
+				$this->total_ttc = (float) price2num($this->multicurrency_total_ttc / $multicurrency_tx);
+			} else {
+				$this->total_ht  = (float) price2num($this->total_ht);
+				$this->total_tva = (float) price2num($this->total_tva);
+				$this->total_ttc = (float) price2num($this->total_ttc);
+			}
 			$this->total_localtax1 = (float) price2num($this->total_localtax1);
 			$this->total_localtax2 = (float) price2num($this->total_localtax2);
-			$this->total_ttc = (float) price2num($this->total_ttc);
 
 			$this->db->free($resql);
 
