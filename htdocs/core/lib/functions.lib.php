@@ -968,7 +968,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 								if ($qualified && isset($user->default_values[$relativepathstring]['filters'][$defkey][$paramname])) {
 									// We must keep $_POST and $_GET here
-									if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all'])) {
+									if (isset($_POST['search_all']) || isset($_GET['search_all'])) {
 										// We made a search from quick search menu, do we still use default filter ?
 										if (!getDolGlobalString('MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH')) {
 											$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ";", "="); // we accept _, -, . and ,
@@ -12897,7 +12897,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  * @param   string $elementType       Element type (Value of $object->element or value of $object->element@$object->module). Example:
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
- * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
+ * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
  * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
@@ -12908,7 +12908,7 @@ function getElementProperties($elementType)
 
 	//$element_type='facture';
 
-	$classfile = $classname = $classpath = $subdir = $dir_output = $parent_element = '';
+	$classfile = $classname = $classpath = $subdir = $dir_output = $dir_temp = $parent_element = '';
 
 	// Parse element/subelement
 	$module = $elementType;
@@ -13267,15 +13267,25 @@ function getElementProperties($elementType)
 		} elseif (!empty($conf->$module->dir_output)) {
 			$dir_output = $conf->$module->dir_output;
 		}
+		if (!empty($conf->$module->multidir_temp[$conf->entity])) {
+			$dir_temp = $conf->$module->multidir_temp[$conf->entity];
+		} elseif (!empty($conf->$module->temp[$conf->entity])) {
+			$dir_temp = $conf->$module->temp[$conf->entity];
+		} elseif (!empty($conf->$module->dir_temp)) {
+			$dir_temp = $conf->$module->dir_temp;
+		}
 	}
 
 	// Overwrite value for special cases
 	if ($element == 'order_supplier') {
 		$dir_output = $conf->fournisseur->commande->dir_output;
+		$dir_temp = $conf->fournisseur->commande->dir_temp;
 	} elseif ($element == 'invoice_supplier') {
 		$dir_output = $conf->fournisseur->facture->dir_output;
+		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
 	$dir_output .= $subdir;
+	$dir_temp .= $subdir;
 
 	$elementProperties = array(
 		'module' => $module,
@@ -13286,6 +13296,7 @@ function getElementProperties($elementType)
 		'classfile' => $classfile,
 		'classname' => $classname,
 		'dir_output' => $dir_output,
+		'dir_temp' => $dir_temp,
 		'parent_element' => $parent_element,
 	);
 

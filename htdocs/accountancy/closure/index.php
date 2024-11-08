@@ -372,7 +372,7 @@ if (empty($current_fiscal_period)) {
 		} else {
 			$buttonvalidate = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_1&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("ValidateMovements") . '</a>';
 		}
-		print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
+		print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), 0, '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -426,7 +426,7 @@ if (empty($current_fiscal_period)) {
 			$button = '<a class="butActionRefused classfortooltip" href="#" title="There is some lines not yet locked. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 		}
 	}
-	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+	print_barre_liste('', 0, '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
 	print '<br>';
 
@@ -444,7 +444,7 @@ if (empty($current_fiscal_period)) {
 	} else {
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_3&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
 	}
-	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+	print_barre_liste('', 0, '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 }
 
 // End of page

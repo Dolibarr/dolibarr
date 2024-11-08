@@ -2940,9 +2940,10 @@ function top_menu_importfile()
 /**
  * Generate list of quickadd items
  *
- * @return string HTML output
+ * @param	int		$mode		1=No scroll
+ * @return 	string 				HTML output
  */
-function printDropdownQuickadd()
+function printDropdownQuickadd($mode = 0)
 {
 	global $user, $langs, $hookmanager;
 
@@ -3075,7 +3076,9 @@ function printDropdownQuickadd()
 	$dropDownQuickAddHtml = '';
 
 	// Define $dropDownQuickAddHtml
-	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	if (empty($mode)) {
+		$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	}
 	$dropDownQuickAddHtml .= '<div class="dropdown-quickadd-list">';
 
 	// Allow the $items of the menu to be manipulated by modules
@@ -3110,7 +3113,9 @@ function printDropdownQuickadd()
 		';
 	}
 
-	$dropDownQuickAddHtml .= '</div>';
+	if (empty($mode)) {
+		$dropDownQuickAddHtml .= '</div>';
+	}
 	$dropDownQuickAddHtml .= '</div>';
 
 	return $dropDownQuickAddHtml;

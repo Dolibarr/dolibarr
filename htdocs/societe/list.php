@@ -78,7 +78,7 @@ if ($contextpage == 'poslist') {
 $mode = GETPOST("mode", 'alpha');
 
 // search fields
-$search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
 $search_id = GETPOST("search_id", 'int');
