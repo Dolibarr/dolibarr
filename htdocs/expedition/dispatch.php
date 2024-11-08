@@ -1003,14 +1003,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 											$out_js_line .= '});';
 											$out_js_line_list[] = $out_js_line;
 
-											if (!empty($out_js_line_list)) {
-												$out_js = '<script type="text/javascript">';
-												$out_js .= 'jQuery(document).ready(function() {';
-												$out_js .= implode('', $out_js_line_list);
-												$out_js .= '});';
-												$out_js .= '</script>';
-												print $out_js;
-											}
+											$out_js = '<script type="text/javascript">';
+											$out_js .= 'jQuery(document).ready(function() {';
+											$out_js .= implode('', $out_js_line_list);
+											$out_js .= '});';
+											$out_js .= '</script>';
+											print $out_js;
 										} else {
 											print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 										}
