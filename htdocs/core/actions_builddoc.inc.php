@@ -67,15 +67,13 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// Special case to force bank account
-		//if (property_exists($object, 'fk_bank'))
-		//{
 		if (GETPOSTINT('fk_bank')) {
 			// this field may come from an external module
-			$object->fk_bank = GETPOSTINT('fk_bank');
+			$object->fk_bank = GETPOSTINT('fk_bank');	// For compatibility
+			$object->fk_account = GETPOSTINT('fk_bank');
 		} elseif (!empty($object->fk_account)) {
-			$object->fk_bank = $object->fk_account;
+			$object->fk_bank = $object->fk_account;		// For compatibility
 		}
-		//}
 
 		$outputlangs = $langs;
 		$newlang = '';

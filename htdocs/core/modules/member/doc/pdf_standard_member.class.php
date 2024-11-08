@@ -67,7 +67,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 *
 	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
-	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @param	array<string,string>	$param		Associative array containing label content and optional parameters
 	 * @return	void
 	 */
 	public function addSticker(&$pdf, $outputlangs, $param)

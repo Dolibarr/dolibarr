@@ -157,6 +157,9 @@ class Opensurveysondage extends CommonObject
 	 * @var int|'' end date of survey
 	 */
 	public $date_fin = '';
+	/**
+	 * @var int
+	 */
 	public $status;
 
 	/**
@@ -393,7 +396,7 @@ class Opensurveysondage extends CommonObject
 		$sql .= " nom_admin=".(isset($this->nom_admin) ? "'".$this->db->escape($this->nom_admin)."'" : "null").",";
 		$sql .= " titre=".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "null").",";
 		$sql .= " date_fin=".(dol_strlen($this->date_fin) != 0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
-		$sql .= " status=".(isset($this->status) ? "'".$this->db->escape($this->status)."'" : "null").",";
+		$sql .= " status=".(!empty($this->status) ? (int) $this->status : "null").",";
 		$sql .= " format=".(isset($this->format) ? "'".$this->db->escape($this->format)."'" : "null").",";
 		$sql .= " mailsonde=".(isset($this->mailsonde) ? ((int) $this->mailsonde) : "null").",";
 		$sql .= " allow_comments=".((int) $this->allow_comments).",";
@@ -528,10 +531,10 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int<0,2>	$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	int<0,1>	$notooltip					1=Disable tooltip
+	 *  @param  string		$morecss            		Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -694,10 +697,10 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Adds a comment to the poll
 	 *
-	 * @param string $comment Comment content
-	 * @param string $comment_user Comment author
-	 * @param string $user_ip Comment author IP
-	 * @return boolean False in case of the query fails, true if it was successful
+	 * @param string $comment		Comment content
+	 * @param string $comment_user	Comment author
+	 * @param string $user_ip		Comment author IP
+	 * @return bool					False in case of the query fails, true if it was successful
 	 */
 	public function addComment($comment, $comment_user, $user_ip = '')
 	{

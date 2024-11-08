@@ -42,8 +42,14 @@ class FormResource
 	 */
 	public $db;
 
+	/**
+	 * @var array<string,string>
+	 */
 	public $substit = array();
 
+	/**
+	 * @var array<string,mixed>
+	 */
 	public $param = array();
 
 	/**
@@ -69,19 +75,19 @@ class FormResource
 	 *
 	 *	@param	int		$selected		Preselected resource id
 	 *	@param	string	$htmlname		Name of field in form
-	 *  @param	array	$filter			Optional filters criteria (example: 's.rowid <> x')
+	 *  @param	string	$filter			Optional filters criteria (example: 's.rowid <> x')
 	 *	@param	int		$showempty		Add an empty field
 	 * 	@param	int		$showtype		Show third party type in combo list (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param	array	$filterkey		Filter on key value
-	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
+	 *  @param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param	string	$filterkey		Filter on key value
+	 *  @param	int<0,2>	$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers, 0 for no limit
 	 *  @param	string	$morecss		More css
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
-	 * 	@return	string|array			HTML string with
+	 * 	@return	string|array<array{key:int,value:int,label:string}>			HTML string with
 	 */
-	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = [], $outputmode = 0, $limit = 20, $morecss = 'minwidth100', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = '', $outputmode = 0, $limit = 20, $morecss = 'minwidth100', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -126,13 +132,14 @@ class FormResource
 					}
 
 					// Test if entry is the first element of $selected.
+					// @phan-suppress-next-line PhanTypeExpectedObjectPropAccess
 					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $resourcestat->lines[$i]->id) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($resourcestat->lines[$i]->id, $selected))) {
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
 					} else {
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'">'.$label.'</option>';
 					}
 
-					array_push($outarray, array('key'=>$resourcestat->lines[$i]->id, 'value'=>$resourcestat->lines[$i]->id, 'label'=>$label));
+					array_push($outarray, array('key' => (int) $resourcestat->lines[$i]->id, 'value' => (int) $resourcestat->lines[$i]->id, 'label' => (string) $label));
 
 					$i++;
 					if (($i % 10) == 0) {

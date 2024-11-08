@@ -171,7 +171,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Init search fields
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_rowid = GETPOST('search_rowid', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');

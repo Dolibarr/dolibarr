@@ -110,7 +110,7 @@ if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
 }
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 if ($search_status < -2) {
 	$search_status = '';
@@ -203,8 +203,8 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
-			'position' => $val['position'],
+			'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => (int) $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}

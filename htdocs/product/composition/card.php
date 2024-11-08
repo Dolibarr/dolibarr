@@ -166,7 +166,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
-
+$resql = false;
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search') {
 	$current_lang = $langs->getDefaultLang();
@@ -358,7 +358,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 				print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
-				print '<td class="right">'.dol_escape_htmltag($value['qty']).'</td>';
+				print '<td class="right">'.dol_escape_htmltag((string) $value['qty']).'</td>';
 				print '</tr>';
 			}
 		} else {

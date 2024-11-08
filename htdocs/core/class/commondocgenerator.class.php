@@ -912,6 +912,9 @@ abstract class CommonDocGenerator
 			array('line_date_start', 'date_start', 'day', 'auto', null),
 			array('line_date_start_locale', 'date_start', 'day', 'tzserver', $outputlangs),
 			array('line_date_start_rfc', 'date_start', 'dayrfc', 'auto', null),
+			array('line_date_start_real', 'date_start_real', 'day', 'auto', null),
+			array('line_date_start_real_locale', 'date_start_real', 'day', 'tzserver', $outputlangs),
+			array('line_date_start_real_rfc', 'date_start_real', 'dayrfc', 'auto', null),
 			array('line_date_end', 'date_end', 'day', 'auto', null),
 			array('line_date_end_locale', 'date_end', 'day', 'tzserver', $outputlangs),
 			array('line_date_end_rfc', 'date_end', 'dayrfc', 'auto', null)

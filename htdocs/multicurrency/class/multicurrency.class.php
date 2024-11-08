@@ -713,13 +713,13 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Check in database if the current code already exists
 	 *
-	 * @param	string	$code 	current code to search
-	 * @return	boolean         True if exists, false if not exists
+	 * @param	string	$code	current code to search
+	 * @return	bool			True if exists, false if not exists
 	 */
 	public function checkCodeAlreadyExists($code)
 	{
 		$currencytmp = new MultiCurrency($this->db);
-		if ($currencytmp->fetch('', $code) > 0) {
+		if ($currencytmp->fetch(0, $code) > 0) {
 			return true;
 		} else {
 			return false;

@@ -84,12 +84,12 @@ $contactstatic = new Contact($db);
 $task = new Task($db);
 
 $arrayofcss = array('/includes/jsgantt/jsgantt.css');
-
+$arrayofjs = [];
 if (!empty($conf->use_javascript_ajax)) {
-	$arrayofjs = array(
-	'/includes/jsgantt/jsgantt.js',
-	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
-	);
+	$arrayofjs = [
+		'/includes/jsgantt/jsgantt.js',
+		'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
+	];
 }
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');

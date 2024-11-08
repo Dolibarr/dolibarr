@@ -131,10 +131,25 @@ class SocieteAccount extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $key_account;
+	/**
+	 * @var string
+	 */
 	public $login;
+	/**
+	 * @var string
+	 */
 	public $pass_encoding;
+	/**
+	 * @var string
+	 */
 	public $pass_crypted;
+	/**
+	 * @var string
+	 */
 	public $pass_temp;
 
 	/**
@@ -142,7 +157,13 @@ class SocieteAccount extends CommonObject
 	 */
 	public $fk_soc;
 
+	/**
+	 * @var string
+	 */
 	public $site;
+	/**
+	 * @var ?string
+	 */
 	public $site_account;
 
 	/**
@@ -150,8 +171,17 @@ class SocieteAccount extends CommonObject
 	 */
 	public $date_last_login;
 
+	/**
+	 * @var int|''
+	 */
 	public $date_last_reset_password;
+	/**
+	 * @var int|''
+	 */
 	public $date_previous_login;
+	/**
+	 * @var string
+	 */
 	public $note_private;
 
 	/**
@@ -164,6 +194,9 @@ class SocieteAccount extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string
+	 */
 	public $import_key;
 
 	/**

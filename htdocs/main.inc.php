@@ -844,7 +844,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$sessionkey = 'dol_antispam_value';
 			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 
@@ -2890,7 +2890,7 @@ function top_menu_quickadd()
 
 /**
  * Build the tooltip on top menu quick add.
- * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set.
+ * Called when MAIN_USE_TOP_MENU_IMPORT_FILE is set to 1 or to an URL string.
  *
  * @return  string                  HTML content
  */
@@ -2920,10 +2920,16 @@ function top_menu_importfile()
 		}
 	}
 
+
 	if (!empty($conf->use_javascript_ajax)) {
-		$html .= '<!-- div for upload file link -->
+		$urlforuploadpage = DOL_URL_ROOT.'/core/upload_page.php';
+		if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
+		}
+
+		$html .= '<!-- div for link to upload file -->
     <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.DOL_URL_ROOT.'/core/upload_page.php" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
+        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.$urlforuploadpage.'" title="'.$langs->trans('UploadFile').' ('.$stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
     </div>';
 	}
 
@@ -2934,9 +2940,10 @@ function top_menu_importfile()
 /**
  * Generate list of quickadd items
  *
- * @return string HTML output
+ * @param	int		$mode		1=No scroll
+ * @return 	string 				HTML output
  */
-function printDropdownQuickadd()
+function printDropdownQuickadd($mode = 0)
 {
 	global $user, $langs, $hookmanager;
 
@@ -3069,7 +3076,9 @@ function printDropdownQuickadd()
 	$dropDownQuickAddHtml = '';
 
 	// Define $dropDownQuickAddHtml
-	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	if (empty($mode)) {
+		$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	}
 	$dropDownQuickAddHtml .= '<div class="dropdown-quickadd-list">';
 
 	// Allow the $items of the menu to be manipulated by modules
@@ -3104,7 +3113,9 @@ function printDropdownQuickadd()
 		';
 	}
 
-	$dropDownQuickAddHtml .= '</div>';
+	if (empty($mode)) {
+		$dropDownQuickAddHtml .= '</div>';
+	}
 	$dropDownQuickAddHtml .= '</div>';
 
 	return $dropDownQuickAddHtml;
@@ -3972,7 +3983,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		// A div for the address popup
+		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
