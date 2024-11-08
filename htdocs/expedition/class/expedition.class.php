@@ -263,7 +263,7 @@ class Expedition extends CommonObject
 	public $commande;
 
 	/**
-	 * @var ExpeditionLigne[] array of shipping lines
+	 * @var array<int, ExpeditionLigne> array of shipping lines
 	 */
 	public $lines = array();
 
@@ -1892,17 +1892,14 @@ class Expedition extends CommonObject
 			$this->multicurrency_total_ttc = 0;
 
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
-
+			$line = new ExpeditionLigne($this->db); // initialize
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-
 				if ($originline > 0 && $originline == $obj->fk_elementdet) {
 					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
-					if (isset($line)) {
-						$line->entrepot_id = 0; // entrepod_id in details_entrepot
-						$line->qty_shipped += $obj->qty_shipped;
-					}
+					$line->entrepot_id = 0; // entrepod_id in details_entrepot
+					$line->qty_shipped += $obj->qty_shipped;
 				} else {
 					$line = new ExpeditionLigne($this->db);		// new group to start
 					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
