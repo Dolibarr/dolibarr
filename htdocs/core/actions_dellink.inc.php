@@ -27,6 +27,15 @@
 // $object must be defined
 // $permissiondellink must be defined
 
+/**
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var int $permissiondellink
+ */
+
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
 $addlinkids = GETPOST('idtolinkto', 'array:int');
