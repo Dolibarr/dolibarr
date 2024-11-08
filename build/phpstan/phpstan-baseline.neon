@@ -13226,11 +13226,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
