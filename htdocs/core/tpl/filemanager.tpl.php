@@ -20,7 +20,14 @@
  * $module must be defined ('ecm', 'medias', ...)
  * $formalreadyopen can be set to 1 to avoid to open the <form> to submit files a second time
  */
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page filemanager.tpl.php can't be called as URL";

@@ -45,6 +45,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 if (isModEnabled('productbatch')) {
@@ -69,7 +77,7 @@ $idproduct = GETPOST('idproduct', 'intcomma');
 $product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -495,6 +503,9 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
 
+				$srcwarehouseid = 0;
+				$eatby = -1;
+				$sellby = -1;
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {

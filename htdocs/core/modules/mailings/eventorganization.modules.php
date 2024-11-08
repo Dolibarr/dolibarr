@@ -108,12 +108,12 @@ class mailing_eventorganization extends MailingTargets
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_project' => $obj->fk_project,
+								'fk_project' => (int) $obj->fk_project,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id, $obj->source),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => $obj->source
 					);
 					$old = $obj->email;

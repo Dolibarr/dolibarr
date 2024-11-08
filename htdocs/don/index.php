@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +30,19 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$langs->load("donations");
+
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('donationindex'));
-
-$langs->load("donations");
 
 $donation_static = new Don($db);
 
@@ -199,7 +207,8 @@ print "</table>";
 print '</div><div class="fichetwothirdright">';
 
 
-$max = 10;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
 
 /*
  * Last modified donations
@@ -207,7 +216,7 @@ $max = 10;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.lastname, c.firstname, c.tms as datem, c.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as c";
-$sql .= " WHERE c.entity = ".$conf->entity;
+$sql .= " WHERE c.entity IN (".getEntity("don").")";
 //$sql.= " AND c.fk_statut > 2";
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -216,7 +225,11 @@ $resql = $db->query($sql);
 if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).'</th></tr>';
+	print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).' ';
+	print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.datem&sortorder=DESC">';
+	print '<span class="badge">...</span>';
+	print '</a>';
+	print '</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num) {

@@ -51,7 +51,7 @@ function dol_getwebuser($mode)
  *
  *	@param	string		$usertotest		Login value to test
  *	@param	string		$passwordtotest	Password value to test
- *	@param	string		$entitytotest	Instance of data we must check
+ *	@param	int|string	$entitytotest	Instance of data we must check
  *	@param	string[]	$authmode		Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param	'api'|'dav'|'ws'|''	$context	Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
  *  @return	string						Login or '' or '--bad-login-validity--'

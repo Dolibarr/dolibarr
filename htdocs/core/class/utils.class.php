@@ -456,7 +456,7 @@ class Utils
 					$output_arr = array();
 					$retval = null;
 
-					exec($fullcommandclear, $output_arr, $retval);
+					exec($fullcommandclear, $output_arr, $retval);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 					// TODO Replace this exec with Utils->executeCLI() function.
 					// We must check that the case for $lowmemorydump works too...
 					//$utils = new Utils($db);
@@ -751,7 +751,7 @@ class Utils
 
 		if ($execmethod == 1) {
 			$retval = null;
-			exec($command, $output_arr, $retval);
+			exec($command, $output_arr, $retval);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 			$result = $retval;
 			if ($retval != 0) {
 				$langs->load("errors");
@@ -1304,8 +1304,10 @@ class Utils
 		global $dolibarr_main_url_root;
 
 		$filepath = '';
+		$filesize = -1;
 		$output = '';
 		$error = 0;
+		$mimetype = '';
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
@@ -1371,6 +1373,7 @@ class Utils
 			$error++;
 		}
 
+		$mailfile = null;
 		if (!$error) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
@@ -1381,7 +1384,8 @@ class Utils
 		}
 
 		$result = false;
-		if (!$error) {
+		$output = '';
+		if (!$error && $mailfile !== null) {
 			$result = $mailfile->sendfile();
 			if (!$result) {
 				$error++;
