@@ -181,6 +181,30 @@ if (empty($reshook)) {
 	$objectlabel = 'CashControl';
 	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+// close cashpoints mass action
+    if (($action == 'close' && $confirm == 'yes') && $permissiontoadd) {
+        $objecttmp = new $objectclass($db);
+        $db->begin();
+        $unique_arr = array_unique($toselect);
+        foreach ($unique_arr as $toselectid) {
+            $result = $objecttmp->fetch($toselectid);
+            if ($result > 0) {
+                $objecttmp->cash = price2num(GETPOST('cash_amount', 'alpha'));
+                $objecttmp->card = price2num(GETPOST('card_amount', 'alpha'));
+                $objecttmp->cheque = price2num(GETPOST('cheque_amount', 'alpha'));
+
+                $result = $objecttmp->valid($user);
+            }
+            if ($result <= 0) {
+                setEventMessages($langs->trans("CashpointAlreadyClosed",$objecttmp->id), null, 'errors');
+                $db->rollback();
+            } else {
+                setEventMessages($langs->trans("CashFenceDone"), null);
+                $db->commit();
+            }
+        }
+    }
 }
 
 
@@ -414,6 +438,10 @@ $modelmail = "cashcontrol";
 $objecttmp = new CashControl($db);
 $trackid = 'cashfence'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($massaction == 'preclose') {
+    print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassClosing"), $langs->trans("ConfirmMassClosingQuestion", count($toselect)), "close", null, '', 0, 200, 500, 1);
+}
 
 if ($search_all) {
 	$setupstring = '';
