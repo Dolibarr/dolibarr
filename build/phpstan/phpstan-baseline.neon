@@ -16521,11 +16521,6 @@ parameters:
 			path: ../../htdocs/holiday/card.php
 
 		-
-			message: "#^Variable \\$formfile might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/holiday/card.php
-
-		-
 			message: "#^Variable \\$starthalfdaykey might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/holiday/card.php

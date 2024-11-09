@@ -277,8 +277,6 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 }
 
 if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->hasRight('projet', 'lire')) {
-	$error = 0;
-
 	if (!GETPOST("new_durationhour") && !GETPOST("new_durationmin")) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
@@ -786,8 +784,6 @@ if ($action == 'confirm_generateinvoice') {
 			$mesg = $langs->trans("InvoiceGeneratedFromTimeSpent", '{s1}');
 			$mesg = str_replace('{s1}', $urltoinvoice, $mesg);
 			setEventMessages($mesg, null, 'mesgs');
-
-			//var_dump($tmpinvoice);
 
 			$db->commit();
 		} else {
