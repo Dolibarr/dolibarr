@@ -93,10 +93,14 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
+if ($object->id > 0) {
+	restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
+}
 
 $permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
-
+if ($object->specimen == 1) {
+	$permissiontoadd = 0;
+}
 
 /*
  * Actions
@@ -118,7 +122,7 @@ $morehtmlref = "";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card_documents');
 
-if ($object->id && $upload_dir !== null) {
+if (($object->id  && $upload_dir !== null) || $object->specimen == 1) {
 	/*
 	 * Show tabs
 	 */
@@ -160,6 +164,10 @@ if ($object->id && $upload_dir !== null) {
 	$modulepart = 'bom';
 	$permissiontoadd = $user->hasRight('bom', 'write');
 	$permtoedit = $user->hasRight('bom', 'write');
+	if ($object->specimen == 1) {
+		$permissiontoadd = 0;
+		$permtoedit = 0;
+	}
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='bom/' . dol_sanitizeFileName($object->id).'/';
