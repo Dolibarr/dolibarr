@@ -21211,11 +21211,6 @@ parameters:
 			path: ../../htdocs/projet/admin/website.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/card.php
-
-		-
 			message: "#^Variable \\$morecss might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/card.php
@@ -21411,11 +21406,6 @@ parameters:
 			path: ../../htdocs/projet/comment.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/projet/contact.php
-
-		-
 			message: "#^Variable \\$formconfirmtoaddtasks might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/contact.php
@@ -21581,6 +21571,11 @@ parameters:
 			path: ../../htdocs/projet/list.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/list.php
+
+		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/projet/list.php
@@ -21592,11 +21587,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/projet/list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/list.php
 
@@ -21851,11 +21841,6 @@ parameters:
 			path: ../../htdocs/projet/tasks/task.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/projet/tasks/task.php
-
-		-
 			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/time.php
@@ -21898,11 +21883,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/projet/tasks/time.php
 
 		-
@@ -22266,11 +22246,6 @@ parameters:
 			path: ../../htdocs/public/opensurvey/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/opensurvey/studs.php
-
-		-
 			message: "#^Variable \\$modifier might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/public/opensurvey/studs.php
@@ -22411,11 +22386,6 @@ parameters:
 			path: ../../htdocs/public/project/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/public/project/index.php
-
-		-
 			message: "#^Variable \\$suffix might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/index.php
@@ -22519,11 +22489,6 @@ parameters:
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 7
 			path: ../../htdocs/public/project/suggestconference.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/project/viewandvote.php
 
 		-
 			message: "#^Variable \\$suffix might not be defined\\.$#"
@@ -23931,17 +23896,17 @@ parameters:
 			path: ../../htdocs/salaries/payments.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/payments.php
+
+		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/payments.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/payments.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/payments.php
 
@@ -23984,11 +23949,6 @@ parameters:
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/virement_request.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/societe/admin/societe.php
 
 		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
@@ -24561,11 +24521,6 @@ parameters:
 			path: ../../htdocs/stripe/admin/stripe.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/stripe/admin/stripe.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/stripe/charge.php
@@ -24826,24 +24781,9 @@ parameters:
 			path: ../../htdocs/supplier_proposal/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/appearance.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/takepos/admin/bar.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/bar.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/receipt.php
 
 		-
 			message: "#^Variable \\$res might not be defined\\.$#"
@@ -24857,11 +24797,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$params of static method Stripe\\\\Terminal\\\\Reader\\:\\:all\\(\\) expects array\\|null, string given\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/terminal.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/takepos/admin/terminal.php
 
@@ -24933,11 +24868,6 @@ parameters:
 		-
 			message: "#^Variable \\$creditnote might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/takepos/invoice.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/takepos/invoice.php
 
 		-

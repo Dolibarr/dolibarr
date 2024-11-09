@@ -161,6 +161,7 @@ if ($object->fk_project > 0) {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = '';
@@ -212,8 +213,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
-	$error = 0;
-
 	$timespent_durationhour = GETPOSTINT('timespent_durationhour');
 	$timespent_durationmin = GETPOSTINT('timespent_durationmin');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin)) {
