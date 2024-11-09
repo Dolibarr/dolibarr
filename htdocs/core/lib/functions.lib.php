@@ -10198,7 +10198,10 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
  *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
  *
+ *  @template T of array<string|int,mixed>
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
+ *  @phpstan-param T $array
+ *  @phan-param T $array
  *  @param	string		$index				Key in array to use for sorting criteria
  *  @param	string		$order				Sort order ('asc' or 'desc')
  *  @param	int<-1,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort), -1=Force alpha order
@@ -10206,6 +10209,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param	int<0,1>	$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param	int<0,1>	$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return	array<string|int,mixed>			Return the sorted array (the source array is not modified !)
+ *  @phpstan-return T
+ *  @phan-return T
  */
 function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sensitive = 0, $keepindex = 0)
 {
