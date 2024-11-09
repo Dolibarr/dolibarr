@@ -304,10 +304,14 @@ if ($object->element == 'supplier_proposal' || $object->element == 'order_suppli
 }
 
 $tooltiponprice = '';
+$tooltiponpricemultiprice = '';
 $tooltiponpriceend = '';
+$tooltiponpriceendmultiprice = '';
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+	$tooltiponpricemultiprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->multicurrency_total_ht);
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
+	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->multicurrency_total_tva);
 	if (is_object($object->thirdparty)) {
 		if ($senderissupplier) {
 			$seller = $object->thirdparty;
@@ -320,22 +324,30 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		if ($mysoc->useLocalTax(1)) {
 			if (($seller->country_code == $buyer->country_code) || $line->total_localtax1 || $seller->useLocalTax(1)) {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->total_localtax1);
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->multicurrency_total_localtax1);
 			} else {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
 			}
 		}
 		if ($mysoc->useLocalTax(2)) {
 			if ((isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2);
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->multicurrency_total_localtax2);
 			} else {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
 			}
 		}
 	}
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->multicurrency_total_ttc);
 
 	$tooltiponprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
+	$tooltiponpricemultiprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponpricemultiprice).'">';
+
 	$tooltiponpriceend = '</span>';
+	$tooltiponpriceendmultiprice = '</span>';
 }
 
 // VAT Rate
@@ -446,7 +458,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 if ($line->special_code == 3) {
 	$coldisplay++;
 	$colspanOptions	= '';
-	if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) {
+	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		$colspanOptions	= ' colspan="2"';
 	}
@@ -459,7 +471,11 @@ if ($line->special_code == 3) {
 	print $tooltiponpriceend;
 	print '</td>';
 	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecolutotalht_currency nowrap right">'.price($sign * $line->multicurrency_total_ht).'</td>';
+		print '<td class="linecolutotalht_currency nowrap right">';
+		print $tooltiponpricemultiprice;
+		print price($sign * $line->multicurrency_total_ht);
+		print $tooltiponpriceendmultiprice;
+		print '</td>';
 		$coldisplay++;
 	}
 }
