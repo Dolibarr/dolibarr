@@ -1370,6 +1370,7 @@ class BOM extends CommonObject
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
 		$this->date_creation = dol_now() - 20000;
+		$this->status = self::STATUS_DRAFT;
 
 		$line = new BOMLine($this->db);
 		$line->initAsSpecimen();

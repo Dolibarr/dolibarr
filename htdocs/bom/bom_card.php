@@ -85,8 +85,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
-if ($object->id > 0) {
+if ($id === 0 && empty($ref)) {
+	$object->initAsSpecimen();
+} else {
+	include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+}
+
+if ($object->id > 0 || $object->specimen == 1) {
 	$object->calculateCosts();
 }
 
@@ -103,7 +108,11 @@ $permissiondellink = $user->hasRight('bom', 'write'); // Used by the include of 
 $permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('bom', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
-
+if ($object->specimen == 1) {
+	$permissiondellink = 0;
+	$permissiontoadd = 0;
+	$permissiontodelete = 0;
+}
 
 /*
  * Actions
@@ -387,7 +396,7 @@ if (($id || $ref) && $action == 'edit') {
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if (($object->id > 0 || $object->specimen == 1) && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = bomPrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, 'bom');
 
