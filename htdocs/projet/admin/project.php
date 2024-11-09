@@ -64,7 +64,7 @@ $type = 'project';
 /*
  * Actions
  */
-
+$error = 0;
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
@@ -89,7 +89,7 @@ if ($action == 'updateMask') {
 if ($action == 'updateMaskTask') {
 	$maskconstmasktask = GETPOST('maskconsttask', 'aZ09');
 	$masktaskt = GETPOST('masktask', 'alpha');
-
+	$res = 0;
 	if ($maskconstmasktask && preg_match('/_MASK$/', $maskconstmasktask)) {
 		$res = dolibarr_set_const($db, $maskconstmasktask, $masktaskt, 'chaine', 0, '', $conf->entity);
 	}
@@ -125,15 +125,15 @@ if ($action == 'updateMaskTask') {
 		require_once $file;
 
 		$module = new $classname($db);
-
 		'@phan-var-force ModelePDFProjects $module';
+		/** @var ModelePDFProjects $module */
 
 		if ($module->write_file($project, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
@@ -161,15 +161,15 @@ if ($action == 'updateMaskTask') {
 		require_once $file;
 
 		$module = new $classname($db);
-
 		'@phan-var-force ModelePDFTask $module';
+		/** @var ModelePDFTask $module */
 
 		if ($module->write_file($project, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project_task&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');

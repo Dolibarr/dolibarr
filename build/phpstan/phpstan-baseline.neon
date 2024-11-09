@@ -19121,11 +19121,6 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/results.php
-
-		-
 			message: "#^Variable \\$expiredate might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/results.php
@@ -21031,11 +21026,6 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
-
-		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
@@ -21141,11 +21131,6 @@ parameters:
 			path: ../../htdocs/projet/activity/perday.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/projet/activity/perday.php
-
-		-
 			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perday.php
@@ -21214,20 +21199,10 @@ parameters:
 			message: "#^Variable \\$ref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perweek.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/projet/admin/project.php
-
-		-
-			message: "#^Variable \\$obj might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/projet/admin/project.php
 
 		-
 			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 2
+			count: 1
 			path: ../../htdocs/projet/admin/project.php
 
 		-
