@@ -16521,11 +16521,6 @@ parameters:
 			path: ../../htdocs/holiday/card.php
 
 		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/holiday/card.php
-
-		-
 			message: "#^Variable \\$formfile might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/holiday/card.php
@@ -25476,11 +25471,6 @@ parameters:
 			path: ../../htdocs/ticket/contact.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/document.php
@@ -25741,11 +25731,6 @@ parameters:
 			path: ../../htdocs/user/document.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/user/group/card.php
-
-		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/user/group/card.php
@@ -25819,11 +25804,6 @@ parameters:
 			message: "#^Variable \\$searchCategoryUserList in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/user/list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/user/logout.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
