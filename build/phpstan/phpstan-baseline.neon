@@ -12526,21 +12526,6 @@ parameters:
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$extrafields might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/extrafields_list_array_fields.tpl.php
