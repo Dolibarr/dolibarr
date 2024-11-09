@@ -7566,28 +7566,13 @@ parameters:
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Right side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: "#^Variable \\$contact might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: "#^Variable \\$from might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -7621,11 +7606,6 @@ parameters:
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
@@ -7633,11 +7613,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
@@ -12711,11 +12686,6 @@ parameters:
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
 			message: "#^Variable \\$filepathnoext might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
@@ -12728,11 +12698,6 @@ parameters:
 		-
 			message: "#^Variable \\$pageid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: "#^Variable \\$website might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
