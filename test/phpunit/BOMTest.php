@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +96,33 @@ class BOMTest extends CommonClassTest
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+		return $result;
+	}
+
+	/**
+	 * testBOMCalculateCosts
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	void
+	 *
+	 * @depends	testBOMCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testBOMCalculateCosts($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new BOM($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->calculateCosts();
+
+		print __METHOD__." id=".$id." result=".$localobject->total_cost."\n";
+		$this->assertEquals($localobject->total_cost, 0);
+
 		return $result;
 	}
 }
