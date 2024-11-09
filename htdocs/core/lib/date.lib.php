@@ -338,7 +338,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
 	if ($duration_unit == 's') {
 		$result = $duration_value / 3600;
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn') {
 		$result = $duration_value / 60;
 	}
 	if ($duration_unit == 'h') {
