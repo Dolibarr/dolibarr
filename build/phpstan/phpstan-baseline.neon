@@ -161,11 +161,6 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/bookkeeping/card.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/bookkeeping/export.php
