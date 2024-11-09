@@ -1368,45 +1368,18 @@ class BOM extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
-		$this->ref = 'BOM-123';
+		$this->ref = 'BOM-123-SPECIMEN';
 		$this->date_creation = dol_now() - 20000;
+		$this->bomtype = 0;
+		$this->fk_product = 0;
 		$this->status = self::STATUS_DRAFT;
 
 		$line = new BOMLine($this->db);
 		$line->initAsSpecimen();
+
 		$this->lines[] = $line;
 
 		return 1;
-	}
-
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 
 	/**
