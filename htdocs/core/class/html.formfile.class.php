@@ -266,10 +266,17 @@ class FormFile
 
 		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 			if ($perm) {
-				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
 				$langs->load('other');
+
+				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
+
+				$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow);
+				if (getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION')) {
+					$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION').')</span>';
+				}
+
 				$out .= ' ';
-				$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1, 0, '1', 'classfortooltip');
+				$out .= info_admin($tooltiptext, 1, 0, '1', 'classfortooltip');
 			}
 		} else {
 			$out .= ' ('.$langs->trans("UploadDisabled").')';
@@ -278,7 +285,7 @@ class FormFile
 
 		if ($savingdocmask) {
 			//add a global variable for disable the auto renaming on upload
-			$rename = (!getDolGlobalString('MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT') ? 'checked' : '');
+			$rename = getDolGlobalString('MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT') ? '' : 'checked';
 
 			$out .= '<tr>';
 			if (!empty($options)) {
@@ -1403,7 +1410,8 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); }', '', $permtoeditline);
+				$url = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); }';
+				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $url, '', $permtoeditline);
 			}
 
 			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
