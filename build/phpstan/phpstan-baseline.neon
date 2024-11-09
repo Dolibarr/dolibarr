@@ -7476,11 +7476,6 @@ parameters:
 			path: ../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
 			message: "#^Comparison operation \"\\>\" between 0 and 1 is always false\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_massactions.inc.php
@@ -7503,11 +7498,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 14
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
