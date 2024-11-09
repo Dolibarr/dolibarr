@@ -7106,5 +7106,17 @@ class Product extends CommonObject
  */
 class ProductService extends Product
 {
+	/**
+	 * Label of the pictogram used for this object ('product' or 'service')
+	 * @var string
+	 * @see img_picto()
+	 */
 	public $picto = 'service';
+
+	/**
+	 * Check TYPE constants
+	 *
+	 * @var int
+	 */
+	public $type = self::TYPE_SERVICE;
 }
