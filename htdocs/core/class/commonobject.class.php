@@ -10460,6 +10460,10 @@ abstract class CommonObject
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
+		if ($id === 0 && empty($ref)) {
+			$this->initAsSpecimen();
+			return 0;
+		}
 		if (empty($id) && empty($ref) && empty($morewhere)) {
 			return -1;
 		}

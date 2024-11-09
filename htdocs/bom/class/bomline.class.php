@@ -485,6 +485,12 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function initAsSpecimen()
 	{
-		return $this->initAsSpecimenCommon();
+		$this->initAsSpecimenCommon();
+		$this->fk_bom = 0;
+		$this->fk_product = 0;
+		$this->qty = 5;
+		$this->cost_price = 1234.56;
+
+		return 1;
 	}
 }

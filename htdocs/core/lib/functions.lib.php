@@ -13381,7 +13381,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 
-			if ($element_id > 0 || !empty($element_ref)) {
+			if ($element_id >= 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
 				if ($ret >= 0) {
 					if (empty($objecttmp->module)) {

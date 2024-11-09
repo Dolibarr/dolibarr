@@ -2860,6 +2860,10 @@ class Product extends CommonObject
 		dol_syslog(get_class($this)."::fetch id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
 		// Check parameters
+		if ($id === 0 && empty($ref)) {
+			$this->initAsSpecimen();
+			return 0;
+		}
 		if (!$id && !$ref && !$ref_ext && !$barcode) {
 			$this->error = 'ErrorWrongParameters';
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
@@ -6694,20 +6698,24 @@ class Product extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		global $conf;
+
 		$now = dol_now();
 
 		// Initialize parameters
 		$this->specimen = 1;
+		$this->entity = $conf->entity;
 		$this->id = 0;
 		$this->ref = 'PRODUCT_SPEC';
 		$this->label = 'PRODUCT SPECIMEN';
 		$this->description = 'This is description of this product specimen that was created the '.dol_print_date($now, 'dayhourlog').'.';
-		$this->specimen = 1;
+		$this->type = self::TYPE_PRODUCT;
 		$this->country_id = 1;
 		$this->status = 1;
 		$this->status_buy = 1;
 		$this->tobatch = 0;
 		$this->sell_or_eat_by_mandatory = 0;
+		$this->pmp = 12345.67;
 		$this->note_private = 'This is a comment (private)';
 		$this->note_public = 'This is a comment (public)';
 		$this->date_creation = $now;

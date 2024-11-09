@@ -85,14 +85,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-if ($id === 0 && empty($ref)) {
-	$object->initAsSpecimen();
-} else {
-	include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 if ($object->id > 0 || $object->specimen == 1) {
-	$object->calculateCosts();
+	$res = $object->calculateCosts();
+	if ($res < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 
@@ -545,12 +544,10 @@ if (($object->id > 0 || $object->specimen == 1) && (empty($action) || ($action !
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	 // Project
-	 if (isModEnabled('project'))
-	 {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd)
-	 {
+	 if ($permissiontoadd) {
 	 if ($action != 'classify')
 	 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 if ($action == 'classify') {

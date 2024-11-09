@@ -27,9 +27,15 @@
 // $object must be defined (object is loaded in this file with fetch)
 // $cancel must be defined
 // $id or $ref must be defined (object is loaded in this file with fetch)
-
-if (((!empty($id) && $id > 0) || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
-	if (($id > 0 && is_numeric($id)) || !empty($ref)) {	// To discard case when id is list of ids like '1,2,3...'
+/**
+ * @var CommonObject $object
+ *
+ * @var string $action
+ * @var ?int $id
+ * @var ?string $ref
+ */
+if (((isset($id) && $id >= 0) || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
+	if (($id >= 0 && is_numeric($id)) || !empty($ref)) {	// To discard case when id is list of ids like '1,2,3...'
 		if ($object->element == 'usergroup') {
 			$ret = $object->fetch($id, (empty($ref) ? '' : $ref), true); // to load $object->members
 		} else {

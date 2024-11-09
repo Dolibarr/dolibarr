@@ -440,8 +440,15 @@ class BOM extends CommonObject
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
 	{
+		if ($this->specimen == 1) {
+			if ($typeproduct == 0) {
+				return count($this->lines);
+			} else {
+				$this->lines = array();
+				return 0;
+			}
+		}
 		$this->lines = array();
-
 		$objectlineclassname = get_class($this).'Line';
 		if (!class_exists($objectlineclassname)) {
 			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';

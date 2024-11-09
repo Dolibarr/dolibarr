@@ -160,7 +160,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if ($id > 0 || !empty($ref)) {
+if ($id >= 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
@@ -1940,7 +1940,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		print $form->buttonsSaveCancel("Create");
 
 		print '</form>';
-	} elseif ($object->id > 0) {
+	} elseif ($object->id > 0 || $object->specimen == 1) {
 		/*
 		 * Product card
 		 */
