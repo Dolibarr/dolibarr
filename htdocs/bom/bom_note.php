@@ -70,7 +70,9 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
-
+if ($object->specimen == 1) {
+	$permissionnote = 0;
+}
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
