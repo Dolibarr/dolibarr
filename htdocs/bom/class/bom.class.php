@@ -1456,8 +1456,11 @@ class BOM extends CommonObject
 					}
 				} else {
 					// Convert qty of line into hours
-					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
-					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($this->db);
+					$measuringUnits->fetch($line->fk_unit);
+					// $unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+					$qtyhourforline = $line->qty * (int) $measuringUnits->scale;
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
