@@ -124,6 +124,7 @@ $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user-
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
 	if (!empty($backtopageforcancel)) {
@@ -158,8 +159,6 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $permissiontoadd) {
-		$error = 0;
-
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$paiement_id = 0;
 		$totalpayment = 0;
@@ -277,8 +276,6 @@ if (empty($reshook)) {
 	 * Action confirm_paiement
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes') {
-		$error = 0;
-
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		$multicurrency_code = array();

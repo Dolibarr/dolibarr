@@ -15991,16 +15991,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/dispatch.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
 			message: "#^Variable \\$product might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/fourn/commande/dispatch.php
@@ -16306,11 +16296,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
 			message: "#^Variable \\$numprlv might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/list.php
@@ -16347,7 +16332,7 @@ parameters:
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 2
+			count: 1
 			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
@@ -16362,11 +16347,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/paiement.php
 
