@@ -316,7 +316,6 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 	}
 }
 
-//var_dump($arraypricelevel);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -337,6 +336,7 @@ if ($search_type == '0') {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -407,7 +407,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $massaction == 'switchonsalestatus' && $permissiontoadd) {
+	if ($massaction == 'switchonsalestatus' && $permissiontoadd) {
 		$product = new Product($db);
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);
@@ -418,7 +418,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if (!$error && $massaction == 'switchonpurchasestatus' && $permissiontoadd) {
+	if ($massaction == 'switchonpurchasestatus' && $permissiontoadd) {
 		$product = new Product($db);
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);

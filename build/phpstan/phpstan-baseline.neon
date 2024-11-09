@@ -19341,11 +19341,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/paybox/admin/paybox.php
@@ -19366,11 +19361,6 @@ parameters:
 			path: ../../htdocs/paybox/lib/paybox.lib.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
 			message: "#^Comparison operation \"\\<\" between \\-1 and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/paypal/lib/paypal.lib.php
@@ -19383,11 +19373,6 @@ parameters:
 		-
 			message: "#^Variable \\$classfile might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/printing/admin/printing.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/printing/admin/printing.php
 
 		-
@@ -20047,11 +20032,6 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
-			count: 2
-			path: ../../htdocs/product/list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/list.php
 
