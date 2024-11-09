@@ -13381,11 +13381,6 @@ parameters:
 			path: ../../htdocs/cron/list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/cron/list.php
-
-		-
 			message: "#^Variable \\$filter might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/cron/list.php
@@ -13402,11 +13397,6 @@ parameters:
 
 		-
 			message: "#^Offset 'css' on array\\{css\\: 'minwidth200', picto\\: mixed\\} in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/admin/setup.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/datapolicy/admin/setup.php
 
@@ -13506,11 +13496,6 @@ parameters:
 			path: ../../htdocs/document.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/don/admin/donation.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/don/admin/donation.php
@@ -13528,11 +13513,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/don/card.php
 
 		-
@@ -14226,11 +14206,6 @@ parameters:
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$from might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
@@ -14288,11 +14263,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/expedition/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 17
 			path: ../../htdocs/expedition/card.php
 
 		-
@@ -14666,11 +14636,6 @@ parameters:
 			path: ../../htdocs/expedition/shipment.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expedition/shipment.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/shipment.php
@@ -14728,11 +14693,6 @@ parameters:
 		-
 			message: "#^Variable \\$date might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/expensereport/card.php
 
 		-
@@ -15081,11 +15041,6 @@ parameters:
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
@@ -15288,11 +15243,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 10
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/fourn/card.php
 
 		-

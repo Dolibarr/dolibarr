@@ -62,6 +62,7 @@ $type = 'donation';
 /*
  * Action
  */
+$error = 0;
 
 if ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');

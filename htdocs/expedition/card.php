@@ -144,7 +144,7 @@ $typeobject = null;
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -240,8 +240,6 @@ if (empty($reshook)) {
 
 	// Create shipment
 	if ($action == 'add' && $permissiontoadd) {
-		$error = 0;
-
 		$db->begin();
 
 		$object->note = GETPOST('note', 'restricthtml');
