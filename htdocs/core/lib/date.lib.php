@@ -130,7 +130,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn') {
 		return $time + (60 * $duration_value);
 	}
 	if ($duration_unit == 'h') {
