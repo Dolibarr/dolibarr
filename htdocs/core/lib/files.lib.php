@@ -2188,6 +2188,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 			$textforfulltextindex = '';
 			$keywords = '';
+			$cmd = 'unknown';
 			if (preg_match('/\.pdf/i', $filename)) {
 				// TODO Move this into external submodule files
 
