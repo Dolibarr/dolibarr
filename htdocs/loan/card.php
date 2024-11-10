@@ -270,9 +270,6 @@ $form = new Form($db);
 $formproject = new FormProjets($db);
 $morehtmlstatus = '';
 $outputlangs = $langs;
-if (isModEnabled('accounting')) {
-	$formaccounting = new FormAccounting($db);
-}
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -369,6 +366,7 @@ if ($action == 'create') {
 
 	// Accountancy
 	if (isModEnabled('accounting')) {
+		$formaccounting = new FormAccounting($db);
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
