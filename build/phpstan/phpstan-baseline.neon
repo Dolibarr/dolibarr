@@ -18666,6 +18666,11 @@ parameters:
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../htdocs/opensurvey/exportcsv.php
+
+		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/list.php
