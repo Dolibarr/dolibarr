@@ -261,16 +261,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
-			message: "#^Left side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
@@ -278,6 +268,11 @@ parameters:
 		-
 			message: "#^Result of && is always false\\.$#"
 			count: 6
+			path: ../../htdocs/accountancy/class/accountancyexport.class.php
+
+		-
+			message: "#^Right side of \\|\\| is always true\\.$#"
+			count: 1
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
