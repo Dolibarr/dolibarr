@@ -4516,11 +4516,6 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/card.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/card.php
@@ -4603,11 +4598,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
@@ -13469,11 +13459,6 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/document.php
-
-		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/don/admin/donation.php
 
 		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
