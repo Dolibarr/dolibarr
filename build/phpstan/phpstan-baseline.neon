@@ -14771,11 +14771,6 @@ parameters:
 			path: ../../htdocs/exports/export.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/externalsite/admin/index.php
-
-		-
 			message: "#^Variable \\$heightforframes might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/externalsite/frames.php
@@ -16691,21 +16686,6 @@ parameters:
 			path: ../../htdocs/hrm/compare.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/core/tpl/objectline_title.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/hrm/core/tpl/objectline_title.tpl.php
-
-		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/core/tpl/objectline_view.tpl.php
@@ -16728,11 +16708,6 @@ parameters:
 		-
 			message: "#^Variable \\$colwidth might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
 
 		-
