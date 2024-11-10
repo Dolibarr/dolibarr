@@ -4,6 +4,7 @@
  * Copyright (C) 2008-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    		<125155@supinfo.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
@@ -124,6 +133,8 @@ if (empty($reshook)) {
 
 		// Verify code
 		if (!$ok) {
+			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
+
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -134,8 +145,7 @@ if (empty($reshook)) {
 				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
 			}
 
-			// Set the message to show (must be the same if login/email exists or not
-			// to avoid to guess them.
+			// Set the message to show (must be the same if login/email exists or not to avoid to guess them.
 			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
 				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
@@ -209,15 +219,6 @@ if (!$username) {
 	$focus_element = 'password';
 }
 
-// Send password button enabled ?
-$disabled = 'disabled';
-if (preg_match('/dolibarr/i', $mode)) {
-	$disabled = '';
-}
-if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
-	$disabled = ''; // To force button enabled
-}
-
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width = 0;
 $rowspan = 2;
@@ -233,10 +234,19 @@ if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/log
 	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 }
 
+// Send password button enabled ?
+$disabled = 'disabled';
+if (preg_match('/dolibarr/i', $mode)) {
+	$disabled = '';
+}
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
+	$disabled = ''; // To force button enabled
+}
+
 // Security graphical code
-if (function_exists("imagecreatefrompng") && !$disabled) {
-	$captcha = 1;
-	$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+$captcha = '';
+if (!$disabled) {
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)

@@ -55,6 +55,15 @@ if (isModEnabled('project')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
 
@@ -1295,13 +1304,13 @@ if ($action == 'create') {
 	}
 
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
-	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
-		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -2243,7 +2252,7 @@ if ($action == 'create') {
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddOrder'),
 						'lang' => 'orders',
-						'perm' => $user->hasRight('commande', 'creer'),
+						'perm' => $user->hasRight('commande', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2252,7 +2261,7 @@ if ($action == 'create') {
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('CreateBill'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('facture', 'creer'),
+						'perm' => $user->hasRight('facture', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2262,7 +2271,7 @@ if ($action == 'create') {
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('fournisseur', 'facture', 'creer'),
+						'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2286,7 +2295,7 @@ if ($action == 'create') {
 						'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
 						'label' => $langs->trans('CloseAllContracts'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('contrat', 'desactiver'),
+						'perm' => $user->hasRight('contrat', 'desactiver') ? true : false,
 						'enabled' => true,
 					);
 				}
@@ -2344,7 +2353,11 @@ if ($action == 'create') {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('contrat'));
+			$tmparray = $form->showLinkToObjectBlock($object, array(), array('contrat'), 1);
+			$linktoelem = $tmparray['linktoelem'];
+			$htmltoenteralink = $tmparray['htmltoenteralink'];
+			print $htmltoenteralink;
+
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link

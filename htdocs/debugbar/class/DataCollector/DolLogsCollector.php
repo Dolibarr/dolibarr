@@ -66,7 +66,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array<string,array{icon?:string,widget?:string,map:string,default:string}>  Array
+	 *  @return array<string,array{icon?:string,indicator?:string,widget?:string,tooltip?:string|array{html:string,class:string},map:string,default:string}>		Array
+
 	 */
 	public function getWidgets()
 	{

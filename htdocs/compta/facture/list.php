@@ -65,10 +65,19 @@ if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
@@ -1021,8 +1030,10 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 if ($search_fk_fac_rec_source) {
 	$object = new FactureRec($db);
-	$object->id = (int) $search_fk_fac_rec_source;
+	$object->fetch((int) $search_fk_fac_rec_source);
+
 	$head = invoice_rec_prepare_head($object);
+
 	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
 }
 
@@ -1249,8 +1260,11 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton = '';
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+	if (!empty($object->socid)) {
+		$url .= '&socid='.urlencode((string) $object->socid);
+	}
+	if (!empty($object->id)) {
+		$url .= '&fac_rec='.urlencode((string) $object->id);
 	}
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));

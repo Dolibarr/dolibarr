@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2009-2010  Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2013  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2010  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2024  Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+// Page to ask email for password forgotten
 
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
@@ -35,6 +38,19 @@ if ($size > 10000) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+/**
+ * @var HookManager $hookmanager
+ * @var string $action
+ * @var string $captcha
+ * @var string $message
+ * @var string $title
+ */
+
+
+/*
+ * View
+ */
 
 header('Cache-Control: Public, must-revalidate');
 
@@ -58,6 +74,7 @@ if (GETPOST('dol_use_jmobile')) {
 if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
+
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
@@ -164,22 +181,39 @@ if (!empty($captcha)) {
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tagtd tdinputlogin nowrap none valignmiddle">
 
-	<span class="fa fa-unlock"></span>
-	<span class="nofa inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
-	</span>
-	<span class="nowrap inline-block">
-	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a>
-	</span>
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
 
-	</div></div>
-	<?php
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		$captchaobj = null;
+
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			/** @var ModeleCaptcha $captchaobj */
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+
+			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+				print $captchaobj->getCaptchaCodeForForm($php_self);  // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+			}
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
 }
 
 if (!empty($morelogincontent)) {
@@ -239,7 +273,7 @@ if (!empty($morelogincontent)) {
 
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
-	if ($action != 'validatenewpassword' && empty($message)) {
+	if ($action != 'validatenewpassword') {
 		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('SendNewPasswordDesc');
@@ -253,24 +287,45 @@ if ($mode == 'dolibarr' || !$disabled) {
 	print '</div>';
 	print '</div>';
 }
+
+print "\n".'<br>'."\n";
+
+
+//$conf->use_javascript_ajax = 0;
+
+// Show error message if defined
+if ($message) {
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message) || preg_match('/<div class="warning/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			$message = preg_replace('/<div class="[^"]*">/', '', $message);
+			$message = preg_replace('/<\/div>/', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
+	} else {
+		?>
+		<div class="center login_main_message">
+		<?php
+		dol_htmloutput_mesg($message, [], '', 1);
+		?>
+		</div>
+		<?php
+	}
+}
 ?>
-
-
-<br>
-
-<?php if (!empty($message)) { ?>
-	<div class="center login_main_message">
-	<?php dol_htmloutput_mesg($message, [], '', 1); ?>
-	</div>
-<?php } ?>
-
 
 <!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
 
 <?php
-if (getDolGlobalString('MAIN_HTML_FOOTER')) {
-	print $conf->global->MAIN_HTML_FOOTER;
-}
+
+print getDolGlobalString('MAIN_HTML_FOOTER');
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option) {
@@ -284,45 +339,12 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
-// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
-	foreach ($tmptagarray as $tmptag) {
-		print "\n";
-		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
-		print "
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
-					<script>
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
+// Can add extra content
+$parameters = array();
+$dummyobject = new stdClass();
+$result = $hookmanager->executeHooks('getPasswordForgottenPageExtraContent', $parameters, $dummyobject, $action);
+print $hookmanager->resPrint;
 
-					gtag('config', '".trim($tmptag)."');
-					</script>";
-		print "\n";
-	}
-}
-
-// TODO Replace this with a hook
-// Google Adsense (need Google module)
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
-	if (empty($conf->dol_use_jmobile)) {
-		?>
-	<div class="center"><br>
-		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-	</div>
-		<?php
-	}
-}
 ?>
 
 

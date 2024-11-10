@@ -42,6 +42,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
 }
@@ -802,7 +810,7 @@ if ($pid) {
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
-if (!$user->hasRight('societe', 'client', 'voir')) {
+if (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 // Search on sale representative
@@ -1548,7 +1556,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
-	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
@@ -1659,7 +1667,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
-	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
 	$i = 0;
 	while ($i < 7) {
@@ -1727,7 +1735,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
-	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month" style="margin-bottom: 10px !important;">';
+	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore" style="margin-bottom: 10px !important;">';
 
 	echo ' <tr class="tagtr liste_titre">';
 	echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";

@@ -101,6 +101,12 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
 
+		/*
+		$result = num_between_day(1514332800, 1538265600, 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(277, $result);
+		*/
+
 		return $result;
 	}
 

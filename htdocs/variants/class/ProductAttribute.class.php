@@ -129,7 +129,7 @@ class ProductAttribute extends CommonObject
 
 	/**
 	 * @var int position
-	 * @deprecated
+	 * @deprecated Use $position
 	 * @see $position
 	 */
 	public $rang;
@@ -1104,7 +1104,7 @@ class ProductAttribute extends CommonObject
 	/**
 	 * 	Update position of attributes with ajax
 	 *
-	 * 	@param	array	$rows	Array of rows
+	 * 	@param	int[]	$rows	Array of rows
 	 * 	@return	void
 	 */
 	public function attributesAjaxOrder($rows)

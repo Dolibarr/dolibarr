@@ -39,6 +39,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'orders', 'other'));
 
@@ -58,6 +67,7 @@ $type = 'order';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -103,8 +113,8 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFCommandes $module';
-
 		/** @var ModelePDFCommandes $module */
+
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
 			return;

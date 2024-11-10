@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006-2016 	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012	 	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
 require_once DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php";
 require_once DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call ActionComm webservices interfaces");
 
@@ -269,7 +272,7 @@ $server->register(
 /**
  * Get ActionComm
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @return	mixed
  */
@@ -372,7 +375,7 @@ function getActionComm($authentication, $id)
 /**
  * Get getListActionCommType
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @return	mixed
  */
 function getListActionCommType($authentication)
@@ -430,7 +433,7 @@ function getListActionCommType($authentication)
 /**
  * Create ActionComm
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
@@ -514,7 +517,7 @@ function createActionComm($authentication, $actioncomm)
 /**
  * Create ActionComm
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */

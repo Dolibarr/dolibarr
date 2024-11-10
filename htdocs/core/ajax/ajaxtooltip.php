@@ -42,6 +42,13 @@ if (!defined('NOHEADERNOFOOTER')) {
 include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $id = GETPOST('id', 'aZ09');
 $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mymodule', 'mymodule_myobject'
@@ -53,9 +60,15 @@ if (GETPOSTISSET('infologin')) {
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');
 }
-
+$element_ref = '';
+if (is_numeric($id)) {
+	$id = (int) $id;
+} else {
+	$element_ref = $id;
+	$id = 0;
+}
 // Load object according to $element
-$object = fetchObjectByElement($id, $objecttype);
+$object = fetchObjectByElement($id, $objecttype, $element_ref);
 if (empty($object->element)) {
 	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
 }

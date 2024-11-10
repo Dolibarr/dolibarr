@@ -96,7 +96,7 @@ class pdf_octopus extends ModelePDFFactures
 	public $heightforfooter;
 
 	/**
-	 * @var int tab_top
+	 * @var float tab_top
 	 */
 	public $tab_top;
 
@@ -130,7 +130,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Situation invoices
 	 *
-	 * @var array{derniere_situation:Facture,date_derniere_situation:int,current:array}	Data of situation
+	 * @var array{derniere_situation?:Facture,date_derniere_situation?:int,cumul_anterieur:array<'HT'|'HTnet'|'retenue_garantie'|'total_a_payer'|'travaux_sup'|'TTC'|'TVA'|int,mixed>,current:array{HT:float,HTnet:float,TVA:float,TTC:float,retenue_garantie:float,travaux_sup:float,total_a_payer:float,derniere_situation?:Facture,date_derniere_situation:int},nouveau_cumul:array<int|string,mixed|float|int>}
 	 */
 	public $TDataSituation;
 
@@ -287,14 +287,14 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "compta"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
+			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies", "compta"));
 		}
 
 		if (empty($object) || ($object->type != Facture::TYPE_SITUATION && ($object->type != Facture::TYPE_CREDIT_NOTE &&  !empty($object->situation_cycle_ref)))) {
@@ -1958,10 +1958,10 @@ class pdf_octopus extends ModelePDFFactures
 	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
-	 *   @param		Translate	$outputlangsbis	Langs object bis
+	 *   @param		?Translate	$outputlangsbis	Langs object bis
 	 *   @return	void
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
@@ -2052,10 +2052,10 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *  @param  Facture		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
+	 *  @param  int<0,1>   	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	array						top shift of linked object lines
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
+	 *  @return	array{top_shift:float,shipp_shift:float}	Top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2150,7 +2150,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 		}
 		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
-		// if ($object->statut == $object::STATUS_DRAFT) {
+		// if ($object->status == $object::STATUS_DRAFT) {
 		// 	$pdf->SetTextColor(128, 0, 0);
 		// 	$title .= ' - '.$outputlangs->transnoentities("NotValidated");
 		// }
@@ -2170,7 +2170,7 @@ class pdf_octopus extends ModelePDFFactures
 		 $pdf->SetXY($posx, $posy);
 		 $pdf->SetTextColor(0, 0, 60);
 		 $textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		 if ($object->statut == $object::STATUS_DRAFT) {
+		 if ($object->status == $object::STATUS_DRAFT) {
 		 $pdf->SetTextColor(128, 0, 0);
 		 $textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		 }
@@ -2187,7 +2187,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -2197,7 +2197,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
 				$posy += 3;
@@ -2269,6 +2269,13 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+		}
+
+		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
+			$posy += 3;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact
@@ -2748,8 +2755,8 @@ class pdf_octopus extends ModelePDFFactures
 	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
@@ -2973,7 +2980,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 * @param   Facture $object  Facture
 	 *
-	 * @return  array
+	 * @return array{derniere_situation?:Facture,date_derniere_situation?:int,cumul_anterieur:array<'HT'|'HTnet'|'retenue_garantie'|'total_a_payer'|'travaux_sup'|'TTC'|'TVA'|int,mixed>,current:array{HT:float,HTnet:float,TVA:float,TTC:float,retenue_garantie:float,travaux_sup:float,total_a_payer:float,derniere_situation?:Facture,date_derniere_situation:int},nouveau_cumul:array<int|string,mixed|float|int>}
 	 *
 	 * Details of returned table
 	 *
@@ -3094,7 +3101,8 @@ class pdf_octopus extends ModelePDFFactures
 
 			foreach ($TDiffKey as $i) {
 				if (empty($object->lines[$i]->fk_prev_id)) {
-					$TDataSituation['nouveau_cumul']['travaux_sup'] += $object->lines[$i]->total_ht;
+					// Next line is useless because 'nouveau_cumul' is overwritten below
+					// $TDataSituation['nouveau_cumul']['travaux_sup'] += $object->lines[$i]->total_ht;
 					$TDataSituation['current']['travaux_sup'] += $object->lines[$i]->total_ht;
 				}
 			}
@@ -3109,10 +3117,10 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Calculates the sum of two arrays, key by key, taking into account nested arrays
 	 *
-	 * @param   array  $a  [$a description]
-	 * @param   array  $b  [$b description]
+	 * @param   array<int|string,int|float|mixed[]>  $a  [$a description]
+	 * @param   array<int|string,int|float|mixed[]>  $b  [$b description]
 	 *
-	 * @return  array	  [return description]
+	 * @return  array<int|string,int|float|mixed[]>		[return description]
 	 */
 	public function sumSituation($a, $b)
 	{
@@ -3208,8 +3216,8 @@ class pdf_octopus extends ModelePDFFactures
 				$pu_ht = $tabprice[3];
 
 				return array(
-					'progress_prec' => $l->situation_percent,
-					'total_ht_without_progress' => $total_ht,
+					'progress_prec' => (float) $l->situation_percent,
+					'total_ht_without_progress' => (float) $total_ht,
 					'total_ht' => $l->total_ht,
 				);
 			}
@@ -3224,8 +3232,8 @@ class pdf_octopus extends ModelePDFFactures
 	 * @param	float	$y				Ordinate of first point
 	 * @param	float	$l				??
 	 * @param	float	$h				??
-	 * @param	int		$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 * @param	int		$hidebottom		Hide bottom
+	 * @param	int<-1,1>	$hidetop	1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param	int<0,1>	$hidebottom	Hide bottom
 	 * @return	void
 	 */
 	/*
@@ -3250,8 +3258,8 @@ class pdf_octopus extends ModelePDFFactures
 	 * @param float       $w            Width of the rectangle
 	 * @param float       $h            Height of the rectangle
 	 * @param float       $r            Corner radius (can be an array for different radii per corner)
-	 * @param int         $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 * @param int         $hidebottom   Hide bottom
+	 * @param int<-1,1>  $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param int<0,1>    $hidebottom   Hide bottom
 	 * @param string      $style        Draw style (e.g. 'D' for draw, 'F' for fill, 'DF' for both)
 	 * @return void
 	 */
@@ -3272,10 +3280,10 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Get data about invoice
 	 *
-	 * @param   int  	$id					invoice id
-	 * @param   boolean $forceReadFromDB  	set to true if you want to force refresh data from SQL
+	 * @param   int		$id					invoice id
+	 * @param   bool	$forceReadFromDB  	set to true if you want to force refresh data from SQL
 	 *
-	 * @return  array	   [return description]
+	 * @return array{HT:float,HTnet:float,TVA:float,TTC:float,retenue_garantie:float,travaux_sup:float,total_a_payer:float,derniere_situation?:Facture,date_derniere_situation:int}
 	 */
 	public function btpGetInvoiceAmounts($id, $forceReadFromDB = false)
 	{
@@ -3339,9 +3347,11 @@ class pdf_octopus extends ModelePDFFactures
 		$ret['retenue_garantie'] = $retenue_garantie;
 
 		//Clean up before keep in "cache"
-		unset($ret['derniere_situation']->db);
-		unset($ret['derniere_situation']->fields);
-		unset($ret['derniere_situation']->lines);
+		if (array_key_exists('derniere_situation', $ret)) {
+			unset($ret['derniere_situation']->db);
+			unset($ret['derniere_situation']->fields);
+			unset($ret['derniere_situation']->lines);
+		}
 
 		// print "<p>Store to cache $id : " . json_encode($_cache_btpProrataGetInvoiceAmounts[$id]) . "</p>";
 		return $ret;

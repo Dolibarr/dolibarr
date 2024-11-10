@@ -50,6 +50,9 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $picto = 'emailsenderprofile';
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
 
 
@@ -114,11 +117,26 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string
+	 */
 	public $email;
 
+	/**
+	 * @var int
+	 */
 	public $private;
+	/**
+	 * @var string
+	 */
 	public $signature;
+	/**
+	 * @var int
+	 */
 	public $position;
+	/**
+	 * @var int
+	 */
 	public $active;
 	// END MODULEBUILDER PROPERTIES
 

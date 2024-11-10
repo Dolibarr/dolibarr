@@ -391,6 +391,12 @@ class User extends CommonObject
 	private $cache_childids; // Cache array of already loaded children
 
 	/**
+	 * Accounting general account for salary
+	 * @var string
+	 */
+	public $accountancy_code_user_general; // Accountancy code in prevision of the complete accountancy module
+
+	/**
 	 * @var string
 	 */
 	public $accountancy_code; // Accountancy code in prevision of the complete accountancy module
@@ -563,6 +569,7 @@ class User extends CommonObject
 		$sql .= " u.dateendvalidity,";
 		$sql .= " u.photo as photo,";
 		$sql .= " u.openid as openid,";
+		$sql .= " u.accountancy_code_user_general,";
 		$sql .= " u.accountancy_code,";
 		$sql .= " u.thm,";
 		$sql .= " u.tjm,";
@@ -678,6 +685,7 @@ class User extends CommonObject
 				$this->email_oauth2 = $obj->email_oauth2;
 				$this->personal_email = $obj->personal_email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
+
 				$this->job = $obj->job;
 				$this->signature = $obj->signature;
 				$this->admin		= $obj->admin;
@@ -691,7 +699,10 @@ class User extends CommonObject
 				$this->openid		= $obj->openid;
 				$this->lang			= $obj->lang;
 				$this->entity		= $obj->entity;
+
+				$this->accountancy_code_user_general = $obj->accountancy_code_user_general;
 				$this->accountancy_code = $obj->accountancy_code;
+
 				$this->thm			= $obj->thm;
 				$this->tjm			= $obj->tjm;
 				$this->salary = $obj->salary;
@@ -853,7 +864,7 @@ class User extends CommonObject
 	 * 	@param	string	$module			Module of permission to check
 	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
-	 *  @return int						1 if user has permission, 0 if not.
+	 *  @return 0|1						Return integer 1 if user has permission, 0 if not.
 	 *  @see	clearrights(), delrights(), loadRights(), hasRight()
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
@@ -919,7 +930,8 @@ class User extends CommonObject
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
-		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
+		//if ($module == 'fournisseur') { var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2); }
+
 		if (!isModEnabled($module)) {
 			return 0;
 		}
@@ -1008,7 +1020,7 @@ class User extends CommonObject
 	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only or '' to include all permissions.
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @return int						> 0 if OK, < 0 if KO
+	 *  @return int						Return integer > 0 if OK, < 0 if KO
 	 *  @see	clearrights(), delrights(), loadRights(), hasRight()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
@@ -1151,7 +1163,7 @@ class User extends CommonObject
 	 *  @param  string		$allperms   Retirer tous les droits du module allmodule, perms allperms
 	 *  @param	int|string	$entity		Entity to use. Example: '1', or '0,1', or '2,3'
 	 *  @param  int	    	$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *  @return int         			> 0 if OK, < 0 if OK
+	 *  @return int         			Return integer > 0 if OK, < 0 if OK
 	 *  @see	clearrights(), addrights(), loadRights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
@@ -2126,6 +2138,7 @@ class User extends CommonObject
 		$this->openid						= trim((string) $this->openid);
 		$this->admin						= ($this->admin > 0 ? $this->admin : 0);
 
+		$this->accountancy_code_user_general	= trim((string) $this->accountancy_code_user_general);
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
 		$this->color						= trim((string) $this->color);
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
@@ -2216,6 +2229,7 @@ class User extends CommonObject
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", job = '".$this->db->escape($this->job)."'";
 		$sql .= ", signature = '".$this->db->escape($this->signature)."'";
+		$sql .= ", accountancy_code_user_general = '".$this->db->escape($this->accountancy_code_user_general)."'";
 		$sql .= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
 		$sql .= ", color = '".$this->db->escape($this->color)."'";
 		$sql .= ", dateemployment=".(strval($this->dateemployment) != '' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
@@ -2527,13 +2541,15 @@ class User extends CommonObject
 				$this->oldcopy = clone $this;
 			}
 
+			$now = dol_now();
+
 			$this->db->begin();
 
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " pass_temp = null";
 			if (!empty($flagdelsessionsbefore)) {
-				$sql .= ", flagdelsessionsbefore = '".$this->db->idate(dol_now() - 5, 'gmt')."'";
+				$sql .= ", flagdelsessionsbefore = '".$this->db->idate($now - 5, 'gmt')."'";
 			}
 			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 				$sql .= ", pass = null";
@@ -2572,6 +2588,12 @@ class User extends CommonObject
 					}
 
 					dol_syslog(get_class($this)."::setPassword notrigger=".$notrigger." error=".$error, LOG_DEBUG);
+
+					// Call trigger for the "security events" log
+					$user->context['audit'] = 'login='.$user->login;
+					if (!empty($flagdelsessionsbefore)) {
+						$user->context['audit'] .= " - flagdelsessionsbefore set to '".$this->db->idate($now - 5, 'gmt')."'";
+					}
 
 					if (!$error && !$notrigger) {
 						// Call trigger

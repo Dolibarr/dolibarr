@@ -93,6 +93,15 @@ const DICT_PRODUCT_NATURE = 42;
 const DICT_PRODUCTBATCH_QCSTATUS = 43;
 const DICT_ASSET_DISPOSAL_TYPE = 44;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
@@ -658,6 +667,7 @@ foreach ($tabcomplete as $key => $value) {
 		continue;
 	}
 	$tabcomplete[$key]['id'] = $i;
+
 	// TODO Comment this lines when data is stored into the tabcomplete array
 	$tabcomplete[$key]['cond'] = $tabcond[$i];
 	$tabcomplete[$key]['rowid'] = $tabrowid[$i];
@@ -1825,13 +1835,13 @@ if ($id > 0) {
 		}
 
 		print '<div class="div-table-responsive">';
-		print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent noborder">';
 
 		$colspan = 0;
 
 		// Title line with search input fields
 		print '<!-- line title to search record -->'."\n";
-		print '<tr class="liste_titre_filter">';
+		print '<tr class="liste_titre liste_titre_filter">';
 
 		// Action button
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

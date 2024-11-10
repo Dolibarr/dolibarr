@@ -5,6 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_skillrank.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'other', 'products'));  // why products?
 
@@ -52,7 +62,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'evaluationcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOSTINT('lineid');
+$lineid = GETPOSTINT('lineid');
 
 // Initialize a technical objects
 $object = new Evaluation($db);
@@ -160,7 +170,7 @@ if (empty($reshook)) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
-				$line->rankorder = $TNote[$line->fk_skill];
+				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
 				$line->update($user);
 			}
 			setEventMessage($langs->trans("SaveLevelSkill"));
@@ -568,9 +578,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$Tab[$num]->skilllabel = $obj->skilllabel;
 				$Tab[$num]->description = $obj->description;
 				$Tab[$num]->userRankForSkill = '<span title="'.$obj->userRankForSkillDesc.'" class="radio_js_bloc_number TNote_1">' . $obj->userRankForSkill . '</span>';
-				$Tab[$num]->required_rank = '<span title="'.$obj->required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $obj->required_rank . '</span>';
 
-				if ($obj->userRankForSkill > $obj->required_rank) {
+				$required_rank = $obj->required_rank;
+				$required_rank_desc = $obj->required_rank_desc;
+				if ($required_rank == "-1") {
+					$required_rank = $langs->trans("NA");
+					$required_rank_desc = $langs->trans("NA");
+				} elseif ($required_rank == "0") {
+					$required_rank_desc = $langs->trans('SkillNotRequired');
+				}
+
+				$Tab[$num]->required_rank = '<span title="'.$required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $required_rank . '</span>';
+
+				if ($obj->userRankForSkill == -1) {
+					$title = $langs->trans('NA');
+					$class .= 'veryhappy diffnote';
+				} elseif ($obj->userRankForSkill > $obj->required_rank) {
 					$title = $langs->trans('MaxlevelGreaterThanShort');
 					$class .= 'veryhappy diffnote';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
@@ -699,7 +722,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('evaluation'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('evaluation'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

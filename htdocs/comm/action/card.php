@@ -8,8 +8,8 @@
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019	    Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019	      Ferran Marcet	          <fmarcet@2byte.es>
+ * Copyright (C) 2024		    MDW						          <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
@@ -360,7 +368,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	}
 
 	if (!$error) {
-		// Initialisation object actioncomm
+		// Initialisation of object actioncomm
 		$object->priority = GETPOSTISSET("priority") ? GETPOSTINT("priority") : 0;
 		$object->fulldayevent = ($fulldayevent ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
@@ -369,11 +377,15 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		if (GETPOST("elementtype", 'alpha')) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
 				$hasPermissionOnLinkedObject = 1;
+			} elseif ($user->hasRight($modulecodetouseforpermissioncheck, $submodulecodetouseforpermissioncheck, 'read')) {
+				$hasPermissionOnLinkedObject = 1;
 			}
+
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementid = GETPOSTINT("fk_element");
@@ -436,7 +448,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 	if (GETPOSTISSET("contactid")) {
-		$object->contact = $contact;
+		$object->contact_id = GETPOSTINT("contactid");
+
+		$object->contact = $contact;	// For backward compatibility
 	}
 
 	if (GETPOSTINT('socid') > 0) {
@@ -1797,7 +1811,7 @@ if ($id > 0) {
 	}
 
 	$result2 = $object->fetch_thirdparty();
-	$result2 = $object->fetch_projet();
+	$result2 = $object->fetchProject();
 	$result3 = $object->fetch_contact();
 	$result4 = $object->fetch_userassigned();
 	$result5 = $object->fetch_optionals();

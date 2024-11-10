@@ -52,7 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -370,7 +373,7 @@ $server->register(
 /**
  * Get order from id, ref or ref_ext.
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
@@ -515,7 +518,7 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 /**
  * Get list of orders for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
  */
@@ -668,7 +671,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 /**
  * Create order
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$order				Order info
  * @return	array							array of new order
  */
@@ -809,7 +812,7 @@ function createOrder($authentication, $order)
 /**
  * Valid an order
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
@@ -879,7 +882,7 @@ function validOrder($authentication, $id = 0, $id_warehouse = 0)
 /**
  * Update an order
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array{id:string,ref:string,refext:string}	$order	Order info
  * @return	array							Array result
  */

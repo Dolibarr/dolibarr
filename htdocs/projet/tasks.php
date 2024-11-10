@@ -37,6 +37,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langsLoad = array('projects', 'users', 'companies');
 if (isModEnabled('eventorganization')) {
@@ -196,6 +204,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
 	if (!empty($backtopageforcancel)) {
@@ -331,8 +340,6 @@ if (count($morewherefilterarray) > 0) {
 }
 
 if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
-	$error = 0;
-
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
 	$date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 	$date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));

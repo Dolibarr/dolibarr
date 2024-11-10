@@ -233,11 +233,11 @@ function dol_getshmopaddress($memoryid)
 /**
  * 	Return list of contents of all memory area shared
  *
- * 	@return	array
+ * 	@return	array<string,mixed|mixed[]>
  */
 function dol_listshmop()
 {
-	global $shmkeys, $shmoffset;
+	global $shmkeys;
 
 	$resarray = array();
 	foreach ($shmkeys as $key => $val) {
@@ -253,13 +253,13 @@ function dol_listshmop()
  * 	Save data into a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@param	string	$data			Data to save. Must be a not null value.
+ * 	@param	mixed|mixed[]	$data	Data to save. Must be a not null value.
  *  @param 	int		$expire			ttl in seconds, 0 never expire
  * 	@return	int						Return integer <0 if KO, 0=Caching not available, Nb of bytes written if OK
  */
 function dol_setshmop($memoryid, $data, $expire)
 {
-	global $shmkeys, $shmoffset;
+	global $shmkeys;
 
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
 	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) {
@@ -293,11 +293,11 @@ function dol_setshmop($memoryid, $data, $expire)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int|null				Return integer <0 if KO, data if OK, null if no cache enabled or not found
+ * 	@return	int<-1,-1>|null|mixed|mixed[]	 integer <0 if KO, data if OK, null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {
-	global $shmkeys, $shmoffset;
+	global $shmkeys;
 
 	$data = null;
 

@@ -1047,9 +1047,9 @@ class Holiday extends CommonObject
 		} else {
 			$error++;
 		}
-		$sql .= " halfday = ".$this->halfday.",";
+		$sql .= " halfday = ".((int) $this->halfday).",";
 		if (!empty($this->status) && is_numeric($this->status)) {
-			$sql .= " statut = ".$this->status.",";
+			$sql .= " statut = ".((int) $this->status).",";
 		} else {
 			$error++;
 		}
@@ -2275,13 +2275,13 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Liste le log des congés payés
+	 *  List log of leaves
 	 *
-	 *  @param	string	$order      Filtrage par ordre
-	 *  @param  string	$filter     Filtre de séléction
+	 *  @param	string	$sqlorder   SQL sort order
+	 *  @param  string	$sqlwhere   SQL where
 	 *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
 	 */
-	public function fetchLog($order, $filter)
+	public function fetchLog($sqlorder, $sqlwhere)
 	{
 		$sql = "SELECT";
 		$sql .= " cpl.rowid,";
@@ -2295,31 +2295,31 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_logs as cpl";
 		$sql .= " WHERE cpl.rowid > 0"; // To avoid error with other search and criteria
 
-		// Filtrage de séléction
-		if (!empty($filter)) {
-			$sql .= " ".$filter;
+		// Filter
+		if (!empty($sqlwhere)) {
+			$sql .= " ".$sqlwhere;
 		}
 
-		// Ordre d'affichage
-		if (!empty($order)) {
-			$sql .= " ".$order;
+		// Order
+		if (!empty($sqlorder)) {
+			$sql .= " ".$sqlorder;
 		}
 
 		dol_syslog(get_class($this)."::fetchLog", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
-		// Si pas d'erreur SQL
+		// If no error SQL
 		if ($resql) {
 			$i = 0;
 			$tab_result = $this->logs;
 			$num = $this->db->num_rows($resql);
 
-			// Si pas d'enregistrement
+			// If no record
 			if (!$num) {
 				return 2;
 			}
 
-			// On liste les résultats et on les ajoutent dans le tableau
+			// Loop on result to fill the array
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 

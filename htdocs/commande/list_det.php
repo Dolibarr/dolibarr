@@ -55,6 +55,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
@@ -109,7 +117,7 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
@@ -1682,7 +1690,7 @@ if ($resql) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
@@ -1771,8 +1779,8 @@ if ($resql) {
 		}
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
+			print '<td class="center" title="'.$langs->trans($arrayfields['c.date_delivery']['label']).': '.dol_print_date($db->jdate($obj->date_delivery), 'dayhour').'">';
+			print dol_print_date($db->jdate($obj->date_delivery), 'day');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2193,7 +2201,11 @@ if ($resql) {
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed).'</td>';
+			print '<td class="center">';
+			if ($obj->billed) {
+				print yn($obj->billed, $langs->trans("Billed"));
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

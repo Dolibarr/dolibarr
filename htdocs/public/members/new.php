@@ -79,6 +79,15 @@ $errmsg = '';
 $num = 0;
 $error = 0;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 

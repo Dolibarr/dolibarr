@@ -34,6 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("admin", "companies", "other"));
 
 $action = GETPOST('action', 'aZ09');
@@ -51,6 +60,7 @@ $formcompany = new FormCompany($db);
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -196,7 +206,7 @@ if ($action == "setaccountancycodecustomerinvoicemandatory") {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
+/* This code is not needed anymore as we can use the setprofid functions instead with key = 'VAT_INTRA'
 //Activate Set vat id unique
 if ($action == "setvatintraunique") {
 	$setvatintraunique = GETPOSTINT('value');
@@ -210,6 +220,7 @@ if ($action == "setvatintraunique") {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
+*/
 
 //Activate Set ref in list
 if ($action == "setaddrefinlist") {
@@ -763,17 +774,34 @@ foreach ($profid as $key => $val) {
 // VAT ID
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
-
+$key = 'VAT_INTRA';
 if (getDolGlobalString('SOCIETE_VAT_INTRA_UNIQUE')) {
-	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=1">';
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
-print '<td colspan="2"></td>';
+if (getDolGlobalString('SOCIETE_VAT_INTRA_MANDATORY')) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY')) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
 print "</tr>\n";
 
 print "</table>\n";

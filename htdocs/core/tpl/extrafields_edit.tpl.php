@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,16 @@
  * $conf
  * $langs
  * $parameters
+ */
+
+ /**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var string $action
+ * @var array<string,mixed> $parameters
  */
 
 // Protection to avoid direct call of template

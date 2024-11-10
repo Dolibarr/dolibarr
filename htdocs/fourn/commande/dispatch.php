@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2021 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
- * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2021  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
@@ -103,13 +111,15 @@ if (!isModEnabled('stock')) {
 }
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
-$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
  * Actions
  */
 
+$error = 0;
+$errors = [];
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -117,7 +127,6 @@ if ($reshook < 0) {
 }
 
 if ($action == 'checkdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -154,7 +163,6 @@ if ($action == 'checkdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -190,7 +198,6 @@ if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'denydispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -225,8 +232,8 @@ if ($action == 'denydispatchline' && $permissiontocontrol) {
 	}
 }
 
+$saveprice = "savepriceIsNotSet";
 if ($action == 'dispatch' && $permissiontoreceive) {
-	$error = 0;
 	$notrigger = 0;
 
 	$db->begin();
@@ -407,6 +414,13 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 	}
 }
 
+$batch = '';
+$eatby = null;
+$sellby = 0;
+$qty = 0;
+$price = '0';
+$entrepot = 0;
+
 // Remove a dispatched line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive) {
 	$db->begin();
@@ -445,7 +459,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 	}
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages(null, $errors, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -454,7 +468,6 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 // Update a dispatched line
 if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
-	$error = 0;
 
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
@@ -499,7 +512,7 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	}
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages($langs->trans("Error"), $errors, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -570,6 +583,7 @@ if ($id > 0 || !empty($ref)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
 		if (0) {
+			$caneditproject = false;	// For static analysis
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -639,6 +653,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<br>';
 
+	$listwarehouses = array();
 
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
@@ -729,6 +744,10 @@ if ($id > 0 || !empty($ref)) {
 		//$sql .= " GROUP BY p.ref, p.label, p.tobatch, p.fk_default_warehouse, l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref"; // Calculation of amount dispatched is done per fk_product so we must group by fk_product
 		$sql .= " ORDER BY l.rang, p.ref, p.label";
 
+		// Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
+		// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+		$nbproduct = 0;
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -793,9 +812,7 @@ if ($id > 0 || !empty($ref)) {
 				print "</tr>\n";
 			}
 
-			$nbfreeproduct = 0; // Nb of lins of free products/services
-			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
-			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+			$nbfreeproduct = 0; // Nb of lines of free products/services
 
 			$conf->cache['product'] = array();
 
@@ -998,7 +1015,7 @@ if ($id > 0 || !empty($ref)) {
 
 						// Qty to dispatch
 						print '<td class="right nowrap">';
-						if ($remaintodispatch>0) {
+						if ($remaintodispatch > 0) {
 							$btnLabel = $langs->trans("Fill").' : '.$remaintodispatch;
 							print '<button class="auto-fill-qty btn-low-emphasis --btn-icon" data-rowname="qty'.$suffix.'" data-value="'.$remaintodispatch.'" title="'.dol_escape_htmltag($btnLabel).'" aria-label="'.dol_escape_htmltag($btnLabel).'" >'.img_picto($btnLabel, 'fa-arrow-right', 'aria-hidden="true"', 0, 0, 1).'</button>';
 						}
@@ -1038,9 +1055,9 @@ if ($id > 0 || !empty($ref)) {
 						// Warehouse
 						print '<td class="right">';
 						if (count($listwarehouses) > 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+							print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 						} elseif (count($listwarehouses) == 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+							print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : ($objp->fk_default_warehouse ? $objp->fk_default_warehouse : ''), "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 						} else {
 							$langs->load("errors");
 							print $langs->trans("ErrorNoWarehouseDefined");
@@ -1228,7 +1245,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>'.$langs->trans("Comment").'</td>';
 
 			// Status
-			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && empty($reception->rowid)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && $reception !== null && empty($reception->rowid)) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
 			} elseif (isModEnabled("reception")) {
 				print '<td class="center"></td>';
@@ -1238,6 +1255,9 @@ if ($id > 0 || !empty($ref)) {
 
 			print "</tr>\n";
 
+
+
+			$reception = null;
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
@@ -1253,6 +1273,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven" id="line_'.$objp->dispatchlineid.'" >';
 
 				// Reception ref
+				$reception = null;
 				if (isModEnabled("reception")) {
 					print '<td class="nowraponall">';
 					if (!empty($objp->fk_reception)) {
@@ -1316,14 +1337,14 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<input type="hidden" name="price" value="'.$objp->subprice.'" />';
 				print '</td>';
-
 				// Warehouse
 				print '<td class="tdoverflowmax150">';
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
+					$warehouse_id = GETPOSTINT("fk_entrepot") ? GETPOSTINT("fk_entrepot") : ($objp->warehouse_id ? $objp->warehouse_id : '');
 					if (count($listwarehouses) > 1) {
-						print $formproduct->selectWarehouses(GETPOST("fk_entrepot") ? GETPOST("fk_entrepot") : ($objp->warehouse_id ? $objp->warehouse_id : ''), "fk_entrepot", '', 1, 0, $objp->fk_product, '', 1, 1, null, 'csswarehouse');
+						print $formproduct->selectWarehouses($warehouse_id, "fk_entrepot", '', 1, 0, $objp->fk_product, '', 1, 1, array(), 'csswarehouse');
 					} elseif (count($listwarehouses) == 1) {
-						print $formproduct->selectWarehouses(GETPOST("fk_entrepot") ? GETPOST("fk_entrepot") : ($objp->warehouse_id ? $objp->warehouse_id : ''), "fk_entrepot", '', 0, 0, $objp->fk_product, '', 1, 1, null, 'csswarehouse');
+						print $formproduct->selectWarehouses($warehouse_id, "fk_entrepot", '', 0, 0, $objp->fk_product, '', 1, 1, array(), 'csswarehouse');
 					} else {
 						$langs->load("errors");
 						print $langs->trans("ErrorNoWarehouseDefined");
@@ -1339,7 +1360,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="tdoverflowmax300" style="white-space: pre;">'.$objp->comment.'</td>';
 
 				// Status
-				if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && empty($reception->rowid)) {
+				if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && ($reception === null || empty($reception->rowid))) {
 					print '<td class="right">';
 					$supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
 					// print $supplierorderdispatch->status;
@@ -1377,7 +1398,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</td>';
 				} elseif (isModEnabled("reception")) {
 					print '<td class="right">';
-					if (!empty($reception->id)) {
+					if ($reception !== null && !empty($reception->id)) {
 						print $reception->getLibStatut(5);
 					}
 					print '</td>';
@@ -1385,7 +1406,7 @@ if ($id > 0 || !empty($ref)) {
 
 				// Action
 				if ($action != 'editline' || $lineid != $objp->dispatchlineid) {
-					if (empty($reception->id) || ($reception->statut == Reception::STATUS_DRAFT)) { // only allow edit on draft reception
+					if (($reception === null) || empty($reception->id) || ($reception->statut == Reception::STATUS_DRAFT)) { // only allow edit on draft reception
 						print '<td class="linecoledit center">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$objp->dispatchlineid.'#line_'.$objp->dispatchlineid.'">';
 						print img_edit();

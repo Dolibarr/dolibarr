@@ -573,7 +573,7 @@ class RecruitmentCandidature extends CommonObject
 				$sql .= ", date_validation = '".$this->db->idate($now)."',";
 			}
 			if (!empty($this->fields['fk_user_valid'])) { // @phan-suppress-current-line PhanTypeMismatchProperty
-				$sql .= ", fk_user_valid = ".$user->id;
+				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1021,7 +1021,7 @@ class RecruitmentCandidature extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
-				'@phan-var-force ModeleNumRefRecruitmentCandidature $module';
+				'@phan-var-force ModeleNumRefRecruitmentCandidature $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

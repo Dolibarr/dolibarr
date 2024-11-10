@@ -45,6 +45,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
 if (isModEnabled('project')) {
@@ -1180,7 +1188,11 @@ if ($id > 0) {
 
 		// Show links to link elements
 		/*
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('salaries'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('salaries'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 		*/
 

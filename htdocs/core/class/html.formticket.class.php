@@ -569,19 +569,6 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
-			print '<span class="span-icon-security inline-block">';
-			print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" />';
-			print '</span>';
-			print '<span class="nowrap inline-block">';
-			print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-			print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
-			print '</span>';
-			print '</td></tr>';
-		}
-
 		// Categories
 		if (isModEnabled('category') && !$public) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -796,6 +783,51 @@ class FormTicket
 			} else {
 				print $object->showOptionals($extrafields, 'edit');
 			}
+		}
+
+		// Show line with Captcha
+		$captcha = '';
+		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+			print '<tr><td class="titlefield"></td><td><br>';
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+
+			// List of directories where we can find captcha handlers
+			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+
+			$fullpathclassfile = '';
+			foreach ($dirModCaptcha as $dir) {
+				$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+				if ($fullpathclassfile) {
+					break;
+				}
+			}
+
+			if ($fullpathclassfile) {
+				include_once $fullpathclassfile;
+				$captchaobj = null;
+
+				// Charging the numbering class
+				$classname = "modCaptcha".ucfirst($captcha);
+				if (class_exists($classname)) {
+					/** @var ModeleCaptcha $captchaobj */
+					$captchaobj = new $classname($this->db, $conf, $langs, $user);
+					'@phan-var-force ModeleCaptcha $captchaobj';
+
+					if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+						print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
+					} else {
+						print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+					}
+				} else {
+					print 'Error, the captcha handler class '.$classname.' was not found after the include';
+				}
+			} else {
+				print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+			}
+
+			print '<br></td></tr>';
 		}
 
 		print '</table>';

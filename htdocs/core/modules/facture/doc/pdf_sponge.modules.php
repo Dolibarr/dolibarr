@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
@@ -94,12 +94,12 @@ class pdf_sponge extends ModelePDFFactures
 	public $heightforfooter;
 
 	/**
-	 * @var int tab_top
+	 * @var float tab_top
 	 */
 	public $tab_top;
 
 	/**
-	 * @var int tab_top_newpage
+	 * @var float tab_top_newpage
 	 */
 	public $tab_top_newpage;
 
@@ -216,14 +216,14 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "compta"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
+			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies", "compta"));
 		}
 
 		// Show Draft Watermark
@@ -1045,10 +1045,31 @@ class pdf_sponge extends ModelePDFFactures
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
+				// Add terms to sale
+				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+					$termsofsale = $conf->mycompany->dir_output.'/'.$mysoc->termsofsale;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$termsofsale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termsofsale;
+					}
+					if (file_exists($termsofsale) && is_readable($termsofsale)) {
+						$pagecount = $pdf->setSourceFile($termsofsale);
+						for ($i = 1; $i <= $pagecount; $i++) {
+							$tplIdx = $pdf->importPage($i);
+							if ($tplIdx!==false) {
+								$s = $pdf->getTemplatesize($tplIdx);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tplIdx);
+							} else {
+								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
+							}
+						}
+					}
+				}
 
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 					$this->addBottomQRInvoice($pdf, $object, $outputlangs);
 				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
@@ -1362,7 +1383,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 
-				if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
+				if ($object->status != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
@@ -1663,25 +1684,22 @@ class pdf_sponge extends ModelePDFFactures
 			}
 		}
 		if ($total_line_remise > 0) {
-			if (getDolGlobalString('MAIN_SHOW_AMOUNT_DISCOUNT')) {
-				$pdf->SetFillColor(255, 255, 255);
-				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', 1);
-				$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', 1);
+			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', 1);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', 1);
 
-				$index++;
-			}
+			$index++;
+
 			// Show total NET before discount
-			if (getDolGlobalString('MAIN_SHOW_AMOUNT_BEFORE_DISCOUNT')) {
-				$pdf->SetFillColor(255, 255, 255);
-				$pdf->SetXY($col1x, $tab2_top);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', 1);
-				$pdf->SetXY($col2x, $tab2_top);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
+			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetXY($col1x, $tab2_top);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', 1);
+			$pdf->SetXY($col2x, $tab2_top);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
 
-				$index++;
-			}
+			$index++;
 		}
 
 		// Total HT
@@ -2048,10 +2066,10 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
-	 *   @param		Translate	$outputlangsbis	Langs object bis
+	 *   @param		?Translate	$outputlangsbis	Langs object bis
 	 *   @return	void
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
@@ -2115,8 +2133,8 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	array						top shift of linked object lines
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
+	 *  @return	array{top_shift:float,shipp_shift:float}	Top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2224,7 +2242,7 @@ class pdf_sponge extends ModelePDFFactures
 		 $pdf->SetXY($posx, $posy);
 		 $pdf->SetTextColor(0, 0, 60);
 		 $textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		 if ($object->statut == $object::STATUS_DRAFT) {
+		 if ($object->status == $object::STATUS_DRAFT) {
 		 $pdf->SetTextColor(128, 0, 0);
 		 $textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		 }
@@ -2241,7 +2259,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -2251,7 +2269,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
 				$posy += 3;
@@ -2323,6 +2341,13 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+		}
+
+		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
+			$posy += 3;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact

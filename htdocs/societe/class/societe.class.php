@@ -854,9 +854,14 @@ class Societe extends CommonObject
 
 	// Multicurrency
 	/**
-	 * @var int ID
+	 * @var int Multicurrency ID
 	 */
 	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	// Warehouse
 	/**
@@ -865,9 +870,10 @@ class Societe extends CommonObject
 	public $fk_warehouse;
 
 	/**
-	 * @var string Multicurrency code
+	 * @var string	Name of file with terms of sales
 	 */
-	public $multicurrency_code;
+	public $termsofsale;
+
 
 	// Fields loaded by fetchPartnerships()
 
@@ -1367,6 +1373,11 @@ class Societe extends CommonObject
 							$this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 						}
 					}
+					if ($this->tva_assuj && !$vallabel && getDolGlobalString('SOCIETE_VAT_INTRA_MANDATORY')) {
+						$langs->load("errors");
+						$error++;
+						$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").')';
+					}
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
 					// Check for unicity
 					if ($vallabel && getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_UNIQUE')) {
@@ -1594,7 +1605,7 @@ class Societe extends CommonObject
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql .= "entity = ".$this->db->escape($this->entity);
+			$sql .= "entity = ".((int) $this->entity);
 			$sql .= ",nom = '".$this->db->escape($this->name)."'"; // Required
 			$sql .= ",name_alias = '".$this->db->escape($this->name_alias)."'";
 			$sql .= ",ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -2165,7 +2176,7 @@ class Societe extends CommonObject
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
-				$result = 1;
+				$result = $this->id;
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -2387,7 +2398,6 @@ class Societe extends CommonObject
 	 */
 	public function set_as_client()
 	{
-		global $conf;
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_as_client is deprecated use setAsCustomer instead", LOG_NOTICE);
 		return $this->setAsCustomer();

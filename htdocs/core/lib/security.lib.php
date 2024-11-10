@@ -398,6 +398,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$parentfortableentity = '';
 
 	// Fix syntax of $features param to support non standard module names.
+	// @todo : use elseif ?
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -454,6 +455,24 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	// if commonObjectLine : Using many2one related commonObject
+	// @see commonObjectLine::parentElement
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+		$features = substr($features, 0, -3);
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+		$features = substr($features, 0, -4);
+	} elseif ($features == 'commandefournisseurdispatch') {
+		$features = 'commandefournisseur';
+	} elseif ($features == 'invoice_supplier_det_rec') {
+		$features = 'invoice_supplier_rec';
+	}
+	// @todo check : project_task
+	// @todo possible ?
+	// elseif (substr($features, -3, 3) == 'det') {
+	// 	$features = substr($features, 0, -3);
+	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
+	// 	$features = substr($features, 0, -4);
+	// }
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -1181,7 +1200,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *	@param	string		$message					Force error message
  *	@param	int			$http_response_code			HTTP response code
  *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
- *  @return	void
+ *  @return	never
  *  @see accessforbidden()
  */
 function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
@@ -1204,11 +1223,11 @@ function httponly_accessforbidden($message = '1', $http_response_code = 403, $st
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
- *	@param	int			$printheader		Show header before
- *  @param  int			$printfooter        Show footer after
- *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
- *  @param  array|null  $params         	More parameters provided to hook
- *  @return	void
+ *	@param	int<0,1>	$printheader		Show header before
+ *  @param  int<0,1>	$printfooter        Show footer after
+ *  @param  int<0,1>	$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  ?array<string,mixed>	$params More parameters provided to hook
+ *  @return	never
  *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)

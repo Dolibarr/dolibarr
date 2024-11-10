@@ -56,7 +56,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -355,7 +358,7 @@ $server->register(
 /**
  * Get produt or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	string		$ref_ext			Ref external of object
@@ -498,7 +501,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 /**
  * Create an invoice
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$product			Product
  * @return	array							Array result
  */
@@ -664,7 +667,7 @@ function createProductOrService($authentication, $product)
 /**
  * Update a product or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$product			Product
  * @return	array							Array result
  */
@@ -831,7 +834,7 @@ function updateProductOrService($authentication, $product)
 /**
  * Delete a product or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$listofidstring		List of id with comma
  * @return	array							Array result
  */
@@ -918,7 +921,7 @@ function deleteProductOrService($authentication, $listofidstring)
 /**
  * getListOfProductsOrServices
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array		$filterproduct		Filter fields
  * @return	array							Array result
  */
@@ -992,7 +995,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 /**
  * Get list of products for a category
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Category id
  * @param	string		$lang				Force lang
  * @return	array							Array result

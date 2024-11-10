@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -52,6 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call User webservices interfaces");
 
@@ -324,7 +328,7 @@ $server->register(
 /**
  * Get produt or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	string		$ref_ext			Ref external of object
@@ -417,7 +421,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 /**
  * getListOfGroups
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @return	array							Array result
  */
 function getListOfGroups($authentication)
@@ -485,7 +489,7 @@ function getListOfGroups($authentication)
 /**
  * Create an external user with thirdparty and contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	array		$thirdpartywithuser Datas
  * @return	mixed
  */
@@ -684,8 +688,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 /**
  * Set password of an user
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$shortuser			Array of login/password info
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @param	array{login:string,password:string}		$shortuser			Array of login/password info
  * @return	mixed
  */
 function setUserPassword($authentication, $shortuser)

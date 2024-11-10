@@ -1,7 +1,21 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var string $butactionbg
+ * @var string $colortextlink
+ * @var int $dol_optimize_smallscreen
+ * @var string $textbutaction
+ * @var string $right
+ * @var string $left
+ */
+?>
 /* <style type="text/css" > */
 
 :root {
@@ -163,6 +177,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
+
+/*
+.butActionDelete#action-delete::before {
+	content: "\f1f8";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	font-weight: 600;
+	width: 20px;
+	visibility: visible;
+}
+.butActionDelete#action-delete span.textbutton {
+	display: none;
+}
+*/
 
 .butActionRefused {
 	text-decoration: none !important;

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2022 	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,19 @@ if ($size > 10000) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+/**
+ * @var HookManager $hookmanager
+ * @var string $action
+ * @var string $captcha
+ * @var string $message
+ * @var string $title
+ */
+
+
+/*
+ * View
+ */
 
 header('Cache-Control: Public, must-revalidate');
 
@@ -196,7 +209,6 @@ if (!empty($disablenofollow)) {
 
 
 <?php
-$captcha = 0;
 if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
@@ -205,7 +217,22 @@ if (!empty($captcha)) {
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants?>
+
+	$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$captchaobj = null;
+	if (dol_is_file($classfile)) {
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		require_once $classfile;
+
+		$captchaobj = new $classname($db, $conf, $langs, $user);
+	}
+
+	if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+		// TODO: get this code using a method of captcha
+	} else {
+		?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd tdinputlogin nowrap none valignmiddle">
@@ -216,11 +243,13 @@ if (!empty($captcha)) {
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a>
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
 	</span>
 
-	</div></div>
-	<?php
+	</div>
+	</div>
+		<?php
+	}
 }
 
 if (!empty($morelogincontent)) {
@@ -325,45 +354,12 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
-// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
-	foreach ($tmptagarray as $tmptag) {
-		print "\n";
-		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
-		print "
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
-					<script>
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
+// Can add extra content
+$parameters = array();
+$dummyobject = new stdClass();
+$result = $hookmanager->executeHooks('getPasswordResetExtraContent', $parameters, $dummyobject, $action);
+print $hookmanager->resPrint;
 
-					gtag('config', '".trim($tmptag)."');
-					</script>";
-		print "\n";
-	}
-}
-
-// TODO Replace this with a hook
-// Google Adsense (need Google module)
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
-	if (empty($conf->dol_use_jmobile)) {
-		?>
-	<div class="center"><br>
-		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-	</div>
-		<?php
-	}
-}
 ?>
 
 

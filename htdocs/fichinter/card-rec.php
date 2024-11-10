@@ -49,6 +49,14 @@ if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
@@ -118,9 +126,9 @@ $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
-	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
 		exit;

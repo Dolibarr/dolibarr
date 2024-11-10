@@ -28,12 +28,73 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 $leftmenuwidth = 240;
 
 // Variables defined in style.css.php (includes this file).
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var int<0,1> $dol_hide_topmenu
+ * @var int<0,1> $dol_hide_leftmenu
+ * @var int<0,1> $dol_optimize_smallscreen
+ * @var int<0,1> $dol_no_mouse_hover
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $borderwidth
+ * @var string $colorbackbody
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinebreak
+ * @var string $colorbacklineimpair1
+ * @var string $colorbacklineimpair2
+ * @var string $colorbacklinepair1
+ * @var string $colorbacklinepair2
+ * @var string $colorbacklinepairchecked
+ * @var string $colorbacklinepairhover
+ * @var string $colorbacktabactive
+ * @var string $colorbacktabcard1
+ * @var string $colorbacktitle1
+ * @var string $colorbackvmenu1
+ * @var string $colorblind_deuteranopes_textSuccess
+ * @var string $colorblind_deuteranopes_textWarning
+ * @var string $colorshadowtitle
+ * @var string $colortext
+ * @var string $colortextbackhmenu
+ * @var string $colortextbacktab
+ * @var string $colortextbackvmenu
+ * @var string $colortextlink
+ * @var string $colortexttitle
+ * @var string $colortexttitlelink
+ * @var string $colortexttitlenotab
+ * @var string $colortexttitlenotab2
+ * @var string $colortopbordertitle1
+ * @var int<0,1> $disableimages
+ * @var int<0,1> $dol_hide_leftmenu
+ * @var int<0,1> $dol_hide_topmenu
+ * @var int<0,1> $dol_optimize_smallscreen
+ * @var string $fontlist
+ * @var string $fontsize
+ * @var int $heightmenu
+ * @var string $heightrow
+ * @var string $img_button
+ * @var string $left
+ * @var string $maxwidthloginblock
+ * @var int $minwidthtmenu
+ * @var int $nbtopmenuentries
+ * @var int $nbtopmenuentriesreal
+ * @var string $path
+ * @var string $right
+ * @var string $textDanger
+ * @var string $textSuccess
+ * @var string $textWarning
+ * @var string $toolTipBgColor
+ * @var string $toolTipFontColor
+ * @var int<0,1> $useboldtitle
+ * @var int $userborderontable
+ * @var array{h:int,l:int,s:int,a:int} $colortextlinkHsla
+ */
 '
 @phan-var-force int<0,1> $dol_hide_topmenu
 @phan-var-force int<0,1> $dol_hide_leftmenu
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force int<0,1> $dol_no_mouse_hover
-
 @phan-var-force string $badgeDanger
 @phan-var-force string $badgeWarning
 @phan-var-force string $borderwidth
@@ -88,6 +149,8 @@ $leftmenuwidth = 240;
 @phan-var-force int $userborderontable
 @phan-var-force array{h:int,l:int,s:int,a:int} $colortextlinkHsla
 ';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
 
 ?>
 /* <style type="text/css" > */
@@ -431,7 +494,7 @@ textarea {
 	margin-bottom:1px;
 	margin-top:1px;
 	}
-input.removedassigned  {
+input.removedassigned, input.removedassignedresource  {
 	padding: 2px !important;
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
@@ -894,6 +957,10 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.smallincombo {
+	font-size: 95%;
+	font-weight: bold;
+}
 .lineheightsmall {
 	line-height: 1.2em;
 }
@@ -1150,7 +1217,7 @@ div.urllink input {
 .divsection {
 	padding: 10px;
 	border: 2px solid #DFDFDF;
-	border-radius: 10px;
+	border-radius: <?php echo $borderradius; ?>px;
 	margin-top: 5px;
 	margin-bottom: 20px;
 	/* background-color: rgba(0, 0, 0, 0.02); */
@@ -1787,7 +1854,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	cursor: pointer;
 	text-align: center;
 	min-height: 40px;
-	background: #eee;
+	background: #f4f4f4;
 	padding: 20px 10px 20px 10px;
 	flex-grow: 1;
 	flex-shrink: 1;
@@ -2552,6 +2619,7 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 20px);\n";
 	} ?>
+	margin-bottom: 20px;
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -4227,17 +4295,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 	margin: 0px 0px 20px 0px;
-
-	/*border-radius: 2px;
-	width: calc(100% - 7px);
-	border-collapse: separate !important;
-	border-spacing: 0px;
-	border-top-width: 0px;
-	border-top-color: rgb(215,215,215);
-	border-top-style: solid;
-	margin: 0px 0px 5px 2px;
-	box-shadow: 1px 1px 5px #ddd;
-	*/
 }
 #tablelines, #tablelinesservice {
 	border-bottom-width: 1px;
@@ -4256,8 +4313,7 @@ table.nointerlines tr:not(:last-child) td {
 }
 
 
-/* Experimental code to manage rounding */
-<?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
+/* Management of border radius */
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
@@ -4265,6 +4321,35 @@ table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder thead tr:last-child td:first-child,
+table.noborder thead tr:last-child th:first-child {
+	border-bottom-left-radius: unset !important;
+}
+table.noborder thead tr:last-child td:last-child,
+table.noborder thead tr:last-child th:last-child {
+	border-bottom-right-radius: unset !important;
+}
+
 table.liste:not(.listwithfilterbefore) {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 	border-top-right-radius: <?php echo $borderradius; ?>px;
@@ -4273,30 +4358,24 @@ table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:last-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
-}
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
-	border-bottom-left-radius: <?php echo $borderradius; ?>px;
-}
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
-	border-bottom-right-radius: <?php echo $borderradius; ?>px;
-}
-
-table.liste tr.liste_titre_filter:first-child td:first-child,
-table.liste tr.liste_titre_filter:first-child th:first-child {
-	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
 div.liste_titre_bydiv {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv_nothingafter {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	border-bottom-width: 1px;
+	border-bottom-color: var(--colortopbordertitle1);
+	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
 table.liste tr:last-child th:first-child {
@@ -4803,6 +4882,7 @@ input.liste_titre {
 	line-height: 24px;
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	<?php if (getDolGlobalString('THEME_ELDY_TOTAL_BACKGROUND_LIKE_HEAD')) { ?>background: var(--colorbacktitle1);<?php } ?>
 	color: var(--listetotal);
 	font-weight: normal;
 }
@@ -4874,14 +4954,14 @@ div.tabBar .noborder {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
-	height: unset;
+/*	height: unset; */
 }
 
 /* Prepare to remove class pair - impair */
 
-.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
+.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven):not(.liste_total)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4894,9 +4974,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	border-bottom: 1px solid #f0f0f0;
 }
 
-.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
+.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven):not(.liste_total)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
@@ -5244,6 +5324,47 @@ img.boxhandle, img.boxclose {
 	color: <?php echo $badgeWarning ?>;
 }
 
+.search-component-assistance {
+	display: none;
+	position: absolute;
+	background: var(--colorbackbody);
+	border-width: 1px 1px 2px;
+	border-style: solid;
+	border-color: rgb(204, 204, 204);
+	border-image: none; padding: 9px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	border-radius: 2px;
+	z-index: 1000;
+	top: 208.933px;
+	left: 352.683px;
+	min-width: 600px
+}
+.search-component-assistance .assistance-title {
+	font-size: 15px;
+	font-weight: bold;
+	color: #333;
+	margin: 5px
+}
+.search-component-assistance .separator {
+	border-left: 1px solid #ccc;
+	padding-left: 8px;
+	margin-left: 5px
+}
+.search-component-assistance .end-separator {
+	border-left: 1px solid #ccc;
+	margin-left: 8px;
+}
+.search-component-assistance .assistance-errors {
+	font-size: 12px;
+	color: #333;
+	margin: 5px 0px 5px 0px
+}
+.search-component-assistance .assistance-errors {
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+
 /*
  *   Ok, Warning, Error
  */
@@ -5427,10 +5548,14 @@ div.fiche > table.table-fiche-title:first-of-type div {
 	/* text-transform: uppercase; */
 	/* font-weight: 600; */
 }
-
 div.titre {
 	color: var(--colortexttitlenotab);
 }
+
+td.subtitle {
+	line-height: 1.1em;
+}
+
 .secondary {
 	color: var(--colortexttitlenotab);
 }
@@ -6183,7 +6308,7 @@ table.jPicker tr:first-of-type td {
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
-	background-color: #f4f4f4 !important;
+	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 }
 .jPicker .Grid {
@@ -6203,6 +6328,13 @@ table.jPicker {
 }
 .jPicker .Preview div {
 	height: 36px !important;
+}
+.jPicker input[type="button"] {
+	background: var(--butactionbg);
+	color: var(--textbutaction);
+	border-radius: 4px;
+	border-collapse: collapse;
+	border: none;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7261,11 +7393,11 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 230px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 230px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -7273,7 +7405,7 @@ select.multiselectononeline {
 		min-width: 140px !important;
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
-		min-width: 300px !important;
+		min-width: 320px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {

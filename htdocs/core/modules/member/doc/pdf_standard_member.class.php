@@ -67,7 +67,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 *
 	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
-	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @param	array<string,string>	$param		Associative array containing label content and optional parameters
 	 * @return	void
 	 */
 	public function addSticker(&$pdf, $outputlangs, $param)
@@ -353,8 +353,9 @@ class pdf_standard_member extends CommonStickerGenerator
 		$filename .= '.pdf';
 
 		// standard format or custom
-		if ($this->Tformat['paper-size'] != 'custom') {
-			$this->format = $this->Tformat['paper-size'];
+		$paper_size = $this->Tformat['paper-size'];
+		if (!is_string($paper_size) || $paper_size != 'custom') {
+			$this->format = $paper_size;
 		} else {
 			//custom
 			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
