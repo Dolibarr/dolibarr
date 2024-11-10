@@ -17896,11 +17896,6 @@ parameters:
 			path: ../../htdocs/loan/card.php
 
 		-
-			message: "#^Variable \\$maxlength might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/loan/card.php
-
-		-
 			message: "#^Variable \\$staytopay might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/loan/card.php
@@ -18069,16 +18064,6 @@ parameters:
 			message: "#^Variable \\$morehtmlright might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/loan/document.php
-
-		-
-			message: "#^Variable \\$formproject might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/loan/info.php
-
-		-
-			message: "#^Variable \\$maxlength might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/loan/info.php
 
 		-
 			message: "#^Variable \\$search_all might not be defined\\.$#"
