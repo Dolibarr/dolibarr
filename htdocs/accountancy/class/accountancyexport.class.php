@@ -362,10 +362,10 @@ class AccountancyExport
 	 * @param	int			$formatexportset			Id of export format
 	 * @param	int<0,1>	$withAttachment				[=0] Not add files
 	 *                                                  or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
-	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
+	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use value other value.
 	 *                                                  or 1 to download after writing files - Forced by default when use withAttachment = 1
 	 *                                                  or -1 not to download files
-	 * @param	int<1,1>	$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 * @param	int<1,2>	$outputMode					[=0] Print on screen. Deprecated. Always use value other value.
 	 *                                                  or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
 	 *                                                  or 2 to write in file a default export directory (accounting/export/)
 	 * @param	int<1,1>	$noouput					0=old mode. Deprecated. Always use value 1.
