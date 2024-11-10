@@ -62,6 +62,7 @@ $type = 'donation';
 /*
  * Action
  */
+$error = 0;
 
 if ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
@@ -352,6 +353,7 @@ $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
 if (isModEnabled('accounting')) {
+	/** @var FormAccounting $formaccounting */
 	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';

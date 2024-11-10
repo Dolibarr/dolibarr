@@ -84,9 +84,10 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'update' && !$cancel) {
-	if (!$error && !GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
+	if (!GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MAIN_MAIL_EMAIL_FROM")), null, 'errors');
 		$action = 'edit';

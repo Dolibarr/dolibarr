@@ -60,6 +60,7 @@ if (!getDolGlobalString('PAYMENT_ADDON')) {
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'updateMask') {
 	$maskconstpayment = GETPOST('maskconstpayment', 'aZ09');
