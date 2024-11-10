@@ -24096,21 +24096,6 @@ parameters:
 			path: ../../htdocs/supplier_proposal/card.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/supplier_proposal/card.php
