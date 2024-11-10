@@ -261,16 +261,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
-			message: "#^Left side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
@@ -278,6 +268,11 @@ parameters:
 		-
 			message: "#^Result of && is always false\\.$#"
 			count: 6
+			path: ../../htdocs/accountancy/class/accountancyexport.class.php
+
+		-
+			message: "#^Right side of \\|\\| is always true\\.$#"
+			count: 1
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
@@ -636,21 +631,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
@@ -666,59 +646,14 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
@@ -19004,6 +18939,11 @@ parameters:
 			message: "#^Property Opensurveysondage\\:\\:\\$title \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../htdocs/opensurvey/exportcsv.php
 
 		-
 			message: "#^Empty array passed to foreach\\.$#"
