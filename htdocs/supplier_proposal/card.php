@@ -118,8 +118,8 @@ if ($id > 0 || !empty($ref)) {
 
 // Common permissions
 $usercanread = $user->hasRight('supplier_proposal', 'lire');
-$usercancreate		= $user->hasRight('supplier_proposal', 'creer');
-$usercandelete		= $user->hasRight('supplier_proposal', 'supprimer');
+$usercancreate = $user->hasRight('supplier_proposal', 'creer');
+$usercandelete = $user->hasRight('supplier_proposal', 'supprimer');
 
 // Advanced permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance')));

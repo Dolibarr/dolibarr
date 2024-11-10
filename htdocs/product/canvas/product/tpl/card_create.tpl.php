@@ -17,6 +17,7 @@
  */
 /**
  * @var Conf $conf
+ * @var Form $form
  * @var Translate $langs
  * @var User $user
  */

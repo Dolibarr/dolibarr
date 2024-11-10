@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,10 @@
  * $conf
  * $langs
  */
-
+/**
+ * @var Form $form
+ * @var Translate $langs
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
