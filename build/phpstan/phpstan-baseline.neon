@@ -7651,11 +7651,6 @@ parameters:
 			path: ../../htdocs/core/actions_dellink.inc.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_dellink.inc.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_dellink.inc.php

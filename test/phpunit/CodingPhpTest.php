@@ -194,6 +194,7 @@ class CodingPhpTest extends CommonClassTest
 					'core/class/html.formticket.class.php',
 					'core/class/utils.class.php',
 					'core/class/openid.class.php',
+					'core/modules/security/captcha/modCaptchaStandard.class.php',
 					'fourn/class/fournisseur.facture.class.php',
 					'societe/canvas/actions_card_common.class.php',
 					'societe/canvas/individual/actions_card_individual.class.php',
