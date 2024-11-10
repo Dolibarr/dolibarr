@@ -148,6 +148,7 @@ $result = restrictedArea($user, 'bom');
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -194,7 +195,7 @@ if (empty($reshook)) {
 
 
 	// Validate records
-	if (!$error && $massaction == 'disable' && $permissiontoadd) {
+	if ($massaction == 'disable' && $permissiontoadd) {
 		$objecttmp = new $objectclass($db);
 
 		if (!$error) {
@@ -277,7 +278,6 @@ if (empty($reshook)) {
 			} else {
 				$db->rollback();
 			}
-			//var_dump($listofobjectthirdparties);exit;
 		}
 	}
 }

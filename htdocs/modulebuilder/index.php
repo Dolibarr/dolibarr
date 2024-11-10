@@ -5273,7 +5273,7 @@ if ($module == 'initmodule') {
 				// Search all files of modules mentioned by menu
 				$listODifferentUrlsInMenu = array();
 				foreach ($menus as $obj) {
-					if (preg_match('/^\/'.preg_quote(strtolower($module), '/').'\//', $obj['url'])) {
+					if (preg_match('/^\/'.preg_quote(strtolower($module), '/').'\//', $obj['url']) && !empty($pathoffile)) {
 						if (!empty($listODifferentUrlsInMenu[$pathoffile])) {	// Test to avoid to show same file twice.
 							continue;
 						}

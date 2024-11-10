@@ -30,9 +30,10 @@ CREATE TABLE llx_ecm_files
   src_object_id     integer,		             	-- Source object id
   agenda_id         integer,                        -- Id of the event created at same time than the upload of the file
   fullpath_orig		varchar(750),	                -- full path of original filename, when file is uploaded from a local computer
-  description		text,
+  description		varchar(255),
   keywords          varchar(750),                   -- list of keywords, separated with comma. Must be limited to most important keywords.
-  cover             text,                           -- is this file a file to use for a cover
+  content			text,
+  cover             varchar(32),                    -- is this file a file to use for a cover
   position          integer,                        -- position of file among others
   gen_or_uploaded   varchar(12),                    -- 'generated' or 'uploaded'
   extraparams		varchar(255),					-- for stocking other parameters with json format

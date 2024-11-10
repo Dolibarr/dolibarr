@@ -126,9 +126,9 @@ $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
-	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
 		exit;

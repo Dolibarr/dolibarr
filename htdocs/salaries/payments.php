@@ -169,6 +169,7 @@ restrictedArea($user, 'salaries', 0, 'salary', '');
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
