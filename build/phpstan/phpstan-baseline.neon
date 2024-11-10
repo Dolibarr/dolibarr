@@ -906,21 +906,6 @@ parameters:
 			path: ../../htdocs/adherents/subscription.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription.php
-
-		-
 			message: "#^Variable \\$bankline in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/subscription/card.php
@@ -1044,21 +1029,6 @@ parameters:
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/events.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/admin/expensereport_rules.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/admin/expensereport_rules.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/admin/expensereport_rules.php
 
 		-
 			message: "#^Variable \\$form might not be defined\\.$#"
@@ -2109,21 +2079,6 @@ parameters:
 			message: "#^Variable \\$code might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/barcode/printsheet.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
