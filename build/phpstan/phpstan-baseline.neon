@@ -12456,21 +12456,6 @@ parameters:
 			path: ../../htdocs/core/tpl/list_print_subtotal.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
 			message: "#^Variable \\$limit might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/list_print_total.tpl.php
@@ -12488,16 +12473,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
 
 		-
@@ -12538,16 +12513,6 @@ parameters:
 		-
 			message: "#^Variable \\$filtercreditnote might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/core/tpl/object_discounts.tpl.php
 
 		-
@@ -12616,11 +12581,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
 			message: "#^Variable \\$seller might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
@@ -12643,11 +12603,6 @@ parameters:
 		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 8
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
@@ -12676,11 +12631,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
 			message: "#^Variable \\$outputalsopricetotalwithtax might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
@@ -12698,11 +12648,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
@@ -12969,11 +12914,6 @@ parameters:
 			message: "#^Variable \\$websitekey might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/website.inc.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/cron/admin/cron.php
 
 		-
 			message: "#^Left side of && is always false\\.$#"
@@ -19071,19 +19011,9 @@ parameters:
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/product/tpl/card_edit.tpl.php
 
 		-
 			message: "#^Property ActionsCardService\\:\\:\\$field_list has no type specified\\.$#"
@@ -19101,11 +19031,6 @@ parameters:
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
@@ -19114,11 +19039,6 @@ parameters:
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/service/tpl/card_edit.tpl.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -20704,16 +20624,6 @@ parameters:
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -24106,33 +24016,13 @@ parameters:
 			path: ../../htdocs/societe/project.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
 
 		-
