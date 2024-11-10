@@ -23,6 +23,14 @@
  * $parameters
  */
 
+ /**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var string $action
+ * @var array<string,mixed> $parameters
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";

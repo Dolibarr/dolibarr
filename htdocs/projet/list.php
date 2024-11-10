@@ -588,7 +588,11 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE p.entity IN (".($search_entity > 0 ? $search_entity : getEntity('project', (GETPOSTINT('search_current_entity') ? 0 : 1))).')';
+if ($search_entity > 0) {
+	$sql .= " WHERE p.entity = ".((int) $search_entity);
+} else {
+	$sql .= " WHERE p.entity IN (".getEntity('project', (GETPOSTINT('search_current_entity') ? 0 : 1)).')';
+}
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }

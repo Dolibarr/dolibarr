@@ -211,7 +211,7 @@ class AccountingJournal extends CommonObject
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
 			$key = $langs->trans("AccountingJournalType".$this->nature);
-			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
+			$transferlabel = ($key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
 

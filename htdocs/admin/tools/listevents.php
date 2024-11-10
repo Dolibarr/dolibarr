@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always '' except when 'print')
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
@@ -220,10 +221,14 @@ $usefilter = 0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
 $sql .= " e.fk_user, e.description, e.prefix_session,";
-$sql .= " u.login, u.admin, u.entity, u.firstname, u.lastname, u.statut as status";
+$sql .= " u.login, u.admin, u.email, u.entity, u.firstname, u.lastname, u.gender, u.photo, u.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql .= " WHERE e.entity IN (".($search_entity > 0 ? $search_entity : getEntity('event', (GETPOSTINT('search_current_entity') ? 0 : 1))).")";
+if ($search_entity > 0) {
+	$sql .= " WHERE e.entity = ".((int) $search_entity).")";
+} else {
+	$sql .= " WHERE e.entity IN (".getEntity('event', (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
+}
 if ($date_start !== '') {
 	$sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
 }
@@ -281,7 +286,7 @@ if ($result) {
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -364,7 +369,7 @@ if ($result) {
 	*/
 
 	print '<div class="div-table-responsive">';
-	print '<table class="liste centpercent">';
+	print '<table class="liste noborder centpercent">';
 
 	// Fields title search
 	print '<tr class="liste_titre">';
@@ -483,13 +488,20 @@ if ($result) {
 			$userstatic->admin = $obj->admin;
 			$userstatic->entity = $obj->entity;
 			$userstatic->status = $obj->status;
+			$userstatic->gender = $obj->gender;
+			$userstatic->photo = $obj->photo;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->email = $obj->email;
 
-			print $userstatic->getLoginUrl(1);
 			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
 			} elseif ($userstatic->admin) {
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
 			}
+
+			//print $userstatic->getLoginUrl(-1);
+			print $userstatic->getNomUrl(-1);
 		} else {
 			print '&nbsp;';
 		}

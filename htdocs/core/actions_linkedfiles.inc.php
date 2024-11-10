@@ -60,6 +60,8 @@ if ((GETPOST('sendit', 'alpha')
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($permissiontoadd)) {
 	if (!empty($_FILES) && is_array($_FILES['userfile'])) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		if (is_array($_FILES['userfile']['tmp_name'])) {
 			$userfiles = $_FILES['userfile']['tmp_name'];
 		} else {

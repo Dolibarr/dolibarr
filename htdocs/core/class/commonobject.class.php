@@ -5324,7 +5324,7 @@ abstract class CommonObject
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  Societe	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	ID line selected
-	 *  @param  ?Extrafields		$extrafields		Object of extrafields
+	 *  @param  ?ExtraFields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
@@ -7873,7 +7873,6 @@ abstract class CommonObject
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
-					//print $sql;
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
 					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
@@ -9085,7 +9084,7 @@ abstract class CommonObject
 	 * Function to show lines of extrafields with output data.
 	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan'] or <div> according to $display_type
 	 *
-	 * @param 	Extrafields $extrafields    Extrafield Object
+	 * @param 	ExtraFields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output ('view') or input ('create' or 'edit') for extrafield
 	 * @param 	array<string,mixed>	$params	Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
@@ -9383,7 +9382,7 @@ abstract class CommonObject
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this->id, $this->table_element);
 								break;
 						}
 

@@ -1,4 +1,13 @@
 
+table#list_of_modules {
+	border-spacing: 0px;
+}
+.imgstore {
+	max-height:150px;
+	max-width: 150px;
+	box-shadow: 5px 5px 20px #ddd;
+}
+
 div.divsearchfield {
     margin: 4px 12px 4px 2px;
     padding-left: 2px;
@@ -109,7 +118,7 @@ div.divsearchfield {
     padding-left: 35px;
 }
 tr.app {
-    height:250px;
+    height: 200px;
 }
 tr.app td {
 	border-bottom: 1px solid #888;

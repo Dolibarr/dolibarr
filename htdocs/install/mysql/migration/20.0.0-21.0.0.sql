@@ -51,6 +51,10 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 -- V21 migration
 
+ALTER TABLE llx_ecm_files MODIFY COLUMN description varchar(255);
+ALTER TABLE llx_ecm_files MODIFY COLUMN cover varchar(32);
+ALTER TABLE llx_ecm_files ADD COLUMN content text;
+
 ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
 
 DROP TABLE llx_contratdet_log;
@@ -310,3 +314,8 @@ ALTER TABLE llx_propaldet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after s
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN subprice_ttc double(24,8) DEFAULT 0 after subprice;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_subprice_ttc double(24,8) DEFAULT 0 after multicurrency_subprice;
+
+-- Add VAT by department
+ALTER TABLE llx_c_tva ADD COLUMN fk_department_buyer integer DEFAULT NULL AFTER fk_pays;
+ALTER TABLE llx_c_tva ADD INDEX idx_tva_fk_department_buyer (fk_department_buyer);
+ALTER TABLE llx_c_tva ADD CONSTRAINT fk_tva_fk_department_buyer FOREIGN KEY (fk_department_buyer) REFERENCES llx_c_departements (rowid);

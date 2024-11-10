@@ -166,7 +166,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
-
+$resql = false;
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search') {
 	$current_lang = $langs->getDefaultLang();
