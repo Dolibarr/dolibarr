@@ -29,6 +29,7 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  */
 

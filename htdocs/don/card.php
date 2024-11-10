@@ -105,6 +105,8 @@ $permissiontodelete = $user->hasRight('don', 'supprimer');
  * Actions
  */
 
+$error = 0;
+
 $parameters = array();
 
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
@@ -180,8 +182,6 @@ if (empty($reshook)) {
 			exit;
 		}
 
-		$error = 0;
-
 		if (empty($donation_date)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$action = "create";
@@ -234,8 +234,6 @@ if (empty($reshook)) {
 			header("Location: index.php");
 			exit;
 		}
-
-		$error = 0;
 
 		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOSTINT("socid") > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');

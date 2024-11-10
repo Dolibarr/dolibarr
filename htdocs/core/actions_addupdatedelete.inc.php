@@ -74,7 +74,7 @@
 $hidedetails = isset($hidedetails) ? $hidedetails : '';
 $hidedesc = isset($hidedesc) ? $hidedesc : '';
 $hideref = isset($hideref) ? $hideref : '';
-
+$error = 0;
 
 if (!empty($permissionedit) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissionedit; // For backward compatibility

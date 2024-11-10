@@ -248,7 +248,7 @@ $permissiontodelete = ($user->hasRight("fournisseur", "facture", "supprimer") ||
 /*
  * Actions
  */
-
+$error = 0;
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';

@@ -163,6 +163,7 @@ $result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc'
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some

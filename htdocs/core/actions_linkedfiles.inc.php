@@ -56,6 +56,7 @@ if ((GETPOST('sendit', 'alpha')
 	die;
 }
 
+$error = 0;
 
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($permissiontoadd)) {

@@ -200,6 +200,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -522,8 +523,6 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->cond_reglement_code = 0; // To clean property
 		$object->cond_reglement_id = 0; // To clean property
-
-		$error = 0;
 
 		$db->begin();
 
@@ -1060,7 +1059,6 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$error = 0;
 		$originentity = GETPOSTINT('originentity');
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);

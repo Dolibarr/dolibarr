@@ -41,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_db_name
  */
 
 // Load translation files required by the page

@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -103,6 +104,7 @@ if ($type == 'bank-transfer') {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";

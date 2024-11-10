@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -100,6 +101,7 @@ if (!$user->admin) {
  */
 
 $nbdone = 0;
+$error = 0;
 
 foreach ($arrayofparameters as $title => $tab) {
 	foreach ($tab as $key => $val) {

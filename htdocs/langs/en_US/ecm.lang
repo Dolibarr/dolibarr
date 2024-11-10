@@ -57,3 +57,4 @@ ECMParentDirectory=Parent directory
 ShowFile=Show file
 FullPathOrig=Full path origin
 GenOrUpload=File origin
+FileHasAnIndexedTextContent=File has an indexed text content

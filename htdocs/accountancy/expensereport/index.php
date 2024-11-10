@@ -84,6 +84,7 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 /*
  * Actions
  */
+$error = 0;
 
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
@@ -110,7 +111,6 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 }
 
 if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write')) {
-	$error = 0;
 	$nbbinddone = 0;
 	$nbbindfailed = 0;
 	$notpossible = 0;
