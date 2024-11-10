@@ -527,6 +527,7 @@ if ($action == 'create') {
 
 	// Accountancy account
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td>';
@@ -540,6 +541,7 @@ if ($action == 'create') {
 
 	// Subledger account
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
 		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
@@ -674,6 +676,7 @@ if ($id) {
 	// Account of Chart of account
 	$editvalue = '';
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="nowrap">';
 		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 		print '</td><td>';
@@ -701,6 +704,7 @@ if ($id) {
 	print '</td><td>';
 	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
 		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+			/** @var FormAccounting $formaccounting */
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->subledger_account, 'subledger_account', 1, 1, '', 1);
 		} else {
 			print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', null, null, '', 1, 'lengthAccounta');

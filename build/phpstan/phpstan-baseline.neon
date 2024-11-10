@@ -4161,11 +4161,6 @@ parameters:
 			path: ../../htdocs/compta/bank/card.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/compta/bank/card.php
-
-		-
 			message: "#^Variable \\$name might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/compta/bank/card.php
@@ -4441,11 +4436,6 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/card.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/card.php
@@ -4523,11 +4513,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
@@ -13241,11 +13226,6 @@ parameters:
 			path: ../../htdocs/document.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/don/admin/donation.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/don/card.php
@@ -17611,21 +17591,6 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/loan/card.php
-
-		-
-			message: "#^Variable \\$loan might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/loan/card.php
-
-		-
-			message: "#^Variable \\$maxlength might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/loan/card.php
-
-		-
 			message: "#^Variable \\$staytopay might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/loan/card.php
@@ -17794,16 +17759,6 @@ parameters:
 			message: "#^Variable \\$morehtmlright might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/loan/document.php
-
-		-
-			message: "#^Variable \\$formproject might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/loan/info.php
-
-		-
-			message: "#^Variable \\$maxlength might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/loan/info.php
 
 		-
 			message: "#^Variable \\$search_all might not be defined\\.$#"
@@ -19168,11 +19123,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/product/card.php
-
-		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/product/card.php
 
 		-
@@ -23757,11 +23707,6 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
-			count: 4
-			path: ../../htdocs/societe/card.php
-
-		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/societe/card.php
 
