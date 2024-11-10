@@ -19426,11 +19426,6 @@ parameters:
 			path: ../../htdocs/product/card.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/product/card.php
-
-		-
 			message: "#^Variable \\$modCodeProduct might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/card.php
