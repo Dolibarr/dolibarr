@@ -17886,11 +17886,6 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/loan/card.php
-
-		-
 			message: "#^Variable \\$staytopay might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/loan/card.php

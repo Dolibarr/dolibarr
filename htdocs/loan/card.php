@@ -270,7 +270,9 @@ $form = new Form($db);
 $formproject = new FormProjets($db);
 $morehtmlstatus = '';
 $outputlangs = $langs;
-
+if (isModEnabled('accounting')) {
+	$formaccounting = new FormAccounting($db);
+}
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 
@@ -366,7 +368,7 @@ if ($action == 'create') {
 
 	// Accountancy
 	if (isModEnabled('accounting')) {
-		$formaccounting = new FormAccounting($db);
+		/** @var FormAccounting $formaccounting */
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
@@ -558,6 +560,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
@@ -589,6 +592,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
@@ -620,6 +624,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';
