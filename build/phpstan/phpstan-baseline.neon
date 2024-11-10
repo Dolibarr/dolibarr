@@ -56,11 +56,6 @@ parameters:
 			path: ../../htdocs/accountancy/admin/categories_list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/accountancy/admin/defaultaccounts.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 4
 			path: ../../htdocs/accountancy/admin/fiscalyear_card.php
@@ -159,11 +154,6 @@ parameters:
 			message: "#^Variable \\$filter might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/bookkeeping/card.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -591,11 +581,6 @@ parameters:
 			path: ../../htdocs/accountancy/expensereport/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/expensereport/index.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/expensereport/lines.php
@@ -951,11 +936,6 @@ parameters:
 			path: ../../htdocs/adherents/list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/messaging.php
@@ -1041,22 +1021,12 @@ parameters:
 			path: ../../htdocs/adherents/type.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/adherents/type.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/admin/accountant.php
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
-			count: 2
-			path: ../../htdocs/admin/agenda.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/agenda.php
 
@@ -1081,16 +1051,6 @@ parameters:
 			path: ../../htdocs/admin/bank.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/admin/bom.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/chequereceipts.php
-
-		-
 			message: "#^Variable \\$massaction might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/const.php
@@ -1104,11 +1064,6 @@ parameters:
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/dav.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/delivery.php
 
 		-
 			message: "#^Variable \\$param in empty\\(\\) always exists and is not falsy\\.$#"
@@ -1156,16 +1111,6 @@ parameters:
 			path: ../../htdocs/admin/events.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/expedition.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/expensereport.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/admin/expensereport_rules.php
@@ -1181,11 +1126,6 @@ parameters:
 			path: ../../htdocs/admin/expensereport_rules.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/external_rss.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/admin/fckeditor.php
@@ -1196,11 +1136,6 @@ parameters:
 			path: ../../htdocs/admin/fediverse.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/admin/fichinter.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/fichinter_xcal.php
@@ -1209,11 +1144,6 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/admin/geoipmaxmind.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/admin/holiday.php
 
 		-
 			message: "#^Elseif condition is always false\\.$#"
@@ -1286,22 +1216,12 @@ parameters:
 			path: ../../htdocs/admin/limits.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/admin/mailing.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 3
 			path: ../../htdocs/admin/mails.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
-			count: 3
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/admin/mails.php
 
@@ -1396,11 +1316,6 @@ parameters:
 			path: ../../htdocs/admin/modules.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/admin/mrp.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/admin/notification.php
@@ -1426,11 +1341,6 @@ parameters:
 			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/oauthlogintokens.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 5
 			path: ../../htdocs/admin/openid_connect.php
@@ -1451,34 +1361,9 @@ parameters:
 			path: ../../htdocs/admin/openinghours.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/admin/order.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/admin/payment.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/admin/paymentbybanktransfer.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/admin/pdf.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/proxy.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/reception_setup.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -1514,16 +1399,6 @@ parameters:
 			message: "#^Variable \\$smsfile might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/admin/sms.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/spip.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/stock.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -1686,11 +1561,6 @@ parameters:
 			path: ../../htdocs/admin/tools/purge.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/admin/translation.php
-
-		-
 			message: "#^Variable \\$massactionbutton in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/translation.php
@@ -1738,11 +1608,6 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/admin/website.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/admin/website.php
 
 		-
@@ -2301,11 +2166,6 @@ parameters:
 			path: ../../htdocs/asset/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/barcode/codeinit.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 4
 			path: ../../htdocs/barcode/printsheet.php
@@ -2332,11 +2192,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
-
-		-
-			message: "#^Variable \\$dolibarr_main_db_name might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
 
@@ -2383,11 +2238,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/bom/bom_list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/bom/bom_list.php
 
 		-
@@ -2661,11 +2511,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: "#^Variable \\$permissiontoadd in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_card.php
@@ -2936,11 +2781,6 @@ parameters:
 			path: ../../htdocs/bookcal/lib/bookcal_calendar.lib.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/bookmarks/admin/bookmark.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookmarks/bookmarks.lib.php
@@ -3018,11 +2858,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 3
-			path: ../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
 			path: ../../htdocs/categories/class/categorie.class.php
 
 		-
@@ -3461,11 +3296,6 @@ parameters:
 			path: ../../htdocs/comm/card.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/comm/card.php
-
-		-
 			message: "#^Variable \\$filedir in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 6
 			path: ../../htdocs/comm/card.php
@@ -3896,11 +3726,6 @@ parameters:
 			path: ../../htdocs/comm/propal/contact.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/comm/propal/contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/document.php
@@ -3923,11 +3748,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/comm/propal/list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/comm/propal/list.php
 
 		-
@@ -4376,11 +4196,6 @@ parameters:
 			path: ../../htdocs/compta/bank/account_statement_document.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
 			message: "#^Variable \\$max might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/annuel.php
@@ -4611,11 +4426,6 @@ parameters:
 			path: ../../htdocs/compta/bank/line.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/line.php
-
-		-
 			message: "#^Variable \\$filepath might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/line.php
@@ -4816,17 +4626,7 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
-			count: 3
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
@@ -5028,11 +4828,6 @@ parameters:
 		-
 			message: "#^Variable \\$classname might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 26
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -5821,11 +5616,6 @@ parameters:
 			path: ../../htdocs/compta/paiement.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement.php
-
-		-
 			message: "#^Variable \\$multicurrency_creditnotes might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/paiement.php
@@ -6096,11 +5886,6 @@ parameters:
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$executiondate of method BonPrelevement\\:\\:generate\\(\\) expects int, string given\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
 			message: "#^Property BonPrelevement\\:\\:\\$amount \\(float\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
@@ -6168,11 +5953,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/compta/prelevement/orders_list.php
 
 		-
@@ -7601,11 +7381,6 @@ parameters:
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
@@ -7646,23 +7421,8 @@ parameters:
 			path: ../../htdocs/core/actions_comments.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/actions_dellink.inc.php
-
-		-
 			message: "#^Variable \\$id might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/actions_dellink.inc.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_dellink.inc.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 9
 			path: ../../htdocs/core/actions_dellink.inc.php
 
 		-
@@ -7711,11 +7471,6 @@ parameters:
 			path: ../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
 			message: "#^Comparison operation \"\\>\" between 0 and 1 is always false\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_massactions.inc.php
@@ -7738,11 +7493,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 14
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
@@ -7811,28 +7561,13 @@ parameters:
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Right side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: "#^Variable \\$contact might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: "#^Variable \\$from might not be defined\\.$#"
 			count: 6
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -7866,11 +7601,6 @@ parameters:
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
@@ -7878,11 +7608,6 @@ parameters:
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 8
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
@@ -11061,36 +10786,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Method pdf_octopus\\:\\:_pagehead\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Method pdf_octopus\\:\\:btpGetInvoiceAmounts\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Method pdf_octopus\\:\\:getDataSituation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Method pdf_octopus\\:\\:sumSituation\\(\\) has parameter \\$a with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Method pdf_octopus\\:\\:sumSituation\\(\\) has parameter \\$b with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: "#^Method pdf_octopus\\:\\:sumSituation\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Parameter \\#1 \\$object of method CommonDocGenerator\\:\\:getExtrafieldsInHtml\\(\\) expects CommonObjectLine, Facture given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -11126,11 +10821,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: "#^Property pdf_octopus\\:\\:\\$TDataSituation type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: "#^Variable \\$hidetop in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 3
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -11147,11 +10837,6 @@ parameters:
 
 		-
 			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: "#^Method pdf_sponge\\:\\:_pagehead\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -11447,26 +11132,6 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/modules_mailings.php
-
-		-
-			message: "#^Method MailingTargets\\:\\:addTargetsToDatabase\\(\\) has parameter \\$cibles with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/modules_mailings.php
-
-		-
-			message: "#^Method MailingTargets\\:\\:getEmailingSelectorsList\\(\\) has parameter \\$forcedir with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/modules_mailings.php
-
-		-
-			message: "#^Method MailingTargets\\:\\:getEmailingSelectorsList\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/modules_mailings.php
-
-		-
-			message: "#^Property MailingTargets\\:\\:\\$evenunsubscribe has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/mailings/modules_mailings.php
 
@@ -11929,66 +11594,6 @@ parameters:
 			message: "#^Property mod_project_simple\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/project/mod_project_simple.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_object\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_project_contacts\\(\\) has parameter \\$contact with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_project_contacts\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_project_file\\(\\) has parameter \\$file with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_project_file\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_project_reference\\(\\) has parameter \\$refdetail with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_project_reference\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_tasks\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_tasksressource\\(\\) has parameter \\$taskresource with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_tasksressource\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_taskstime\\(\\) has parameter \\$tasktime with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: "#^Method doc_generic_task_odt\\:\\:get_substitutionarray_taskstime\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
@@ -12546,11 +12151,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/mod_supplier_proposal_marbre.php
 
 		-
-			message: "#^Method doc_generic_ticket_odt\\:\\:get_substitutionarray_object\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/ticket/doc/doc_generic_ticket_odt.modules.php
-
-		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/ticket/doc/doc_generic_ticket_odt.modules.php
@@ -12564,11 +12164,6 @@ parameters:
 			message: "#^Property mod_ticket_simple\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/ticket/mod_ticket_simple.php
-
-		-
-			message: "#^Method doc_generic_user_odt\\:\\:get_substitutionarray_object\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/user/doc/doc_generic_user_odt.modules.php
 
 		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
@@ -12926,21 +12521,6 @@ parameters:
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
-			message: "#^Variable \\$extrafields might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/extrafields_list_array_fields.tpl.php
@@ -13086,11 +12666,6 @@ parameters:
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
 			message: "#^Variable \\$filepathnoext might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
@@ -13103,11 +12678,6 @@ parameters:
 		-
 			message: "#^Variable \\$pageid might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: "#^Variable \\$website might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
@@ -13376,11 +12946,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
-			message: "#^Variable \\$conf might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
@@ -13626,26 +13191,6 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
 
 		-
-			message: "#^Right side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/core/upload_page.php
-
-		-
-			message: "#^Variable \\$accept in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/core/upload_page.php
-
-		-
-			message: "#^Variable \\$capture in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/core/upload_page.php
-
-		-
-			message: "#^Variable \\$perm in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/core/upload_page.php
-
-		-
 			message: "#^Variable \\$conf might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/core/website.inc.php
@@ -13816,11 +13361,6 @@ parameters:
 			path: ../../htdocs/cron/list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/cron/list.php
-
-		-
 			message: "#^Variable \\$filter might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/cron/list.php
@@ -13837,11 +13377,6 @@ parameters:
 
 		-
 			message: "#^Offset 'css' on array\\{css\\: 'minwidth200', picto\\: mixed\\} in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/admin/setup.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/datapolicy/admin/setup.php
 
@@ -13871,89 +13406,9 @@ parameters:
 			path: ../../htdocs/dav/fileserver.php
 
 		-
-			message: "#^Method DolConfigCollector\\:\\:collect\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolConfigCollector.php
-
-		-
-			message: "#^Method DolConfigCollector\\:\\:getConfig\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolConfigCollector.php
-
-		-
-			message: "#^Method DolConfigCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolConfigCollector.php
-
-		-
-			message: "#^Method DolConfigCollector\\:\\:objectToArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolConfigCollector.php
-
-		-
-			message: "#^Method DolExceptionsCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolExceptionsCollector.php
-
-		-
-			message: "#^Method DolMemoryCollector\\:\\:collect\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolMemoryCollector.php
-
-		-
-			message: "#^Method DolMemoryCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolMemoryCollector.php
-
-		-
 			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, array\\{\\$this\\(PhpCollector\\), 'errorHandler'\\} given\\.$#"
 			count: 1
 			path: ../../htdocs/debugbar/class/DataCollector/DolPhpCollector.php
-
-		-
-			message: "#^Method DolQueryCollector\\:\\:collect\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolQueryCollector.php
-
-		-
-			message: "#^Method DolQueryCollector\\:\\:getAssets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolQueryCollector.php
-
-		-
-			message: "#^Method DolQueryCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolQueryCollector.php
-
-		-
-			message: "#^Method DolRequestDataCollector\\:\\:collect\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolRequestDataCollector.php
-
-		-
-			message: "#^Method DolRequestDataCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolRequestDataCollector.php
-
-		-
-			message: "#^Method DolTimeDataCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolTimeDataCollector.php
-
-		-
-			message: "#^Method DolibarrCollector\\:\\:collect\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolibarrCollector.php
-
-		-
-			message: "#^Method DolibarrCollector\\:\\:getAssets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolibarrCollector.php
-
-		-
-			message: "#^Method DolibarrCollector\\:\\:getWidgets\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/debugbar/class/DataCollector/DolibarrCollector.php
 
 		-
 			message: "#^Parameter \\#2 \\$resql of method TraceableDB\\:\\:endTracing\\(\\) expects string, bool\\|mysqli_result\\|resource given\\.$#"
@@ -14021,11 +13476,6 @@ parameters:
 			path: ../../htdocs/document.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/don/admin/donation.php
-
-		-
 			message: "#^Variable \\$formaccounting might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/don/admin/donation.php
@@ -14043,11 +13493,6 @@ parameters:
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/don/card.php
 
 		-
@@ -14741,11 +14186,6 @@ parameters:
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: "#^Variable \\$from might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
@@ -14803,11 +14243,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 2
-			path: ../../htdocs/expedition/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 17
 			path: ../../htdocs/expedition/card.php
 
 		-
@@ -15181,11 +14616,6 @@ parameters:
 			path: ../../htdocs/expedition/shipment.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/expedition/shipment.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/shipment.php
@@ -15243,11 +14673,6 @@ parameters:
 		-
 			message: "#^Variable \\$date might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/expensereport/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 10
 			path: ../../htdocs/expensereport/card.php
 
 		-
@@ -15596,11 +15021,6 @@ parameters:
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
@@ -15803,11 +15223,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 10
-			path: ../../htdocs/fourn/card.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/fourn/card.php
 
 		-
@@ -16556,16 +15971,6 @@ parameters:
 			path: ../../htdocs/fourn/commande/dispatch.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
 			message: "#^Variable \\$product might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/fourn/commande/dispatch.php
@@ -16871,11 +16276,6 @@ parameters:
 			path: ../../htdocs/fourn/facture/list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/list.php
-
-		-
 			message: "#^Variable \\$numprlv might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/list.php
@@ -16912,7 +16312,7 @@ parameters:
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
-			count: 2
+			count: 1
 			path: ../../htdocs/fourn/facture/paiement.php
 
 		-
@@ -16927,11 +16327,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fourn/facture/paiement.php
 
@@ -17117,16 +16512,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$endhalfdaykey might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/holiday/card.php
-
-		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/holiday/card.php
-
-		-
-			message: "#^Variable \\$formfile might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/holiday/card.php
 
@@ -19721,11 +19106,6 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/results.php
-
-		-
 			message: "#^Variable \\$expiredate might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/results.php
@@ -19926,11 +19306,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 16
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/paybox/admin/paybox.php
@@ -19951,11 +19326,6 @@ parameters:
 			path: ../../htdocs/paybox/lib/paybox.lib.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/paypal/admin/paypal.php
-
-		-
 			message: "#^Comparison operation \"\\<\" between \\-1 and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/paypal/lib/paypal.lib.php
@@ -19968,11 +19338,6 @@ parameters:
 		-
 			message: "#^Variable \\$classfile might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/printing/admin/printing.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/printing/admin/printing.php
 
 		-
@@ -20636,11 +20001,6 @@ parameters:
 			path: ../../htdocs/product/list.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/list.php
-
-		-
 			message: "#^Variable \\$perm might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/list.php
@@ -20911,11 +20271,6 @@ parameters:
 			path: ../../htdocs/product/stats/supplier_proposal.php
 
 		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/card.php
@@ -20927,11 +20282,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$pricemin might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$units might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/card.php
 
@@ -21651,11 +21001,6 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
-
-		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
@@ -21761,11 +21106,6 @@ parameters:
 			path: ../../htdocs/projet/activity/perday.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/projet/activity/perday.php
-
-		-
 			message: "#^Variable \\$moreforfilter in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perday.php
@@ -21834,31 +21174,16 @@ parameters:
 			message: "#^Variable \\$ref might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/activity/perweek.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/projet/admin/project.php
-
-		-
-			message: "#^Variable \\$obj might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/projet/admin/project.php
 
 		-
 			message: "#^Variable \\$res might not be defined\\.$#"
-			count: 2
+			count: 1
 			path: ../../htdocs/projet/admin/project.php
 
 		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/admin/website.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/projet/card.php
 
 		-
 			message: "#^Variable \\$morecss might not be defined\\.$#"
@@ -22056,11 +21381,6 @@ parameters:
 			path: ../../htdocs/projet/comment.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/projet/contact.php
-
-		-
 			message: "#^Variable \\$formconfirmtoaddtasks might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/contact.php
@@ -22226,6 +21546,11 @@ parameters:
 			path: ../../htdocs/projet/list.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: ../../htdocs/projet/list.php
+
+		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/projet/list.php
@@ -22237,11 +21562,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/projet/list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/projet/list.php
 
@@ -22496,11 +21816,6 @@ parameters:
 			path: ../../htdocs/projet/tasks/task.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/projet/tasks/task.php
-
-		-
 			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/projet/tasks/time.php
@@ -22543,11 +21858,6 @@ parameters:
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/projet/tasks/time.php
 
 		-
@@ -22911,11 +22221,6 @@ parameters:
 			path: ../../htdocs/public/opensurvey/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/opensurvey/studs.php
-
-		-
 			message: "#^Variable \\$modifier might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/public/opensurvey/studs.php
@@ -23056,11 +22361,6 @@ parameters:
 			path: ../../htdocs/public/project/index.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/public/project/index.php
-
-		-
 			message: "#^Variable \\$suffix might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/public/project/index.php
@@ -23108,11 +22408,6 @@ parameters:
 		-
 			message: "#^Variable \\$emailcompany might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/public/project/suggestbooth.php
-
-		-
-			message: "#^Variable \\$errors might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/public/project/suggestbooth.php
 
 		-
@@ -23169,11 +22464,6 @@ parameters:
 			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 7
 			path: ../../htdocs/public/project/suggestconference.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/public/project/viewandvote.php
 
 		-
 			message: "#^Variable \\$suffix might not be defined\\.$#"
@@ -24581,17 +23871,17 @@ parameters:
 			path: ../../htdocs/salaries/payments.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: ../../htdocs/salaries/payments.php
+
+		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/payments.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/salaries/payments.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/payments.php
 
@@ -24634,11 +23924,6 @@ parameters:
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/virement_request.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 24
-			path: ../../htdocs/societe/admin/societe.php
 
 		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
@@ -25211,11 +24496,6 @@ parameters:
 			path: ../../htdocs/stripe/admin/stripe.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 21
-			path: ../../htdocs/stripe/admin/stripe.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/stripe/charge.php
@@ -25476,24 +24756,9 @@ parameters:
 			path: ../../htdocs/supplier_proposal/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/appearance.php
-
-		-
 			message: "#^Variable \\$dolibarr_main_url_root might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/takepos/admin/bar.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/bar.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/receipt.php
 
 		-
 			message: "#^Variable \\$res might not be defined\\.$#"
@@ -25507,11 +24772,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$params of static method Stripe\\\\Terminal\\\\Reader\\:\\:all\\(\\) expects array\\|null, string given\\.$#"
-			count: 2
-			path: ../../htdocs/takepos/admin/terminal.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/takepos/admin/terminal.php
 
@@ -25583,11 +24843,6 @@ parameters:
 		-
 			message: "#^Variable \\$creditnote might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/takepos/invoice.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/takepos/invoice.php
 
 		-
@@ -26196,11 +25451,6 @@ parameters:
 			path: ../../htdocs/ticket/contact.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/ticket/contact.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/ticket/document.php
@@ -26461,11 +25711,6 @@ parameters:
 			path: ../../htdocs/user/document.php
 
 		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/user/group/card.php
-
-		-
 			message: "#^Variable \\$mc might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/user/group/card.php
@@ -26539,11 +25784,6 @@ parameters:
 			message: "#^Variable \\$searchCategoryUserList in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/user/list.php
-
-		-
-			message: "#^Variable \\$error might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/user/logout.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -27119,41 +26359,6 @@ parameters:
 			message: "#^Function getListOfGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_user.php
-
-		-
-			message: "#^Method Website\\:\\:compareFichierModifie\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
-
-		-
-			message: "#^Method Website\\:\\:componentSelectLang\\(\\) has parameter \\$languagecodes with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
-
-		-
-			message: "#^Method Website\\:\\:fetchAll\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
-
-		-
-			message: "#^Method Website\\:\\:fetchAll\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
-
-		-
-			message: "#^Method Website\\:\\:replaceLineUsingNum\\(\\) has parameter \\$differences with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
-
-		-
-			message: "#^Method Website\\:\\:showDifferences\\(\\) has parameter \\$exceptNumPge with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
-
-		-
-			message: "#^Method Website\\:\\:showDifferences\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/website/class/website.class.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"

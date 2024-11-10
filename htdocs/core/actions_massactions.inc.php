@@ -56,6 +56,7 @@
  * @var ?string $option
  * @var ?int $deliveryreceipt
  * @var string $massaction
+ * @var string $objectclass
  * @var string $uploaddir
  * @var string $confirm
  */
@@ -711,7 +712,7 @@ if (!$error && $massaction == 'confirm_presend') {
 									// End call triggers
 
 									if ($error) {
-										setEventMessages($db->lasterror(), $errors, 'errors');
+										setEventMessages($db->lasterror(), null, 'errors');
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}

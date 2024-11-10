@@ -119,13 +119,10 @@ if (!$permissiontoread) {
 }
 
 
-
-
-
-
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -134,8 +131,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$backurlforlist = dol_buildpath('/bookcal/availabilities_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
@@ -149,7 +144,6 @@ if (empty($reshook)) {
 	}
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
-
 
 	$startday = GETPOST('startday', 'int');
 	$startmonth = GETPOST('startmonth', 'int');
@@ -235,22 +229,6 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("Availabilities");
 $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities');
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
-
 
 // Part to create
 if ($action == 'create') {

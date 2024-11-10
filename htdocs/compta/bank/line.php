@@ -97,6 +97,7 @@ $extrafields->fetch_name_optionals_label($object->element);
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -138,8 +139,6 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('b
 }
 
 if ($user->hasRight('banque', 'modifier') && $action == "update") {
-	$error = 0;
-
 	$result = $object->fetch($rowid);
 	if ($result <= 0) {
 		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.

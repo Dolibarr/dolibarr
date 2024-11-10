@@ -932,13 +932,14 @@ class EcmFiles extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array<string,mixed> $params params to construct tooltip data
+	 *
+	 * @param 	array<string,mixed> 	$params 		params to construct tooltip data
+	 * @return 	array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
 	 * @since v21
-	 * @return array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$langs->load('ecm');
 		$datas = [];
@@ -947,12 +948,23 @@ class EcmFiles extends CommonObject
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowFile")];
 		}
-		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("ShowFile") . '</u>';
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("File") . '</u>';
+		if (!empty($this->filename)) {
+			$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.basename($this->filename);
+		}
 		if (!empty($this->ref)) {
-			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$datas['ref'] = '<br><b>'.$langs->trans('HashOfFileContent').':</b> '.$this->ref;
+		}
+		if (!empty($this->share)) {
+			$datas['share'] = '<br>'.$langs->trans("FileSharedViaALink");
+		} else {
+			$datas['share'] = '<br>'.$langs->trans("FileNotShared");
 		}
 		if (!empty($this->gen_or_uploaded)) {
 			$datas['gen_or_upload'] = '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+		}
+		if (!empty($this->content)) {
+			$datas['content'] = '<br>'.$langs->trans('FileHasAnIndexedTextContent');
 		}
 
 		return $datas;

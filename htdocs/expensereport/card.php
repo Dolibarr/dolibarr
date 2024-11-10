@@ -169,6 +169,8 @@ $permissiontoadd = $user->hasRight('expensereport', 'creer');	// Used by the inc
 /*
  * Actions
  */
+$error = 0;
+
 $value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 $value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 $qty = price2num(GETPOST('qty', 'alpha'));
@@ -265,8 +267,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'add' && $permissiontoadd) {
-		$error = 0;
-
 		$object = new ExpenseReport($db);
 
 		$object->date_debut = $date_start;
@@ -387,8 +387,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $permissiontoadd) {
-		$error = 0;
-
 		$db->begin();
 
 		$object = new ExpenseReport($db);
@@ -1128,8 +1126,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "addline" && $user->hasRight('expensereport', 'creer')) {
-		$error = 0;
-
 		// First save uploaded file
 		$fk_ecm_files = 0;
 		if (GETPOSTISSET('attachfile')) {
