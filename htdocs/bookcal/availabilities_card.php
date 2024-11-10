@@ -145,24 +145,24 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	$startday = GETPOST('startday', 'int');
-	$startmonth = GETPOST('startmonth', 'int');
-	$startyear = GETPOST('startyear', 'int');
-	$starthour = GETPOST('startHour', 'int');
+	$startday = GETPOSTINT('startday');
+	$startmonth = GETPOSTINT('startmonth');
+	$startyear = GETPOSTINT('startyear');
+	$starthour = GETPOSTINT('startHour');
 
-	if ($starthour == "0") {
+	if (GETPOST('startHour') == "") {
 		$error++;
 		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
 	}
 
 	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
 
-	$endday = GETPOST('endday', 'int');
-	$endmonth = GETPOST('endmonth', 'int');
-	$endyear = GETPOST('endyear', 'int');
-	$endhour = GETPOST('endHour', 'int');
+	$endday = GETPOSTINT('endday');
+	$endmonth = GETPOSTINT('endmonth');
+	$endyear = GETPOSTINT('endyear');
+	$endhour = GETPOSTINT('endHour');
 
-	if ($endhour == "0") {
+	if (GETPOST('endHour') == "") {
 		$error++;
 		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
 	}

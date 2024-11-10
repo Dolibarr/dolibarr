@@ -2366,26 +2366,6 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: "#^Property Availabilities\\:\\:\\$status \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_card.php
@@ -2798,36 +2778,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
 			path: ../../htdocs/comm/action/card.php
 
 		-
@@ -3326,36 +3276,6 @@ parameters:
 			path: ../../htdocs/comm/propal/card.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/comm/propal/card.php
-
-		-
 			message: "#^Property CommonObject\\:\\:\\$fk_project \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/card.php
@@ -3678,36 +3598,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 7
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 7
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 7
 			path: ../../htdocs/commande/card.php
 
 		-
@@ -4586,36 +4476,6 @@ parameters:
 			path: ../../htdocs/compta/facture/card-rec.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
 			message: "#^Variable \\$newlang in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 2
 			path: ../../htdocs/compta/facture/card-rec.php
@@ -4646,38 +4506,8 @@ parameters:
 			path: ../../htdocs/compta/facture/card.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/card.php
-
-		-
 			message: "#^Parameter \\#12 \\$localtaxes_array of function calcul_price_total expects array\\{string, int\\|string, string, int\\|string, string, string\\}\\|array\\{string, int\\|string, string, string\\}, array\\{\\} given\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -5241,21 +5071,6 @@ parameters:
 			path: ../../htdocs/compta/index.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
 			message: "#^Variable \\$tabcompany might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/journal/purchasesjournal.php
@@ -5341,21 +5156,6 @@ parameters:
 			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
 			message: "#^Variable \\$accountline might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/card.php
@@ -5369,21 +5169,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/localtax/class/localtax.class.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
 
 		-
 			message: "#^Variable \\$builddate might not be defined\\.$#"
@@ -5424,21 +5209,6 @@ parameters:
 			message: "#^Variable \\$x_paye_sum might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
 
 		-
 			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
@@ -24383,36 +24153,6 @@ parameters:
 		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
 			path: ../../htdocs/supplier_proposal/card.php
 
 		-

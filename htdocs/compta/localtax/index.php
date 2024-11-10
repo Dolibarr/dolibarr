@@ -56,8 +56,8 @@ if (empty($year)) {
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOSTINT("q");
 	if (empty($q)) {
@@ -455,7 +455,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 
 
 	print '<tr class="oddeven">';
-	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y").'</a></td>';
+	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, (int) $m, 1, (int) $y), "%b %Y").'</a></td>';
 
 	$x_coll_sum = 0;
 	foreach (array_keys($x_coll) as $rate) {
