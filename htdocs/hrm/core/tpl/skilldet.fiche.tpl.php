@@ -19,6 +19,9 @@
 /**
  * @var Form $form
  * @var Translate $langs
+ *
+ * @var string $note_public
+ * @var string $note_private
  */
 
 // Protection to avoid direct call of template

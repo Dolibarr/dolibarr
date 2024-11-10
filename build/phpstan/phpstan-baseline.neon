@@ -16716,16 +16716,6 @@ parameters:
 			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
 
 		-
-			message: "#^Variable \\$note_private might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: "#^Variable \\$note_public might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
 			message: "#^Variable \\$permission might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
