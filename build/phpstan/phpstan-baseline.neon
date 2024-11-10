@@ -12416,28 +12416,8 @@ parameters:
 			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
