@@ -55,6 +55,7 @@ $type = 'paymentorder';
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == "set") {
 	$db->begin();

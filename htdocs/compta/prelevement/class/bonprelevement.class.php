@@ -1089,11 +1089,11 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
-			$entity = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$entities = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
-			$entity = getEntity('salary');
+			$entities = getEntity('salary');
 			$sqlTable = 'salary';
 			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
@@ -1173,7 +1173,7 @@ class BonPrelevement extends CommonObject
 				// TODO Add 'AND sr.default_rib = 1' in sourcetype salary too Note: the column has been created in v21 in llx_user_rib and default to 0
 				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			}
-			$sql .= " WHERE f.entity IN (".((int) $entity).')';
+			$sql .= " WHERE f.entity IN (".$this->db->escape($entities).')';
 			if ($sourcetype != 'salary') {
 				$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";

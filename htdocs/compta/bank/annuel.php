@@ -74,6 +74,7 @@ if (!$year_start) {
 /*
  * View
  */
+$error = 0;
 
 $form = new Form($db);
 

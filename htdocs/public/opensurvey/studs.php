@@ -81,13 +81,13 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 $listofvoters = explode(',', $_SESSION["savevoter"]);
 
+$error = 0;
+
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
 	if (!$canbemodified) {
 		httponly_accessforbidden('ErrorForbidden');
 	}
-
-	$error = 0;
 
 	$comment = GETPOST("comment", 'alphanohtml');
 	$comment_user = GETPOST('commentuser', 'alphanohtml');

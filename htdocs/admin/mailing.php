@@ -53,6 +53,7 @@ $form = new Form($db);
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'setvalue') {
 	$db->begin();

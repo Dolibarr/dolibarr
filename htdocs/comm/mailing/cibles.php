@@ -329,6 +329,9 @@ llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES
 $form = new Form($db);
 $formmailing = new FormMailing($db);
 $arrayofselected = is_array($toselect) ? $toselect : array();
+$totalarray = [
+	'nbfield' => 0,
+];
 
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
@@ -380,8 +383,7 @@ if ($object->fetch($id) >= 0) {
 			print dol_print_email($object->email_from, 0, 0, 0, 0, 1);
 		}
 	}
-	//print dol_print_email($object->email_from, 0, 0, 0, 0, 1);
-	//var_dump($object->email_from);
+
 	print '</td></tr>';
 
 	// Errors to
@@ -799,6 +801,7 @@ if ($object->fetch($id) >= 0) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ConfirmResetMailingTargetMassaction"), $langs->trans("ConfirmResetMailingTargetMassactionQuestion"), "confirm_reset_target", null, '', 0, 0, 500, 1);
 		}
 
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 		$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 		$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');

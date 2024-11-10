@@ -100,6 +100,7 @@ if (!$user->admin) {
  */
 
 $nbdone = 0;
+$error = 0;
 
 foreach ($arrayofparameters as $title => $tab) {
 	foreach ($tab as $key => $val) {

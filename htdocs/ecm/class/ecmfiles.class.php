@@ -97,7 +97,7 @@ class EcmFiles extends CommonObject
 	public $keywords;
 
 	/**
-	 * @var string content
+	 * @var ?string content
 	 */
 	public $content;
 

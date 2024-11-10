@@ -111,13 +111,15 @@ if (!isModEnabled('stock')) {
 }
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
-$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
  * Actions
  */
 
+$error = 0;
+$errors = [];
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -125,7 +127,6 @@ if ($reshook < 0) {
 }
 
 if ($action == 'checkdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -162,7 +163,6 @@ if ($action == 'checkdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -198,7 +198,6 @@ if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'denydispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -235,7 +234,6 @@ if ($action == 'denydispatchline' && $permissiontocontrol) {
 
 $saveprice = "savepriceIsNotSet";
 if ($action == 'dispatch' && $permissiontoreceive) {
-	$error = 0;
 	$notrigger = 0;
 
 	$db->begin();
@@ -461,7 +459,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 	}
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages(null, $errors, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -470,7 +468,6 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 // Update a dispatched line
 if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
-	$error = 0;
 
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);

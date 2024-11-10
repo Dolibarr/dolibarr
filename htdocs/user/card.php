@@ -2161,7 +2161,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						if (!empty($groupslist)) {
 							foreach ($groupslist as $group) {
 								print '<tr class="oddeven">';
-								print '<td class="tdoverflowmax150">';
+								print '<td class="tdoverflowmax200">';
 								if ($permissiontoeditgroup) {
 									print $group->getNomUrl(1);
 								} else {
@@ -2179,7 +2179,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 								print "</td></tr>\n";
 							}
 						} else {
-							print '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+							print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 						}
 
 						print "</table>";
