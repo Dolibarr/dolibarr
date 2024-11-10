@@ -17891,11 +17891,6 @@ parameters:
 			path: ../../htdocs/loan/card.php
 
 		-
-			message: "#^Variable \\$loan might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/loan/card.php
-
-		-
 			message: "#^Variable \\$staytopay might not be defined\\.$#"
 			count: 3
 			path: ../../htdocs/loan/card.php
