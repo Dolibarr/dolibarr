@@ -12236,68 +12236,13 @@ parameters:
 			path: ../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
-			message: "#^Variable \\$formadmin might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$formadmin might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
 
 		-
@@ -12321,33 +12266,8 @@ parameters:
 			path: ../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$objectsrc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$permission might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
 			path: ../../htdocs/core/tpl/contacts.tpl.php
 
 		-
