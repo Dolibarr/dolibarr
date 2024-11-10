@@ -5886,11 +5886,6 @@ parameters:
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
 
 		-
-			message: "#^Parameter \\#2 \\$executiondate of method BonPrelevement\\:\\:generate\\(\\) expects int, string given\\.$#"
-			count: 1
-			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
 			message: "#^Property BonPrelevement\\:\\:\\$amount \\(float\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/compta/prelevement/class/bonprelevement.class.php
@@ -20276,11 +20271,6 @@ parameters:
 			path: ../../htdocs/product/stats/supplier_proposal.php
 
 		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/card.php
@@ -20292,11 +20282,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$pricemin might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/card.php
-
-		-
-			message: "#^Variable \\$units might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/card.php
 
