@@ -12286,23 +12286,8 @@ parameters:
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: "#^Variable \\$modulepart might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
@@ -16826,11 +16811,6 @@ parameters:
 			path: ../../htdocs/hrm/position.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/hrm/position.php
-
-		-
 			message: "#^Variable \\$job might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/position.php
@@ -19071,11 +19051,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_list.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$IBS_DEVISE in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/paybox/lib/paybox.lib.php
@@ -20188,11 +20163,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/product/stock/info.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/product/stock/info.php
 
 		-
@@ -23671,11 +23641,6 @@ parameters:
 			path: ../../htdocs/salaries/virement_request.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/salaries/virement_request.php
-
-		-
 			message: "#^Variable \\$numOfBp might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/virement_request.php
@@ -25586,11 +25551,6 @@ parameters:
 			path: ../../htdocs/user/perms.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/variants/admin/admin.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/variants/class/ProductAttribute.class.php
@@ -26408,11 +26368,6 @@ parameters:
 		-
 			message: "#^Variable \\$arrayofparameters in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
-			path: ../../htdocs/zapier/admin/setup.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/zapier/admin/setup.php
 
 		-
