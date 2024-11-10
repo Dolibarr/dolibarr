@@ -6591,11 +6591,6 @@ parameters:
 			path: ../../htdocs/compta/tva/index.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/info.php
-
-		-
 			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 2
 			path: ../../htdocs/compta/tva/initdatesforvat.inc.php
@@ -13187,11 +13182,6 @@ parameters:
 
 		-
 			message: "#^Offset 'css' on array\\{css\\: 'minwidth200', picto\\: mixed\\} in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/admin/setup.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/datapolicy/admin/setup.php
 
