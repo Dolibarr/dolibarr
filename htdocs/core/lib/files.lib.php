@@ -2134,10 +2134,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 	global $db, $user, $conf;
 
 	$result = 0;
+	$error = 0;
 
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
-	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a tmp dir
+	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
 		$filename = basename(preg_replace('/\.noexe$/', '', $file));
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
@@ -2203,10 +2204,10 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 					// We also exclude '/temp/' dir and 'documents/admin/documents'
 					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
 					$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
-					$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-					if (!$result['error']) {
-						$txt = $result['output'];
+					if (!$resultexec['error']) {
+						$txt = $resultexec['output'];
 						$matches = array();
 						if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
 							$keywords = $matches[1];
@@ -2214,6 +2215,9 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 						if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
 							$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
 						}
+					} else {
+						dol_syslog($resultexec['error']);
+						$error++;
 					}
 				}
 
@@ -2225,11 +2229,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 					// We also exclude '/temp/' dir and 'documents/admin/documents'
 					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_DOCLING', 'docling')." '".escapeshellcmd($filetoprocess)."' --to text ";
-					$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+					$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-					if (!$result['error']) {
-						$txt = $result['output'];
+					if (!$resultexec['error']) {
+						$txt = $resultexec['output'];
 						//$matches = array();
 						//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
 						//	$keywords = $matches[1];
@@ -2238,6 +2242,9 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 						//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
 						//}
 						$textforfulltextindex = $txt;
+					} else {
+						dol_syslog($resultexec['error']);
+						$error++;
 					}
 				}
 			}
@@ -2247,9 +2254,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->keywords = $keywords;
 		}
 
-		$result = $ecmfile->create($user);
-		if ($result < 0) {
-			dol_syslog($ecmfile->error);
+		if (!$error) {
+			$result = $ecmfile->create($user);
+			if ($result < 0) {
+				dol_syslog($ecmfile->error);
+			}
 		}
 	}
 

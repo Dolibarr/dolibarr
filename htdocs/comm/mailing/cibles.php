@@ -52,6 +52,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
+$action = GETPOST('action', 'aZ09');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$mode       = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -72,9 +77,6 @@ if (!$sortorder) {
 
 $id = GETPOSTINT('id');
 $rowid = GETPOSTINT('rowid');
-$action = GETPOST('action', 'aZ09');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
@@ -797,6 +799,10 @@ if ($object->fetch($id) >= 0) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ConfirmResetMailingTargetMassaction"), $langs->trans("ConfirmResetMailingTargetMassactionQuestion"), "confirm_reset_target", null, '', 0, 0, 500, 1);
 		}
 
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+		$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+		$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
 
@@ -804,9 +810,9 @@ if ($object->fetch($id) >= 0) {
 		print '<tr class="liste_titre_filter">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="liste_titre maxwidthsearch">';
-			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$searchpicto = $form->showFilterButtons('left');
 			print $searchpicto;
 			print '</td>';
 		}
@@ -847,9 +853,9 @@ if ($object->fetch($id) >= 0) {
 		print '</td>';
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (empty($conf->main_checkbox_left_column)) {
 			print '<td class="liste_titre maxwidthsearch">';
-			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
 		}
@@ -862,8 +868,9 @@ if ($object->fetch($id) >= 0) {
 
 		print '<tr class="liste_titre">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		if ($conf->main_checkbox_left_column) {
+			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			$totalarray['nbfield']++;
 		}
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", $param, "", "", $sortfield, $sortorder);
@@ -876,8 +883,9 @@ if ($object->fetch($id) >= 0) {
 		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', '', $sortfield, $sortorder, 'center ');
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		if (!$conf->main_checkbox_left_column) {
+			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			$totalarray['nbfield']++;
 		}
 		print '</tr>';
 
