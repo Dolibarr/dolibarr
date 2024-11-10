@@ -24021,11 +24021,6 @@ parameters:
 			path: ../../htdocs/societe/card.php
 
 		-
-			message: "#^Variable \\$formaccounting might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/societe/card.php
-
-		-
 			message: "#^Variable \\$messagetoshow might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/checkvat/checkVatPopup.php
