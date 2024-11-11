@@ -261,16 +261,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
-			message: "#^Left side of \\|\\| is always true\\.$#"
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
@@ -278,6 +268,11 @@ parameters:
 		-
 			message: "#^Result of && is always false\\.$#"
 			count: 6
+			path: ../../htdocs/accountancy/class/accountancyexport.class.php
+
+		-
+			message: "#^Right side of \\|\\| is always true\\.$#"
+			count: 1
 			path: ../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
@@ -636,21 +631,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
@@ -666,59 +646,14 @@ parameters:
 			path: ../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/purchasesjournal.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/purchasesjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/accountancy/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/accountancy/journal/variousjournal.php
 
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
@@ -971,21 +906,6 @@ parameters:
 			path: ../../htdocs/adherents/subscription.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/adherents/subscription.php
-
-		-
 			message: "#^Variable \\$bankline in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/adherents/subscription/card.php
@@ -1041,11 +961,6 @@ parameters:
 			path: ../../htdocs/admin/agenda_reminder.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/agenda_xcal.php
-
-		-
 			message: "#^Variable \\$errorsaved in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/admin/bank.php
@@ -1058,11 +973,6 @@ parameters:
 		-
 			message: "#^Offset 'css' on array\\{css\\: 'minwidth200', enabled\\: mixed\\} in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/admin/dav.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/admin/dav.php
 
 		-
@@ -1111,34 +1021,9 @@ parameters:
 			path: ../../htdocs/admin/events.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/admin/expensereport_rules.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/admin/expensereport_rules.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/admin/expensereport_rules.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/admin/fckeditor.php
-
-		-
 			message: "#^Variable \\$result might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/admin/fediverse.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/admin/fichinter_xcal.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -1446,8 +1331,8 @@ parameters:
 			path: ../../htdocs/admin/system/filecheck.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 3
 			path: ../../htdocs/admin/system/filecheck.php
 
 		-
@@ -1611,6 +1496,11 @@ parameters:
 			path: ../../htdocs/admin/website.php
 
 		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 1
+			path: ../../htdocs/admin/workflow.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/admin/workstation.php
@@ -1644,11 +1534,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/ai/admin/setup.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/api/admin/index.php
 
 		-
 			message: "#^Unable to resolve the template type T in call to method DolibarrApi\\:\\:_cleanObjectDatas\\(\\)$#"
@@ -1891,6 +1776,11 @@ parameters:
 			path: ../../htdocs/api/class/api_setup.class.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 3
+			path: ../../htdocs/api/class/api_setup.class.php
+
+		-
 			message: "#^Variable \\$multicurrency in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/api/class/api_setup.class.php
@@ -2051,6 +1941,11 @@ parameters:
 			path: ../../htdocs/asset/model/card.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/asset/model/card.php
+
+		-
 			message: "#^Property CommonObject\\:\\:\\$entity \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/asset/model/depreciation_options.php
@@ -2091,37 +1986,12 @@ parameters:
 			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
 
 		-
-			message: "#^Variable \\$assetdepreciationoptions might not be defined\\.$#"
-			count: 11
-			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
 			message: "#^Variable \\$parameters might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
 
 		-
-			message: "#^Variable \\$assetdepreciationoptions might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/asset/tpl/depreciation_options_view.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/depreciation_options_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/depreciation_options_view.tpl.php
 
@@ -2136,17 +2006,17 @@ parameters:
 			path: ../../htdocs/asset/tpl/depreciation_options_view.tpl.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/asset/tpl/depreciation_view.tpl.php
+
+		-
 			message: "#^Variable \\$assetdepreciationoptions might not be defined\\.$#"
 			count: 7
 			path: ../../htdocs/asset/tpl/depreciation_view.tpl.php
 
 		-
 			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/asset/tpl/depreciation_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/asset/tpl/depreciation_view.tpl.php
 
@@ -2174,21 +2044,6 @@ parameters:
 			message: "#^Variable \\$code might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/barcode/printsheet.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -2336,6 +2191,11 @@ parameters:
 			path: ../../htdocs/bom/class/bom.class.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/bom/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/bom/tpl/linkedobjectblock.tpl.php
@@ -2348,21 +2208,6 @@ parameters:
 		-
 			message: "#^Variable \\$extrafields might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 9
-			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 18
-			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$this might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
 
 		-
@@ -2421,21 +2266,6 @@ parameters:
 			path: ../../htdocs/bom/tpl/objectline_title.tpl.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/bom/tpl/objectline_title.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 6
-			path: ../../htdocs/bom/tpl/objectline_title.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 14
-			path: ../../htdocs/bom/tpl/objectline_title.tpl.php
-
-		-
 			message: "#^Property CommonDict\\:\\:\\$label \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
@@ -2473,26 +2303,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
 			path: ../../htdocs/bookcal/availabilities_card.php
 
 		-
@@ -2861,6 +2671,11 @@ parameters:
 			path: ../../htdocs/categories/class/categorie.class.php
 
 		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 1
+			path: ../../htdocs/categories/class/categorie.class.php
+
+		-
 			message: "#^Variable \\$url in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/categories/class/categorie.class.php
@@ -2908,36 +2723,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/comm/action/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
 			path: ../../htdocs/comm/action/card.php
 
 		-
@@ -3076,11 +2861,6 @@ parameters:
 			path: ../../htdocs/comm/action/document.php
 
 		-
-			message: "#^Function show_day_events\\(\\) has parameter \\$eventarray with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/comm/action/index.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/index.php
@@ -3151,16 +2931,6 @@ parameters:
 			path: ../../htdocs/comm/action/pertype.php
 
 		-
-			message: "#^Function show_day_events_pertype\\(\\) has parameter \\$colorsbytype with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
-			message: "#^Function show_day_events_pertype\\(\\) has parameter \\$eventarray with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/pertype.php
@@ -3209,16 +2979,6 @@ parameters:
 			message: "#^Variable \\$theme_datacolor might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/comm/action/pertype.php
-
-		-
-			message: "#^Function show_day_events2\\(\\) has parameter \\$colorsbytype with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: "#^Function show_day_events2\\(\\) has parameter \\$eventarray with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/comm/action/peruser.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -3292,6 +3052,11 @@ parameters:
 
 		-
 			message: "#^Result of && is always true\\.$#"
+			count: 6
+			path: ../../htdocs/comm/card.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
 			count: 6
 			path: ../../htdocs/comm/card.php
 
@@ -3421,11 +3186,6 @@ parameters:
 			path: ../../htdocs/comm/mailing/list.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/multiprix.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/agenda.php
@@ -3433,36 +3193,6 @@ parameters:
 		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/comm/propal/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
 			path: ../../htdocs/comm/propal/card.php
 
 		-
@@ -3771,6 +3501,11 @@ parameters:
 			path: ../../htdocs/comm/propal/stats/index.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
@@ -3788,36 +3523,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 7
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 7
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 7
 			path: ../../htdocs/commande/card.php
 
 		-
@@ -4096,6 +3801,11 @@ parameters:
 			path: ../../htdocs/commande/list.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/commande/list.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 3
 			path: ../../htdocs/commande/list.php
@@ -4164,6 +3874,11 @@ parameters:
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/commande/stats/index.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/commande/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -4396,21 +4111,6 @@ parameters:
 			path: ../../htdocs/compta/bank/graph.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/line.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/line.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/bank/line.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/line.php
@@ -4551,11 +4251,6 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/info.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/various_payment/info.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/info.php
@@ -4666,11 +4361,6 @@ parameters:
 			path: ../../htdocs/compta/clients.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/deplacement/list.php
-
-		-
 			message: "#^Variable \\$fileurl_avg might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/deplacement/stats/index.php
@@ -4693,36 +4383,6 @@ parameters:
 		-
 			message: "#^Left side of \\|\\| is always true\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
 			path: ../../htdocs/compta/facture/card-rec.php
 
 		-
@@ -4756,38 +4416,8 @@ parameters:
 			path: ../../htdocs/compta/facture/card.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/card.php
-
-		-
 			message: "#^Parameter \\#12 \\$localtaxes_array of function calcul_price_total expects array\\{string, int\\|string, string, int\\|string, string, string\\}\\|array\\{string, int\\|string, string, string\\}, array\\{\\} given\\.$#"
 			count: 1
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/compta/facture/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -5326,6 +4956,11 @@ parameters:
 			path: ../../htdocs/compta/facture/stats/index.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/compta/facture/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/facture/tpl/linkedobjectblock.tpl.php
@@ -5349,21 +4984,6 @@ parameters:
 			message: "#^Variable \\$total_ttc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/index.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/purchasesjournal.php
 
 		-
 			message: "#^Variable \\$tabcompany might not be defined\\.$#"
@@ -5399,21 +5019,6 @@ parameters:
 			message: "#^Variable \\$tabtva might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
 			message: "#^Variable \\$tabcompany might not be defined\\.$#"
@@ -5451,21 +5056,6 @@ parameters:
 			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/compta/localtax/card.php
-
-		-
 			message: "#^Variable \\$accountline might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/card.php
@@ -5479,21 +5069,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/localtax/class/localtax.class.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
 
 		-
 			message: "#^Variable \\$builddate might not be defined\\.$#"
@@ -5536,21 +5111,6 @@ parameters:
 			path: ../../htdocs/compta/localtax/clients.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/index.php
-
-		-
 			message: "#^Variable \\$arrayofselected might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/localtax/list.php
@@ -5573,21 +5133,6 @@ parameters:
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
 			path: ../../htdocs/compta/localtax/quadri_detail.php
 
 		-
@@ -5654,21 +5199,6 @@ parameters:
 			message: "#^Variable \\$site_account_payment might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/compta/paiement/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/cheque/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/cheque/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/compta/paiement/cheque/card.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
@@ -5931,18 +5461,8 @@ parameters:
 			path: ../../htdocs/compta/prelevement/list.php
 
 		-
-			message: "#^Variable \\$arrayfields might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
-			path: ../../htdocs/compta/prelevement/orders_list.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 5
 			path: ../../htdocs/compta/prelevement/orders_list.php
 
 		-
@@ -5968,6 +5488,11 @@ parameters:
 		-
 			message: "#^Offset 'checked' on array\\{label\\: 'Date', checked\\: 1\\} in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
+			path: ../../htdocs/compta/recap-compta.php
+
+		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 2
 			path: ../../htdocs/compta/recap-compta.php
 
 		-
@@ -6073,36 +5598,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
 			path: ../../htdocs/compta/sociales/card.php
 
 		-
@@ -6231,43 +5726,8 @@ parameters:
 			path: ../../htdocs/compta/sociales/payments.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/sociales/payments.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/byratecountry.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 4
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
 			path: ../../htdocs/compta/stats/cabyprodserv.php
 
 		-
@@ -6316,21 +5776,6 @@ parameters:
 			path: ../../htdocs/compta/stats/cabyprodserv.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/compta/stats/cabyuser.php
@@ -6359,21 +5804,6 @@ parameters:
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/stats/cabyuser.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/casoc.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/casoc.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/casoc.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
@@ -6499,21 +5929,6 @@ parameters:
 			message: "#^Variable \\$type might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
@@ -6679,26 +6094,6 @@ parameters:
 			message: "#^Variable \\$date_start might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/compta/tva/index.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/info.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/initdatesforvat.inc.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/initdatesforvat.inc.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/compta/tva/initdatesforvat.inc.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -6936,6 +6331,11 @@ parameters:
 			path: ../../htdocs/contact/list.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/contact/list.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/contact/list.php
@@ -6951,21 +6351,6 @@ parameters:
 			path: ../../htdocs/contact/perso.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/contact/perso.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/contact/perso.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/contrat/agenda.php
@@ -6978,36 +6363,6 @@ parameters:
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 15
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 15
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 21
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 21
-			path: ../../htdocs/contrat/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 21
 			path: ../../htdocs/contrat/card.php
 
 		-
@@ -7251,6 +6606,11 @@ parameters:
 			path: ../../htdocs/contrat/list.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/contrat/list.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/contrat/list.php
@@ -7281,21 +6641,6 @@ parameters:
 			path: ../../htdocs/contrat/services_list.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/services_list.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 5
 			path: ../../htdocs/contrat/services_list.php
@@ -7322,36 +6667,6 @@ parameters:
 
 		-
 			message: "#^Left side of && is always false\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
@@ -7686,11 +7001,6 @@ parameters:
 			path: ../../htdocs/core/ajax/ajaxdirpreview.php
 
 		-
-			message: "#^Function treeOutputForAbsoluteDir\\(\\) has parameter \\$sqltree with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/ajax/ajaxdirtree.php
-
-		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/ajax/ajaxdirtree.php
@@ -7729,11 +7039,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/ajax/locationincoterms.php
-
-		-
-			message: "#^Function dolPrintSignatureImage\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/ajax/onlineSign.php
 
 		-
 			message: "#^Variable \\$tva_tx in isset\\(\\) always exists and is not nullable\\.$#"
@@ -8476,6 +7781,11 @@ parameters:
 			path: ../../htdocs/core/class/commonobject.class.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/core/class/commonobject.class.php
+
+		-
 			message: "#^Variable \\$minSize in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/commonobject.class.php
@@ -9071,6 +8381,11 @@ parameters:
 			path: ../../htdocs/core/class/html.form.class.php
 
 		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 4
+			path: ../../htdocs/core/class/html.form.class.php
+
+		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/core/class/html.form.class.php
@@ -9078,6 +8393,11 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 8
+			path: ../../htdocs/core/class/html.form.class.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 2
 			path: ../../htdocs/core/class/html.form.class.php
 
 		-
@@ -9111,6 +8431,11 @@ parameters:
 			path: ../../htdocs/core/class/html.formcompany.class.php
 
 		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 1
+			path: ../../htdocs/core/class/html.formcompany.class.php
+
+		-
 			message: "#^Variable \\$idprof might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/class/html.formcompany.class.php
@@ -9137,6 +8462,11 @@ parameters:
 
 		-
 			message: "#^Ternary operator condition is always false\\.$#"
+			count: 3
+			path: ../../htdocs/core/class/html.formfile.class.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
 			count: 3
 			path: ../../htdocs/core/class/html.formfile.class.php
 
@@ -9841,6 +9171,11 @@ parameters:
 			path: ../../htdocs/core/lib/ftp.lib.php
 
 		-
+			message: "#^Array has 2 duplicate keys with value 6 \\(\\\\LOG_INFO, \\\\LOG_DEBUG\\)\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/functions.lib.php
+
+		-
 			message: "#^Comparison operation \"\\>\" between int\\<1, max\\> and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/functions.lib.php
@@ -9974,6 +9309,11 @@ parameters:
 			message: "#^Variable \\$array in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/json.lib.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/core/lib/modulebuilder.lib.php
 
 		-
 			message: "#^Comparison operation \"\\>\" between 0 and 0 is always false\\.$#"
@@ -11221,11 +10561,6 @@ parameters:
 			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
-			message: "#^Function members_card_pdf_create\\(\\) has parameter \\$arrayofmembers with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/member/modules_cards.php
-
-		-
 			message: "#^Variable \\$user in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 2
 			path: ../../htdocs/core/modules/modAgenda.class.php
@@ -12136,6 +11471,11 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/mod_supplier_proposal_marbre.php
 
 		-
+			message: "#^Array has 2 duplicate keys with value 6 \\(\\\\LOG_INFO, \\\\LOG_DEBUG\\)\\.$#"
+			count: 1
+			path: ../../htdocs/core/modules/syslog/mod_syslog_file.php
+
+		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/ticket/doc/doc_generic_ticket_odt.modules.php
@@ -12217,11 +11557,6 @@ parameters:
 
 		-
 			message: "#^Right side of && is always false\\.$#"
-			count: 1
-			path: ../../htdocs/core/search_page.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/search_page.php
 
@@ -12331,68 +11666,13 @@ parameters:
 			path: ../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
-			message: "#^Variable \\$formadmin might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/commonfields_add.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$formadmin might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 13
 			path: ../../htdocs/core/tpl/commonfields_view.tpl.php
 
 		-
@@ -12416,33 +11696,8 @@ parameters:
 			path: ../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 28
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$objectsrc might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$permission might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 17
 			path: ../../htdocs/core/tpl/contacts.tpl.php
 
 		-
@@ -12466,23 +11721,8 @@ parameters:
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: "#^Variable \\$hookmanager might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: "#^Variable \\$modulepart might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: "#^Variable \\$object might not be defined\\.$#"
-			count: 7
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
@@ -12611,28 +11851,8 @@ parameters:
 			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
 			message: "#^Variable \\$hookmanager might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 11
 			path: ../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
@@ -12686,21 +11906,6 @@ parameters:
 			path: ../../htdocs/core/tpl/list_print_subtotal.tpl.php
 
 		-
-			message: "#^Variable \\$db might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 7
-			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
 			message: "#^Variable \\$limit might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/list_print_total.tpl.php
@@ -12718,16 +11923,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 5
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 5
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
 			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
 
 		-
@@ -12771,16 +11966,6 @@ parameters:
 			path: ../../htdocs/core/tpl/object_discounts.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 12
-			path: ../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 5
 			path: ../../htdocs/core/tpl/object_discounts.tpl.php
@@ -12801,31 +11986,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
 			message: "#^Variable \\$buyer might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
@@ -12843,11 +12003,6 @@ parameters:
 		-
 			message: "#^Variable \\$date_start_prefill might not be defined\\.$#"
 			count: 1
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 12
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
@@ -12876,11 +12031,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
@@ -12906,11 +12056,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
 			message: "#^Variable \\$outputalsopricetotalwithtax might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
@@ -12928,11 +12073,6 @@ parameters:
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 2
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
@@ -13201,11 +12341,6 @@ parameters:
 			path: ../../htdocs/core/website.inc.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/cron/admin/cron.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/cron/card.php
@@ -13366,11 +12501,6 @@ parameters:
 			path: ../../htdocs/datapolicy/admin/setup.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/datapolicy/admin/setup.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 3
 			path: ../../htdocs/datapolicy/class/datapolicy.class.php
@@ -13446,6 +12576,11 @@ parameters:
 			path: ../../htdocs/delivery/class/delivery.class.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/delivery/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/delivery/tpl/linkedobjectblock.tpl.php
@@ -13459,21 +12594,6 @@ parameters:
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/document.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
 
 		-
 			message: "#^Variable \\$hidedesc might not be defined\\.$#"
@@ -13651,6 +12771,11 @@ parameters:
 			path: ../../htdocs/don/info.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/don/list.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/don/list.php
@@ -13708,21 +12833,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/don/payment/payment.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/don/payment/payment.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/don/payment/payment.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
 			path: ../../htdocs/don/payment/payment.php
 
 		-
@@ -14466,21 +13576,6 @@ parameters:
 			path: ../../htdocs/expedition/dispatch.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
 			message: "#^Variable \\$modebatch might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/expedition/dispatch.php
@@ -14527,21 +13622,6 @@ parameters:
 
 		-
 			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/list.php
 
@@ -14951,11 +14031,6 @@ parameters:
 			path: ../../htdocs/exports/export.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/externalsite/admin/index.php
-
-		-
 			message: "#^Variable \\$heightforframes might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/externalsite/frames.php
@@ -14971,42 +14046,12 @@ parameters:
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
 			message: "#^Property CommonObjectLine\\:\\:\\$product_type \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Variable \\$objp might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
 
@@ -15189,6 +14234,11 @@ parameters:
 			message: "#^Right side of && is always false\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/note.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -15833,36 +14883,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 3
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 8
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
@@ -16826,41 +15846,6 @@ parameters:
 			path: ../../htdocs/hrm/class/skillrank.class.php
 
 		-
-			message: "#^Function diff\\(\\) has parameter \\$TMergedSkills with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Function displayUsersListWithPicto\\(\\) has parameter \\$TUser with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Function mergeSkills\\(\\) has parameter \\$TSkill1 with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Function mergeSkills\\(\\) has parameter \\$TSkill2 with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Function mergeSkills\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Function rate\\(\\) has parameter \\$TMergedSkills with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Function skillList\\(\\) has parameter \\$TMergedSkills with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/compare.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/compare.php
@@ -16869,21 +15854,6 @@ parameters:
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/hrm/compare.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/hrm/core/tpl/objectline_title.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/hrm/core/tpl/objectline_title.tpl.php
 
 		-
 			message: "#^Variable \\$action might not be defined\\.$#"
@@ -16911,23 +15881,8 @@ parameters:
 			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
 			message: "#^Variable \\$moreparam might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: "#^Variable \\$note_private might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: "#^Variable \\$note_public might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
 
 		-
@@ -17041,11 +15996,6 @@ parameters:
 			path: ../../htdocs/hrm/position.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/hrm/position.php
-
-		-
 			message: "#^Variable \\$job might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/position.php
@@ -17091,6 +16041,11 @@ parameters:
 			path: ../../htdocs/hrm/skill_card.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/hrm/skill_card.php
+
+		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/skill_card.php
@@ -17109,6 +16064,11 @@ parameters:
 			message: "#^Variable \\$upload_dir might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/hrm/skill_document.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/hrm/skill_list.php
 
 		-
 			message: "#^Variable \\$contextpage in empty\\(\\) always exists and is not falsy\\.$#"
@@ -17146,36 +16106,6 @@ parameters:
 			path: ../../htdocs/imports/import.php
 
 		-
-			message: "#^Function arrayInsert\\(\\) has parameter \\$array with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Function arrayInsert\\(\\) has parameter \\$insertArray with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Function arrayInsert\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Function getnewkey\\(\\) has parameter \\$fieldssource with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Function getnewkey\\(\\) has parameter \\$listofkey with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
-			message: "#^Function show_elem\\(\\) has parameter \\$fieldssource with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/imports/import.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 12
 			path: ../../htdocs/imports/import.php
@@ -17187,6 +16117,11 @@ parameters:
 
 		-
 			message: "#^Offset 'picto' on array\\{labelkey\\: mixed, labelkeyarray\\: array\\<int, string\\>, label\\: string, required\\: 0\\|1, position\\: mixed, picto\\: ''\\} in empty\\(\\) always exists and is always falsy\\.$#"
+			count: 1
+			path: ../../htdocs/imports/import.php
+
+		-
+			message: "#^Parameter \\#3 \\$insertArray of function arrayInsert expects array\\{label\\?\\: string, example1\\?\\: string, required\\?\\: bool, imported\\?\\: bool\\|int\\<0, 1\\>, position\\?\\: int\\}, non\\-empty\\-array\\<string, array\\{label\\?\\: string, example1\\?\\: string, required\\?\\: bool, imported\\?\\: bool\\|int\\<0, 1\\>, position\\?\\: int\\}\\> given\\.$#"
 			count: 1
 			path: ../../htdocs/imports/import.php
 
@@ -18141,6 +17076,11 @@ parameters:
 			path: ../../htdocs/main.inc.php
 
 		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 1
+			path: ../../htdocs/margin/agentMargins.php
+
+		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/margin/agentMargins.php
@@ -18278,6 +17218,11 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 3
+			path: ../../htdocs/modulebuilder/index.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
 			path: ../../htdocs/modulebuilder/index.php
 
 		-
@@ -18861,6 +17806,11 @@ parameters:
 			path: ../../htdocs/mrp/mo_production.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$action might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
@@ -19004,6 +17954,11 @@ parameters:
 			message: "#^Property Opensurveysondage\\:\\:\\$title \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../htdocs/opensurvey/exportcsv.php
 
 		-
 			message: "#^Empty array passed to foreach\\.$#"
@@ -19261,11 +18216,6 @@ parameters:
 			path: ../../htdocs/partnership/partnership_list.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/paybox/admin/paybox.php
-
-		-
 			message: "#^Variable \\$IBS_DEVISE in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/paybox/lib/paybox.lib.php
@@ -19351,19 +18301,9 @@ parameters:
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/product/tpl/card_edit.tpl.php
 
 		-
 			message: "#^Property ActionsCardService\\:\\:\\$field_list has no type specified\\.$#"
@@ -19381,11 +18321,6 @@ parameters:
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
 			message: "#^Variable \\$refalreadyexists might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
@@ -19394,11 +18329,6 @@ parameters:
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/product/canvas/service/tpl/card_edit.tpl.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -20376,11 +19306,6 @@ parameters:
 			path: ../../htdocs/product/stock/info.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/product/stock/info.php
-
-		-
 			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/product/stock/info.php
@@ -20991,16 +19916,6 @@ parameters:
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 9
 			path: ../../htdocs/product/traduction.php
@@ -21364,31 +20279,6 @@ parameters:
 			message: "#^Variable \\$total_time in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/projet/element.php
-
-		-
-			message: "#^Function constructGanttLine\\(\\) has parameter \\$tarr with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Function constructGanttLine\\(\\) has parameter \\$task with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Function constructGanttLine\\(\\) has parameter \\$task_dependencies with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Function findChildGanttLine\\(\\) has parameter \\$tarr with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: "#^Function findChildGanttLine\\(\\) has parameter \\$task_dependencies with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/projet/ganttchart.inc.php
 
 		-
 			message: "#^Variable \\$dateformat might not be defined\\.$#"
@@ -21819,6 +20709,11 @@ parameters:
 			message: "#^Variable \\$valtoshow might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/projet/tasks/time.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: "#^Variable \\$object might not be defined\\.$#"
@@ -23196,6 +22091,11 @@ parameters:
 			path: ../../htdocs/reception/note.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/reception/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/reception/tpl/linkedobjectblock.tpl.php
@@ -23856,11 +22756,6 @@ parameters:
 			path: ../../htdocs/salaries/virement_request.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 8
-			path: ../../htdocs/salaries/virement_request.php
-
-		-
 			message: "#^Variable \\$numOfBp might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/salaries/virement_request.php
@@ -24396,33 +23291,13 @@ parameters:
 			path: ../../htdocs/societe/project.php
 
 		-
-			message: "#^Variable \\$action might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
 			message: "#^Variable \\$db might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
-			message: "#^Variable \\$langs might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 4
-			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 3
 			path: ../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
 
 		-
@@ -24488,36 +23363,6 @@ parameters:
 		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 1
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
-			path: ../../htdocs/supplier_proposal/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 4
 			path: ../../htdocs/supplier_proposal/card.php
 
 		-
@@ -25471,6 +24316,11 @@ parameters:
 			path: ../../htdocs/ticket/messaging.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/ticket/tpl/linkedobjectblock.tpl.php
+
+		-
 			message: "#^Variable \\$object might not be defined\\.$#"
 			count: 2
 			path: ../../htdocs/ticket/tpl/linkedobjectblock.tpl.php
@@ -25588,6 +24438,11 @@ parameters:
 		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 4
+			path: ../../htdocs/user/class/user.class.php
+
+		-
+			message: "#^Return type of call to function dol_sort_array contains unresolvable type\\.$#"
+			count: 1
 			path: ../../htdocs/user/class/user.class.php
 
 		-
@@ -25766,11 +24621,6 @@ parameters:
 			path: ../../htdocs/user/perms.php
 
 		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/variants/admin/admin.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: ../../htdocs/variants/class/ProductAttribute.class.php
@@ -25827,6 +24677,11 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: ../../htdocs/variants/list.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
 			count: 1
 			path: ../../htdocs/variants/list.php
 
@@ -26031,6 +24886,11 @@ parameters:
 			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
 
 		-
+			message: "#^Unable to resolve the template type T in call to function dol_sort_array$#"
+			count: 1
+			path: ../../htdocs/webportal/class/html.formlistwebportal.class.php
+
+		-
 			message: "#^Parameter \\#3 \\$preselectedvalue of method FormWebPortal\\:\\:selectForForms\\(\\) expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/webportal/class/html.formwebportal.class.php
@@ -26066,244 +24926,19 @@ parameters:
 			path: ../../htdocs/webportal/class/webportalpropal.class.php
 
 		-
-			message: "#^Function createActionComm\\(\\) has parameter \\$actioncomm with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
-			message: "#^Function createActionComm\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
-			message: "#^Function updateActionComm\\(\\) has parameter \\$actioncomm with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
-			message: "#^Function updateActionComm\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_actioncomm.php
-
-		-
 			message: "#^Parameter \\#1 \\$authentication of function check_authentication expects array\\{login\\: string, password\\: string, entity\\: int\\|null, dolibarrkey\\: string\\}, array\\{login\\: string, entity\\: int\\} given\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_category.php
 
 		-
-			message: "#^Function createContact\\(\\) has parameter \\$contact with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Function createContact\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Function getContactsForThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Function updateContact\\(\\) has parameter \\$contact with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Function updateContact\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_contact.php
-
-		-
-			message: "#^Function createInvoice\\(\\) has parameter \\$invoice with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Function createInvoice\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Function getInvoice\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Function getInvoicesForThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/webservices/server_invoice.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Variable \\$newobject might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Variable \\$socid might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/webservices/server_invoice.php
-
-		-
-			message: "#^Function createOrder\\(\\) has parameter \\$order with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Function createOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Function getOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Function getOrdersForThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Function updateOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Function validOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Variable \\$socid might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_order.php
-
-		-
-			message: "#^Function createProductOrService\\(\\) has parameter \\$product with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function createProductOrService\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function deleteProductOrService\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function getListOfProductsOrServices\\(\\) has parameter \\$filterproduct with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function getListOfProductsOrServices\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function getProductsForCategory\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function updateProductOrService\\(\\) has parameter \\$product with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function updateProductOrService\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_productorservice.php
-
-		-
-			message: "#^Function createProject\\(\\) has parameter \\$project with no value type specified in iterable type array\\.$#"
-			count: 1
 			path: ../../htdocs/webservices/server_project.php
-
-		-
-			message: "#^Function createProject\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_project.php
-
-		-
-			message: "#^Function getProject\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_project.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_project.php
-
-		-
-			message: "#^Function getSupplierInvoice\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_supplier_invoice.php
-
-		-
-			message: "#^Function getSupplierInvoicesForThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_supplier_invoice.php
-
-		-
-			message: "#^Function createThirdParty\\(\\) has parameter \\$thirdparty with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function createThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function deleteThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function getListOfThirdParties\\(\\) has parameter \\$filterthirdparty with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function getListOfThirdParties\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function getThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function updateThirdParty\\(\\) has parameter \\$thirdparty with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function updateThirdParty\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_thirdparty.php
-
-		-
-			message: "#^Function createUserFromThirdparty\\(\\) has parameter \\$thirdpartywithuser with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_user.php
-
-		-
-			message: "#^Function getListOfGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../htdocs/webservices/server_user.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
@@ -26588,11 +25223,6 @@ parameters:
 		-
 			message: "#^Variable \\$arrayofparameters in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
-			path: ../../htdocs/zapier/admin/setup.php
-
-		-
-			message: "#^Variable \\$form might not be defined\\.$#"
-			count: 2
 			path: ../../htdocs/zapier/admin/setup.php
 
 		-

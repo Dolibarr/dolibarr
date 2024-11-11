@@ -333,6 +333,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
  *    	@param      float	$duration_value		Duration value
  *    	@param      string	$duration_unit		Duration unit
  *      @return     float	$result
+ *      @see measuringUnitString()
  */
 function convertDurationtoHour($duration_value, $duration_unit)
 {
