@@ -6606,21 +6606,6 @@ parameters:
 			path: ../../htdocs/contrat/services_list.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/services_list.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/contrat/services_list.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 5
 			path: ../../htdocs/contrat/services_list.php
@@ -6647,36 +6632,6 @@ parameters:
 
 		-
 			message: "#^Left side of && is always false\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#3 \\$second of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/core/actions_addupdatedelete.inc.php
 
