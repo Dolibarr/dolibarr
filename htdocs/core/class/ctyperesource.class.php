@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 /**
  * Class Ctyperesource
  */
-class Ctyperesource extends CommonDict
+class Ctyperesource
 {
 	/**
 	 * @var string Id to identify managed objects
@@ -465,7 +465,7 @@ class Ctyperesource extends CommonDict
 /**
  * Class CtyperesourceLine
  */
-class CtyperesourceLine extends CommonObjectLine
+class CtyperesourceLine extends CommonDict
 {
 	/**
 	 * @var int ID
