@@ -29,11 +29,11 @@
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
  */
 function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesures, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -97,15 +97,13 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath
 			);
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$arrayofmesures[$tablealias.'.'.$key.'-stddevpop'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
-					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
-					'position' => ($position + ($count * 100000)).'.5',
-					'table' => $object->table_element,
-					'tablefromt' => $tablepath
-				);
-			}
+			$arrayofmesures[$tablealias.'.'.$key.'-stddevpop'] = array(
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
+				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
+				'position' => ($position + ($count * 100000)).'.5',
+				'table' => $object->table_element,
+				'tablefromt' => $tablepath
+			);
 		}
 	}
 	// Add extrafields to Measures
@@ -142,15 +140,13 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-					$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-stddevpop'] = array(
-						'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
-						'labelnohtml' => $labelofobject.': '.$langs->trans($val),
-						'position' => ($position + ($count * 100000)).'.5',
-						'table' => $object->table_element,
-						'tablefromt' => $tablepath
-					);
-				}
+				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-stddevpop'] = array(
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
+					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
+					'position' => ($position + ($count * 100000)).'.5',
+					'table' => $object->table_element,
+					'tablefromt' => $tablepath
+				);
 			}
 		}
 	}
@@ -183,11 +179,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
  */
 function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -352,11 +348,11 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
  * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
  */
 function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroupby, $level = 0, &$count = 0, &$tablepath = '')
 {

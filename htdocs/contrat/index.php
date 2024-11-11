@@ -334,7 +334,7 @@ $sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AN
 $sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
 $sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
 $sql .= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
@@ -351,7 +351,7 @@ if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.statut,";
-$sql .= " s.nom, s.name_alias, s.logo, s.rowid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
+$sql .= " s.nom, s.name_alias, s.logo, s.rowid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max);
 

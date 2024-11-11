@@ -9733,6 +9733,7 @@ abstract class CommonObject
 		 }*/
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {

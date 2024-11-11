@@ -198,6 +198,12 @@ class FactureRec extends CommonInvoice
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
+	/**
+	 * @var int
+	 */
+	public $fk_societe_rib;
+
+	const PAYMENTCODETOEDITSOCIETERIB = "PRE";
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -267,6 +273,7 @@ class FactureRec extends CommonInvoice
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 210),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 215),
 		'suspended' => array('type' => 'integer', 'label' => 'Suspended', 'enabled' => 1, 'visible' => -1, 'position' => 225),
+		'fk_societe_rib' => array('type' => 'integer', 'label' => 'Fk Societe RIB', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -358,6 +365,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", multicurrency_code";
 			$sql .= ", multicurrency_tx";
 			$sql .= ", suspended";
+			$sql .= ", fk_societe_rib";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql .= ", ".((int) $this->socid);
@@ -387,6 +395,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", '".$this->db->escape($facsrc->multicurrency_code)."'";
 			$sql .= ", ".((float) $facsrc->multicurrency_tx);
 			$sql .= ", ".((int) $this->suspended);
+			$sql .= ", ".((int) $this->fk_societe_rib);
 			$sql .= ")";
 
 			if ($this->db->query($sql)) {
@@ -559,6 +568,7 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_ttc = ".((float) $this->total_ttc);
+		$sql .= " fk_societe_rib = ".((int) $this->fk_societe_rib);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -612,7 +622,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.modelpdf as model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
-		$sql .= ', f.fk_account';
+		$sql .= ', f.fk_account, f.fk_societe_rib';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql .= ', f.generate_pdf';
 		$sql .= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
@@ -663,6 +673,7 @@ class FactureRec extends CommonInvoice
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_project;
 				$this->fk_account             = $obj->fk_account;
+				$this->fk_societe_rib         = $obj->fk_societe_rib;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;	// deprecated

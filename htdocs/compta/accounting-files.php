@@ -417,11 +417,11 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 						//var_dump($files);
 						if (count($files) < 1) {
 							$nofile = array();
-							$nofile['id'] = $objd->id;
-							$nofile['entity'] = $objd->entity;
+							$nofile['id'] = (int) $objd->id;
+							$nofile['entity'] = (int) $objd->entity;
 							$nofile['date'] = $db->jdate($objd->date);
 							$nofile['date_due'] = $db->jdate($objd->date_due);
-							$nofile['paid'] = $objd->paid;
+							$nofile['paid'] = (int) $objd->paid;
 							$nofile['amount_ht'] = $objd->total_ht;
 							$nofile['amount_ttc'] = $objd->total_ttc;
 							$nofile['amount_vat'] = $objd->total_vat;
@@ -444,11 +444,11 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 							$filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 						} else {
 							foreach ($files as $key => $file) {
-								$file['id'] = $objd->id;
-								$file['entity'] = $objd->entity;
+								$file['id'] = (int) $objd->id;
+								$file['entity'] = (int) $objd->entity;
 								$file['date'] = $db->jdate($objd->date);
 								$file['date_due'] = $db->jdate($objd->date_due);
-								$file['paid'] = $objd->paid;
+								$file['paid'] = (int) $objd->paid;
 								$file['amount_ht'] = $objd->total_ht;
 								$file['amount_ttc'] = $objd->total_ttc;
 								$file['amount_vat'] = $objd->total_vat;
@@ -816,7 +816,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			print '<td class="nowraponall tdoverflowmax150">';
 
 			if ($data['item'] == 'Invoice') {
-				$invoice->id = $data['id'];
+				$invoice->id = (int) $data['id'];
 				$invoice->ref = $data['ref'];
 				$invoice->total_ht = $data['amount_ht'];
 				$invoice->total_ttc = $data['amount_ttc'];
@@ -827,7 +827,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$invoice->multicurrency_code = $data['currency'];
 				print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 			} elseif ($data['item'] == 'SupplierInvoice') {
-				$supplier_invoice->id = $data['id'];
+				$supplier_invoice->id = (int) $data['id'];
 				$supplier_invoice->ref = $data['ref'];
 				$supplier_invoice->total_ht = $data['amount_ht'];
 				$supplier_invoice->total_ttc = $data['amount_ttc'];
@@ -838,27 +838,27 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$supplier_invoice->multicurrency_code = $data['currency'];
 				print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 			} elseif ($data['item'] == 'ExpenseReport') {
-				$expensereport->id = $data['id'];
+				$expensereport->id = (int) $data['id'];
 				$expensereport->ref = $data['ref'];
 				print $expensereport->getNomUrl(1, 0, 0, 0, 0, 0);
 			} elseif ($data['item'] == 'SalaryPayment') {
-				$salary_payment->id = $data['id'];
+				$salary_payment->id = (int) $data['id'];
 				$salary_payment->ref = $data['ref'];
 				print $salary_payment->getNomUrl(1);
 			} elseif ($data['item'] == 'Donation') {
-				$don->id = $data['id'];
+				$don->id = (int) $data['id'];
 				$don->ref = $data['ref'];
 				print $don->getNomUrl(1, 0, '', 0);
 			} elseif ($data['item'] == 'SocialContributions') {
-				$charge_sociales->id = $data['id'];
+				$charge_sociales->id = (int) $data['id'];
 				$charge_sociales->ref = $data['ref'];
 				print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
 			} elseif ($data['item'] == 'VariousPayment') {
-				$various_payment->id = $data['id'];
+				$various_payment->id = (int) $data['id'];
 				$various_payment->ref = $data['ref'];
 				print $various_payment->getNomUrl(1, '', 0, 0);
 			} elseif ($data['item'] == 'LoanPayment') {
-				$payment_loan->id = $data['id'];
+				$payment_loan->id = (int) $data['id'];
 				$payment_loan->ref = $data['ref'];
 				print $payment_loan->getNomUrl(1, 0, 0, '', 0);
 			} else {

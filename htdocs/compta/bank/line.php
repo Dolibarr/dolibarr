@@ -168,8 +168,8 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		$db->begin();
 
 		$amount = price2num(GETPOST('amount'));
-		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
-		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		$dateop = dol_mktime(12, 0, 0, GETPOSTINT("dateomonth"), GETPOSTINT("dateoday"), GETPOSTINT("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
@@ -636,7 +636,7 @@ if ($result) {
 
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, '', 'parent', 0, 0, 1);
 
 			$arrayselected = array();
 
@@ -647,7 +647,7 @@ if ($result) {
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
+			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, '', 0, "90%");
 			print "</td></tr>";
 		}
 

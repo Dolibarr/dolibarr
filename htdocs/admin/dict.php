@@ -275,7 +275,7 @@ $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle A
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity IN (".getEntity($tabname[DICT_TVA]).")";
+$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_pays = c.rowid LEFT JOIN ".MAIN_DB_PREFIX."c_departements as db ON t.fk_department_buyer = db.rowid WHERE t.entity IN (".getEntity($tabname[DICT_TVA]).")";
 $tabsql[DICT_TYPE_CONTACT] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[DICT_PAYMENT_TERM] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAYMENT_TERM]).")";
 $tabsql[DICT_PAIEMENT] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAIEMENT]).")";
@@ -322,7 +322,7 @@ $tabsqlsort[DICT_ACTIONCOMM] = "a.type ASC, a.module ASC, a.position ASC, a.code
 $tabsqlsort[DICT_CHARGESOCIALES] = "c.label ASC, a.code ASC, a.libelle ASC";
 $tabsqlsort[DICT_TYPENT] = "country DESC,".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ' t.position ASC,' : '')." libelle ASC";
 $tabsqlsort[DICT_CURRENCIES] = "label ASC";
-$tabsqlsort[DICT_TVA] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
+$tabsqlsort[DICT_TVA] = "country ASC, department_buyer ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[DICT_TYPE_CONTACT] = "t.element ASC, t.source ASC, t.position ASC, t.code ASC";
 $tabsqlsort[DICT_PAYMENT_TERM] = "sortorder ASC, code ASC";
 $tabsqlsort[DICT_PAIEMENT] = "code ASC";
@@ -369,7 +369,7 @@ $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
 $tabfield[DICT_TYPENT] = "code,libelle,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[DICT_CURRENCIES] = "code,label,unicode";
-$tabfield[DICT_TVA] = "country_id,country,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[DICT_TVA] = "country_id,country,department_buyer_id,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfield[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfield[DICT_PAIEMENT] = "code,libelle,type";
@@ -416,7 +416,7 @@ $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
 $tabfieldvalue[DICT_TYPENT] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[DICT_CURRENCIES] = "code,label,unicode";
-$tabfieldvalue[DICT_TVA] = "country,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[DICT_TVA] = "country,department_buyer_id,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfieldvalue[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[DICT_PAIEMENT] = "code,libelle,type";
@@ -463,7 +463,7 @@ $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
 $tabfieldinsert[DICT_TYPENT] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[DICT_CURRENCIES] = "code_iso,label,unicode";
-$tabfieldinsert[DICT_TVA] = "fk_pays,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
+$tabfieldinsert[DICT_TVA] = "fk_pays,fk_department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
 $tabfieldinsert[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfieldinsert[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[DICT_PAIEMENT] = "code,libelle,type,entity";
@@ -810,6 +810,14 @@ if (empty($reshook)) {
 			if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) {
 				continue; // For some pages, country is not mandatory
 			}
+			// Discard check of mandatory fields for department buyer id for some tables (only for add action)
+			if (GETPOST('actionadd') && $value == 'department_buyer_id' && $tablib[$id] == 'DictionaryVAT') {
+				continue; // For some pages, department buyer id is not mandatory
+			}
+			// Discard check of mandatory fields for department buyer for some tables
+			if ($value == 'department_buyer' && $tablib[$id] == 'DictionaryVAT') {
+				continue; // For some pages, department buyer is not mandatory
+			}
 			// Discard check of mandatory fields for other fields
 			if ($value == 'localtax1' && !GETPOST('localtax1_type')) {
 				continue;
@@ -927,6 +935,9 @@ if (empty($reshook)) {
 		}
 		if ((GETPOST("localtax2_type") || (GETPOST('localtax2_type') == '0')) && !GETPOST("localtax2")) {
 			$_POST["localtax2"] = '0'; // If empty, we force to 0
+		}
+		if (GETPOST('department_buyer_id') <= 0) {
+			$_POST['department_buyer_id'] = ''; // If empty, we force to null
 		}
 		if (GETPOST("accountancy_code") <= 0) {
 			$_POST["accountancy_code"] = ''; // If empty, we force to null
@@ -1576,6 +1587,9 @@ if ($id > 0) {
 						}		// For region page, we do not show the country input
 						$valuetoshow = $langs->trans("Country");
 					}
+					if ($value == 'department_buyer') {
+						$valuetoshow = '';
+					}
 					if ($value == 'recuperableonly') {
 						$valuetoshow = $langs->trans("NPR");
 						$class = "center";
@@ -1601,7 +1615,7 @@ if ($id > 0) {
 					if ($value == 'unit' || $value == 'metric') {
 						$valuetoshow = $langs->trans("MeasuringUnit");
 					}
-					if ($value == 'region_id' || $value == 'country_id') {
+					if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 						$valuetoshow = '';
 					}
 					if ($value == 'accountancy_code') {
@@ -1821,7 +1835,7 @@ if ($id > 0) {
 			}
 
 			$showfield = 1; // By default
-			if ($value == 'region_id' || $value == 'country_id') {
+			if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 				$showfield = 0;
 			}
 
@@ -1860,7 +1874,7 @@ if ($id > 0) {
 			}
 
 			$showfield = 1; // By default
-			if ($value == 'region_id' || $value == 'country_id') {
+			if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 				$showfield = 0;
 			}
 
@@ -2013,6 +2027,9 @@ if ($id > 0) {
 			if ($value == 'country') {
 				$valuetoshow = $langs->trans("Country");
 			}
+			if ($value == 'department_buyer') {
+				$valuetoshow = $langs->trans('DepartmentBuyer');
+			}
 			if ($value == 'recuperableonly') {
 				$valuetoshow = $langs->trans("NPR");
 				$cssprefix = "center ";
@@ -2153,7 +2170,7 @@ if ($id > 0) {
 				$valuetoshow = $langs->trans('Unit');
 			}
 
-			if ($value == 'region_id' || $value == 'country_id') {
+			if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 				$showfield = 0;
 			}
 
@@ -2428,7 +2445,7 @@ if ($id > 0) {
 								$langs->load('trips');
 								$key = $langs->trans(strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != strtoupper($obj->code) ? $key : $obj->$value);
-							} elseif ($value == 'region_id' || $value == 'country_id') {
+							} elseif ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 								$showfield = 0;
 							} elseif ($value == 'unicode') {
 								$valuetoshow = $langs->getCurrencySymbol($obj->code, 1);
@@ -2474,6 +2491,9 @@ if ($id > 0) {
 								}
 								$valuetoshow = length_accountg($valuetoshow);
 							} elseif ($value == 'fk_tva') {
+								if (empty($form->cache_vatrates)) {
+									$form->load_tva('cache_fk_tva', '', $mysoc, new Societe($db), 0, 0, '', false, -1);
+								}
 								foreach ($form->cache_vatrates as $key => $Tab) {
 									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow) {
 										$valuetoshow = $form->cache_vatrates[$key]['label'];
@@ -2747,6 +2767,25 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td>';
 			print '<input type="hidden" name="'. $value .'" value="'.$region_id.'">';
 			print '</td>';
+		} elseif ($value == 'department_buyer') {
+			if ($context == 'edit') {
+				print '<td>';
+				// show department buyer list
+				$country_code = (!empty($obj->country_code) ? $obj->country_code : '');
+				$department_buyer_id = (!empty($obj->department_buyer_id) ? (int) $obj->department_buyer_id : 0);
+				if ($country_code != '') {
+					print img_picto('', 'state', 'class="pictofixedwidth"');
+					print $formcompany->select_state($department_buyer_id, $country_code, 'department_buyer_id', 'minwidth100 maxwidth150 maxwidthonsmartphone');
+				}
+				print '</td>';
+			}
+		} elseif ($value == 'department_buyer_id') {
+			if (!in_array('department_buyer', $fieldlist)) { // If there is already a field department buyer, we don't show department buyer id (avoid duplicate)
+				$department_buyer_id = (!empty($obj->{$value}) ? $obj->{$value} : 0);
+				print '<td class="tdoverflowmax100">';
+				print '<input type="hidden" name="'.$value.'" value="'.$department_buyer_id.'">';
+				print '</td>';
+			}
 		} elseif ($value == 'lang') {
 			print '<td>';
 			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');

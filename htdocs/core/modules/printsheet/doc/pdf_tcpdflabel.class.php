@@ -251,7 +251,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,code:string,encoding:string,is2d:int<0,1>|bool}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,code:string,encoding:string,is2d:int<0,1>|bool}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
