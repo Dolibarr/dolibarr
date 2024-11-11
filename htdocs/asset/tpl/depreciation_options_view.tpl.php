@@ -29,7 +29,13 @@
 /**
  * @var Form $form
  * @var HookManager $hookmanager
+ * @var AssetDepreciationOptions $assetdepreciationoptions
  */
+'
+@phan-var-force ?Form $form
+@phan-var-force HookManager $hookmanager
+@phan-var-force AssetDepreciationOptions $assetdepreciationoptions
+';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
