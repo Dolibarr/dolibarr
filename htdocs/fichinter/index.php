@@ -31,10 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-
-if (!$user->hasRight('ficheinter', 'lire')) {
-	accessforbidden();
-}
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 /**
  * @var Conf $conf
@@ -43,6 +40,10 @@ if (!$user->hasRight('ficheinter', 'lire')) {
  * @var Translate $langs
  * @var User $user
  */
+
+if (!$user->hasRight('ficheinter', 'lire')) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->load("interventions");
@@ -66,6 +67,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
  */
 
 $fichinterstatic = new Fichinter($db);
+$companystatic = new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
@@ -213,7 +215,10 @@ if (isModEnabled('intervention')) {
 				$fichinterstatic->ref = $obj->ref;
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$fichinterstatic->getNomUrl(1).'</td>';
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '</tr>';
 				$i++;
 			}
 		}
@@ -284,8 +289,9 @@ if ($resql) {
 			print '</td></tr></table>';
 
 			print '</td>';
-
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
 			print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
@@ -356,11 +362,10 @@ if (isModEnabled('intervention')) {
 				print '</td></tr></table>';
 
 				print '</td>';
-
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td>';
-
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
-
 				print '</tr>';
 				$i++;
 			}
