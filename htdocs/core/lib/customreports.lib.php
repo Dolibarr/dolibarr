@@ -29,11 +29,11 @@
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
  */
 function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesures, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -183,11 +183,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
  */
 function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -352,11 +352,11 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
  * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
  */
 function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroupby, $level = 0, &$count = 0, &$tablepath = '')
 {
