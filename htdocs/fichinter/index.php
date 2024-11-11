@@ -209,9 +209,10 @@ if (isModEnabled('intervention')) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+				$fichinterstatic->id = $obj->rowid;
+				$fichinterstatic->ref = $obj->ref;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
+				print '<td class="nowrap">'.$fichinterstatic->getNomUrl(1).'</td>';
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
 				$i++;
 			}
