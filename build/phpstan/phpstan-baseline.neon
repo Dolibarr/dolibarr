@@ -9171,11 +9171,6 @@ parameters:
 			path: ../../htdocs/core/lib/ftp.lib.php
 
 		-
-			message: "#^Array has 2 duplicate keys with value 6 \\(\\\\LOG_INFO, \\\\LOG_DEBUG\\)\\.$#"
-			count: 1
-			path: ../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: "#^Comparison operation \"\\>\" between int\\<1, max\\> and 0 is always true\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/functions.lib.php
@@ -11469,11 +11464,6 @@ parameters:
 			message: "#^Property mod_supplier_proposal_marbre\\:\\:\\$prefix has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/mod_supplier_proposal_marbre.php
-
-		-
-			message: "#^Array has 2 duplicate keys with value 6 \\(\\\\LOG_INFO, \\\\LOG_DEBUG\\)\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/syslog/mod_syslog_file.php
 
 		-
 			message: "#^Parameter \\#2 \\$config of class Odf constructor expects string, array\\<string, mixed\\> given\\.$#"
@@ -14202,11 +14192,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$badgeStatus4 might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/index.php
-
-		-
-			message: "#^Variable \\$user might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/index.php
 
@@ -17954,11 +17939,6 @@ parameters:
 			message: "#^Property Opensurveysondage\\:\\:\\$title \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/exportcsv.php
 
 		-
 			message: "#^Empty array passed to foreach\\.$#"
