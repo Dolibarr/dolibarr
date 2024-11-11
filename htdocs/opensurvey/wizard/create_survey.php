@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,9 +91,9 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
 	}
 
 	$testdate = false;
-	$champdatefin = dol_mktime(23, 59, 59, GETPOSTINT('champdatefinmonth'), GETPOSTINT('champdatefinday'), GETPOSTINT('champdatefinyear'));
+	$champdatefin = (int) dol_mktime(23, 59, 59, GETPOSTINT('champdatefinmonth'), GETPOSTINT('champdatefinday'), GETPOSTINT('champdatefinyear'));
 
-	if (! $error && $champdatefin && ($champdatefin > 0)) {	// A date was provided
+	if ($champdatefin > 0) {	// A date was provided, $error still 0 here
 		// Expire date is not before today
 		if ($champdatefin >= dol_now()) {
 			$testdate = true;
