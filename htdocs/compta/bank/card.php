@@ -505,7 +505,7 @@ if ($action == 'create') {
 				$arrayselected[] = $cat->id;
 			}
 		}
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -594,6 +594,10 @@ if ($action == 'create') {
 				$name = 'cle_rib';
 				$sizecss = 'minwidth50';
 				$content = $object->cle_rib;
+			} else {
+				$name = 'undefined';
+				$sizecss = 'undefined';
+				$content = 'undefined';
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
@@ -651,7 +655,7 @@ if ($action == 'create') {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
 		if ($formaccounting->nbaccounts == 0) {
 			$langs->load("errors");
 			$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -1069,7 +1073,7 @@ if ($action == 'create') {
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1110,7 +1114,7 @@ if ($action == 'create') {
 		if (isModEnabled('accounting')) {
 			/** @var FormAccounting $formaccounting */
 			print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+			print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
 			if ($formaccounting->nbaccounts == 0) {
 				$langs->load("errors");
 				$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -1182,6 +1186,10 @@ if ($action == 'create') {
 					$name = 'cle_rib';
 					$css = 'width50';
 					$content = $object->cle_rib;
+				} else {
+					$name = 'undefined';
+					$css = 'undefined';
+					$content = 'undefined';
 				}
 
 				print '<tr><td>'.$langs->trans($val).'</td>';

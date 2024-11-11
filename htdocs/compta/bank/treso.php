@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
  * Copyright (C) 2016-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +284,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 			if ($tmpobj->family == 'invoice') {
 				$facturestatic->ref = $tmpobj->ref;
 				$facturestatic->id = $tmpobj->objid;
-				$facturestatic->type = $tmpobj->type;
+				$facturestatic->type = (int) $tmpobj->type;
 				$ref = $facturestatic->getNomUrl(1, '');
 
 				$societestatic->id = $tmpobj->socid;

@@ -10,11 +10,11 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 560+ occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 510+ occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 500+ occurrences
     // PhanUndeclaredGlobalVariable : 340+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 280+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 270+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 180+ occurrences
-    // PhanTypeMismatchProperty : 150+ occurrences
+    // PhanTypeMismatchProperty : 140+ occurrences
     // PhanPluginUnknownPropertyType : 130+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 120+ occurrences
     // PhanPossiblyUndeclaredVariable : 110+ occurrences
@@ -101,19 +101,11 @@ return [
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/commande/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/accounting-files.php' => ['PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty'],
         'htdocs/compta/bank/account_statement_document.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/bank/annuel.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/bank/bankentries_list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/compta/bank/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/compta/bank/class/account.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/bank/class/api_bankaccounts.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/compta/bank/graph.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/bank/line.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/bank/releve.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/bank/transfer.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/compta/bank/treso.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/compta/bank/various_payment/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/compta/bank/line.php' => ['PhanUndeclaredGlobalVariable'],
+        'htdocs/compta/bank/various_payment/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/compta/bank/various_payment/document.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/compta/bank/various_payment/info.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/compta/bank/various_payment/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchProperty'],
