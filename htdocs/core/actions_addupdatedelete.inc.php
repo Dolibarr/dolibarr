@@ -74,7 +74,7 @@
 $hidedetails = isset($hidedetails) ? $hidedetails : '';
 $hidedesc = isset($hidedesc) ? $hidedesc : '';
 $hideref = isset($hideref) ? $hideref : '';
-
+$error = 0;
 
 if (!empty($permissionedit) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissionedit; // For backward compatibility
@@ -394,7 +394,7 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 	$keyforfield = $reg[1];
 	if (property_exists($object, $keyforfield)) {
 		if (!empty($object->fields[$keyforfield]) && in_array($object->fields[$keyforfield]['type'], array('date', 'datetime', 'timestamp'))) {
-			$object->$keyforfield = dol_mktime(GETPOST($keyforfield.'hour'), GETPOST($keyforfield.'min'), GETPOST($keyforfield.'sec'), GETPOST($keyforfield.'month'), GETPOST($keyforfield.'day'), GETPOST($keyforfield.'year'));
+			$object->$keyforfield = dol_mktime(GETPOSTINT($keyforfield.'hour'), GETPOSTINT($keyforfield.'min'), GETPOSTINT($keyforfield.'sec'), GETPOSTINT($keyforfield.'month'), GETPOSTINT($keyforfield.'day'), GETPOSTINT($keyforfield.'year'));
 		} else {
 			$object->$keyforfield = GETPOST($keyforfield);
 		}
@@ -650,7 +650,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 		$objectutil = dol_clone($object, 1);
 		// We used native clone to keep this->db valid and allow to use later all the methods of object.
-		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+		// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
 		if (is_object($result) || $result > 0) {

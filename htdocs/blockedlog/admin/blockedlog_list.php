@@ -41,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_db_name
  */
 
 // Load translation files required by the page
@@ -71,12 +73,12 @@ $search_endday = GETPOSTINT('search_endday');
 $search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
-if ($search_startyear != '') {
+if (GETPOST('search_startyear') != '') {
 	$search_start = dol_mktime(0, 0, 0, $search_startmonth, $search_startday, $search_startyear);
 }
 $search_end = -1;
 if (GETPOST('search_endyear') != '') {
-	$search_end = dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
 $search_code = GETPOST('search_code', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');

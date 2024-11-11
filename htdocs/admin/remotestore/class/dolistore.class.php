@@ -302,6 +302,8 @@ class Dolistore
 
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
+		$dolibarrversiontouse = DOL_VERSION;
+		//$dolibarrversiontouse = 20.0;
 
 		$i = 0;
 		foreach ($this->products as $product) {
@@ -333,17 +335,17 @@ class Dolistore
 			// free or pay ?
 			if ($product->price > 0) {
 				$price = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
 			} else {
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
-				$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
 				$download_link .= '<a class="paddingleft paddingright" target="_blank" rel="noopener noreferrer" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
 			}
 
 			// Set and check version
 			$version = '';
-			if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
-				if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
+			if ($this->version_compare($product->dolibarr_min, $dolibarrversiontouse) <= 0) {
+				if ($this->version_compare($product->dolibarr_max, $dolibarrversiontouse) >= 0) {
 					//compatible
 					$version = '<span class="compatible">'.$langs->trans(
 						'CompatibleUpTo',
@@ -356,7 +358,7 @@ class Dolistore
 					//never compatible, module expired
 					$version = '<span class="notcompatible">'.$langs->trans(
 						'NotCompatible',
-						DOL_VERSION,
+						$dolibarrversiontouse,
 						$product->dolibarr_min,
 						$product->dolibarr_max
 					).'</span>';
@@ -366,7 +368,7 @@ class Dolistore
 				//need update
 				$version = '<span class="compatibleafterupdate">'.$langs->trans(
 					'CompatibleAfterUpdate',
-					DOL_VERSION,
+					$dolibarrversiontouse,
 					$product->dolibarr_min,
 					$product->dolibarr_max
 				).'</span>';

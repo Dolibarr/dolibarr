@@ -85,6 +85,7 @@ $hookmanager->initHooks(array('admintranslation', 'globaladmin'));
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
