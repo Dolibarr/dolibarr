@@ -694,7 +694,7 @@ class FormFile
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;
 				} else {
-					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_movement.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/movement/modules_movement.php';
 					$modellist = ModelePDFMovement::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'export') {
