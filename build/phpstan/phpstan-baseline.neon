@@ -11926,31 +11926,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
 			message: "#^Variable \\$buyer might not be defined\\.$#"
 			count: 6
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
@@ -12556,21 +12531,6 @@ parameters:
 			path: ../../htdocs/document.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
 			message: "#^Variable \\$hidedesc might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/don/card.php
@@ -12803,21 +12763,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: ../../htdocs/don/payment/payment.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/don/payment/payment.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/don/payment/payment.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
 			path: ../../htdocs/don/payment/payment.php
 
 		-
@@ -13561,21 +13506,6 @@ parameters:
 			path: ../../htdocs/expedition/dispatch.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 6
-			path: ../../htdocs/expedition/dispatch.php
-
-		-
 			message: "#^Variable \\$modebatch might not be defined\\.$#"
 			count: 4
 			path: ../../htdocs/expedition/dispatch.php
@@ -13622,21 +13552,6 @@ parameters:
 
 		-
 			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/expedition/list.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
 			count: 1
 			path: ../../htdocs/expedition/list.php
 
@@ -14061,42 +13976,12 @@ parameters:
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
-			message: "#^Parameter \\#1 \\$hour of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#2 \\$minute of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 2
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 3
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
 			message: "#^Property CommonObjectLine\\:\\:\\$product_type \\(int\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
 
 		-
 			message: "#^Variable \\$maxlength might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/fichinter/card-rec.php
-
-		-
-			message: "#^Variable \\$objp might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/fichinter/card-rec.php
 

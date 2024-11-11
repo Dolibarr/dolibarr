@@ -65,7 +65,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
-$donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+$donation_date = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
 $public_donation = GETPOSTINT("public");
 
