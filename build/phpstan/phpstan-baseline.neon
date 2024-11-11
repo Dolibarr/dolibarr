@@ -9666,6 +9666,11 @@ parameters:
 			path: ../../htdocs/core/lib/accounting.lib.php
 
 		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: ../../htdocs/core/lib/admin.lib.php
+
+		-
 			message: "#^Offset 1 on array\\{string, non\\-falsy\\-string, string\\} in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/core/lib/admin.lib.php
