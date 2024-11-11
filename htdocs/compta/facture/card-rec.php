@@ -248,6 +248,7 @@ if (empty($reshook)) {
 
 			$object->mode_reglement_id     = GETPOSTINT('mode_reglement_id');
 			$object->cond_reglement_id     = GETPOSTINT('cond_reglement_id');
+			$object->fk_societe_rib 	   = GETPOSTINT('accountcustomerid');
 
 			$object->frequency             = $frequency;
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
@@ -331,7 +332,12 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Set mode
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentMode"));
-		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
+		$object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
+		$object->setValueFrom('fk_societe_rib', 0);
+
+		//Need to reload to display bank customer account field
+		header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$object->id);
+		exit;
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Project"));
@@ -356,6 +362,11 @@ if (empty($reshook)) {
 		// Set bank account
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Bank"));
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
+	} elseif ($action == 'setbankaccountcustomer' && $usercancreate) {
+		// Set bank account customer
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("DebitBankAccount"));
+		$fk_societe_rib = (GETPOSTINT('accountcustomerid') != "-1") ? GETPOSTINT('accountcustomerid') : 0;
+		$result = $object->setValueFrom('fk_societe_rib', $fk_societe_rib);
 	} elseif ($action == 'setfrequency' && $usercancreate) {
 		// Set frequency and unit frequency
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Frequency"));
@@ -1009,6 +1020,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 
 	$object = new Facture($db); // Source invoice
+	$factureRec = new FactureRec($db);
 	$product_static = new Product($db);
 
 	if ($object->fetch($id, $ref) > 0) {
@@ -1018,6 +1030,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
+
 
 		print dol_get_fiche_head([], '', '', 0);
 
@@ -1091,6 +1104,38 @@ if ($action == 'create') {
 		print $form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ? GETPOSTINT('mode_reglement_id') : $object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 0, 0, 1, '', 1);
 		//$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', '', 1);
 		print "</td></tr>";
+
+		// Customer Bank Account
+		print "<tr><td>".$langs->trans('DebitBankAccount')."</td><td>";
+		$defaultRibId = $object->thirdparty->getDefaultRib();
+		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $defaultRibId, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+		print "</td></tr>";
+
+		print '<script>
+				$(document).ready(function() {
+                    if($("#selectmode_reglement_id option:selected").data("code") != "' . $factureRec::PAYMENTCODETOEDITSOCIETERIB . '") {
+                      hideselectfksocieterib();
+                    }
+					$("#selectmode_reglement_id").change(function() {
+                        if($("#selectmode_reglement_id option:selected").data("code") != "'. $factureRec::PAYMENTCODETOEDITSOCIETERIB .'") {
+                       	 	hideselectfksocieterib(1);
+                        } else {
+                            showselectfksocieterib();
+                        }
+					});
+				});
+
+                function hideselectfksocieterib(empty = 0){
+                     $("#selectaccountcustomerid").closest("tr").hide();
+                     if(empty == 1){
+                       $("#selectaccountcustomerid").val("-1").change();
+                     }
+                }
+
+                function showselectfksocieterib(){
+                  $("#selectaccountcustomerid").closest("tr").show();
+                }
+				</script>';
 
 		// Bank account
 		if ($object->fk_account > 0) {
@@ -1407,6 +1452,28 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
+
+		// Bank Account Customer
+		if ($object->mode_reglement_code == $object::PAYMENTCODETOEDITSOCIETERIB) {
+			print '<tr><td class="nowrap">';
+			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print $langs->trans('DebitBankAccount');
+			print '<td>';
+
+			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccountcustomer&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetDebitBankAccount'), 1) . '</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td>';
+
+			if ($action == 'editbankaccountcustomer') {
+				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, 1);
+			} else {
+				$form->formRib($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_societe_rib, 'none', '', 0, 1);
+			}
+			print "</td>";
+			print '</tr>';
+		}
 
 		// Bank Account
 		print '<tr><td class="nowrap">';

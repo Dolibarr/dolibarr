@@ -4715,7 +4715,7 @@ class Form
 			}
 
 			if ($format == 0) {
-				$out .= '<option value="' . $id . '"';
+				$out .= '<option value="' . $id . '" data-code="'.$arraytypes['code'].'"';
 			} elseif ($format == 1) {
 				$out .= '<option value="' . $arraytypes['code'] . '"';
 			} elseif ($format == 2) {
@@ -4751,41 +4751,6 @@ class Form
 		if ($user->admin && !$noadmininfo) {
 			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		$out .= ajax_combobox('select' . $htmlname);
-
-		if (empty($nooutput)) {
-			print $out;
-		} else {
-			return $out;
-		}
-	}
-
-	/**
-	 * Return list of payment methods
-	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
-	 *
-	 * @param 	string 	 $selected 		    Id or code or preselected payment mode
-	 * @param 	string 	 $htmlname 		    Name of select field
-	 * @param 	int 	 $empty 			1=can be empty, 0 otherwise
-	 * @param 	string 	 $morecss 		    Add more CSS on select tag
-	 * @param 	int 	 $nooutput 		    1=Return string, do not send to output
-	 * @param   string[] $ribForSelection   Array of RIBs (IBAN / BIC))
-	 * @return  string|void                 String for the HTML select component
-	 */
-	public function selectTypesIban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
-	{
-		$out = '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
-		if ($empty) {
-			$out .= '<option value="">&nbsp;</option>';
-		}
-
-		foreach ($ribForSelection as $rib) {
-			$selectedAttribute = $selected == $rib ? 'selected' : '';
-			$out .= '<option value="' . $rib . '" '.$selectedAttribute.'>';
-			$out .= $rib;
-			$out .= '</option>';
-		}
-		$out .= '</select>';
 		$out .= ajax_combobox('select' . $htmlname);
 
 		if (empty($nooutput)) {
@@ -5247,6 +5212,84 @@ class Form
 	}
 
 	/**
+	 *  Return a HTML select list of bank accounts customer
+	 *
+	 * @param int|''	 	$selected 		Id account preselected
+	 * @param string 		$htmlname 		Name of select zone
+	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users
+	 * @param int|string	$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param string 		$moreattrib 	To add more attribute on select
+	 * @param int 			$showibanbic 	Show iban/bic in label
+	 * @param string 		$morecss 		More CSS
+	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
+	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
+	 */
+	public function selectRib($selected = '', $htmlname = 'ribcompanyid', $filtre = '', $useempty = 0, $moreattrib = '', $showibanbic = 0, $morecss = '', $nooutput = 0)
+	{
+		// phpcs:enable
+		global $langs;
+
+		$out = '';
+
+		$langs->load("admin");
+		$num = 0;
+
+		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
+		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
+		$sql.=  " WHERE 1=1";
+		if ($filtre) {	// TODO Support USF
+			$sql .= " AND " . $filtre;
+		}
+		$sql .= " ORDER BY label";
+		dol_syslog(get_class($this) . "::select_comptes", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+
+			$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
+
+			if ($num == 0) {
+				$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountFound") . '</span>';
+			} else {
+				if (!empty($useempty) && !is_numeric($useempty)) {
+					$out .= '<option value="-1">'.$langs->trans($useempty).'</option>';
+				} elseif ($useempty == 1 || ($useempty == 2 && $num > 1)) {
+					$out .= '<option value="-1">&nbsp;</option>';
+				}
+			}
+
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
+					$out .= '<option value="' . $obj->rowid . '" data-iban-prefix="' . $obj->iban_prefix . ' data-bic="' . $obj->bic . '" selected>';
+				} else {
+					$out .= '<option value="' . $obj->rowid . '" data-iban-prefix="' . $obj->iban_prefix . ' data-bic="' . $obj->bic . '">';
+				}
+				$out .= trim($obj->label);
+				if ($showibanbic) {
+					$out .= ' (' . $obj->iban_prefix . '/' .$obj->bic. ')';
+				}
+				$out .= '</option>';
+				$i++;
+			}
+			$out .= "</select>";
+			$out .= ajax_combobox('select' . $htmlname);
+		} else {
+			dol_print_error($this->db);
+		}
+
+		// Output or return
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+
+		return $num;
+	}
+
+	/**
 	 * Return a HTML select list of establishment
 	 *
 	 * @param 	string 	$selected 		Id establishment preselected
@@ -5347,6 +5390,46 @@ class Form
 				$result = $bankstatic->fetch($selected);
 				if ($result) {
 					print $bankstatic->getNomUrl(1);
+				}
+			} else {
+				print "&nbsp;";
+			}
+		}
+	}
+
+	/**
+	 * Display form to select bank customer account
+	 *
+	 * @param string 	$page 			Page
+	 * @param string 	$selected 		Id of bank customer account
+	 * @param string 	$htmlname 		Name of select html field
+	 * @param string 	$filtre 		filtre for rib selected
+	 * @param int 		$addempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param int 		$showibanbic 	Show iban/bic in label
+	 * @return    						void
+	 */
+	public function formRib($page, $selected = '', $htmlname = 'ribcompanyid', $filtre = '', $addempty = 0, $showibanbic = 0)
+	{
+		global $langs;
+		if ($htmlname != "none") {
+			print '<form method="POST" action="' . $page . '">';
+			print '<input type="hidden" name="action" value="setbankaccountcustomer">';
+			print '<input type="hidden" name="token" value="' . newToken() . '">';
+			$nbaccountfound = $this->selectRib($selected, $htmlname, $filtre, $addempty, '', $showibanbic);
+			if ($nbaccountfound > 0) {
+				print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+			}
+			print '</form>';
+		} else {
+			$langs->load('banks');
+
+			if ($selected) {
+				require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+				$bankstatic = new CompanyBankAccount($this->db);
+				$result = $bankstatic->fetch($selected);
+				if ($result) {
+					print $bankstatic->label;
+					if ($showibanbic) print ' (' . $bankstatic->iban . '/' .$bankstatic->bic. ')';
 				}
 			} else {
 				print "&nbsp;";
@@ -6336,41 +6419,6 @@ class Form
 				print 1;
 			}
 		}
-	}
-
-	/**
-	 *    Show form with IBAN
-	 *
-	 * @param   string   $selected Id mode pre-selectionne
-	 * @param   string   $htmlname Name of select html field
-	 * @param   int      $addempty 1=Add empty entry
-	 * @param   string   $type Type ('direct-debit' or 'bank-transfer')
-	 * @param   int      $nooutput 1=Return string, no output
-	 * @param   string[] $ribForSelection Array of RIBs (IBAN / BIC))
-	 * @return  string   HTML output or ''
-	 */
-	public function formIban(string $selected = '', string $htmlname = 'ribList', int $addempty = 0, string $type = '', int $nooutput = 0, $ribForSelection = [])
-	{
-		$out = '';
-		if ($htmlname != "none") {
-			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
-			if ($type) {
-				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
-			}
-			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, 'minwidth100', 1, $ribForSelection);
-		} else {
-			if ($selected) {
-				$out .= $selected;
-			} else {
-				$out .= "&nbsp;";
-			}
-		}
-
-		if ($nooutput) {
-			return $out;
-		}
-		print $out;
-		return array_search($selected, $ribForSelection);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

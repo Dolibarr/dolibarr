@@ -22003,12 +22003,6 @@ parameters:
 			path: ../../htdocs/fichinter/index.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/fichinter/index.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -27593,12 +27587,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: ../../htdocs/opensurvey/exportcsv.php
 
 		-
 			message: '#^Empty array passed to foreach\.$#'

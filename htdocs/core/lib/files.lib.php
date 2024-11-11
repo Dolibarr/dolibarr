@@ -1887,10 +1887,11 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param   string		$trackid			Track id (used to prefix name of session vars to avoid conflict)
  * @param	int<0,1>	$generatethumbs		1=Generate also thumbs for uploaded image files
  * @param   ?Object		$object				Object used to set 'src_object_*' fields
+ * @param	string		$forceFullTestIndexation		'1'=Force full text storage in database even if global option not set (consume a high level of data)
  * @return	int                             Return integer <=0 if KO, >0 if OK
  * @see dol_remove_file_process()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '')
 {
 	global $db, $user, $conf, $langs;
 
@@ -2127,9 +2128,10 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
  *  @param      Object  $object         Object used to set 'src_object_*' fields
+ *  @param		string	$forceFullTextIndexation		'1'=Force full text indexation even if global option not set
  *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
-function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null, $forceFullTextIndexation = '')
 {
 	global $db, $user, $conf;
 
@@ -2180,6 +2182,14 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 		// Use a convertisser Doc to Text
 		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		if (empty($useFullTextIndexation) && $forceFullTextIndexation == '1') {
+			if (getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT')) {
+				$useFullTextIndexation = 'pdftotext';
+			} elseif (getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_DOCLING')) {
+				$useFullTextIndexation = 'docling';
+			}
+		}
+
 		//$useFullTextIndexation = 1;
 		if ($useFullTextIndexation) {
 			$ecmfile->filepath = $rel_dir;

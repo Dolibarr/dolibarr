@@ -65,6 +65,7 @@ State=State/Province
 StateId=State ID
 StateCode=State/Province code
 StateShort=State
+DepartmentBuyer=Buyer's department
 Region=Region
 Region-State=Region - State
 Country=Country

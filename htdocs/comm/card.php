@@ -397,13 +397,20 @@ if ($object->id > 0) {
 			if ($action == 'editcustomeraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
 				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_customer_general, 'customeraccountancycodegeneral', 0, 1, '', 1);
 			} else {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(0, $object->accountancy_code_customer_general, 1);
+				if ($object->accountancy_code_customer_general > 0) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $object->accountancy_code_customer_general, 1);
 
-				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+				}
+				if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
+					if ($object->accountancy_code_customer_general > 0) {
+						print ' - ';
+					}
+					$accountingAccountByDefault = '<span class="opacitymedium">' . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . '</span>';
+					print $accountingAccountByDefault;
+				}
 			}
-			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . ")";
-			print(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') ? $accountingAccountByDefault : '');
 			print '</td>';
 		}
 
