@@ -19,7 +19,6 @@
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
 				$action = 'transfert';
-				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 				$date_liv = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 				$newfiletmp = preg_replace('/\.od(s|t)/i', '', $newfile);
 				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
