@@ -178,7 +178,7 @@ if ($resql) {
 
 
 /*
- * Draft orders
+ * Draft interventions
  */
 if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
