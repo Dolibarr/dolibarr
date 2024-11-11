@@ -278,6 +278,7 @@ $help_url = '';
 llxHeader('', $langs->trans("RepeatableIntervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card-rec');
 
 $form = new Form($db);
+$fichinterrecstatic = new FichinterRec($db);
 $companystatic = new Societe($db);
 if (isModEnabled('contract')) {
 	$contratstatic = new Contrat($db);
@@ -786,7 +787,7 @@ if ($action == 'create') {
 	} else {
 		// List mode
 
-		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.title,";
+		$sql = "SELECT f.rowid as id, s.nom as name, s.rowid as socid, f.title,";
 		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql .= " f.date_last_gen, f.date_when, f.datec, f.status";
 
@@ -851,16 +852,17 @@ if ($action == 'create') {
 			print "</tr>\n";
 
 
-			// les filtres à faire ensuite
+			// TODO filters
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
 					$objp = $db->fetch_object($resql);
+					$fichinterrecstatic->id = $objp->id;
+					$fichinterrecstatic->ref = $objp->title;
+					$fichinterrecstatic->title = $objp->title;
 
 					print '<tr class="oddeven">';
-					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->fich_rec.'">';
-					print img_object($langs->trans("ShowIntervention"), "intervention").' '.$objp->title;
-					print "</a></td>\n";
+					print '<td>'.$fichinterrecstatic->getNomUrl(1)."</td>\n";
 					if ($objp->socid) {
 						$companystatic->id = $objp->socid;
 						$companystatic->name = $objp->name;
@@ -919,7 +921,7 @@ if ($action == 'create') {
 						if ($user->hasRight('ficheinter', 'creer')) {
 							if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
-								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'&token='.newToken().'">';
+								print '&socid='.$objp->socid.'&id='.$objp->id.'&token='.newToken().'">';
 								print $langs->trans("NewIntervention").'</a>';
 							} else {
 								print $langs->trans("DateIsNotEnough");
