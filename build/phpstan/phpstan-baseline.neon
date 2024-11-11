@@ -31519,31 +31519,7 @@ parameters:
 			path: ../../htdocs/public/agenda/agendaexport.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/public/agenda/agendaexport.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/agenda/agendaexport.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/public/agenda/agendaexport.php
-
-		-
 			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/agenda/agendaexport.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/public/agenda/agendaexport.php
