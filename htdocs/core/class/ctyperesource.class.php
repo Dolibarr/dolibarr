@@ -465,7 +465,7 @@ class Ctyperesource extends CommonDict
 /**
  * Class CtyperesourceLine
  */
-class CtyperesourceLine
+class CtyperesourceLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
