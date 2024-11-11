@@ -25,7 +25,7 @@
 /**
  *	Parent class of all other dictionary classes
  */
-abstract class CommonDict extends CommonObject
+abstract class CommonDict
 {
 	/**
 	 * @var DoliDB		Database handler (result of a new DoliDB)
