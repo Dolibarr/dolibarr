@@ -966,7 +966,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 	// Date payment
 	if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
-		$paymentdate = dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
+		$paymentdate = dol_mktime(0, 0, 0, GETPOSTINT('paymentmonth'), GETPOSTINT('paymentday'), GETPOSTINT('paymentyear'));
 	}
 
 	print '<tr>';

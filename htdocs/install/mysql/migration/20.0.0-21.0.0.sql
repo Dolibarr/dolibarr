@@ -326,3 +326,5 @@ ALTER TABLE llx_facture ADD COLUMN is_delivery_note tinyint  DEFAULT 0 NOT NULL 
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Loading facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Delivery facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Customer shipping contact', 1);
+
+ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;

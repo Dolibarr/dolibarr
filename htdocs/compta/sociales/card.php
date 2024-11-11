@@ -69,8 +69,8 @@ $lineid = GETPOSTINT('lineid');
 
 $fk_project = (GETPOST('fk_project') ? GETPOSTINT('fk_project') : 0);
 
-$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
+$dateech = dol_mktime(GETPOSTINT('echhour'), GETPOSTINT('echmin'), GETPOSTINT('echsec'), GETPOSTINT('echmonth'), GETPOSTINT('echday'), GETPOSTINT('echyear'));
+$dateperiod = dol_mktime(GETPOSTINT('periodhour'), GETPOSTINT('periodmin'), GETPOSTINT('periodsec'), GETPOSTINT('periodmonth'), GETPOSTINT('periodday'), GETPOSTINT('periodyear'));
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOSTINT('actioncode');
 $fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;

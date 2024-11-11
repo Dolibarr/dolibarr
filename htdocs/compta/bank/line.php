@@ -168,8 +168,8 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		$db->begin();
 
 		$amount = price2num(GETPOST('amount'));
-		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
-		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		$dateop = dol_mktime(12, 0, 0, GETPOSTINT("dateomonth"), GETPOSTINT("dateoday"), GETPOSTINT("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened

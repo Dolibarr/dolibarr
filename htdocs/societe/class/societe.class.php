@@ -3528,6 +3528,32 @@ class Societe extends CommonObject
 		}
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getDefaultRib()
+	{
+		// phpcs:enable
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type = 'ban' AND default_rib = 1 AND fk_soc = ". (int) $this->id;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		} else {
+			$num_rows = $this->db->num_rows($resql);
+			$rib_array = array();
+			if ($num_rows) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					return $obj->rowid;
+				}
+			}
+			return 0;
+		}
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Assigns a customer code from the code control module.
