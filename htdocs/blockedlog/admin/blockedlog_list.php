@@ -117,12 +117,15 @@ $block_static->loadTrackedEvents();
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
 // Execution Time
-$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_execution_time_for_importexport = getDolGlobalInt('EXPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
 	@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
 }
+
+$MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
+$MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
 
 /*
@@ -349,8 +352,6 @@ if (GETPOST('withtab', 'alpha')) {
 $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
-
-$MAXLINES = 10000;
 
 $blocks = $block_static->getLog('all', $search_id, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (!is_array($blocks)) {
@@ -587,7 +588,6 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 
 if (is_array($blocks)) {
 	$nbshown = 0;
-	$MAXFORSHOWLINK = 100;
 	$object_link = '';
 	$object_link_title = '';
 
@@ -596,7 +596,7 @@ if (is_array($blocks)) {
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id]) {
 			$nbshown++;
 
-			if ($nbshown < $MAXFORSHOWLINK) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
+			if ($nbshown < $MAXFORSHOWNLINKS) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
 				$object_link = $block->getObjectLink();
 				$object_link_title = '';
 			} else {
@@ -647,8 +647,9 @@ if (is_array($blocks)) {
 
 			// Fingerprint
 			print '<td class="nowraponall">';
+			// Note: the previous line id is not necessarily id-1, so in texttoshow we say "on previous line" without giving id to avoid a search/fetch to get previous id.
 			$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("SavedOnLine").' =<br>'.$block->signature;
-			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256('.$langs->trans("PreviousHash").' on line '.($block->id - 1).' + data) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
+			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256('.$langs->trans("PreviousHash").' on previous line + data) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
 			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';
 			//$texttoshow .= '<br>keyforsignature='.$checkdetail[$block->id]['keyforsignature'];
 			print $form->textwithpicto(dol_trunc($block->signature, 8), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);

@@ -93,6 +93,7 @@ $result = $object->fetch($id);
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 $sqlmessage = '';
+$mesgs = array();
 
 // List of sending methods
 $listofmethods = array();

@@ -102,7 +102,7 @@ create table llx_facture
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format
-  
+  is_also_delivery_note tinyint DEFAULT 0 NOT NULL,             -- 0=default, 1=can act also as a delivery note (for countries that accept invoices as delivery notes)
   fk_multicurrency		integer,
   multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,

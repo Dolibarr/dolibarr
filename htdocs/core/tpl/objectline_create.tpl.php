@@ -171,7 +171,7 @@ if ($nolinesbefore) {
 					echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+					echo '<td class="margininfos linecolmark1 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 				}
 			}
 		} ?>

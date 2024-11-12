@@ -51,6 +51,9 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 -- V21 migration
 
+ALTER TABLE llx_blockedlog DROP INDEX entity_action;
+ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
+
 ALTER TABLE llx_ecm_files MODIFY COLUMN description varchar(255);
 ALTER TABLE llx_ecm_files MODIFY COLUMN cover varchar(32);
 ALTER TABLE llx_ecm_files ADD COLUMN content text;
@@ -114,7 +117,7 @@ ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content in
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
 
 
-create table llx_paymentexpensereport_expensereport
+CREATE TABLE llx_paymentexpensereport_expensereport
 (
   rowid            		integer AUTO_INCREMENT PRIMARY KEY,
   fk_payment       		integer,
@@ -257,7 +260,7 @@ ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFA
 ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
 
-create table llx_accounting_category_account
+CREATE TABLE llx_accounting_category_account
 (
   rowid           			integer AUTO_INCREMENT PRIMARY KEY,
   fk_accounting_category	integer,
@@ -320,4 +323,11 @@ ALTER TABLE llx_c_tva ADD COLUMN fk_department_buyer integer DEFAULT NULL AFTER 
 ALTER TABLE llx_c_tva ADD INDEX idx_tva_fk_department_buyer (fk_department_buyer);
 ALTER TABLE llx_c_tva ADD CONSTRAINT fk_tva_fk_department_buyer FOREIGN KEY (fk_department_buyer) REFERENCES llx_c_departements (rowid);
 
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_unit integer AFTER qty;
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Loading facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Delivery facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Customer shipping contact', 1);
+
 ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
+
+ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;

@@ -185,6 +185,11 @@ class FactureRec extends CommonInvoice
 	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**
+	 * @var int			ID of bank account to use if invoice is set for direct debit payment (see PAYMENTCODETOEDITSOCIETERIB)
+	 */
+	public $fk_societe_rib;
+
+	/**
 	 * @var int
 	 */
 	public $suspended; // status
@@ -198,12 +203,10 @@ class FactureRec extends CommonInvoice
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
-	/**
-	 * @var int
-	 */
-	public $fk_societe_rib;
+
 
 	const PAYMENTCODETOEDITSOCIETERIB = "PRE";
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -567,7 +570,7 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
-		$sql .= " total_ttc = ".((float) $this->total_ttc);
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_societe_rib = ".((int) $this->fk_societe_rib);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
