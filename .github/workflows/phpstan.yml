@@ -89,6 +89,6 @@ jobs:
       # Run PHPStan generate baseline
       - name: Run PHPStan generate baseline
         id: phpstan-baseline
-        if: ${{ success() }}
+        # if: ${{ success() }}
         run: |
           phpstan -vv analyse --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
