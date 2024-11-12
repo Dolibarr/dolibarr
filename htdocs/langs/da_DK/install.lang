@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Migrer lagerplads til forsendelse af salgsordrer
 MigrationShippingDelivery=Opgrader lagerplads for forsendelse
 MigrationShippingDelivery2=Opgrader lagerplads af forsendelse 2
 MigrationFinished=Migration afsluttet
-LastStepDesc=<strong>Sidste trin</strong>: Definer her login og adgangskode som du vil bruge til at oprette forbindelse til Dolibarr.<b>Mist ikke dette, da det er masterkontoen til at administrere alle andre/ekstra brugerkonti.</b>
+LastStepDesc=<strong>Sidste trin</strong>: Definer her login og adgangskode du ønsker at bruge til at oprette forbindelse til Dolibarr. <b>Mab ikke dette, da det er hovedkontoen til at administrere alle andre/yderligere brugerkonti.</b>
 ActivateModule=Aktiver modulet %s
 ShowEditTechnicalParameters=Klik her for at vise/redigere avancerede parametre (eksperttilstand)
 WarningUpgrade=Advarsel:\nKørte du først en database backup?\nDette anbefales stærkt. Dataforløb (på grund af f.eks. Fejl i mysql version 5.5.40 / 41/42/43) kan være mulig under denne proces, så det er vigtigt at tage en komplet dump af din database, før du starter en migrering.\n\nKlik på OK for at starte overførselsprocessen ...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Du brugte Dolibarr installationsguiden fra en Linux-pakke (
 KeepDefaultValuesMamp=Du brugte Dolibarr installationsguiden fra DoliMamp, så de her foreslåede værdier er allerede optimeret. Skift kun dem, hvis du ved hvad du laver.
 KeepDefaultValuesProxmox=Du brugte Dolibarr installationsguiden fra et Proxmox virtuelt apparat, så de her foreslåede værdier er allerede optimeret. Skift kun dem, hvis du ved hvad du laver.
 UpgradeExternalModule=Kør dedikeret opgraderingsproces af eksternt modul
-SetAtLeastOneOptionAsUrlParameter=Indstil mindst én mulighed som en parameter i URL. For eksempel: '... repair.php? Standard = bekræftet'
+SetAtLeastOneOptionAsUrlParameter=Indstil mindst én mulighed som parameter i URL med værdien 'test' eller 'bekræftet'. For eksempel: '...repair.php?standard=confirmed'
 NothingToDelete=Intet at rengøre / slette
 NothingToDo=Ingenting at lave
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Programmet forsøgte at opgradere selv, men inst
 YouTryUpgradeDisabledByMissingFileUnLock=Applikationen forsøgte at opgradere sig selv, men opgraderingsprocessen er i øjeblikket ikke tilladt. <br>
 ClickHereToGoToApp=Klik her for at gå til din ansøgning
 ClickOnLinkOrRemoveManualy=Hvis en opgradering er i gang, skal du vente. Hvis ikke, skal du klikke på følgende link. Hvis du altid ser denne samme side, skal du fjerne / omdøbe filen install.lock i dokumentmappen.
-ClickOnLinkOrCreateUnlockFileManualy=Hvis en opgradering er i gang, vent venligst... Hvis ikke, skal du oprette en fil upgrade.unlock i Dolibarr-dokumentbiblioteket.
+ClickOnLinkOrCreateUnlockFileManualy=Hvis en opgradering er i gang, vent venligst... Hvis ikke, skal du fjerne filen install.lock (eller oprette en fil upgrade.unlock til opgradering) i Dolibarr-dokumentbiblioteket.
 Loaded=Indlæst
 FunctionTest=Funktionstest
 NodoUpgradeAfterDB=Ingen handling anmodet om af eksterne moduler efter opgradering af database

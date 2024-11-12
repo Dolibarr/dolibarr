@@ -32,6 +32,7 @@ PRINTIPP_HOST=Server de print
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Parolă
+PRINTIPP_SSL=Utilizează SSL
 NoDefaultPrinterDefined=Nicio imprimantă implicită definită
 DefaultPrinter=Imprimantă implicită
 Printer=Imprimantă
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Configurare variabile pentru driverul imprimanta Goog
 PrintingDriverDescprintipp=Variabilele de configurare pentru driverele de imprimare Cups
 PrintTestDescprintgcp=Lista imprimantelor pentru Google Cloud Print
 PrintTestDescprintipp=Lista imprimantelor pentru Cups.
+Testbbbb

@@ -4,10 +4,11 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -60,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
 // Init vars
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -85,14 +88,15 @@ if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
 
-
 $objectsoc = new Societe($db);
 $user->loadDefaultValues();
+
+$extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch optionals attributes and labels
 
 
 /**
@@ -102,11 +106,11 @@ $user->loadDefaultValues();
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $conf, $langs, $mysoc;
 
@@ -133,15 +137,15 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<div class="logopublicpayment">';
 		print '<img id="dolpaymentlogo" src="' . $urllogo . '">';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
+	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . $conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION . '">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION') . '">';
 		print '</div>';
 	}
 
@@ -188,7 +192,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is a public page. Security is done on constant and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -200,9 +204,9 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	// Check Captcha code if is enabled
-	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode") . "<br>\n";
@@ -214,26 +218,34 @@ if (empty($reshook) && $action == 'add') {
 		$societe = new Societe($db);
 
 		$societe->name = GETPOST('name', 'alphanohtml');
-
-		$societe->client = GETPOST('client', 'int') ? GETPOST('client', 'int') : $societe->client;
-
+		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
 		$societe->address	= GETPOST('address', 'alphanohtml');
-
-		$societe->country_id				= GETPOST('country_id', 'int');
-
+		$societe->country_id				= GETPOSTINT('country_id');
 		$societe->phone					= GETPOST('phone', 'alpha');
-
 		$societe->fax				= GETPOST('fax', 'alpha');
-
 		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-
 		$societe->client = 2 ; // our client is a prospect
-
-		$societe->code_client		= -1;
-
+		$societe->code_client		= '-1';
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
+		$societe->note_private = GETPOST('note_private', 'alphanohtml');
 
-		$societe->note_private = GETPOST('note_private');
+		// Fill array 'array_options' with data from add form
+		/*
+		$extrafields->fetch_name_optionals_label($societe->table_element);
+		$ret = $extrafields->setOptionalsFromPost(null, $societe);
+		if ($ret < 0) {
+			$error++;
+			$errmsg .= $societe->error;
+		}
+		*/
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($societe, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $societe->errors);
+		}
+
 		if (!$error) {
 			$result = $societe->create($user);
 			if ($result > 0) {
@@ -242,15 +254,15 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
-				} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
+					$urlback = getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"] . "?action=added&token=" . newToken();
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $societe->errors);
+				$errmsg .= implode('<br>', $societe->errors);
 			}
 		}
 	}
@@ -258,7 +270,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: " . $urlback);
+		header("Location: " . $urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -270,7 +282,7 @@ if (empty($reshook) && $action == 'add') {
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge("newSocieteAdded");
 
 	// If we have not been redirected
@@ -293,21 +305,20 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
 $formadmin = new FormAdmin($db);
-$extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("ContactUs"));
 
 print '<br>';
-print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-if (!empty($conf->global->COMPANY_NEWFORM_TEXT)) {
-	print $langs->trans($conf->global->COMPANY_NEWFORM_TEXT) . "<br>\n";
+if (getDolGlobalString('COMPANY_NEWFORM_TEXT')) {
+	print $langs->trans(getDolGlobalString('COMPANY_NEWFORM_TEXT')) . "<br>\n";
 } else {
 	print $langs->trans("ContactUsDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL")) . "<br>\n";
 }
@@ -327,7 +338,7 @@ $messagemandatory = '<span class="">' . $langs->trans("FieldsWithAreMandatory", 
 //print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -411,9 +422,9 @@ print '<td>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . 
 print '</tr>';
 
 // Email / Web
-print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $objectsoc, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
+print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $objectsoc, 0, 'string', '', !getDolGlobalString('SOCIETE_EMAIL_MANDATORY') ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
 print '<td>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $objectsoc->email . '"></td>';
-if (isModEnabled('mailing') && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	if ($conf->browser->layout == 'phone') {
 		print '</tr><tr>';
 	}
@@ -431,12 +442,17 @@ print '<tr>';
 print '<td class="tdtop">' . $langs->trans("Comments") . '</td>';
 print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1) . '</textarea></td>';
 print '</tr>' . "\n";
+
+
+// Other attributes
+$parameters['tpl_context'] = 'public';	// define template context to public
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+
 // TODO Move this into generic feature.
 
-
-
 // Display Captcha code if is enabled
-if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 	print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">' . $langs->trans("SecurityCode") . '</span></label></td><td>';
 	print '<span class="span-icon-security inline-block">';

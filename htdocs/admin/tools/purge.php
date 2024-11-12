@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load("admin");
 
@@ -78,7 +87,7 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-tools_purge');
 
 $form = new Form($db);
 
@@ -92,6 +101,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 
+print '<div class="divsection wordbreak">';
 print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
@@ -123,6 +133,7 @@ if (getDolGlobalInt('MAIN_PURGE_ACCEPT_NBSECONDSOLD')) {
 	print 'NbSecondsOld = <input class="width50 right" type="text" name="nbsecondsold" value="'.$nbsecondsold.'">';
 }
 print '</td></tr></table>';
+print '</div>';
 
 //if ($choice != 'confirm_allfiles')
 //{

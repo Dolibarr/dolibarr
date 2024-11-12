@@ -13,7 +13,6 @@ ConfirmDeleteLoan=Confirme a exclusão deste empréstimo
 LoanDeleted=Empréstimo excluído com sucesso
 ConfirmPayLoan=Confirmar este empréstimo como pago
 LoanPaid=Empréstimo pago
-ListLoanAssociatedProject=Lista de empréstimos associados ao projeto
 InterestAmount=Juro
 CapitalRemain=Capital permanecem
 TermPaidAllreadyPaid =Este termo já está pago

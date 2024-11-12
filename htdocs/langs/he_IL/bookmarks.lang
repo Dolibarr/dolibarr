@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Bookmark
-Bookmarks=הסימניות
-ListOfBookmarks=List of bookmarks
-EditBookmarks=List/edit bookmarks
-NewBookmark=New bookmark
-ShowBookmark=Show bookmark
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Create bookmark
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Bookmarks management
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = הוסף עמוד נוכחי לסימניות
+BehaviourOnClick = התנהגות כאשר נבחרת כתובת אתר של סימניה
+Bookmark = סימניה
+Bookmarks = הסימניות
+BookmarkTargetNewWindowShort = כרטיסייה חדשה
+BookmarkTargetReplaceWindowShort = הכרטיסייה הנוכחית
+BookmarkTitle = שם סימניה
+BookmarksManagement = ניהול סימניות
+BookmarksMenuShortCut = Ctrl + Shift + M
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = בחר אם הדף המקושר ייפתח בכרטיסייה הנוכחית או בכרטיסייה חדשה
+CreateBookmark = צור סימניה
+EditBookmarks = רשום/ערוך סימניות
+ListOfBookmarks = רשימת סימניות
+NewBookmark = סימניה חדשה
+NoBookmarkFound = לא נמצאה סימניה
+NoBookmarks = לא הוגדרו סימניות
+OpenANewWindow = פתח כרטיסייה חדשה
+ReplaceWindow = החלף את הכרטיסייה הנוכחית
+SetHereATitleForLink = הגדר שם לסימניה
+ShowBookmark = הצג סימניה
+UrlOrLink = כתובת אתר
+UseAnExternalHttpLinkOrRelativeDolibarrLink = השתמש בקישור חיצוני/אבסולוטי (https://externalurl.com) או בקישור פנימי/יחסי (/mypage.php). אתה יכול גם להשתמש בטלפון כמו טלפון:0123456.

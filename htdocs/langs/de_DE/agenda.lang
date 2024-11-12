@@ -8,8 +8,6 @@ LocalAgenda=Standard-Kalender
 ActionsOwnedBy=Ereignis stammt von
 ActionsOwnedByShort=Eigentümer
 AffectedTo=Zugewiesen an
-Event=Ereignis
-Events=Ereignisse
 EventsNb=Anzahl der Ereignisse
 ListOfActions=Liste Ereignisse
 EventReports=Ereignisbericht
@@ -23,7 +21,6 @@ MenuDoneMyActions=Meine abgeschlossenen Termine
 ListOfEvents=Liste der Ereignisse (Standardkalender)
 ActionsAskedBy=Ereignisse eingetragen von
 ActionsToDoBy=Termin/Aufgabe zugewiesen an
-ActionsDoneBy=Termine erledigt von
 ActionAssignedTo=Ereignis zugewiesen an
 ViewCal=Monatsansicht
 ViewDay=Tagesansicht
@@ -89,6 +86,8 @@ ShippingSentByEMail=Lieferung %s per E-Mail versendet
 ShippingValidated= Lieferung %s freigegeben
 InterventionSentByEMail=Serviceauftrag %s per E-Mail versendet
 ProjectSentByEMail=Projekt %s per E-Mail gesendet
+ProjectDeletedInDolibarr=Projekt %s gelöscht
+ProjectClosedInDolibarr=Projekt %s geschlossen
 ProposalDeleted=Angebot gelöscht
 OrderDeleted=Auftrag gelöscht
 InvoiceDeleted=Rechnung gelöscht
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=Fertigungsauftrag produziert
 MRP_MO_DELETEInDolibarr=Fertigungsauftrag gelöscht
 MRP_MO_CANCELInDolibarr=Fertigungsauftrag storniert
 PAIDInDolibarr=%s bezahlt
+ENABLEDISABLEInDolibarr=Benutzer aktiviert oder deaktiviert
+CANCELInDolibarr=Storniert
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginn
 DateActionEnd=Ende
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
-AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer <b>%s</b> nicht als Eigentümer zugewiesene Aktionen.
+AgendaUrlOptions3=<b>logina=%s</b>, um die Ausgabe auf Aktionen zu beschränken, die einem Benutzer <b>%s</b> zugeordnet sind (verwenden Sie <b>logina=!%s</b> für Ereignisse, die dem Benutzer nicht zugeordnet sind).
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um nur Aktionen zum Projekt <b> __PROJECT_ID__</b> auszugeben.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> um automatische Events auszuschliessen.
+AgendaUrlOptionsType=<b>actiontype=%s</b> um entweder automatische oder manuelle Ereignisse zu erhalten
+AgendaUrlOptionsCode=<b>actioncode=%s</b> um nur Ereignisse mit einem bestimmten Code abzurufen
 AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> zur Beschränkung auf Ereignisse in den letzten %s Tagen (Standard ist %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> zur Begrenzung auf die letzten 50 Ereignisse (Standard und Maximum ist %s).
 AgendaShowBirthdayEvents=Geburtstage der Kontakte
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Beschäftigt
@@ -181,3 +184,24 @@ Reminders=Erinnerungen
 ActiveByDefault=Standardmäßig aktiviert
 Until=bis
 DataFromWasMerged=Daten von %s wurden zusammengeführt
+AgendaShowBookcalCalendar=Buchungskalender: %s
+MenuBookcalIndex=Online-Terminvereinbarung
+BookcalLabelAvailabilityHelp=Bezeichnung des Verfügbarkeitsbereichs. Zum Beispiel:<br>Allgemeine Verfügbarkeit<br>Verfügbarkeit während der Weihnachtsferien
+DurationOfRange=Dauer der Bereiche
+BookCalSetup = Konfiguration der Online-Terminvereinbarung
+BookCalSetupPage = Seite für die Konfiguration der Online-Terminvereinbarung
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface Titel
+BookCalAbout = Über BookCal
+BookCalAboutPage = Über BookCal
+Calendars=Terminkalender
+Availabilities=Verfügbarkeiten
+NewAvailabilities=Neue Verfügbarkeiten
+NewCalendar=Neuer Kalender
+ThirdPartyBookCalHelp=Der in diesem Kalender gebuchte Termin wird automatisch mit diesem Geschäftspartner verknüpft.
+AppointmentDuration = Termindauer: %s
+BookingSuccessfullyBooked=Ihre Buchung wurde gespeichert
+BookingReservationHourAfter=Wir bestätigen die Terminvereinbarung an folgendem Datum: %s
+BookcalBookingTitle=Online-Terminvereinbarung
+Transparency = Transparenz
+ReadMore = Mehr anzeigen
+ReadLess = Weniger anzeigen

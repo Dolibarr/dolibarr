@@ -34,7 +34,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -42,6 +42,7 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/images.lib.php";
@@ -56,13 +57,19 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (empty($argv[1])) {
 	print "Usage:    $script_file  subdirtoscan\n";
 	print "Example:  $script_file  produit\n";
-	exit(-1);
+	exit(1);
 }
 
 print '--- start'."\n";
@@ -70,7 +77,7 @@ print '--- start'."\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
+	dol_print_error(null, 'dir not defined');
 	exit(1);
 }
 if (!dol_is_dir($dir.'/'.$subdir)) {
@@ -84,7 +91,7 @@ global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach ($filearray as $keyf => $valf) {
 	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
+	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp|\.webp)$', '(\.meta|_preview.*\.png)$');
 	foreach ($filearrayimg as $keyi => $vali) {
 		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";
 

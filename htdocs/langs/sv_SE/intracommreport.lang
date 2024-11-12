@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm-rapport
+IntraCommReports=Intracomm reports
+
 Module68000Name = Intracomm-rapport
 Module68000Desc = Intracomm-rapporthantering (stöd för franska DEB/DES-format)
 IntracommReportSetup = Konfigurering av modul för Intracomm-rapporter
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Roll för aktören
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivå av skyldighet för introducerare
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivå av skyldighet på försändelser
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategori av tjänster av typen "Fraktkostnader"
-
 INTRACOMMREPORT_NUM_DECLARATION=Deklarantens nummer
-
 # Menu
 MenuIntracommReport=Intracomm-rapport
 MenuIntracommReportNew=Ny deklarant
 MenuIntracommReportList=Lista
-
 # View
 NewDeclaration=Ny deklaration
 Declaration=Deklaration
@@ -25,16 +25,14 @@ AnalysisPeriod=Analysperiod
 TypeOfDeclaration=Typ av deklaration
 DEB=Godsutbytesdeklaration (DEB)
 DES=Tjänsteutbytesdeklaration (DES)
-
 # Export page
 IntracommReportTitle=Förberedelse av en XML-fil i ProDouane-format
-
 # List
 IntracommReportList=Lista över genererade deklarationer
 IntracommReportNumber=Deklarationsnummer
 IntracommReportPeriod=Analysperiod
 IntracommReportTypeDeclaration=Typ av deklaration
 IntracommReportDownload=ladda ner XML-fil
-
 # Invoice
 IntracommReportTransportMode=Transportläge
+DeleteIntraCommReport=Delete IntraComm report

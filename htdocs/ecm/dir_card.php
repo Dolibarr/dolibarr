@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
 
@@ -41,16 +50,16 @@ $confirm    = GETPOST('confirm', 'alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -66,7 +75,7 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha') ? GETPOST("section", 'alpha') : GETPOST("relativedir", 'alpha');
 if (!$section) {
-	dol_print_error('', "ErrorSectionParamNotDefined");
+	dol_print_error(null, "ErrorSectionParamNotDefined");
 	exit;
 }
 
@@ -83,8 +92,7 @@ if ($module == 'ecm') {
 		$relativepath = $section;
 		$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 	}
-} else // For example $module == 'medias'
-{
+} else { // For example $module == 'medias'
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 }
@@ -114,7 +122,7 @@ if (!$permissiontoread) {
  */
 
 // Upload file
-if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissiontoupload) {
+if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontoupload) {
 	if (dol_mkdir($upload_dir) >= 0) {
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir."/".dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0) {
@@ -126,8 +134,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissionto
 			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
 				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else // Known error
-			{
+			} else { // Known error
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
@@ -141,7 +148,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissionto
 // Remove file
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
-	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -206,9 +213,9 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
-		$fk_parent = GETPOST("catParent", 'int');
-		if ($fk_parent == "-1") {
-			$ecmdir->fk_parent = "0";
+		$fk_parent = GETPOSTINT("catParent");
+		if ($fk_parent == -1) {
+			$ecmdir->fk_parent = 0;
 		} else {
 			$ecmdir->fk_parent = $fk_parent;
 		}
@@ -291,11 +298,11 @@ if ($module == 'ecm' && $ecmdir->id > 0) {
 	$object->fetch($ecmdir->id);
 }
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-dir_card');
 
 // Built the file List
-$filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+$filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 $totalsize = 0;
 foreach ($filearray as $key => $file) {
 	$totalsize += $file['size'];
@@ -338,7 +345,7 @@ if ($module == 'ecm') {
 			$i++;
 		}
 	} else {
-		$s .= join(' -> ', explode('/', $section));
+		$s .= implode(' -> ', explode('/', $section));
 	}
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
 }
@@ -478,12 +485,12 @@ if ($action == 'deletefile') {
 // Confirm remove dir
 if ($action == 'delete' || $action == 'delete_dir') {
 	$relativepathwithoutslash = preg_replace('/[\/]$/', '', $relativepath);
-
-	//Form to close proposal (signed or not)
+	$formquestion = [];
+	// Form to delete files
 	if (count($filearrayall) > 0) {
 		$langs->load("other");
 		$formquestion = array(
-			array('type' => 'checkbox', 'name' => 'deletedirrecursive', 'label' => $langs->trans("ContentOfDirectoryIsNotEmpty").'<br>'.$langs->trans("DeleteAlsoContentRecursively"), 'value' => '0')				// Field to complete private note (not replace)
+			array('type' => 'checkbox', 'name' => 'deletedirrecursive', 'label' => $langs->trans("ContentOfDirectoryIsNotEmpty").'<br>'.$langs->trans("DeleteAlsoContentRecursively"), 'value' => '0')	// Field to complete private note (not replace)
 		);
 	}
 
@@ -492,19 +499,17 @@ if ($action == 'delete' || $action == 'delete_dir') {
 
 
 /*
-$formfile=new FormFile($db);
+$formfile = new FormFile($db);
 
 // Display upload form
-if ($user->rights->ecm->upload)
-{
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/dir_card.php','',0,$section);
+if ($user->hasRight('ecm', 'upload')) {
+	$formfile->form_attach_new_file(DOL_URL_ROOT . '/ecm/dir_card.php', '', 0, $section);
 }
 
 // List of document
-if ($user->rights->ecm->read)
-{
-	$param='&amp;section='.$section;
-	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload);
+if ($user->hasRight('ecm', 'read')) {
+	$param = '&amp;section=' . $section;
+	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload);
 }
 */
 

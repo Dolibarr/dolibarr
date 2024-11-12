@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2007-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +20,24 @@
 
 /**
  *  \file       htdocs/admin/system/browser.php
- *  \brief      Page to show Dolibarr informations
+ *  \brief      Page to show Dolibarr information
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
-if (!$user->admin) {
+if (empty($user->admin)) {
 	accessforbidden();
 }
 
@@ -39,23 +46,19 @@ if (!$user->admin) {
  * View
  */
 
-$form = new Form($db);
-
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_browser');
 
 print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
-
-$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 
 // Browser
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("UserAgent").'</td><td colspan="2">'.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserName").'</td><td colspan="2">'.$tmp['browsername'].'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserOS").'</td><td colspan="2">'.$tmp['browseros'].'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("Version").'</td><td colspan="2">'.$tmp['browserversion'].'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("Layout").' (phone/tablet/classic)</td><td colspan="2">'.$tmp['layout'].'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2"></td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("UserAgent").'</td><td colspan="2">'.dol_escape_htmltag($conf->browser->ua).'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserName").'</td><td colspan="2">'.$conf->browser->name.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserOS").'</td><td colspan="2">'.$conf->browser->os.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("Version").'</td><td colspan="2">'.$conf->browser->version.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("Layout").' (phone/tablet/classic)</td><td colspan="2">'.$conf->browser->layout.'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("IPAddress").'</td><td colspan="2">'.dol_escape_htmltag($_SERVER['REMOTE_ADDR']);
 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 	print ' (HTTP_CLIENT_IP='.dol_escape_htmltag($_SERVER['HTTP_CLIENT_IP']).')';

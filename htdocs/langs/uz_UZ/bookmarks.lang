@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Xatcho'plarga joriy sahifani qo'shing
-Bookmark=Xatcho'p
-Bookmarks=Xatcho'plar
-ListOfBookmarks=Xatcho'plar ro'yxati
-EditBookmarks=Xatcho'plarni ro'yxatlash / tahrirlash
-NewBookmark=Yangi xatcho'p
-ShowBookmark=Xatcho'pni ko'rsatish
-OpenANewWindow=Yangi yorliqni oching
-ReplaceWindow=Joriy yorliqni almashtirish
-BookmarkTargetNewWindowShort=Yangi yorliq
-BookmarkTargetReplaceWindowShort=Joriy yorliq
-BookmarkTitle=Xatcho'p nomi
-UrlOrLink=URL manzili
-BehaviourOnClick=Xatcho'p URL manzili tanlanganida o'zini tutishi
-CreateBookmark=Xatcho'p yarating
-SetHereATitleForLink=Xatcho'p uchun nom o'rnating
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Tashqi/mutlaq havoladan (https://externalurl.com) yoki ichki/nisbiy havoladan (/mypage.php) foydalaning. Siz 0123456 kabi telefondan ham foydalanishingiz mumkin.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bog'langan sahifa joriy yorliqda yoki yangi yorliqda ochilishini tanlang
-BookmarksManagement=Xatcho'plarni boshqarish
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=Xatcho‘plar aniqlanmagan
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Xatcho'plarga joriy sahifani qo'shing
+BehaviourOnClick = Xatcho‘p URL manzili tanlangandagi xatti-harakatlari
+Bookmark = Xatcho'p
+Bookmarks = Xatcho'plar
+BookmarkTargetNewWindowShort = Yangi yorliq
+BookmarkTargetReplaceWindowShort = Joriy yorliq
+BookmarkTitle = Xatcho'p nomi
+BookmarksManagement = Xatcho'plarni boshqarish
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Bog'langan sahifa joriy yorliqda yoki yangi yorliqda ochilishini tanlang
+CreateBookmark = Xatcho'p yarating
+EditBookmarks = Xatcho'plarni ro'yxatlash / tahrirlash
+ListOfBookmarks = Xatcho'plar ro'yxati
+NewBookmark = Yangi xatcho'p
+NoBookmarkFound = Xatcho‘p topilmadi
+NoBookmarks = Xatcho‘plar aniqlanmagan
+OpenANewWindow = Yangi yorliqni oching
+ReplaceWindow = Joriy yorliqni almashtirish
+SetHereATitleForLink = Xatcho'p uchun nom o'rnating
+ShowBookmark = Xatcho'pni ko'rsatish
+UrlOrLink = URL manzili
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Tashqi/mutlaq havoladan (https://externalurl.com) yoki ichki/nisbiy havoladan (/mypage.php) foydalaning. Siz 0123456 kabi telefondan ham foydalanishingiz mumkin.

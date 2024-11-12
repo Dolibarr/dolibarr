@@ -2,7 +2,7 @@
 StripeSetup=Stripe モジュールの設定
 StripeDesc=<a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe</a>を介してクレジット/デビットカードで支払うためのオンライン支払ページを顧客に提供する。これを使用して、顧客が臨時の支払や、特定のDolibarrオブジェクト（請求書、注文など）に関連する支払の実行ができるようになる。
 StripeOrCBDoPayment=クレジットカードまたはStripeで支払う
-FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払をするために顧客にページを提供するために利用可能 
+FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払をするために顧客にページを提供するために利用可能
 PaymentForm=支払形態
 WelcomeOnPaymentPage=オンライン決済サービスへようこそ
 ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができる。
@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=契約ラインの%sオンライン�
 ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任意の金額の%sオンライン支払ページを提供するURL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=構成員サブスクリプションの%sオンライン支払ページを提供するURL
 ToOfferALinkForOnlinePaymentOnDonation=寄付の支払のために%sオンライン支払ページを提供するURL
-YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して(オブジェクトにリンクされていない支払にのみ必須)、独自の支払コメントタグを追加することもできる。 <br>既存のオブジェクトがない支払のURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる(一部の支払モードでは、このパラメータがないと、異なるリンクごとに支払が1に制限される場合がある)
+YouCanAddTagOnUrl=また、URL パラメータ <b>&タグ=value</b> をこれらの URL のいずれかに追加して (オブジェクトにリンクされていない支払いの場合のみ必須)、独自の支払いコメント タグ を追加することもできる。<br> 既存のオブジェクトがない支払いの URL の場合は、パラメータ <strong>&noidempotency=1</strong> なので、同じ タグ を持つ同じリンクを複数回使用できる (一部の支払いモードでは、このパラメータがないと、異なるリンクごとに支払いが 1 回に制限される場合がある)
+YouCanEmbedOnWebsite=支払いページを Dolibarr ウェブサイト に統合する場合は、次のパラメータを含めることができる: <b>&ws=website_ref</b>.<br>さらに、オンライン支払いが成功または失敗した後にリダイレクトを受信するためには、名前が<b>paymentok</b> と <b>paymentko</b>の2ページをウェブサイトに作成することが必須。
 SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証済なら支払が自動的に作成されるように、URL <b> %s</b>を使用してStripeを設定する。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
@@ -71,9 +72,19 @@ ToOfferALinkForTestWebhook=IPNを呼び出すためのStripeWebHookの設定へ�
 ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookの設定へのリンク(ライブモード)
 PaymentWillBeRecordedForNextPeriod=支払は次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客 認証する ルールにより、カードの作成は Stripe バックオフィスから行う必要がある。ここをクリックして Stripe 顧客レコードをオンにできる: %s
 STRIPE_CARD_PRESENT=ストライプ端末のカードプレゼント
 TERMINAL_LOCATION=Stripe 端末の場所 (アドレス)
 RequestDirectDebitWithStripe=Stripe で口座振替をリクエストする
+RequesCreditTransferWithStripe=Stripe でクレジット転送をリクエストする
 STRIPE_SEPA_DIRECT_DEBIT=Stripe による口座振替の支払いを有効にする
-
+STRIPE_KLARNA=Klarnaを使った支払いを有効化
+STRIPE_BANCONTACT=BANCONTACTを使用した支払いを有効化
+STRIPE_IDEAL=IDEALを使用した支払いを有効化
+STRIPE_GIROPAY=GIROPAYを使用した支払いを有効化
+STRIPE_SOFORT=SOFORTを使用した支払いを有効化
+StripeConnect_Mode=ストライプ接続モード
+ExampleOnlyForBECustomers=ベルギーのお客様のみ
+ExampleOnlyForDECustomers=ドイツのお客様のみ
+ExampleOnlyForNLCustomers=オランダのお客様のみ
+ExampleOnlyForATBEDEITNLESCustomers=オーストリア、ベルギー、ドイツ、イタリア、オランダ、スペインのお客様のみ

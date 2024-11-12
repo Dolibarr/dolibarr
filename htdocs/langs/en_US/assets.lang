@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=New asset
 AccountancyCodeAsset=Accounting code (asset)
 AccountancyCodeDepreciationAsset=Accounting code (depreciation asset account)
@@ -25,50 +21,34 @@ DeleteType=Delete
 DeleteAnAssetType=Delete an asset model
 ConfirmDeleteAssetType=Are you sure you want to delete this asset model?
 ShowTypeCard=Show model '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Assets
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Assets description
-
-#
 # Admin page
-#
 AssetSetup=Assets setup
 AssetSetupPage=Assets setup page
 ExtraFieldsAssetModel=Complementary attributes (Asset's model)
-
 AssetsType=Asset model
 AssetsTypeId=Asset model id
 AssetsTypeLabel=Asset model label
 AssetsTypes=Assets models
 ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=Assets
 MenuNewAsset=New asset
 MenuAssetModels=Model assets
 MenuListAssets=List
 MenuNewAssetModel=New asset's model
 MenuListAssetModels=List
-
-#
 # Module
-#
 ConfirmDeleteAsset=Do you really want to remove this asset?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Depreciation options
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=Depreciation
-
-#
 # Asset
-#
 Asset=Asset
 Assets=Assets
 AssetReversalAmountHT=Reversal amount (without taxes)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Not depreciated
 AssetDisposal=Disposal
 AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
 AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
-
-#
 # Asset status
-#
 AssetInProgress=In progress
 AssetDisposed=Disposed
 AssetRecorded=Accounted
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Date of disposal
 AssetDisposalAmount=Disposal value
 AssetDisposalType=Type of disposal
 AssetDisposalDepreciated=Depreciate the year of transfer
 AssetDisposalSubjectToVat=Disposal subject to VAT
-
-#
 # Asset model
-#
 AssetModel=Asset's model
 AssetModels=Asset's models
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Economic depreciation
 AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
 AssetDepreciationOptionDepreciationType=Depreciation type
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Linear
 AssetDepreciationOptionDepreciationTypeDegressive=Degressive
 AssetDepreciationOptionDepreciationTypeExceptional=Exceptional
 AssetDepreciationOptionDegressiveRate=Degressive rate
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated (tax)
 AssetDepreciationOptionDuration=Duration
 AssetDepreciationOptionDurationType=Type duration
 AssetDepreciationOptionDurationTypeAnnual=Annual
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Rate (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Depreciation base (excl. VAT)
 AssetDepreciationOptionAmountBaseDeductibleHT=Deductible base (excl. VAT)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Economic depreciation
 AssetAccountancyCodeAsset=Asset
 AssetAccountancyCodeDepreciationAsset=Depreciation
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation
 AssetAccountancyCodeAcceleratedDepreciation=Account
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Depreciation expense
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
 AssetDepreciationBeginDate=Start of depreciation on
 AssetDepreciationDuration=Duration
@@ -164,10 +125,7 @@ AssetResidualHT=Residual value (excl. VAT)
 AssetDispatchedInBookkeeping=Depreciation recorded
 AssetFutureDepreciationLine=Future depreciation
 AssetDepreciationReversal=Reversal
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model found has not been provided
 AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
 AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode

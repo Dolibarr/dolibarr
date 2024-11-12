@@ -25,7 +25,6 @@ StatusSendingProcessed=Traité
 StatusSendingProcessedShort=Traité
 SendingSheet=Fiche d'expédition
 ConfirmDeleteSending=Êtes-vous sûr de vouloir supprimer cette expédition?
-ConfirmValidateSending=Êtes-vous sûr de vouloir valider cette expédition avec la référence <b>%s</b>?
 ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition?
 WarningNoQtyLeftToSend=Attention, aucun produit n'est en attente d'expédition.
 DateDeliveryPlanned=Date de livraison prévue

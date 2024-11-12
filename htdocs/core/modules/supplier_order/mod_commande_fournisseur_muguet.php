@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +21,21 @@
 
 /**
  *    	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
- *		\ingroup    commande
- *		\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
+ *		\ingroup    order
+ *		\brief      Fichier contenant la class du modele de numerotation de reference de commande fournisseur Muguet
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**
- *	Classe du modele de numerotation de reference de commande fournisseur Muguet
+ *	Class du modele de numerotation de reference de commande fournisseur Muguet
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -54,7 +56,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public $name = 'Muguet';
 
-	public $prefix = 'CF';
+	public $prefix = 'PO';	// PO for "Purchase Order"
 
 
 	/**
@@ -62,10 +64,8 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public function __construct()
 	{
-		global $conf;
-
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) {
-			$this->prefix = 'PO'; // We use correct standard code "PO = Purchase Order"
+		if (getDolGlobalInt('MAIN_VERSION_LAST_INSTALL') < 5) {
+			$this->prefix = 'CF'; // We use old prefix
 		}
 	}
 
@@ -97,8 +97,8 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *  @return boolean     			false if KO (there is a conflict), true if OK
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
 	{
@@ -132,11 +132,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	/**
 	 * 	Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object		$object		Object
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @param	Societe|string		$objsoc		Object third party
+	 *  @param  CommandeFournisseur	$object		Object
+	 *  @return string|int<-1,0>				Value if OK, <=0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc, $object)
 	{
 		global $db, $conf;
 
@@ -162,29 +162,14 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		if (empty($date)) {
 			$date = $object->date; // Creation date is order date for suppliers orders
 		}
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Renvoie la reference de commande suivante non utilisee
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-	 *  @return string      			Descriptive text
-	 */
-	public function commande_get_num($objsoc = 0, $object = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $object);
 	}
 }

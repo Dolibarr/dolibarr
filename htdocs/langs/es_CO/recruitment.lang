@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - recruitment
 ModuleRecruitmentName =Reclutamiento
 RecruitmentSetupPage =Ingrese aquí la configuración de las principales opciones para el módulo de reclutamiento
-RecruitmentAbout =Acerca de la contratación
-RecruitmentAboutPage =Reclutamiento sobre la página
 NbOfEmployeesExpected=Número esperado de empleados
 ResponsibleOfRecruitement=Responsable de reclutamiento
 IfJobIsLocatedAtAPartner=Si el trabajo se encuentra en un lugar asociado

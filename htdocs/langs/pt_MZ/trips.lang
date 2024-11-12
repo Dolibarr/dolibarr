@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - trips
-TF_OTHER=Outros
 AUTHORPAIEMENT=Pago por
 DATE_SAVE=Data Validação
 expenseReportOffset=Compensar
+TF_OTHER=Outros

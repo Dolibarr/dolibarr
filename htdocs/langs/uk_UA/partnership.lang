@@ -20,6 +20,7 @@ ModulePartnershipName=Партнерське управління
 PartnershipDescription=Модуль Управління партнерством
 PartnershipDescriptionLong= Модуль Управління партнерством
 Partnership=Партнерство
+Partnerships=Партнерські відносини
 AddPartnership=Додати партнерство
 CancelPartnershipForExpiredMembers=Партнерство: скасувати партнерство учасників із простроченими підписками
 PartnershipCheckBacklink=Партнерство: перевірте зворотне посилання
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Партнерство: перевірте зворот
 # Menu
 #
 NewPartnership=Нове партнерство
+NewPartnershipbyWeb=Ваш запит на партнерство успішно додано. Ми можемо незабаром зв'язатися з вами...
 ListOfPartnerships=Список партнерства
 
 #
@@ -36,12 +38,13 @@ ListOfPartnerships=Список партнерства
 PartnershipSetup=Налаштування партнерства
 PartnershipAbout=Про партнерство
 PartnershipAboutPage=Партнерство про сторінку
-partnershipforthirdpartyormember=Статус партнера має бути встановлений як "третя сторона" або "член"
+partnershipforthirdpartyormember=Статус партнера має бути встановлений на "третю сторону" або "учасника"
 PARTNERSHIP_IS_MANAGED_FOR=Партнерство керується для
 PARTNERSHIP_BACKLINKS_TO_CHECK=Зворотні посилання для перевірки
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кількість днів до скасування статусу партнерства, коли закінчився термін дії підписки
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кількість днів до скасування статусу партнерства, коли термін дії підписки закінчився
 ReferingWebsiteCheck=Перевірка посилання на сайт
 ReferingWebsiteCheckDesc=Ви можете ввімкнути функцію, щоб перевірити, чи ваші партнери додали зворотне посилання на домени вашого веб-сайту на своєму власному веб-сайті.
+PublicFormRegistrationPartnerDesc=Dolibarr може надати вам загальнодоступну URL-адресу/веб-сайт, щоб зовнішні відвідувачі могли подати запит на участь у партнерській програмі.
 
 #
 # Object
@@ -52,7 +55,7 @@ PartnershipDedicatedToThisMember=Партнерство, присвячене ц
 DatePartnershipStart=Дата початку
 DatePartnershipEnd=Дата закінчення
 ReasonDecline=Причина відмови
-ReasonDeclineOrCancel=Причина відмови
+ReasonDeclineOrCancel=Причина відмови або скасування
 PartnershipAlreadyExist=Партнерство вже існує
 ManagePartnership=Керуйте партнерством
 BacklinkNotFoundOnPartnerWebsite=Зворотне посилання не знайдено на веб-сайті партнера
@@ -60,6 +63,11 @@ ConfirmClosePartnershipAsk=Ви впевнені, що хочете скасув
 PartnershipType=Тип партнерства
 PartnershipRefApproved=Партнерство %s затверджено
 KeywordToCheckInWebsite=Якщо ви хочете переконатися, що дане ключове слово є на веб-сайті кожного партнера, визначте це ключове слово тут
+PartnershipDraft=Проект
+PartnershipAccepted=Прийнято
+PartnershipRefused=Відмовився
+PartnershipCanceled=Скасовано
+PartnershipManagedFor=Партнери є
 
 #
 # Template Mail
@@ -74,21 +82,17 @@ YourPartnershipRefusedTopic=Від партнерства відмовили
 YourPartnershipAcceptedTopic=Партнерство прийнято
 YourPartnershipCanceledTopic=Партнерство скасовано
 
-YourPartnershipWillSoonBeCanceledContent=Повідомляємо, що ваше партнерство незабаром буде скасовано (Зворотне посилання не знайдено)
-YourPartnershipRefusedContent=Повідомляємо, що ваш запит на партнерство відхилено.
+YourPartnershipWillSoonBeCanceledContent=Ми хотіли б повідомити вам, що наше партнерство незабаром буде скасовано (ми не отримали поновлення або передумови для нашого партнерства не були виконані). Зв’яжіться з нами, якщо ви отримали це через помилку.
+YourPartnershipRefusedContent=Повідомляємо, що ваш запит на партнерство відхилено. Передумови не виконано. Будь ласка, зв'яжіться з нами, якщо вам потрібна додаткова інформація.
 YourPartnershipAcceptedContent=Повідомляємо, що ваш запит на партнерство прийнято.
-YourPartnershipCanceledContent=Повідомляємо, що ваше партнерство скасовано.
+YourPartnershipCanceledContent=Повідомляємо вам, що наше партнерство припинено. Будь ласка, зв'яжіться з нами, якщо вам потрібна додаткова інформація.
 
 CountLastUrlCheckError=Кількість помилок для останньої перевірки URL-адреси
 LastCheckBacklink=Дата останньої перевірки URL-адреси
-ReasonDeclineOrCancel=Причина відмови
 
-#
-# Status
-#
-PartnershipDraft=Проект
-PartnershipAccepted=Прийнято
-PartnershipRefused=Відмовився
-PartnershipCanceled=Скасовано
-PartnershipManagedFor=Партнери є
+NewPartnershipRequest=Новий запит на партнерство
+NewPartnershipRequestDesc=Ця форма дозволяє подати запит на участь в одній із наших партнерських програм. Якщо вам потрібна допомога із заповненням цієї форми, зв’яжіться з нами електронною поштою <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ця сторінка має містити принаймні одне посилання на один із таких доменів: %s
+
+IPOfApplicant=IP заявника
 

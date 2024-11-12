@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Politica de confidențialitate a datelor
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Modul de gestionare a confidențialității datelor cu caracter personal (conformitate cu GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Configurare modul Confidențialitatea datelor cu caracter personal
 Deletion = Ștergere date
-datapolicySetupPage = În funcție de legislația țării tale (Exemplu <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Articolul 5</a> din GDPR), datele cu caracter personal trebuie păstrate pe o perioadă care să nu depășească cea necesară scopurilor pentru care au fost colectate, cu excepția scopurilor de arhivare. <br>Ștergerea se va face automat după o anumită perioadă fără evenimente (durata pe care o vei indica mai jos).
+datapolicySetupPage = În funcție de legile din țara ta (Exemplu <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Articolul 5</a> din GDPR), datele cu caracter personal trebuie păstrate pentru o perioadă care nu depășește durata în care datele sunt necesare pentru scopul pentru care au fost colectate, cu excepția scopurilor de arhivare.<br>Ștergerea va fi se face automat după o anumită durată fără evenimente (durata pe care o vei indica mai jos).
 NB_MONTHS = %s luni
 ONE_YEAR = 1 an
 NB_YEARS = %s ani
@@ -38,55 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Client
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nici prospect/Nici client
 DATAPOLICY_CONTACT_FOURNISSEUR = Furnizor
 DATAPOLICY_ADHERENT = Membru
-DATAPOLICY_Tooltip_SETUP = Tip de contact - Indică opțiunile tale pentru fiecare tip. 
-DATAPOLICYMail = Configurare email-uri
-DATAPOLICYSUBJECTMAIL = Subiect email
-DATAPOLICYCONTENTMAIL = Conținut email
-DATAPOLICYSUBSITUTION = Poți utiliza următoarele variabile în email-ul tău. (LINKACCEPT permite crearea unui link care să înregistreze acordul persoanei, LINKREFUSED face posibilă înregistrarea refuzului persoanei):
-DATAPOLICYACCEPT = Mesaj după acord
-DATAPOLICYREFUSE = Mesaj după dezacord
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Poți trimite un email de acord GDPR tuturor persoanelor de contact relevante (care nu au primit încă un email și pentru care nu ai înregistrat nimic despre acordul lor GDPR). Pentru a face acest lucru, utilizează următorul buton.
 SendAgreement = Trimite email-uri
 AllAgreementSend = Toate email-urile au fost trimise
 TXTLINKDATAPOLICYACCEPT = Text pentru linkul "acord"
-TXTLINKDATAPOLICYREFUSE = Text pentru linkul "dezacord"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Text pentru link "dezacord"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Prelucrarea datelor cu caracter personal
 DATAPOLICY_consentement = Consimțământul obținut pentru prelucrarea datelor cu caracter personal
-DATAPOLICY_opposition_traitement = Se opune prelucrării datelor sale cu caracter personal
+DATAPOLICY_opposition_traitement = Se opune prelucrării datelor sale personale
 DATAPOLICY_opposition_prospection = Se opune prelucrării datelor sale personale în scopuri de prospectare
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizare terț
-DATAPOLICY_POPUP_ANONYME_TEXTE = Nu poți șterge acest contact din sistem deoarece există articole legate. În conformitate cu GDPR, veți face toate aceste date anonime pentru a vă respecta obligațiile. Doriți să continuați?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portabilitate GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export date personale
-DATAPOLICY_PORTABILITE_CONFIRMATION = Dorești să exporți datele personale ale acestui contact. Ești sigur ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonimizare %s
-
-# V2
-DATAPOLICYReturn = Validare GDPR
-DATAPOLICY_date = Data trimiterii email-ului de acord/dezacord
-DATAPOLICY_send = Data trimiterii email-ului de acord/consimțământ
-DATAPOLICYReturn = Validare GDPR
-DATAPOLICY_SEND = Trimite email GDPR
+DATAPOLICY_date = Dată acord/dezacord GDPR
+DATAPOLICY_send = Dată trimitere email acord
 MailSent = Email-ul a fost trimis
-
-# ERROR
-ErrorSubjectIsRequired = Eroare: subiectul email-ului este obligatoriu. Indicați-l în configurarea modulului
-=Din cauza unei probleme tehnice, nu am putut înregistra preferințele tale. Ne cerem scuze pentru asta. Contactați-ne pentru a ne trimite preferințele tale.
 NUMBER_MONTH_BEFORE_DELETION = Număr de luni înainte de ștergere

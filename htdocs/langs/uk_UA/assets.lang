@@ -168,7 +168,7 @@ AssetDepreciationReversal=Розворот
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Ідентифікатор активу або звук моделі не надано
+AssetErrorAssetOrAssetModelIDNotProvide=Ідентифікатор asset або знайдена модель не була надана
 AssetErrorFetchAccountancyCodesForMode=Помилка під час отримання облікових рахунків для режиму амортизації "%s"
 AssetErrorDeleteAccountancyCodesForMode=Помилка під час видалення рахунків бухгалтерського обліку з режиму амортизації «%s»
 AssetErrorInsertAccountancyCodesForMode=Помилка під час вставки облікових рахунків режиму амортизації '%s'

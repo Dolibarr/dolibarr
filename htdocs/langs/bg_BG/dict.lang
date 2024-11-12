@@ -21,7 +21,7 @@ CountryNL=Холандия
 CountryHU=Унгария
 CountryRU=Русия
 CountrySE=Швеция
-CountryCI=Ivory Coast
+CountryCI=Бряг на слоновата кост
 CountrySN=Сенегал
 CountryAR=Аржентина
 CountryCM=Камерун
@@ -137,7 +137,7 @@ CountryLV=Латвия
 CountryLB=Ливан
 CountryLS=Лесото
 CountryLR=Либерия
-CountryLY=Libya
+CountryLY=Либия
 CountryLI=Лихтенщайн
 CountryLT=Литва
 CountryLU=Люксембург
@@ -247,7 +247,7 @@ CountryJE=Жарсе
 CountryME=Черна гора
 CountryBL=Сен Бартелми
 CountryMF=Свети Мартин
-CountryXK=Kosovo
+CountryXK=Косово
 
 ##### Civilities #####
 CivilityMME=г-жа
@@ -295,8 +295,8 @@ CurrencyXPF=Френски тихоокеански франкове
 CurrencySingXPF=Френски тихоокеански франк
 CurrencyCentEUR=центa
 CurrencyCentSingEUR=цент
-CurrencyCentINR=пайса
-CurrencyCentSingINR=пайси
+CurrencyCentINR=пайси
+CurrencyCentSingINR=пайса
 CurrencyThousandthSingTND=хиляден
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Интернет

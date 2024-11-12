@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
+MailTo=Hacia
 MailMessage=Cuerpo del correo electronico
+TestMailing=Probar

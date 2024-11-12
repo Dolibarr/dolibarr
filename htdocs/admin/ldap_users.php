@@ -6,6 +6,8 @@
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors'));
@@ -135,7 +145,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_USERS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -158,14 +168,14 @@ if ($action == 'setvalue' && $user->admin) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_users');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functionality is available
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -187,7 +197,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
-// DN Pour les utilisateurs
+// DN (Domain Name) for the users
 print '<!-- LDAP_USER_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.getDolGlobalString('LDAP_USER_DN').'">';
@@ -256,14 +266,14 @@ print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_SAMBA"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA') ? ' checked' : '')."></td>";
 print '</tr>';
 
-// Password not crypted
+// Password not encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.getDolGlobalString('LDAP_FIELD_PASSWORD').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 
-// Password crypted
+// Password encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
@@ -394,7 +404,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test de la connection
  */
 if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroUser");
@@ -415,7 +425,7 @@ if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP)
 
 if (function_exists("ldap_connect")) {
 	if ($action == 'testuser') {
-		// Creation objet
+		// Create object
 		$object = new User($db);
 		$object->initAsSpecimen();
 
@@ -423,7 +433,7 @@ if (function_exists("ldap_connect")) {
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -446,7 +456,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
@@ -458,7 +468,7 @@ if (function_exists("ldap_connect")) {
 	}
 
 	if ($action == 'testsearchuser') {
-		// Creation objet
+		// Create object
 		$object = new User($db);
 		$object->initAsSpecimen();
 
@@ -466,7 +476,7 @@ if (function_exists("ldap_connect")) {
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$required_fields = array(
@@ -495,8 +505,8 @@ if (function_exists("ldap_connect")) {
 			// $filter = '('.ldap_escape(getDolGlobalString('LDAP_KEY_USERS'), '', LDAP_ESCAPE_FILTER).'=*)';
 			$ldapusers = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 1);
 
+			$liste = array();
 			if (is_array($ldapusers)) {
-				$liste = array();
 				foreach ($ldapusers as $key => $ldapuser) {
 					// Define the label string for this user
 					$label = '';

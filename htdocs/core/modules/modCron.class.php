@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modCron extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -65,9 +64,9 @@ class modCron extends DolibarrModules
 		//-------------
 		$this->config_page_url = array("cron.php@cron");
 
-		// Dependancies
+		// Dependencies
 		//-------------
-		$this->hidden = !empty($conf->global->MODULE_CRON_DISABLED); // A condition to disable module
+		$this->hidden = getDolGlobalInt('MODULE_CRON_DISABLED'); // A condition to disable module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
@@ -143,7 +142,7 @@ class modCron extends DolibarrModules
 								'langs'=>'cron', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>500,
 								'enabled'=>'$conf->cron->enabled && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'$user->rights->cron->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->cron->read', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

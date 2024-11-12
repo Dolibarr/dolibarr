@@ -4,6 +4,7 @@
  * Copyright (C) 2016       Laurent Destailleur <aldy@users.sourceforge.net>
  * Copyright (C) 2013       Florian Henry   <florian.henry@open-concept.pro>
  * Copyright (C) 2016	    Gilles Poirier  <glgpoirier@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +31,18 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -41,17 +50,17 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('resourcenote'));
 
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$permissionnote = $user->rights->resource->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('resource', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -64,7 +73,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -72,7 +81,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader();
+$title = '';
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_notes');
 
 $form = new Form($db);
 
@@ -107,7 +118,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 
-	$permission = $user->rights->resource->write;
+	$permission = $user->hasRight('resource', 'write');
 	$cssclass = 'titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

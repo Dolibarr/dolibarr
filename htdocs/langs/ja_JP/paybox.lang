@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBoxモジュールの設定
 PayBoxDesc=このモジュールは、顧客による<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox</a>での支払を許可するページを提供する。これは、無料の支払または特定のDolibarrオブジェクト（請求書、注文など）での支払に使用できる。
-FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払をするために顧客にページを提供するために利用可能 
-PaymentForm=支払形態
-WelcomeOnPaymentPage=オンライン決済サービスへようこそ
-ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができる。
-ThisIsInformationOnPayment=これは、実行する支払に関する情報。
-ToComplete=完了する
-YourEMail=入金確定を受信する電子メール
-Creditor=債権者
-PaymentCode=支払コード
 PayBoxDoPayment=Payboxで支払う
 YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされる。
-Continue=次の
 SetupPayBoxToHavePaymentCreatedAutomatically=Payboxによる検証済時に支払が自動的に作成されるように、URL <b> %s</b>を使用してPayboxを設定する。
 YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確定する。ありがとうございる。
 YourPaymentHasNotBeenRecorded=お支払は記録されておらず、取引はキャンセルされている。ありがとうございる。
-AccountParameter=アカウントのパラメータ
-UsageParameter=使用パラメータ
-InformationToFindParameters=あなたの%sアカウント情報を見つけるのを助ける
 PAYBOX_CGI_URL_V2=支払のために切符売り場CGIモジュールのurl
-CSSUrlForPaymentForm=支払フォームのCSSスタイルシートのURL
 NewPayboxPaymentReceived=新規Paybox支払を受け取った
 NewPayboxPaymentFailed=新規Paybox支払を試みましたが失敗した
 PAYBOX_PAYONLINE_SENDEMAIL=支払試行後の電子メール通知(成功または失敗)

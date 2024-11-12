@@ -65,9 +65,8 @@ LT2SupplierES=مشتريات IRPF
 LT2CustomerIN=مبيعات SGST
 LT2SupplierIN=مشتريات SGST
 VATCollected=جمعت ضريبة القيمة المضافة
-StatusToPay=دفع
 SpecialExpensesArea=منطقة لجميع المدفوعات الخاصة
-VATExpensesArea=منطقة لجميع مدفوعات TVA
+VATExpensesArea=Area for all VAT payments
 SocialContribution=الضريبة الاجتماعية أو المالية
 SocialContributions=الضرائب الاجتماعية أو المالية
 SocialContributionsDeductibles=Deductible social or fiscal taxes
@@ -83,7 +82,7 @@ NewSocialContribution=الضريبة الاجتماعية / مالية جديد�
 AddSocialContribution=Add social/fiscal tax
 ContributionsToPay=الضرائب الاجتماعية / المالية لدفع
 AccountancyTreasuryArea=منطقة المحاسبة
-InvoicesArea=Billing and payment area
+InvoicesArea=دفع الفواتير و منطقة
 NewPayment=دفع جديدة
 PaymentCustomerInvoice=الزبون تسديد الفاتورة
 PaymentSupplierInvoice=دفع فاتورة البائع
@@ -133,15 +132,15 @@ ByThirdParties=بو أطراف ثالثة
 ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
 CheckReceipt=قسيمة الإيداع
 CheckReceiptShort=قسيمة الإيداع
-LastCheckReceiptShort=Latest %s deposit slips
-LastPaymentForDepositShort=Latest %s %s deposit slips
+LastCheckReceiptShort=أحدث %s قسائم الإيداع
+LastPaymentForDepositShort=أحدث قسائم إيداع %s %s
 NewCheckReceipt=خصم جديد
-NewCheckDeposit=New deposit slip
+NewCheckDeposit=قسيمة إيداع جديدة
 NewCheckDepositOn=تهيئة لتلقي الودائع على حساب : ٪ ق
 NoWaitingChecks=No checks awaiting deposit.
-NoWaitingPaymentForDeposit=No %s payment awaiting deposit.
+NoWaitingPaymentForDeposit=لا توجد دفعة %s في انتظار الإيداع.
 DateChequeReceived=تحقق من تاريخ الاستلام
-DatePaymentReceived=Date of document reception
+DatePaymentReceived=تاريخ استلام الوثيقة
 NbOfCheques=عدد الشيكات
 PaySocialContribution=دفع ضريبة اجتماعية / مالية
 PayVAT=دفع إقرار ضريبة القيمة المضافة
@@ -160,10 +159,11 @@ ConfirmDeleteVariousPayment=هل أنت متأكد أنك تريد حذف هذه
 ExportDataset_tax_1=الضرائب والمدفوعات الاجتماعية والمالية
 CalcModeVATDebt=<b>الوضع٪ SVAT بشأن المحاسبة الالتزام٪ الصورة.</b>
 CalcModeVATEngagement=وضع <b>SVAT٪ على مداخيل مصاريف٪ الصورة.</b>
-CalcModeDebt=Analysis of known recorded documents
-CalcModeEngagement=Analysis of known recorded payments
+CalcModeDebt=تحليل الوثائق المسجلة المعروفة
+CalcModeEngagement=تحليل المدفوعات المسجلة المعروفة
+CalcModePayment=تحليل المدفوعات المسجلة المعروفة
 CalcModeBookkeeping=تحليل البيانات المسجلة في دفتر دفتر الأستاذ.
-CalcModeNoBookKeeping=Even if they are not yet accounted in Ledger
+CalcModeNoBookKeeping=حتى لو لم يتم حسابهم بعد في دفتر الأستاذ
 CalcModeLT1= <b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء - فواتير الموردين٪ الصورة</b>
 CalcModeLT1Debt=<b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء٪ الصورة</b>
 CalcModeLT1Rec= <b>الوضع٪ زارة العلاقات الخارجية على فواتير الموردين٪ الصورة</b>
@@ -177,7 +177,7 @@ AnnualByCompaniesDueDebtMode=ميزان الإيرادات والمصروفات 
 AnnualByCompaniesInputOutputMode=ميزان الإيرادات والمصروفات ، التفاصيل حسب المجموعات المحددة مسبقًا ، الوضع <b> %s الدخل - المصروفات %s </b> قال <b> المحاسبة النقدية a09a4b739.
 SeeReportInInputOutputMode=راجع <b> %s تحليل المدفوعات
 SeeReportInDueDebtMode=راجع <b> %s تحليل المستندات المسجلة
-SeeReportInBookkeepingMode=راجع <b> %s تحليل جدول دفتر الأستاذ لحراسة الدفاتر
+SeeReportInBookkeepingMode=راجع <b>%sتحليل جدول دفتر أستاذ مسك الدفاتر%s</b> لتقرير يعتمد على <b>جدول دفتر أستاذ مسك الدفاتر</b>
 RulesAmountWithTaxIncluded=- المبالغ المبينة لمع جميع الضرائب المدرجة
 RulesAmountWithTaxExcluded=- مبالغ الفواتير المعروضة مع استبعاد جميع الضرائب
 RulesResultDue=- تشمل جميع الفواتير والمصاريف وضريبة القيمة المضافة والتبرعات والرواتب سواء تم دفعها أم لا. <br> - يعتمد على تاريخ فوترة الفواتير وتاريخ استحقاق المصروفات أو مدفوعات الضرائب. بالنسبة للرواتب ، يتم استخدام تاريخ انتهاء الفترة.
@@ -251,14 +251,16 @@ TurnoverPerProductInCommitmentAccountingNotRelevant=لا يتوفر تقرير �
 TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant=لا يتوفر تقرير رقم الأعمال المحصل لكل معدل ضريبة بيع. هذا التقرير متاح فقط للدوران المفوتر.
 CalculationMode=وضع الحساب
 AccountancyJournal=مجلة كود المحاسبة
-ACCOUNTING_VAT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on sales (used if not defined on VAT dictionary setup)
-ACCOUNTING_VAT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases (used if not defined on VAT dictionary setup)
-ACCOUNTING_VAT_PAY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for paying VAT
-ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases for reverse charges (Credit)
-ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases for reverse charges (Debit)
-ACCOUNTING_ACCOUNT_CUSTOMER=Account (from the Chart Of Account) used for "customer" third parties
+ACCOUNTING_VAT_SOLD_ACCOUNT=الحساب (من دليل الحساب) الذي سيتم استخدامه كحساب افتراضي لضريبة القيمة المضافة على المبيعات (يُستخدم إذا لم يتم تحديده في إعداد قاموس ضريبة القيمة المضافة)
+ACCOUNTING_VAT_BUY_ACCOUNT=الحساب (من دليل الحساب) الذي سيتم استخدامه كحساب افتراضي لضريبة القيمة المضافة على المشتريات (يُستخدم إذا لم يتم تحديده في إعداد قاموس ضريبة القيمة المضافة)
+ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT=الحساب (من دليل الحساب) الذي سيتم استخدامه لختم الإيرادات على المبيعات
+ACCOUNTING_REVENUESTAMP_BUY_ACCOUNT=الحساب (من دليل الحساب) الذي سيتم استخدامه لختم الإيرادات على المشتريات
+ACCOUNTING_VAT_PAY_ACCOUNT=الحساب (من دليل الحسابات) الذي سيتم استخدامه كحساب افتراضي لدفع ضريبة القيمة المضافة
+ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT=الحساب (من دليل الحساب) الذي سيتم استخدامه كحساب افتراضي لضريبة القيمة المضافة على المشتريات مقابل الرسوم العكسية (الائتمان)
+ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT=الحساب (من دليل الحساب) الذي سيتم استخدامه كحساب افتراضي لضريبة القيمة المضافة على المشتريات مقابل الرسوم العكسية (الخصم)
+ACCOUNTING_ACCOUNT_CUSTOMER=الحساب (من دليل الحساب) المستخدم لـ "العميل" الجهات الخارجية
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=سيتم استخدام حساب المحاسبة المخصص المحدد في بطاقة الطرف الثالث لمحاسبة Subledger فقط. سيتم استخدام هذا واحد لدفتر الأستاذ العام وكقيمة افتراضية لمحاسبة Subledger إذا لم يتم تحديد حساب محاسبة العميل المخصص على طرف ثالث.
-ACCOUNTING_ACCOUNT_SUPPLIER=Account (from the Chart of Account) used for the "vendor" third parties
+ACCOUNTING_ACCOUNT_SUPPLIER=الحساب (من دليل الحساب) المستخدم لدى الأطراف الثالثة "المورد"
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=سيتم استخدام حساب المحاسبة المخصص المحدد في بطاقة الطرف الثالث لمحاسبة Subledger فقط. سيتم استخدام هذا واحد لدفتر الأستاذ العام وكقيمة افتراضية لمحاسبة Subledger إذا لم يتم تحديد حساب محاسبة البائع المخصص على طرف ثالث.
 ConfirmCloneTax=قم بتأكيد استنساخ الضريبة الاجتماعية / المالية
 ConfirmCloneVAT=قم بتأكيد استنساخ إقرار ضريبة القيمة المضافة
@@ -272,7 +274,7 @@ SameCountryCustomersWithVAT=تقرير عملاء الوطني
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل
 LinkedFichinter=Link to an intervention
 ImportDataset_tax_contrib=الضرائب الاجتماعية / المالية
-ImportDataset_tax_vat=Vat payments
+ImportDataset_tax_vat=VAT payments
 ErrorBankAccountNotFound=Error: Bank account not found
 FiscalPeriod=Accounting period
 ListSocialContributionAssociatedProject=List of social contributions associated with the project

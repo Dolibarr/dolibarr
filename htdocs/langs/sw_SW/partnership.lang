@@ -38,10 +38,10 @@ ListOfPartnerships=Orodha ya ushirika
 PartnershipSetup=Mpangilio wa ushirika
 PartnershipAbout=Kuhusu Ushirikiano
 PartnershipAboutPage=Ushirikiano kuhusu ukurasa
-partnershipforthirdpartyormember=Hali ya mshirika lazima iwekwe kwa 'mtu wa tatu' au 'mwanachama'
+partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
 PARTNERSHIP_IS_MANAGED_FOR=Ushirikiano unasimamiwa kwa
 PARTNERSHIP_BACKLINKS_TO_CHECK=Viungo vya nyuma vya kuangalia
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ya siku kabla ya kughairi hali ya ushirikiano wakati usajili umeisha
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
 ReferingWebsiteCheck=Angalia urejeleaji wa tovuti
 ReferingWebsiteCheckDesc=Unaweza kuwezesha kipengele ili kuangalia kama washirika wako wameongeza kiunga cha nyuma kwenye vikoa vya tovuti yako kwenye tovuti yao wenyewe.
 PublicFormRegistrationPartnerDesc=Dolibarr inaweza kukupa URL/tovuti ya umma ili kuruhusu wageni kutoka nje kuomba kuwa sehemu ya mpango wa ushirikiano.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Ushirikiano uliowekwa kwa mwanachama huyu
 DatePartnershipStart=Tarehe ya kuanza
 DatePartnershipEnd=Tarehe ya mwisho
 ReasonDecline=Kataa sababu
-ReasonDeclineOrCancel=Kataa sababu
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Ushirikiano tayari upo
 ManagePartnership=Dhibiti ushirikiano
 BacklinkNotFoundOnPartnerWebsite=Backlink haipatikani kwenye tovuti ya mshirika
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=Ushirikiano ulikataa
 YourPartnershipAcceptedTopic=Ushirikiano umekubaliwa
 YourPartnershipCanceledTopic=Ushirikiano umeghairiwa
 
-YourPartnershipWillSoonBeCanceledContent=Tunakujulisha kuwa ushirikiano wako utaghairiwa hivi karibuni (Kiungo cha nyuma hakijapatikana)
-YourPartnershipRefusedContent=Tunakujulisha kuwa ombi lako la ushirikiano limekataliwa.
-YourPartnershipAcceptedContent=Tunakujulisha kuwa ombi lako la ushirikiano limekubaliwa.
-YourPartnershipCanceledContent=Tunakujulisha kuwa ushirikiano wako umeghairiwa.
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
 
 CountLastUrlCheckError=Idadi ya makosa ya ukaguzi wa mwisho wa URL
 LastCheckBacklink=Tarehe ya mwisho ya kuangalia URL
-ReasonDeclineOrCancel=Kataa sababu
 
 NewPartnershipRequest=Ombi jipya la ushirikiano
 NewPartnershipRequestDesc=Fomu hii hukuruhusu kuomba kuwa sehemu ya mojawapo ya mpango wetu wa ushirikiano. Ikiwa unahitaji usaidizi wa kujaza fomu hii, tafadhali wasiliana na barua pepe <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ukurasa huu lazima uwe na angalau kiungo kimoja kwa mojawapo ya vikoa vifuatavyo: %s
+
+IPOfApplicant=IP of applicant
 

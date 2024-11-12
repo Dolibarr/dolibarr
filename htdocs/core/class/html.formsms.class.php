@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,13 @@
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
  *       \ingroup    core
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Classe permettant la generation du formulaire d'envoi de Sms
+ *      Class permettant la generation du formulaire d'envoi de Sms
  *      Usage: $formsms = new FormSms($db)
  *             $formsms->proprietes=1 ou chaine ou tableau de valeurs
  *             $formsms->show_form() affiche le formulaire
@@ -38,34 +39,101 @@ class FormSms
 	 */
 	public $db;
 
+	/**
+	 * @var int
+	 */
 	public $fromid;
+	/**
+	 * @var string
+	 */
 	public $fromname;
+	/**
+	 * @var string
+	 */
 	public $fromsms;
+
+	/**
+	 * @var string
+	 */
 	public $fromtype;
+	/**
+	 * @var string
+	 */
 	public $replytoname;
+	/**
+	 * @var string
+	 */
 	public $replytomail;
+	/**
+	 * @var string
+	 */
 	public $toname;
+	/**
+	 * @var string
+	 */
 	public $tomail;
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $withsubstit; // Show substitution array
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $withfrom;
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $withto;
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtopic;
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $withbody;
 
 	/**
 	 * @var int 	Id of company
 	 */
 	public $withtosocid;
-
+	/**
+	 * @var int<0,1>
+	 */
 	public $withfromreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withreplytoreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtoreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withtopicreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withbodyreadonly;
+	/**
+	 * @var int<0,1>
+	 */
 	public $withcancel;
 
+	/**
+	 * @var array<string,string>
+	 */
 	public $substit = array();
+	/**
+	 * @var array{}|array{action:string,models:string,smsid:int,returnurl:string}
+	 */
 	public $param = array();
 
 	/**
@@ -105,12 +173,12 @@ class FormSms
 	 *	Show the form to input an sms.
 	 *
 	 *	@param	string	$morecss Class on first column td
-	 *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
+	 *  @param int $showform Show form tags and submit button (recommended is to use with value 0)
 	 *	@return	void
 	 */
 	public function show_form($morecss = 'titlefield', $showform = 1)
 	{
-	 // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs, $form;
 
 		if (!is_object($form)) {
@@ -186,6 +254,8 @@ function limitChars(textarea, limit, infodiv)
 				print "</td></tr>\n";
 			} else {
 				print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom")."</td><td>";
+				$resultsender = array();
+				$sms = null;
 				if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
 					$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
 					$classmoduleofsender = getDolGlobalString('MAIN_MODULE_'.strtoupper($sendmode).'_SMS', $sendmode);	// $conf->global->MAIN_MODULE_XXX_SMS looks like a value 'class@module'
@@ -201,18 +271,19 @@ function limitChars(textarea, limit, infodiv)
 						$classname = ucfirst($classfile);
 						if (class_exists($classname)) {
 							$sms = new $classname($this->db);
-							$resultsender = $sms->SmsSenderList();
+							'@phan-var-force CommonObject $sms';
+							$resultsender = $sms->SmsSenderList();  // @phan-suppress-current-line PhanUndeclaredMethod
 						} else {
 							$sms = new stdClass();
 							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 						}
 					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+						dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
 						exit;
 					}
 				} else {
 					dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
-					$resultsender = array();
+					$resultsender = array(0 => new stdClass());
 					$resultsender[0]->number = $this->fromsms;
 				}
 
@@ -223,7 +294,7 @@ function limitChars(textarea, limit, infodiv)
 					}
 					print '</select>';
 				} else {
-					print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
+					print '<span class="error wordbreak">'.$langs->trans("SmsNoPossibleSenderFound");
 					if (is_object($sms) && !empty($sms->error)) {
 						print ' '.$sms->error;
 					}
@@ -244,7 +315,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print '<input size="16" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
+				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {
@@ -254,7 +325,7 @@ function limitChars(textarea, limit, infodiv)
 					//var_dump($_REQUEST);exit;
 					print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
 				}
-				print ' <span class="opacitymedium">'.$langs->trans("SmsInfoNumero").'</span>';
+				print '<span class="opacitymedium hideonsmartphone"> '.$langs->trans("SmsInfoNumero").'</span>';
 			}
 			print "</td></tr>\n";
 		}

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +34,19 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("knowledgemanagement", "ticket", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -44,9 +54,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'knowledgerecordcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new KnowledgeRecord($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->knowledgemanagement->dir_output.'/temp/massgeneration/'.$user->id;
@@ -57,7 +67,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -71,13 +81,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
-$permissiontovalidate = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
 $permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontovalidate =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('knowledgemanagement', 'knowledgerecord_advance', 'validate')));
 $permissionnote = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -116,7 +126,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Update / add for lang
 	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {
@@ -139,10 +149,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -166,7 +176,7 @@ $formadmin = new FormAdmin($db);
 
 $title = $langs->trans("KnowledgeRecord");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card');
 
 // Part to create
 if ($action == 'create') {
@@ -191,8 +201,8 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 	$object->fields['answer']['enabled'] = 1;
 
-	if (isModEnabled('categorie')) {
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
+	if (isModEnabled('category')) {
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
 
 		if (count($cate_arbo)) {
 			// Categories
@@ -248,8 +258,8 @@ if (($id || $ref) && $action == 'edit') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 	$object->fields['answer']['enabled'] = 1;
 
-	if (isModEnabled('categorie')) {
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
+	if (isModEnabled('category')) {
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
 
 		if (count($cate_arbo)) {
 			// Categories
@@ -425,7 +435,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak='fk_c_ticket_category';	// We change column just before this field
+	$keyforbreak = 'fk_c_ticket_category';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	$object->fields['answer']['enabled'] = 0;
@@ -433,7 +443,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fields['answer']['enabled'] = 1;
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
 		print "</td></tr>";
@@ -544,7 +554,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('knowledgerecord'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('knowledgerecord'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

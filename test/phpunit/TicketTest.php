@@ -30,13 +30,14 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
 require_once dirname(__FILE__).'/../../htdocs/ticket/class/ticket.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -46,87 +47,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TicketTest extends PHPUnit\Framework\TestCase
+class TicketTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return TicketTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testTicketCreate
 	 *
@@ -135,24 +57,24 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Try to create one with bad values
-		$localobject=new Ticket($db);
+		$localobject = new Ticket($db);
 		$localobject->initAsSpecimen();
 		$localobject->ref = '';
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
 
 		// Try to create one with correct values
-		$localobject=new Ticket($db);
+		$localobject = new Ticket($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThan(0, $result, $localobject->error.join(',', $localobject->errors));
@@ -172,13 +94,13 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Ticket($db);
-		$result=$localobject->fetch($id);
+		$localobject = new Ticket($db);
+		$result = $localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
@@ -198,12 +120,12 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketmarkAsRead($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->markAsRead($user);
+		$result = $localobject->markAsRead($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
@@ -222,14 +144,14 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketsetProject($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$project_id = 1;
 
-		$result=$localobject->setProject($project_id);
+		$result = $localobject->setProject($project_id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
@@ -248,14 +170,14 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketsetContract($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$contract_id = 1;
 
-		$result=$localobject->setContract($contract_id);
+		$result = $localobject->setContract($contract_id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
@@ -274,14 +196,14 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketsetProgression($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$percent = 80;
 
-		$result=$localobject->setProgression($percent);
+		$result = $localobject->setProgression($percent);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
@@ -300,14 +222,14 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketassignUser($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$user_id_to_assign = 1;
 
-		$result=$localobject->assignUser($user, $user_id_to_assign);
+		$result = $localobject->assignUser($user, $user_id_to_assign);
 		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
@@ -327,14 +249,14 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketassignUserOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$user_id_to_assign = 2;
 
-		$result=$localobject->assignUser($user, $user_id_to_assign);
+		$result = $localobject->assignUser($user, $user_id_to_assign);
 		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
@@ -354,12 +276,12 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketclose($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->close($user);
+		$result = $localobject->close($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
@@ -379,14 +301,14 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	public function testTicketDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Ticket($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new Ticket($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);

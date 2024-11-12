@@ -422,3 +422,6 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-28Η ΟΚΤΩΒΡΙΟΥ', 0, 102, '', 0,  10, 28, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΧΡΙΣΤΟΥΓΕΝΝΑ', 0, 102, '', 0,  12, 25, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΣΥΝΑΞΗ ΘΕΟΤΟΚΟΥ', 0, 102, '', 0, 12, 26, 1);
+
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
+

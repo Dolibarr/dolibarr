@@ -25,7 +25,8 @@ create table llx_deliverydet
   fk_product        integer,
   description       text,
   qty               real,                            -- quantity
-  subprice          double(24,8) DEFAULT 0,          -- prix unitaire
+  subprice          double(24,8) DEFAULT 0,          -- unit price
+  subprice_ttc      double(24,8) DEFAULT 0,    	 	 -- unit price if price was entered including tax
   total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite
   rang              integer      DEFAULT 0
 )ENGINE=innodb;
