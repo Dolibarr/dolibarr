@@ -27,7 +27,15 @@
 // $permissionnote must be defined to permission to edit object
 // $object must be defined (object is loaded in this file with fetch)
 // $id must be defined (object is loaded in this file with fetch)
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $permissionnote
+ */
 // Set public note
 if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
 	if (empty($action) || !is_object($object) || empty($id)) {
