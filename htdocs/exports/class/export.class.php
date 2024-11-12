@@ -837,7 +837,7 @@ class Export
 									$params = [];
 									if (!empty($item['method_params'])) {
 										foreach ($item['method_params'] as $paramName) {
-											$params[] = $obj->$paramName ?? null;
+											$params[] = $obj->$paramName ?? ($paramName ?? null);
 										}
 									}
 									$value = $tmpObject->$methodName(...$params);
