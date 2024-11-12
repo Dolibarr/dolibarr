@@ -9577,69 +9577,15 @@ parameters:
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: '#^Variable \$modulepart might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 20
 			path: ../../htdocs/core/actions_setnotes.inc.php
 
 		-
@@ -31414,18 +31360,6 @@ parameters:
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
-			path: ../../htdocs/public/bookcal/index.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 16
-			path: ../../htdocs/public/bookcal/index.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 20
 			path: ../../htdocs/public/bookcal/index.php
 
 		-
