@@ -34,6 +34,8 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var string $action
+ * @var int $id
  * @var int $permissionnote
  */
 // Set public note
