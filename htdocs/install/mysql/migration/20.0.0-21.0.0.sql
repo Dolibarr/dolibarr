@@ -51,6 +51,9 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 -- V21 migration
 
+ALTER TABLE llx_blockedlog DROP INDEX entity_action;
+ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
+
 ALTER TABLE llx_ecm_files MODIFY COLUMN description varchar(255);
 ALTER TABLE llx_ecm_files MODIFY COLUMN cover varchar(32);
 ALTER TABLE llx_ecm_files ADD COLUMN content text;
