@@ -1,9 +1,9 @@
 name: 'PHPStan'
 
 on:
-  # Every Wednesday we want to refresh the baseline
+  # Every Monday we want to refresh the baseline
   schedule:
-    - cron: '0 6 * * 3'
+    - cron: '0 6 * * 1'
 
   # We want to be able to manually refresh the baseline too
   workflow_dispatch:
@@ -59,6 +59,7 @@ jobs:
           commit_name: Dolibot
           commit_email: dolibarr-bot@users.noreply.github.com
           commit_message: PHPStan > Update baseline
+          target_branch: develop
           pr_create: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && 1 || 0 }}
           pr_title: PHPStan > Update baseline
           pr_reviewer: eldy
