@@ -157,7 +157,7 @@ if (empty($reshook)) {
 			// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
 			$stdobject = new GenericObject($db);
 			$stdobject->barcode_type = $fk_barcode_type;
-			$result = $stdobject->fetch_barcode();
+			$result = $stdobject->fetchBarCode();
 			if ($result <= 0) {
 				$error++;
 				setEventMessages('Failed to get bar code type information '.$stdobject->error, $stdobject->errors, 'errors');
@@ -171,8 +171,8 @@ if (empty($reshook)) {
 
 		if (!$error && $stdobject !== null) {
 			$code = $forbarcode;
-			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
-			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
+			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetchBarCode). Engine.
+			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetchBarCode). Example 'ean', 'isbn', ...
 
 			$diroutput = $conf->barcode->dir_temp;
 			dol_mkdir($diroutput);
