@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent   <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,9 @@ global $user, $db, $hookmanager;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force array<CommonObject> $linkedObjectBlock';
 $object = $GLOBALS['object'];
 
 // Load translation files required by the page
@@ -43,8 +46,9 @@ if ($object->element == 'mo') {
 	$mo_static = new Mo($db);
 	$res = $mo_static->fetch($object->id);
 	$TMoChilds = $mo_static->getMoChilds();
+	'@phan-var-force Mo[] $TMoChilds';
 
-	$hookmanager->initHooks('LinesLinkedObjectBlock');
+	$hookmanager->initHooks(array('LinesLinkedObjectBlock'));
 	$parameters = array('TMoChilds' => $TMoChilds);
 	$reshook = $hookmanager->executeHooks('LinesLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
@@ -88,7 +92,7 @@ if ($object->element == 'mo') {
 	}
 } else {
 	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-
+	'@phan-var-force array<CommonObject> $linkedObjectBlock';
 	$total = 0;
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {

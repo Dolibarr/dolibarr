@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Рекрутинг
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Управляйте кампаниями по найму на новые рабочие места и следите за ними
-
-#
 # Admin page
-#
 RecruitmentSetup = Настройка набора
 RecruitmentSetupPage = Введите здесь настройки основных опций модуля найма
 RecruitmentArea=Рекрутинговая зона
 PublicInterfaceRecruitmentDesc=Публичные страницы вакансий - это общедоступные URL-адреса для отображения открытых вакансий и ответа на них. Для каждой открытой вакансии есть одна отдельная ссылка, которая находится в каждой записи о вакансии.
 EnablePublicRecruitmentPages=Включить публичные страницы открытых вакансий
 
-#
-# About page
-#
-RecruitmentAbout = О найме
-RecruitmentAboutPage = Рекрутинг о странице
 NbOfEmployeesExpected=Ожидаемое количество сотрудников
 JobLabel=Ярлык должности
 WorkPlace=Рабочее место
@@ -47,7 +34,6 @@ PositionToBeFilled=Должность
 PositionsToBeFilled=Вакансии
 ListOfPositionsToBeFilled=Список вакансий
 NewPositionToBeFilled=Новые рабочие места
-
 JobOfferToBeFilled=Должность быть заполнена
 ThisIsInformationOnJobPosition=Информация о вакансии, которую необходимо заполнить
 ContactForRecruitment=Контакт для набора

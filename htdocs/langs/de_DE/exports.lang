@@ -46,10 +46,16 @@ LineLabel=Zeilenbeschriftung
 LineDescription=Beschreibung der Zeile
 LineUnitPrice=Stückpreis der Zeile
 LineVATRate=Steuersatz der Zeile
+LineLT1Rate=Steuersatz dieser Zeile für Steuer 2
+LineLT2Rate=Steuersatz dieser Zeile für Steuer 3
+LineLT1Type=Steuerart dieser Zeile für Steuer 2
+LineLT2Type=Steuerart dieser Zeile für Steuer 3
 LineQty=Menge der Zeile
 LineTotalHT=Betrag ohne Steuern (netto)
 LineTotalTTC=Bruttobetrag der Zeile
 LineTotalVAT=Steuerbetrag der Zeile
+LineTotalLT1=Steuerbetrag dieser Zeile für Steuer 2
+LineTotalLT2=Steuerbetrag dieser Zeile für Steuer 3
 TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Leistung)
 FileWithDataToImport=Datei mit zu importierenden Daten
 FileToImport=Quelldatei für Import

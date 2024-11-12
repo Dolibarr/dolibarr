@@ -28,7 +28,6 @@ ProjectReferers=Verknüpfte Objekte
 ProjectMustBeValidatedFirst=Projekt muss erst bestätigt werden
 InputPerDay=Eingang pro Tag
 InputPerWeek=Eingang pro Woche
-ProjectsWithThisUserAsContact=Projekte mit diesem Anwender als Kontakt
 TasksWithThisUserAsContact=Aufgaben zugeordnet zu diesem Anwender
 ResourceNotAssignedToProject=Zugewiesen zu Projekt
 ResourceNotAssignedToTheTask=Nicht der Aufgabe zugewiesen

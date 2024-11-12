@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM-Consulting  	 <support@atm-consulting.fr>
  * Copyright (C) 2020		Maxime DEMAREST  	 <maxime@indelog.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array('bills'));
 
 // Security check
@@ -56,12 +65,15 @@ if (!$year) {
 	$year = date("Y");
 }
 
+$permissiontoread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
+$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
+
 
 /*
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $permissiontoread) {
 	$rap = new pdf_paiement_fourn($db);
 
 	$outputlangs = $langs;
@@ -93,7 +105,7 @@ $formfile = new FormFile($db);
 
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
 
-llxHeader('', $titre);
+llxHeader('', $titre, '', '', 0, 0, '', '', '', 'mod-fourn-facture page-rapport');
 
 print load_fiche_titre($titre, '', 'supplier_invoice');
 

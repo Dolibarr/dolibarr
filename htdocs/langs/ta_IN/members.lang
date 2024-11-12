@@ -200,8 +200,8 @@ MembersStatisticsDesc=நீங்கள் படிக்க விரும�
 MenuMembersStats=புள்ளிவிவரங்கள்
 LastMemberDate=சமீபத்திய உறுப்பினர் தேதி
 LatestSubscriptionDate=சமீபத்திய பங்களிப்பு தேதி
-MemberNature=உறுப்பினரின் இயல்பு
-MembersNature=உறுப்பினர்களின் இயல்பு
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
 MembershipPublic=Public membership
 NewMemberbyWeb=புதிய உறுப்பினர் சேர்க்கப்பட்டார். ஒப்புதலுக்காக காத்திருக்கிறது
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

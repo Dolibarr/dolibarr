@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 
 // Security check
 if (!isModEnabled('bookcal')) {
@@ -97,7 +98,7 @@ $max_day_in_prev_month = idate("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_ye
 $max_day_in_month = idate("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
 // tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
 $tmpday = - idate("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // idate('w') is 0 for sunday
-$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
+$tmpday += (getDolGlobalInt('MAIN_START_WEEK', 1) - 1);
 if ($tmpday >= 1) {
 	$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
 }
@@ -124,13 +125,13 @@ $errmsg = '';
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -185,12 +186,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  * Actions
  */
 
-if ($action == 'add') {
+if ($action == 'add' ) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$idcontact = 0;
 	$calendar = $object;
 	$contact = new Contact($db);
 	$actioncomm = new ActionComm($db);
+	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 
 	if (!is_object($user)) {
 		$user = new User($db);
@@ -229,10 +231,17 @@ if ($action == 'add') {
 				$contact->lastname = GETPOST("lastname");
 				$contact->firstname = GETPOST("firstname");
 				$contact->email = GETPOST("email");
-				$result = $contact->create($user);
-				if ($result < 0) {
+				$contact->ip = getUserRemoteIP();
+
+				if (checkNbPostsForASpeceificIp($contact, $nb_post_max) <= 0) {
 					$error++;
-					$errmsg .= $contact->error." ".implode(',', $contact->errors);
+					$errmsg .= implode('<br>', $contact->errors);
+				} else {
+					$result = $contact->create($user);
+					if ($result < 0) {
+						$error++;
+						$errmsg .= $contact->error." ".implode(',', $contact->errors);
+					}
 				}
 			}
 		} else {
@@ -242,7 +251,7 @@ if ($action == 'add') {
 	}
 
 	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOST("durationbooking"), 'i');
+		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
 
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
@@ -262,25 +271,15 @@ if ($action == 'add') {
 				'transparency' =>0,
 			]
 		];
-
-		$result = $actioncomm->create($user);
-		if ($result < 0) {
+		$actioncomm->ip = getUserRemoteIP();
+		if (checkNbPostsForASpeceificIp($actioncomm, $nb_post_max) <= 0) {
 			$error++;
-			$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
-		}
-
-		if (!$error) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources";
-			$sql .= "(fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
-			$sql .= ") VALUES (";
-			$sql .= (int) $actioncomm->id;
-			$sql .= ", 'socpeople'";
-			$sql .= ", ". (int) $contact->id;
-			$sql .= ", 0, 0, 0)";
-			$resql = $db->query($sql);
-			if (!$resql) {
+			$errmsg .= implode('<br>', $actioncomm->errors);
+		} else {
+			$result = $actioncomm->create($user);
+			if ($result < 0) {
 				$error++;
-				$errmsg .= $db->lasterror();
+				$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
 			}
 		}
 	}
@@ -421,7 +420,7 @@ if ($action == 'afteradd') {
 		}
 		print ' </tr>'."\n";
 
-		$todayarray = dol_getdate($now, 'fast');
+		$todayarray = dol_getdate($now, true);
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
 		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']

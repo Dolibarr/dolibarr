@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=ማድረስ
 DeliveryRef=ማጣቀሻ መላኪያ
-DeliveryCard=የአክሲዮን ደረሰኝ
+DeliveryCard=Delivery receipt
 DeliveryOrder=የመላኪያ ደረሰኝ
 DeliveryDate=መላኪያ ቀን
 CreateDeliveryOrder=የመላኪያ ደረሰኝ ይፍጠሩ

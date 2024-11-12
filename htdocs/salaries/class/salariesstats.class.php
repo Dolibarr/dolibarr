@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (c) 2018      Fidesio              <contact@fidesio.com>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (c) 2018       Fidesio                 <contact@fidesio.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,19 +37,22 @@ class SalariesStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
-	public $userid;
 
-	public $from;
-	public $field;
-	public $where;
+	/**
+	 * @var int user ID
+	 */
+	public $userid;
 
 	/**
 	 * Constructor
 	 *
 	 * @param   DoliDB      $db        Database handler
 	 * @param   int         $socid     Id third party
-	 * @param   mixed       $userid    Id user for filter or array of user ids
+	 * @param   int|int[]   $userid    Id user for filter or array of user ids
 	 * @return  void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -77,7 +82,7 @@ class SalariesStats extends Stats
 	/**
 	 *  Return the number of salary by year
 	 *
-	 *	@return		array	Array of values
+	 *	@return	array<array{0:int,1:int}>		Array of nb each year
 	 */
 	public function getNbByYear()
 	{
@@ -95,7 +100,7 @@ class SalariesStats extends Stats
 	 *
 	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -117,7 +122,7 @@ class SalariesStats extends Stats
 	 *
 	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -137,7 +142,7 @@ class SalariesStats extends Stats
 	 *	Return average amount
 	 *
 	 *	@param	int		$year		Year to scan
-	 *	@return	array				Array of values
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -154,7 +159,7 @@ class SalariesStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array				Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{

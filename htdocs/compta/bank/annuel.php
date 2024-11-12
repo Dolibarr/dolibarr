@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +32,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 380); // Large for one graph in a smarpthone.
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '380'); // Large for one graph in a smarpthone.
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '160');
 
 $id = GETPOST('account') ? GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankannualreport', 'globalcard'));
 
 // Security check
@@ -53,7 +62,7 @@ $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_accoun
 
 $year_start = GETPOST('year_start');
 //$year_current = strftime("%Y", time());
-$year_current = dol_print_date(time(), "%Y");
+$year_current = (int) dol_print_date(time(), "%Y");
 if (!$year_start) {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;
@@ -62,10 +71,10 @@ if (!$year_start) {
 }
 
 
-
 /*
  * View
  */
+$error = 0;
 
 $form = new Form($db);
 
@@ -296,15 +305,16 @@ if ($result < 0) {
 		$obj = $db->fetch_object($resql);
 		$min = $db->jdate($obj->min);
 		$max = $db->jdate($obj->max);
+		$log = "graph.php: min=".$min." max=".$max;
+		dol_syslog($log);
 	} else {
 		dol_print_error($db);
 	}
-	$log = "graph.php: min=".$min." max=".$max;
-	dol_syslog($log);
 
 	// CRED PART
 	// Chargement du tableau des années
 	$tblyear = array();
+	'@phan-var-force array<array<string,int|float>> $tblyear';
 	$tblyear[0] = array();
 	$tblyear[1] = array();
 	$tblyear[2] = array();

@@ -46,10 +46,16 @@ LineLabel=Etiqueta de liña
 LineDescription=Descrición de liña
 LineUnitPrice=Prezo unitario da liña
 LineVATRate=Tipo de IVE da liña
+LineLT1Rate=Taxa do imposto 2 por liña
+LineLT2Rate=Taxa do imposto 3 por liña
+LineLT1Type=Tipo de imposto 2 por a liña
+LineLT2Type=Tipo de imposto 3 por liña
 LineQty=Cantidade da liña
 LineTotalHT=Importe sen IVE da liña
 LineTotalTTC=Importe total da liña
 LineTotalVAT=Importe IVE da liña
+LineTotalLT1=Importe do imposto 2 por liña
+LineTotalLT2=Importe do imposto 3 por liña
 TypeOfLineServiceOrProduct=Tipo de liña (0=producto, 1=servizo)
 FileWithDataToImport=Ficheiro cos datos a importar
 FileToImport=Ficheiro orixe a importar

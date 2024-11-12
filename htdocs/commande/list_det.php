@@ -55,6 +55,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
@@ -83,6 +91,7 @@ $search_dateorder_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateorder_end_
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_start_month'), GETPOSTINT('search_datedelivery_start_day'), GETPOSTINT('search_datedelivery_start_year'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_end_month'), GETPOSTINT('search_datedelivery_end_day'), GETPOSTINT('search_datedelivery_end_year'));
 
+$search_product_category_array = array();
 if (isModEnabled('category')) {
 	$search_product_category_array = GETPOST("search_category_".Categorie::TYPE_PRODUCT."_list", "array");
 	$searchCategoryProductOperator = 0;
@@ -109,7 +118,7 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
@@ -155,7 +164,7 @@ if (!$sortorder) {
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlistdetail'));
 $extrafields = new ExtraFields($db);
@@ -247,6 +256,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'commande', $id, '');
 
+$permissiontoread = false;
 
 /*
  * Actions
@@ -1298,6 +1308,7 @@ if ($resql) {
 
 	// Détail commande
 	if (!empty($arrayfields['rowid']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
 		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 	}
@@ -1464,6 +1475,7 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$productstat_cache = array();
+	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_sdtat_cache';
 	$productstat_cachevirtual = array();
 	$getNomUrl_cache = array();
 
@@ -1488,6 +1500,7 @@ if ($resql) {
 
 	// Détail commande
 	$totalqty = 0;
+	$oldref = null;
 
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
@@ -1547,7 +1560,7 @@ if ($resql) {
 		$projectstatic->title = $obj->project_label;
 
 		$marginInfo = array();
-		if ($with_margin_info === true) {
+		if ($with_margin_info) {
 			$generic_commande->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
 			$total_ht += $obj->total_ht;
@@ -1680,7 +1693,7 @@ if ($resql) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
@@ -1769,8 +1782,8 @@ if ($resql) {
 		}
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
+			print '<td class="center" title="'.$langs->trans($arrayfields['c.date_delivery']['label']).': '.dol_print_date($db->jdate($obj->date_delivery), 'dayhour').'">';
+			print dol_print_date($db->jdate($obj->date_delivery), 'day');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1806,7 +1819,7 @@ if ($resql) {
 		// Channel
 		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 			print '<td>';
-			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
+			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', 0);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2091,6 +2104,7 @@ if ($resql) {
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && isModEnabled('stock')) {
+				$text_icon = '';
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
 
@@ -2110,7 +2124,7 @@ if ($resql) {
 							$productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 						} else {
 							$generic_product->stock_reel = $productstat_cache[$obj->fk_product]['stock_reel'];
-							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'];
 						}
 
 						if ($reliquat > $generic_product->stock_reel) {
@@ -2168,10 +2182,10 @@ if ($resql) {
 						}
 					}
 					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}
@@ -2191,7 +2205,11 @@ if ($resql) {
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed).'</td>';
+			print '<td class="center">';
+			if ($obj->billed) {
+				print yn($obj->billed, $langs->trans("Billed"));
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

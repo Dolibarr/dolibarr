@@ -32,6 +32,7 @@ PRINTIPP_HOST=Serveri i printimit
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Identifikohu
 PRINTIPP_PASSWORD=Fjalëkalimi
+PRINTIPP_SSL=Përdorni SSL
 NoDefaultPrinterDefined=Nuk është përcaktuar asnjë printer i paracaktuar
 DefaultPrinter=Printeri i parazgjedhur
 Printer=Printer
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Variablat e konfigurimit për drejtuesin e printimit 
 PrintingDriverDescprintipp=Variablat e konfigurimit për printimin e kupave të shoferit.
 PrintTestDescprintgcp=Lista e printerëve për Google Cloud Print.
 PrintTestDescprintipp=Lista e printerëve për gota.
+Testbbbb

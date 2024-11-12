@@ -1,3 +1,5 @@
+includes:
+	- build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
@@ -9,7 +11,7 @@ parameters:
 		# minimumNumberOfJobsPerProcess: 2  # default is 2
 		# buffer: 134217728 # 128 MB  # Not documented
 	customRulesetUsed: true
-	level: 3
+	level: 9
 	fileExtensions:
 		- php
 	paths:
@@ -25,14 +27,15 @@ parameters:
 		- htdocs/support/*
 		analyse:
 		- htdocs/includes/*
+		- htdocs/core/class/lessc.class.php
 	checkAlwaysTrueCheckTypeFunctionCall: false
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: true
-	checkFunctionArgumentTypes: false
+	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
-	checkArgumentsPassedByReference: false
-	checkMaybeUndefinedVariables: false
+	checkArgumentsPassedByReference: true
+	checkMaybeUndefinedVariables: true
 	checkNullables: false
 	checkThisOnly: true
 	checkUnionTypes: false
@@ -46,20 +49,7 @@ parameters:
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
-		- '#Result of function fieldList#'
-		- '#Caught class Stripe#'
-		- '#Function llx.* invoked with#'
-		- '#always exists and is not falsy#'
-		- '#always exists and is not nullable#'
-		- '#is always fal#'
-		- '#is always true#'
-		- '#Empty array passed to foreach#'
-		- '#in isset\(\) is not nullable#'
-		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
-		- '#Sprain\\SwissQrBill\\#'
-		- '#Constructor of class .* has an unused parameter #'
-		- '#Dead catch - Exception is never thrown in the try block#'
-		- '#.*phan-var-force #'
+		- '#.*phan-var#'
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512

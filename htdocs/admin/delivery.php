@@ -36,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
@@ -55,6 +64,7 @@ $type = 'delivery';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -94,6 +104,9 @@ if ($action == 'activate_delivery') {
 if ($action == 'updateMask') {
 	$maskconstdelivery = GETPOST('maskconstdelivery', 'aZ09');
 	$maskdelivery = GETPOST('maskdelivery', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstdelivery && preg_match('/_MASK$/', $maskconstdelivery)) {
 		$res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
 	}
@@ -223,8 +236,8 @@ if (!getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
-print '<br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
-print '<br>';
+print '<br><br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
+print '<br><br>';
 print '<br>';
 
 
@@ -258,6 +271,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file();
+
+						'@phan-var-force ModeleNumRefDeliveryOrder $module';
 
 						if ($module->isEnabled()) {
 							// Show modules according to features level
@@ -392,6 +407,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFDeliveryOrder $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -405,7 +422,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

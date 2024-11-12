@@ -1,10 +1,12 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=Ethiopian
 Language_af_ZA=Afrikaans (South Africa)
+Language_ar_AE=Arabic (Arab Emirates)
 Language_ar_AR=Arabic
 Language_ar_DZ=Arabic (Algeria)
 Language_ar_EG=Arabic (Egypt)
 Language_ar_JO=Arabic (Jordania)
+Language_ar_LB=Arabic (Liban)
 Language_ar_MA=Arabic (Moroco)
 Language_ar_SA=Arabic (Saudi Arabia)
 Language_ar_TN=Arabic (Tunisia)

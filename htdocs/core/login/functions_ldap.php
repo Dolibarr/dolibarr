@@ -78,7 +78,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$ldapdn = $dolibarr_main_auth_ldap_dn;
 		$ldapadminlogin = $dolibarr_main_auth_ldap_admin_login;
 		$ldapadminpass = $dolibarr_main_auth_ldap_admin_pass;
-		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+		$ldapdebug = !(empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false");
 
 		if ($ldapdebug) {
 			print "DEBUG: Logging LDAP steps<br>\n";
@@ -196,7 +196,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					}
 
 					$usertmp = new User($db);
-					$resultFetchUser = $usertmp->fetch('', $login, $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
+					$resultFetchUser = $usertmp->fetch(0, $login, $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
 					if ($resultFetchUser > 0) {
 						dol_syslog("functions_ldap::check_user_password_ldap Sync user found user id=".$usertmp->id);
 						// Verify if the login changed and update the Dolibarr attributes
@@ -217,7 +217,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					global $mc;
 
 					$usertmp = new User($db);
-					$usertmp->fetch('', $login);
+					$usertmp->fetch(0, $login);
 					if (is_object($mc)) {
 						$ret = $mc->checkRight($usertmp->id, $entitytotest);
 						if ($ret < 0) {

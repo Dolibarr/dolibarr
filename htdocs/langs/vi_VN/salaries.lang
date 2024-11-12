@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Tài khoản (từ Sơ đồ tài khoản) được sử dụng theo mặc định cho bên thứ ba "người dùng"
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Tài khoản chuyên dụng được xác định trên thẻ người dùng sẽ chỉ được sử dụng cho kế toán Sổ cái phụ. Cái này sẽ được sử dụng cho Sổ cái chung và làm giá trị mặc định của kế toán Sổ cái phụ nếu tài khoản kế toán người dùng chuyên dụng trên người dùng không được xác định.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Tài khoản kế toán theo mặc định cho các khoản thanh toán tiền lương
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Theo mặc định, để trống tùy chọn "Tự động tạo tổng thanh toán" khi tạo Lương
 Salary=Mức lương

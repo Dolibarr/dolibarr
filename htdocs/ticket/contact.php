@@ -2,6 +2,8 @@
 /* Copyright (C) 2011-2016 Jean-François Ferry    <hello@librethic.io>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +41,14 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
@@ -88,6 +98,7 @@ $permissiontoadd = $user->hasRight('ticket', 'write');
 /*
  * Actions
  */
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -101,24 +112,22 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
-		$error = 0;
-
 		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-		if ($codecontact=='SUPPORTTEC') {
+		if ($codecontact == 'SUPPORTTEC') {
 			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 			foreach ($internal_contacts as $key => $contact) {
 				if ($contact['id'] !== $contactid) {
 					//print "user à effacer : ".$useroriginassign;
 					$result = $object->delete_contact($contact['rowid']);
-					if ($result<0) {
-						$error ++;
+					if ($result < 0) {
+						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 			}
 			$ret = $object->assignUser($user, $contactid);
 			if ($ret < 0) {
-				$error ++;
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -155,10 +164,10 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 		foreach ($internal_contacts as $key => $contact) {
-			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
-				$ret = $object->assignUser($user, null);
+			if ($contact['rowid'] == $lineid && $object->fk_user_assign == $contact['id']) {
+				$ret = $object->assignUser($user, 0);
 				if ($ret < 0) {
-					$error ++;
+					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}

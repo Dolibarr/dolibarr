@@ -35,3 +35,4 @@ DonationPayments=Πληρωμές δωρεών
 DonationValidated=Η δωρεά %s επικυρώθηκε
 DonationUseThirdparties=Χρησιμοποιήστε τη διεύθυνση ενός υπάρχοντος τρίτου μέρους ως διεύθυνση του χορηγού
 DonationsStatistics=Στατιστικά δωρεών
+NbOfDonations=Αριθμός δωρεών

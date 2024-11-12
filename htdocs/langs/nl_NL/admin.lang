@@ -2393,7 +2393,6 @@ INVOICE_ADD_SWISS_QR_CODE=Toon de Zwitserse QR-factuurcode op Facturen (met een 
 INVOICE_ADD_SWISS_QR_CODEMore=De Zwitserse standaard voor facturen; zorg ervoor dat ZIP & City zijn ingevuld en dat de accounts geldige Zwitserse/Liechtensteinse IBAN's hebben.
 INVOICE_ADD_EPC_QR_CODE=Toon de EPC QR-code op Facturen (met een bankrekening gedefinieerd voor overboeking)
 INVOICE_ADD_EPC_QR_CODEMore=Met deze functie kunt u een EPC QR-code toevoegen aan of verwijderen van uw Facturen, wat automatische SEPA-overboekingen mogelijk maakt. Als u deze optie inschakelt, kunnen uw klanten eenvoudig betalingen uitvoeren door de QR-code te scannen, waardoor handmatige invoerfouten worden verminderd. Gebruik deze functie als u klanten heeft in landen als Oostenrijk, België, Finland, Duitsland en Nederland waar dit systeem wordt ondersteund. Schakel het uit als dit niet nodig is voor uw bedrijfsvoering of klantenbestand.
-INVOICE_ADD_EPC_QR_CODEPay=Scan deze QR-code om te betalen met een smartphone die betaling met EPC QR-code ondersteunt.
 INVOICE_SHOW_SHIPPING_ADDRESS=Verzendadres tonen
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Verplichte vermelding in sommige landen (Frankrijk, ...)
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Facturatiecontact weergeven op voorstel

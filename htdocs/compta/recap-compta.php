@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("companies");
 if (isModEnabled('invoice')) {
@@ -38,9 +48,13 @@ if (isModEnabled('invoice')) {
 $id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
 // Security check
-if ($user->socid) {
+if ($user->socid > 0) {
 	$id = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -48,8 +62,6 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -71,16 +83,18 @@ if (!$sortorder) {
 
 
 $arrayfields = array(
-	'f.datef'=>array('label'=>"Date", 'checked'=>1),
+	'f.datef' => array('label' => "Date", 'checked' => 1),
 	//...
 );
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
+
 
 /*
  * Actions
  */
+
 $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -159,7 +173,10 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaid = $fac->getSommePaiement();
+
+				$alreadypaid = $fac->getSommePaiement();
+				$alreadypaid += $fac->getSumDepositsUsed();
+				$alreadypaid += $fac->getSumCreditNotesUsed();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -169,7 +186,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaid),
+					'status' => $fac->getLibStatut(2, $alreadypaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
@@ -238,19 +255,19 @@ if ($id > 0) {
 		}
 
 		if (empty($TData)) {
-			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		} else {
 			// Sort array by date ASC to calculate balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
 			// Balance calculation
 			$balance = 0;
-			foreach ($TData as &$data1) {
-				$balance += $data1['amount'];
-				if (!isset($data1['balance'])) {
-					$data1['balance'] = 0;
+			foreach (array_keys($TData) as $key) {
+				$balance += $TData[$key]['amount'];
+				if (!array_key_exists('balance', $TData[$key])) {
+					$TData[$key]['balance'] = 0;
 				}
-				$data1['balance'] += $balance;
+				$TData[$key]['balance'] += $balance;
 			}
 
 			// Resorte array to have elements on the required $sortorder

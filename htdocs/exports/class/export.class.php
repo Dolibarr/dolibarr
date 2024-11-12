@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,14 @@ class Export
 	 */
 	public $id;
 
+	/**
+	 * @var string[]
+	 */
 	public $array_export_icon;
 
+	/**
+	 * @var bool[]
+	 */
 	public $array_export_perms;
 
 
@@ -58,30 +65,93 @@ class Export
 	 */
 	public $errors;
 
+	/**
+	 * @var array<int,string>
+	 */
 	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
+	/**
+	 * @var string[]
+	 */
 	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
+	/**
+	 * @var DolibarrModules[]
+	 */
 	public $array_export_module = array(); // Tableau de "nom de modules"
+	/**
+	 * @var string[]
+	 */
 	public $array_export_label = array(); // Tableau de "libelle de lots"
+	/**
+	 * @var string[]
+	 */
 	public $array_export_sql_start = array(); // Tableau des "requetes sql"
+	/**
+	 * @var string[]
+	 */
 	public $array_export_sql_end = array(); // Tableau des "requetes sql"
+	/**
+	 * @var string[]
+	 */
 	public $array_export_sql_order = array(); // Tableau des "requetes sql"
 
+	/**
+	 * @var array<int,array<string,string>>
+	 */
 	public $array_export_fields = array(); // Tableau des listes de champ+libelle a exporter
+	/**
+	 * @var array<int,array<string,string>>
+	 */
 	public $array_export_TypeFields = array(); // Tableau des listes de champ+Type de filtre
+	/**
+	 * @var array<int,array<string,string>>
+	 */
 	public $array_export_FilterValue = array(); // Tableau des listes de champ+Valeur a filtrer
+	/**
+	 * @var array<int,array<string,string>>
+	 */
 	public $array_export_entities = array(); // Tableau des listes de champ+alias a exporter
+	/**
+	 * @var array<int,array<string,string>>
+	 */
 	public $array_export_dependencies = array(); // array of list of entities that must take care of the DISTINCT if a field is added into export
+	/**
+	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>
+	 */
 	public $array_export_special = array(); // array of special operations to do on field
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $array_export_examplevalues = array(); // array with examples for fields
+	/**
+	 * @var array<int,array<string,string>|''>
+	 */
 	public $array_export_help = array(); // array with tooltip help for fields
 
 	// To store export templates
-	public $hexa; // List of fields in the export profile
-	public $hexafiltervalue; // List of search criteria in the export profile
+	/**
+	 * @var string List of fields in the export profile
+	 */
+	public $hexa;
+	/**
+	 * @var string List of search criteria in the export profile
+	 */
+	public $hexafiltervalue;
+	/**
+	 * @var string
+	 */
 	public $datatoexport;
-	public $model_name; // Name of export profile
+	/**
+	 * @var string Name of export profile
+	 */
+	public $model_name;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
 
+	/**
+	 * @var string
+	 */
 	public $sqlusedforexport;
 
 
@@ -144,6 +214,7 @@ class Export
 							$classname = $modulename;
 							require_once $file;
 							$module = new $classname($this->db);
+							'@phan-var-force DolibarrModules $module';
 
 							if (isset($module->export_code) && is_array($module->export_code)) {
 								foreach ($module->export_code as $r => $value) {
@@ -225,7 +296,8 @@ class Export
 									$this->array_export_sql_order[$i] = (!empty($module->export_sql_order[$r]) ? $module->export_sql_order[$r] : null);
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(!empty($module->export_fields_code[$r]) ? count($module->export_fields_code[$r]) : ''));
+									// @phan-suppress-next-line PhanUndeclaredProperty
+									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(property_exists($module, 'export_fields_code') && !empty($module->export_fields_code[$r]) ? count($module->export_fields_code[$r]) : ''));
 									$i++;
 									//	          }
 								}
@@ -247,8 +319,8 @@ class Export
 	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
 	 *
 	 *      @param      int		$indice				Indice of export
-	 *      @param      array	$array_selected     Filter fields on array of fields to export
-	 *      @param      array	$array_filterValue  Filter records on array of value for fields
+	 *      @param      array<string,string>	$array_selected     Filter fields on array of fields to export
+	 *      @param      array<string,string>	$array_filterValue  Filter records on array of value for fields
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
 	public function build_sql($indice, $array_selected, $array_filterValue)
@@ -453,7 +525,7 @@ class Export
 				$szFilterField = '<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Boolean':
-				$szFilterField = '<select name="'.$NameField.'" class="flat">';
+				$szFilterField = '<select name="'.$NameField.'" id="'.dol_escape_all($NameField).'" class="flat width75 maxwidth75">';
 				$szFilterField .= '<option ';
 				if ($ValueField == '') {
 					$szFilterField .= ' selected ';
@@ -472,6 +544,7 @@ class Export
 				}
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
+				$szFilterField .= ajax_combobox(dol_escape_all($NameField));
 				break;
 			case 'FormSelect':
 				//var_dump($NameField);
@@ -510,7 +583,7 @@ class Export
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$szFilterField = '<select class="flat" name="'.$NameField.'">';
+					$szFilterField = '<select class="minwidth300 maxwidth500" name="'.$NameField.'" id="'.dol_escape_all($NameField).'">';
 					$szFilterField .= '<option value="0">&nbsp;</option>';
 					$num = $this->db->num_rows($resql);
 
@@ -524,7 +597,7 @@ class Export
 								continue;
 							}
 							//var_dump($InfoFieldList[1]);
-							$labeltoshow = dol_trunc($obj->label, 18);
+							$labeltoshow = $obj->label;
 							if ($InfoFieldList[1] == 'c_stcomm') {
 								$langs->load("companies");
 								$labeltoshow = (($langs->trans("StatusProspect".$obj->id) != "StatusProspect".$obj->id) ? $langs->trans("StatusProspect".$obj->id) : $obj->label);
@@ -535,14 +608,15 @@ class Export
 								$labeltoshow = (($langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label);
 							}
 							if (!empty($ValueField) && $ValueField == $obj->rowid) {
-								$szFilterField .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.dolPrintHTML($labeltoshow).'</option>';
 							} else {
-								$szFilterField .= '<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
 							}
 							$i++;
 						}
 					}
 					$szFilterField .= "</select>";
+					$szFilterField .= ajax_combobox(dol_escape_all($NameField));
 
 					$this->db->free($resql);
 				} else {
@@ -596,8 +670,8 @@ class Export
 	 *      @param      User		$user               User that export
 	 *      @param      string		$model              Export format
 	 *      @param      string		$datatoexport       Name of dataset to export
-	 *      @param      array		$array_selected     Filter on array of fields to export
-	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
+	 *      @param      array<string,string>	$array_selected     Filter on array of fields to export
+	 *      @param      array<string,string>	$array_filterValue  Filter on array of fields with a filter
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 * 		@param		string		$separator			separator to fill $objmodel->separator with the new separator
 	 *      @return		int								Return integer <0 if KO, >0 if OK
@@ -625,8 +699,10 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+		'@phan-var-force ModeleExports $objmodel';
 
-		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator)) {
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$objmodel->separator = $separator;
 		}
 
@@ -687,27 +763,30 @@ class Export
 							if (!array_key_exists($key, $array_selected)) {
 								continue; // Field not selected
 							}
+
+							// TODO: Not sure why the original was not using $value directly.
+							$item = $this->array_export_special[$indice][$key];
 							// Operation NULLIFNEG
-							if ($this->array_export_special[$indice][$key] == 'NULLIFNEG') {
+							if (is_string($item) && $item == 'NULLIFNEG') { // @phan-suppress-current-line PhanTypeComparisonFromArray
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								if ($obj->$alias < 0) {
 									$obj->$alias = '';
 								}
-							} elseif ($this->array_export_special[$indice][$key] == 'ZEROIFNEG') {
+							} elseif (is_string($item) && $item == 'ZEROIFNEG') {
 								// Operation ZEROIFNEG
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								if ($obj->$alias < 0) {
 									$obj->$alias = '0';
 								}
-							} elseif ($this->array_export_special[$indice][$key] == 'getNumOpenDays') {
+							} elseif (is_string($item) && $item == 'getNumOpenDays') {
 								// Operation GETNUMOPENDAYS (for Holiday module)
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
-							} elseif ($this->array_export_special[$indice][$key] == 'getRemainToPay') {
+							} elseif (is_string($item) && $item == 'getRemainToPay') {
 								// Operation INVOICEREMAINTOPAY
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
@@ -724,38 +803,40 @@ class Export
 									$remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
-							} elseif (is_array($this->array_export_special[$indice][$key]) &&
-								!empty($this->array_export_special[$indice][$key]['rule']) &&
-								$this->array_export_special[$indice][$key]['rule'] == 'compute'
+							} elseif (is_array($item) &&
+								array_key_exists('rule', $item) &&
+								$item['rule'] == 'compute'
 							) {
 								// Custom compute
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$value = '';
-								if (!empty($this->array_export_special[$indice][$key]['class']) &&
-									!empty($this->array_export_special[$indice][$key]['classfile']) &&
-									!empty($this->array_export_special[$indice][$key]['method'])
+								if (!empty($item['class']) &&
+									!empty($item['classfile']) &&
+									!empty($item['method'])
 								) {
-									if (!dol_include_once($this->array_export_special[$indice][$key]['classfile'])) {
-										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['classfile']} not found";
+									if (!dol_include_once($item['classfile'])) {
+										$this->error = "Computed field bad configuration: {$item['classfile']} not found";
 										return -1;
 									}
 
-									if (!class_exists($this->array_export_special[$indice][$key]['class'])) {
-										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['class']} class doesn't exist";
+									if (!class_exists($item['class'])) {
+										$this->error = "Computed field bad configuration: {$item['class']} class doesn't exist";
 										return -1;
 									}
 
-									$className = $this->array_export_special[$indice][$key]['class'];
+									$className = $item['class'];
 									$tmpObject = new $className($this->db);
-									if (!method_exists($tmpObject, $this->array_export_special[$indice][$key]['method'])) {
-										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['method']} method doesn't exist";
+									'@phan-var-force CommonObject $tmpObject';
+
+									if (!method_exists($tmpObject, $item['method'])) {
+										$this->error = "Computed field bad configuration: {$item['method']} method doesn't exist";
 										return -1;
 									}
 
-									$methodName = $this->array_export_special[$indice][$key]['method'];
+									$methodName = $item['method'];
 									$params = [];
-									if (!empty($this->array_export_special[$indice][$key]['method_params'])) {
-										foreach ($this->array_export_special[$indice][$key]['method_params'] as $paramName) {
+									if (!empty($item['method_params'])) {
+										foreach ($item['method_params'] as $paramName) {
 											$params[] = $obj->$paramName ?? null;
 										}
 									}
@@ -766,7 +847,7 @@ class Export
 								// TODO FIXME
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
-								$computestring = $this->array_export_special[$indice][$key];
+								$computestring = is_string($item) ? $item : json_encode($item);
 								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 

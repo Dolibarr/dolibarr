@@ -21,7 +21,6 @@ MenuDoneMyActions=ເຫດການສິ້ນສຸດຂອງຂ້ອຍ
 ListOfEvents=ລາຍການເຫດການ (ປະຕິທິນເລີ່ມຕົ້ນ)
 ActionsAskedBy=ລາຍງານເຫດການໂດຍ
 ActionsToDoBy=ເຫດການທີ່ມອບtoາຍໃຫ້
-ActionsDoneBy=ເຫດການທີ່ເຮັດໂດຍ
 ActionAssignedTo=ມອບEventາຍເຫດການໃຫ້
 ViewCal=ມຸມມອງລາຍເດືອນ
 ViewDay=ມຸມມອງມື້
@@ -135,12 +134,14 @@ AgendaModelModule=ແມ່ແບບເອກະສານ ສຳ ລັບເຫ
 DateActionStart=ວັນ​ທີ່​ເລີ່ມ
 DateActionEnd=ວັນທີສິ້ນສຸດ
 AgendaUrlOptions1=ນອກນັ້ນທ່ານຍັງສາມາດເພີ່ມຕົວກໍານົດການດັ່ງຕໍ່ໄປນີ້ເພື່ອກັ່ນຕອງຜົນໄດ້ຮັບ:
-AgendaUrlOptions3= <b> logina = %s </b> ເພື່ອຈໍາກັດຜົນຜະລິດຕໍ່ກັບການກະທໍາທີ່ເປັນເຈົ້າຂອງໂດຍຜູ້ໃຊ້ <b> %s </b>.
-AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> ເພື່ອຈໍາກັດຜົນຜະລິດຕໍ່ກັບການກະທໍາທີ່ບໍ່ໄດ້ເປັນເຈົ້າຂອງໂດຍຜູ້ໃຊ້ <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b> ເພື່ອຈໍາກັດຜົນໄດ້ຮັບຕໍ່ກັບການກະທໍາທີ່ມອບtoາຍໃຫ້ກັບຜູ້ໃຊ້ <b> %s </b> (ເຈົ້າຂອງແລະອື່ນ others).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> ເພື່ອຈໍາກັດຜົນຜະລິດຕໍ່ກັບການກະທໍາທີ່ເຊື່ອມໂຍງກັບໂຄງການ <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b> ເພື່ອຍົກເວັ້ນເຫດການອັດຕະໂນມັດ.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> ເພື່ອລວມເຫດການຂອງວັນພັກ.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=ວັນເດືອນປີເກີດຂອງການຕິດຕໍ່
 AgendaHideBirthdayEvents=ເຊື່ອງວັນເກີດຂອງຜູ້ຕິດຕໍ່
 Busy=ຄາ​ວຽກ
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=ການຈອງຂອງທ່ານໄດ້ຖື
 BookingReservationHourAfter=ພວກເຮົາຢືນຢັນການຈອງກອງປະຊຸມຂອງພວກເຮົາໃນວັນທີ %s
 BookcalBookingTitle=ການນັດພົບອອນໄລນ໌
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

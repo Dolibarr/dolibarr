@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dorëzimi
 DeliveryRef=Dorëzimi Ref
-DeliveryCard=Dëftesa e aksioneve
+DeliveryCard=Faturën e dorëzimit
 DeliveryOrder=Faturën e dorëzimit
 DeliveryDate=Data e dorëzimit
 CreateDeliveryOrder=Gjeneroni faturën e dorëzimit

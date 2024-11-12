@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -140,7 +141,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
-					'source_id' => $obj->id,
+					'source_id' => (int) $obj->id,
 					'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;
@@ -167,7 +168,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{

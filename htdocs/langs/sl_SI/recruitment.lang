@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Zaposlovanje
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Upravljajte in spremljajte zaposlovalne kampanje za nova delovna mesta
-
-#
 # Admin page
-#
 RecruitmentSetup = Nastavitev zaposlovanja
 RecruitmentSetupPage = Tukaj vnesite nastavitev glavnih možnosti za modul zaposlovanja
 RecruitmentArea=Območje zaposlovanja
 PublicInterfaceRecruitmentDesc=Javne strani delovnih mest so javni URL-ji za prikaz in odgovore na odprta delovna mesta. Za vsako odprto delovno mesto obstaja ena druga povezava, ki jo najdete v zapisu vsakega delovnega mesta.
 EnablePublicRecruitmentPages=Omogoči javne strani odprtih delovnih mest
 
-#
-# About page
-#
-RecruitmentAbout = O zaposlovanju
-RecruitmentAboutPage = Stran o zaposlovanju
 NbOfEmployeesExpected=Pričakovano št. zaposlenih
 JobLabel=Oznaka delovnega mesta
 WorkPlace=Delovno mesto
@@ -47,7 +34,6 @@ PositionToBeFilled=Delovno mesto
 PositionsToBeFilled=Delovna mesta
 ListOfPositionsToBeFilled=Seznam delovnih mest
 NewPositionToBeFilled=Nova delovna mesta
-
 JobOfferToBeFilled=Delovno mesto, ki ga je treba zapolniti
 ThisIsInformationOnJobPosition=Informacije o delovnem mestu, ki ga je treba zapolniti
 ContactForRecruitment=Kontakt za zaposlovanje

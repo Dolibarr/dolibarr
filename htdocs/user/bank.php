@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2002-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
- * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Peter Fontaine              <contact@peterfontaine.fr>
+ * Copyright (C) 2015-2016  Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,9 +48,26 @@ if (isModEnabled('salaries')) {
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 }
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
+
+if (isModEnabled('accounting')) {
+	$langs->load('compta');
+}
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
@@ -58,7 +75,7 @@ $bankid = GETPOSTINT('bankid');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercardBank', 'globalcard'));
 
 // Security check
@@ -71,7 +88,7 @@ $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user')
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 }
 
 $account = new UserBankAccount($db);
@@ -87,12 +104,12 @@ if (empty($account->userid)) {
 
 // Define value to know what current user can do on users
 $selfpermission = ($user->id == $id && $user->hasRight('user', 'self', 'creer'));
-$canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
-$canreaduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
+$usercanadd = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
+$usercanread = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
 $permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'user', 'creer') || $selfpermission);
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
-$permissiontosimpleedit = ($selfpermission || $canadduser);
+$permissiontosimpleedit = ($selfpermission || $usercanadd);
 
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -130,10 +147,10 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('address', 'alpha');
 	$account->address         = GETPOST('address', 'alpha');
-	$account->owner_name = GETPOST('proprio', 'alpha');
-	$account->proprio = $account->owner_name;
+
+	$account->owner_name      = GETPOST('proprio', 'alpha');
+	$account->proprio         = $account->owner_name;
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
@@ -163,9 +180,9 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('address', 'alpha');
 	$account->address         = GETPOST('address', 'alpha');
-	$account->proprio         = GETPOST('proprio', 'alpha');
+	$account->owner_name      = GETPOST('proprio', 'alpha');
+	$account->proprio         = $account->owner_name;
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
@@ -196,7 +213,7 @@ if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
 }
 
 // update birth
-if ($action == 'setbirth' && $canadduser && !$cancel) {
+if ($action == 'setbirth' && $usercanadd && !$cancel) {
 	$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -222,8 +239,18 @@ if ($action == 'setpersonal_mobile' && $permissiontosimpleedit && !$cancel) {
 	}
 }
 
-// update accountancy_code
-if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
+// update accountancy_code_user_general
+if ($action == 'setaccountancycodeusergeneral' && $usercanadd) {
+	$result = $object->fetch($id);
+	$object->accountancy_code_user_general = GETPOST("accountancycodeusergeneral");
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'editaccountancycodeusergeneral';
+	}
+}
+
+if ($action == 'setaccountancy_code' && $usercanadd && !$cancel) {
 	$object->accountancy_code = (string) GETPOST('accountancy_code', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -232,7 +259,7 @@ if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
 }
 
 // update ref_employee
-if ($action == 'setref_employee' && $canadduser && !$cancel) {
+if ($action == 'setref_employee' && $usercanadd && !$cancel) {
 	$object->ref_employee = (string) GETPOST('ref_employee', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -241,7 +268,7 @@ if ($action == 'setref_employee' && $canadduser && !$cancel) {
 }
 
 // update national_registration_number
-if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
+if ($action == 'setnational_registration_number' && $usercanadd && !$cancel) {
 	$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -251,7 +278,7 @@ if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
 
 if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	// update default_c_exp_tax_cat
-	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
+	if ($action == 'setdefault_c_exp_tax_cat' && $usercanadd) {
 		$object->default_c_exp_tax_cat = GETPOSTINT('default_c_exp_tax_cat');
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -260,7 +287,7 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	}
 
 	// update default range
-	if ($action == 'setdefault_range' && $canadduser) {
+	if ($action == 'setdefault_range' && $usercanadd) {
 		$object->default_range = GETPOSTINT('default_range');
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -566,17 +593,6 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '</tr>';
 	}
 
-	// Accountancy code
-	if (isModEnabled('accounting')) {
-		print '<tr class="nowrap">';
-		print '<td>';
-		print $form->editfieldkey("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
-		print '</td><td>';
-		print $form->editfieldval("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
-		print '</td>';
-		print '</tr>';
-	}
-
 	// Employee Number
 	if ($permissiontoreadhr) {
 		print '<tr class="nowrap">';
@@ -595,6 +611,35 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $permissiontowritehr);
 		print '</td><td>';
 		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $permissiontowritehr, 'string', $object->national_registration_number);
+		print '</td>';
+		print '</tr>';
+	}
+
+	if (isModEnabled('accounting')) {
+		// Accountancy code user general
+		$formaccounting = new FormAccounting($db);
+
+		print '<tr>';
+		print '<td>';
+		print $form->editfieldkey("UserAccountancyCodeGeneral", 'accountancycodeusergeneral', length_accountg($object->accountancy_code_user_general), $object, $user->hasRight('user', 'user', 'creer'));
+		print '</td><td>';
+		if ($action == 'editaccountancycodeusergeneral' && $user->hasRight('user', 'user', 'creer')) {
+			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_user_general, 'accountancycodeusergeneral', 0, 1, '', 1);
+		} else {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
+			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+		}
+		$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
+		print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
+		print '</td>';
+
+		// Accountancy code
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
+		print '</td><td>';
+		print $form->editfieldval("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -939,7 +984,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	} elseif (empty($selectedcode)) {
 		$selectedcode = $mysoc->country_code;
 	}
-	$account->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+	$account->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
 	print '<td class="maxwidth200onsmartphone">';
@@ -1018,7 +1063,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+	print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->owner_name.'"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';

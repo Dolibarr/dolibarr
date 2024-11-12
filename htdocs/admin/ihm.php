@@ -7,6 +7,8 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
@@ -127,6 +138,11 @@ if ($action == 'update') {
 			} else {
 				dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);
 			}
+		}
+
+		if (GETPOSTISSET('THEME_ELDY_BORDER_RADIUS')) {
+			$val = GETPOST('THEME_ELDY_BORDER_RADIUS');
+			dolibarr_set_const($db, 'THEME_ELDY_BORDER_RADIUS', GETPOSTINT('THEME_ELDY_BORDER_RADIUS'), 'chaine', 0, '', $conf->entity);
 		}
 
 		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
@@ -225,14 +241,14 @@ if ($action == 'update') {
 			dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $val, 'chaine', 0, '', $conf->entity);
 		}
 
-		$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BTNACTION'), array()))));
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BTNACTION'), array()))));
 		if ($val == '') {
 			dolibarr_del_const($db, 'THEME_ELDY_BTNACTION', $conf->entity);
 		} else {
 			dolibarr_set_const($db, 'THEME_ELDY_BTNACTION', $val, 'chaine', 0, '', $conf->entity);
 		}
 
-		$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTBTNACTION'), array()))));
+		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTBTNACTION'), array()))));
 		if ($val == '') {
 			dolibarr_del_const($db, 'THEME_ELDY_TEXTBTNACTION', $conf->entity);
 		} else {
@@ -337,9 +353,9 @@ llxHeader(
 	0,
 	0,
 	array(
-	'/includes/ace/src/ace.js',
-	'/includes/ace/src/ext-statusbar.js',
-	'/includes/ace/src/ext-language_tools.js',
+		'/includes/ace/src/ace.js',
+		'/includes/ace/src/ext-statusbar.js',
+		'/includes/ace/src/ext-language_tools.js',
 	),
 	array(),
 	'',
@@ -385,7 +401,7 @@ if ($mode == 'other') {
 	// Default language
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultLanguage").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'MAIN_LANG_DEFAULT', 1, array(), '', 0, 0, 'minwidth300', 2);
 	//print '<input class="button button-save smallpaddingimp" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 	print '</td>';
 	print '</tr>';
@@ -434,7 +450,15 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Max size of lists
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > 0) {
+		print getDolGlobalString('MAIN_SIZE_LISTE_LIMIT');
+	}
+	print '">';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') <= 0) {
+		print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Automatic").')</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
@@ -447,36 +471,28 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
-	// show input border
-	/*
-	 print '<tr><td>'.$langs->trans("showInputBorder").'</td><td>';
-	 print $form->selectyesno('main_showInputBorder',isset($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)?$conf->global->THEME_ELDY_SHOW_BORDER_INPUT:0,1);
-	 print '</td>';
-	 print '</tr>';
-	 */
-
 	// First day for weeks
 	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
-	print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'), 'MAIN_START_WEEK', 0);
+	print $formother->select_dayofweek(getDolGlobalString('MAIN_START_WEEK', '1'), 'MAIN_START_WEEK', 0);
 	print '</td>';
 	print '</tr>';
 
 	// DefaultWorkingDays
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . (isset($conf->global->MAIN_DEFAULT_WORKING_DAYS) ? $conf->global->MAIN_DEFAULT_WORKING_DAYS : '1-5') . '">';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5') . '">';
 	print '</td>';
 	print '</tr>';
 
 	// DefaultWorkingHours
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . (isset($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? $conf->global->MAIN_DEFAULT_WORKING_HOURS : '9-18') . '">';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18') . '">';
 	print '</td>';
 	print '</tr>';
 
 	// Firstname/Name
 	print '<tr class="oddeven"><td>' . $langs->trans("FirstnameNamePosition") . '</td><td>';
 	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
-	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, (isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? $conf->global->MAIN_FIRSTNAME_NAME_POSITION : 0));
+	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION', 0));
 	print '</td>';
 	print '</tr>';
 
@@ -514,7 +530,7 @@ if ($mode == 'other') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
 	print '</td><td>';
-	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (!getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
+	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') . '">';
 	print '</td>';
 	print '</tr>';
 
@@ -552,17 +568,10 @@ if ($mode == 'dashboard') {
 
 	print '</td><td>';
 
-	$doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD) ? $conf->global->MAIN_MOTD : ''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
+	$doleditor = new DolEditor('main_motd', getDolGlobalString('MAIN_MOTD'), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
 
-	print '</td></tr>' . "\n";
-
-	/* no more need for this option. It is now a widget already controlled by end user
-	 print '<tr class="oddeven"><td>' . $langs->trans('BoxstatsDisableGlobal') . '</td><td>';
-	 print ajax_constantonoff("MAIN_DISABLE_GLOBAL_BOXSTATS", array(), $conf->entity, 0, 0, 1, 0);
-	 print '</td>';
-	 print '</tr>';
-	 */
+	print '</td></tr>'."\n";
 
 	print '</table>';
 	print '</div>';
@@ -667,10 +676,12 @@ if ($mode == 'login') {
 	print '</td></tr>';
 
 	// Hide helpcenter link on login page
+	/*
 	print '<tr class="oddeven"><td>' . $langs->trans("DisableLinkToHelpCenter") . '</td><td>';
 	print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '', 'login');
 	print '</td>';
 	print '</tr>';
+	*/
 
 	// Message on login page
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount', 'user'));

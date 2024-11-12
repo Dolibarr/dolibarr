@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $error = '';
 
 	/**
-	 * @var array of errors
+	 * @var string[] of errors
 	 */
 	public $errors;
 
@@ -72,7 +73,10 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $sql;
 
 
-	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
+	/**
+	 * @var int<0,1>	Set this to 1 if you want to flag you also want to include email in target that has opt-out.
+	 */
+	public $evenunsubscribe = 0;
 
 
 	/**
@@ -189,7 +193,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Add a list of targets into the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
-	 * @param   array	$cibles        Array with targets
+	 * @param	array<array{fk_contact?:int,lastname:string,firstname:string,email:string,other:string,source_url:string,source_id?:int,source_type:string,id?:int}>		$cibles		Array with targets
 	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
@@ -197,6 +201,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		global $conf;
 
 		$this->db->begin();
+
 
 		// Insert emailing targets from array into database
 		$j = 0;
@@ -216,7 +221,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
-				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
+				$sql .= (empty($targetarray['source_id']) ? 'null' : (int) $targetarray['source_id']).",";
 				$sql .= "'".$this->db->escape(dol_hash($conf->file->instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'))."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
@@ -301,8 +306,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
 	 *  List is sorted by widget filename so by priority to run.
 	 *
-	 *  @param	array	$forcedir			null=All default directories. This parameter is used by modulebuilder module only.
-	 * 	@return	array						Array list of widget
+	 *  @param	?array<string>	$forcedir	null=All default directories. This parameter is used by modulebuilder module only.
+	 *  @return array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
 	 */
 	public static function getEmailingSelectorsList($forcedir = null)
 	{
@@ -390,6 +395,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 			$objMod = new $modName($db);
 			if (is_object($objMod)) {
+				'@phan-var-force ModeleBoxes $objMod';
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
 				$disabledbymodule = 0; // TODO Set to 2 if module is not enabled
@@ -400,7 +406,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 					$disabledbyname = 1;
 				}
 
-				// We set info of modules
+				// We set info of modules @phan-suppress-next-line PhanUndeclaredProperty
 				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
@@ -425,5 +431,38 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		return $widget;
+	}
+
+
+	/**
+	 *  On the main mailing area, there is a box with statistics.
+	 *  If you want to add a line in this report you must provide an
+	 *  array of SQL request that returns two field:
+	 *  One called "label", One called "nb".
+	 *
+	 *	@return		string[]		Array with SQL requests
+	 */
+	public function getSqlArrayForStats()
+	{
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return array();
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Add destinations in the targets table
+	 *
+	 *  @param  int     $mailing_id     Id of emailing
+	 *  @return int                     Return integer < 0 on error, count of added when ok
+	 */
+	public function add_to_target($mailing_id)
+	{
+		// phpcs:enable
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return -1;
 	}
 }

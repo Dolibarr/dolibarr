@@ -75,7 +75,13 @@ class MouvementStock extends CommonObject
 	 */
 	public $type;
 
+	/**
+	 * @var null|int|'' datem date
+	 */
 	public $datem = '';
+	/**
+	 * @var float|string
+	 */
 	public $price;
 
 	/**
@@ -111,17 +117,42 @@ class MouvementStock extends CommonObject
 	 * @var string Origin type ('project', ...)
 	 */
 	public $origin_type;
+	/**
+	 * @var int
+	 */
 	public $line_id_oject_src;
+	/**
+	 * @var int
+	 */
 	public $line_id_oject_origin;
 
-
+	/**
+	 * @var string inventory code
+	 */
 	public $inventorycode;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
 
+	/**
+	 * @var int
+	 */
 	public $line_id_object_src;
+	/**
+	 * @var int
+	 */
 	public $line_id_object_origin;
 
+	/**
+	 * @var null|int|'' eatby date
+	 */
 	public $eatby;
+
+	/**
+	 * @var null|int|'' sellby date
+	 */
 	public $sellby;
 
 
@@ -392,7 +423,7 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
-					$productlot->origin = !empty($this->origin_type) ? $this->origin_type : '';
+					$productlot->origin_type = !empty($this->origin_type) ? $this->origin_type : '';
 					$productlot->origin_id = !empty($this->origin_id) ? $this->origin_id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
@@ -415,7 +446,8 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		// Check if stock is enough when qty is < 0
+		// Check if stock is enough when qty is < 0.
+		// THIS MUST BE DONE AT END OF MOVEMENTS
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
 		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
@@ -540,7 +572,7 @@ class MouvementStock extends CommonObject
 					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0) {
+						if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
 							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 						} else {
 							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
@@ -893,11 +925,11 @@ class MouvementStock extends CommonObject
 	/**
 	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
-	 * @param	array|int	$dluo	      Could be either
-	 *                                    - int if row id of product_batch table (for update)
-	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+	 * @param	array{fk_product_stock:int,batchnumber:string}|int	$dluo	      Could be either
+	 *                                                                            - int if row id of product_batch table (for update)
+	 *                                                                            - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	float		$qty	      Quantity of product with batch number. May be a negative amount.
-	 * @return 	int   				      Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
+	 * @return 	int<-2,-1>|int<1,max>	  Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
 	{
@@ -907,6 +939,8 @@ class MouvementStock extends CommonObject
 
 		$pdluo = new Productbatch($this->db);
 
+		$vbatchnumber = '';
+		$vfk_product_stock = 0;
 		$result = 0;
 
 		// Try to find an existing record with same batch number or id
@@ -923,7 +957,7 @@ class MouvementStock extends CommonObject
 				$vfk_product_stock = $dluo['fk_product_stock'];
 				$vbatchnumber = $dluo['batchnumber'];
 
-				$result = $pdluo->find($vfk_product_stock, '', '', $vbatchnumber); // Search on batch number only (eatby and sellby are deprecated here)
+				$result = $pdluo->find($vfk_product_stock, 0, 0, $vbatchnumber); // Search on batch number only (eatby and sellby are deprecated here)
 			} else {
 				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock", LOG_ERR);
 				$result = -1;
@@ -933,6 +967,7 @@ class MouvementStock extends CommonObject
 			$result = -1;
 		}
 
+		$fk_product_stock = 0;
 		if ($result >= 0) {
 			// No error
 			if ($pdluo->id > 0) {	// product_batch record found
@@ -1323,5 +1358,38 @@ class MouvementStock extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Retrieve date of last stock movement for
+	 *
+	 * @param int $fk_entrepot  Warehouse id
+	 * @param int $fk_product   Product id
+	 * @param string $batch     Batch number
+	 * @return string   		Date of last stock movement if found else empty string
+	 */
+	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch)
+	{
+		$date = '';
+
+		$sql = 	"SELECT MAX(datem) as datem";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+		$sql .= " WHERE fk_product = " . ((int) $fk_product);
+		$sql .= " AND fk_entrepot  = " .((int) $fk_entrepot);
+		$sql .= " AND batch = '" . $this->db->escape($batch) . "'";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$dateObj = $this->db->fetch_object($result);
+				$date = $dateObj->datem;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+			return $date;
+		}
+
+		return $date;
 	}
 }

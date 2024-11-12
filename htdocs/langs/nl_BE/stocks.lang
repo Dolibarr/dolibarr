@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
+ListOfStockMovements=Voorraadmutatielijst
 LastMovements=Laatste verplaatsingen
 WarehouseAskWarehouseDuringOrder=Stel een magazijn in op Verkooporders
 QtyToDispatchShort=Aantal te verzenden
