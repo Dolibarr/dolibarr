@@ -1523,6 +1523,8 @@ $( document ).ready(function() {
 				$s .= " - " . $contact->getFullName($langs);
 			}
 		}
+	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
+		print '$("#idcustomer").val("");';
 	}
 	?>
 

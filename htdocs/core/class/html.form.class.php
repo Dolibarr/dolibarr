@@ -3757,7 +3757,7 @@ class Form
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
-			$prefix = !getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+			$prefix = getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$search_crit = explode(' ', $filterkey);
 			$i = 0;
@@ -4041,10 +4041,12 @@ class Form
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
 
+				// set $parameters to call hook
 				$outarrayentry = array(
 					'key' => $outkey,
 					'value' => $outref,
 					'label' => $outvallabel,
+					'labelhtml' => $optlabel,
 					'qty' => $outqty,
 					'price_qty_ht' => price2num($objp->fprice, 'MU'),    // Keep higher resolution for price for the min qty
 					'price_unit_ht' => price2num($objp->unitprice, 'MU'),    // This is used to fill the Unit Price
@@ -4064,7 +4066,6 @@ class Form
 					$outarrayentry['multicurrency_code'] = $objp->multicurrency_code;
 					$outarrayentry['multicurrency_unitprice'] = price2num($objp->multicurrency_unitprice, 'MU');
 				}
-
 				$parameters = array(
 					'objp' => &$objp,
 					'optstart' => &$optstart,
@@ -4084,6 +4085,7 @@ class Form
 					'key' => $outkey,
 					'value' => $outref,
 					'label' => $outvallabel,
+					'labelhtml' => $optlabel,
 					'qty' => $outqty,
 					'price_qty_ht' => price2num($objp->fprice, 'MU'),        // Keep higher resolution for price for the min qty
 					'price_qty_ht_locale' => price($objp->fprice),

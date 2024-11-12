@@ -2232,7 +2232,7 @@ class pdf_crabe extends ModelePDFFactures
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
 
-			// Show shipping address
+			// Show shipping/delivery address
 			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS')) {
 				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
 
