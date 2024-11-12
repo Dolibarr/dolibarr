@@ -1135,7 +1135,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete existing dispatched lines
 		$errOnDelete = 0;
-		$errorsOnDelete = [];
+		$errorsOnDelete = array();
 
 		$db->begin();
 
@@ -1189,6 +1189,7 @@ if (empty($reshook)) {
 			*/
 		}
 
+		// @phpstan-ignore-next-line
 		if (empty($errOnDelete)) {
 			$result = $object->delete($user);
 			if ($result > 0) {
