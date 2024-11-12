@@ -2917,12 +2917,6 @@ parameters:
 			path: ../../htdocs/blockedlog/ajax/block-add.php
 
 		-
-			message: '#^Parameter \#1 \$objtoshow of function formatObject expects object, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/blockedlog/ajax/block-info.php
-
-		-
 			message: '#^Call to function is_object\(\) with Don\|Facture\|FactureFournisseur\|PaymentVarious will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3373,6 +3367,12 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_document.php
 
 		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: ../../htdocs/bookcal/availabilities_list.php
+
+		-
 			message: '#^Expression "''…" on a separate line does not do anything\.$#'
 			identifier: expr.resultUnused
 			count: 1
@@ -3521,6 +3521,12 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../../htdocs/bookcal/calendar_document.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: ../../htdocs/bookcal/calendar_list.php
 
 		-
 			message: '#^Expression "''…" on a separate line does not do anything\.$#'
@@ -4543,12 +4549,6 @@ parameters:
 			path: ../../htdocs/comm/mailing/cibles.php
 
 		-
-			message: '#^Variable \$mesgs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -5461,19 +5461,7 @@ parameters:
 			path: ../../htdocs/commande/list_det.php
 
 		-
-			message: '#^Variable \$oldref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/commande/list_det.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: '#^Variable \$permissiontoread might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/commande/list_det.php
@@ -5482,18 +5470,6 @@ parameters:
 			message: '#^Variable \$searchCategoryProductOperator might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: '#^Variable \$search_product_category_array might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: '#^Variable \$text_icon might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../htdocs/commande/list_det.php
 
 		-
@@ -5551,18 +5527,6 @@ parameters:
 			path: ../../htdocs/compta/bank/account_statement_document.php
 
 		-
-			message: '#^Variable \$max might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
-			message: '#^Variable \$min might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
@@ -5597,24 +5561,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: '#^Variable \$numr might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: '#^Variable \$css might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/card.php
-
-		-
-			message: '#^Variable \$name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/compta/bank/card.php
 
 		-
 			message: '#^Variable \$noback in empty\(\) always exists and is always falsy\.$#'
@@ -5815,42 +5761,6 @@ parameters:
 			path: ../../htdocs/compta/bank/graph.php
 
 		-
-			message: '#^Variable \$morehtml might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: '#^Variable \$show1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: '#^Variable \$show2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: '#^Variable \$show3 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: '#^Variable \$show4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: '#^Variable \$show5 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
@@ -5929,12 +5839,6 @@ parameters:
 			path: ../../htdocs/compta/bank/releve.php
 
 		-
-			message: '#^Variable \$total might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -5984,12 +5888,6 @@ parameters:
 
 		-
 			message: '#^Variable \$accountline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/card.php
@@ -27679,24 +27577,6 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
 			message: '#^Variable \$allow_comments might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -31515,12 +31395,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 2
-			path: ../../htdocs/public/agenda/agendaexport.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/public/agenda/agendaexport.php
 
