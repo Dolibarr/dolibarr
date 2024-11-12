@@ -8,8 +8,6 @@ LocalAgenda=Kalenda chaguomsingi
 ActionsOwnedBy=Tukio linalomilikiwa na
 ActionsOwnedByShort=Mmiliki
 AffectedTo=Imekabidhiwa
-Event=Tukio
-Events=Matukio
 EventsNb=Idadi ya matukio
 ListOfActions=Orodha ya matukio
 EventReports=Ripoti za tukio
@@ -23,7 +21,6 @@ MenuDoneMyActions=Matukio yangu yaliyokatishwa
 ListOfEvents=Orodha ya matukio (kalenda chaguomsingi)
 ActionsAskedBy=Matukio yaliyoripotiwa na
 ActionsToDoBy=Matukio yaliyokabidhiwa
-ActionsDoneBy=Matukio yaliyofanywa na
 ActionAssignedTo=Tukio lililokabidhiwa
 ViewCal=Mwonekano wa mwezi
 ViewDay=Mtazamo wa siku
@@ -89,6 +86,8 @@ ShippingSentByEMail=Usafirishaji %s kutumwa kwa barua pepe
 ShippingValidated= Usafirishaji %s imethibitishwa
 InterventionSentByEMail=Kuingilia kati %s kutumwa kwa barua pepe
 ProjectSentByEMail=Mradi %s kutumwa kwa barua pepe
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=Pendekezo limefutwa
 OrderDeleted=Agizo limefutwa
 InvoiceDeleted=Ankara imefutwa
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO zinazozalishwa
 MRP_MO_DELETEInDolibarr=MO imefutwa
 MRP_MO_CANCELInDolibarr=MO ameghairiwa
 PAIDInDolibarr=%s kulipwa
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=Canceled
 ##### End agenda events #####
 AgendaModelModule=Violezo vya hati kwa tukio
 DateActionStart=Tarehe ya kuanza
 DateActionEnd=Tarehe ya mwisho
 AgendaUrlOptions1=Unaweza pia kuongeza vigezo vifuatavyo ili kuchuja pato:
-AgendaUrlOptions3= <b> logina=%s </b>  ili kudhibiti matokeo kwa vitendo vinavyomilikiwa na mtumiaji <b> %s </b> .
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b>  ili kudhibiti matokeo kwa vitendo visivyomilikiwa na mtumiaji <b> %s </b> .
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b>  ili kudhibiti matokeo yaliyotolewa kwa mtumiaji <b> %s </b>  (mmiliki na wengine).
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b>  ili kudhibiti matokeo kwa vitendo vilivyounganishwa na mradi <b> __PROJECT_ID__ </b> .
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b>  ili kuwatenga matukio ya kiotomatiki.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b>  kujumuisha matukio ya likizo.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Siku za kuzaliwa za mawasiliano
 AgendaHideBirthdayEvents=Ficha siku za kuzaliwa za watu unaowasiliana nao
 Busy=Shughuli
@@ -181,3 +184,24 @@ Reminders=Vikumbusho
 ActiveByDefault=Imewashwa kwa chaguomsingi
 Until=mpaka
 DataFromWasMerged=Data kutoka %s iliunganishwa
+AgendaShowBookcalCalendar=Booking calendar: %s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=Calendars
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

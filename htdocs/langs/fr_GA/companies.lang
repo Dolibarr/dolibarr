@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - companies
 State=Province
 Zip=Boîte Postale
+VATIsNotUsed=Non assujetti à la TPS
 OverAllProposals=Devis
 ProfId1=N° Statistique
 ProfId2=CNSS
@@ -8,6 +9,8 @@ ProfId3=CNAMGS
 ProfId4=RCCM
 ProfId5=NIM
 ProfId6=NIF
+VATIntra=Numéro TPS
+VATIntraShort=Numéro TPS
 Contact=Contact / Adresse
 Contacts=Contacts / Adresses
 ContactsAddresses=Contacts / Adresses

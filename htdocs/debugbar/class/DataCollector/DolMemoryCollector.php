@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +32,11 @@ class DolMemoryCollector extends MemoryCollector
 	/**
 	 *	Return value of indicator
 	 *
-	 *  @return array
+	 *  @return array{peak_usage:string,peak_usage_str:string}		Array
 	 */
 	public function collect()
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$this->updatePeakUsage();
 		return array(
@@ -48,7 +49,7 @@ class DolMemoryCollector extends MemoryCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array
+	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:string}>      Array
 	 */
 	public function getWidgets()
 	{

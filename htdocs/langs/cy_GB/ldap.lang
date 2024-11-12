@@ -29,3 +29,5 @@ LDAPPasswordHashType=Math o hash cyfrinair
 LDAPPasswordHashTypeExample=Math o hash cyfrinair a ddefnyddir ar y gweinydd
 SupportedForLDAPExportScriptOnly=Cefnogir gan sgript allforio ldap yn unig
 SupportedForLDAPImportScriptOnly=Cefnogir gan sgript mewnforio ldap yn unig
+LDAPUserAccountControl = userAccountControl ar greu (cyfeiriadur gweithredol)
+LDAPUserAccountControlExample = 512 Cyfrif Normal / 546 Cyfrif Normal + Dim Passwd + Anabl (gweler : https://fr.wikipedia.org/wiki/Active_Directory)

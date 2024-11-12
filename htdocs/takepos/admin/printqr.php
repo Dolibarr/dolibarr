@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020       Andreu Bisquerra Gaya  <jove@bisquerra.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,15 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
@@ -31,15 +41,15 @@ if (!$user->admin) {
 
 $langs->load("cashdesk");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
-$_GET['optioncss'] = "print";
+//$_GET['optioncss'] = "print";
 
 print '<center>';
 
 if (GETPOSTISSET("id")) {
 	print '<h1><b>'.$langs->trans("ScanToOrder").'</b></h1>';
-	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($id)."' width='30%'>";
+	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode((string) $id)."' width='30%'>";
 } else {
 	print '<h1><b>'.$langs->trans("ScanToMenu").'</b></h1>';
 	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' width='30%'>";

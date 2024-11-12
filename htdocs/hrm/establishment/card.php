@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,15 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
@@ -35,7 +45,7 @@ $error = 0;
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // List of status
 static $tmpstatus2label = array(
@@ -50,11 +60,12 @@ foreach ($tmpstatus2label as $key => $val) {
 $object = new Establishment($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
 $permissiontodelete = $user->admin;
+
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -62,23 +73,27 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (!isModEnabled('hrm')) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'confirm_delete' && $confirm == "yes") {
-	$result = $object->delete($id);
+if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add') {
+} elseif ($action == 'add' && $permissiontoadd) {
 	if (!$cancel) {
 		$error = 0;
 
@@ -92,11 +107,11 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip = GETPOST('zipcode', 'alpha');
 			$object->town = GETPOST('town', 'alpha');
-			$object->country_id = GETPOST("country_id", 'int');
-			$object->status = GETPOST('status', 'int');
+			$object->country_id = GETPOSTINT("country_id");
+			$object->status = GETPOSTINT('status');
 			$object->fk_user_author	= $user->id;
 			$object->datec = dol_now();
-			$object->entity = GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity;
+			$object->entity = GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $conf->entity;
 
 			$id = $object->create($user);
 
@@ -113,7 +128,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		header("Location: ../admin/admin_establishment.php");
 		exit;
 	}
-} elseif ($action == 'update') {
+} elseif ($action == 'update' && $permissiontoadd) {
 	// Update record
 	$error = 0;
 
@@ -129,25 +144,26 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = GETPOST('country_id', 'int');
+			$object->country_id     = GETPOSTINT('country_id');
 			$object->fk_user_mod = $user->id;
-			$object->status         = GETPOST('status', 'int');
-			$object->entity         = GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity;
+			$object->status         = GETPOSTINT('status');
+			$object->entity         = GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $conf->entity;
 
 			$result = $object->update($user);
 
 			if ($result > 0) {
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOSTINT('id'));
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOSTINT('id'));
 		exit;
 	}
 }
+
 
 /*
  * View
@@ -158,9 +174,7 @@ llxHeader();
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-/*
- * Action create
- */
+// Action create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEstablishment"));
 
@@ -228,7 +242,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
+	print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -405,7 +419,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($object->country_id > 0) {
 		$img = picto_from_langcode($object->country_code);
 		print $img ? $img.' ' : '';
-		print getCountry($object->getCountryCode(), 0, $db);
+		print getCountry($object->getCountryCode(), '', $db);
 	}
 	print '</td>';
 	print '</tr>';

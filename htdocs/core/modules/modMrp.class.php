@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Destailleur Laurent     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Charlene Benke     		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ class modMrp extends DolibarrModules
 		//                             2 => array('MRP_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('MRP_MO_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of MO', 0),
+			//1=>array('MRP_MO_ADDON_PDF', 'chaine', 'vinci', 'Name of default PDF model of MO', 0),
 			2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
 			3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
 		);
@@ -166,7 +167,7 @@ class modMrp extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -265,12 +266,12 @@ class modMrp extends DolibarrModules
 			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
-			'm.fk_soc'=>'Tiers',
-			'e.rowid'=>'WarehouseId',
-			'e.ref'=>'WarehouseRef',
+			'm.fk_soc'=>'ThirdParty:ID',
 			'm.qty'=>'Qty',
 			'm.date_creation'=>'DateCreation',
-			'm.tms'=>'DateModification'
+			'm.tms'=>'DateModification',
+			'm.fk_warehouse'=>'WarehouseForProduction:ID',
+			'e.ref'=>'WarehouseForProduction:Ref'
 		);
 		$keyforselect = 'mrp_mo';
 		$keyforelement = 'mrp_mo';
@@ -293,19 +294,119 @@ class modMrp extends DolibarrModules
 			'm.note_private'=>'Text',
 			'm.note_public'=>'Text',
 			'm.fk_soc'=>'Numeric',
-			'e.fk_warehouse'=>'Numeric',
-			'e.ref'=>'Text',
 			'm.qty'=>'Numeric',
 			'm.date_creation'=>'Date',
-			'm.tms'=>'Date'
-
+			'm.tms'=>'Date',
+			'm.fk_warehouse'=>'Numeric',
+			'e.ref'=>'Text',
 		);
-		$this->export_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->export_entities_array[$r] = array('m.fk_warehouse' => 'warehouse', 'e.ref' => 'warehouse'); // We define here only fields that use another icon that the one defined into import_icon
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'mrp_mo as m';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_mo_extrafields as extra ON m.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = m.fk_warehouse';
 		$this->export_sql_end[$r] .= ' WHERE m.entity IN ('.getEntity('mrp_mo').')'; // For product and service profile
+
+		// Export of MO + liste of consumption / production
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='ConsumptionAndProductionInMos';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]='mrp';
+		$this->export_fields_array[$r] = array(
+			'm.rowid'=>"Id",
+			'm.ref'=>"Ref",
+			'm.label'=>"Label",
+			'm.fk_project'=>'ProjectId',
+			'm.fk_bom'=>"Bom:ID",
+			'm.date_start_planned'=>"DateStartPlanned",
+			'm.date_end_planned'=>"DateEndPlanned",
+			'm.fk_product'=>"Product",
+			'm.status'=>'Status',
+			'm.model_pdf'=>'Model',
+			'm.fk_user_valid'=>'ValidatedById',
+			'm.fk_user_modif'=>'ModifiedById',
+			'm.fk_user_creat'=>'CreatedById',
+			'm.date_valid'=>'DateValidation',
+			'm.note_private'=>'NotePrivate',
+			'm.note_public'=>'Note',
+			'm.fk_soc'=>'Tiers',
+			'm.qty'=>'Qty',
+			'm.date_creation'=>'DateCreation',
+			'm.tms'=>'DateModification',
+			//'e.rowid'=>'WarehouseId',
+			//'e.ref'=>'WarehouseRef',
+		);
+		$keyforselect = 'mrp_mo';
+		$keyforelement = 'mrp_mo';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		// Add fields for lines
+		$this->export_fields_array[$r]['mp.role'] = 'TypeOfMovement';
+		$this->export_fields_array[$r]['mp.date_creation'] = 'DateCreation';
+		$this->export_fields_array[$r]['mp.qty'] = 'Qty';
+		$this->export_fields_array[$r]['mp.batch'] = 'Batch';
+		$this->export_fields_array[$r]['mp.fk_product'] = 'ProductId';
+		$this->export_fields_array[$r]['p.ref'] = 'ProductRef';
+		$this->export_fields_array[$r]['mp.fk_warehouse'] = 'WarehouseId';
+		$this->export_fields_array[$r]['e.ref'] = 'WarehouseRef';
+		$this->export_fields_array[$r]['mp.fk_stock_movement'] = 'StockMovement:ID';
+
+		$keyforselect = 'mrp_production';
+		$keyforelement = 'mrp_production';
+		$keyforaliasextra = 'extramp';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_TypeFields_array[$r] = array(
+			'm.ref'=>"Text",
+			'm.label'=>"Text",
+			'm.fk_project'=>'Numeric',
+			'm.fk_bom'=>"Numeric",
+			'm.date_end_planned'=>"Date",
+			'm.date_start_planned'=>"Date",
+			'm.fk_product'=>"Numeric",
+			'm.status'=>'Numeric',
+			'm.model_pdf'=>'Text',
+			'm.fk_user_valid'=>'Numeric',
+			'm.fk_user_modif'=>'Numeric',
+			'm.fk_user_creat'=>'Numeric',
+			'm.date_valid'=>'Date',
+			'm.note_private'=>'Text',
+			'm.note_public'=>'Text',
+			'm.fk_soc'=>'Numeric',
+			'm.qty'=>'Numeric',
+			'm.date_creation'=>'Date',
+			'm.tms'=>'Date',
+			'e.fk_warehouse'=>'Numeric',
+			'e.ref'=>'Text',
+			'mp.qty' => 'Numeric',
+			'mp.batch' => 'Text',
+			'mp.fk_product' => 'Numeric',
+			'p.ref' => 'Text',
+			'mp.role' => 'Text',
+			'mp.date_creation' => 'Date',
+			'mp.fk_warehouse' => 'Numeric',
+			'mp.fk_stock_movement' => 'Numeric'
+		);
+		$this->export_entities_array[$r] = array(
+			'mp.qty' => 'mrp_line',
+			'mp.batch' => 'mrp_line',
+			'mp.role' => 'mrp_line',
+			'mp.date_creation' => 'mrp_line',
+			'mp.fk_product' => 'product',
+			'p.ref' => 'product',
+			'mp.fk_warehouse' => 'warehouse',
+			'e.ref' => 'warehouse',
+			'mp.fk_stock_movement' => 'stock'
+		); // We define here only fields that use another icon that the one defined into import_icon
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'mrp_mo as m';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_mo_extrafields as extra ON m.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_production as mp ON m.rowid = mp.fk_mo';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_production_extrafields as extramp ON mp.rowid = extramp.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = mp.fk_warehouse';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = mp.fk_product';
+		$this->export_sql_end[$r] .= ' WHERE m.entity IN ('.getEntity('mrp_mo').')'; // For product and service profile
+
 
 		// Imports profiles provided by this module
 		$r = 0;
@@ -346,7 +447,7 @@ class modMrp extends DolibarrModules
 			'm.fk_user_valid'=>'ValidatedById',
 			'm.fk_user_modif'=>'ModifiedById',
 			'm.fk_user_creat'=>'CreatedById',
-			'm.date_valid'=>'DateValid',
+			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
 			'm.fk_soc'=>'Tiers',
@@ -423,14 +524,8 @@ class modMrp extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
-		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
-		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
-		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
-		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
+		// Create tables of module at module activation
+		$result = $this->_load_tables('/install/mysql/', 'mrp');
 
 		// Permissions
 		$this->remove($options);
@@ -445,7 +540,7 @@ class modMrp extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
@@ -454,8 +549,8 @@ class modMrp extends DolibarrModules
 		}
 
 		$sql = array(
-			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".((int) $conf->entity),
-			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('vinci')."' AND type = 'mrp' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('vinci')."','mrp',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

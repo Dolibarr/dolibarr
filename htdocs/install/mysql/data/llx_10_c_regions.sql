@@ -42,52 +42,52 @@
 
 -- CONTENT -------------------------------------------------------------------
 -- 
--- Algeria     -> only for Departmements
--- Andorra     -> only for Departmements
--- Angola      -> only for Departmements
+-- Algeria     -> only for Departments/Counties
+-- Andorra     -> only for Departments/Counties
+-- Angola      -> only for Departments/Counties
 -- Argentina
--- Australia   -> only for Departmements
--- Austria     -> only for Departmements
--- Barbados    -> only for Departmements
+-- Australia   -> only for Departments/Counties
+-- Austria     -> only for Departments/Counties
+-- Barbados    -> only for Departments/Counties
 -- Belgium
 -- Bolivia
--- Brazil      -> only for Departmements
+-- Brazil      -> only for Departments/Counties
 -- Burundi
--- Canada      -> only for Departmements
+-- Canada      -> only for Departments/Counties
 -- Chile
 -- China
--- Colombie    -> only for Departmements
+-- Colombie    -> only for Departments/Counties
 -- Croatia
 -- Denmark
 -- France
--- Germany     -> only for Departmements
+-- Germany     -> only for Departments/Counties
 -- Greece
--- Honduras    -> only for Departmements
+-- Honduras    -> only for Departments/Counties
 -- Hungary
--- India       -> only for Departmements
--- Indonesia   -> only for Departmements
+-- India       -> only for Departments/Counties
+-- Indonesia   -> only for Departments/Counties
 -- Italy
--- Japan       -> only for Departmements
+-- Japan       -> only for Departments/Counties
 -- Luxembourg
 -- Mauritius
--- Mexique     -> only for Departmements
+-- Mexique     -> only for Departments/Counties
 -- Morocco
--- Netherlands -> only for Departmements
--- Panama      -> only for Departmements
+-- Netherlands -> only for Departments/Counties
+-- Panama      -> only for Departments/Counties
 -- Peru
 -- Portugal
--- Romania     -> only for Departmements
+-- Romania     -> only for Departments/Counties
 -- San Salvador
 -- Slovakia
 -- Slovenia
 -- Spain
--- Switzerland/Suisse    -> only for Departmements/Cantons
--- Taiwan      -> only for Departmements
+-- Switzerland/Suisse    -> only for Departments/Cantons
+-- Taiwan      -> only for Departments/Counties
 -- Tunesia
 -- Turkey
--- United Arab Emirates  -> only for Departmements
+-- United Arab Emirates  -> only for Departments/Counties
 -- United Kingdom
--- USA         -> only for Departmements
+-- USA         -> only for Departments/Counties
 -- Venezuela
 
 
@@ -557,4 +557,10 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23207, '', 0, 'Los Llanos');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23208, '', 0, 'Nor-Oriental');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23209, '', 0, 'Zuliana');
+
+-- Cuba Regions (id_country=77)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7700, '', 0, 'Cuba');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7701, '', 0, 'Occidente');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7702, '', 0, 'Centro');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7703, '', 0, 'Occidente');
 

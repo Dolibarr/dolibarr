@@ -55,27 +55,27 @@ class StockMovements extends DolibarrApi
 	/**
 	 * Get properties of a stock movement object
 	 *
-	 * Return an array with stock movement informations
+	 * Return an array with stock movement information
 	 *
-	 * @param 	int 	$id 			ID of movement
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of movement
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	/*
 	public function get($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->stockmovement->fetch($id);
-		if( ! $result ) {
+		if (!$result ) {
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		if (!DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->stockmovement);
@@ -89,18 +89,19 @@ class StockMovements extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -136,16 +137,14 @@ class StockMovements extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$stockmovement_static = new MouvementStock($this->db);
 				if ($stockmovement_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($stockmovement_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve stock movement list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No stock movement found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -169,15 +168,15 @@ class StockMovements extends DolibarrApi
 	 * @param string $dlc Eat-by date. {@from body} {@type date}
 	 * @param string $dluo Sell-by date. {@from body} {@type date}
 	 * @param string $origin_type   Origin type (Element of source object, like 'project', 'inventory', ...)
-	 * @param string $origin_id     Origin id (Id of source object)
+	 * @param int $origin_id     Origin id (Id of source object)
 	 *
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
 	public function post($product_id, $warehouse_id, $qty, $type = 2, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+			throw new RestException(403);
 		}
 
 		if ($qty == 0) {
@@ -201,7 +200,7 @@ class StockMovements extends DolibarrApi
 		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, $dateMvt, $eatBy, $sellBy, $lot) <= 0) {
 			$errormessage = $this->stockmovement->error;
 			if (empty($errormessage)) {
-				$errormessage = join(',', $this->stockmovement->errors);
+				$errormessage = implode(',', $this->stockmovement->errors);
 			}
 			throw new RestException(503, 'Error when create stock movement : '.$errormessage);
 		}
@@ -212,15 +211,15 @@ class StockMovements extends DolibarrApi
 	/**
 	 * Update stock movement
 	 *
-	 * @param int   $id             Id of warehouse to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of warehouse to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	/*
 	public function put($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->stockmovement->fetch($id);
@@ -229,7 +228,7 @@ class StockMovements extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach($request_data as $field => $value) {
@@ -252,20 +251,20 @@ class StockMovements extends DolibarrApi
 	/*
 	public function delete($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
+		if (! DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->stockmovement->fetch($id);
-		if( ! $result ) {
+		if (! $result ) {
 			throw new RestException(404, 'stock movement not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		if (! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (! $this->stockmovement->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401,'error when delete stock movement');
+			throw new RestException(403,'error when delete stock movement');
 		}
 
 		return array(
@@ -343,7 +342,7 @@ class StockMovements extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	private function _validate($data)
+	private function _validate($data) // @phpstan-ignore-line
 	{
 		$stockmovement = array();
 		foreach (self::$FIELDS as $field) {

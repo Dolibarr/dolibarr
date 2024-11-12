@@ -9,31 +9,30 @@ ActionsOnResource=Események ezzel az erőforrással kapcsolatban
 ResourcePageIndex=Erőforrás-lista
 ResourceSingular=Erőforrás
 ResourceCard=Erőforrás kártya
+NewResource=Új erőforrás
 AddResource=Erőforrás létrehozása
 ResourceFormLabel_ref=Erőforrás neve
-ResourceType=Erőforrás típusa
 ResourceFormLabel_description=Erőforrás leírása
-
-ResourcesLinkedToElement=Elemhez kapcsolt erőforrások 
+ResourceType=Erőforrás típusa
+ResourceTypeID=Erőforrástípus azonosítója
+ResourceTypeLabel=Erőforrás típusa címke
+ResourcesLinkedToElement=Elemhez kapcsolt erőforrások
 
 ShowResource=Mutassa meg az erőforrást
-
 ResourceElementPage=Erőforrások
 ResourceCreatedWithSuccess=Az erőforrás sikeresen létrehozva
 RessourceLineSuccessfullyDeleted=Az erőforrás vonal sikeresen törölve
 RessourceLineSuccessfullyUpdated=Az erőforrás vonal sikeresen frissítve
 ResourceLinkedWithSuccess=Az erőforrás kapcsolása sikeres
-
 ConfirmDeleteResource=Hagyja jóvá az erőforrás törlését
 RessourceSuccessfullyDeleted=Az erőforrás sikeresen törölve
 DictionaryResourceType=Erőforrás típusa
-
 SelectResource=Válasszon erőforrást
-
 IdResource=Erőforrás ID
 AssetNumber=Sorozatszám
 ResourceTypeCode=Erőforrástípus kódja
 ImportDataset_resource_1=Erőforrások
-
 ErrorResourcesAlreadyInUse=Néhány erőforrás használatban van
 ErrorResourceUseInEvent=%s használt %s eseményben
+MaxUsers=A felhasználók maximális száma (helyek, ülőhelyek stb.)
+MaxUsersLabel=Maximális felhasználó

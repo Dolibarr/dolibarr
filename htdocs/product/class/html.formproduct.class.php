@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
+/* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +20,7 @@
 
 /**
  *	\file       htdocs/product/class/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html
+ *	\brief      File for class with methods for building product related HTML components
  */
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -40,8 +42,17 @@ class FormProduct
 	public $error = '';
 
 	// Cache arrays
+	/**
+	 * @var array<int,array{id:int,label:string,parent_id:int,description:string,stock:string,full_label:string}>
+	 */
 	public $cache_warehouses = array();
+	/**
+	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float}>>
+	 */
 	public $cache_lot = array();
+	/**
+	 * @var array<int,array{id:int,ref:string,label:string,type:string,nb_operators_required:int,thm_operator_estimated:float,thm_machine_estimated:float}>
+	 */
 	public $cache_workstations = array();
 
 
@@ -67,8 +78,8 @@ class FormProduct
 	 *                      				    'warehouseclosed' = select products from closed warehouses,
 	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
-	 * @param	array       $exclude            warehouses ids to exclude
-	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 * @param	int[]       $exclude            warehouses ids to exclude
+	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
@@ -178,7 +189,7 @@ class FormProduct
 	 * If fk_product is not 0, we do not use cache
 	 *
 	 * @param	int		    $fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 * @param	array       $exclude            warehouses ids to exclude
+	 * @param	int[]       $exclude            warehouses ids to exclude
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
@@ -233,10 +244,13 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
-	 *
-	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
-	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
-	 * @return	String					full label with all parents, separated by ' >> '
+	 * Set Hidden conf MAIN_WAREHOUSE_LIST_DISPLAY_MODE at 0 || 1 || 2 to unlock display
+	 *   0 : Default behavior, display parents of warehouse
+	 *   1 : Display only current warehouse label only
+	 *   2 : Display last parent warehouse label
+	 * @param	array{id:int,label:string,parent_id:int,description:string,stock:string,full_label:string}	$tab			warehouse data in $this->cache_warehouses line
+	 * @param	string	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
+	 * @return	string					full label with all parents, separated by ' >> '
 	 */
 	private function get_parent_path($tab, $final_label = '')
 	{
@@ -245,11 +259,14 @@ class FormProduct
 			$final_label = $tab['label'];
 		}
 
-		if (empty($tab['parent_id'])) {
+		if (empty($tab['parent_id']) || getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 1) {
 			return $final_label;
 		} else {
 			if (!empty($this->cache_warehouses[$tab['parent_id']])) {
-				$final_label = $this->cache_warehouses[$tab['parent_id']]['label'].' >> '.$final_label;
+				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 2 && empty($this->cache_warehouses[$tab['parent_id']]['parent_id']))) {
+					$final_label = $this->cache_warehouses[$tab['parent_id']]['label'] . ' >> ' . $final_label;
+				}
+
 				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
 			}
 		}
@@ -260,25 +277,25 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int|array  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  ''|'-1'|'ifone'|'ifonenodefault'|'-2'|string|int|int[]  $selected     Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
 	 *                                          'warehouseclosed' = select products from closed warehouses,
 	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int		    $empty			    1=Can be empty, 0 if not
-	 * 	@param	int		    $disabled		    1=Select is disabled
+	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
-	 *  @param	int		    $showstock		    1=Show stock count
-	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
-	 *  @param	array	    $events			    Events to add to select2
+	 *  @param	int<0,1>    $showstock		    1=Show stock count
+	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
+	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
 	 *  @param  string      $morecss            Add more css classes to HTML select
-	 *  @param	array	    $exclude            Warehouses ids to exclude
+	 *  @param	int[]	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
-	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
-	 *  @param	int			$multiselect		1=Allow multiselect
+	 *  @param	int<0,1>	$multiselect		1=Allow multiselect
 	 * 	@return string					        HTML select
 	 *
 	 *  @throws Exception
@@ -287,10 +304,10 @@ class FormProduct
 	{
 		global $conf, $langs, $user, $hookmanager;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus==="warehouseinternal")) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -308,18 +325,18 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
-					$selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
+					$selected = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 				}
 			} else {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 					$selected = $user->fk_warehouse;
 				}
 			}
 		}
 
 		$out .= '<select '.($multiselect ? 'multiple ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '');
-		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect?'[]':'').($disabled ? '_disabled' : '')).'"';
+		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect ? '[]' : '').($disabled ? '_disabled' : '')).'"';
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
@@ -346,7 +363,7 @@ class FormProduct
 					$out .= ' selected';
 				}
 			} else {
-				if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
+				if ($selected == $id || (!empty($selected) && preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 					$out .= ' selected';
 				}
 			}
@@ -393,15 +410,15 @@ class FormProduct
 	 *
 	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
-	 *  @param  int		    $empty			    1=Can be empty, 0 if not
-	 * 	@param	int		    $disabled		    1=Select is disabled
+	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
-	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
-	 *  @param	array	    $events			            Events to add to select2
-	 *  @param  string      $morecss                    Add more css classes to HTML select
-	 *  @param	array	    $exclude            Warehouses ids to exclude
-	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
+	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
+	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
+	 *  @param  string      $morecss            Add more css classes to HTML select
+	 *  @param	int[]	    $exclude            Warehouses ids to exclude
+	 *  @param  int<0,1>	$showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 * 	@return string					        HTML select
 	 *
@@ -413,7 +430,7 @@ class FormProduct
 
 		dol_syslog(get_class($this)."::selectWorkstations $selected, $htmlname, $empty, $disabled, $fk_product, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
-		$filterstatus='';
+		$filterstatus = '';
 		$out = '';
 		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_workstations = array();
@@ -430,11 +447,11 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
-					$selected = $conf->global->MAIN_DEFAULT_WORKSTATION;
+				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
+					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 				}
 			} else {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
+				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
 					$selected = $user->fk_workstation;
 				}
 			}
@@ -490,10 +507,10 @@ class FormProduct
 	/**
 	 *    Display form to select warehouse
 	 *
-	 *    @param    string  $page        Page
-	 *    @param    int     $selected    Id of warehouse
-	 *    @param    string  $htmlname    Name of select html field
-	 *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *    @param    string      $page        Page
+	 *    @param    string|int  $selected    Id of warehouse
+	 *    @param    string      $htmlname    Name of select html field
+	 *    @param    int<0,2>	$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *    @return   void
 	 */
 	public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
@@ -524,20 +541,20 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
-	 *  pour l'instant on ne definit pas les unites dans la base
+	 *  Currently the units are not define in the DB
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default            Preselected value
+	 *  @param  string		$selected            Preselected value
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
 	 *  @deprecated
 	 */
-	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0)
 	{
 		//phpcs:enable
-		print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
+		print $this->selectMeasuringUnits($name, $measuring_style, $selected, $adddefault, $mode);
 	}
 
 	/**
@@ -546,15 +563,15 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default             Preselected value
+	 *  @param  string		$selected            Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
-	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
+	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
-	 *  @return string
+	 *  @return string|int<-1,-1>
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'minwidth75 maxwidth125')
 	{
-		global $langs, $conf, $mysoc, $db;
+		global $langs, $db;
 
 		$langs->load("other");
 
@@ -572,7 +589,7 @@ class FormProduct
 
 		$result = $measuringUnits->fetchAll(
 			'',
-			'',
+			'scale',
 			0,
 			0,
 			$filter
@@ -583,7 +600,7 @@ class FormProduct
 		} else {
 			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
-				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
+				$return .= '<option value="0"'.($selected === '0' ? ' selected' : '').'>'.($adddefault ? '('.$langs->trans("Default").')' : '').'</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines) {
@@ -596,11 +613,11 @@ class FormProduct
 					$return .= $lines->id;
 				}
 				$return .= '"';
-				if ($mode == 1 && $lines->short_label == $default) {
+				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $default) {
+				} elseif ($mode == 2 && $lines->scale == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 0 && $lines->id == $default) {
+				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
 				$return .= '>';
@@ -627,7 +644,7 @@ class FormProduct
 	 *  @param  string		$selected             Preselected value
 	 *  @param  int         $mode                1=Use label as value, 0=Use code
 	 *  @param  int         $showempty           1=show empty value, 0= no
-	 *  @return string
+	 *  @return string|int
 	 */
 	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty = 1)
 	{
@@ -691,17 +708,17 @@ class FormProduct
 	/**
 	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
 	 *
-	 *  @param	int		$selected		Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param	string|int	$selected	Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname		Name of html select html
 	 *  @param  string	$filterstatus	lot status filter, following comma separated filter options can be used
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
 	 * 	@param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
-	 * 	@param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 * 	@param	CommonObjectLine[]	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
 	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
-	 *  @param	array	$events			Events to add to select2
+	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
 	 *  @param  string  $morecss		Add more css classes to HTML select
 	 *
 	 * 	@return	string					HTML select
@@ -786,12 +803,12 @@ class FormProduct
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 *  @param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
 	 *  @param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
-	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 *  @param	CommonObjectLine[]	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *  @return	string					HTML datalist
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
-		global $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot", LOG_DEBUG);
 
@@ -841,7 +858,8 @@ class FormProduct
 					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">(' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
+						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
 					}
 				}
 			}
@@ -855,7 +873,7 @@ class FormProduct
 	/**
 	 * Load in cache array list of lot available in stock from a given list of products
 	 *
-	 * @param	array	$productIdArray		array of product id's from who to get lot numbers. A
+	 * @param	int[]	$productIdArray		array of product id's from who to get lot numbers. A
 	 *
 	 * @return	int							Nb of loaded lines, 0 if nothing loaded, <0 if KO
 	 */
@@ -872,7 +890,7 @@ class FormProduct
 		if (count($productIdArray) && count($this->cache_lot)) {
 			// check cache already loaded for product id's
 			foreach ($productIdArray as $productId) {
-				$cacheLoaded = !empty($this->cache_lot[$productId]) ? true : false;
+				$cacheLoaded = !empty($this->cache_lot[$productId]);
 			}
 		}
 		if ($cacheLoaded) {

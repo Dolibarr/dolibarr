@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("help", "members", "other", "admin"));
 
@@ -53,32 +62,35 @@ $version = '0.0';
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_about');
 
 
 print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');
 
-print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png', 'height="120"').'</div>';
-
-
 
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
+print '<div class="divsection wordwrap">';
+print '<div class="floatright paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
-print '<a href="https://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '<a href="https://www.gnu.org/copyleft/gpl.html" target="_blank">GNU-GPL v3+</a></li>';
 print '</li></ul>';
+print'</div>';
 
 //print "<br>\n";
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("Developpers").':';
 print '<ul>';
 print '<li>'.$langs->trans("SourcesRepository").': <a href="https://www.github.com/Dolibarr/dolibarr" target="_blank" rel="noopener noreferrer external">https://www.github.com/Dolibarr/dolibarr</a></li>';
 print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="https://wiki.dolibarr.org/index.php/Dolibarr_Project" target="_blank" rel="noopener noreferrer external">https://wiki.dolibarr.org/index.php/Dolibarr_Project</a></li>';
 print '</ul>';
+print '</div>';
 
 //print "<br>\n";
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("OtherInformations").':';
 
 print '<ul>';
@@ -90,65 +102,60 @@ print '</li>';
 if (preg_match('/^fr_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.fr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("France")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.fr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryFR")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^el_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.gr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Greece")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.gr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryGR")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^es_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.es/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Spain")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.es/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryES")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^it_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.it/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Italy")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.it/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryIT")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^de_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.de/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Germany")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.de/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryDE")).'</a>';
 	print '</li>';
 }*/
 print '<li>';
 print '<a target="_blank" href="https://wiki.dolibarr.org/" rel="noopener noreferrer external">'.$langs->trans("OfficialWiki").'</a>';
 print '</li>';
 print '</ul>';
+print '</div>';
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("Demo").':';
 print '<ul>';
 print '<li>';
 print '<a target="_blank" href="https://www.dolibarr.org/onlinedemo/" rel="noopener noreferrer external">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
 print '</ul>';
+print '</div>';
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("ModulesMarketPlaces").':';
 print '<ul>';
 print '<li>';
 print '<a target="_blank" href="https://www.dolistore.com" rel="noopener noreferrer external">'.$langs->trans("OfficialMarketPlace").'</a>';
 print '</li>';
 print '</ul>';
-
+print '</div>';
 
 print '</div><div class="fichehalfright">';
 
-
-print $langs->trans("HelpCenter").':';
-print '<ul>';
-print '<li>';
-//print $langs->trans("SeeWikiPage",'http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers');
-print '<a target="_blank" rel="noopener noreferrer external" href="'.DOL_URL_ROOT.'/support/index.php" data-ajax="false">'.$langs->trans("HelpCenter").'</a>';
-print '</li>';
-print '</ul>';
-
-
+print '<div class="divsection wordwrap">';
 print $langs->trans("Foundation").':';
 
 print '<ul>';
@@ -161,17 +168,19 @@ if (preg_match('/^es_/i', $langs->getDefaultLang())) {
 }
 print '<li><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SubscribeToFoundation").'</a></li>';
 print '</ul>';
+print '</div>';
 
+print '<div class="divsection wordwrap">';
 print $langs->trans("SocialNetworks").':';
 
 print '<ul>';
 
-print '<li><a href="https://facebook.com/dolibarr" target="_blank" rel="noopener noreferrer external">FaceBook</a></li>';
-print '<li><a href="https://twitter.com/dolibarr" target="_blank" rel="noopener noreferrer external">Twitter</a></li>';
+print '<li><a href="https://wiki.dolibarr.org/index.php?title=Social_Networks" target="_blank" rel="noopener noreferrer external">See wiki</a></li>';
 
 print '</ul>';
+print '</div>';
 
-
+print '<div class="divsection wordwrap">';
 print $langs->trans("OtherResources").':';
 print '<ul>';
 
@@ -191,6 +200,7 @@ print '<a target="_blank" rel="noopener noreferrer external" href="'.$url.'">'.$
 print '</li>';
 
 print '</ul>';
+print '</div>';
 
 print '</div>';
 print '</div>';

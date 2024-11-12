@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox module instellen
-PayBoxDesc=Deze module bied pagina's om betalingen via <a href="http://www.paybox.com" target="_blank">Paybox</a> mogelijk te maken door afnemers. Dit kan gebruikt worden voor een vrije betaling (donatie) of voor een specifiek Dolibarr object (factuur, order, etc)
-FollowingUrlAreAvailableToMakePayments=De volgende URL's zijn beschikbaar om een pagina te bieden aan afnemers voor het doen van een betaling van Dolibarr objecten
-PaymentForm=Betalingsformulier
-WelcomeOnPaymentPage=Welkom bij onze online betaaldienst
-ThisScreenAllowsYouToPay=Dit scherm staat u toe om een online betaling te doen aan %s
-ThisIsInformationOnPayment=Informatie over de nog uit te voeren betalingen
-ToComplete=Nog te doen
-YourEMail=E-mail om betalingsbevestiging te ontvangen
-Creditor=Crediteur
-PaymentCode=Betalingscode
+PayBoxDesc=Deze module biedt pagina's waarmee klanten kunnen betalen met <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. Dit kan worden gebruikt voor een gratis betaling of voor een betaling op een bepaald Dolibarr-object (factuur, bestelling, ...)
 PayBoxDoPayment=Betalen met Paybox
 YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina om uw creditcard informatie in te voeren
-Continue=Volgende
 SetupPayBoxToHavePaymentCreatedAutomatically=Stel uw Paybox in met url <b> %s </b> om de betaling automatisch te laten aanmaken na validatie door Paybox.
 YourPaymentHasBeenRecorded=Deze pagina bevestigd dat uw betaling succesvol in geregistreerd. Dank u.
 YourPaymentHasNotBeenRecorded=Uw betaling is NIET geboekt en de transactie is geannuleerd. Dankuwel.
-AccountParameter=Accountwaarden
-UsageParameter=Met gebruik van de waarden
-InformationToFindParameters=Hulp om uw %s accountinformatie te vinden
 PAYBOX_CGI_URL_V2=URL van de Paybox CGI module voor betalingen
-CSSUrlForPaymentForm=URL van het CSS-stijlbestand voor het betalingsformulier
 NewPayboxPaymentReceived=Betaling met Paybox ontvangen
 NewPayboxPaymentFailed=Poging te betalen met Paybox mislukt
 PAYBOX_PAYONLINE_SENDEMAIL=E-mailmelding na betalingspoging (succesvol of mislukt)

@@ -81,7 +81,7 @@ export QUILT_PATCHES=debian/patches
 # dpkg -l                                List all packages
 # dpkg -b                                To build binary only package
 # dpkg -c package.deb                    List content of package
-# dpkg -I package.deb                    Give informations on package
+# dpkg -I package.deb                    Give information on package
 # dpkg -i package.deb                    Install a package
 # dpkg-reconfigure -plow package         Reconfigure package
 # dpkg -L packagename                    List content of installed package 
@@ -173,7 +173,7 @@ or
 > ls /srv/chroot
 
 Puis pour se connecter et préparer l'environnement 
-> schroot -c name_of_chroot  (exemple schroot -c unstable-amd64-sbuild)
+> schroot -c name_of_chroot  (example schroot -c unstable-amd64-sbuild)
 > cat /etc/debian_chroot       to check which debian branch we are into
 > apt-get install vim dialog
 > vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
@@ -249,7 +249,7 @@ ou
 > git-buildpackage -us -uc --git-ignore-branch --git-upstream-branch=[upstream|upstream-x.y.z]
 
 Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-3.5.x]
-Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
+Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommitted file
 Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
 Note: Package is built into directory ../build-area
 Note: To compare 2 packages: debdiff package1.dsc package2.dsc
@@ -345,7 +345,7 @@ To update dolibarr debian package when only files not into debian has changed:
 
 * Checkout the branch you want to work on: master of debian/...  
 * Manually, add patches into debian/patches and update the file debian/series, or do the 2 steps with "quilt import filepatch.patch"
-* You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revient a l'état du upstream sans les patch.
+* You can test patching of series with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revient a l'état du upstream sans les patch.
 * Update the debian/changelog to add entry of change.
 
 Once files has been prepared, it's time to test:
@@ -357,7 +357,7 @@ ou
 > git-buildpackage -us -uc --git-ignore-branch --git-upstream-branch=[upstream|upstream-jessie|upstream-3.5.x|3.5.5]
 
 Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-jessie|upstream-3.5.x|3.5.5]
-Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
+Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommitted file
 Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
 Note: Package is built into directory ../build-area
 Note: To compare 2 packages: debdiff package1.dsc package2.dsc

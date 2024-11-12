@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = நிகழ்வு அமைப்பு
 EventOrganizationDescription = தொகுதி திட்டத்தின் மூலம் நிகழ்வு அமைப்பு
 EventOrganizationDescriptionLong= ஒரு நிகழ்வின் அமைப்பை நிர்வகித்தல் (நிகழ்ச்சி, மாநாடுகள், பங்கேற்பாளர்கள் அல்லது பேச்சாளர்கள், பரிந்துரை, வாக்கு அல்லது பதிவுக்கான பொதுப் பக்கங்களுடன்)
-#
-# Menu
-#
 EventOrganizationMenuLeft = ஏற்பாடு செய்யப்பட்ட நிகழ்வுகள்
 EventOrganizationConferenceOrBoothMenuLeft = மாநாடு அல்லது சாவடி
-
 PaymentEvent=நிகழ்வின் கட்டணம்
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=பதிவு
 EventOrganizationSetup=நிகழ்வு அமைப்பு அமைப்பு
 EventOrganization=நிகழ்வு அமைப்பு
-Settings=அமைப்புகள்
 EventOrganizationSetupPage = நிகழ்வு அமைப்பு அமைவு பக்கம்
 EVENTORGANIZATION_TASK_LABEL = திட்டம் சரிபார்க்கப்படும் போது தானாக உருவாக்க பணிகளின் லேபிள்
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
@@ -49,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when se
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
 EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
 # Object
-#
 OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= மாநாடு அல்லது சாவடி
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = ஒரு நிகழ்வின் அமைப்பை நிர்வகிக்கவும்
 ConferenceOrBooth = மாநாடு அல்லது சாவடி
 ConferenceOrBoothTab = மாநாடு அல்லது சாவடி
@@ -64,10 +50,7 @@ DateOfRegistration = பதிவு செய்யப்பட்ட தேத
 ConferenceOrBoothAttendee = மாநாடு அல்லது பூத் பங்கேற்பாளர்
 ApplicantOrVisitor=Applicant or visitor
 Speaker=Speaker
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = மாநாட்டிற்கான உங்கள் கோரிக்கை பெறப்பட்டது
 YourOrganizationEventBoothRequestWasReceived = சாவடிக்கான உங்கள் கோரிக்கை பெறப்பட்டது
 EventOrganizationEmailAskConf = மாநாட்டிற்கான கோரிக்கை
@@ -77,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = நிகழ்வுக்கான
 EventOrganizationMassEmailAttendees = பங்கேற்பாளர்களுக்கான தொடர்பு
 EventOrganizationMassEmailSpeakers = பேச்சாளர்களுக்கு தொடர்பு
 ToSpeakers=To speakers
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=மாநாடுகளைப் பரிந்துரைக்க மக்களை அனுமதிக்கவும்
 AllowUnknownPeopleSuggestConfHelp=தெரியாதவர்கள் தாங்கள் செய்ய விரும்பும் மாநாட்டை பரிந்துரைக்க அனுமதிக்கவும்
 AllowUnknownPeopleSuggestBooth=ஒரு சாவடிக்கு விண்ணப்பிக்க மக்களை அனுமதிக்கவும்
@@ -89,27 +69,29 @@ PriceOfRegistration=பதிவு விலை
 PriceOfRegistrationHelp=பதிவு செய்ய அல்லது நிகழ்வில் பங்கேற்க கட்டணம் செலுத்த வேண்டும்
 PriceOfBooth=ஒரு சாவடியில் நிற்க சந்தா விலை
 PriceOfBoothHelp=ஒரு சாவடியில் நிற்க சந்தா விலை
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=மாநாடு அல்லது பூத் தகவல்கள்
+ConferenceOrBoothInformation=Conference Or Booth information
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=பங்கேற்பாளர்கள்
-ListOfAttendeesOfEvent=நிகழ்ச்சித் திட்டத்தின் பங்கேற்பாளர்களின் பட்டியல்
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ICS இணைப்பைப் பதிவிறக்கவும்
 EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = ஒரு சாவடி இருப்பிடத்தைப் பற்றிய விலைப்பட்டியல் வரிசையில் பயன்படுத்தப்படும் சேவை
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=வாக்குகளின் எண்ணிக்கை
-#
 # Status
-#
 EvntOrgDraft = வரைவு
 EvntOrgSuggested = பரிந்துரைக்கப்பட்டது
 EvntOrgConfirmed = உறுதி
 EvntOrgNotQualified = தகுதி இல்லை
 EvntOrgDone = முடிந்தது
-EvntOrgCancelled = ரத்து செய்யப்பட்டது
-#
-# Public page
-#
+EvntOrgCancelled = Canceled
+# Other
 SuggestForm = பரிந்துரை பக்கம்
 SuggestOrVoteForConfOrBooth = பரிந்துரை அல்லது வாக்களிப்பதற்கான பக்கம்
 EvntOrgRegistrationHelpMessage = இங்கே, நீங்கள் ஒரு மாநாட்டிற்கு வாக்களிக்கலாம் அல்லது நிகழ்வுக்கு புதிய ஒன்றை பரிந்துரைக்கலாம். நிகழ்வின் போது ஒரு சாவடிக்கு விண்ணப்பிக்கலாம்.
@@ -132,6 +114,7 @@ EventType = நிகழ்வு வகை
 LabelOfBooth=பூத் லேபிள்
 LabelOfconference=மாநாட்டு லேபிள்
 ConferenceIsNotConfirmed=பதிவு கிடைக்கவில்லை, மாநாடு இன்னும் உறுதிப்படுத்தப்படவில்லை
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s கண்டிப்பாக %s
 DateMustBeAfterThan=%s கண்டிப்பாக %s ஆக இருக்க வேண்டும்
 MaxNbOfAttendeesReached=The maximum number of participants has been reached
@@ -144,13 +127,8 @@ OrganizationEventBulkMailToAttendees=நிகழ்வில் பங்கே
 OrganizationEventBulkMailToSpeakers=ஒரு பேச்சாளராக நிகழ்வில் நீங்கள் பங்கேற்பதற்கான நினைவூட்டல் இது
 OrganizationEventLinkToThirdParty=மூன்றாம் தரப்பினருக்கான இணைப்பு (வாடிக்கையாளர், சப்ளையர் அல்லது பங்குதாரர்)
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=ஒரு சாவடிக்கான விண்ணப்பம்
 NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = மாநாடு அல்லது சாவடி பரிந்துரை பக்கத்தில் வரவேற்கிறோம்.
 EvntOrgRegistrationConfWelcomeMessage = மாநாட்டு ஆலோசனை பக்கத்தில் வரவேற்கிறோம்.
 EvntOrgRegistrationBoothWelcomeMessage = சாவடி பரிந்துரை பக்கத்தில் வரவேற்கிறோம்.
@@ -158,8 +136,8 @@ EvntOrgVoteHelpMessage = இங்கே, திட்டத்திற்க�
 VoteOk = உங்கள் வாக்கு ஏற்றுக்கொள்ளப்பட்டது.
 AlreadyVoted = இந்த நிகழ்வுக்கு நீங்கள் ஏற்கனவே வாக்களித்துள்ளீர்கள்.
 VoteError = வாக்களிப்பின் போது பிழை ஏற்பட்டது, மீண்டும் முயற்சிக்கவும்.
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = நிகழ்வுக்கான உங்கள் சந்தாவை உறுதிப்படுத்துதல்
 Attendee = பங்கேற்பாளர்
 PaymentConferenceAttendee = மாநாட்டில் பங்கேற்பாளர் கட்டணம்
@@ -169,9 +147,16 @@ RegistrationAndPaymentWereAlreadyRecorder=<b> %s </b> என்ற மின்�
 EmailAttendee=பங்கேற்பாளர் மின்னஞ்சல்
 EmailCompany=Company email
 EmailCompanyForInvoice=நிறுவனத்தின் மின்னஞ்சல் (விலைப்பட்டியலுக்கு, பங்கேற்பாளர் மின்னஞ்சலில் இருந்து வேறுபட்டால்)
-ErrorSeveralCompaniesWithEmailContactUs=இந்த மின்னஞ்சலைக் கொண்ட பல நிறுவனங்கள் கண்டறியப்பட்டதால், உங்கள் பதிவைத் தானாகச் சரிபார்க்க முடியாது. கைமுறை சரிபார்ப்புக்கு எங்களை %s இல் தொடர்பு கொள்ளவும்
-ErrorSeveralCompaniesWithNameContactUs=இந்தப் பெயரைக் கொண்ட பல நிறுவனங்கள் கண்டறியப்பட்டதால், உங்கள் பதிவைத் தானாகச் சரிபார்க்க முடியாது. கைமுறை சரிபார்ப்புக்கு எங்களை %s இல் தொடர்பு கொள்ளவும்
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=இந்த நிகழ்விற்கான பொது நடவடிக்கைகள் எதுவும் பொது மக்களுக்குத் திறக்கப்படவில்லை
 MaxNbOfAttendees=Max number of attendees
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated=%s Records updated
+RecordUpdated=Record updated
+NoRecordUpdated=No Record updated
+ProfitPerValidatedAttendee=Profit per attendee

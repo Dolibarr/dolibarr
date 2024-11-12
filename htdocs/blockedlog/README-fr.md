@@ -17,7 +17,7 @@ Remarque: Le type des événements tracés est probablement plus large que la pl
 de ces exigences.
 Vous pouvez aussi lire et faire des recherches au sein de la log inaltérable.
 
-Tous les enregistrements de la logs inaltérable sont liés avec le précédent dans une Blockchain, et leur contenu fait parti de la signature inclue dans ce lien,
+Tous les enregistrements de la logs inaltérable sont liés avec le précédent dans une Blockchain, et leur contenu fait parti de la signature include dans ce lien,
 aussi, une fois le module activé et le premier enregistrement réalisé, il ne sera plus possible d'effacer ni modifier un enregistrement dans la log 
-inaltérable sans corrompre toute la chaine. Dès lors qu'un enregistrement est invalide, tous les suivants pourront également être considérés invalides par votre administration.
+inaltérable sans corrompre toute la chaine. Dès lors qu'un enregistrement est invalid, tous les suivants pourront également être considérés invalides par votre administration.
 

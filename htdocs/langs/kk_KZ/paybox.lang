@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox модулін орнату
-PayBoxDesc=Бұл модуль клиенттерге <a href="http://www.paybox.com" target="_blank"> Paybox </a> бойынша төлем жасауға мүмкіндік беретін беттерді ұсынады. Бұл ақысыз төлем үшін немесе белгілі бір Dolibarr объектісіндегі төлем үшін пайдаланылуы мүмкін (шот -фактура, тапсырыс, ...)
-FollowingUrlAreAvailableToMakePayments=Келушілерге Dolibarr нысандары бойынша төлем жасау үшін бетті ұсыну үшін келесі URL мекенжайлары қол жетімді
-PaymentForm=Төлем формасы
-WelcomeOnPaymentPage=Біздің онлайн төлем қызметіне қош келдіңіз
-ThisScreenAllowsYouToPay=Бұл экран %s -ге онлайн төлем жасауға мүмкіндік береді.
-ThisIsInformationOnPayment=Бұл төлем туралы ақпарат
-ToComplete=Аяқтау
-YourEMail=Төлем растауын алу үшін электрондық пошта
-Creditor=Кредитор
-PaymentCode=Төлем коды
+PayBoxDesc=Бұл модуль тұтынушылардың <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> арқылы төлеуге рұқсат беретін беттерді ұсынады. Бұл тегін төлем үшін немесе белгілі бір Dolibarr нысанындағы төлем үшін (шот-фактура, тапсырыс, ...)
 PayBoxDoPayment=Paybox арқылы төлеу
 YouWillBeRedirectedOnPayBox=Сіз несие картасы туралы ақпаратты енгізу үшін қорғалған Paybox бетіне бағытталасыз
-Continue=Келесі
 SetupPayBoxToHavePaymentCreatedAutomatically=Төлем қорапшасын <b> %s </b> url арқылы орнатыңыз, бұл төлемді Paybox арқылы расталған кезде төлем автоматты түрде жасалады.
 YourPaymentHasBeenRecorded=Бұл бет сіздің төлеміңіз жазылғанын растайды. Рақмет сізге.
 YourPaymentHasNotBeenRecorded=Сіздің төлеміңіз жазылмаған және транзакция тоқтатылған. Рақмет сізге.
-AccountParameter=Есептік жазба параметрлері
-UsageParameter=Қолдану параметрлері
-InformationToFindParameters=%s тіркелгі ақпаратын табуға көмектесіңіз
 PAYBOX_CGI_URL_V2=Төлеуге арналған Paybox CGI модулінің url
-CSSUrlForPaymentForm=Төлем формасы үшін CSS стилі парағының URL мекенжайы
 NewPayboxPaymentReceived=Төлем жәшігінің жаңа төлемі алынды
 NewPayboxPaymentFailed=Төлем жәшігінің жаңа төлемі байқалды, бірақ сәтсіз болды
 PAYBOX_PAYONLINE_SENDEMAIL=Төлем әрекетінен кейін электрондық пошта хабарламасы (сәтті немесе сәтсіз)

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("admin");
 
@@ -46,7 +55,7 @@ $sortorder = 'ASC';
  * View
  */
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-triggers');
 
 $form = new Form($db);
 
@@ -58,7 +67,8 @@ print "<br>\n";
 
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
-$param = ''; $align = '';
+$param = '';
+$align = '';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
@@ -78,6 +88,7 @@ foreach ($triggers as $trigger) {
 	$text = $trigger['info'];
 	$text .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
 	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto('', $text);
 	print '</td>';
 	print '</tr>';

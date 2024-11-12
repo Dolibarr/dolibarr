@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - marque pages / bookmarks
 
 AddThisPageToBookmarks = Ongeza ukurasa wa sasa kwenye vialamisho
-BehaviourOnClick = Tabia wakati URL ya alamisho imechaguliwa
+BehaviourOnClick = Behavior when a bookmark URL is selected
 Bookmark = Alamisho
 Bookmarks = Alamisho
 BookmarkTargetNewWindowShort = Kichupo kipya

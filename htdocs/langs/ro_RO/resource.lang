@@ -1,39 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resurse
 MenuResourceAdd=Resursă nouă
-DeleteResource=Şterge resursa
+DeleteResource=Şterge resursă
 ConfirmDeleteResourceElement=Confirmaţi ştergerea resursei pentru acest element
 NoResourceInDatabase=Nicio resursă în baza de date.
-NoResourceLinked=Nicio resursă legată
+NoResourceLinked=Nicio resursă asociată
 ActionsOnResource=Evenimente despre această resursă
-ResourcePageIndex=Lista resurse
+ResourcePageIndex=Listă resurse
 ResourceSingular=Resursă
 ResourceCard=Fişă resursă
-AddResource=Crează resursă
+NewResource=Resursă nouă
+AddResource=Creare resursă
 ResourceFormLabel_ref=Nume resursă
-ResourceType=Tip resursă
 ResourceFormLabel_description=Descriere resursă
-
+ResourceType=Tip resursă
+ResourceTypeID=ID tip resursă
+ResourceTypeLabel=Etichetă tip resursă
 ResourcesLinkedToElement=Resurse legate de elementul
 
-ShowResource=Arata Resursă
-
-ResourceElementPage=Element resurse
-ResourceCreatedWithSuccess=Resursă creată
+ShowResource=Arată resursă
+ResourceElementPage=Resurse element
+ResourceCreatedWithSuccess=Resursa a fost creată cu succes
 RessourceLineSuccessfullyDeleted=Linie resursă ștearsă
-RessourceLineSuccessfullyUpdated=Linie  resursă actualizată
-ResourceLinkedWithSuccess=Resursă legată cu succes
-
+RessourceLineSuccessfullyUpdated=Linie resursă actualizată
+ResourceLinkedWithSuccess=Resursă asociată cu succes
 ConfirmDeleteResource=Confirmaţi ştergerea acestei resurse
 RessourceSuccessfullyDeleted=Resursă ştearsă
 DictionaryResourceType=Tipuri resurse
-
-SelectResource=Selectează resursa
-
+SelectResource=Selectare resursă
 IdResource=Id resursă
 AssetNumber=Număr serial
-ResourceTypeCode=Codul tipului de resursă
+ResourceTypeCode=Cod tip resursă
 ImportDataset_resource_1=Resurse
-
 ErrorResourcesAlreadyInUse=O parte din resurse sunt deja în uz
-ErrorResourceUseInEvent= %sutilizat în %seveniment
+ErrorResourceUseInEvent= %sutilizată în %seveniment
+MaxUsers=Număr maxim de utilizatori (locuri, scaune etc.)
+MaxUsersLabel=Maxim de utilizatori

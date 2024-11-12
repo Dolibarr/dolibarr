@@ -473,7 +473,7 @@ class VCard extends VObject\Document
      *
      * @param Xml\Writer $writer XML writer
      */
-    public function xmlSerialize(Xml\Writer $writer)
+    public function xmlSerialize(Xml\Writer $writer): void
     {
         $propertiesByGroup = [];
 

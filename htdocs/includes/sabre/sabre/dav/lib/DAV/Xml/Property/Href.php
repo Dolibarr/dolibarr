@@ -35,6 +35,19 @@ class Href implements Element, HtmlOutput
     protected $hrefs;
 
     /**
+     * Automatically prefix the url with the server base directory.
+     * Note: use of this property in code was removed in PR:
+     * https://github.com/sabre-io/dav/pull/801
+     * But the property is left here because old data may still exist
+     * that has this property saved.
+     * See discussion in issue:
+     * https://github.com/sabre-io/Baikal/issues/1154.
+     *
+     * @var bool
+     */
+    protected $autoPrefix = true;
+
+    /**
      * Constructor.
      *
      * You must either pass a string for a single href, or an array of hrefs.

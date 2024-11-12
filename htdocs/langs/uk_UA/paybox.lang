@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Налаштування модуля PayBox
 PayBoxDesc=Цей модуль пропонує сторінки, які дозволяють клієнтам здійснювати оплату на <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. Це можна використовувати для безкоштовного платежу або для оплати за конкретний об’єкт Dolibarr (рахунок-фактура, замовлення, ...)
-FollowingUrlAreAvailableToMakePayments=Наведені нижче URL-адреси доступні, щоб запропонувати клієнту сторінку для здійснення платежу за об’єктами Dolibarr
-PaymentForm=Форма оплати
-WelcomeOnPaymentPage=Ласкаво просимо до нашого сервісу онлайн-платежів
-ThisScreenAllowsYouToPay=На цьому екрані ви можете здійснити онлайн-платеж на адресу %s.
-ThisIsInformationOnPayment=Це інформація про оплату
-ToComplete=Завершувати
-YourEMail=Електронна пошта, щоб отримати підтвердження оплати
-Creditor=Кредитор
-PaymentCode=Код платежу
 PayBoxDoPayment=Оплата за допомогою Paybox
 YouWillBeRedirectedOnPayBox=Ви будете перенаправлені на захищену сторінку Paybox, щоб ввести дані вашої кредитної картки
-Continue=Далі
 SetupPayBoxToHavePaymentCreatedAutomatically=Налаштуйте свою Paybox за URL-адресою <b> %s </b>, щоб платіж створювався автоматично після підтвердження Paybox.
 YourPaymentHasBeenRecorded=Ця сторінка підтверджує, що ваш платіж зафіксовано. Дякую.
 YourPaymentHasNotBeenRecorded=Ваш платіж НЕ зафіксовано, і трансакцію скасовано. Дякую.
-AccountParameter=Параметри рахунку
-UsageParameter=Параметри використання
-InformationToFindParameters=Допоможіть знайти інформацію про ваш обліковий запис %s
 PAYBOX_CGI_URL_V2=URL-адреса CGI модуля Paybox для оплати
-CSSUrlForPaymentForm=URL-адреса таблиці стилів CSS для форми оплати
 NewPayboxPaymentReceived=Отримано новий платіж Paybox
 NewPayboxPaymentFailed=Спробував новий платіж Paybox, але не вдалося
 PAYBOX_PAYONLINE_SENDEMAIL=Сповіщення електронною поштою після спроби оплати (успішної чи невдалої)

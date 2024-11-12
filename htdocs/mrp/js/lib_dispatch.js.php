@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
 //
@@ -46,6 +48,17 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array("mrp"));
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
@@ -153,10 +166,12 @@ function addDispatchLine(index, type, mode)
  */
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
 	if (qtyOrdered <= 1) {
-		window.alert("Quantity can't be split");
+		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
+		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
-		window.alert("No remain qty to dispatch");
+		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>';
+		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
@@ -219,4 +234,3 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 		}
 	}
 }
-
