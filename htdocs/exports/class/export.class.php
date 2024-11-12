@@ -504,7 +504,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -610,7 +610,7 @@ class Export
 							if (!empty($ValueField) && $ValueField == $obj->rowid) {
 								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.dolPrintHTML($labeltoshow).'</option>';
 							} else {
-								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
 							}
 							$i++;
 						}
