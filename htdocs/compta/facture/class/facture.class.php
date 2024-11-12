@@ -532,7 +532,7 @@ class Facture extends CommonInvoice
 			return -3;
 		}
 		$soc = new Societe($this->db);
-		$result = $soc->fetch($this->socid);
+		$result = $soc->fetch($this->fk_soc);
 		if ($result < 0) {
 			$this->error = "Failed to fetch company: ".$soc->error;
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
@@ -574,7 +574,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!empty($_facrec->frequency)) {  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarily when there is no recurrence.
-				$this->socid = $_facrec->socid;
+				$this->fk_soc = $_facrec->socid;
 			}
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
@@ -688,7 +688,7 @@ class Facture extends CommonInvoice
 		}
 
 		// Insert into database
-		$socid = $this->socid;
+		$socid = $this->fk_soc;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture (";
 		$sql .= " ref";
@@ -1188,7 +1188,7 @@ class Facture extends CommonInvoice
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
 		$facture->subtype 			= $this->subtype;
-		$facture->socid 		    = $this->socid;
+		$facture->fk_soc 		    = $this->fk_soc;
 		$facture->date              = $this->date;
 		$facture->date_pointoftax   = $this->date_pointoftax;
 		$facture->note_public       = $this->note_public;
@@ -1233,7 +1233,7 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		dol_syslog(get_class($this)."::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".count($facture->lines));
+		dol_syslog(get_class($this)."::createFromCurrent invertdetail=".$invertdetail." socid=".$this->fk_soc." nboflines=".count($facture->lines));
 
 		$facid = $facture->create($user);
 		if ($facid <= 0) {
@@ -1278,11 +1278,11 @@ class Facture extends CommonInvoice
 		$objFrom = clone $object;
 
 		// Change socid if needed
-		if (!empty($this->socid) && $this->socid != $object->socid) {
+		if (!empty($this->fk_soc) && $this->fk_soc != $object->fk_soc) {
 			$objsoc = new Societe($this->db);
 
-			if ($objsoc->fetch($this->socid) > 0) {
-				$object->socid = $objsoc->id;
+			if ($objsoc->fetch($this->fk_soc) > 0) {
+				$object->fk_soc = $objsoc->id;
 				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$object->fk_project = 0;
@@ -1362,7 +1362,7 @@ class Facture extends CommonInvoice
 				$error++;
 				$this->error = $object->error;
 				$this->errors = $object->errors;
-			} elseif ($object->socid == $objFrom->socid) {
+			} elseif ($object->fk_soc == $objFrom->fk_soc) {
 				// copy external contacts if same company
 				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
@@ -1466,7 +1466,7 @@ class Facture extends CommonInvoice
 			$this->lines[$i] = $line;
 		}
 
-		$this->socid                = $object->socid;
+		$this->fk_soc                = $object->fk_soc;
 		$this->fk_project           = $object->fk_project;
 		$this->fk_account = $object->fk_account;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
@@ -1601,7 +1601,7 @@ class Facture extends CommonInvoice
 			$this->lines[$i] = $line;
 		}
 
-		$this->socid                = $object->socid;
+		$this->fk_soc                = $object->fk_soc;
 		$this->fk_project           = $object->fk_project;
 		$this->fk_account = $object->fk_account;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
@@ -1713,7 +1713,7 @@ class Facture extends CommonInvoice
 		}
 
 		$deposit = new self($origin->db);
-		$deposit->socid = $origin->socid;
+		$deposit->fk_soc = $origin->fk_soc;
 		$deposit->type = self::TYPE_DEPOSIT;
 		$deposit->fk_project = $origin->fk_project;
 		$deposit->ref_client = $origin->ref_client;
@@ -2558,7 +2558,7 @@ class Facture extends CommonInvoice
 		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape($this->socid) : "null").",";
+		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->db->escape($this->fk_soc) : "null").",";
 		$sql .= " datec=".(strval($this->date_creation) != '' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql .= " datef=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
