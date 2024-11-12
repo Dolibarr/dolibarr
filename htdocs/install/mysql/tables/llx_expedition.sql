@@ -31,7 +31,6 @@ create table llx_expedition
 
   ref_ext               varchar(255),					-- reference into an external system (not used by dolibarr)
   ref_customer          varchar(255),					-- customer number
-  datee				    date,							-- issue date of expedition
   date_creation         datetime,						-- date of creation
   fk_user_author        integer,						-- author of creation
   fk_user_modif         integer,						-- author of last change
