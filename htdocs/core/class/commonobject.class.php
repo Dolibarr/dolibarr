@@ -1631,7 +1631,7 @@ abstract class CommonObject
 	 *      @param  int<0,1>	$option     	0=Return array id->label, 1=Return array code->label, 2=Return complete array
 	 *      @param  int<0,1>	$activeonly 	0=all status of contact, 1=only the active
 	 *		@param	string		$code			Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *      @return array<int,string>|array<string,string>|null		Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
+	 *      @return array<int,string>|array<string,string>|array<int,array>|null		Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
