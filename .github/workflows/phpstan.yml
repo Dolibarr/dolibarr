@@ -93,3 +93,6 @@ jobs:
         if: ${{ success() }}
         run: |
           phpstan -vv analyse --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Phpstan baseline
