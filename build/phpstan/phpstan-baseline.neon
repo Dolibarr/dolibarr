@@ -15535,7 +15535,8 @@ parameters:
 			path: ../../htdocs/core/modules/mailings/partnership.modules.php
 
 		-
-			message: "#^Property mailing_xinputfile\\:\\:\\$require_admin has no type specified\\.$#"
+			message: '#^Property mailing_xinputfile\:\:\$require_admin has no type specified\.$#'
+			identifier: missingType.property
 			count: 1
 			path: ../../htdocs/core/modules/mailings/xinputfile.modules.php
 
