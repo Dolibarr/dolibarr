@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
- * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2018-2018  Andre Schild        	<a.schild@aarboard.ch>
+ * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
