@@ -1135,46 +1135,58 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete existing dispatched lines
 		$errOnDelete = 0;
+		$errorsOnDelete = [];
 
 		$db->begin();
 
 		if ($stockDelete) {
+			// TODO We must find line already recorded in stock, not lines dispatched (stock recording may not have been done
+			// even if dispatched in llx_receptiondet_batch)
+			// For example to know if stock movement were already record, we may look at stock movements in llx_stock_movement linked to a reception
+			// that is linked to the purchase order.
+
+			/*
 			$dispatchedLines = $object->getDispachedLines();
+
 			if (!empty($dispatchedLines)) {
 				foreach ($dispatchedLines as $dispatchedLine) {
 					$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 					$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
 					if ($result > 0) {
-						$qty = $supplierorderdispatch->qty;
-						$entrepot = $supplierorderdispatch->fk_entrepot;
-						$product = $supplierorderdispatch->fk_product;
-						$price = price2num(GETPOST('price', 'alpha'), 'MU');
-						$comment = $langs->trans('SupplierOrderDeletion', $object->ref);
-						$eatby = $supplierorderdispatch->eatby;
-						$sellby = $supplierorderdispatch->sellby;
-						$batch = $supplierorderdispatch->batch;
 						$result = $supplierorderdispatch->delete($user);
 					}
 					if ($result < 0) {
 						$errorsOnDelete = $object->errors;
 						$errOnDelete++;
-					} else {
-						// If module stock is enabled and the stock increase is done on purchase order dispatching
-						if ($entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) && empty($supplierorderdispatch->fk_reception)) {
-							$mouv = new MouvementStock($db);
-							if ($product > 0) {
-								$mouv->origin = &$object;
-								$mouv->setOrigin($object->element, $object->id);
-								$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
-								if ($result < 0) {
-									$errorsOnDelete = $mouv->errors;
-									$errOnDelete++;
-								}
-							}
+					}
+				}
+			}
+
+			if ($entrepot > 0 && $product > 0 && isModEnabled('enabled')) {
+				$stockMovementLines = $object->getstockMovementLines()
+
+				if (!empty($stockMovementLines)) {
+					foreach($stockMovementLines as $stockmovementline) {
+						$qty = $stockmovementline->qty;
+						$entrepot = $stockmovementline->fk_entrepot;
+						$product = $stockmovementline->fk_product;
+						$price = $stockmovementline->price;
+						$comment = $langs->trans('SupplierOrderDeletion', $object->ref);
+						$eatby = $stockmovementline->eatby;
+						$sellby = $stockmovementline->sellby;
+						$batch = $stockmovementline->batch;
+
+						$mouv = new MouvementStock($db);
+						$mouv->setOrigin($object->element, $object->id);
+						$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+						if ($result < 0) {
+							$errorsOnDelete = $mouv->errors;
+							$errOnDelete++;
 						}
 					}
 				}
 			}
+			*/
 		}
 
 		if (empty($errOnDelete)) {
@@ -1961,7 +1973,14 @@ if ($action == 'create') {
 		$arrayAjouts = array();
 		$heightModal = 0;
 		$widthModal = 500;
-		if (!empty($object->getDispachedLines())) {
+
+		// TODO We must find line already recorded in stock, not lines dispatched (stock recording may not have been done
+		// even if dispatched in llx_receptiondet_batch).
+		// For example to know if stock movement were already record, we may look at stock movements in llx_stock_movement linked to a reception
+		// that is linked to the purchase order.
+		/* $dispatchedLines = $object->getStockMovementLines();
+
+		if (!empty($dispatchedLines)) {
 			$arrayAjouts = array(
 				array(
 					'type' => 'other',
@@ -1975,17 +1994,14 @@ if ($action == 'create') {
 					'label' => $langs->trans('ConfirmDeleteDispatchedLines'),
 					'values' => array(1 => $langs->trans('Yes'), 0 => $langs->trans('No')),
 					'select_show_empty' => false
-				),
-				array(
-					'type' => 'other',
-					'value' => img_warning() . " " . $langs->trans('WarningDispatchedLinesWillNotBeAccessibles')
-				),
-				array('type' => 'separator'),
+				)
 			);
 			$heightModal = 300;
 			$widthModal = "70%";
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
+		*/
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
 	}
 
 	// Clone confirmation
