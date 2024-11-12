@@ -6189,6 +6189,7 @@ class Product extends CommonObject
 					$this->stock_reel += $row->reel;
 					$i++;
 				}
+				$this->stock_reel = (float) price2num($this->stock_reel, 'MS');
 			}
 			$this->db->free($result);
 

@@ -1627,11 +1627,11 @@ abstract class CommonObject
 	 *      Return array with list of possible values for type of contacts
 	 *
 	 *      @param	'internal'|'external'|'all'	$source	'internal', 'external' or 'all'
-	 *      @param	string	$order		Sort order by : 'position', 'code', 'rowid'...
-	 *      @param  int<0,1>	$option     0=Return array id->label, 1=Return array code->label
-	 *      @param  int<0,1>	$activeonly 0=all status of contact, 1=only the active
-	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *      @return array<int,string>|array<string,string>|null	Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
+	 *      @param	string		$order			Sort order by : 'position', 'code', 'rowid'...
+	 *      @param  int<0,1>	$option     	0=Return array id->label, 1=Return array code->label, 2=Return complete array
+	 *      @param  int<0,1>	$activeonly 	0=all status of contact, 1=only the active
+	 *		@param	string		$code			Type of contact (Example: 'CUSTOMER', 'SERVICE')
+	 *      @return array<int,string>|array<string,string>|array<int,array>|null		Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
@@ -1646,43 +1646,47 @@ abstract class CommonObject
 		}
 
 		$tab = array();
+
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
-		$sql .= " WHERE tc.element='".$this->db->escape($this->element)."'";
+		$sql .= " WHERE tc.element = '".$this->db->escape($this->element)."'";
 		if ($activeonly == 1) {
-			$sql .= " AND tc.active=1"; // only the active types
+			$sql .= " AND tc.active = 1"; // only the active types
 		}
 		if (!empty($source) && $source != 'all') {
-			$sql .= " AND tc.source='".$this->db->escape($source)."'";
+			$sql .= " AND tc.source = '".$this->db->escape($source)."'";
 		}
 		if (!empty($code)) {
-			$sql .= " AND tc.code='".$this->db->escape($code)."'";
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
 		$sql .= $this->db->order($order, 'ASC');
 
 		//print "sql=".$sql;
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
-				$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-				$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-				if (empty($option)) {
-					$tab[$obj->rowid] = $libelle_type;
-				} else {
-					$tab[$obj->code] = $libelle_type;
-				}
-				$i++;
-			}
-			return $tab;
-		} else {
+		if (!$resql) {
 			$this->error = $this->db->lasterror();
 			//dol_print_error($this->db);
 			return null;
 		}
+
+		$num = $this->db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $this->db->fetch_object($resql);
+
+			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
+			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+			if (empty($option)) {
+				$tab[$obj->rowid] = $libelle_type;
+			} elseif ($option == 1) {
+				$tab[$obj->code] = $libelle_type;
+			} else {
+				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $libelle_type);
+			}
+			$i++;
+		}
+
+		return $tab;
 	}
 
 	/**
