@@ -203,7 +203,9 @@ class FactureRec extends CommonInvoice
 	 */
 	public $fk_societe_rib;
 
+
 	const PAYMENTCODETOEDITSOCIETERIB = "PRE";
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -567,7 +569,7 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
-		$sql .= " total_ttc = ".((float) $this->total_ttc);
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_societe_rib = ".((int) $this->fk_societe_rib);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
