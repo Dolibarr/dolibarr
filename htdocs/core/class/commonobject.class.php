@@ -1955,7 +1955,7 @@ abstract class CommonObject
 	public function fetch_barcode()
 	{
 		// phpcs:enable
-		return fetchBarCode();
+		return $this->fetchBarCode();
 	}
 
 	/**

@@ -185,6 +185,11 @@ class FactureRec extends CommonInvoice
 	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**
+	 * @var int			ID of bank account to use if invoice is set for direct debit payment (see PAYMENTCODETOEDITSOCIETERIB)
+	 */
+	public $fk_societe_rib;
+
+	/**
 	 * @var int
 	 */
 	public $suspended; // status
@@ -198,10 +203,6 @@ class FactureRec extends CommonInvoice
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
-	/**
-	 * @var int
-	 */
-	public $fk_societe_rib;
 
 
 	const PAYMENTCODETOEDITSOCIETERIB = "PRE";
