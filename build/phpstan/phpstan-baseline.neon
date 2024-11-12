@@ -10386,41 +10386,6 @@ parameters:
 			path: ../../htdocs/core/modules/mailings/partnership.modules.php
 
 		-
-			message: "#^Property mailing_pomme\\:\\:\\$require_admin has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/pomme.modules.php
-
-		-
-			message: "#^Property mailing_pomme\\:\\:\\$require_module has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/pomme.modules.php
-
-		-
-			message: "#^Property mailing_thirdparties\\:\\:\\$require_admin has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/thirdparties.modules.php
-
-		-
-			message: "#^Property mailing_thirdparties\\:\\:\\$require_module has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/thirdparties.modules.php
-
-		-
-			message: "#^Property mailing_thirdparties_services_expired\\:\\:\\$arrayofproducts has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/thirdparties_services_expired.modules.php
-
-		-
-			message: "#^Property mailing_thirdparties_services_expired\\:\\:\\$require_admin has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/thirdparties_services_expired.modules.php
-
-		-
-			message: "#^Property mailing_thirdparties_services_expired\\:\\:\\$require_module has no type specified\\.$#"
-			count: 1
-			path: ../../htdocs/core/modules/mailings/thirdparties_services_expired.modules.php
-
-		-
 			message: "#^Property mailing_xinputfile\\:\\:\\$require_admin has no type specified\\.$#"
 			count: 1
 			path: ../../htdocs/core/modules/mailings/xinputfile.modules.php
