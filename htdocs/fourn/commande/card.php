@@ -1135,9 +1135,9 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete existing dispatched lines
 		$errOnDelete = 0;
-		
+
 		$db->begin();
-		
+
 		if ($stockDelete) {
 			$dispatchedLines = $object->getDispachedLines();
 			if (!empty($dispatchedLines)) {
@@ -1176,7 +1176,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		
+
 		if (empty($errOnDelete)) {
 			$result = $object->delete($user);
 			if ($result > 0) {
