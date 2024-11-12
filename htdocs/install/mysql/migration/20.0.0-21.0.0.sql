@@ -322,7 +322,6 @@ ALTER TABLE llx_c_tva ADD CONSTRAINT fk_tva_fk_department_buyer FOREIGN KEY (fk_
 
 ALTER TABLE llx_expedition ADD COLUMN datee date AFTER ref_customer;
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_unit integer AFTER qty;
-ALTER TABLE llx_facture ADD COLUMN is_delivery_note tinyint  DEFAULT 0 NOT NULL AFTER fk_facture_source;
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Loading facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Delivery facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Customer shipping contact', 1);
