@@ -27225,7 +27225,7 @@ parameters:
 		-
 			message: '#^Property Mo\:\:\$tpl \(array\<string, int\|string\>\) does not accept array\<string, float\|int\|string\>\.$#'
 			identifier: assign.propertyType
-			count: 4
+			count: 6
 			path: ../../htdocs/mrp/class/mo.class.php
 
 		-
