@@ -144,7 +144,7 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
 		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
-		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
+		print '<td class="linecolmark1 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
 	}
 }
 
