@@ -1135,7 +1135,9 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete existing dispatched lines
 		$errOnDelete = 0;
+		
 		$db->begin();
+		
 		if ($stockDelete) {
 			$dispatchedLines = $object->getDispachedLines();
 			if (!empty($dispatchedLines)) {
@@ -1174,6 +1176,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
+		
 		if (empty($errOnDelete)) {
 			$result = $object->delete($user);
 			if ($result > 0) {
@@ -1181,6 +1184,7 @@ if (empty($reshook)) {
 				header("Location: " . DOL_URL_ROOT . '/fourn/commande/list.php?restore_lastsearch_values=1');
 				exit;
 			} else {
+				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
