@@ -33,7 +33,7 @@
  *  \brief      File of class to generate document from standard template
  */
 
-require_once DOL_DOCUMENT_ROOT . '/asset/core/modules/asset/modules_asset.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/asset/modules_asset.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
