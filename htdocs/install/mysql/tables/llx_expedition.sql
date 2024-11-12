@@ -63,8 +63,6 @@ create table llx_expedition
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
 
-  is_also_delivery_note tinyint DEFAULT 0 NOT NULL,     -- 0=default, 1=can act also as a delivery note (for countries that accept invoices as delivery notes)
-
   import_key			varchar(14),                    -- import id when line is imported
   extraparams			varchar(255)					-- for other parameters with json format
 )ENGINE=innodb;
