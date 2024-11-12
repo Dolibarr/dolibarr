@@ -350,7 +350,7 @@ if ($result) {
 		} else { //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
 			$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-			$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
+			$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 			if ($tva_npr) { // If NPR, we add an entry for counterpartWe into tabother
 				$tabother[$obj->rowid][$compta_counterpart_tva_npr] += $obj->total_tva;
 			}
