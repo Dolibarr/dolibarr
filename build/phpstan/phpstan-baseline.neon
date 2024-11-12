@@ -17931,21 +17931,6 @@ parameters:
 			path: ../../htdocs/opensurvey/results.php
 
 		-
-			message: "#^Parameter \\#4 \\$month of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: "#^Parameter \\#5 \\$day of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
-			message: "#^Parameter \\#6 \\$year of function dol_mktime expects int, array\\|string given\\.$#"
-			count: 1
-			path: ../../htdocs/opensurvey/wizard/create_survey.php
-
-		-
 			message: "#^Variable \\$allow_comments might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/opensurvey/wizard/create_survey.php
