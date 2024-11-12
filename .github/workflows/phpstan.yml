@@ -86,3 +86,9 @@ jobs:
           name: phpstan-srcrt
           path: ${{ github.workspace }}/_stan.xml
           retention-days: 2
+      # Run PHPStan generate baseline
+      - name: Run PHPStan
+        id: phpstan-baseline
+        if: ${{ success() }}
+        run: |
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
