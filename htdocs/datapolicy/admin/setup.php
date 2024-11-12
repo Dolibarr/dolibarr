@@ -36,7 +36,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array();
 // ThirdParty
-	$arrayofparameters['ThirdParty'] = array(
+$arrayofparameters['ThirdParty'] = array(
 		'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
 		'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
 		'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
@@ -44,7 +44,7 @@ $arrayofparameters = array();
 		'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'supplier', 'class="pictofixedwidth"')),
 	);
 // Contact
-if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
+if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 	$arrayofparameters['Contact'] = array(
 		'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
 		'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
