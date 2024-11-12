@@ -44,6 +44,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          coverage: none # disable xdebug, pcov
           tools: phpstan:2.0, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
@@ -89,6 +90,6 @@ jobs:
       # Run PHPStan generate baseline
       - name: Run PHPStan generate baseline
         id: phpstan-baseline
-        # if: ${{ success() }}
+        if: ${{ success() }}
         run: |
           phpstan -vv analyse --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
