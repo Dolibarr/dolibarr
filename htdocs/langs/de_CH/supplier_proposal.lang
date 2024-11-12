@@ -19,7 +19,6 @@ SupplierProposalStatusSigned=Akzeptiert
 SupplierProposalStatusValidatedShort=Bestätigt
 SupplierProposalStatusSignedShort=Akzeptiert
 CreateEmptyAsk=Leere Anfrage erstellen
-ConfirmCloneAsk=Willst du die Offertanfrage <b>%s</b> duplizieren?
 ConfirmReOpenAsk=Willst du diese Preisanfrage <b>%s</b> wiedereröffnen?
 SendAskByMail=Preisanfrage mit E-Mail versenden
 SendAskRef=Preisanfrage %s versenden

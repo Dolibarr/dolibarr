@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID de Evento
 ActionsOwnedBy=Evento propiedad de
-Event=Acción
 EventsNb=Numero de eventos
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento todo el día(s)
@@ -60,13 +59,12 @@ MRP_MO_UNVALIDATEInDolibarr=MO establecido en estado de borrador
 MRP_MO_PRODUCEDInDolibarr=MO producido
 MRP_MO_DELETEInDolibarr=MO eliminado
 MRP_MO_CANCELInDolibarr=MO cancelado
+CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b> logina = %s </b> para restringir la salida a acciones propiedad de un usuario <b> %s </b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s </b> para restringir la salida a acciones que no son propiedad del usuario <b> %s </b>.
 AgendaUrlOptions4=<b> logint = %s </b> para restringir la salida a las acciones asignadas al usuario <b> %s </b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID__ </b> para restringir la salida a acciones vinculadas al proyecto <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> para excluir eventos automáticos.
 AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b> para incluir eventos de vacaciones.
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda

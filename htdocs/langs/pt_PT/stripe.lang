@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configurar módulo de Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Ofereça ao seu clientes uma página de pagamento on-line para pagamentos com cartões de crédito/débito via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a> . Isso pode ser usado para permitir que seu clientes faça pagamentos ad-hoc ou pagamentos relacionados a um objeto Dolibarr específico (fatura, encomenda, ...)
 StripeOrCBDoPayment=Pagar com cartão de crédito ou Stripe
 FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponiveis para permitir a um cliente efectuar um pagamento
 PaymentForm=Forma de pagamento
@@ -9,20 +9,21 @@ ThisScreenAllowsYouToPay=Esta tela permite que você faça o seu pagamento onlin
 ThisIsInformationOnPayment=Aqui estão as informações de pagamento para fazer
 ToComplete=A completar
 YourEMail=E-Mail de confirmação de pagamento
-STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
+STRIPE_PAYONLINE_SENDEMAIL=Notificação por e-mail após uma tentativa de pagamento (sucesso ou falha)
 Creditor=Beneficiario
 PaymentCode=Código de pagamento
-StripeDoPayment=Pay with Stripe
+StripeDoPayment=Pague com Stripe
 YouWillBeRedirectedOnStripe=Você será redirecionado para uma página segura do Stripe de forma a inserir as informações do seu cartão de crédito
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL para o pagamento %s
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
-ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+ToOfferALinkForOnlinePaymentOnOrder=URL para oferecer uma página de pagamento on-line %s para vendas encomenda
+ToOfferALinkForOnlinePaymentOnInvoice=URL para oferecer uma página de pagamento on-line %s para um fatura de clientes
+ToOfferALinkForOnlinePaymentOnContractLine=URL para oferecer uma página de pagamento on-line %s para uma linha Contrato
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL para oferecer uma página de pagamento on-line %s de qualquer valor sem nenhum objeto existente
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma página de pagamento on-line %s para uma assinatura membro
+ToOfferALinkForOnlinePaymentOnDonation=URL para oferecer uma %s página de pagamento on-line para pagamento de uma doação
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Configure o seu Stripe através do URL <b>%s</b> para que tenha os pagamentos criados automaticamente quando estes forem validades pelo Stripe.
 AccountParameter=Conta parâmetros
 UsageParameter=Parâmetros de uso
@@ -31,7 +32,7 @@ STRIPE_CGI_URL_V2=Módulo Url of Stripe CGI para pagamento
 CSSUrlForPaymentForm=CSS url folha de estilo para forma de pagamento
 NewStripePaymentReceived=Novo pagamento Stripe recebido
 NewStripePaymentFailed=Nova tentativa de pagamento Stripo, mas falhou
-FailedToChargeCard=Failed to charge card
+FailedToChargeCard=Falha ao cobrar cartão
 STRIPE_TEST_SECRET_KEY=Chave de teste secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Chave de teste publicável
 STRIPE_TEST_WEBHOOK_KEY=Chave de teste Webhook
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Chave ao vivo do Webhook
 ONLINE_PAYMENT_WAREHOUSE=Estoque a ser usado para redução de estoque quando o pagamento on-line é feito <br> (TODO Quando a opção para diminuir o estoque é feita em uma ação na fatura e o pagamento on-line gera a fatura em si?)
 StripeLiveEnabled=Stripe live enabled (caso contrário, modo de teste / sandbox)
 StripeImportPayment=Importar pagamentos de tarja
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Exemplo de cartão de crédito para um pagamento de teste: %s => válido, %s => erro CVC, %s => expirou, %s => falha na cobrança
+ExampleOfTestBankAcountForSEPA=Exemplo de BAN conta bancária para teste Débito direto: %s
 StripeGateways=Gateways listra
 OAUTH_STRIPE_TEST_ID=ID do cliente do Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID do cliente do Stripe Connect (ca _...)
@@ -50,6 +52,7 @@ StripeAccount=Conta da listra
 StripeChargeList=Lista de cobranças do Stripe
 StripeTransactionList=Lista de transações de faixa
 StripeCustomerId=ID do cliente de faixa
+StripePaymentId=Pagamento parcelado Id.
 StripePaymentModes=Modos de pagamento tarja
 LocalID=Id. Local
 StripeID=ID da faixa
@@ -61,11 +64,27 @@ DeleteACard=Excluir cartão
 ConfirmDeleteCard=Tem certeza de que deseja excluir este cartão de crédito ou débito?
 CreateCustomerOnStripe=Criar cliente no Stripe
 CreateCardOnStripe=Criar ficha no Stripe
+CreateBANOnStripe=Criar banco no Stripe
 ShowInStripe=Mostrar na listra
-StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
-StripePayoutList=List of Stripe payouts
-ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
-ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
-PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
-ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+StripeUserAccountForActions=utilizador conta para usar na notificação por e-mail de alguns eventos do Stripe (pagamentos do Stripe)
+StripePayoutList=Lista de pagamentos Stripe
+ToOfferALinkForTestWebhook=hiperligação, conexão para configurar o Stripe WebHook para chamar o IPN (modo de teste)
+ToOfferALinkForLiveWebhook=hiperligação, conexão para configurar o Stripe WebHook para chamar o IPN (modo ao vivo)
+PaymentWillBeRecordedForNextPeriod=O pagamento será registrado para o próximo período.
+ClickHereToTryAgain=<a href="%s">Clique aqui para tentar novamente...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Devido às fortes regras cliente Autenticação, a criação de um cartão deve ser feita no back office do Stripe. Você pode clicar aqui para ativar o registro Stripe cliente: %s
+STRIPE_CARD_PRESENT=Presente de cartão para terminais Stripe
+TERMINAL_LOCATION=Localização (endereço) dos Terminais Stripe
+RequestDirectDebitWithStripe=Solicitação Débito direto com Stripe
+RequesCreditTransferWithStripe=Solicitar transferência de crédito com Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Habilite os pagamentos Débito direto através do Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Modo Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

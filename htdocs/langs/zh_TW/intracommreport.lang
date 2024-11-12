@@ -1,3 +1,6 @@
+IntraCommReport=內部通訊報告
+IntraCommReports=Intracomm reports
+
 Module68000Name = 內部通訊報告
 Module68000Desc = 內部通訊報告管理（支援法國 DEB/DES 格式）
 IntracommReportSetup = 內部通訊報告模組設定
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=發話者角色
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=介紹義務的等級
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=裝運義務水平
 INTRACOMMREPORT_CATEG_FRAISDEPORT=“Frais de port”類型的服務類別
-
 INTRACOMMREPORT_NUM_DECLARATION=申報人編號
-
 # Menu
 MenuIntracommReport=內部通訊報告
 MenuIntracommReportNew=新報單
 MenuIntracommReportList=清單
-
 # View
 NewDeclaration=新報單
 Declaration=報單
@@ -25,16 +25,14 @@ AnalysisPeriod=分析期間
 TypeOfDeclaration=報單類型
 DEB=貨物交換報關單（DEB）
 DES=服務交換報單(DES)
-
 # Export page
 IntracommReportTitle=準備ProDouane格式的XML檔案
-
 # List
 IntracommReportList=已產生報單清單
-IntracommReportNumber=申報數量
+IntracommReportNumber=申報編號
 IntracommReportPeriod=分析週期
 IntracommReportTypeDeclaration=報單類型
 IntracommReportDownload=下載 XML檔案
-
 # Invoice
 IntracommReportTransportMode=運輸方式
+DeleteIntraCommReport=Delete IntraComm report

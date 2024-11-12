@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Podešavanje PayBox modula
 PayBoxDesc=Ovaj modul nudi stranice koje omogućuju plaćanje na <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> od strane kupaca. Ovo se može koristiti za besplatno plaćanje ili za plaćanje na određenom Dolibarr objektu (račun, narudžba, ...)
-FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
-PaymentForm=Obrazac plaćanja
-WelcomeOnPaymentPage=Dobro došli na naš servis online plaćanja
-ThisScreenAllowsYouToPay=Ova stranica vam dozvoljava da vršite online plaćanje prema %s
-ThisIsInformationOnPayment=Ovo je informacija o plaćanju
-ToComplete=Za završiti
-YourEMail=E-pošta za prijem potvrde uplate
-Creditor=Kreditor
-PaymentCode=Kod plaćanja
 PayBoxDoPayment=Platite Payboxom
 YouWillBeRedirectedOnPayBox=Biti ćete preusmjereni na sigurnu stranicu PayBox servisa gdje možete unijeti podatke o svojoj kreditnoj kartici
-Continue=Sljedeće
 SetupPayBoxToHavePaymentCreatedAutomatically=Postavite svoj Paybox s url-om <b> %s </b> da se plaćanje automatski kreira kada ga Paybox potvrdi.
 YourPaymentHasBeenRecorded=Ova stranica potvrđuje da je vaše plaćanje pohranjeno. Hvala Vam.
 YourPaymentHasNotBeenRecorded=Vaše plaćanje NIJE zabilježeno i transakcija je otkazana. Hvala vam.
-AccountParameter=Parametri računa
-UsageParameter=Parametri korištenja
-InformationToFindParameters=Pomoć za pronalaženje podataka o računu %s
 PAYBOX_CGI_URL_V2=URL PayBox CGI modula za plaćanje
-CSSUrlForPaymentForm=CSS style sheet url for payment form
 NewPayboxPaymentReceived=Primljena nova PayBox uplata
 NewPayboxPaymentFailed=PayBox uplata probana ali s greškom
 PAYBOX_PAYONLINE_SENDEMAIL=Obavijest e-poštom nakon pokušaja plaćanja (uspješan ili neuspješan)

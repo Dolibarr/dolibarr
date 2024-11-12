@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +39,14 @@ if (!defined('NOREQUIRESOC')) {
 }
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $warehouse = new Entrepot($db);
 
 $action = GETPOST("action", "alpha");
@@ -43,16 +54,22 @@ $barcode = GETPOST("barcode", "aZ09");
 $product = GETPOST("product");
 $response = "";
 
-$fk_entrepot = GETPOST("fk_entrepot", "int");
-$fk_inventory = GETPOST("fk_inventory", "int");
-$fk_product = GETPOST("fk_product", "int");
-$reelqty = GETPOST("reelqty", "int");
-$batch = GETPOST("batch", "int");
+$fk_entrepot = GETPOSTINT("fk_entrepot");
+$fk_inventory = GETPOSTINT("fk_inventory");
+$fk_product = GETPOSTINT("fk_product");
+$reelqty = GETPOSTINT("reelqty");
+$batch = GETPOST("batch", "aZ09");
 $mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;
 $warehouseid = 0;
 $objectreturn = array();
+
+/*
+ * Action
+ */
+
+// None
 
 
 /*
@@ -61,7 +78,7 @@ $objectreturn = array();
 
 top_httphead('application/json');
 
-if ($action == "existbarcode" && !empty($barcode)) {
+if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'lire')) {
 	if (!empty($mode) && $mode == "lotserial") {
 		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
@@ -81,7 +98,7 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	$result = $db->query($sql);
 	if ($result) {
 		$nbline = $db->num_rows($result);
-		for ($i=0; $i < $nbline; $i++) {
+		for ($i = 0; $i < $nbline; $i++) {
 			$object = $db->fetch_object($result);
 			if (($mode == "barcode" && $barcode == $object->barcode) || ($mode == "lotserial" && $barcode == $object->batch)) {
 				$warehouse->fetch(0, $product["Warehouse"]);
@@ -91,25 +108,25 @@ if ($action == "existbarcode" && !empty($barcode)) {
 					$fk_product = $object->fk_product;
 					$reelqty = $object->reel;
 
-					$objectreturn = array('fk_warehouse'=>$warehouseid,'fk_product'=>$fk_product,'reelqty'=>$reelqty);
+					$objectreturn = array('fk_warehouse' => $warehouseid,'fk_product' => $fk_product,'reelqty' => $reelqty);
 				}
 			}
 		}
 		if ($warehousefound < 1) {
-			$response = array('status'=>'error','errorcode'=>'NotFound','message'=>'No warehouse found for barcode'.$barcode);
+			$response = array('status' => 'error','errorcode' => 'NotFound','message' => 'No warehouse found for barcode'.$barcode);
 		} elseif ($warehousefound > 1) {
-			$response = array('status'=>'error','errorcode'=>'TooManyWarehouse','message'=>'Too many warehouse found');
+			$response = array('status' => 'error','errorcode' => 'TooManyWarehouse','message' => 'Too many warehouse found');
 		} else {
-			$response = array('status'=>'success','message'=>'Warehouse found','object'=>$objectreturn);
+			$response = array('status' => 'success','message' => 'Warehouse found','object' => $objectreturn);
 		}
 	} else {
-		$response = array('status'=>'error','errorcode'=>'NotFound','message'=>"No results found for barcode");
+		$response = array('status' => 'error','errorcode' => 'NotFound','message' => "No results found for barcode");
 	}
 } else {
-	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
+	$response = array('status' => 'error','errorcode' => 'ActionError','message' => "Error on action");
 }
 
-if ($action == "addnewlineproduct") {
+if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
 	$inventoryline = new InventoryLine($db);
 	if (!empty($fk_inventory)) {
@@ -125,12 +142,12 @@ if ($action == "addnewlineproduct") {
 
 		$result = $inventoryline->create($user);
 		if ($result > 0) {
-			$response = array('status'=>'success','message'=>'Success on creating line','id_line'=>$result);
+			$response = array('status' => 'success','message' => 'Success on creating line','id_line' => $result);
 		} else {
-			$response = array('status'=>'error','errorcode'=>'ErrorCreation','message'=>"Error on line creation");
+			$response = array('status' => 'error','errorcode' => 'ErrorCreation','message' => "Error on line creation");
 		}
 	} else {
-		$response = array('status'=>'error','errorcode'=>'NoIdForInventory','message'=>"No id for inventory");
+		$response = array('status' => 'error','errorcode' => 'NoIdForInventory','message' => "No id for inventory");
 	}
 }
 

@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - stocks
-AlwaysShowFullArbo=Display the full path of a warehouse (parent warehouses) on the popup of warehouse links (Warning: This may decrease dramatically performances)
+QtyCurrentlyKnownInStock=The quantity the system think you have in stock. As long as the inventory is not closed, this is a realtime value and it may change if you continue to make stock movement during the inventory (not recommended).
+QtyInStockWhenInventoryWasValidated=The quantity the system think you had in stock when the inventory was validated (before the stock correction)

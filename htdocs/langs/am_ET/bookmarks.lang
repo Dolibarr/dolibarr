@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Bookmark
-Bookmarks=Bookmarks
-ListOfBookmarks=List of bookmarks
-EditBookmarks=List/edit bookmarks
-NewBookmark=New bookmark
-ShowBookmark=Show bookmark
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Create bookmark
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Bookmarks management
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = የአሁኑን ገጽ ወደ ዕልባቶች ያክሉ
+BehaviourOnClick = የዕልባት URL ሲመረጥ ባህሪ
+Bookmark = ዕልባት
+Bookmarks = ዕልባቶች
+BookmarkTargetNewWindowShort = አዲስ ትር
+BookmarkTargetReplaceWindowShort = የአሁኑ ትር
+BookmarkTitle = የዕልባት ስም
+BookmarksManagement = የዕልባቶች አስተዳደር
+BookmarksMenuShortCut = Ctrl + Shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = የተገናኘው ገጽ አሁን ባለው ትር ወይም በአዲስ ትር ውስጥ መከፈት እንዳለበት ይምረጡ
+CreateBookmark = ዕልባት ይፍጠሩ
+EditBookmarks = ዕልባቶችን ይዘርዝሩ/ያርትዑ
+ListOfBookmarks = የዕልባቶች ዝርዝር
+NewBookmark = አዲስ ዕልባት
+NoBookmarkFound = ምንም ዕልባት አልተገኘም።
+NoBookmarks = ምንም ዕልባቶች አልተገለጹም።
+OpenANewWindow = አዲስ ትር ክፈት
+ReplaceWindow = የአሁኑን ትር ይተኩ
+SetHereATitleForLink = ለዕልባቶች ስም ያዘጋጁ
+ShowBookmark = ዕልባት አሳይ
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = ውጫዊ/ፍፁም ማገናኛን (https://externalurl.com) ወይም የውስጥ/ዘመድ አገናኝ (/mypage.php) ተጠቀም። እንዲሁም እንደ ቴል፡0123456 ያለ ስልክ መጠቀም ይችላሉ።

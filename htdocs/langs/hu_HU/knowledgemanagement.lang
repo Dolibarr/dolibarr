@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Tudásmenedzsment rendszer
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Tudásmenedzsment (KM) vagy Help-Desk bázis kezelése
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Tudáskezelő rendszer beállítása
-Settings = Beállítások
 KnowledgeManagementSetupPage = Tudáskezelő rendszer beállítási oldala
-
-
-#
 # About page
-#
-About = Névjegy
 KnowledgeManagementAbout = A tudásmenedzsmentről
 KnowledgeManagementAboutPage = Tudáskezelés az oldalról
-
 KnowledgeManagementArea = Tudásmenedzsment
 MenuKnowledgeRecord = Tudásbázis
+MenuKnowledgeRecordShort = Tudásbázis
 ListKnowledgeRecord = Cikkek listája
 NewKnowledgeRecord = Új cikk
 ValidateReply = A megoldás érvényesítése
@@ -47,8 +33,13 @@ KnowledgeRecord = Cikk
 KnowledgeRecordExtraFields = Extra mezők a cikkhez
 GroupOfTicket=Jegyek csoportjai
 YouCanLinkArticleToATicketCategory=A cikket összekapcsolhatja egy jegycsoporttal (így a cikk kiemelve lesz a csoport minden jegyén)
-SuggestedForTicketsInGroup=Jegyekhez ajánlott, ha csoport van
-
+SuggestedForTicketsInGroup=Jegykészítésnél javasolt
 SetObsolete=Beállítás elavultként
 ConfirmCloseKM=Megerősíti, hogy a cikk elavultként zárult be?
 ConfirmReopenKM=Szeretné visszaállítani ezt a cikket "Érvényesített" állapotba?
+BoxLastKnowledgerecordDescription=Legutóbbi %s cikk
+BoxLastKnowledgerecord=Utolsó cikkek
+BoxLastKnowledgerecordContent=Utolsó cikkek
+BoxLastKnowledgerecordModifiedContent=Utoljára módosított cikkek
+BoxLastModifiedKnowledgerecordDescription=Legutóbbi %s módosított cikk
+BoxLastModifiedKnowledgerecord=Utoljára módosított cikkek

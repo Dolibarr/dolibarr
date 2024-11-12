@@ -5,163 +5,158 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
-#
-# Menu
-#
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
-
-PaymentEvent=Payment of event
-
-#
+ModuleEventOrganizationName = Tổ chức sự kiện
+EventOrganizationDescription = Tổ chức sự kiện thông qua dự án module
+EventOrganizationDescriptionLong= Quản lý việc tổ chức một sự kiện (chương trình, hội nghị, người tham dự hoặc diễn giả, với các trang công khai để gợi ý, bình chọn hoặc đăng ký)
+EventOrganizationMenuLeft = Sự kiện đã tổ chức
+EventOrganizationConferenceOrBoothMenuLeft = Hội nghị hoặc gian hàng
+PaymentEvent=thanh toán của sự kiện
+EventFee=Event fee
 # Admin page
-#
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Cài đặt
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+NewRegistration=Sự đăng ký
+EventOrganizationSetup=Thiết lập tổ chức sự kiện
+EventOrganization=Tổ chức sự kiện
+EventOrganizationSetupPage = Trang thiết lập tổ chức sự kiện
+EVENTORGANIZATION_TASK_LABEL = Nhãn nhiệm vụ được tạo tự động khi dự án được xác thực
+EVENTORGANIZATION_TASK_LABELTooltip = Khi bạn xác thực một sự kiện để tổ chức, một số nhiệm vụ có thể được tạo tự động trong dự án<br><br>Ví dụ: <br>Gửi cuộc gọi cho hội nghị<br>Gửi cuộc gọi cho các gian hàng<br>Xác thực đề xuất của hội nghị<br>Xác thực đơn đăng ký Gian hàng<br>Mở đăng ký sự kiện cho người tham dự<br>Gửi lời nhắc về sự kiện tới các diễn giả<br>Gửi lời nhắc về sự kiện tới người tổ chức Booth<br>Gửi lời nhắc về sự kiện đến những người tham dự
+EVENTORGANIZATION_TASK_LABELTooltip2=Để trống nếu bạn không cần tạo nhiệm vụ tự động.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Danh mục để thêm vào bên thứ ba được tạo tự động khi ai đó đề xuất hội nghị
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Danh mục để thêm vào bên thứ ba được tạo tự động khi họ đề xuất gian hàng
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Mẫu email để gửi sau khi nhận được đề xuất về một cuộc hội thảo.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Mẫu email gửi sau khi nhận được gợi ý về gian hàng.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Mẫu email gửi sau khi đăng ký gian hàng đã được thanh toán.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Mẫu email để gửi sau khi đăng ký tham gia sự kiện đã được thanh toán.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Mẫu email sử dụng khi gửi email từ chương trình "Gửi email" tới diễn giả
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Mẫu email sử dụng khi gửi email từ sự kiện "Gửi email" trên danh sách người tham dự
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Trong biểu mẫu tạo/thêm người tham dự, giới hạn danh sách bên thứ ba đối với các bên thứ ba trong danh mục
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Trong hình thức tạo/thêm người tham dự, hạn chế danh sách bên thứ ba đối với bên thứ ba với tính chất
 # Object
-#
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
-
-#
+OrganizedEvent=Sự kiện được tổ chức
+EventOrganizationConfOrBooth= Hội nghị hoặc gian hàng
+EventOrganizationConfOrBoothes=Conferences or Booths
+ManageOrganizeEvent = Quản lý việc tổ chức một sự kiện
+ConferenceOrBooth = Hội nghị hoặc gian hàng
+ConferenceOrBoothTab = Hội nghị hoặc gian hàng
+AmountPaid = Số tiền đã trả
+DateOfRegistration = Ngày đăng ký
+ConferenceOrBoothAttendee = Người tham dự hội nghị hoặc gian hàng
+ApplicantOrVisitor=Người nộp đơn hoặc khách truy cập
+Speaker=Loa
 # Template Mail
-#
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
-
-#
+YourOrganizationEventConfRequestWasReceived = Yêu cầu hội nghị của bạn đã được nhận
+YourOrganizationEventBoothRequestWasReceived = Yêu cầu gian hàng của bạn đã được nhận
+EventOrganizationEmailAskConf = Yêu cầu hội nghị
+EventOrganizationEmailAskBooth = Yêu cầu gian hàng
+EventOrganizationEmailBoothPayment = thanh toán trong gian hàng của bạn
+EventOrganizationEmailRegistrationPayment = Đăng ký cho một sự kiện
+EventOrganizationMassEmailAttendees = Truyền thông tới người tham dự
+EventOrganizationMassEmailSpeakers = Giao tiếp với diễn giả
+ToSpeakers=Tới loa
 # Event
-#
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
-#
+AllowUnknownPeopleSuggestConf=Cho phép mọi người đề xuất hội nghị
+AllowUnknownPeopleSuggestConfHelp=Cho phép những người chưa biết đề xuất một cuộc hội thảo mà họ muốn thực hiện
+AllowUnknownPeopleSuggestBooth=Cho phép mọi người đăng ký gian hàng
+AllowUnknownPeopleSuggestBoothHelp=Cho phép những người chưa biết đăng ký gian hàng
+PriceOfRegistration=Giá đăng ký
+PriceOfRegistrationHelp=Giá phải trả để đăng ký hoặc tham gia sự kiện
+PriceOfBooth=Giá đăng ký đứng gian hàng
+PriceOfBoothHelp=Giá đăng ký đứng gian hàng
+EventOrganizationICSLinkProject=Liên kết ICS cho sự kiện
+EventOrganizationICSLink=Liên kết ICS cho hội nghị
+ConferenceOrBoothInformation=Thông tin hội nghị hoặc gian hàng
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
+Attendees=Người tham dự
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink = Tải xuống liên kết ICS
+EVENTORGANIZATION_SECUREKEY = Seed để bảo mật key cho trang đăng ký công khai để đề xuất hội nghị
+SERVICE_BOOTH_LOCATION = Dịch vụ sử dụng cho dòng hóa đơn về địa điểm gian hàng
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Dịch vụ được sử dụng cho hàng hóa đơn về việc đăng ký người tham dự một sự kiện
+NbVotes=Số phiếu bầu
 # Status
-#
 EvntOrgDraft = Dự thảo
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgSuggested = được đề xuất
+EvntOrgConfirmed = Đã xác nhận
+EvntOrgNotQualified = Không chất lượng
 EvntOrgDone = Đã hoàn thành
-EvntOrgCancelled = Cancelled
-#
-# Public page
-#
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EvntOrgCancelled = Đã hủy
+# Other
+SuggestForm = Trang gợi ý
+SuggestOrVoteForConfOrBooth = Trang để gợi ý hoặc bình chọn
+EvntOrgRegistrationHelpMessage = Tại đây, bạn có thể bỏ phiếu cho một hội nghị hoặc đề xuất một hội nghị mới cho sự kiện. Bạn cũng có thể đăng ký để có một gian hàng trong sự kiện.
+EvntOrgRegistrationConfHelpMessage = Tại đây, bạn có thể đề xuất một hội nghị mới để tạo hiệu ứng sinh động trong sự kiện.
+EvntOrgRegistrationBoothHelpMessage = Tại đây, bạn có thể đăng ký để có gian hàng trong thời gian diễn ra sự kiện.
+ListOfSuggestedConferences = Danh sách các hội nghị được đề xuất
+ListOfSuggestedBooths=Gian hàng được đề xuất
+ListOfConferencesOrBooths=Hội nghị hoặc gian hàng của dự án sự kiện
+SuggestConference = Đề xuất một hội nghị mới
+SuggestBooth = Đề xuất gian hàng
+ViewAndVote = Xem và bình chọn cho các sự kiện được đề xuất
+PublicAttendeeSubscriptionGlobalPage = Liên kết công khai để đăng ký sự kiện
+PublicAttendeeSubscriptionPage = Liên kết công khai chỉ để đăng ký sự kiện này
+MissingOrBadSecureKey = Khóa bảo mật không hợp lệ hoặc bị thiếu
+EvntOrgWelcomeMessage = Biểu mẫu này cho phép bạn đăng ký làm người tham gia mới cho sự kiện
+EvntOrgDuration = Hội nghị này bắt đầu vào %s và kết thúc vào %s.
+ConferenceAttendeeFee = Phí tham dự hội nghị cho sự kiện: '%s' diễn ra từ %s đến %s.
+BoothLocationFee = Vị trí gian hàng cho sự kiện: '%s' diễn ra từ %s đến %s
 EventType = Loại sự kiện
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+LabelOfBooth=Nhãn gian hàng
+LabelOfconference=Nhãn hội nghị
+ConferenceIsNotConfirmed=Đăng ký không có sẵn, hội nghị chưa được xác nhận
+EventRegistrationAreClosed=Event registrations are closed
+DateMustBeBeforeThan=%s phải trước %s
+DateMustBeAfterThan=%s phải sau %s
+MaxNbOfAttendeesReached=Đã đạt đến số lượng người tham gia tối đa
+NewSubscription=Sự đăng ký
+OrganizationEventConfRequestWasReceived=Đề xuất của bạn cho một hội nghị đã được nhận
+OrganizationEventBoothRequestWasReceived=Yêu cầu gian hàng của bạn đã được nhận
+OrganizationEventPaymentOfBoothWasReceived=thanh toán cho gian hàng của bạn đã được ghi lại
+OrganizationEventPaymentOfRegistrationWasReceived=thanh toán đăng ký sự kiện của bạn đã được ghi lại
+OrganizationEventBulkMailToAttendees=Đây là lời nhắc nhở về việc bạn tham gia sự kiện với tư cách là người tham dự
+OrganizationEventBulkMailToSpeakers=Đây là lời nhắc nhở về việc bạn tham gia sự kiện với tư cách là diễn giả
+OrganizationEventLinkToThirdParty=Liên kết với bên thứ ba (khách hàng, nhà cung cấp hoặc đối tác)
+OrganizationEvenLabelName=Tên công khai của hội nghị hoặc gian hàng
+NewSuggestionOfBooth=Đơn xin gian hàng
+NewSuggestionOfConference=Đơn xin tổ chức hội nghị
+EvntOrgRegistrationWelcomeMessage = Chào mừng bạn đến với trang gợi ý hội nghị hoặc gian hàng.
+EvntOrgRegistrationConfWelcomeMessage = Chào mừng bạn đến với trang gợi ý hội nghị.
+EvntOrgRegistrationBoothWelcomeMessage = Chào mừng bạn đến với trang gợi ý gian hàng.
+EvntOrgVoteHelpMessage = Tại đây, bạn có thể xem và bình chọn cho các sự kiện được đề xuất cho dự án
+VoteOk = Phiếu bầu của bạn đã được chấp nhận.
+AlreadyVoted = Bạn đã bình chọn cho sự kiện này.
+VoteError = Đã xảy ra lỗi trong quá trình bỏ phiếu, vui lòng thử lại.
+SubscriptionOk=Đăng ký của bạn đã được ghi lại
+AmountOfRegistrationPaid=Số tiền đăng ký đã thanh toán
+ConfAttendeeSubscriptionConfirmation = Xác nhận đăng ký của bạn với một sự kiện
+Attendee = Người tham dự
+PaymentConferenceAttendee = Người tham dự hội nghị thanh toán
+PaymentBoothLocation = Vị trí gian hàng thanh toán
+DeleteConferenceOrBoothAttendee=Xóa người tham dự
+RegistrationAndPaymentWereAlreadyRecorder=Đăng ký và thanh toán đã được ghi lại cho email <b>%s</b>
+EmailAttendee=Email người tham dự
+EmailCompany=Email công ty
+EmailCompanyForInvoice=Email công ty (đối với hóa đơn, nếu khác với email người tham dự)
+ErrorSeveralCompaniesWithEmailContactUs=Một số công ty có email này đã được tìm thấy nên chúng tôi không thể tự động xác thực đăng ký của bạn. Vui lòng liên hệ với chúng tôi tại %s để xác thực thủ công
+ErrorSeveralCompaniesWithNameContactUs=Một số công ty có tên này đã được tìm thấy nên chúng tôi không thể tự động xác thực đăng ký của bạn. Vui lòng liên hệ với chúng tôi tại %s để xác thực thủ công
+NoPublicActionsAllowedForThisEvent=Không có hoạt động công khai nào được mở công khai cho sự kiện này
+MaxNbOfAttendees=Số lượng người tham dự tối đa
+DateStartEvent=Ngày bắt đầu sự kiện
+DateEndEvent=Ngày kết thúc sự kiện
+ModifyStatus=Sửa đổi trạng thái
+ConfirmModifyStatus=Xác nhận sửa đổi trạng thái
+ConfirmModifyStatusQuestion=Bạn có chắc chắn muốn sửa đổi (các) bản ghi đã chọn %s không?
+RecordsUpdated=%s Đã cập nhật bản ghi
+RecordUpdated=Đã cập nhật bản ghi
+NoRecordUpdated=Không có bản ghi nào được cập nhật
+ProfitPerValidatedAttendee=Profit per attendee

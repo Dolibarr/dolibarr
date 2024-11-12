@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = ইন্ট্রাকম রিপোর্ট
+Module68000Desc = ইন্ট্রাকম রিপোর্ট ম্যানেজমেন্ট (ফরাসি DEB/DES ফর্ম্যাটের জন্য সমর্থন)
+IntracommReportSetup = Intracommreport মডিউল সেটআপ
+IntracommReportAbout = intracommreport সম্পর্কে
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=অভিনেতা টাইপ
+INTRACOMMREPORT_ROLE_ACTEUR=রোল জুয়ে পার ল'অ্যাক্টুর
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_CATEG_FRAISDEPORT="Frais de port" টাইপ পরিষেবার বিভাগ
 
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=List
+MenuIntracommReport=ইন্ট্রাকম রিপোর্ট
+MenuIntracommReportNew=নতুন ঘোষণা
+MenuIntracommReportList=তালিকা
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=নতুন ঘোষণা
+Declaration=ঘোষণা
+AnalysisPeriod=বিশ্লেষণ সময়কাল
+TypeOfDeclaration=ঘোষণার ধরন
+DEB=পণ্য বিনিময় ঘোষণা (DEB)
+DES=পরিষেবা বিনিময় ঘোষণা (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=ProDouane বিন্যাসে একটি XML ফাইলের প্রস্তুতি
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=উত্পন্ন ঘোষণার তালিকা
+IntracommReportNumber=ঘোষণার সংখ্যা
+IntracommReportPeriod=বিশ্লেষণের সময়কাল
+IntracommReportTypeDeclaration=ঘোষণার ধরন
+IntracommReportDownload=XML ফাইল ডাউনলোড করুন
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=পরিবহন মোড

@@ -62,9 +62,9 @@ dol_syslog($script_file." launched with arg ".implode(',', $argv));
 $mode = $argv[1];
 $filepath = $argv[2];
 $filepatherr = $filepath.'.err';
-$defaultlang = empty($argv[3])?'en_US':$argv[3];
-$startlinenb = empty($argv[4])?1:$argv[4];
-$endlinenb = empty($argv[5])?0:$argv[5];
+$defaultlang = empty($argv[3]) ? 'en_US' : $argv[3];
+$startlinenb = empty($argv[4]) ? 1 : $argv[4];
+$endlinenb = empty($argv[5]) ? 0 : $argv[5];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [defaultlang] [startlinenb] [endlinenb]\n";

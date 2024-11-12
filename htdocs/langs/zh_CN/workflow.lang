@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=工作流模块设置
-WorkflowDesc=该模块提供了一些自动操作。默认情况下，工作流是打开的（您可以按想要的顺序执行操作），但在这里您可以激活一些自动操作。
-ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
+WorkflowDesc=该模块提供了一些自动操作。默认情况下，工作流是开启的（您可以按想要的顺序执行操作），但在这里您可以激活一些自动操作。
+ThereIsNoWorkflowToModify=已激活的模块没有可用的工作流修改。
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=签署报价单后自动创建销售订单（新订单的金额与报价金额相同）
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=签署报价单后自动创建客户发票（新发票的金额与报价金额相同）
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=在合同确认后自动创建客户发票
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=创建服务工单时，自动创建现场服务。
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=报价单被客户签字接受后自动创建销售订单（新订单的金额与报价单金额相同）
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=报价单被客户签字接受后自动创建客户发票（新发票的金额与报价单金额相同）
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=当合同被验证通过后自动创建客户发票
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=当销售订单被关闭后自动创建客户发票（新发票的金额与订单金额相同）
+descWORKFLOW_TICKET_CREATE_INTERVENTION=创建服务工单时，自动创建现场服务单。
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=当发货单被验证时，将链接的源销售订单归类为已发货（并且如果所有发货单的发货数量之和与要更新的订单中的数量相同）
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当发货单被关闭时，将链接的源销售订单归类为已发货（并且如果所有发货单的发货数量之和与要更新的订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=当销售订单设置为已开票时，将链接源报价归类为已开票（且如果订单总额与已签名链接报价的总额相同）
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户发票设置为已支付时，将链接的源销售订单归类为已开票（且如果发票 订单的金额与链接的销售订单的总金额相同）。如果您对n个订单设置生成 1 张发票，这也可能将所有订单设置为已开票。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当一个客户发票订单被验证后，将所有关联的源销售订单归类为已开票（且如果发票的金额与关联的源销售订单的总金额相同）。如果您为 n 个订单设置生成 1 个共同的发票，这可能会将所有源订单设置为已开票。
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=当一个客户发票被验证时，如果关联的销售订单的总金额等于从其发出的所有发票的总金额，将关联的销售订单（如果只有一个）归类为已开票。如果您为 1  个订单生成 n 张发票，则一旦所有发票都已验证，就可以将该订单设置为已开票。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=当发货单被验证后，将链接源销售订单归类为已发货（且如果所有货件的发货数量与要更新的订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当发货单关闭时，将链接源销售订单归类为已发货（且如果所有货件的发货数量与要更新的订单中的数量相同）
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=当供应商发票被验证后，将链接源供应商报价归类为已开票（且如果发票的数量与链接报价的总数量相同）
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=验证接收时将链接源采购订单分类为已接收（并且如果所有接收收到的数量与要更新的采购订单中的数量相同）
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=当接收关闭时将链接源采购订单分类为已接收（并且如果所有接收收到的数量与要更新的采购订单中的数量相同）
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=当链接的采购发票经过验证（并且发票金额与链接的收款总金额相同时），将收款分类为“已开票”
-# Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=创建服务工单时，链接其匹配的合作方的可用合同
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=关闭服务工单后，关闭与服务工单关联的所有现场服务
-AutomaticCreation=自动创建
-AutomaticClassification=自动分类
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=当供应商发票被验证后，将链接源采购订单归类为已开票（且如果发票的金额与链接订单的总金额相同）
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=当收货单被验证后，将链接源采购订单归类为已收货（且如果所有接收的数量与要更新的采购订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=当收货单关闭时，将链接源采购订单归类为已收货（且如果从采购订单发出的所有收货单所收到的总数量与要更新的采购订单中的数量相同）
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=当客户发票被验证时，将链接的源发货单归类为已关闭（并且发票金额与链接的发货单的总金额相同）
-AutomaticClosing=Automatic closing
-AutomaticLinking=Automatic linking
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=关闭服务工单后，关闭与服务工单关联的所有现场服务单
+AutomaticCreation=自动创建
+AutomaticClassification=自动归类
+AutomaticClosing=自动关闭
+AutomaticLinking=自动链接

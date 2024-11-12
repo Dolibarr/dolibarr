@@ -137,7 +137,7 @@ CountryLV=Латвия
 CountryLB=Лубнон
 CountryLS=Лесото
 CountryLR=Либерия
-CountryLY=Libya
+CountryLY=Либия
 CountryLI=Лихтенштейн
 CountryLT=Литва
 CountryLU=Люксембург
@@ -247,13 +247,13 @@ CountryJE=Ҷерсӣ
 CountryME=Черногория
 CountryBL=Сент Бартелеми
 CountryMF=Сент Мартин
-CountryXK=Kosovo
+CountryXK=Косово
 
 ##### Civilities #####
 CivilityMME=Бону.
-CivilityMMEShort=Mrs.
+CivilityMMEShort=Бону.
 CivilityMR=Ҷаноб.
-CivilityMRShort=Mr.
+CivilityMRShort=Ҷаноб.
 CivilityMLE=Бону.
 CivilityMTRE=Устод
 CivilityDR=Духтур
@@ -295,8 +295,8 @@ CurrencyXPF=Франки CFP
 CurrencySingXPF=CFP Франк
 CurrencyCentEUR=сент
 CurrencyCentSingEUR=сент
-CurrencyCentINR=пайса
-CurrencyCentSingINR=таваққуф
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=ҳазорум
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=интернет

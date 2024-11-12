@@ -17,7 +17,7 @@ ThisProduct=この製品
 DefaultForService=サービスのデフォルト
 DefaultForProduct=製品のデフォルト
 ProductForThisThirdparty=この取引先向けの製品
-ServiceForThisThirdparty=この取引先向けのサービス
+ServiceForThisThirdparty=この取引先向けサービス
 CantSuggest=提案できない
 AccountancySetupDoneFromAccountancyMenu=会計のほとんどの設定はメニュー%sから行われる
 ConfigAccountingExpert=会計モジュールの構成(複式簿記)
@@ -38,7 +38,7 @@ DeleteCptCategory=グループから勘定科目を削除する
 ConfirmDeleteCptCategory=この勘定科目を勘定科目グループから削除してもよいか？
 JournalizationInLedgerStatus=仕訳帳化の状況
 AlreadyInGeneralLedger=既に会計仕訳日記帳と元帳に転記済
-NotYetInGeneralLedger=まだ会計仕訳日記帳と元帳に未転記
+NotYetInGeneralLedger=会計仕訳帳と元帳にまだ転送されていない
 GroupIsEmptyCheckSetup=グループが空。パーソナライズされた会計グループの設定を確認すること
 DetailByAccount=科目ごとに詳細を表示
 DetailBy=詳細はこちら
@@ -60,23 +60,19 @@ VueBySubAccountAccounting=会計補助勘定科目で表示
 MainAccountForCustomersNotDefined=設定で定義されていない顧客の主口座 (勘定科目表から)
 MainAccountForSuppliersNotDefined=設定で定義されていない仕入先の主勘定 (勘定科目表から)
 MainAccountForUsersNotDefined=セットアップで定義されていないユーザーの主勘定 (勘定科目表から)
-MainAccountForRevenueStampSaleNotDefined=設定で定義されていない収入印紙 (売上) の勘定科目 (勘定科目表から)
-MainAccountForRevenueStampPurchaseNotDefined=セットアップで定義されていない収入印紙 (購入) の勘定科目 (勘定科目表から)
 MainAccountForVatPaymentNotDefined=VAT 支払い用の勘定 (勘定科目表から) が設定で定義されていない
 MainAccountForSubscriptionPaymentNotDefined=メンバーシップ支払い用の勘定 (勘定科目表から) が設定で定義されていない
 MainAccountForRetainedWarrantyNotDefined=設定で定義されていない保持保証の勘定科目 (勘定科目表から)
 UserAccountNotDefined=設定で定義されていないユーザの会計勘定科目
-
 AccountancyArea=経理エリア
 AccountancyAreaDescIntro=会計モジュールの使用は、いくつかのステップで行われる。
 AccountancyAreaDescActionOnce=次のアクションは通常、1回だけ、または1年に1回実行される。
-AccountancyAreaDescActionOnceBis=経理でデータ転送するときに自動的に正しいデフォルトの勘定科目を提案することで将来の時間を節約できるよう、次のステップを実行する必要がある
+AccountancyAreaDescActionOnceBis=今後の時間を節約するには、会計でデータを転送するときに正しいデフォルトの会計アカウントを自動的に提案することで、次のステップを実行する必要がある。
 AccountancyAreaDescActionFreq=次のアクションは通常、非常に大規模な企業の場合、毎月、毎週、または毎日実行される。
-
 AccountancyAreaDescJournalSetup=ステップ%s: メニュー%sから仕訳リストの内容を確認する
 AccountancyAreaDescChartModel=ステップ%s：勘定科目表のモデルが存在することを確認するか、メニュー%sからモデルを作成する。
 AccountancyAreaDescChart=ステップ%s：メニュー%sから勘定科目表を選択および|または完成させる
-
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=ステップ%s：各VAT率の勘定科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescDefault=ステップ%s：デフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescExpenseReport=ステップ%s: 経費報告書のタイプごとにデフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
@@ -84,19 +80,18 @@ AccountancyAreaDescSal=ステップ%s：給与支払のデフォルトの勘定�
 AccountancyAreaDescContrib=ステップ%s: 税金（特別経費）のデフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescDonation=ステップ%s：寄付のデフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescSubscription=ステップ%s：構成員サブスクリプションのデフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
-AccountancyAreaDescMisc=ステップ%s：その他のトランザクションの必須のデフォルト科目とデフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
+AccountancyAreaDescMisc=ステップ %s: 必須のデフォルトアカウントとその他のトランザクション用のデフォルト会計アカウントを定義する。これには、メニュー エントリ %s を使用する。
 AccountancyAreaDescLoan=ステップ%s：ローンのデフォルトの勘定科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescBank=ステップ%s：各銀行および金融口座の会計口座と仕訳コードを定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescProd=ステップ%s: 製品/サービスの勘定科目を定義する。これには、メニューエントリ%sを使用する。
-
 AccountancyAreaDescBind=ステップ%s：既存の%s行と勘定科目の間の結合が完了していることを確認する。これにより、アプリケーションはワンクリックで元帳のトランザクションを仕訳できるようになる。不足している結合を完了する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescWriteRecords=ステップ%s：元帳にトランザクションを書き込む。これを行うには、メニュー<strong> %s </strong>に移動し、ボタン<strong>%s</strong>をクリックする。
-AccountancyAreaDescAnalyze=ステップ%s：既存のトランザクションを追加または編集し、報告書sとエクスポートを生成する。
-
-AccountancyAreaDescClosePeriod=ステップ%s：期間を閉じて、将来変更できないようにする。
-
+AccountancyAreaDescAnalyze=ステップ %s: レポートを読むか、他の簿記担当者用のエクスポート ファイルを生成する。
+AccountancyAreaDescClosePeriod=ステップ %s: 期間を終了するため、今後同じ期間にデータを転送できなくなります。
+TheFiscalPeriodIsNotDefined=設定の必須ステップが完了していない（会計期間が定義されていない）
 TheJournalCodeIsNotDefinedOnSomeBankAccount=設定の必須ステップが完了していない(全銀行口座に対して会計コード仕訳帳が定義されていない)
 Selectchartofaccounts=アクティブな勘定科目表を選択する
+CurrentChartOfAccount=現在アクティブな勘定科目表
 ChangeAndLoad=変更してロード
 Addanaccount=勘定科目を追加
 AccountAccounting=勘定科目
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=アカウントの提案に使用されるデータ
 AccountAccountingSuggest=アカウントが提案された
 MenuDefaultAccounts=規定の科目
 MenuBankAccounts=銀行口座
-MenuVatAccounts=消費税科目
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=租税公課
 MenuExpenseReportAccounts=経費報告書科目
 MenuLoanAccounts=借入金科目
@@ -134,7 +129,7 @@ WriteBookKeeping=会計での取引の記録
 Bookkeeping=元帳
 BookkeepingSubAccount=補助元帳
 AccountBalance=勘定残高
-AccountBalanceSubAccount=サブアカウントの残高
+AccountBalanceSubAccount=補助科目残高
 ObjectsRef=ソースオブジェクト参照
 CAHTF=税引前の合計購入ベンダー
 TotalExpenseReport=総経費報告書
@@ -144,8 +139,6 @@ ExpenseReportLines=結合する経費報告書sの行
 ExpenseReportLinesDone=経費報告書sの境界線
 IntoAccount=勘定科目との結合行
 TotalForAccount=合計勘定科目
-
-
 Ventilate=結合
 LineId=IDライン
 Processing=Processing
@@ -158,22 +151,21 @@ VentilatedinAccount=勘定科目に正常に結合された
 NotVentilatedinAccount=勘定科目に結合されていない
 XLineSuccessfullyBinded=%s製品/サービスが勘定科目に正常に結合された
 XLineFailedToBeBinded=%s製品/サービスはどの勘定科目にも結合されていない
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=リストおよび結合ページの最大行数(推奨：50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=「Bindingtodo」ページの最新の要素による並べ替えを開始する
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=「結合完了」ページの最新の要素による並べ替えを開始する
-
 ACCOUNTING_LENGTH_DESCRIPTION=x文字の後のリストの製品とサービスの説明を切り捨てる(ベスト= 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=x文字の後のリストの製品とサービスの科目説明フォームを切り捨てる(ベスト= 50)
 ACCOUNTING_LENGTH_GACCOUNT=一般勘定科目の長さ(ここで値を6に設定すると、勘定科目「706」は画面に「706000」のように表示される)
 ACCOUNTING_LENGTH_AACCOUNT=取引先の勘定科目の長さ(ここで値を6に設定すると、科目「401」は画面に「401000」のように表示される)
 ACCOUNTING_MANAGE_ZERO=勘定科目の最後に異なる数のゼロを管理できるようにする。一部の国(スイスなど)で必要。オフ(デフォルト)に設定すると、次の2つのパラメーターを設定して、アプリケーションに仮想ゼロを追加するように要求できる。
+ACCOUNTING_BANK_CONCILIATED=銀行取引明細書で照合された明細のみを会計に転送（デフォルトでは、転送ごとにチェックを外すことができる）
 BANK_DISABLE_DIRECT_INPUT=銀行口座での取引の直接記録を無効にする
+ACCOUNTANCY_ER_DATE_RECORD=経費の日付ではなく、経費報告書の期間の終了日を会計への転送日として使用する。
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=仕訳帳で下書きエクスポートを有効化
 ACCOUNTANCY_COMBO_FOR_AUX=子会社アカウントのコンボリストを有効化 (取引先が多数あると遅くなるだろうし、値の一部検索機能は壊れる)
-ACCOUNTING_DATE_START_BINDING=会計で結合と転記を開始する日付を定義する。この日付を下回ると、取引は会計に転記されない。
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=会計転送では、デフォルトで選択される期間は何か
-
+ACCOUNTING_DATE_START_BINDING=日付がこの日付より前の場合、会計処理でのバインディングと転送を無効にする (この日付より前のトランザクションはデフォルトで除外される)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=データを会計に転送するページで、デフォルトで選択されている期間は何か
 ACCOUNTING_SELL_JOURNAL=販売仕訳帳 - 販売と返品
 ACCOUNTING_PURCHASE_JOURNAL=仕訳帳 - 購入と返品
 ACCOUNTING_BANK_JOURNAL=現金仕訳帳 - 入出金
@@ -182,38 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=一般仕訳帳
 ACCOUNTING_HAS_NEW_JOURNAL=新規仕訳帳がある
 ACCOUNTING_INVENTORY_JOURNAL=在庫仕訳帳
 ACCOUNTING_SOCIAL_JOURNAL=交際費仕訳帳
-
 ACCOUNTING_RESULT_PROFIT=結果勘定科目(利益)
 ACCOUNTING_RESULT_LOSS=結果勘定科目(損失)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=閉鎖の仕訳帳
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=貸借対照表勘定に使用される会計グループ (カンマで区切る)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=損益計算書に使用される会計グループ (カンマで区切る)
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=移行用の銀行振込の口座として使用される口座 (勘定科目表から)
 TransitionalAccount=中継銀行振込口座
-
-ACCOUNTING_ACCOUNT_SUSPENSE=受け取った、または支払った未割り当ての資金、つまり「待機[中]」の資金の口座として使用される口座 (口座チャートから) 
+ACCOUNTING_ACCOUNT_SUSPENSE=受け取った、または支払った未割り当ての資金、つまり「待機[中]」の資金の口座として使用される口座 (口座チャートから)
 DONATION_ACCOUNTINGACCOUNT=寄付の登録に使用するアカウント (勘定科目表から) (寄付モジュール)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=メンバーシップのサブスクリプションを登録するために使用されるアカウント (アカウント チャートから) (メンバーシップ モジュール - メンバーシップが請求書なしで記録されている場合)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=顧客預金を登録するためのデフォルト口座として使用される口座 (勘定科目表から)
 UseAuxiliaryAccountOnCustomerDeposit=顧客アカウントを頭金ラインの補助元帳に個人アカウントとして保存する（無効にした場合、頭金ラインの個人アカウントは空のままになる）
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=デフォルトとして使用される勘定科目 (勘定科目表から)
 UseAuxiliaryAccountOnSupplierDeposit=仕入先勘定を、前払明細の補助元帳に個別勘定として保管する (無効にすると、前払明細の個別勘定は空のままになる)。
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=顧客保有保証を登録するためのデフォルトのアカウンティング アカウント
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=同じ国内で購入された製品のデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (製品シートで定義されていない場合に使用)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC から別の EEC 国に購入された製品のデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (製品シートで定義されていない場合に使用)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=他の外国から購入および輸入された製品のデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (製品シートで定義されていない場合に使用)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=販売された製品のデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (製品シートで定義されていない場合に使用)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=EEC から別の EEC 国に販売される製品のデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (製品シートで定義されていない場合に使用)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=他の外国に販売および輸出される製品のデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (製品シートで定義されていない場合に使用)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=同じ国内で購入されたサービスのデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (サービス シートで定義されていない場合に使用)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=EEC から別の EEC 国に購入したサービスのデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (サービス シートで定義されていない場合に使用)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=他の外国から購入および輸入されたサービスのデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (サービス シートで定義されていない場合に使用)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=販売されたサービスのデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (サービス シートで定義されていない場合に使用)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=EEC から別の EEC 国に販売されるサービスのデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (サービス シートで定義されていない場合に使用)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=他の外国に販売および輸出されるサービスのデフォルト アカウントとして使用されるアカウント (アカウント チャートから) (サービス シートで定義されていない場合に使用)
-
 Doctype=ドキュメントの種別
 Docdate=日付
 Docref=参照
@@ -235,7 +222,6 @@ AccountingAccountGroupsDesc=ここで、勘定科目のいくつかのグルー�
 ByAccounts=科目別
 ByPredefinedAccountGroups=事前定義されたグループによる
 ByPersonalizedAccountGroups=パーソナライズされたグループによる
-ByYear=年度別
 NotMatch=設定されていない
 DeleteMvt=会計からいくつかの行を削除する
 DelMonth=削除する月
@@ -274,43 +260,36 @@ OpeningBalance=期首残高
 ShowOpeningBalance=期首残高を表示する
 HideOpeningBalance=期首残高を非表示にする
 ShowSubtotalByGroup=レベルごとに小計を表示
-
 Pcgtype=勘定科目のグループ
 PcgtypeDesc=科目のグループは、一部の会計報告書sの事前定義された「フィルタ」および「グループ化」基準として使用される。たとえば、「INCOME」または「EXPENSE」は、費用/収入報告書sを作成するための製品の勘定科目のグループとして使用される。
 AccountingCategoriesDesc=アカウントのカスタム グループを使用して、会計アカウントを 1 つの名前にグループ化し、フィルターの使用やカスタム レポートの作成を容易にすることができる。
-
 Reconcilable=調整可能
-
 TotalVente=税引前総売上高
 TotalMarge=売上総利益
-
 DescVentilCustomer=ここで、勘定科目表から製品アカウントにバインドされている (またはバインドされていない) 顧客請求明細行のリストを参照すること。
 DescVentilMore=ほとんどの場合、定義済みの製品またはサービスを使用し、製品/サービス カードに (勘定科目表から) アカウントを設定すると、アプリケーションは、請求明細行とチャートの会計勘定科目との間のすべてのバインドを行うことができる。ボタン <strong> "%s" </strong> を 1 回クリックするだけでアカウントの数を指定できる。製品/サービス カードにアカウントが設定されていない場合、またはアカウントにバインドされていない行がまだある場合は、メニュー " <strong> %s </strong> " から手動でバインドする必要がある。
 DescVentilDoneCustomer=顧客の請求明細行と勘定科目表からの製品勘定のリストを参照すること。
 DescVentilTodoCustomer=勘定科目表からまだ製品勘定にバインドされていない請求書明細をバインドする
 ChangeAccount=次の勘定科目を使用して、選択した行の製品/サービス勘定科目を (勘定科目表から) 変更する。
 Vide=-
-DescVentilSupplier=勘定科目表から製品アカウントにバインドされている、またはまだバインドされていない仕入先請求明細行のリストを参照すること (経理部門でまだ転送されていないレコードのみが表示される)。
+DescVentilSupplier=ここで、勘定科目表から 製品科目にバインドされている、またはまだバインドされていない 仕入先 請求書明細のリストを参照すること (会計処理で転送されていない記録だけが見える)
 DescVentilDoneSupplier=ベンダーの請求書の行とその勘定科目のリストをここで参照すること
 DescVentilTodoExpenseReport=まだ料金勘定科目に結合されていない経費報告書行を結合する
 DescVentilExpenseReport=手数料勘定科目に結合されている(または結合されていない)経費報告行のリストをここで参照すること
 DescVentilExpenseReportMore=経費報告行の種別で勘定科目を設定すると、アプリケーションは、ボタン<strong> "%s" </strong>をワンクリックするだけで、経費報告行と勘定科目表の勘定科目の間の全結合を行うことができる。勘定科目が料金辞書に設定されていない場合、または勘定科目に結合されていない行がまだある場合は、メニュー「<strong>%s</strong>」から手動で結合する必要がある。
 DescVentilDoneExpenseReport=経費報告書sの行とその手数料勘定科目のリストをここで参照すること
-
 Closure=年次閉鎖
-DescClosure=まだ検証されておらずロックされていない月ごとの動きの数はこちらを参照すること
-OverviewOfMovementsNotValidated=検証およびロックされていない動きの概要
+AccountancyClosureStep1Desc=まだ検証されておらずロックされていない月ごとの動きの数はこちらを参照すること
+OverviewOfMovementsNotValidated=検証されておらずロックされていない動きの概要
 AllMovementsWereRecordedAsValidated=全動きは検証され、ロックされたものとして記録された
 NotAllMovementsCouldBeRecordedAsValidated=全動きを検証済みおよびロック済みとして記録できるわけではない
 ValidateMovements=動きを検証してロックする
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習の全エントリが要検証済。検証済でないと、閉じることができない。
-
 ValidateHistory=自動的に結合
 AutomaticBindingDone=自動結合が実行された（%s）-一部のレコードでは自動結合不可（%s）
 DoManualBindingForFailedRecord=自動的にリンクされない %s 行(s)を手動でリンクする必要がある。
-
 ErrorAccountancyCodeIsAlreadyUse=エラー、この勘定科目表は使用されているため、削除または無効化できない
-MvtNotCorrectlyBalanced=動きのバランスが正しくない。借方=%s＆貸方= %s
+MvtNotCorrectlyBalanced=動きの残高が正しくない。借方=%s＆貸方= %s
 Balancing=バランシング
 FicheVentilation=結合カード
 GeneralLedgerIsWritten=トランザクションは元帳に書き込まれる
@@ -321,19 +300,18 @@ ChangeBinding=結合を変更する
 Accounted=元帳に計上
 NotYetAccounted=まだ経理に回していない
 ShowTutorial=チュートリアルを表示
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=調整されていない
 WarningRecordWithoutSubledgerAreExcluded=警告、補助元帳アカウントが定義されていない全行はフィルタリングされ、このビューから除外される
 AccountRemovedFromCurrentChartOfAccount=現在の勘定科目表に存在しない会計勘定
-
 ## Admin
-BindingOptions=結合オプション
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=マスカテゴリを適用する
 AddAccountFromBookKeepingWithNoCategories=パーソナライズされたグループにまだない利用可能な科目
 CategoryDeleted=勘定科目のカテゴリが削除された
 AccountingJournals=会計仕訳帳
 AccountingJournal=会計仕訳
 NewAccountingJournal=新規会計仕訳
-ShowAccountingJournal=仕訳日記帳を表示
 NatureOfJournal=仕訳帳の性質
 AccountingJournalType1=その他の操作
 AccountingJournalType2=販売
@@ -341,7 +319,7 @@ AccountingJournalType3=購入
 AccountingJournalType4=バンク
 AccountingJournalType5=経費報告書s
 AccountingJournalType8=目録
-AccountingJournalType9=持っている-新規
+AccountingJournalType9=留保所得
 GenerationOfAccountingEntries=会計仕訳の生成
 ErrorAccountingJournalIsAlreadyUse=この仕訳帳は既に使用されている
 AccountingAccountForSalesTaxAreDefinedInto=注：消費税の勘定科目は、メニュー<b> %s </b> --<b> %s</b>に定義されている。
@@ -352,13 +330,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=購入時の会計における結合と�
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書sの会計における結合と転記を無効にする(経費報告書sは会計で考慮されない)
 ACCOUNTING_ENABLE_LETTERING=会計でレタリング機能を有効化
 ACCOUNTING_ENABLE_LETTERING_DESC=このオプションを有効にすると、各会計エントリにコードを定義できるため、さまざまな会計移動をグループ化できる。以前は、異なるジャーナルが独立して管理されていた場合、この機能は、異なるジャーナルの動線をグループ化するために必要でした。ただし、Dolibarr 会計では、「 <b> %s </b> 」と呼ばれるトラッキング コードがすでに自動的に保存されており、自動レタリングがすでに行われており、エラーのリスクがないため、この機能は一般的な使用には役に立ちない。手動レタリング機能は、会計におけるデータ転送を行うコンピューター エンジンをあまり信頼していないエンド ユーザーのために提供されている。
-EnablingThisFeatureIsNotNecessary=厳格な会計管理のためにこの機能を有効にする必要はなくなった。
+EnablingThisFeatureIsNotNecessary=厳密な会計管理のためにこの機能を有効にする必要はなくなった。
 ACCOUNTING_ENABLE_AUTOLETTERING=会計への転送時に自動レタリングを有効化
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=レタリングのコードは自動的に生成および増加され、エンド ユーザーが選択することはない。
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=レタリングの コード は 自動的に 生成されて増加するので、エンドユーザによる選択はない
+ACCOUNTING_LETTERING_NBLETTERS=レタリングコード生成時の文字数（デフォルトは3）
+ACCOUNTING_LETTERING_NBLETTERS_DESC=一部の会計ソフトウェアでは 2 文字のコードのみを受け入れる。このパラメータを使用すると、この側面を設定できる。デフォルトの文字数は 3 文字。
 OptionsAdvanced=高度なオプション
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=サプライヤーの購入に対する VAT リバースチャージの管理を有効にする
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=このオプションを有効にすると、サプライヤーまたは特定の仕入先請求書を別の方法で会計に転送する必要があることを定義できる。追加の借方および貸方行が、 "%s" 設定ページにある勘定科目表から 2 つの特定の口座の会計に生成される。
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=このオプションを有効にすると、サプライヤーまたは特定の 仕入先 請求書を別の方法で会計に転送する必要があることを定義できる。追加の借方枠と貸方枠が 2 日に会計に生成される。 「%s」設定ページに定義された勘定科目表からの指定された勘定科目。
 ## Export
 NotExportLettering=ファイルの生成時にレタリングをエクスポートしない
 NotifiedExportDate=まだエクスポートされていない明細にエクスポート済としてフラグを設定する <span class="warning"> (エクスポート済としてフラグが設定された明細を変更するには、トランザクション全体を削除して会計に再転送する必要がある) </span>
@@ -368,7 +347,7 @@ DateValidationAndLock=日付の検証とロック
 ConfirmExportFile=会計エクスポートファイルの生成を確定するか？
 ExportDraftJournal=下書き仕訳帳のエクスポート
 Modelcsv=エクスポートのモデル
-Selectmodelcsv=エクスポートのモデルを選択
+Selectmodelcsv=エクスポートのデフォルト形式を選択
 Modelcsv_normal=Classic のエクスポート
 Modelcsv_CEGID=CEGID Expert Comptabilité のエクスポート
 Modelcsv_COALA=Sage Coala のエクスポート
@@ -390,7 +369,6 @@ Modelcsv_Gestinumv3=Gestinum(v3)のエクスポート
 Modelcsv_Gestinumv5=Gestinum（v5）のエクスポート
 Modelcsv_charlemagne=AplimCharlemagneのエクスポート
 ChartofaccountsId=勘定科目表ID
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=初期会計
 InitAccountancyDesc=このページを使用して、販売および購入用に定義された勘定科目がない製品およびサービスの勘定科目を初期化できる。
@@ -420,17 +398,18 @@ SaleLocal=ローカルセール
 SaleExport=エクスポート販売
 SaleEEC=EECでの販売
 SaleEECWithVAT=VATがnullではないEECでの販売。したがって、これは域内販売ではなく、提案された科目は標準の製品科目であると想定する。
-SaleEECWithoutVATNumber=VAT なしの EEC での販売ですが、サードパーティの VAT ID は定義されていない。標準販売のアカウントにフォールバックする。必要に応じて、サードパーティの VAT ID を修正するか、バインディング用に提案された製品アカウントを変更できる。
+SaleEECWithoutVATNumber=VAT なしの EEC での販売ですが、取引先の VAT ID は定義されていない。私たちは標準的な売上を考慮する。必要に応じて、取引先の VAT ID を修正したり、バインドするために提案された製品アカウントを変更したりできる。
 ForbiddenTransactionAlreadyExported=禁止：トランザクションは検証済 かつ/または エクスポート済。
 ForbiddenTransactionAlreadyValidated=禁止：トランザクションは検証済。
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=勘定科目の範囲
 Calculated=計算済
 Formula=式
-
 ## Reconcile
 LetteringAuto=自動照合
 LetteringManual=手動照合
+LetteringPartial=Reconcile partial
 Unlettering=和解しない
 UnletteringAuto=自動照合解除
 UnletteringManual=手動照合解除
@@ -440,17 +419,28 @@ AccountancyLetteringModifiedSuccessfully=%s調整が正常に変更された
 AccountancyNoUnletteringModified=調整されていない変更はない
 AccountancyOneUnletteringModifiedSuccessfully=1つの調整解除が正常に変更された
 AccountancyUnletteringModifiedSuccessfully=%sunreconcileが正常に変更された
-
+## Closure
+AccountancyClosureStep1=ステップ 1 : 動きを検証してロックする
+AccountancyClosureStep2=ステップ 2 : 会計期間を閉じる
+AccountancyClosureStep3=ステップ 3 : エントリを抽出する (オプション)
+AccountancyClosureClose=会計期間を閉じる
+AccountancyClosureAccountingReversal=「利益剰余金」項目を抽出して記録する
+AccountancyClosureStep3NewFiscalPeriod=次会計期間
+AccountancyClosureGenerateClosureBookkeepingRecords=次の会計年度に「利益剰余金」の仕訳を生成する。
+AccountancyClosureSeparateAuxiliaryAccounts=「利益剰余金」エントリを生成するときは、補助元帳勘定の詳細を記載する。
+AccountancyClosureCloseSuccessfully=会計期間は無事終了した
+AccountancyClosureInsertAccountingReversalSuccessfully=「利益剰余金」の簿記エントリが正常に挿入された
 ## Confirm box
-ConfirmMassUnletteringAuto=一括自動照合解除確認
-ConfirmMassUnletteringManual=一括手動照合解除確認
+ConfirmMassUnletteringAuto=一括自動照合解除確定
+ConfirmMassUnletteringManual=一括手動照合解除確定
 ConfirmMassUnletteringQuestion=選択した %s レコード(s)を照合解除するか?
 ConfirmMassDeleteBookkeepingWriting=一括削除確定
 ConfirmMassDeleteBookkeepingWritingQuestion=これにより、会計からトランザクションが削除される (同じトランザクションに関連するすべての行エントリが削除される)。 %s 選択したエントリを削除してもよいか?
-
+AccountancyClosureConfirmClose=今の会計期間を閉じてもよろしい か? <span class="warning">会計期間の終了は元に戻せない操作であり、この期間中のエントリの変更または削除は永久にブロックされることを理解したものとする</span> 。
+AccountancyClosureConfirmAccountingReversal=「利益剰余金」への仕訳を記録したいか？
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=設定のいくつかの必須の手順が実行されない。それらを完了すること
-ErrorNoAccountingCategoryForThisCountry=国%sで使用できる勘定科目グループがない( ホーム - 設定 - 辞書 を参照)
+ErrorNoAccountingCategoryForThisCountry=国 %s では使用可能な勘定科目 グループがない (%s - %s -  %s を参照)
 ErrorInvoiceContainsLinesNotYetBounded=請求書<strong>%s </strong>の一部の行を仕訳しようとしたが、他の一部の行はまだ勘定科目に結合されていない。この請求書の全請求書行の仕訳は拒否される。
 ErrorInvoiceContainsLinesNotYetBoundedShort=請求書の一部の行は、勘定科目に結合されていない。
 ExportNotSupported=設定されたエクスポート形式は、このページではサポートされていない
@@ -465,7 +455,9 @@ AccountancyErrorMismatchBalanceAmount=残高（%s）が0に等しくない
 AccountancyErrorLetteringBookkeeping=トランザクションに関してエラーが発生しました：%s
 ErrorAccountNumberAlreadyExists=会計番号%sはすでに存在する
 ErrorArchiveAddFile=「%s」ファイルをアーカイブに入れることができない
-
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=簿記文書の日付が有効な会計期間内にない
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=簿記書類の日付は終了した会計期間内にある
 ## Import
 ImportAccountingEntries=会計仕訳
 ImportAccountingEntriesFECFormat=会計項目 - FEC形式
@@ -487,11 +479,9 @@ FECFormatReconcilableDate=調整可能日付 (DateLet)
 FECFormatValidateDate=検証済単体日付 (ValidDate)
 FECFormatMulticurrencyAmount=多通貨額 (Montantdevise)
 FECFormatMulticurrencyCode=他通貨 コード (Idevise)
-
 DateExport=日付のエクスポート
 WarningReportNotReliable=警告、このレポートは元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれない。仕訳が最新の場合、簿記ビューはより正確になる。
 ExpenseReportJournal=経費報告仕訳帳
 DocsAlreadyExportedAreIncluded=すでにエクスポートされたドキュメントが含まれる
 ClickToShowAlreadyExportedLines=クリックすると、すでにエクスポートされた行が表示される
-
 NAccounts=%sアカウント

@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2020      Frédéric France  <frederic.france@netlogic.fr>
+-- Copyright (C) 2020       Frédéric France  <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_ecm_files_extrafields ADD INDEX idx_ecm_files_extrafields (fk_object);
+ALTER TABLE llx_ecm_files_extrafields ADD UNIQUE INDEX uk_ecm_files_extrafields (fk_object);

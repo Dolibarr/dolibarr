@@ -1,2 +1,2 @@
 # Dolibarr language file - Source file is en_US - errors
-ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
+EmptyMessageNotAllowedError=Empty Message Not Allowed Error

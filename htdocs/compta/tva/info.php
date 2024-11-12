@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +29,25 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Tva($db);
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -47,9 +58,9 @@ $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
  * Actions
  */
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer) {
+if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 	$object->fetch($id);
-	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', null, 'text', '', $user, 'TAX_MODIFY');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -62,7 +73,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 
 $title = $langs->trans("VAT")." - ".$langs->trans("Info");
 $help_url = '';
-llxHeader("", $title, $helpurl);
+llxHeader("", $title, $help_url);
 
 $object = new Tva($db);
 $object->fetch($id);
@@ -74,8 +85,8 @@ print dol_get_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'paymen
 
 $morehtmlref = '<div class="refidno">';
 // Label of social contribution
-$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', 0, 1);
+$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', null, null, '', 1);
 $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';

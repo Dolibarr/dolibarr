@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'products'));
@@ -65,7 +75,9 @@ if ($action == 'convert') {
 
 		$nbrecordsmodified = 0;
 
-		$db->begin();
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
+			$db->begin();
+		}
 
 		// Clean vat code old
 		$vat_src_code_old = '';
@@ -94,7 +106,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				" AND default_vat_code = IS NULL";
+				$sql .= " AND default_vat_code = IS NULL";
 			}
 
 			$resql = $db->query($sql);
@@ -108,7 +120,9 @@ if ($action == 'convert') {
 					$objectstatic = new Product($db); // Object init must be into loop to avoid to get value of previous step
 					$ret = $objectstatic->fetch($obj->rowid);
 					if ($ret > 0) {
-						$ret = 0; $retm = 0; $updatelevel1 = false;
+						$ret = 0;
+						$retm = 0;
+						$updatelevel1 = false;
 
 						// Update multiprice
 						$listofmulti = array_reverse($objectstatic->multiprices, true); // To finish with level 1
@@ -194,10 +208,10 @@ if ($action == 'convert') {
 		if ($vat_src_code_old) {
 			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		} else {
-			" AND default_vat_code = IS NULL";
+			$sql .= " AND default_vat_code = IS NULL";
 		}
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
-		//print $sql;
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -209,7 +223,9 @@ if ($action == 'convert') {
 				$objectstatic2 = new ProductFournisseur($db); // Object init must be into loop to avoid to get value of previous step
 				$ret = $objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0) {
-					$ret = 0; $retm = 0; $updatelevel1 = false;
+					$ret = 0;
+					$retm = 0;
+					$updatelevel1 = false;
 
 					$price_base_type = 'HT';
 					//$price_base_type = $objectstatic2->price_base_type;	// Get price_base_type of product/service to keep the same for update
@@ -255,10 +271,21 @@ if ($action == 'convert') {
 			dol_print_error($db);
 		}
 
-		if (!$error) {
-			$db->commit();
-		} else {
-			$db->rollback();
+
+		// add hook for external modules
+		$parameters = array('oldvatrate' => $oldvatrate, 'newvatrate' => $newvatrate);
+		$reshook = $hookmanager->executeHooks('hookAfterVatUpdate', $parameters);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$error++;
+		}
+
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 		}
 
 		// Output result
@@ -282,7 +309,7 @@ $form = new Form($db);
 
 $title = $langs->trans('ProductVatMassChange');
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product_tools');
 
 print load_fiche_titre($title, '', 'title_setup');
 

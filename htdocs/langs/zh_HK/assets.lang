@@ -1,65 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
-
+NewAsset=新資產
+AccountancyCodeAsset=會計代碼（資產）
+AccountancyCodeDepreciationAsset=會計代碼（折舊資產帳戶）
+AccountancyCodeDepreciationExpense=會計代碼（折舊費用賬戶）
+AssetsLines=資產
+DeleteType=刪除
+DeleteAnAssetType=刪除資產模組
+ConfirmDeleteAssetType=您確定要刪除此資產模組嗎？
+ShowTypeCard=顯示模型 '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=資產
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
-
-#
+ModuleAssetsDesc=資產描述
 # Admin page
-#
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
-
-#
+AssetSetup=資產設置
+AssetSetupPage=資產設置頁面
+ExtraFieldsAssetModel=互補屬性（資產模組）
+AssetsType=資產模組
+AssetsTypeId=資產模組編號
+AssetsTypeLabel=資產模組標籤
+AssetsTypes=多組資產模組
+ASSET_ACCOUNTANCY_CATEGORY=固定資產會計群組
+ASSET_DEPRECIATION_DURATION_PER_YEAR=按年計算折舊的比例天數
 # Menu
-#
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
-
-#
+MenuAssets=多組資產
+MenuNewAsset=新資產
+MenuAssetModels=資產模組
+MenuListAssets=清單
+MenuNewAssetModel=新資產模組
+MenuListAssetModels=清單
 # Module
-#
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=您真的要移除此資產嗎？
+# Tab
+AssetDepreciationOptions=折舊選項
+AssetAccountancyCodes=會計賬戶
+AssetDepreciation=折舊
+# Asset
+Asset=資產
+Assets=資產
+AssetReversalAmountHT=回轉金額（不含稅）
+AssetAcquisitionValueHT=購置金額（不含稅）
+AssetRecoveredVAT=已回收增值稅
+AssetReversalDate=沖銷日期
+AssetDateAcquisition=取得日期
+AssetDateStart=啟動日期
+AssetAcquisitionType=獲取類型
+AssetAcquisitionTypeNew=新增
+AssetAcquisitionTypeOccasion=已使用
+AssetType=資產類型
+AssetTypeIntangible=無形
+AssetTypeTangible=有形的
+AssetTypeInProgress=進行中
+AssetTypeFinancial=財務
+AssetNotDepreciated=未折舊
+AssetDisposal=處置
+AssetConfirmDisposalAsk=您確定要處置該資產嗎 <b>%s</b>？
+AssetConfirmReOpenAsk=您確定要重新開啟這項資產嗎 <b>%s</b>？
+# Asset status
+AssetInProgress=進行中
+AssetDisposed=經已處置
+AssetRecorded=已入賬
+# Asset disposal
+AssetDisposalDate=處置日期
+AssetDisposalAmount=處置價值
+AssetDisposalType=處置類型
+AssetDisposalDepreciated=折舊轉移年份
+AssetDisposalSubjectToVat=處置需繳增值稅
+# Asset model
+AssetModel=資產模組
+AssetModels=多項資產模組
+# Asset depreciation options
+AssetDepreciationOptionEconomic=外部性折舊
+AssetDepreciationOptionAcceleratedDepreciation=加速折舊（稅務）
+AssetDepreciationOptionDepreciationType=折舊類型
+AssetDepreciationOptionDepreciationTypeLinear=線性
+AssetDepreciationOptionDepreciationTypeDegressive=遞減
+AssetDepreciationOptionDepreciationTypeExceptional=卓越
+AssetDepreciationOptionDegressiveRate=遞減比率
+AssetDepreciationOptionDuration=時期
+AssetDepreciationOptionDurationType=持續時間類型
+AssetDepreciationOptionDurationTypeAnnual=年度
+AssetDepreciationOptionDurationTypeMonthly=每月
+AssetDepreciationOptionDurationTypeDaily=每日
+AssetDepreciationOptionRate=匯率(%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=折舊基礎（不含增值稅）
+AssetDepreciationOptionAmountBaseDeductibleHT=可扣除基本 (不含增值稅)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=上一次折舊總額(不含增值稅)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=外部性折舊
+AssetAccountancyCodeAsset=資產
+AssetAccountancyCodeDepreciationAsset=折舊
+AssetAccountancyCodeDepreciationExpense=折舊費用
+AssetAccountancyCodeValueAssetSold=處置資產的價值
+AssetAccountancyCodeReceivableOnAssignment=出售所得款項
+AssetAccountancyCodeProceedsFromSales=出售收益
+AssetAccountancyCodeVatCollected=收增值稅
+AssetAccountancyCodeVatDeductible=資產上的回收增值稅
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=加速折舊（稅務）
+AssetAccountancyCodeAcceleratedDepreciation=賬戶
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=折舊費用
+AssetAccountancyCodeProvisionAcceleratedDepreciation=回收 / 撥備
+# Asset depreciation
+AssetBaseDepreciationHT=折舊方式（不含增值稅）
+AssetDepreciationBeginDate=折舊開始於
+AssetDepreciationDuration=時期
+AssetDepreciationRate=率(%%)
+AssetDepreciationDate=折舊日期
+AssetDepreciationHT=折舊 (不含增值稅)
+AssetCumulativeDepreciationHT=累計折舊（不含增值稅）
+AssetResidualHT=剩餘價值（不含增值稅）
+AssetDispatchedInBookkeeping=折舊記錄
+AssetFutureDepreciationLine=未來折舊
+AssetDepreciationReversal=沖銷
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=未提供找到的資產或模型的ID
+AssetErrorFetchAccountancyCodesForMode=錯誤: 從 '%s' 折舊模式檢索會計賬目時出錯
+AssetErrorDeleteAccountancyCodesForMode=錯誤: 刪除會計賬戶時在 '%s' 折舊模式出錯
+AssetErrorInsertAccountancyCodesForMode=出錯 : 在插入折舊模式 '%s' 的會計賬戶時出錯。
+AssetErrorFetchDepreciationOptionsForMode=出錯 : 在 '%s' 折舊模式檢索選項時出錯
+AssetErrorDeleteDepreciationOptionsForMode=出錯: 在刪除 '%s' 折舊模式選項時出錯
+AssetErrorInsertDepreciationOptionsForMode=出錯:在 '%s' 折舊模組選項時出錯
+AssetErrorFetchDepreciationLines=檢索已記錄的折舊行列時出錯
+AssetErrorClearDepreciationLines=清除已記錄的折舊行列（沖銷和未來）時出錯
+AssetErrorAddDepreciationLine=出錯 : 添加折舊行列時出錯
+AssetErrorCalculationDepreciationLines=出錯 : 計算折舊行列（恢復和未來）時出錯
+AssetErrorReversalDateNotProvidedForMode=未提供 '%s' 折舊方法的抵銷日期
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s' 折舊方法的沖銷日期必須大於或等於本財年的開始日期
+AssetErrorReversalAmountNotProvidedForMode=折舊模式 '%s' 未提供沖銷金額。
+AssetErrorFetchCumulativeDepreciation=出錯 : 從折舊行列中檢索累計折舊金額時出錯。
+AssetErrorSetLastCumulativeDepreciation=出錯: 記錄最新累計折舊金額時出錯。

@@ -43,7 +43,6 @@ DOL_DOUBLE_WIDTH=Tamanho duplo para largura
 DOL_DEFAULT_HEIGHT_WIDTH=Tamanho padrão para altura e largura
 DOL_UNDERLINE=Habilitar sublinhado
 DOL_UNDERLINE_DISABLED=Desabilitar sublinhado
-DOL_BEEP=Sinal sonoro
 DOL_VALUE_MONTH_LETTERS=Ano da fatura
 DOL_VALUE_MONTH=Ano da fatura
 DOL_VALUE_DAY_LETTERS=Data da fatura em letras

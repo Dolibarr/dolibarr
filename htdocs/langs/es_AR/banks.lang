@@ -33,7 +33,6 @@ EditFinancialAccount=Editar cuentga
 LabelBankCashAccount=Banco o Caja
 AccountType=Tipo de Cuenta
 BankType0=Caja de ahorro
-BankType1=Current, cheque or credit card account
 BankType2=Cuenta Caja
 AccountsArea=Area de Cuentas
 AccountCard=Ficha de la cuenta

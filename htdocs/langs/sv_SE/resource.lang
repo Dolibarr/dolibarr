@@ -9,31 +9,30 @@ ActionsOnResource=Händelser om denna resurs
 ResourcePageIndex=Lista över resurser
 ResourceSingular=Resurs
 ResourceCard=Resurskort
+NewResource=Ny resurs
 AddResource=Skapa en resurs
 ResourceFormLabel_ref=Resursnamn
-ResourceType=Resurstyp
 ResourceFormLabel_description=Resursbeskrivning
-
+ResourceType=Resurstyp
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Resurser länkade till elementet
 
 ShowResource=Visa resurs
-
 ResourceElementPage=Elementresurser
 ResourceCreatedWithSuccess=Resursen har skapats
 RessourceLineSuccessfullyDeleted=Resursrad har tagits bort
 RessourceLineSuccessfullyUpdated=Resursrad har uppdaterats
 ResourceLinkedWithSuccess=Resursen har länkats
-
 ConfirmDeleteResource=Bekräfta radering av denna resurs
 RessourceSuccessfullyDeleted=Resurs har tagits bort
 DictionaryResourceType=Typ av resurser
-
 SelectResource=Välj resurs
-
 IdResource=ID-resurs
 AssetNumber=Serienummer
 ResourceTypeCode=Resurs typkod
 ImportDataset_resource_1=Resurser
-
 ErrorResourcesAlreadyInUse=Vissa resurser används
 ErrorResourceUseInEvent=%s använt i %s
+MaxUsers=Maximalt antal användare (platser, sittplatser, etc.)
+MaxUsersLabel=Maximum users
