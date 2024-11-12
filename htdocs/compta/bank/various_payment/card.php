@@ -226,6 +226,8 @@ if (empty($reshook)) {
 					if ($result > 0) {
 						$result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 					}
+				} else {
+					$account_line = null;
 				}
 
 				if ($result >= 0) {
@@ -233,7 +235,7 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 					exit;
 				} else {
-					$object->error = $accountline->error;
+					$object->error = $accountline ? $accountline->error : 'No AccountLine';
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -356,9 +358,13 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
+} else {
+	$formaccounting = null;
 }
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
+} else {
+	$formproject = null;
 }
 
 if ($id) {
@@ -531,7 +537,7 @@ if ($action == 'create') {
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
+		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, array(), 1, 1);
 		print '</td></tr>';
 	} else { // For external software
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
@@ -606,7 +612,7 @@ if ($id) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
 		//$morehtmlref .= '<br>';
 		if ($permissiontoadd) {

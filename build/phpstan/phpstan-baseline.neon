@@ -2051,11 +2051,6 @@ parameters:
 			path: ../../htdocs/blockedlog/admin/blockedlog_list.php
 
 		-
-			message: "#^Parameter \\#1 \\$objtoshow of function formatObject expects object, array given\\.$#"
-			count: 1
-			path: ../../htdocs/blockedlog/ajax/block-info.php
-
-		-
 			message: "#^Dead catch \\- Exception is never thrown in the try block\\.$#"
 			count: 1
 			path: ../../htdocs/blockedlog/class/blockedlog.class.php
@@ -2356,6 +2351,11 @@ parameters:
 			path: ../../htdocs/bookcal/availabilities_document.php
 
 		-
+			message: "#^Empty array passed to foreach\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/availabilities_list.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_list.php
@@ -2474,6 +2474,11 @@ parameters:
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: ../../htdocs/bookcal/calendar_document.php
+
+		-
+			message: "#^Empty array passed to foreach\\.$#"
+			count: 1
+			path: ../../htdocs/bookcal/calendar_list.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -3127,11 +3132,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$mesg might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
-			message: "#^Variable \\$mesgs might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/comm/mailing/cibles.php
 
@@ -3836,33 +3836,13 @@ parameters:
 			path: ../../htdocs/commande/list_det.php
 
 		-
-			message: "#^Variable \\$oldref might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/list_det.php
-
-		-
 			message: "#^Variable \\$permissiontoadd might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: "#^Variable \\$permissiontoread might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/commande/list_det.php
 
 		-
 			message: "#^Variable \\$searchCategoryProductOperator might not be defined\\.$#"
 			count: 3
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: "#^Variable \\$search_product_category_array might not be defined\\.$#"
-			count: 2
-			path: ../../htdocs/commande/list_det.php
-
-		-
-			message: "#^Variable \\$text_icon might not be defined\\.$#"
-			count: 1
 			path: ../../htdocs/commande/list_det.php
 
 		-
@@ -3911,16 +3891,6 @@ parameters:
 			path: ../../htdocs/compta/bank/account_statement_document.php
 
 		-
-			message: "#^Variable \\$max might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
-			message: "#^Variable \\$min might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/annuel.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/bankentries_list.php
@@ -3944,21 +3914,6 @@ parameters:
 			message: "#^Variable \\$dateop in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: "#^Variable \\$numr might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
-			message: "#^Variable \\$css might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/card.php
-
-		-
-			message: "#^Variable \\$name might not be defined\\.$#"
-			count: 4
-			path: ../../htdocs/compta/bank/card.php
 
 		-
 			message: "#^Variable \\$noback in empty\\(\\) always exists and is always falsy\\.$#"
@@ -4081,36 +4036,6 @@ parameters:
 			path: ../../htdocs/compta/bank/graph.php
 
 		-
-			message: "#^Variable \\$morehtml might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$show1 might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$show2 might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$show3 might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$show4 might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
-			message: "#^Variable \\$show5 might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/graph.php
-
-		-
 			message: "#^Right side of && is always true\\.$#"
 			count: 2
 			path: ../../htdocs/compta/bank/line.php
@@ -4171,11 +4096,6 @@ parameters:
 			path: ../../htdocs/compta/bank/releve.php
 
 		-
-			message: "#^Variable \\$total might not be defined\\.$#"
-			count: 3
-			path: ../../htdocs/compta/bank/releve.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/transfer.php
@@ -4212,11 +4132,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$accountline might not be defined\\.$#"
-			count: 1
-			path: ../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: "#^Variable \\$formproject might not be defined\\.$#"
 			count: 1
 			path: ../../htdocs/compta/bank/various_payment/card.php
 

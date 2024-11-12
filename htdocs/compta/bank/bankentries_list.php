@@ -974,6 +974,7 @@ if ($resql) {
 		$last_receipts = array();
 		$last_releve = '';
 		$last_ok = 0;
+		$numr = 0;
 
 		$resqlr = $db->query($sql);
 		if ($resqlr) {
@@ -1101,7 +1102,7 @@ if ($resql) {
 			// Bank line
 			$moreforfilter .= '<div class="divsearchfield">';
 			$tmptitle = $langs->trans('RubriquesTransactions');
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', 0, 0, 1);
 			$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_bid', $cate_arbo, $search_bid, $tmptitle, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}
