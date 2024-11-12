@@ -37,8 +37,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: '0'
       # Get PHP and addons
       - name: Setup PHP
         id: setup-php
@@ -89,11 +87,8 @@ jobs:
           path: ${{ github.workspace }}/_stan.xml
           retention-days: 2
       # Run PHPStan generate baseline
-      - name: Run PHPStan generate baseline
-        id: phpstan-baseline
-        if: ${{ success() }}
-        run: |
-          phpstan -vv analyse --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Update Phpstan baseline
+      # - name: Run PHPStan generate baseline
+      #   id: phpstan-baseline
+      #   if: ${{ success() }}
+      #   run: |
+      #     phpstan -vv analyse --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
