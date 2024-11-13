@@ -305,7 +305,6 @@ class pdf_strato extends ModelePDFContract
 
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-				dol_syslog("ERIC: extrafield " . $extranote);
 				if (!empty($extranote)) {
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
