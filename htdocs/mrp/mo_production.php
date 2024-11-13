@@ -188,7 +188,7 @@ if (empty($reshook)) {
 
 		// Line to produce
 		$moline->fk_mo = $object->id;
-		$moline->qty = GETPOSTINT('qtytoadd');
+		$moline->qty = GETPOSTFLOAT('qtytoadd');
 		$moline->fk_product = GETPOSTINT('productidtoadd');
 		if (GETPOST('addconsumelinebutton')) {
 			$moline->role = 'toconsume';
@@ -484,7 +484,7 @@ if (empty($reshook)) {
 				$value = GETPOST('options_'.$key, 'alphanohtml');
 				$moline->array_options["options_".$key] = $value;
 			}
-			$moline->qty = GETPOSTINT('qty_lineProduce');
+			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
 			$res = $moline->update($user);
 			if ($res < 0) {
 				setEventMessages($moline->error, $moline->errors, 'errors');
