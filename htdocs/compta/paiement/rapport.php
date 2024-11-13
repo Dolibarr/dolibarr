@@ -64,14 +64,14 @@ if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->hasRight('facture', 'lire');
+$permissiontoread = ($user->hasRight('facture', 'lire') == 1);
 
 
 /*
  * Actions
  */
 
-if ($action == 'builddoc' && ($permissiontoread == 1)) {
+if ($action == 'builddoc' && $permissiontoread) {
 	$rap = new pdf_paiement($db);
 
 	$outputlangs = $langs;
