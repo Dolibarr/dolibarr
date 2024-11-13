@@ -1,13 +1,13 @@
 ---
 name: pre-commit
 on:
-  # pull_request:
-  # push:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:

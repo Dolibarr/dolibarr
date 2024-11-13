@@ -52,32 +52,69 @@ class Productlot extends CommonObject
 	 */
 	public $picto = 'lot';
 
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats propales
+	 */
 	public $stats_propale;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats orders
+	 */
 	public $stats_commande;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats contracts
+	 */
 	public $stats_contrat;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats invoices
+	 */
 	public $stats_facture;
+
+	/**
+	 * @var array{suppliers:int,nb:int,rows:int,qty:int} stats supplier propales
+	 */
 	public $stats_commande_fournisseur;
 
 	/**
-	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats shipping
 	 */
 	public $stats_expedition;
 
 	/**
-	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats receptions
 	 */
 	public $stats_reception;
 
 	/**
-	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats supplier orders
 	 */
 	public $stats_supplier_order;
 
+	/**
+	 * @var array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
+	 */
 	public $stats_mo;
+	/**
+	 * @var array{nb_toproduce:int,qty_toproduce:float,nb_toconsume:int,qty_toconsume:float}
+	 */
 	public $stats_bom;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_mrptoconsume;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_mrptoproduce;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_facturerec;
+	/**
+	 * @var array{suppliers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_facture_fournisseur;
 
 
@@ -157,22 +194,31 @@ class Productlot extends CommonObject
 	public $sellby = '';
 
 	/**
-	 * @var int|string eal_date
+	 * @var int|'' eol_date
 	 */
 	public $eol_date = '';
 
 	/**
-	 * @var int|string manufacturing_date
+	 * @var int|'' manufacturing_date
 	 */
 	public $manufacturing_date = '';
 
 	/**
-	 * @var int|string scrapping_date
+	 * @var int|'' scrapping_date
 	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
+	/**
+	 * @var int|''
+	 */
 	public $qc_frequency = '';
+	/**
+	 * @var int|''
+	 */
 	public $lifetime = '';
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
 	/**
@@ -243,7 +289,7 @@ class Productlot extends CommonObject
 	 * @param	int			$sellBy				Sell by date
 	 * @param 	int			$eatBy				Eat by date
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
-	 * @return 	array|null	Array of errors or null if nothing done
+	 * @return 	string[]|null	Array of errors or null if nothing done
 	 */
 	public static function checkSellOrEatByMandatoryFromProductIdAndDates($productId, $sellBy, $eatBy, $onlyFieldName = '')
 	{
@@ -277,7 +323,7 @@ class Productlot extends CommonObject
 	 * @param 	int			$eatBy				Eat by date
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
 	 * @param	bool		$alreadyCheckConf	[=false] conf hasn't been already checked by default or true not to check conf
-	 * @return 	array|null	Array of errors or null if nothing done
+	 * @return 	string[]|null	Array of errors or null if nothing done
 	 */
 	public static function checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName = '', $alreadyCheckConf = false)
 	{
@@ -605,7 +651,7 @@ class Productlot extends CommonObject
 			//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
 			$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
 			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
-			$sql .= ' datec = ' . (!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
+			$sql .= ' datec = ' . (dol_strlen((string) $this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
 			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
 			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';

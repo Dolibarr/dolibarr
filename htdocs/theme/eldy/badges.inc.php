@@ -1,9 +1,21 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+/**
+ * @var string $badgePrimary
+ * @var string $badgeSecondary
+ * @var string $badgeSuccess
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $badgeInfo
+ * @var string $badgeLight
+ * @var string $badgeDark
+ * @var string $colorblind_deuteranopes_badgeWarning
+ */
 '
 @phan-var-force string $badgePrimary
 @phan-var-force string $badgeSecondary

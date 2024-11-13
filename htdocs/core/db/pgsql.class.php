@@ -9,6 +9,7 @@
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public $unescapeslashquot = false;
 	/**
-	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of string using '' and not \'
+	 * @var boolean $standard_conforming_strings		Set this to true if postgres accept only standard encoding of string using '' and not \'
 	 */
 	public $standard_conforming_strings = false;
 
@@ -606,7 +607,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Return datas as an array
 	 *
 	 *	@param	resource	$resultset  Resultset of request
-	 *	@return	false|array				Array
+	 *	@return	array<int|string,mixed>|null|false	Array or null if KO or end of cursor
 	 */
 	public function fetch_array($resultset)
 	{
@@ -623,7 +624,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Return datas as an array
 	 *
 	 *	@param	resource	$resultset  Resultset of request
-	 *	@return	false|array				Array
+	 *	@return	array<int,mixed>|null|int<0,0>	Array or null if KO or end of cursor or 0 if resultset is bool
 	 */
 	public function fetch_row($resultset)
 	{
@@ -632,7 +633,7 @@ class DoliDBPgsql extends DoliDB
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return pg_fetch_row($resultset);
+		return pg_fetch_row($resultset);  // @phan-suppress-current-line PhanTypeMismatchArgumentProbablyReal
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -964,7 +965,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	string[]				List of tables in an array
 	 */
 	public function DDLListTables($database, $table = '')
 	{
@@ -979,7 +980,7 @@ class DoliDBPgsql extends DoliDB
 		}
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
 		if ($result) {
-			while ($row = $this->fetch_row($result)) {
+			while ($row = $this->fetch_row($result)) {  // @phan-suppress-current-line PhanTypeMismatchArgumentProbablyReal
 				$listtables[] = $row[0];
 			}
 		}
@@ -992,7 +993,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	array<array{0:string,1:string}>		List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '')
 	{
@@ -1007,7 +1008,7 @@ class DoliDBPgsql extends DoliDB
 		}
 		$result = pg_query($this->db, "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
 		if ($result) {
-			while ($row = $this->fetch_row($result)) {
+			while ($row = $this->fetch_row($result)) {  // @phan-suppress-current-line PhanTypeMismatchArgumentProbablyReal
 				$listtables[] = $row;
 			}
 		}
@@ -1016,10 +1017,10 @@ class DoliDBPgsql extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	List information of columns into a table.
+	 *	List information of columns in a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Array with information on table
+	 *	@return	array<array<mixed>>	Table with information of columns in the table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -1060,9 +1061,9 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
-	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
+	 *	@param	    ?array<string,mixed>	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	@param	    string[]	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
+	 *	@param	    array<string,mixed>	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
@@ -1213,7 +1214,7 @@ class DoliDBPgsql extends DoliDB
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+			$sql .= " ".$this->sanitize($field_desc['null']);
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
@@ -1347,7 +1348,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		array|null		List of Charset
+	 *	@return	?array<int,array{charset:string,description:string}>	List of Charset
 	 */
 	public function getListOfCharacterSet()
 	{
@@ -1386,7 +1387,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array|null		Liste of Collation
+	 *	@return	?array<int,array{collation:string}>		List of Collations
 	 */
 	public function getListOfCollation()
 	{
@@ -1459,8 +1460,8 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Return value of server parameters
 	 *
-	 * @param	string	$filter		Filter list on a particular value
-	 * @return	array				Array of key-values (key=>value)
+	 * @param	string	$filter			Filter list on a particular value
+	 * @return	array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerParametersValues($filter = '')
 	{
@@ -1483,8 +1484,8 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Return value of server status
 	 *
-	 * @param	string	$filter		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @param	string	$filter			Filter list on a particular value
+	 * @return	array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerStatusValues($filter = '')
 	{

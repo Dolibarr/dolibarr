@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
@@ -66,6 +74,7 @@ if (!$year_start) {
 /*
  * View
  */
+$error = 0;
 
 $form = new Form($db);
 
@@ -296,11 +305,11 @@ if ($result < 0) {
 		$obj = $db->fetch_object($resql);
 		$min = $db->jdate($obj->min);
 		$max = $db->jdate($obj->max);
+		$log = "graph.php: min=".$min." max=".$max;
+		dol_syslog($log);
 	} else {
 		dol_print_error($db);
 	}
-	$log = "graph.php: min=".$min." max=".$max;
-	dol_syslog($log);
 
 	// CRED PART
 	// Chargement du tableau des années

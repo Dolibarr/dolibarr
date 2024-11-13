@@ -32,14 +32,14 @@ require_once __DIR__ . '/webPortalTheme.class.php';
 class Context
 {
 	/**
-	 * @var Context Singleton
+	 * @var ?Context Singleton
 	 * @access private
 	 * @static
 	 */
 	private static $_instance = null;
 
 	/**
-	 * @var	DoliDb	$db		Database handler
+	 * @var	DoliDB	$db		Database handler
 	 */
 	public $db;
 
@@ -125,6 +125,9 @@ class Context
 	 */
 	public $rootUrl;
 
+	/**
+	 * @var string[]
+	 */
 	public $menu_active = array();
 
 	/**
@@ -322,7 +325,7 @@ class Context
 	 * Get root url
 	 *
 	 * @param	string			$controller		Controller name
-	 * @param	string|array	$moreParams		More parameters
+	 * @param	string|array<string,mixed>	$moreParams		More parameters
 	 * @param	bool			$addToken		Add token hash only if $controller is set
 	 * @return	string
 	 * @deprecated see getControllerUrl()
@@ -336,7 +339,7 @@ class Context
 	 * Get controller url according to context
 	 *
 	 * @param	string			$controller		Controller name
-	 * @param	string|array	$moreParams		More parameters
+	 * @param	string|array<string,mixed>	$moreParams		More parameters
 	 * @param	bool			$addToken		Add token hash only if controller is set
 	 * @return	string
 	 */
@@ -366,9 +369,9 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param 	string			$controller				Controller
-	 * @param 	string|array	$moreParams				More parameters
-	 * @param	array			$Tparams				Parameters
+	 * @param 	string						$controller		Controller
+	 * @param 	string|array<string,mixed>	$moreParams		More parameters
+	 * @param	array<string,mixed>			$Tparams		Parameters
 	 * @return	string
 	 */
 	public static function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())

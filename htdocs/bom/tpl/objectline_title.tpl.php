@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  *
  * $type, $text, $description, $line
+ */
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var Form $form
+ * @var Translate $langs
+ *
+ * @var string $action
  */
 
 // Protection to avoid direct call of template

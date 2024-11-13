@@ -142,7 +142,13 @@ class IntracommReport extends CommonObject
 	 * @var string
 	 */
 	public $type_export;
+	/**
+	 * @var int|string
+	 */
 	public $datec;
+	/**
+	 * @var int
+	 */
 	public $tms;
 	// END MODULEBUILDER PROPERTIES
 
@@ -152,8 +158,14 @@ class IntracommReport extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string
+	 */
 	public $period;
 
+	/**
+	 * @var string
+	 */
 	public $declaration;
 
 	/**
@@ -391,6 +403,7 @@ class IntracommReport extends CommonObject
 				return 0;
 			}
 
+			$categ_fraisdeport = null;
 			if ($exporttype == 'deb' && getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0) {
 				$categ_fraisdeport = new Categorie($this->db);
 				$categ_fraisdeport->fetch(getDolGlobalString('INTRACOMMREPORT_CATEG_FRAISDEPORT'));
@@ -530,7 +543,7 @@ class IntracommReport extends CommonObject
 	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
 	 *
 	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
-	 * 	@param	array				$TLinesFraisDePort	Data of shipping costs line
+	 * 	@param	Object[]			$TLinesFraisDePort	Data of shipping costs line
 	 *  @param	string	    		$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param	Categorie			$categ_fraisdeport	category of shipping costs
 	 *  @param	int		    		$i					Line Id
@@ -595,11 +608,12 @@ class IntracommReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE exporttype = '".$this->db->escape($this->type_export)."'";
 		$resql = $this->db->query($sql);
+		$res = null;
 		if ($resql) {
 			$res = $this->db->fetch_object($resql);
 		}
 
-		return (string) ($res->max_declaration_number + 1);
+		return (string) ($res !== null ? ($res->max_declaration_number + 1) : '');
 	}
 
 	/**

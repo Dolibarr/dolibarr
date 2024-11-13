@@ -93,12 +93,12 @@ class FunctionsLibTest extends CommonClassTest
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT') != 5) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') != 2) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
 			die(1);
 		}

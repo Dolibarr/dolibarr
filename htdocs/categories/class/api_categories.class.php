@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024	Jose MARTINEZ			<jose.martinez@pichinov.com>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,9 @@ class Categories extends DolibarrApi
 		'type'
 	);
 
+	/**
+	 * @var array<int,string> Code mapping from ID
+	 */
 	public static $TYPES = array(
 		0 => 'product',
 		1 => 'supplier',

@@ -27,7 +27,15 @@
 // $action must be defined
 // $db, $user, $conf, $langs must be defined
 // Filename to print must be provided into 'file' parameter
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ */
 // Print file
 if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	$langs->load("printing");
@@ -49,8 +57,9 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			$classname = 'printing_'.$driver;
 			$printer = new $classname($db);
 			'@phan-var-force PrintingDriver $printer';
+			/** @var PrintingDriver $printer */
 			$langs->load('printing');
-			//print '<pre>'.print_r($printer, true).'</pre>';
+			// print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {
 				$printerfound++;

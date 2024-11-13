@@ -45,6 +45,15 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load('hrm');
 
@@ -289,7 +298,7 @@ $db->close();
  *
  * 	Return a html list element with diff  between required rank  and user rank
  *
- * 		@param array $TMergedSkills skill list with all rate to add good picto
+ * 		@param array<int,stdClass> $TMergedSkills skill list with all rate to add good picto
  * 		@return string
  */
 function diff(&$TMergedSkills)
@@ -323,7 +332,7 @@ function diff(&$TMergedSkills)
 
 /**
  * 	Return a html list with rank information
- * 		@param array $TMergedSkills skill list for display
+ * 		@param array<int,stdClass> $TMergedSkills skill list for display
  * 		@param string $field which column of comparison we are working with
  * 		@return string
  */
@@ -363,7 +372,7 @@ function rate(&$TMergedSkills, $field)
 /**
  * return a html ul list of skills
  *
- * @param array $TMergedSkills skill list for display
+ * @param array<int,stdClass> $TMergedSkills skill list for display
  * @return string (ul list in html )
  */
 function skillList(&$TMergedSkills)
@@ -385,9 +394,9 @@ function skillList(&$TMergedSkills)
 /**
  *  create an array of lines [ skillLabel,description, maxrank on group1 , minrank needed for this skill ]
  *
- * @param array $TSkill1 skill list of first column
- * @param array $TSkill2 skill list of second column
- * @return array
+ * @param array<int,stdClass> $TSkill1 skill list of first column
+ * @param array<int,stdClass> $TSkill2 skill list of second column
+ * @return array<int,stdClass>
  */
 function mergeSkills($TSkill1, $TSkill2)
 {
@@ -420,7 +429,7 @@ function mergeSkills($TSkill1, $TSkill2)
 /**
  * 	Display a list of User with picto
  *
- * 	@param 	array 	$TUser 			list of users (employees) in selected usergroup of a column
+ * 	@param 	int[] 	$TUser 			list of users (employees) in selected usergroup of a column
  * 	@param 	int 	$fk_usergroup 	selected usergroup id
  * 	@param 	string 	$namelist 		html name
  * 	@return string

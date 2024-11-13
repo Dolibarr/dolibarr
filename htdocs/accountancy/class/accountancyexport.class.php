@@ -358,19 +358,19 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param 	BookKeepingLine[]	$TData 			Array with data
+	 * @param 	BookKeepingLine[]	$TData 				Array with data
 	 * @param	int			$formatexportset			Id of export format
 	 * @param	int<0,1>	$withAttachment				[=0] Not add files
 	 *                                                  or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
-	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
+	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use another value.
 	 *                                                  or 1 to download after writing files - Forced by default when use withAttachment = 1
 	 *                                                  or -1 not to download files
-	 * @param	int<1,1>	$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 * @param	int<1,2>	$outputMode					[=0] Print on screen. Deprecated. Always use another value.
 	 *                                                  or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
 	 *                                                  or 2 to write in file a default export directory (accounting/export/)
 	 * @param	int<1,1>	$noouput					0=old mode. Deprecated. Always use value 1.
 	 *                                                  or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
-	 * @return 	int									Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
+	 * @return 	int										Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
 	 */
 	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 1, $outputMode = 1, $noouput = 1)
 	{
@@ -1506,6 +1506,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							'@phan-var-force FactureFournisseur $invoice';
+							/** @var FactureFournisseur $invoice */
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
@@ -1719,6 +1720,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							'@phan-var-force FactureFournisseur $invoice';
+							/** @var FactureFournisseur $invoice */
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
