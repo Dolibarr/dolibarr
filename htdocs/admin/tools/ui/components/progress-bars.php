@@ -66,17 +66,17 @@ $documentation->showSidebar(); ?>
 				<p class="documentation-text"><?php echo $langs->trans('DocProgressBarsDescription'); ?></p>
 				<div class="documentation-example">
 
-					<?php echo $langs->trans('Xss'); ?>
+					<?php echo 'Xss'; ?>
 					<div class="progress xxs spaced" title="10%">
 						<div class="progress-bar" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
 					</div>
 
-					<?php echo $langs->trans('Xs'); ?>
+					<?php echo 'Xs'; ?>
 					<div class="progress xs spaced" title="20%">
 						<div class="progress-bar" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
 					</div>
 
-					<?php echo $langs->trans('Sm'); ?>
+					<?php echo 'Sm'; ?>
 					<div class="progress sm spaced" title="40%">
 						<div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
 					</div>
