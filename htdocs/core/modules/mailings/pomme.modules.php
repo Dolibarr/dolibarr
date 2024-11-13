@@ -203,7 +203,7 @@ class mailing_pomme extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
-						'fk_contact' => $obj->fk_contact,
+						'fk_contact' => (int) $obj->fk_contact,
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
 						'other' =>
@@ -211,7 +211,7 @@ class mailing_pomme extends MailingTargets
 							($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
 							($langs->transnoentities("PhonePro").'='.$obj->office_phone),
 						'source_url' => $this->url($obj->id),
-						'source_id' => $obj->id,
+						'source_id' => (int) $obj->id,
 						'source_type' => 'user'
 					);
 					$old = $obj->email;

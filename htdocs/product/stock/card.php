@@ -619,9 +619,7 @@ if ($action == 'create') {
 
 			print "</div>";
 
-
 			// Show list of products into warehouse
-
 
 			$totalarray = array();
 			$totalarray['val'] = array();
@@ -743,6 +741,7 @@ if ($action == 'create') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				$units = 0;
 				$sameunits = true;
 
 				while ($i < $num) {
@@ -854,8 +853,6 @@ if ($action == 'create') {
 
 					print "</tr>";
 
-					$i++;
-
 					// Define $unit and $sameunits
 					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						if ($i == 0) {
@@ -864,6 +861,8 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
+
+					$i++;
 				}
 				$db->free($resql);
 

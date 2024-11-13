@@ -50,4 +50,3 @@ e) to display the Original Work publicly.
 
 
 [0]: http://rosenlaw.com/OSL3.0-explained.htm
-

@@ -12,5 +12,4 @@ https://www.gnu.org/licenses/license-list.html#OSL
 ## Local changes
 
 - Change `executeRequest` to public method because
-  `htdocs/admin/dolistore/ajax/image.php#` uses it.
-
+  `htdocs/admin/remotestore/ajax/image.php#` uses it.

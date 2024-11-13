@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.org>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ $servicename = 'PayBox';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -48,7 +49,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-
+$error = 0;
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();

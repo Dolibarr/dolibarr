@@ -35,6 +35,7 @@
  * @var string $upload_dir
  * @var string $upload_dirold
  * @var string $confirm
+ * @var	string $forceFullTextIndexation
  */
 
 // Protection to understand what happen when submitting files larger than post_max_size
@@ -56,6 +57,7 @@ if ((GETPOST('sendit', 'alpha')
 	die;
 }
 
+$error = 0;
 
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($permissiontoadd)) {
@@ -92,9 +94,9 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
-				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
+				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);
 			} elseif (!empty($upload_dir)) {
-				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
+				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);
 			}
 		}
 	}

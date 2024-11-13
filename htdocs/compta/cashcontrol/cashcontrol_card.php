@@ -117,6 +117,7 @@ $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("ta
 /*
  * Actions
  */
+$error = 0;
 
 if (empty($backtopage)) {
 	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
@@ -147,7 +148,6 @@ if ($action == "reopen" && $permissiontoadd) {
 }
 
 if ($action == "start" && $permissiontoadd) {
-	$error = 0;
 	if (!GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
 		$action = 'create';
@@ -169,7 +169,6 @@ if ($action == "start" && $permissiontoadd) {
 		$action = 'start';
 		$error++;
 	}
-	$error = 0;
 	foreach ($arrayofpaymentmode as $key => $val) {
 		$object->$key = (float) price2num(GETPOST($key.'_amount', 'alpha'));
 	}

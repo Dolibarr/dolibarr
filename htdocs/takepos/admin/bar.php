@@ -53,6 +53,7 @@ $res = 0;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();

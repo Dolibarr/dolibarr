@@ -130,7 +130,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if ($duration_unit == 's') {
 		return $time + (int) ($duration_value);
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn' || $duration_unit == 'min') {
 		return $time + (int) (60 * $duration_value);
 	}
 	if ($duration_unit == 'h') {
@@ -333,6 +333,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
  *    	@param      float	$duration_value		Duration value
  *    	@param      string	$duration_unit		Duration unit
  *      @return     float	$result
+ *      @see measuringUnitString()
  */
 function convertDurationtoHour($duration_value, $duration_unit)
 {
@@ -341,7 +342,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
 	if ($duration_unit == 's') {
 		$result = $duration_value / 3600;
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn' || $duration_unit == 'min') {
 		$result = $duration_value / 60;
 	}
 	if ($duration_unit == 'h') {
@@ -1024,7 +1025,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
-	if ($timestampStart < $timestampEnd) {
+	if ($timestampStart <= $timestampEnd) {
 		if ($lastday == 1) {
 			$bit = 0;
 		} else {

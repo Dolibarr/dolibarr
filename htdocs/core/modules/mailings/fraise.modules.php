@@ -301,7 +301,7 @@ class mailing_fraise extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' =>
@@ -310,7 +310,7 @@ class mailing_fraise extends MailingTargets
 								($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
 								($langs->transnoentities("Company").'='.$obj->societe),
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'member'
 					);
 					$old = $obj->email;

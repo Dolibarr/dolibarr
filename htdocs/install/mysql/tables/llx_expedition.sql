@@ -27,18 +27,17 @@ create table llx_expedition
   ref                   varchar(30)        NOT NULL,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
-  fk_projet  		integer  DEFAULT NULL,
+  fk_projet  		    integer  DEFAULT NULL,
 
   ref_ext               varchar(255),					-- reference into an external system (not used by dolibarr)
   ref_customer          varchar(255),					-- customer number
-
   date_creation         datetime,						-- date of creation
   fk_user_author        integer,						-- author of creation
   fk_user_modif         integer,						-- author of last change
   date_valid            datetime,						-- date of validation
   fk_user_valid         integer,						-- user that validate
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
-  date_expedition       datetime,						-- not used (deprecated)
+  date_expedition       datetime,						-- date real shipment (to implement)
   fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
   fk_shipping_method    integer,
   tracking_number       varchar(50),
@@ -64,6 +63,6 @@ create table llx_expedition
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
 
-  import_key			varchar(14),
-  extraparams			varchar(255)							-- for other parameters with json format
+  import_key			varchar(14),                    -- import id when line is imported
+  extraparams			varchar(255)					-- for other parameters with json format
 )ENGINE=innodb;

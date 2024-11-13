@@ -81,7 +81,7 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {

@@ -109,7 +109,9 @@ class modCaptchaStandard extends ModeleCaptcha
 	{
 		global $langs;
 
-		// TODO Replace the a link with a post of form.
+		// Output the image by calling /core/antispamimage.php
+		// This antispamimage also record the value of code into $_SESSION['dol_antispam_value'] so we will be able to validate by calling
+		// validateCodeAfterLoginSubmit() later when we submit the login form.
 
 		$out = '<!-- Captcha -->
 		<div class="trinputlogin">
@@ -131,16 +133,19 @@ class modCaptchaStandard extends ModeleCaptcha
 		function submitFormFromCaptcha(event) {
 			console.log("submitFormFromCaptcha");
 
-	      	// Prevent the default action of the link
-    		event.preventDefault();
-      		// Search the form
+			// Prevent the default action of the link
+			event.preventDefault();
+			// Search the form
 			const form = event.target.closest("form");
 
-      		// Submit the form if found
-      		if (form) {
-        		form.submit();
-      		}
-    	}
+			// Submit the form if found
+			if (form) {
+				console.log("we set actionlogin to value \"disabled\"");
+				document.getElementById("actionlogin").value = "disabled";
+
+				form.submit();
+			}
+		}
 		</script>
 		<!-- End code for Captcha -->'."\n";
 
@@ -157,6 +162,10 @@ class modCaptchaStandard extends ModeleCaptcha
 	 */
 	public function validateCodeAfterLoginSubmit()
 	{
-		return 1;
+		$sessionkey = 'dol_antispam_value';		// The same key than set into the /core/antispamimage.php file.
+
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml')))) ? 1 : 0;
+
+		return $ok;
 	}
 }

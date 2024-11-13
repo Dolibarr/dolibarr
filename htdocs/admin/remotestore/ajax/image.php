@@ -23,13 +23,13 @@ if (!defined('NOTOKENRENEWAL')) {
 
 
 /**
- *      \file       htdocs/admin/dolistore/ajax/image.php
+ *      \file       htdocs/admin/remotestore/ajax/image.php
  *      \ingroup    admin
  *      \brief      Page des information dolistore
  */
 
 require "../../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/dolistore.class.php';
 
 
 /*

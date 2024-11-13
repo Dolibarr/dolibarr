@@ -1826,13 +1826,13 @@ $db->close();
  * @param   int		$year            Year
  * @param   int		$monthshown      Current month shown in calendar view
  * @param   string	$style           Style to use for this day
- * @param   array	$eventarray      Array of events
+ * @param   array<int,ActionComm[]>	$eventarray      Array of events
  * @param   int		$maxprint        Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
- * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
+ * @param	int<-1,1>	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
  * @param	array{}|array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
@@ -2158,9 +2158,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						'@phan-var-force ActionComm $event';
 						if (empty($reshook)) {
 							// Other calendar
+							/*
 							if (empty($event->fulldayevent)) {
 								//print $event->getNomUrl(2).' ';
 							}
+							*/
 
 							// Date
 							if (empty($event->fulldayevent)) {

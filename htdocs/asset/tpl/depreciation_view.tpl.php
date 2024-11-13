@@ -26,15 +26,16 @@
  * $parameters
  */
 
+/**
+ * @var Form $form
+ * @var HookManager $hookmanager
+ */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-/**
- * @var HookManager $hookmanager
- */
 
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -113,7 +114,7 @@ if (empty($reshook)) {
 			if (!empty($field_info['help'])) {
 				print $form->textwithpicto($langs->trans($field_info['label']), $langs->trans($field_info['help']));
 			} else {
-				if (isset($field_info['copytoclipboard']) && $field_info['copytoclipboard'] == 1) {
+				if (isset($field_info['copytoclipboard']) && $field_info['copytoclipboard'] == 1) {  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 					print showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($field_info['label']));
 				} else {
 					print $langs->trans($field_info['label']);
