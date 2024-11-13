@@ -28,7 +28,13 @@
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
-
+/**
+ * @var FormSetup $formSetup
+ * @var string $action
+ * @var int $error
+ * @var ?int $nomessageinupdate
+ * @var ?int $nomessageinsetmoduleoptions
+ */
 
 if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();

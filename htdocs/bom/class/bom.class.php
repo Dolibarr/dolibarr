@@ -1471,7 +1471,8 @@ class BOM extends CommonObject
 					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 					$measuringUnits = new CUnits($this->db);
 					$measuringUnits->fetch($line->fk_unit);
-					// $unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+
+					// The unit is a unit for time, so the $measuringUnits->scale is not a power of 10, but directly the factor to change unit into seconds
 					$qtyhourforline = $line->qty * (int) $measuringUnits->scale / 3600;
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {

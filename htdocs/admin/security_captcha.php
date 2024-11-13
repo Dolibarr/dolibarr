@@ -91,7 +91,7 @@ print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("CaptchaDesc")."</span><br>\n";
 print "<br>\n";
 
-$dirModCaptcha = array_merge(array('/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+$dirModCaptcha = array_merge(array('/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
 
 // Load array with all captcha generation modules
 $arrayhandler = array();
@@ -112,6 +112,7 @@ foreach ($dirModCaptcha as $dirroot) {
 
 				$obj = new $classname($db, $conf, $langs, $user);
 				'@phan-var-force ModeleCaptcha $obj';
+				/** @var ModeleCaptcha $obj */
 				$arrayhandler[$obj->id] = $obj;
 				$i++;
 			}

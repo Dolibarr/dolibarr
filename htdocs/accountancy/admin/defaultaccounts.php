@@ -132,8 +132,9 @@ if (isModEnabled('societe')) {
  * Actions
  */
 
+$error = 0;
+
 if ($action == 'update') {
-	$error = 0;
 	// Process $list_account_main
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');

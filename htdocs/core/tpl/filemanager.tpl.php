@@ -27,6 +27,7 @@
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Website $website
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -49,11 +50,13 @@ if (empty($module)) {
 	$module = 'ecm';
 }
 
-'@phan-var-force WebSite $website';
+'@phan-var-force Website $website';
 
 $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
+$error = 0;
+
 if ($module == 'ecm') {
 	$permtoadd = $user->hasRight("ecm", "setup");
 	$permtoupload = $user->hasRight("ecm", "upload");

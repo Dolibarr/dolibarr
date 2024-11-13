@@ -346,7 +346,7 @@ if ($mode == 'kanban' && $groupby) {
 /*
  * Actions
  */
-
+$error = 0;
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';

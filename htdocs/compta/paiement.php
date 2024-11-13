@@ -12,7 +12,7 @@
  * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $field
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -107,8 +108,6 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $usercanissuepayment) {
-		$error = 0;
-
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$paiement_id = 0;
 		$totalpayment = 0;
@@ -223,8 +222,6 @@ if (empty($reshook)) {
 	 * Action confirm_paiement
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes' && $usercanissuepayment) {
-		$error = 0;
-
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzuser');
 
 		$db->begin();

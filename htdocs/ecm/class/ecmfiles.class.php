@@ -97,6 +97,11 @@ class EcmFiles extends CommonObject
 	public $keywords;
 
 	/**
+	 * @var ?string content
+	 */
+	public $content;
+
+	/**
 	 * @var string cover
 	 */
 	public $cover;
@@ -159,20 +164,21 @@ class EcmFiles extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "contains hash from filename+filepath"),
-		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash of file content"),
-		'share' => array('type' => 'varchar(128)', 'label' => 'Share', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash for file sharing"),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash of file content"),
+		'share' => array('type' => 'varchar(128)', 'label' => 'Share', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash for file sharing"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 50, 'index' => 1),
-		'filepath' => array('type' => 'varchar(255)', 'label' => 'FilePath', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "relative to dolibarr document dir. Example module/def"),
-		'filename' => array('type' => 'varchar(255)', 'label' => 'FileName', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "file name only without any directory"),
-		'src_object_type' => array('type' => 'varchar(64)', 'label' => 'SourceType', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => 0, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "Source object type ('proposal', 'invoice', ...)"),
+		'filepath' => array('type' => 'varchar(255)', 'label' => 'FilePath', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "relative to dolibarr document dir. Example module/def"),
+		'filename' => array('type' => 'varchar(255)', 'label' => 'FileName', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "file name only without any directory"),
+		'src_object_type' => array('type' => 'varchar(64)', 'label' => 'SourceType', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => 0, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "Source object type ('proposal', 'invoice', ...)"),
 		'src_object_id' => array('type' => 'integer', 'label' => 'SourceID', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 90, 'index' => 1, 'comment' => "Source object id"),
-		'fullpath_orig' => array('type' => 'varchar(750)', 'label' => 'FullPathOrig', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "full path of original filename, when file is uploaded from a local computer"),
+		'fullpath_orig' => array('type' => 'varchar(750)', 'label' => 'FullPathOrig', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "full path of original filename, when file is uploaded from a local computer"),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 0, 'position' => 110),
-		'keywords' => array('type' => 'varchar(750)', 'label' => 'Keywords', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "list of keywords, separated with comma. Must be limited to most important keywords."),
+		'keywords' => array('type' => 'varchar(750)', 'label' => 'Keywords', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "list of keywords, separated with comma. Must be limited to most important keywords."),
+		'content' => array('type' => 'html', 'label' => 'Content', 'enabled' => 'getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")', 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax200', 'help' => "Text content of file", 'showoncombobox' => 2, 'validate' => 1,'comment' => "Text content if option to store txt content was set."),
 		'cover' => array('type' => 'text', 'label' => 'Cover', 'enabled' => 1, 'visible' => 0, 'position' => 130, 'comment' => "is this file a file to use for a cover"),
 		'position' => array('type' => 'integer', 'label' => 'Position', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 140, 'index' => 1, 'comment' => "position of file among others"),
-		'gen_or_uploaded' => array('type' => 'varchar(12)', 'label' => 'GenOrUpload', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "'generated' or 'uploaded'"),
-		'extraparams' => array('type' => 'varchar(255)', 'label' => 'ExtraParams', 'enabled' => 1, 'position' => 160, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1, 'comment' => "for stocking other parameters with json format"),
+		'gen_or_uploaded' => array('type' => 'varchar(12)', 'label' => 'GenOrUpload', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "'generated' or 'uploaded'"),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'ExtraParams', 'enabled' => 1, 'position' => 160, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "for stocking other parameters with json format"),
 		'date_c' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 175),
 		'fk_user_c' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
@@ -311,6 +317,9 @@ class EcmFiles extends CommonObject
 		$sql .= 'fullpath_orig,';
 		$sql .= 'description,';
 		$sql .= 'keywords,';
+		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+			$sql .= 'content,';
+		}
 		$sql .= 'cover,';
 		$sql .= 'position,';
 		$sql .= 'gen_or_uploaded,';
@@ -332,6 +341,9 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->fullpath_orig) ? 'NULL' : "'".$this->db->escape($this->fullpath_orig)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->keywords) ? 'NULL' : "'".$this->db->escape($this->keywords)."'").',';
+		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+			$sql .= ' '.(!isset($this->content) ? 'NULL' : "'".$this->db->escape($this->content)."'").',';
+		}
 		$sql .= ' '.(!isset($this->cover) ? 'NULL' : "'".$this->db->escape($this->cover)."'").',';
 		$sql .= ' '.((int) $maxposition).',';
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';
@@ -414,6 +426,9 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fullpath_orig,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+			$sql .= " t.content,";
+		}
 		$sql .= " t.cover,";
 		$sql .= " t.position,";
 		$sql .= " t.gen_or_uploaded,";
@@ -492,6 +507,9 @@ class EcmFiles extends CommonObject
 				$this->fullpath_orig = $obj->fullpath_orig;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
+				if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+					$this->content = $obj->content;
+				}
 				$this->cover = $obj->cover;
 				$this->position = $obj->position;
 				$this->gen_or_uploaded = $obj->gen_or_uploaded;
@@ -553,6 +571,9 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fullpath_orig,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+			$sql .= " t.content,";
+		}
 		$sql .= " t.cover,";
 		$sql .= " t.position,";
 		$sql .= " t.gen_or_uploaded,";
@@ -625,6 +646,9 @@ class EcmFiles extends CommonObject
 				$line->fullpath_orig = $obj->fullpath_orig;
 				$line->description = $obj->description;
 				$line->keywords = $obj->keywords;
+				if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+					$line->content = $obj->content;
+				}
 				$line->cover = $obj->cover;
 				$line->position = $obj->position;
 				$line->gen_or_uploaded = $obj->gen_or_uploaded;
@@ -727,6 +751,9 @@ class EcmFiles extends CommonObject
 		$sql .= ' fullpath_orig = '.(isset($this->fullpath_orig) ? "'".$this->db->escape($this->fullpath_orig)."'" : "null").',';
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' keywords = '.(isset($this->keywords) ? "'".$this->db->escape($this->keywords)."'" : "null").',';
+		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+			$sql .= ' content = '.(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").',';
+		}
 		$sql .= ' cover = '.(isset($this->cover) ? "'".$this->db->escape($this->cover)."'" : "null").',';
 		$sql .= ' position = '.(isset($this->position) ? $this->db->escape($this->position) : "0").',';
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
@@ -905,13 +932,14 @@ class EcmFiles extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array<string,mixed> $params params to construct tooltip data
+	 *
+	 * @param 	array<string,mixed> 	$params 		params to construct tooltip data
+	 * @return 	array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
 	 * @since v21
-	 * @return array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$langs->load('ecm');
 		$datas = [];
@@ -920,12 +948,23 @@ class EcmFiles extends CommonObject
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowFile")];
 		}
-		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("ShowFile") . '</u>';
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("File") . '</u>';
+		if (!empty($this->filename)) {
+			$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.basename($this->filename);
+		}
 		if (!empty($this->ref)) {
-			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$datas['ref'] = '<br><b>'.$langs->trans('HashOfFileContent').':</b> '.$this->ref;
+		}
+		if (!empty($this->share)) {
+			$datas['share'] = '<br>'.$langs->trans("FileSharedViaALink");
+		} else {
+			$datas['share'] = '<br>'.$langs->trans("FileNotShared");
 		}
 		if (!empty($this->gen_or_uploaded)) {
 			$datas['gen_or_upload'] = '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+		}
+		if (!empty($this->content)) {
+			$datas['content'] = '<br>'.$langs->trans('FileHasAnIndexedTextContent');
 		}
 
 		return $datas;
@@ -1061,8 +1100,9 @@ class EcmFiles extends CommonObject
 		$this->filename = 'myspecimenfilefile.pdf';
 		$this->filepath = '/aaa/bbb';
 		$this->fullpath_orig = 'c:/file on my disk.pdf';
-		$this->description = 'This is a long description of file';
+		$this->description = 'This is a description of the file';
 		$this->keywords = 'key1,key2';
+		$this->content = 'This is the text content of the file';
 		$this->cover = '1';
 		$this->position = 5;
 		$this->gen_or_uploaded = 'uploaded';
@@ -1117,6 +1157,12 @@ class EcmFilesLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $keywords;
+
+	/**
+	 * @var string
+	 */
+	public $content;
+
 	/**
 	 * @var string
 	 */

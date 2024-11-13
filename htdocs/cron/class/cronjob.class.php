@@ -1580,13 +1580,13 @@ class Cronjob extends CommonObject
 		}
 
 		$statusType = 'status4';
-		if ($status == 1 && $processing) {
+		if ($status == self::STATUS_ENABLED && $processing) {
 			$statusType = 'status1';
 		}
-		if ($status == 0) {
+		if ($status == self::STATUS_DISABLED) {
 			$statusType = 'status5';
 		}
-		if ($this->lastresult) {
+		if ($status == self::STATUS_ENABLED && $this->lastresult) {
 			$statusType = 'status8';
 		}
 
