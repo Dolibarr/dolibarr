@@ -88,7 +88,7 @@ $documentation->showSidebar(); ?>
 								<td class="left">Jack</td>
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
-								<td class="right">Caribean</td>
+								<td class="right">Caribbean</td>
 							</tr>
 							<tr>
 								<td class="left">Sacha</td>
