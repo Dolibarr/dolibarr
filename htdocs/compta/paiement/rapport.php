@@ -64,7 +64,7 @@ if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->hasRight('facture', 'lire');
+$permissiontoread = ($user->hasRight('facture', 'lire') == 1);
 
 
 /*

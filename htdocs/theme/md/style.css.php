@@ -2720,6 +2720,7 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 16px);\n";
 	} ?>
+	margin-bottom: 20px;
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {

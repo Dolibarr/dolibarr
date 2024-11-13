@@ -434,12 +434,12 @@ class Asset extends CommonObject
 			if ($res < 0) {
 				return -1;
 			} elseif ($res > 0) {
-				$this->fields['date_acquisition']['noteditable'] = '1';
-				$this->fields['date_start']['noteditable'] = '1';
-				$this->fields['acquisition_value_ht']['noteditable'] = '1';
-				$this->fields['recovered_vat']['noteditable'] = '1';
-				$this->fields['reversal_date']['noteditable'] = '1';
-				$this->fields['reversal_amount_ht']['noteditable'] = '1';
+				$this->fields['date_acquisition']['noteditable'] = 1;
+				$this->fields['date_start']['noteditable'] = 1;
+				$this->fields['acquisition_value_ht']['noteditable'] = 1;
+				$this->fields['recovered_vat']['noteditable'] = 1;
+				$this->fields['reversal_date']['noteditable'] = 1;
+				$this->fields['reversal_amount_ht']['noteditable'] = 1;
 			}
 		}
 

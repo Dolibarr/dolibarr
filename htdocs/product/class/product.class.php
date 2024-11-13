@@ -356,14 +356,14 @@ class Product extends CommonObject
 	/**
 	 * Stock real (denormalized data)
 	 *
-	 * @var int
+	 * @var float
 	 */
 	public $stock_reel = 0;
 
 	/**
 	 * Stock virtual
 	 *
-	 * @var int
+	 * @var float
 	 */
 	public $stock_theorique;
 
@@ -6189,6 +6189,7 @@ class Product extends CommonObject
 					$this->stock_reel += $row->reel;
 					$i++;
 				}
+				$this->stock_reel = (float) price2num($this->stock_reel, 'MS');
 			}
 			$this->db->free($result);
 

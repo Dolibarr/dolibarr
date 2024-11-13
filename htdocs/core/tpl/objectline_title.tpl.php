@@ -39,6 +39,7 @@
  * @var CommonObject $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -190,7 +191,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmark1 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }
 

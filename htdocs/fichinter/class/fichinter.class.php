@@ -875,7 +875,7 @@ class Fichinter extends CommonObject
 		$langs->load('interventions');
 
 		$datas = [];
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowIntervention").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}

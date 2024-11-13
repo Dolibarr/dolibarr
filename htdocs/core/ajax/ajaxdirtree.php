@@ -367,7 +367,7 @@ if ((!isset($mode) || $mode != 'noajax') && is_object($db)) {
 /**
  * treeOutputForAbsoluteDir
  *
- * @param	array	$sqltree				Sqltree
+ * @param	array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:int,id_children?:int[],level:int}>	$sqltree				Sqltree
  * @param	string	$selecteddir			Selected dir
  * @param	string	$fullpathselecteddir	Full path of selected dir
  * @param	string	$modulepart				Modulepart

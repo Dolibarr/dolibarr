@@ -244,7 +244,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->date_start			= $this->db->jdate($objp->date_start);
 			$this->date_end				= $this->db->jdate($objp->date_end);
 			$this->info_bits			= $objp->info_bits;
-			$this->tva_npr = (($objp->info_bits & 1) == 1) ? 1 : 0;
+			$this->tva_npr = ((($objp->info_bits & 1) == 1) ? 1 : 0);
 			$this->special_code = $objp->special_code;
 			$this->total_ht				= $objp->total_ht;
 			$this->total_tva			= $objp->total_tva;

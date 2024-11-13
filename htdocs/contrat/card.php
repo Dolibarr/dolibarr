@@ -176,10 +176,10 @@ if (empty($reshook)) {
 		$date_start = '';
 		$date_end = '';
 		if (GETPOST('startmonth') && GETPOST('startday') && GETPOST('startyear')) {
-			$date_start = dol_mktime(GETPOST('starthour'), GETPOST('startmin'), 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
+			$date_start = dol_mktime(GETPOSTINT('starthour'), GETPOSTINT('startmin'), 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 		}
 		if (GETPOST('endmonth') && GETPOST('endday') && GETPOST('endyear')) {
-			$date_end = dol_mktime(GETPOST('endhour'), GETPOST('endmin'), 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+			$date_end = dol_mktime(GETPOSTINT('endhour'), GETPOSTINT('endmin'), 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 		}
 
 		$result = $object->active_line($user, GETPOSTINT('ligne'), $date_start, $date_end, GETPOST('comment'));
@@ -209,7 +209,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_end = '';
 		if (GETPOST('endmonth') && GETPOST('endday') && GETPOST('endyear')) {
-			$date_end = dol_mktime(GETPOST('endhour'), GETPOST('endmin'), 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+			$date_end = dol_mktime(GETPOSTINT('endhour'), GETPOSTINT('endmin'), 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 		}
 		if (!$date_end) {
 			$error++;
@@ -230,10 +230,10 @@ if (empty($reshook)) {
 		$date_start = '';
 		$date_end = '';
 		if (GETPOST('date_startmonth') && GETPOST('date_startday') && GETPOST('date_startyear')) {
-			$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+			$date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 		}
 		if (GETPOST('date_endmonth') && GETPOST('date_endday') && GETPOST('date_endyear')) {
-			$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+			$date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		}
 	}
 
@@ -243,19 +243,19 @@ if (empty($reshook)) {
 	$date_start_real_update = '';
 	$date_end_real_update = '';
 	if (GETPOST('date_start_updatemonth') && GETPOST('date_start_updateday') && GETPOST('date_start_updateyear')) {
-		$date_start_update = dol_mktime(GETPOST('date_start_updatehour'), GETPOST('date_start_updatemin'), 0, GETPOST('date_start_updatemonth'), GETPOST('date_start_updateday'), GETPOST('date_start_updateyear'));
+		$date_start_update = dol_mktime(GETPOSTINT('date_start_updatehour'), GETPOSTINT('date_start_updatemin'), 0, GETPOSTINT('date_start_updatemonth'), GETPOSTINT('date_start_updateday'), GETPOSTINT('date_start_updateyear'));
 	}
 	if (GETPOST('date_end_updatemonth') && GETPOST('date_end_updateday') && GETPOST('date_end_updateyear')) {
-		$date_end_update = dol_mktime(GETPOST('date_end_updatehour'), GETPOST('date_end_updatemin'), 0, GETPOST('date_end_updatemonth'), GETPOST('date_end_updateday'), GETPOST('date_end_updateyear'));
+		$date_end_update = dol_mktime(GETPOSTINT('date_end_updatehour'), GETPOSTINT('date_end_updatemin'), 0, GETPOSTINT('date_end_updatemonth'), GETPOSTINT('date_end_updateday'), GETPOSTINT('date_end_updateyear'));
 	}
 	if (GETPOST('date_start_real_updatemonth') && GETPOST('date_start_real_updateday') && GETPOST('date_start_real_updateyear')) {
-		$date_start_real_update = dol_mktime(GETPOST('date_start_real_updatehour'), GETPOST('date_start_real_updatemin'), 0, GETPOST('date_start_real_updatemonth'), GETPOST('date_start_real_updateday'), GETPOST('date_start_real_updateyear'));
+		$date_start_real_update = dol_mktime(GETPOSTINT('date_start_real_updatehour'), GETPOSTINT('date_start_real_updatemin'), 0, GETPOSTINT('date_start_real_updatemonth'), GETPOSTINT('date_start_real_updateday'), GETPOSTINT('date_start_real_updateyear'));
 	}
 	if (GETPOST('date_end_real_updatemonth') && GETPOST('date_end_real_updateday') && GETPOST('date_end_real_updateyear')) {
-		$date_end_real_update = dol_mktime(GETPOST('date_end_real_updatehour'), GETPOST('date_end_real_updatemin'), 0, GETPOST('date_end_real_updatemonth'), GETPOST('date_end_real_updateday'), GETPOST('date_end_real_updateyear'));
+		$date_end_real_update = dol_mktime(GETPOSTINT('date_end_real_updatehour'), GETPOSTINT('date_end_real_updatemin'), 0, GETPOSTINT('date_end_real_updatemonth'), GETPOSTINT('date_end_real_updateday'), GETPOSTINT('date_end_real_updateyear'));
 	}
 	if (GETPOST('remonth') && GETPOST('reday') && GETPOST('reyear')) {
-		$datecontrat = dol_mktime(GETPOST('rehour'), GETPOST('remin'), 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+		$datecontrat = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 
 	// Add contract
@@ -511,8 +511,8 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$date_start = dol_mktime(GETPOSTINT('date_start'.$predef.'hour'), GETPOSTINT('date_start'.$predef.'min'), GETPOSTINT('date_start'.$predef.'sec'), GETPOSTINT('date_start'.$predef.'month'), GETPOSTINT('date_start'.$predef.'day'), GETPOSTINT('date_start'.$predef.'year'));
+		$date_end = dol_mktime(GETPOSTINT('date_end'.$predef.'hour'), GETPOSTINT('date_end'.$predef.'min'), GETPOSTINT('date_end'.$predef.'sec'), GETPOSTINT('date_end'.$predef.'month'), GETPOSTINT('date_end'.$predef.'day'), GETPOSTINT('date_end'.$predef.'year'));
 		if (!empty($date_start) && !empty($date_end) && $date_start > $date_end) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$error++;
@@ -531,8 +531,8 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Clean parameters
-			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+			$date_start = dol_mktime(GETPOSTINT('date_start'.$predef.'hour'), GETPOSTINT('date_start'.$predef.'min'), GETPOSTINT('date_start'.$predef.'sec'), GETPOSTINT('date_start'.$predef.'month'), GETPOSTINT('date_start'.$predef.'day'), GETPOSTINT('date_start'.$predef.'year'));
+			$date_end = dol_mktime(GETPOSTINT('date_end'.$predef.'hour'), GETPOSTINT('date_end'.$predef.'min'), GETPOSTINT('date_end'.$predef.'sec'), GETPOSTINT('date_end'.$predef.'month'), GETPOSTINT('date_end'.$predef.'day'), GETPOSTINT('date_end'.$predef.'year'));
 
 			$price_base_type = '';
 			$price_min = '';
@@ -908,8 +908,8 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
-		$date_start = dol_mktime(12, 0, 0, GETPOST('d_startmonth'), GETPOST('d_startday'), GETPOST('d_startyear'));
-		$date_end   = dol_mktime(12, 0, 0, GETPOST('d_endmonth'), GETPOST('d_endday'), GETPOST('d_endyear'));
+		$date_start = dol_mktime(12, 0, 0, GETPOSTINT('d_startmonth'), GETPOSTINT('d_startday'), GETPOSTINT('d_startyear'));
+		$date_end   = dol_mktime(12, 0, 0, GETPOSTINT('d_endmonth'), GETPOSTINT('d_endday'), GETPOSTINT('d_endyear'));
 		$comment      = GETPOST('comment', 'alpha');
 		$result = $object->activateAll($user, $date_start, 0, $comment, $date_end);
 		if ($result < 0) {
@@ -1027,7 +1027,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			$datacontrat = dol_mktime(GETPOST('date_contrathour'), GETPOST('date_contratmin'), 0, GETPOST('date_contratmonth'), GETPOST('date_contratday'), GETPOST('date_contratyear'));
+			$datacontrat = dol_mktime(GETPOSTINT('date_contrathour'), GETPOSTINT('date_contratmin'), 0, GETPOSTINT('date_contratmonth'), GETPOSTINT('date_contratday'), GETPOSTINT('date_contratyear'));
 			$result = $object->setValueFrom('date_contrat', $datacontrat, '', null, 'date', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2045,14 +2045,14 @@ if ($action == 'create') {
 				// Definie date debut et fin par default
 				$dateactstart = $objp->date_start;
 				if (GETPOST('remonth')) {
-					$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+					$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				} elseif (!$dateactstart) {
 					$dateactstart = time();
 				}
 
 				$dateactend = $objp->date_end;
 				if (GETPOST('endmonth')) {
-					$dateactend = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+					$dateactend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 				} elseif (!$dateactend) {
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
@@ -2102,14 +2102,14 @@ if ($action == 'create') {
 				// Definie date debut et fin par default
 				$dateactstart = $objp->date_start_real;
 				if (GETPOST('remonth')) {
-					$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+					$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				} elseif (!$dateactstart) {
 					$dateactstart = time();
 				}
 
 				$dateactend = $objp->date_end_real;
 				if (GETPOST('endmonth')) {
-					$dateactend = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+					$dateactend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 				} elseif (!$dateactend) {
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);

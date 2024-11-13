@@ -100,7 +100,7 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
 $extrafields = new ExtraFields($db);
@@ -549,7 +549,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
-				$form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1, array(), 0, 1, 0, '', 0, '', null);
+				$form->select_produits(0, 'elemid', '', 0, 0, -1, 2, '', 1, array(), 0, 1, 0, '', 0, '', null);
 				print '<input type="submit" class="button buttongen" name="addintocategory" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';

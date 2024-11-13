@@ -200,12 +200,18 @@ class AccountingAccountTest extends CommonClassTest
 		print __METHOD__." date_start = ".dol_print_date($result['date_start'], 'dayhour', 'gmt')."\n";
 		print __METHOD__." date_end   = ".dol_print_date($result['date_end'], 'dayhour', 'gmt')."\n";
 
+		$this->assertArrayHasKey('date_start', $result);
+		$this->assertArrayHasKey('date_end', $result);
+
 
 		$result = getCurrentPeriodOfFiscalYear($db, $conf, null, 'gmt');
 		var_dump($result);
 
 		print __METHOD__." date_start = ".dol_print_date($result['date_start'], 'dayhour', 'gmt')."\n";
 		print __METHOD__." date_end   = ".dol_print_date($result['date_end'], 'dayhour', 'gmt')."\n";
+
+		$this->assertArrayHasKey('date_start', $result);
+		$this->assertArrayHasKey('date_end', $result);
 
 		return $result;
 	}

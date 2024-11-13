@@ -80,8 +80,8 @@ if ($cancel && !$id) {
 if ($action == 'add' && !$cancel && $permissiontoadd) {
 	$db->begin();
 
-	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
-	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
+	$datev = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
+	$datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
 
 	$object->accountid = GETPOSTINT("accountid");
 	$object->paymenttype = GETPOST("paiementtype");
@@ -159,8 +159,8 @@ $help_url = '';
 llxHeader('', $title, $help_url);
 
 if ($action == 'create') {
-	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
-	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
+	$datev = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
+	$datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
 
 	print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
 
