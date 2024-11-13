@@ -72,7 +72,7 @@ jobs:
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.head_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-
-            ${{ env.KEY_ROOT }}-
+            # ${{ env.KEY_ROOT }}-
 
       - name: Setup MariaDB
         uses: frederic34/setup-mariadb@v1
