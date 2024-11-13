@@ -10411,12 +10411,6 @@ parameters:
 			path: ../../htdocs/core/class/comment.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/class/commondocgenerator.class.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommonObject given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12529,42 +12523,6 @@ parameters:
 			path: ../../htdocs/core/filemanagerdol/browser/default/browser.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmactualfolder.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmcreatefolder.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmcreatefolder.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmfolders.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmresourceslist.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmupload.php
-
-		-
 			message: '#^Variable \$_FILES in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -13711,12 +13669,6 @@ parameters:
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Asset given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -13969,12 +13921,6 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Commande given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 6
@@ -14025,12 +13971,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Commande given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
@@ -14227,12 +14167,6 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Delivery given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_storm\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14369,12 +14303,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Expedition given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
 			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float given\.$#'
@@ -14617,12 +14545,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Facture given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_crabe\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14678,12 +14600,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$a of method pdf_octopus\:\:sumSituation\(\) expects array\<int\|string, array\<mixed\>\|float\|int\>, array\<string, Facture\|float\|int\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Facture given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -14883,12 +14799,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Facture given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -16267,12 +16177,6 @@ parameters:
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Entrepot\|MouvementStock given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
 			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
 			identifier: argument.type
 			count: 2
@@ -16347,12 +16251,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Mo given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
@@ -16795,12 +16693,6 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Propal given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 6
@@ -16845,12 +16737,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Propal given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
@@ -17209,12 +17095,6 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, StockTransfer given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: '#^Parameter \#4 \$posy of method pdf_eagle_proforma\:\:drawTotalTable\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -17353,12 +17233,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, FactureFournisseur given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 3
@@ -17401,24 +17275,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixcreditnote has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixdeposit has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixinvoice has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommandeFournisseur given\.$#'
 			identifier: argument.type
 			count: 1
@@ -17457,12 +17313,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, CommandeFournisseur given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -17725,12 +17575,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, SupplierProposal given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 5
@@ -17757,12 +17601,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, SupplierProposal given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -26239,12 +26077,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, MyObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
 			message: '#^Parameter \#3 \$tab_height of method pdf_standard_myobject\:\:_tableau\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 6
@@ -33165,12 +32997,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, RecruitmentJobPosition given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
