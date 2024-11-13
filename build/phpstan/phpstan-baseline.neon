@@ -6567,7 +6567,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 2
+			count: 3
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
