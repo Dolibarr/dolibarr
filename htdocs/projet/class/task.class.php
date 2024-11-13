@@ -1984,7 +1984,7 @@ class Task extends CommonObjectLine
 			$projectstatic = new Project($this->db);
 			$projectstatic->fetch($ori_project_id);
 
-			// Origin project strat date
+			// Origin project start date
 			$orign_project_dt_start = (!isset($projectstatic->date_start) || $projectstatic->date_start == '') ? $projectstatic->date_c : $projectstatic->date_start;
 
 			// Calculate new task start date with difference between origin proj start date and origin task start date
