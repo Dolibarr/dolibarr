@@ -34,9 +34,6 @@ if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
 
 /**
  * Class for BOM
@@ -1475,7 +1472,7 @@ class BOM extends CommonObject
 					$measuringUnits = new CUnits($this->db);
 					$measuringUnits->fetch($line->fk_unit);
 					// $unitforline = measuringUnitString($line->fk_unit, '', '', 1);
-					$qtyhourforline = $line->qty * $measuringUnits->scale;
+					$qtyhourforline = $line->qty * (int) $measuringUnits->scale / 3600;
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
