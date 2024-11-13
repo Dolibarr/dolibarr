@@ -23,6 +23,9 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 // Load Dolibarr environment
 require '../../../../main.inc.php';
+/**
+ * @var Conf $conf
+ */
 
 top_httphead();
 
@@ -31,6 +34,10 @@ top_httphead();
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
  *

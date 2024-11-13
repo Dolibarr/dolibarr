@@ -12529,42 +12529,6 @@ parameters:
 			path: ../../htdocs/core/filemanagerdol/browser/default/browser.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmactualfolder.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmcreatefolder.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmcreatefolder.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmfolders.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmresourceslist.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmupload.php
-
-		-
 			message: '#^Variable \$_FILES in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
