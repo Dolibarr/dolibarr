@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 // Ask confirmation
 if (! $confirmed) {

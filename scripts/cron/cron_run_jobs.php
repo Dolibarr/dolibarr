@@ -167,7 +167,7 @@ if ($langs->getDefaultLang() != $langcode) {
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 
-$user->getrights();
+$user->loadRights();
 
 if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
@@ -245,7 +245,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 						exit(1);
 					}
 				}
-				$user->getrights();
+				$user->loadRights();
 			}
 
 			// Reload langs
