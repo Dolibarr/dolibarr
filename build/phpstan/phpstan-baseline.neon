@@ -17275,24 +17275,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixcreditnote has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixdeposit has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixinvoice has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommandeFournisseur given\.$#'
 			identifier: argument.type
 			count: 1
