@@ -1724,12 +1724,12 @@ class Expedition extends CommonObject
 
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 
+			$line = new ExpeditionLigne($this->db); // always set $line for PHAN analyser. @phan-var-force muse be used after an assignation, and there is no assignation for $line.
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-
 				if ($originline > 0 && $originline == $obj->fk_elementdet) {
-					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
+					// '@phan-var-force ExpeditionLigne $line'; // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
