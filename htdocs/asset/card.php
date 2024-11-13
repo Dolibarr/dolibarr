@@ -197,7 +197,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 	if (GETPOSTISSET('supplier_invoice_id')) {
-		$object->fields['supplier_invoice_id'] = array('type' => 'integer:FactureFournisseur:fourn/class/fournisseur.facture.class.php:1:entity IN (__SHARED_ENTITIES__)', 'label' => 'SupplierInvoice', 'enabled' => '1', 'noteditable' => '1', 'position' => 280, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => '1',);
+		$object->fields['supplier_invoice_id'] = array('type' => 'integer:FactureFournisseur:fourn/class/fournisseur.facture.class.php:1:entity IN (__SHARED_ENTITIES__)', 'label' => 'SupplierInvoice', 'enabled' => '1', 'noteditable' => 1, 'position' => 280, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => '1',);
 		print '<input type="hidden" name="supplier_invoice_id" value="' . GETPOSTINT('supplier_invoice_id') . '">';
 	}
 

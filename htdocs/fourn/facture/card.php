@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2019	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2023	Juanjo Menent			<jmenent@simnandez.es>
  * Copyright (C) 2013-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>

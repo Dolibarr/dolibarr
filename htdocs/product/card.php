@@ -590,7 +590,7 @@ if (empty($reshook)) {
 			$stdobject = new GenericObject($db);
 			$stdobject->element = 'product';
 			$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
-			$result = $stdobject->fetch_barcode();
+			$result = $stdobject->fetchBarCode();
 			if ($result < 0) {
 				$error++;
 				$mesg = 'Failed to get bar code type information ';
@@ -835,7 +835,7 @@ if (empty($reshook)) {
 				$stdobject = new GenericObject($db);
 				$stdobject->element = 'product';
 				$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
-				$result = $stdobject->fetch_barcode();
+				$result = $stdobject->fetchBarCode();
 				if ($result < 0) {
 					$error++;
 					$mesg = 'Failed to get bar code type information ';
@@ -2555,7 +2555,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
 						$fk_barcode_type = $object->barcode_type;
 					} else {
-						$object->fetch_barcode();
+						$object->fetchBarCode();
 						$fk_barcode_type = $object->barcode_type;
 						print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 					}

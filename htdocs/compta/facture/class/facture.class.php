@@ -495,7 +495,8 @@ class Facture extends CommonInvoice
 
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
 		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
-		$this->note_public = trim($this->note_public);
+		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : '');
+
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;
 		}
@@ -1400,7 +1401,7 @@ class Facture extends CommonInvoice
 	/**
 	 *	Load an object from an order and create a new invoice into database
 	 *
-	 *	@param	Facture		$object		Object source
+	 *	@param	Commande	$object		Object source
 	 *	@param	User		$user		Object user
 	 *	@return	int<-1,1>				Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
