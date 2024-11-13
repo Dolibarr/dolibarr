@@ -571,19 +571,19 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
-	 * @var string 		Public note
+	 * @var ?string 		Public note
 	 * @see update_note()
 	 */
 	public $note_public;
 
 	/**
-	 * @var string 		Private note
+	 * @var ?string 		Private note
 	 * @see update_note()
 	 */
 	public $note_private;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
