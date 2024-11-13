@@ -6,12 +6,198 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: NEW Module - help to setup OpenID Connect (#30317)
+NEW: Add hidden option CONTRACT_HIDE_MYCOMPANY_SIGNATURE_SECTION_PDF
+NEW: Add a tab on recurring invoice card to see the list of invoices generated from this recurring invoice (customer and supplier invoices) (#31463)
+NEW: #28871 signed_status to commande (#30359)
+NEW: #30269 linked project in column of last record tables (#30344)
+NEW: Accountancy - Add general account on thirdparty
+NEW: Accountancy - Add partial reconcile on subledger (#30027)
+NEW: Accountancy - Option to select the label of operation (#31200)
+NEW: Accountancy - Allow grouping taxes with primary line price (#26732)
+NEW: Activate PHPUnit with tests on permission on $action ==...
+NEW: Add advice for max size on list for better performance
+NEW: Add an advanced permission to validate knowledge (#30855)
+NEW: Add a test mode into the setup of AI module to test the AI prompts.
+NEW: Add a tool to decrypt data encrypted in database.
+NEW: Add auto generate document when reception is created (#30688)
+NEW: Add badge for generate invoice client tab (#31559)
+NEW: Add caldav on fichinter (#30582)
+NEW: Add column agenda_id to implement the link between files and event
+NEW: Add column "comment" in list of payment
+NEW: Add constant to hide version (#30865)
+NEW: Add country in search of project
+NEW: add duration extrafields (#31595)
+NEW: Add export for thirdparty bank accounts (#30807)
+NEW: Add export profile to export MO and lines of consumption/production
+NEW: Add option to store the text content of uploaded files into database (with conversion with pdftotext)
+NEW: Add Filter Assistance for Filling Filters Field (#31646)
+NEW: add last stock movement and product nature to StocksWithBatch export (#30578)
+NEW: Add member title to the labels (#31710)
+NEW: Add mode Customer price + level price (#31091)
+NEW: add option to add external billing contact on the supplier_proposal pdf (#30298)
+NEW: Add option to clone its default BOM when cloning a product (#30088)
+NEW: Add option to enable PDF frame rounded corners
+NEW: Add option to round weight and volume on shipment PDF
+NEW: add pdf regeneration to mass action for shipments (#29970)
+NEW: Add picto on list of notification email templates
+NEW: add recurring supplier invoice on supplier tab #30945 #30949
+NEW: Add sort by ref warehouse/product or ref product/warehouse on inventory product list (#31639)
+NEW: Add some improvement for ODT Contracts (#31715)
+NEW: Add terms of sale on documents (#24846)
+NEW: Add thirdparty state in substitution array (#31549)
+NEW: Add tooltip on closing accounting setup
+NEW: add trigger for linking and unlinking invoices (#30182)
+NEW: Add Unit price on supplier order stat product (#31055)
+NEW: add warehouseId parameters in select_produit to limit result to existing product in select (#30477)
+NEW: allow link feature to task (#30235)
+NEW: Authorize modification of a partially shipped order (#31423)
+NEW: autogenerate project reference in API (#30638)
+NEW: automatically change status on answering a ticket (#30556)
+NEW: Browser notifications use now jnotify (fix browser compatibility)
+NEW: can add extrafields with dol_move (#30574)
+NEW: Can change the type of a social contribution if no payment
+NEW: can delete a category translation (#31396)
+NEW: Can link an object to another using the ref. Close #31001
+NEW: Can set a class on the tr lines of form setup lines
+NEW: Can set border radius of list and tables
+NEW: Can set date of transmission in 1 click when validating SEPA
+NEW: Can set parameters with setup type yesno.
+NEW: Can set the contact type for the autoassigned user that creates a project (#30444)
+NEW: Can show raw value of oauth token
+NEW: Can use a specific profile to send email for password forgotten
+NEW: option to care grandchild (#31314)
+NEW: Look and feel - checkbox to choose thirdparty nature (#30192)
+NEW: Color line total and sub total (#26172)
+NEW: Constant to hide user login times (#29815)
+NEW: Const ASSET_ROUND_INTEGER_NUMBER_UPWARDS for ASSET Module. Compatibility to migrate from other accounting solutions. (#31615)
+NEW: Content of tab "attached files" is more compact.
+NEW: Contract signed status update (#30779)
+NEW: Create thirdparty notification by action code (#30541)
+NEW: Customer price and level price together
+NEW: default configuration for event reminder (#31407)
+NEW: determine multi-currency price on object line create tpl (#28021)
+NEW: Display for socialnetworks admin
+NEW: display mark rates in objectLineCreate (#30872)
+NEW: due date in accounting bookkeeping list and card (#30061)
+NEW: enhance the OAUTH2 token manager. Can refresh a token from page.
+NEW: EPC QR CODE - Use bank owner account name instead of company (#31735)
+NEW: fichinter list disable details option (#30884)
+NEW: filter on invoice dates in product margin tab (#29997) and thirdparty margin tab (#29998)
+NEW: FIX: Display invoice widgets by amount instead of number (#30215)
+NEW: Add the Clone of company (#29755)
+NEW: function for Preview In CKeditor products
+NEW: FY Changed Period handle in Module Asset (#31618)
+NEW: hidden option MAIN_TE_PRIVATE_FIRST_AND_LASTNAME_TO_UPPER (#31143)
+NEW: Hide completed items in Link to (#31329)
+NEW: Iban is saved encrypted
+NEW: if a user is associated with the expense report, then that user will get an associated credit line ($tabtp) generated.
+NEW: Implementing Billable tasks on projects using new attribute "billable" (#30092)
+NEW: Include a protection into check update of module to detect malware
+NEW: intervention signed status update (#30629)
+NEW: INTRA VAT ID field optionally mandatory and/or invoice mandatory in thirdparty module setup (#31663)
+NEW: Invoice - Generate payment information - Structured communication (#31376)
+NEW: Invoice line import - fk_product can be a ref (#30795)
+NEW: Look and feel v21 - Can have rounded border on tables
+NEW: Look and feel v21 - Toolbar for WYSIWYG editor is short on smartphone
+NEW: Management of extrafields on customer prices, level prices and default prices (#31313)
+NEW: manage several type of dangerous goods for a same parcel (#30238)
+NEW: Member - Can upload a file with drag and drop (#30265)
+NEW: Move the picto in the first tab label always visible
+NEW: ODTSubsitution for date_start_real / Contracts
+NEW: Look and feel - Opacity for finished lines (#30219)
+NEW: option: assign default roles to "individual" third-party contacts (#30499)
+NEW: option to allow freezing qty in BOM service's line (#29990)
+NEW: Add a page to list the lines of orderse (#31521)
+NEW: pagination in product margin tab
+NEW: payment term and mode on creating supplier (#31166) and third-party (#31067)
+NEW: PDF Add Customer accountancy code (#31544)
+NEW: PDF Add discount total if line discount exists (#31483)
+NEW: PDF Add option to print rounded corner frames (#31172)
+NEW: PDF Add shipping address in sales orders (#31293)
+NEW: PDF Add total discount if line discount exists
+NEW: PDF frame rounded corners
+NEW: Prelevement - Use structured payment data for Belgium (#31383)
+NEW: Preview product list when we choose model email layout Commerce (#30185)
+NEW: Can upload a file with drag and drop: Thirdparty (#30263) - Product/Service (#30250) - Project (#30276) - Propale (#30315)
+NEW: Public and private note options in thirdparty list (#31062)
+NEW: redirect to expedition card if global search has unique result (#30108)
+NEW: replenishment if the warehouse is set to the default selected user (#31229)
+NEW: retrieve Thirdparty by account (#31283)
+NEW: Share msg "not found" for widgets and add a button to add new record when none exists (#31309)
+NEW: shipment signed status update (#30928)
+NEW: Show detail of each multicurrency amount in popup of price
+NEW: show holidays at bottom of activity/permonth.php page (#31550)
+NEW: Show tooltip on number of qualified records
+NEW: Signature or proposal from the Web portal (#30062)
+NEW: Star Field Type for Extra Fields (#31348) and for for Module Builder (#31216)
+NEW: Support option PDF_ADD_POSITION on shipment espadon template
+NEW: Auto-suspend facture rec when nb gen max is reached (#31623)
+NEW: The margin section can now be shown/hidden
+NEW: Deal change in fiscal year period adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
+NEW: (ticket, admin): More options entries (#30548)
+NEW: Update warehouse product list to add another sorting option (#30971)
+NEW: Can set blacklist of words into answer of AI (#30385)
+NEW: user list country filter (#30770)
+NEW: vat rate with department in dict (#31628) (#31627)
+NEW: When we export data of unlaterable log, we add an unalterable line in logs
 NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
 NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
 
+PERF: Reduce nb of requests into num_public_holiday
+PERF: Reduce size for VCF files and virtualcard qrcode
+PERF: Reduce time to show the page of unalterable logs with high data
+
 For developers:
 ---------------
+NEW: translation with action triggers API (#30595)
+NEW: more complete stock product API call (#30567)
+NEW: Projet - Add hook formconfirm (#31408)
+NEW: Can choose the zip handler to build ODT.
+NEW: Can force ip into log file name using a define('SYSLOG_FILE_ADDIP')
+NEW: Can force log file name using a define('SYSLOG_FILE_ADDSUFFIX')
+NEW: Can define the text on tooltip on a yesno check.
+NEW: Introduce value 'password' for mode of sanitization in GETPOST.
+NEW: Add getImageFromHtmlContent() method
+NEW: Add gitleaks into pre-commit
+NEW: Add hook after the line is processed in the sell journal page (#31439)
+NEW: add hook dolibarrDelConst (#30672)
+NEW: Add hook getLoginPageExtraContent, getPasswordResetPageExtraContent
+NEW: add hook in dolibarr_set_const admin.lib.php (#30605)
+NEW: Add hook on sell journal page for overwrite the processed journal data after the SQL request (#31033)
+NEW: force_install_noedit : add value 3 to block all technical parameters excepted main_url (#30080)
+NEW: Add a new hook on order list (#31315)
+NEW: Add ID of the line in the trigger context for addLine(), updateLine() and deleteLine() on contract (#30343)
+NEW: Add more log information
+NEW: Add pagination data to some api routes (#29895)
+NEW: Add test to forbidden NOW() SQL function.
+NEW: API call to re-generate a users password. (#30590)
+NEW: API close proposal now supports both private and public note (#30659)
+NEW: API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELD (#30562)
+NEW: API /setup endpoint for getting action triggers (#30538)
+NEW: HOOK FORMCONFIRM IN TICKET (#31321)
+NEW: hook on expensereport added (#31380)
 QUAL line classes for various business object classes have been moved to individual files.
+QUAL: #30122 (#30131)
+QUAL: AccountancySystem: maintenance work to uniformize and clean up (#31391)
+QUAL: All $conf->global->module->enabled are replaced with isModEnabled()
+QUAL: bankline category table name (#30419)
+QUAL: Clean code
+QUAL: conformity PR for data structure of #29964 (#30014)
+QUAL: Edition of currency is shared in a common tpl file
+QUAL: Ergo btn and fix  (#30947)
+QUAL: Move function csvClean into functions2.lib.php
+QUAL: Move the public css file into the public directory
+QUAL: Removed inclusion of the file json.lib.php
+QUAL: simplifying readability of sql
+QUAL: Standardize name of user cookies
+QUAL: Suffix table name to have them created on module install
+QUAL: The property ->domiciliation and ->propio on bank accounts has been
+QUAL: Update inc.php (#29822)
+QUAL: Use archiveOrBackupFile for MAIN_MAIL_DEBUG_LOG_WITH_DATE
+QUAL: Use table_element in sql queries (#31355)
+QUAL: rename const WORKFLOW_EXPEDITION_CLASSIFY_NEWD_INVOICE to WORKFLOW_RECEPTION_CLASSIFY_NEWD_INVOICE
+QUAL: This configuration change in phan will report NEW: array types in phpdoc
 
 
 WARNING:
