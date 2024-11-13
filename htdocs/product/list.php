@@ -86,7 +86,7 @@ $mode = GETPOST('mode', 'alpha');
 $fourn_id = GETPOSTINT("fourn_id");
 
 // Search Criteria
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
@@ -329,7 +329,6 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 	}
 }
 
-//var_dump($arraypricelevel);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -350,6 +349,7 @@ if ($search_type == '0') {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -421,7 +421,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $massaction == 'switchonsalestatus' && $permissiontoadd) {
+	if ($massaction == 'switchonsalestatus' && $permissiontoadd) {
 		$product = new Product($db);
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);
@@ -432,7 +432,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if (!$error && $massaction == 'switchonpurchasestatus' && $permissiontoadd) {
+	if ($massaction == 'switchonpurchasestatus' && $permissiontoadd) {
 		$product = new Product($db);
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);

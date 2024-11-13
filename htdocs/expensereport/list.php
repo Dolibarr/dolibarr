@@ -103,7 +103,7 @@ if (!$sortfield) {
 }
 
 
-$search_all			= trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all			= trim(GETPOST('search_all', 'alphanohtml'));
 
 $search_ref			= GETPOST('search_ref', 'alpha');
 $search_user		= GETPOST('search_user', 'intcomma');

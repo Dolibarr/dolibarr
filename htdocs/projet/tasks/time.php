@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formintervention.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -160,6 +161,7 @@ if ($object->fk_project > 0) {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = '';
@@ -211,8 +213,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
-	$error = 0;
-
 	$timespent_durationhour = GETPOSTINT('timespent_durationhour');
 	$timespent_durationmin = GETPOSTINT('timespent_durationmin');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin)) {
@@ -277,8 +277,6 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 }
 
 if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->hasRight('projet', 'lire')) {
-	$error = 0;
-
 	if (!GETPOST("new_durationhour") && !GETPOST("new_durationmin")) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
@@ -786,8 +784,6 @@ if ($action == 'confirm_generateinvoice') {
 			$mesg = $langs->trans("InvoiceGeneratedFromTimeSpent", '{s1}');
 			$mesg = str_replace('{s1}', $urltoinvoice, $mesg);
 			setEventMessages($mesg, null, 'mesgs');
-
-			//var_dump($tmpinvoice);
 
 			$db->commit();
 		} else {

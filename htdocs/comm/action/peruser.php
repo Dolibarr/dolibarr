@@ -1146,14 +1146,14 @@ $db->close();
  * @param   int		$year           Year
  * @param   int		$monthshown     Current month shown in calendar view
  * @param   string	$style          Style to use for this day
- * @param   array	$eventarray    	Array of events
+ * @param   array<int,ActionComm[]>	$eventarray      Array of events
  * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar    Nb of characters to show for event line
  * @param   string	$newparam       Parameters on current URL
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
- * @param	array	$colorsbytype	Array with colors by type
+ * @param	array<string,string>	$colorsbytype	Array with colors by type
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */

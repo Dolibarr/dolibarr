@@ -34,6 +34,8 @@ require '../../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_db_pass
  */
 
 $langs->load("admin");

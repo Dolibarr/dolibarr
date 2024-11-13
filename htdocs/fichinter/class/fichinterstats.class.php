@@ -39,11 +39,26 @@ class FichinterStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $where;
 
 

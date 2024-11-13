@@ -66,7 +66,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Search Fields
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
 $search_messtype = GETPOST("search_messtype", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');

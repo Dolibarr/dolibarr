@@ -35,9 +35,11 @@
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
+ * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  *
+ * @var string $dolibarr_main_url_root
  * @var string $action
  * @var ?string $subject
  */
@@ -45,6 +47,8 @@
 @phan-var-force Societe      $mysoc
 @phan-var-force CommonObject $object
 ';
+
+$error = 0;
 
 /*
  * Add file in email form

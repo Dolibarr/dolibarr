@@ -151,6 +151,7 @@ if ($dirread != DOL_DOCUMENT_ROOT && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 
 // Search modules to edit
 $textforlistofdirs = '<!-- Directory scanned -->'."\n";
 $listofmodules = array();
+'@phan-var-force array<string,array{modulenamewithcase:string,moduledescriptorrelpath:string,moduledescriptorfullpath:string,moduledescriptorrootpath,moduletype?:string}> $listofmodules';
 $i = 0;
 foreach ($dirsrootforscan as $tmpdirread) {
 	$moduletype = 'external';
@@ -1981,7 +1982,7 @@ if ($dirins && $action == 'confirm_deletemodule' && $user->hasRight("modulebuild
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
-				'@phan-var-force DolibarrMOdules $moduleobj';
+				'@phan-var-force DolibarrModules $moduleobj';
 				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
@@ -2065,12 +2066,17 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname && $user->hasRig
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
-				'@phan-var-force DolibarrMOdules $moduleobj';
+				'@phan-var-force DolibarrModules $moduleobj';
 				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
 			}
+		} else {
+			$error++;
+			$langs->load("errors");
+			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			exit;
 		}
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
@@ -2249,7 +2255,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') && $us
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -2319,7 +2325,7 @@ if ($dirins && $action == 'generatepackage' && $user->hasRight("modulebuilder", 
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -2597,7 +2603,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -2772,7 +2778,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') && $user
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -2837,7 +2843,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) && $user->hasRight("module
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -2996,7 +3002,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
-				'@phan-var-force DolibarrMOdules $moduleobj';
+				'@phan-var-force DolibarrModules $moduleobj';
 				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
@@ -3101,7 +3107,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -3265,7 +3271,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
 			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
@@ -3633,7 +3639,13 @@ if ($module == 'initmodule') {
 				foreach ($listofsetuppages as $setuppage) {
 					//var_dump($setuppage);
 					print '<tr><td>';
-					print '<span class="fa fa-file"></span> '.$langs->trans("SetupFile").' : ';
+					print '<span class="fa fa-file"></span> ';
+					if ($setuppage['relativename'] == 'about.php') {
+						print $langs->trans("AboutFile");
+					} else {
+						print $langs->trans("SetupFile");
+					}
+					print ' : ';
 					print '<strong class="wordbreak bold"><a href="'.dol_buildpath($modulelowercase.'/admin/'.$setuppage['relativename'], 1).'" target="_test">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</a></strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($modulelowercase.'/admin/'.$setuppage['relativename']).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td></tr>';
@@ -4950,7 +4962,7 @@ if ($module == 'initmodule') {
 
 
 				$newdict = dolGetButtonTitle($langs->trans('NewDictionary'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.urlencode($module).'&tabdic=newdictionary');
-				print_barre_liste($langs->trans("ListOfDictionariesEntries"), '', $_SERVER["PHP_SELF"], '', '', '', '', 0, '', '', 0, $newdict, '', 0, 0, 0, 1);
+				print_barre_liste($langs->trans("ListOfDictionariesEntries"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', '', 0, $newdict, '', 0, 0, 0, 1);
 
 				if ($tabdic != 'newdictionary') {
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -5259,9 +5271,26 @@ if ($module == 'initmodule') {
 				print '</span>';
 				print '<br>';
 
+				// Links to editable files
 				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
 				print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'&find=TOPMENU">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
+
+				// Search all files of modules mentioned by menu
+				$listODifferentUrlsInMenu = array();
+				foreach ($menus as $obj) {
+					if (preg_match('/^\/'.preg_quote(strtolower($module), '/').'\//', $obj['url']) && !empty($pathoffile)) {
+						if (!empty($listODifferentUrlsInMenu[$pathoffile])) {	// Test to avoid to show same file twice.
+							continue;
+						}
+						$pathtofile = $obj['url'];
+						$listODifferentUrlsInMenu[$pathoffile] = $pathtofile;
+						print '<span class="fa fa-file"></span> '.$langs->trans("PageLinkedByAMenuEntry").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
+						print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'&find=TOPMENU">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '<br>';
+					}
+				}
+
 
 				print '<br>';
 				print load_fiche_titre($langs->trans("ListOfMenusEntries"), '', '');
@@ -6603,13 +6632,14 @@ if ($module == 'initmodule') {
 			if (class_exists($class)) {
 				try {
 					$moduleobj = new $class($db);
-					'@phan-var-force DolibarrMOdules $moduleobj';
+					'@phan-var-force DolibarrModules $moduleobj';
 					/** @var DolibarrModules $moduleobj */
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());
 				}
-			} else {
+			}
+			if ($moduleobj === null) {
 				$error++;
 				$langs->load("errors");
 				dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));

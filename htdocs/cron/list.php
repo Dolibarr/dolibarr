@@ -109,6 +109,7 @@ $permissiontoexecute = $user->hasRight('cron', 'execute');
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';

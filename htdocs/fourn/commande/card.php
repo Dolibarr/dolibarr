@@ -65,11 +65,16 @@ if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+if (isModEnabled('stock')) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+}
 
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -82,21 +87,22 @@ if (isModEnabled('incoterm')) {
 
 
 // Get Parameters
-$id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
-$action      = GETPOST('action', 'alpha');
-$confirm     = GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
+$cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 $socid     = GETPOSTINT('socid');
 $projectid = GETPOSTINT('projectid');
-$cancel    = GETPOST('cancel', 'alpha');
 $lineid    = GETPOSTINT('lineid');
 $origin    = GETPOST('origin', 'alpha');
 $originid  = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $rank      = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+$stockDelete = GETPOST('stockDelete', 'int');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -419,8 +425,8 @@ if (empty($reshook)) {
 	// Add a product line
 	if ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
 		// Define date start and date end for all line
-		$alldate_start = dol_mktime(GETPOST('alldate_starthour'), GETPOST('alldate_startmin'), 0, GETPOST('alldate_startmonth'), GETPOST('alldate_startday'), GETPOST('alldate_startyear'));
-		$alldate_end = dol_mktime(GETPOST('alldate_endhour'), GETPOST('alldate_endmin'), 0, GETPOST('alldate_endmonth'), GETPOST('alldate_endday'), GETPOST('alldate_endyear'));
+		$alldate_start = dol_mktime(GETPOSTINT('alldate_starthour'), GETPOSTINT('alldate_startmin'), 0, GETPOSTINT('alldate_startmonth'), GETPOSTINT('alldate_startday'), GETPOSTINT('alldate_startyear'));
+		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
 		foreach ($object->lines as $line) {
 			if ($line->product_type == 1) { // only service line
 				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
@@ -444,8 +450,8 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$date_start = dol_mktime(GETPOSTINT('date_start'.$predef.'hour'), GETPOSTINT('date_start'.$predef.'min'), GETPOSTINT('date_start'.$predef.'sec'), GETPOSTINT('date_start'.$predef.'month'), GETPOSTINT('date_start'.$predef.'day'), GETPOSTINT('date_start'.$predef.'year'));
+		$date_end = dol_mktime(GETPOSTINT('date_end'.$predef.'hour'), GETPOSTINT('date_end'.$predef.'min'), GETPOSTINT('date_end'.$predef.'sec'), GETPOSTINT('date_end'.$predef.'month'), GETPOSTINT('date_end'.$predef.'day'), GETPOSTINT('date_end'.$predef.'year'));
 
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
@@ -782,14 +788,14 @@ if (empty($reshook)) {
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
+		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
 			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOSTINT('qty')), $line->fk_product, 'none', GETPOSTINT('socid')) < 0) {
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
 		}
 
-		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+		$date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), GETPOSTINT('date_startsec'), GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+		$date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), GETPOSTINT('date_endsec'), GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1127,12 +1133,76 @@ if (empty($reshook)) {
 
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
-		$result = $object->delete($user);
-		if ($result > 0) {
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
-			exit;
+		// Delete existing dispatched lines
+		$errOnDelete = 0;
+		$errorsOnDelete = array();
+
+		$db->begin();
+
+		if ($stockDelete) {
+			// TODO We must find line already recorded in stock, not lines dispatched (stock recording may not have been done
+			// even if dispatched in llx_receptiondet_batch)
+			// For example to know if stock movement were already record, we may look at stock movements in llx_stock_movement linked to a reception
+			// that is linked to the purchase order.
+
+			/*
+			$dispatchedLines = $object->getDispachedLines();
+
+			if (!empty($dispatchedLines)) {
+				foreach ($dispatchedLines as $dispatchedLine) {
+					$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+					$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
+					if ($result > 0) {
+						$result = $supplierorderdispatch->delete($user);
+					}
+					if ($result < 0) {
+						$errorsOnDelete = $object->errors;
+						$errOnDelete++;
+					}
+				}
+			}
+
+			if ($entrepot > 0 && $product > 0 && isModEnabled('enabled')) {
+				$stockMovementLines = $object->getstockMovementLines()
+
+				if (!empty($stockMovementLines)) {
+					foreach($stockMovementLines as $stockmovementline) {
+						$qty = $stockmovementline->qty;
+						$entrepot = $stockmovementline->fk_entrepot;
+						$product = $stockmovementline->fk_product;
+						$price = $stockmovementline->price;
+						$comment = $langs->trans('SupplierOrderDeletion', $object->ref);
+						$eatby = $stockmovementline->eatby;
+						$sellby = $stockmovementline->sellby;
+						$batch = $stockmovementline->batch;
+
+						$mouv = new MouvementStock($db);
+						$mouv->setOrigin($object->element, $object->id);
+						$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+						if ($result < 0) {
+							$errorsOnDelete = $mouv->errors;
+							$errOnDelete++;
+						}
+					}
+				}
+			}
+			*/
+		}
+
+		// @phpstan-ignore-next-line
+		if (empty($errOnDelete)) {
+			$result = $object->delete($user);
+			if ($result > 0) {
+				$db->commit();
+				header("Location: " . DOL_URL_ROOT . '/fourn/commande/list.php?restore_lastsearch_values=1');
+				exit;
+			} else {
+				$db->rollback();
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
+			setEventMessages('', $errorsOnDelete, 'errors');
 		}
 	}
 
@@ -1166,7 +1236,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (GETPOST("type") != '') {
-				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+				$date_liv = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 
 				$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 				if ($result > 0) {
@@ -1305,7 +1375,7 @@ if (empty($reshook)) {
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects [$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin] = $object->origin_id;
 					$other_linked_objects = GETPOST('other_linked_objects', 'array');
 					if (!empty($other_linked_objects)) {
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
@@ -1520,7 +1590,7 @@ if (empty($reshook)) {
  * View
  */
 
-$form = new	Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 $productstatic = new Product($db);
@@ -1901,7 +1971,38 @@ if ($action == 'create') {
 
 	// Confirmation de la suppression de la commande
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
+		$arrayAjouts = array();
+		$heightModal = 0;
+		$widthModal = 500;
+
+		// TODO We must find line already recorded in stock, not lines dispatched (stock recording may not have been done
+		// even if dispatched in llx_receptiondet_batch).
+		// For example to know if stock movement were already record, we may look at stock movements in llx_stock_movement linked to a reception
+		// that is linked to the purchase order.
+		/* $dispatchedLines = $object->getStockMovementLines();
+
+		if (!empty($dispatchedLines)) {
+			$arrayAjouts = array(
+				array(
+					'type' => 'other',
+					'value' => img_warning() . " " . $langs->trans('ExistingDipatchLines')
+				),
+				array('type' => 'separator'),
+				array(
+					'type' => 'select',
+					'id' => 'stockDeleteSelect',
+					'name' => 'stockDelete',
+					'label' => $langs->trans('ConfirmDeleteDispatchedLines'),
+					'values' => array(1 => $langs->trans('Yes'), 0 => $langs->trans('No')),
+					'select_show_empty' => false
+				)
+			);
+			$heightModal = 300;
+			$widthModal = "70%";
+		}
+		*/
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
 	}
 
 	// Clone confirmation
@@ -1933,7 +2034,7 @@ if ($action == 'create') {
 			$text = $langs->trans('ConfirmValidateOrder', $newref);
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-				$notify = new	Notify($db);
+				$notify = new Notify($db);
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
 			}
@@ -1970,7 +2071,7 @@ if ($action == 'create') {
 		$text = $langs->trans("ConfirmApproveThisOrder", $object->ref);
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new	Notify($db);
+			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
 		}
@@ -2005,7 +2106,7 @@ if ($action == 'create') {
 		);
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new	Notify($db);
+			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_CANCEL', $object->socid, $object);
 		}
@@ -2014,10 +2115,10 @@ if ($action == 'create') {
 
 	// Confirmation de l'envoi de la commande
 	if ($action == 'commande') {
-		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+		$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new	Notify($db);
+			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_SUBMIT', $object->socid, $object);
 		}
@@ -2393,8 +2494,8 @@ if ($action == 'create') {
 		$dateSelector = 0;
 		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = 1;
+		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
+			$senderissupplier = getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY');
 		}
 
 		// Show object lines

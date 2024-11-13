@@ -96,7 +96,7 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOM
 /**
  * Actions
  */
-
+$error = 0;
 $parameters = array('id' => $id, 'userid' => $userid, 'caneditperms' => $permissiontoedit);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {

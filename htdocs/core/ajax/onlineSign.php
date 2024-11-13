@@ -228,7 +228,7 @@ if ($action == "importSignature") {
 								// TODO Get position of box from PDF template
 
 								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
-											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+									$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
 								} else {
 									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
 								}
@@ -945,7 +945,7 @@ echo $response;
  *
  * @param 	TCPDF 		$pdf		PDF handler
  * @param	Translate	$langs		Language
- * @param	array		$params		Array of params
+ * @param	array<string,int|float|string|mixed[]>		$params		Array of params
  * @return	void
  */
 function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)

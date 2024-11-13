@@ -60,6 +60,7 @@ $nblines = $object->fetch_lines();
 /*
  * Actions
  */
+$error = 0;
 
 // Return to the results
 if (GETPOST('cancel')) {

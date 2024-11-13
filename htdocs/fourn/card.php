@@ -55,6 +55,7 @@ if (isModEnabled('accounting')) {
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -104,7 +105,7 @@ if ($object->id > 0) {
 /*
  * Action
  */
-
+$error = 0;
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {

@@ -1,7 +1,7 @@
 <?php
 /* TVI
- * Copyright (C) 2015	Florian HENRY 		<florian.henry@open-concept.pro>
- * Copyright (C) 2020   Maxime DEMAREST     <maxime@indelog.fr>
+ * Copyright (C) 2015	    Florian HENRY 		    <florian.henry@open-concept.pro>
+ * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,9 +45,9 @@ require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
  * @var User $user
  */
 
-$mens = price2num(GETPOST('mens'));
-$capital = price2num(GETPOST('capital'));
-$rate = price2num(GETPOST('rate'));
+$mens = (float) price2num(GETPOST('mens'));
+$capital = (float) price2num(GETPOST('capital'));
+$rate = (float) price2num(GETPOST('rate'));
 $echance = GETPOSTINT('echeance');
 $nbterm = GETPOSTINT('nbterm');
 

@@ -67,6 +67,7 @@ $socid = GETPOSTINT('socid');
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
 $error = 0;
+$errors = [];
 
 $now = dol_now();
 
@@ -973,6 +974,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
@@ -1021,7 +1023,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
+			setEventMessages(null, $errors, 'errors');
 		}
 
 
@@ -1029,9 +1031,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		$( document ).ready(function() {
 			$("input.button-save").click("submit", function(e) {
 				console.log("Call valider()");
-	    	    if (document.demandeCP.date_debut_.value != "")
-	    	    {
-		           	if(document.demandeCP.date_fin_.value != "")
+				if (document.demandeCP.date_debut_.value != "")
+				{
+					if(document.demandeCP.date_fin_.value != "")
 		           	{
 		               if(document.demandeCP.valideur.value != "-1") {
 		                 return true;
@@ -1052,7 +1054,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
 		           return false;
 		        }
-	       	});
+			});
 		});
        </script>'."\n";
 
@@ -1275,7 +1277,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						break;
 				}
 
-				setEventMessages($errors, null, 'errors');
+				setEventMessages(null, $errors, 'errors');
 			}
 
 			// check if the user has the right to read this request

@@ -51,6 +51,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
+$error = 0;
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();

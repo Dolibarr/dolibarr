@@ -104,7 +104,7 @@ class pdf_standard_actions
 	public $marge_basse;
 
 	/**
-	 * @var array format
+	 * @var array{0:float,1:float} format
 	 */
 	public $format;
 

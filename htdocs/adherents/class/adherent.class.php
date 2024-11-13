@@ -1836,12 +1836,16 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
-				// set customer's bank account on the invoice
+				// set customer's payment bank account on the invoice
 				if (!empty($customer->fk_account)) {
 					$invoice->fk_account = $customer->fk_account;
 				} elseif (getDolGlobalString('FACTURE_RIB_NUMBER')) {
 					// set default bank account from invoice module settings
 					$invoice->fk_account = (int) getDolGlobalString('FACTURE_RIB_NUMBER');
+				}
+				//set customer's payment method on the invoice
+				if (!empty($customer->mode_reglement_id)) {
+					$invoice->mode_reglement_id = $customer->mode_reglement_id;
 				}
 				//$invoice->date = $datesubscription;
 				$invoice->date = dol_now();

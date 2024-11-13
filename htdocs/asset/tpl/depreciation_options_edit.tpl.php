@@ -2,6 +2,7 @@
 /* Copyright (C) 2021  		Open-Dsi  				<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		José					<jose.martinez@pichinov.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +27,30 @@
  * $parameters
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var AssetDepreciationOptions $assetdepreciationoptions
+ * @var Translate $langs
+ * @var ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
+ */
+'
+@phan-var-force Conf $conf
+@phan-var-force DoliDB $db
+@phan-var-force ?Form $form
+@phan-var-force HookManager $hookmanager
+@phan-var-force AssetDepreciationOptions $assetdepreciationoptions
+@phan-var-force Translate $langs
+@phan-var-force ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
+';
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-/**
- * @var HookManager $hookmanager
- */
 
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -81,7 +97,7 @@ if (empty($reshook)) {
 
 		$assetdepreciationoptions->setInfosForMode($mode_key, $class_type, true);
 		$prefix_html_name = $mode_key . '_';
-		$width = ($mode_key == "economic")? "width50p pull-left" : "width50p";
+		$width = ($mode_key == "economic") ? "width50p pull-left" : "width50p";
 		print '<table class="border '. $width .'" id="block_' . $mode_key . '">' . "\n";
 		print '<tr><td class="info-box-title">'.$langs->trans($mode_info['label']).'</td></tr>';
 		if ($mode_key == "economic") {

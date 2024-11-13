@@ -134,7 +134,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type_id = '';
 }
 
-$search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 /*
 * TODO: fill array "$fields" in "/compta/bank/class/paymentvarious.class.php" and use
@@ -574,6 +574,7 @@ if ($arrayfields['entry']['checked']) {
 
 // Accounting account
 if (!empty($arrayfields['account']['checked'])) {
+	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 	print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
@@ -583,6 +584,7 @@ if (!empty($arrayfields['account']['checked'])) {
 
 // Subledger account
 if (!empty($arrayfields['subledger']['checked'])) {
+	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 

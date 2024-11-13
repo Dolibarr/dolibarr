@@ -29,6 +29,9 @@ $leftmenuwidth = 240;
 
 // Variables defined in style.css.php (includes this file).
 /**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
  * @var int<0,1> $dol_hide_topmenu
  * @var int<0,1> $dol_hide_leftmenu
  * @var int<0,1> $dol_optimize_smallscreen
@@ -1851,7 +1854,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	cursor: pointer;
 	text-align: center;
 	min-height: 40px;
-	background: #eee;
+	background: #f4f4f4;
 	padding: 20px 10px 20px 10px;
 	flex-grow: 1;
 	flex-shrink: 1;
@@ -2616,6 +2619,7 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 20px);\n";
 	} ?>
+	margin-bottom: 20px;
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {

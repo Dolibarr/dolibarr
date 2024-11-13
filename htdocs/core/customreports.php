@@ -788,6 +788,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-max$/', $val)) {
 			$tmpval = preg_replace('/\-max$/', '', $val);
 			$sql .= "MAX(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
+		} elseif (preg_match('/\-stddevpop$/', $val)) {
+			$tmpval = preg_replace('/\-stddevpop$/', '', $val);
+			$sql .= "STDDEV_POP(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
@@ -939,9 +942,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		$sql = preg_replace_callback(
 			"/(\w+)\.(\w+)\s*(=|!=|<>|<|>|<=|>=)\s*'(\d{4})-(\d{2})-(\d{2})'/",
 			/**
-			* @param array<int, string> $matches
-			* @return string
-			*/
+			 * @param array<int, string> $matches
+			 * @return string SQL filter condition
+			 */
 			function (array $matches): string {
 				global $db;
 				$column = $matches[1] . '.' . $matches[2];

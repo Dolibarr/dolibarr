@@ -126,7 +126,7 @@ $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include 
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -303,8 +303,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update' && empty(GETPOST('cancel')) && $permissiontoadd) {
-		$error = 0;
-
 		if (empty($ref)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
@@ -419,7 +417,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'set_opp_status' && $user->hasRight('projet', 'creer')) {
-		$error = 0;
 		if (GETPOSTISSET('opp_status')) {
 			$object->opp_status   = $opp_status;
 		}

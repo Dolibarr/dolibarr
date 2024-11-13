@@ -1982,6 +1982,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<table class="border centpercent">';
 
 				if (isModEnabled('accounting')) {
+					/** @var FormAccounting $formaccounting */
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2827,6 +2828,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<table class="border centpercent">';
 
 					if (isModEnabled('accounting')) {
+						/** @var FormAccounting $formaccounting */
 						// Accountancy_code_sell
 						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';

@@ -136,7 +136,13 @@ class Inventory extends CommonObject
 	 * @var string Categories id separated by comma
 	 */
 	public $categories_product;
+	/**
+	 * @var int|''
+	 */
 	public $date_inventory;
+	/**
+	 * @var string
+	 */
 	public $title;
 
 	/**
@@ -759,8 +765,8 @@ class Inventory extends CommonObject
 	 * Return the child warehouse of the current one
 	 *
 	 * @param int 	$id 				Id of warehouse
-	 * @param array	$TChildWarehouse  	Array of child warehouses
-	 * @return int             			Return integer <0 if KO, >0 if OK
+	 * @param int[]	$TChildWarehouse  	Array of child warehouses
+	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
 	public function getChildWarehouse($id, &$TChildWarehouse)
 	{
@@ -851,10 +857,25 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public $rowid;
 
+	/**
+	 * @var int
+	 */
 	public $fk_inventory;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var string
+	 */
 	public $batch;
+	/**
+	 * @var int
+	 */
 	public $datec;
 
 	/**
@@ -863,7 +884,7 @@ class InventoryLine extends CommonObjectLine
 	public $qty_stock;
 
 	/**
-	 * @var float|null Quantity viewed
+	 * @var ?float Quantity viewed
 	 */
 	public $qty_view;
 
@@ -872,7 +893,13 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public $qty_regulated;
 
+	/**
+	 * @var string
+	 */
 	public $pmp_real;
+	/**
+	 * @var string
+	 */
 	public $pmp_expected;
 
 	/**

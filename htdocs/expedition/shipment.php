@@ -53,6 +53,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -101,7 +102,7 @@ $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the incl
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {

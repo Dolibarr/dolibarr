@@ -828,22 +828,22 @@ class FormCompany extends Form
 		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact')) {
 			'@phan-var-force CommonObject $object';  // CommonObject has the method.
-			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);	// List of types into c_type_contact for element=$object->element
+			$lesTypes = $object->liste_type_contact($source, $sortorder, 2, 1);	// List of types into c_type_contact for element=$object->element
 
 			$out .= '<select class="flat valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 			if ($showempty) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
-			foreach ($lesTypes as $key => $value) {
-				$out .= '<option value="' . $key . '"';
+			foreach ($lesTypes as $key => $arrayvalue) {
+				$out .= '<option value="'.$key.'" data-code="'.$arrayvalue['code'].'"';
 				if ($key == $selected) {
 					$out .= ' selected';
 				}
-				$out .= '>' . $value . '</option>';
+				$out .= '>'.$arrayvalue['label'].'</option>';
 			}
 			$out .= "</select>";
 			if ($user->admin && empty($forcehidetooltip)) {
-				$out .= ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
 
 			$out .= ajax_combobox($htmlname);
@@ -993,6 +993,7 @@ class FormCompany extends Form
 		}
 
 		$maxlength = $formlength;
+		$maxlength += getDolGlobalInt("MAIN_PROFID_MAXLENGTH_PLUS");
 		if (empty($formlength)) {
 			$formlength = 24;
 			$maxlength = 128;

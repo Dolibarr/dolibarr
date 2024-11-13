@@ -1149,8 +1149,8 @@ while ($i < $imaxinloop) {
 		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			$societestatic->id = $obj->socid;
-			$societestatic->client = $obj->client;
-			$societestatic->name = $obj->societe;
+			$societestatic->client = (int) $obj->client;
+			$societestatic->name = (string) $obj->societe;
 			$societestatic->email = $obj->socemail;
 
 			print $societestatic->getNomUrl(1, '', 28);

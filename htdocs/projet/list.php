@@ -104,7 +104,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
+$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
+
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
@@ -344,7 +346,7 @@ if ($mode == 'kanban' && $groupby) {
 /*
  * Actions
  */
-
+$error = 0;
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -429,6 +431,7 @@ if (empty($reshook)) {
 		$search_price_booth = '';
 		$search_login = '';
 		$search_import_key = '';
+		$search_entity = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_category_array = array();
@@ -585,7 +588,11 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE p.entity IN (".getEntity('project', (GETPOSTINT('search_current_entity') ? 0 : 1)).')';
+if ($search_entity > 0) {
+	$sql .= " WHERE p.entity = ".((int) $search_entity);
+} else {
+	$sql .= " WHERE p.entity IN (".getEntity('project', (GETPOSTINT('search_current_entity') ? 0 : 1)).')';
+}
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
@@ -886,15 +893,18 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_all != '') {
+	$param .= '&search_all='.urlencode($search_all);
+}
+if ($search_entity != '') {
+	$param .= '&search_entity='.((int) $search_entity);
+}
 if ($groupby != '') {
 	$param .= '&groupby='.urlencode($groupby);
 }
 
 if ($socid) {
 	$param .= '&socid='.urlencode((string) $socid);
-}
-if ($search_all != '') {
-	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_sday) {
 	$param .= '&search_sday='.urlencode((string) ($search_sday));
