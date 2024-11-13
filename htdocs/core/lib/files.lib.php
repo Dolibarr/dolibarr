@@ -2181,11 +2181,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		}
 
 		// Use a convertisser Doc to Text
-		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');
 		if (empty($useFullTextIndexation) && $forceFullTextIndexation == '1') {
-			if (getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT')) {
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {
 				$useFullTextIndexation = 'pdftotext';
-			} elseif (getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_DOCLING')) {
+			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {
 				$useFullTextIndexation = 'docling';
 			}
 		}
@@ -2213,7 +2213,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 					// We also exclude '/temp/' dir and 'documents/admin/documents'
 					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
 					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 					if (!$resultexec['error']) {
@@ -2239,7 +2239,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 					// We also exclude '/temp/' dir and 'documents/admin/documents'
 					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
 					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 					if (!$resultexec['error']) {

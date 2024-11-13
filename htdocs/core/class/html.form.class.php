@@ -10290,8 +10290,8 @@ class Form
 		// Complete object if not complete
 		if (empty($object->barcode_type_code) || empty($object->barcode_type_coder)) {
 			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-			$result = $object->fetch_barcode();
-			//Check if fetch_barcode() failed
+			$result = $object->fetchBarCode();
+			//Check if fetchBarCode() failed
 			if ($result < 1) {
 				return '<!-- ErrorFetchBarcode -->';
 			}

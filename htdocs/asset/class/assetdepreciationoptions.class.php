@@ -204,7 +204,7 @@ class AssetDepreciationOptions extends CommonObject
 				$this->{$field_key} = $this->deprecation_options[$mode][$field_key] ?? null;
 			}
 
-			$this->fields['rowid'] = array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id");
+			$this->fields['rowid'] = array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id");
 			if (empty($class_type)) {
 				$this->fields['fk_asset'] = array('type' => 'integer:Asset:asset/class/asset.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label' => 'Asset', 'enabled' => 1, 'position' => 0, 'notnull' => 0, 'visible' => 0, 'index' => 1, 'validate' => 1,);
 			} else {
