@@ -62,7 +62,7 @@ FIX: Extrafield following between rec invoice and classic invoice (#31445)
 FIX: fatal error on loading pictures in attached documents of an event (#30553)
 FIX: fatal error Unsupported operand types when recording load payment
 FIX: Fix bug select columns and access to the public ticket list from the public ticket card (case when we have connected to another client before, the track id stocked in session overwrite the new track id from the public ticket card) (#31000)
-FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfert is allowed (#26217)
+FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfer is allowed (#26217)
 FIX: Fix save directory for invoice ODT and multientities
 FIX: group by qty in product margin tab (#29853)
 FIX: Hierarchy Employee view do not filter on employee = 1 (#29496)
@@ -499,7 +499,7 @@ NEW: No overwrite of optionals during put() contact
 NEW: Notifications: add Customer Order delivered (ORDER_NEW) in module Notification
 NEW: Notifications: for Sign or Refused Propal from Online Page
 NEW: Now we can edit amount on VAT and salaries clone action
-NEW: only get openned contact from liste_contact function, to not have access to closed contact as mail receiver
+NEW: only get open contact from liste_contact function, to not have access to closed contact as mail receiver
 NEW: Option to manage deposit slips for more payment modes (not only
 NEW: Option to show column for field and line selection on the left
 NEW: Orders: add sub total in order list det
