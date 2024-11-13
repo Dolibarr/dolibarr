@@ -29,7 +29,7 @@ FIX: Accountancy - Generate entries of expense report with localtax (#30411)
 FIX: Accountancy - Not trunc id_import
 FIX: accounting FEC import (Issue #28306) (#29414)
 FIX: Add new hidden conf "DISABLE_QTY_OVERWRITTEN" (#28523)
-FIX: Add same security test whe nuploading files from API than from GUI (#31114)
+FIX: Add same security test when uploading files from API than from GUI (#31114)
 FIX: Amount of localtaxes in foreign currency was wrong on screen and PDF
 FIX: an error in a complex else condition
 FIX: ASSET: annual depreciation starting year (Again ;-)) #26084 (#30040)
@@ -49,19 +49,19 @@ FIX: Condition on newDateLimReglement
 FIX: Conflict with autoload (#30399)
 FIX: const  WORKFLOW_RECEPTION_CLASSIFY_NEWD_INVOICE (#31601)
 FIX: contact/address title is always "New Contact/Address" even if the contact/address already exists (#29581)
-FIX: Display the date according to user language on subsitutions (#29510)
+FIX: Display the date according to user language on substitutions (#29510)
 FIX: Display the real_PMP on inventory when its value is equal to 0 (#22291)
 FIX: Don't display column when it's out of date (#28271)
 FIX: email templates for expense report not visible
 FIX: Error mesg show untranslated extrafield name (#30227)
-FIX: Error message overwrited when a error occurs during update of product multilangs (#30841)
+FIX: Error message overwrote when a error occurs during update of product multilangs (#30841)
 FIX: Error When cloning fourn price no default value for tva_tx (#28368)
 FIX: executeHooks $object default value (#29647)
 FIX: expedition PDF models using units labels (#30358)
 FIX: Extrafield following between rec invoice and classic invoice (#31445)
 FIX: fatal error on loading pictures in attached documents of an event (#30553)
 FIX: fatal error Unsupported operand types when recording load payment
-FIX: Fix bug select columns and acces to the public ticket list from the public ticket card (case when we have connected to another client before, the track id stocked in session overwrite the new track id from the public ticket card) (#31000)
+FIX: Fix bug select columns and access to the public ticket list from the public ticket card (case when we have connected to another client before, the track id stocked in session overwrite the new track id from the public ticket card) (#31000)
 FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfert is allowed (#26217)
 FIX: Fix save directory for invoice ODT and multientities
 FIX: group by qty in product margin tab (#29853)
@@ -89,7 +89,7 @@ FIX: notification module: for supplier orders (any of the 3 triggers), user can 
 FIX: Not qualified lines for reception (#29473)
 FIX: not redirect when error occurs on updating card (#29388)
 FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
-FIX: on change ref for bank account attachement are lost (#30529)
+FIX: on change ref for bank account attachment are lost (#30529)
 FIX: Option MAIN_DOC_USE_TIMING can be a string with date format
 FIX: orders to bill menu (#30179)
 FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
@@ -100,7 +100,7 @@ FIX: php8: Fatal when empty $tmpvat is an empty string (no silent conversion to 
 FIX: PHP 8 warning on output of successful cronjob (#29922)
 FIX: PHP exception on getSpecialCode (#29646)
 FIX: php warning global conf (#29478)
-FIX: pos: invoice date incorrectly set beacause of timezome mismatches (reverts #36e91da) (#30184)
+FIX: pos: invoice date incorrectly set because of timezome mismatches (reverts #36e91da) (#30184)
 FIX: public project form return an error if SOCIETE_EMAIL_UNIQUE (#29942)
 FIX: purge files cron: php warnings when rest module enabled (#30919)
 FIX: PUT /thirdparties/{id} and PUT /contacts/{id} should throw exception if update returns < 0 (#29596)
@@ -499,7 +499,7 @@ NEW: No overwrite of optionals during put() contact
 NEW: Notifications: add Customer Order delivered (ORDER_NEW) in module Notification
 NEW: Notifications: for Sign or Refused Propal from Online Page
 NEW: Now we can edit amount on VAT and salaries clone action
-NEW: only get openned contact from liste_contact function, to not have acces to closed contact as mail receiver
+NEW: only get openned contact from liste_contact function, to not have access to closed contact as mail receiver
 NEW: Option to manage deposit slips for more payment modes (not only
 NEW: Option to show column for field and line selection on the left
 NEW: Orders: add sub total in order list det
@@ -2744,7 +2744,7 @@ NEW: add quick dropdown menu in top right menu (experimental with MAIN_USE_TOP_M
 NEW: add region in export companies and contacts
 NEW: add rights on margin info on invoice list
 NEW: add search param for close date on order list
-NEW: add show preview for mail attachement on form mail
+NEW: add show preview for mail attachment on form mail
 NEW: add State/Province origin for products
 NEW: add the workflow interaction close intervention on closing ticket
 NEW: add tracking number in list and search_all items
@@ -4129,7 +4129,7 @@ FIX: access to public interface when origin email has an alias.
 FIX: Alias name is not into the email recipient label.
 FIX: allow standalone credit note even if no invoice
 FIX: an admin can not access his own permissions after enabling advanced permissions
-FIX: Attachement of linked files on ticket when sending a message
+FIX: Attachment of linked files on ticket when sending a message
 FIX: avoid non numeric warning
 FIX: Bad currency var used in stripe for connect
 FIX: Bad list of ticket on public interface for ticket emailcollector
@@ -4925,7 +4925,7 @@ NEW: hidden option to define an invoice template for each invoice type
 NEW: Highlight lines on lists when they are checked
 NEW: Notification module support expense report+holiday validation and approval
 NEW: On customer/supplier card, add simple tooltip to amount boxes
-NEW: Page to check if the operations/items created between two dates have attached item(s) and possibility to download all attachements
+NEW: Page to check if the operations/items created between two dates have attached item(s) and possibility to download all attachments
 NEW: possibility to add all rights of all modules in one time
 NEW: redirect if only one result on global search on card
 NEW: Permission to ignore price min
@@ -6369,7 +6369,7 @@ NEW: No external check of version without explicit click in about page.
 NEW: ODT docs for USER USERGROUP CONTRACT and PRODUCT class
 NEW: odt usergroup
 NEW: On invoices generated by template, we save if invoice come from a source template.
-NEW: option to copy into attachement files of events, files send by mail (with auto event creation)
+NEW: option to copy into attachment files of events, files send by mail (with auto event creation)
 NEW: PDF with numbertoword
 NEW: Permit multiple file upload in linked documents
 NEW: PHP 7.1 compatibility
