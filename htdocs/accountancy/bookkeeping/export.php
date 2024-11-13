@@ -487,9 +487,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
-	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->hasRight('societe', 'creer');
+	$permissiontoread = ($user->hasRight('societe', 'lire') == 1);
+	$permissiontodelete = ($user->hasRight('societe', 'supprimer') == 1);
+	$permissiontoadd = ($user->hasRight('societe', 'creer') == 1);
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

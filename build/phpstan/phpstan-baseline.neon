@@ -7297,12 +7297,6 @@ parameters:
 			path: ../../htdocs/compta/paiement/list.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../htdocs/compta/paiement/rapport.php
-
-		-
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
