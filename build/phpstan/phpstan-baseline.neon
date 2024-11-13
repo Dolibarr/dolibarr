@@ -2623,12 +2623,6 @@ parameters:
 			path: ../../htdocs/asset/class/asset.class.php
 
 		-
-			message: '#^Property Asset\:\:\$fields \(array\<string, array\{type\: string, label\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-2, 5\>\|string, noteditable\?\: int\<0, 1\>, default\?\: string, \.\.\.\}\>\) does not accept non\-empty\-array\<string, array\{type\: string, label\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-2, 5\>\|string, noteditable\?\: ''1''\|int\<0, 1\>, default\?\: string, \.\.\.\}\>\.$#'
-			identifier: assign.propertyType
-			count: 6
-			path: ../../htdocs/asset/class/asset.class.php
-
-		-
 			message: '#^Property Asset\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -4063,12 +4057,6 @@ parameters:
 			path: ../../htdocs/comm/action/class/actioncomm.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/comm/action/class/actioncomm.class.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -4825,24 +4813,6 @@ parameters:
 			path: ../../htdocs/comm/propal/class/propal.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -4917,12 +4887,6 @@ parameters:
 		-
 			message: '#^Property Propal\:\:\$user_author_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
 			count: 1
 			path: ../../htdocs/comm/propal/class/propal.class.php
 
@@ -5269,24 +5233,6 @@ parameters:
 			path: ../../htdocs/commande/class/commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -5331,12 +5277,6 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
 			count: 1
 			path: ../../htdocs/commande/class/commande.class.php
 
@@ -6553,24 +6493,6 @@ parameters:
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -6652,12 +6574,6 @@ parameters:
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
-			count: 2
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -7843,18 +7759,6 @@ parameters:
 			path: ../../htdocs/compta/sociales/class/chargesociales.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/compta/sociales/class/paymentsocialcontribution.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/compta/sociales/class/paymentsocialcontribution.class.php
-
-		-
 			message: '#^Property PaymentSocialContribution\:\:\$amount \(float\|int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
@@ -8249,12 +8153,6 @@ parameters:
 			identifier: variable.undefined
 			count: 4
 			path: ../../htdocs/compta/tva/card.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/compta/tva/class/paymentvat.class.php
 
 		-
 			message: '#^Property PaymentVAT\:\:\$amount \(float\|int\) in isset\(\) is not nullable\.$#'
@@ -8707,18 +8605,6 @@ parameters:
 			path: ../../htdocs/contact/class/contact.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
 			message: '#^Property Contact\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8984,18 +8870,6 @@ parameters:
 
 		-
 			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../htdocs/contrat/class/contrat.class.php
@@ -10541,12 +10415,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/core/class/comment.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/class/commondocgenerator.class.php
 
 		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommonObject given\.$#'
@@ -12661,42 +12529,6 @@ parameters:
 			path: ../../htdocs/core/filemanagerdol/browser/default/browser.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmactualfolder.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmcreatefolder.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmcreatefolder.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmfolders.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmresourceslist.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/filemanagerdol/browser/default/frmupload.php
-
-		-
 			message: '#^Variable \$_FILES in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -13843,12 +13675,6 @@ parameters:
 			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Asset given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -14101,12 +13927,6 @@ parameters:
 			path: ../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Commande given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 6
@@ -14157,12 +13977,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Commande given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
@@ -14353,12 +14167,6 @@ parameters:
 			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Delivery given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_storm\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14495,12 +14303,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Expedition given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
 			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float given\.$#'
@@ -14743,12 +14545,6 @@ parameters:
 			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Facture given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_crabe\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14804,12 +14600,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$a of method pdf_octopus\:\:sumSituation\(\) expects array\<int\|string, array\<mixed\>\|float\|int\>, array\<string, Facture\|float\|int\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Facture given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -15009,12 +14799,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Facture given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -15461,18 +15245,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../../htdocs/core/modules/mailings/contacts1.modules.php
-
-		-
-			message: '#^Property mailing_eventorganization\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/mailings/eventorganization.modules.php
-
-		-
-			message: '#^Property mailing_eventorganization\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/mailings/eventorganization.modules.php
 
 		-
 			message: '#^Property mailing_fraise\:\:\$require_admin has no type specified\.$#'
@@ -16405,12 +16177,6 @@ parameters:
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Entrepot\|MouvementStock given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
 			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
 			identifier: argument.type
 			count: 2
@@ -16485,12 +16251,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Mo given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
@@ -16933,12 +16693,6 @@ parameters:
 			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Propal given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 6
@@ -16983,12 +16737,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, Propal given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
@@ -17347,12 +17095,6 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, StockTransfer given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: '#^Parameter \#4 \$posy of method pdf_eagle_proforma\:\:drawTotalTable\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -17491,12 +17233,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, FactureFournisseur given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 3
@@ -17539,24 +17275,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixcreditnote has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixdeposit has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
-			message: '#^Property mod_facture_fournisseur_cactus\:\:\$prefixinvoice has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommandeFournisseur given\.$#'
 			identifier: argument.type
 			count: 1
@@ -17595,12 +17313,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, CommandeFournisseur given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -17863,12 +17575,6 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, SupplierProposal given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
 			identifier: argument.type
 			count: 5
@@ -17895,12 +17601,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, SupplierProposal given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -19249,12 +18949,6 @@ parameters:
 			path: ../../htdocs/cron/class/cronjob.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../htdocs/cron/class/cronjob.class.php
-
-		-
 			message: '#^Property Cronjob\:\:\$command \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -19696,12 +19390,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 5
-			path: ../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../htdocs/don/class/paymentdonation.class.php
 
 		-
@@ -20743,18 +20431,6 @@ parameters:
 			path: ../../htdocs/expedition/class/expedition.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/expedition/class/expedition.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -21321,24 +20997,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../htdocs/expensereport/class/paymentexpensereport.class.php
 
@@ -22178,18 +21836,6 @@ parameters:
 
 		-
 			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
@@ -25573,18 +25219,6 @@ parameters:
 			path: ../../htdocs/loan/class/loan.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/loan/class/loan.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/loan/class/loan.class.php
-
-		-
 			message: '#^Property Loan\:\:\$account_capital \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -25633,18 +25267,6 @@ parameters:
 			path: ../../htdocs/loan/class/loanschedule.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/loan/class/loanschedule.class.php
-
-		-
 			message: '#^Property LoanSchedule\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
@@ -25690,18 +25312,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../htdocs/loan/class/paymentloan.class.php
 
 		-
@@ -26463,12 +26073,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, MyObject given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
@@ -28126,18 +27730,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/product/class/product.class.php
 
 		-
@@ -30469,18 +30061,6 @@ parameters:
 			path: ../../htdocs/projet/class/task.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/projet/class/task.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -32773,18 +32353,6 @@ parameters:
 			path: ../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$note_private \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note_public \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/reception/class/reception.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -33433,12 +33001,6 @@ parameters:
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:getExtrafieldsInHtml\(\) expects CommonObjectLine, RecruitmentJobPosition given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
 			message: '#^Variable \$outputlangsbis might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
@@ -33940,12 +33502,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between '''' and ''nolink'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 2
-			path: ../../htdocs/salaries/class/paymentsalary.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../htdocs/salaries/class/paymentsalary.class.php
 
 		-

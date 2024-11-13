@@ -1586,10 +1586,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	CommonObjectLine	$object    		line of common object
-	 *  @param 	Translate 			$outputlangs    Output language
-	 *  @param 	array<string,mixed> $params    		array of additional parameters
-	 *  @return	string  							Html string
+	 *  @param	CommonObject|CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 						$outputlangs    Output language
+	 *  @param 	array<string,mixed> 			$params    		array of additional parameters
+	 *  @return	string  										Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{
