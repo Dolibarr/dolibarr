@@ -71,7 +71,7 @@ $permissiontoread = $user->hasRight('facture', 'lire');
  * Actions
  */
 
-if ($action == 'builddoc' && $permissiontoread) {
+if ($action == 'builddoc' && ($permissiontoread == 1)) {
 	$rap = new pdf_paiement($db);
 
 	$outputlangs = $langs;
