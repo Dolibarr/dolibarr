@@ -1302,7 +1302,7 @@ if (!empty($arrayfields['l.ref']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
-	// Date received
+	// Date reception
 	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datereceipt_start ? $search_datereceipt_start : -1, 'search_datereceipt_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -1415,12 +1415,12 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 	print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['e.date_expedition']['checked'])) {
-	print_liste_field_titre($arrayfields['e.date_expedition']['label'], $_SERVER["PHP_SELF"], "e.date_expedition", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.date_expedition']['checked'])) {
+	print_liste_field_titre($arrayfields['e.date_expedition']['label'], $_SERVER["PHP_SELF"], "e.date_expedition", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
