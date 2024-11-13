@@ -94,16 +94,10 @@ if ($id || $ref) {
 		$batch = $tmp[1];
 	}
 	$object->fetch($id, $productid, $batch);
-	$object->ref = $object->batch; // Old system for document management ( it uses $object->ref)
 
 	if (isModEnabled('productbatch')) {
 		$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 		$filearray = dol_dir_list($upload_dir, "files");
-		if (empty($filearray)) {
-			// If no files linked yet, use new system on lot id. (Batch is not unique and can be same on different product)
-			$object->fetch($id, $productid, $batch);
-			$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
-		}
 	}
 }
 
