@@ -50,6 +50,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
 
@@ -195,7 +203,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	}
 } elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
-	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }
 
 // Update extrafields

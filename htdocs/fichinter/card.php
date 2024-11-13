@@ -55,6 +55,14 @@ if (getDolGlobalString('FICHEINTER_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/co
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
 
@@ -1801,7 +1809,7 @@ if ($action == 'create') {
 							'url' => '/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
 							'label' => $langs->trans('AddBill'),
 							'lang' => 'bills',
-							'perm' => $user->hasRight('facture', 'creer'),
+							'perm' => $user->hasRight('facture', 'creer') ? true : false,
 							'enabled' => true,
 						);
 					}

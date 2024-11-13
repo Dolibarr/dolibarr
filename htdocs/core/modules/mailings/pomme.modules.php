@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +32,25 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_pomme extends MailingTargets
 {
-	public $name = 'DolibarrUsers'; // Identifiant du module mailing
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'Dolibarr users with emails'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	public $require_module = array(); // Module mailing actif si modules require_module actifs
-	public $require_admin = 1; // Module mailing actif pour user admin ou non
+	/**
+	 * @var string name of mailing module
+	 */
+	public $name = 'DolibarrUsers';
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
+	public $desc = 'Dolibarr users with emails'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+
+	/**
+	 * @var string[] Module mailing actif si modules require_module actifs
+	 */
+	public $require_module = array();
+
+	/**
+	 * @var int Module mailing actif pour user admin ou non
+	 */
+	public $require_admin = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -203,7 +218,7 @@ class mailing_pomme extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
-						'fk_contact' => $obj->fk_contact,
+						'fk_contact' => (int) $obj->fk_contact,
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
 						'other' =>
@@ -211,7 +226,7 @@ class mailing_pomme extends MailingTargets
 							($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
 							($langs->transnoentities("PhonePro").'='.$obj->office_phone),
 						'source_url' => $this->url($obj->id),
-						'source_id' => $obj->id,
+						'source_id' => (int) $obj->id,
 						'source_type' => 'user'
 					);
 					$old = $obj->email;

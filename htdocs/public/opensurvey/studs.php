@@ -45,6 +45,12 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -75,13 +81,13 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 $listofvoters = explode(',', $_SESSION["savevoter"]);
 
+$error = 0;
+
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
 	if (!$canbemodified) {
 		httponly_accessforbidden('ErrorForbidden');
 	}
-
-	$error = 0;
 
 	$comment = GETPOST("comment", 'alphanohtml');
 	$comment_user = GETPOST('commentuser', 'alphanohtml');

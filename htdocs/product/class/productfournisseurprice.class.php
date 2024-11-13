@@ -566,7 +566,7 @@ class ProductFournisseurPrice extends CommonObject
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
 			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".$user->id;
+				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 

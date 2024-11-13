@@ -24,7 +24,17 @@
  *  \brief			Code for actions on extrafields admin pages
  */
 
- /** @var ExtraFields $extrafields */
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ *
+ * @var int $error
+ * @var string $action
+ * @var string $elementtype
+ * @var string $value
+ */
 $maxsizestring = 255;
 $maxsizeint = 10;
 $mesg = '';

@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +81,7 @@ class ExtraFields
 		'double' => 'Float',
 		'date' => 'Date',
 		'datetime' => 'DateAndTime',
+		'duration' => 'Duration',
 		//'datetimegmt'=>'DateAndTimeUTC',
 		'boolean' => 'Boolean',
 		'price' => 'ExtrafieldPrice',
@@ -119,7 +121,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datetime','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', 'separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -195,7 +197,7 @@ class ExtraFields
 	 *
 	 *  @param  string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datetime','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', 'separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -267,7 +269,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int<0,1>	$unique				Is field unique or not
@@ -320,6 +322,9 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'duration') {
+				$typedb = 'int';
+				$lengthdb = '11';
 			} elseif ($type == 'point') {
 				$typedb = 'point';
 				$lengthdb = '';
@@ -355,10 +360,10 @@ class ExtraFields
 				'default' => $default_value
 			);
 
-			$result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
+			$result = $this->db->DDLAddField($this->db->prefix().$this->db->sanitize($table), $attrname, $field_desc);
 			if ($result > 0) {
 				if ($unique) {
-					$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$sql = "ALTER TABLE ".$this->db->prefix().$this->db->sanitize($table)." ADD UNIQUE INDEX uk_".$this->db->sanitize($table)."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
@@ -634,7 +639,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int<0,1>	$unique			Is field unique or not
@@ -701,6 +706,9 @@ class ExtraFields
 				$typedb = 'text';
 				$lengthdb = $length;
 			} elseif ($type == 'link') {
+				$typedb = 'int';
+				$lengthdb = '11';
+			} elseif ($type == 'duration') {
 				$typedb = 'int';
 				$lengthdb = '11';
 			} elseif ($type == 'point') {
@@ -919,11 +927,11 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($type)."',";
 			$sql .= " '".$this->db->escape($size)."',";
 			$sql .= " '".$this->db->escape($elementtype)."',";
-			$sql .= " ".$unique.",";
-			$sql .= " ".$required.",";
+			$sql .= " ".((int) $unique).",";
+			$sql .= " ".((int) $required).",";
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
-			$sql .= " ".$pos.",";
+			$sql .= " ".((int) $pos).",";
 			$sql .= " '".$this->db->escape($alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."',";
@@ -931,8 +939,8 @@ class ExtraFields
 			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
-			$sql .= " ".$user->id.",";
-			$sql .= " ".$user->id.",";
+			$sql .= " ".((int) $user->id).",";
+			$sql .= " ".((int) $user->id).",";
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= "'".$this->db->escape($enabled)."',";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
@@ -1283,6 +1291,9 @@ class ExtraFields
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 			$out .= $form->selectCurrency($currency, $keyprefix.$key.$keysuffix.'currency_id');
+		} elseif ($type == 'duration') {
+			$value = intval($value);
+			$out = $form->select_duration($keyprefix . $key, $value, 0, 'text', 0, 1);
 		} elseif ($type == 'double') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
@@ -1936,13 +1947,13 @@ class ExtraFields
 	/**
 	 * Return HTML string to put an output field into a page
 	 *
-	 * @param   string		$key            		Key of attribute
-	 * @param   string		$value          		Value to show
-	 * @param	string		$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string		$extrafieldsobjectkey	Required (for example $object->table_element).
-	 * @param 	Translate 	$outputlangs 			Output
-	 * @param	object		$object					The parent object of field to show
-	 * @return	string								Formatted value
+	 * @param   string			$key            		Key of attribute
+	 * @param   string			$value          		Value to show
+	 * @param	string			$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
+	 * @param	string			$extrafieldsobjectkey	Required (for example $object->table_element).
+	 * @param 	Translate|null 	$outputlangs 			Output
+	 * @param	object			$object					The parent object of field to show
+	 * @return	string									Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
 	{
@@ -1989,6 +2000,12 @@ class ExtraFields
 			$showsize = 19;
 			if ($value !== '') {
 				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
+			}
+		} elseif ($type == 'duration') {
+			$showsize = 10;
+			if ($value !== '') {
+				$value = intval($value);
+				$value = convertSecondToTime($value);
 			}
 		} elseif ($type == 'datetimegmt') {
 			$showsize = 19;
@@ -2290,7 +2307,7 @@ class ExtraFields
 			} else {
 				$value = '';
 			}
-		} elseif (in_array($type, ['multipts','linestrg', 'polygon'])) {
+		} elseif (in_array($type, ['multipts', 'linestrg', 'polygon'])) {
 			if (!empty($value)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
@@ -2393,7 +2410,7 @@ class ExtraFields
 
 		if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
 			$cssstring = "center";
-		} elseif (in_array($type, array('int', 'price', 'double'))) {
+		} elseif (in_array($type, array('int', 'price', 'double', 'duration'))) {
 			$cssstring = "right";
 		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
 			$cssstring = "center";
@@ -2537,7 +2554,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'multipts', 'linestrg', 'polygon')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'multipts', 'linestrg', 'polygon', 'duration')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2609,6 +2626,10 @@ class ExtraFields
 				} elseif (in_array($key_type, array('datetimegmt'))) {
 					// Clean parameters
 					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'gmt');
+				} elseif (in_array($key_type, array('duration'))) {
+					$value_hours = GETPOSTINT("options_" . $key . "hour");
+					$value_minutes = GETPOSTINT("options_" . $key . "minute");
+					$value_key = $value_hours * 3600 + $value_minutes * 60;
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {

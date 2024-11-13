@@ -47,11 +47,11 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return datas as an array
+	 * Return data as an array
 	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
 	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
-	 * @return  array                   			Array
+	 * @return  array<string|int,mixed>|null|int<0,0>      			Array
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
@@ -61,9 +61,10 @@ interface Database
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 * @param   int		$param 		Date TMS to convert
+	 * @param	'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 * @return  string            	Date in a string YYYYMMDDHHMMSS
 	 */
-	public function idate($param);
+	public function idate($param, $gm = 'tzserver');
 
 	/**
 	 * Return last error code
@@ -98,7 +99,7 @@ interface Database
 	/**
 	 * Return version of database server into an array
 	 *
-	 * @return	array        Version array
+	 * @return	string[]        Version array
 	 */
 	public function getVersionArray();
 
@@ -135,7 +136,7 @@ interface Database
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	string[] of tables in an array
 	 */
 	public function DDLListTables($database, $table = '');
 	// phpcs:enable
@@ -146,7 +147,7 @@ interface Database
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	array<array{0:string,1:string}>		List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '');
 	// phpcs:enable
@@ -177,10 +178,10 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return datas as an array
+	 *    Return data as an array
 	 *
 	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
-	 * @return  array|null|false           							Result with row
+	 * @return  array<int|string,mixed>|null|false  				Result with row
 	 */
 	public function fetch_array($resultset);
 	// phpcs:enable
@@ -280,16 +281,16 @@ interface Database
 	/**
 	 * Return value of server parameters
 	 *
-	 * @param   string	$filter		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @param   string	$filter			Filter list on a particular value
+	 * @return  array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerParametersValues($filter = '');
 
 	/**
 	 * Return value of server status
 	 *
-	 * @param   string $filter 		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @param   string $filter			Filter list on a particular value
+	 * @return  array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerStatusValues($filter = '');
 
@@ -340,9 +341,9 @@ interface Database
 	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Name of the field that will be the primary key
 	 * @param        string $type 			Type of the table
-	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
-	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
-	 * @param        array $keys 			Table of key fields names => value
+	 * @param        ?array<string,mixed>	$unique_keys 	Associative array Name of fields that will be unique key => value
+	 * @param        string[] 	$fulltext_keys 	Field name table that will be indexed in fulltext
+	 * @param        string[]	$keys 			Table of key fields names => value
 	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
@@ -361,7 +362,7 @@ interface Database
 	/**
 	 * Return list of available charset that can be used to store data in database
 	 *
-	 * @return        array        List of Charset
+	 * @return	?array<int,array{charset:string,description:string}>	List of Charset
 	 */
 	public function getListOfCharacterSet();
 
@@ -404,7 +405,7 @@ interface Database
 	/**
 	 * Return list of available collation that can be used for database
 	 *
-	 * @return        array        			List of Collation
+	 * @return	?array<int,array{collation:string}>		List of Collation
 	 */
 	public function getListOfCollation();
 
@@ -456,7 +457,7 @@ interface Database
 	 * List information of columns into a table.
 	 *
 	 * @param   string 			$table 			Name of table
-	 * @return  array                			Array with information on table
+	 * @return  array<array<string,mixed>>		Array with information on table
 	 */
 	public function DDLInfoTable($table);
 	// phpcs:enable

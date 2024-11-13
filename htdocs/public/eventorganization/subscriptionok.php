@@ -61,6 +61,17 @@ if (isModEnabled('paypal')) {
 
 global $dolibarr_main_url_root, $mysoc;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
 $object = new stdClass(); // For triggers

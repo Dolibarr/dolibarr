@@ -79,6 +79,9 @@ class MouvementStock extends CommonObject
 	 * @var null|int|'' datem date
 	 */
 	public $datem = '';
+	/**
+	 * @var float|string
+	 */
 	public $price;
 
 	/**
@@ -114,7 +117,13 @@ class MouvementStock extends CommonObject
 	 * @var string Origin type ('project', ...)
 	 */
 	public $origin_type;
+	/**
+	 * @var int
+	 */
 	public $line_id_oject_src;
+	/**
+	 * @var int
+	 */
 	public $line_id_oject_origin;
 
 	/**
@@ -127,7 +136,13 @@ class MouvementStock extends CommonObject
 	 */
 	public $batch;
 
+	/**
+	 * @var int
+	 */
 	public $line_id_object_src;
+	/**
+	 * @var int
+	 */
 	public $line_id_object_origin;
 
 	/**
@@ -910,11 +925,11 @@ class MouvementStock extends CommonObject
 	/**
 	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
-	 * @param	array|int	$dluo	      Could be either
-	 *                                    - int if row id of product_batch table (for update)
-	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+	 * @param	array{fk_product_stock:int,batchnumber:string}|int	$dluo	      Could be either
+	 *                                                                            - int if row id of product_batch table (for update)
+	 *                                                                            - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	float		$qty	      Quantity of product with batch number. May be a negative amount.
-	 * @return 	int   				      Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
+	 * @return 	int<-2,-1>|int<1,max>	  Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
 	{
@@ -924,6 +939,8 @@ class MouvementStock extends CommonObject
 
 		$pdluo = new Productbatch($this->db);
 
+		$vbatchnumber = '';
+		$vfk_product_stock = 0;
 		$result = 0;
 
 		// Try to find an existing record with same batch number or id
@@ -940,7 +957,7 @@ class MouvementStock extends CommonObject
 				$vfk_product_stock = $dluo['fk_product_stock'];
 				$vbatchnumber = $dluo['batchnumber'];
 
-				$result = $pdluo->find($vfk_product_stock, '', '', $vbatchnumber); // Search on batch number only (eatby and sellby are deprecated here)
+				$result = $pdluo->find($vfk_product_stock, 0, 0, $vbatchnumber); // Search on batch number only (eatby and sellby are deprecated here)
 			} else {
 				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock", LOG_ERR);
 				$result = -1;
@@ -950,6 +967,7 @@ class MouvementStock extends CommonObject
 			$result = -1;
 		}
 
+		$fk_product_stock = 0;
 		if ($result >= 0) {
 			// No error
 			if ($pdluo->id > 0) {	// product_batch record found

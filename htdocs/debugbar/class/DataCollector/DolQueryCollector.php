@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +55,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 * Return collected data
 	 *
-	 * @return array  Array of collected data
+	 * @return array<string,mixed>  Array of collected data
 	 */
 	public function collect()
 	{
@@ -65,7 +67,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 			$queries[] = array(
 				'sql' => $query['sql'],
 				'duration' => $query['duration'],
-				'duration_str' => round($query['duration'] * 1000, 2),
+				'duration_str' => round((float) $query['duration'] * 1000, 2),
 				'memory' => $query['memory_usage'],
 				'is_success' => $query['is_success'],
 				'error_code' => $query['error_code'],
@@ -100,7 +102,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array      Array
+	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:string}>      Array
 	 */
 	public function getWidgets()
 	{
@@ -125,7 +127,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return assets
 	 *
-	 *  @return array   Array
+	 *  @return array<string,string>   Array
 	 */
 	public function getAssets()
 	{

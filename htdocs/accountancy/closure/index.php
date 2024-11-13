@@ -30,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
@@ -230,7 +238,8 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300
+			300,
+			600
 		);
 	} elseif ($action == 'step_2') {
 		$form_question = array();
@@ -267,7 +276,8 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300
+			300,
+			600
 		);
 	} elseif ($action == 'step_3') {
 		$form_question = array();
@@ -310,7 +320,8 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300
+			300,
+			600
 		);
 	}
 }
@@ -340,81 +351,89 @@ print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_tex
 if (empty($current_fiscal_period)) {
 	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("FiscalPeriod"));
 } else {
-	// Step 1
-	$head = array();
-	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("AccountancyClosureStep1");
-	$head[0][2] = 'step1';
-	print dol_get_fiche_head($head, 'step1', '', -1, '');
+	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
+		// Step 1
+		$head = array();
+		$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
+		$head[0][1] = $langs->trans("Step").' 1 - '.$langs->trans("AccountancyClosureStep1");
+		$head[0][2] = 'step1';
+		print dol_get_fiche_head($head, 'step1', '', -1, '');
 
-	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
+		print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
-	$count_by_month = $object->getCountByMonthForFiscalPeriod($current_fiscal_period['date_start'], $current_fiscal_period['date_end']);
-	if (!is_array($count_by_month)) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
+		$count_by_month = $object->getCountByMonthForFiscalPeriod($current_fiscal_period['date_start'], $current_fiscal_period['date_end']);
 
-	if (empty($count_by_month['total'])) {
-		$buttonvalidate = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("ValidateMovements") . '</a>';
-	} else {
-		$buttonvalidate = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_1&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("ValidateMovements") . '</a>';
-	}
-	print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-
-	print '<tr class="liste_titre">';
-	$nb_years = is_array($count_by_month['list']) ? count($count_by_month['list']) : 0;
-	if ($nb_years > 1) {
-		print '<td class="right">' . $langs->trans("Year") . '</td>';
-	}
-	for ($i = 1; $i <= 12; $i++) {
-		print '<td class="right">' . $langs->trans('MonthShort' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)) . '</td>';
-	}
-	print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
-	print '</tr>';
-
-	if (is_array($count_by_month['list'])) {
-		foreach ($count_by_month['list'] as $info) {
-			print '<tr class="oddeven">';
-			if ($nb_years > 1) {
-				print '<td class="right">' . $info['year'] . '</td>';
-			}
-			for ($i = 1; $i <= 12; $i++) {
-				print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
-			}
-			print '<td class="right"><b>' . $info['total'] . '</b></td></tr>';
+		if (!is_array($count_by_month)) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
+
+		if (empty($count_by_month['total'])) {
+			$buttonvalidate = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("ValidateMovements") . '</a>';
+		} else {
+			$buttonvalidate = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_1&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("ValidateMovements") . '</a>';
+		}
+		print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), 0, '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+
+		print '<tr class="liste_titre">';
+		$nb_years = is_array($count_by_month['list']) ? count($count_by_month['list']) : 0;
+		if ($nb_years > 1) {
+			print '<td class="right">' . $langs->trans("Year") . '</td>';
+		}
+		for ($i = 1; $i <= 12; $i++) {
+			print '<td class="right">' . $langs->trans('MonthShort' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)) . '</td>';
+		}
+		print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
+		print '</tr>';
+
+		if (is_array($count_by_month['list'])) {
+			foreach ($count_by_month['list'] as $info) {
+				print '<tr class="oddeven">';
+				if ($nb_years > 1) {
+					print '<td class="right">' . $info['year'] . '</td>';
+				}
+				for ($i = 1; $i <= 12; $i++) {
+					print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
+				}
+				print '<td class="right"><b>' . $info['total'] . '</b></td></tr>';
+			}
+		}
+
+		print "</table>\n";
+		print '</div>';
+
+		print '<br>';
 	}
-
-	print "</table>\n";
-	print '</div>';
-
-	print '<br>';
 
 	// Step 2
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("AccountancyClosureStep2");
+	$head[0][1] = $langs->trans("Step").(getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '1' : '2').' - '.$langs->trans("AccountancyClosureStep2");
 	$head[0][2] = 'step2';
 	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
+	$button = '';
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
-
-	if (empty($count_by_month['total']) && empty($current_fiscal_period['status'])) {
-		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
+	if ((empty($count_by_month['total']) || getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) && empty($current_fiscal_period['status'])) {
+		// If no unlocked record and period still open
+		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	} else {
-		$button = '<a class="butActionRefused classfortooltip" href="#" title="This fiscal period already has the status Closed. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
+		if (!empty($current_fiscal_period['status'])) {
+			$button = '<a class="butActionRefused classfortooltip" href="#" title="The period is already closed. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
+		} elseif (!empty($count_by_month['total'])) {
+			$button = '<a class="butActionRefused classfortooltip" href="#" title="There is some lines not yet locked. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
+		}
 	}
-	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+	print_barre_liste('', 0, '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
 	print '<br>';
 
 	// Step 3
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("AccountancyClosureStep3");
+	$head[0][1] = $langs->trans("Step").(getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '2' : '3').' - '.$langs->trans("AccountancyClosureStep3");
 	$head[0][2] = 'step3';
 	print dol_get_fiche_head($head, 'step3', '', -1, '');
 
@@ -423,9 +442,9 @@ if (empty($current_fiscal_period)) {
 	if (empty($current_fiscal_period['status'])) {
 		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
 	} else {
-		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_3&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
+		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_3&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
 	}
-	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+	print_barre_liste('', 0, '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 }
 
 // End of page

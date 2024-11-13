@@ -40,6 +40,14 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$res = @include '../../main.inc.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -359,7 +367,7 @@ if ((!isset($mode) || $mode != 'noajax') && is_object($db)) {
 /**
  * treeOutputForAbsoluteDir
  *
- * @param	array	$sqltree				Sqltree
+ * @param	array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:int,id_children?:int[],level:int}>	$sqltree				Sqltree
  * @param	string	$selecteddir			Selected dir
  * @param	string	$fullpathselecteddir	Full path of selected dir
  * @param	string	$modulepart				Modulepart

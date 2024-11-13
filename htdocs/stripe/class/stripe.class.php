@@ -690,7 +690,7 @@ class Stripe extends CommonObject
 
 		$setupintent = null;
 
-		if (empty($setupintent)) {
+		if (empty($setupintent)) {  // @phan-suppress-current-line PhanPluginConstantVariableNull
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress, 'dol_noidempotency' => (int) $noidempotency_key);
 			if (is_object($object)) {
@@ -1011,7 +1011,9 @@ class Stripe extends CommonObject
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
+
 				dol_syslog(get_class($this)."::sepaStripe paymentmode=".$cardref);
+
 				if ($cardref) {
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
@@ -1363,8 +1365,10 @@ class Stripe extends CommonObject
 				}
 			}
 			'@phan-var-force stdClass|\Stripe\Charge $charge';
+			/*
 			if (isset($charge->id)) {
 			}
+			*/
 
 			$return->result = 'success';
 			$return->id = $charge->id;
@@ -1376,7 +1380,7 @@ class Stripe extends CommonObject
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
 				} elseif ($charge->source->type == 'three_d_secure') {
 					$stripe = new Stripe($this->db);
-					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card, array(
+					$src = \Stripe\Source::retrieve((string) $charge->source->three_d_secure->card, array(
 						"stripe_account" => $stripe->getStripeAccount($service)
 					));
 					$return->message = $src->card->brand." ....".$src->card->last4;

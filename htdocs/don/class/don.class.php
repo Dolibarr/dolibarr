@@ -163,6 +163,9 @@ class Don extends CommonObject
 	 */
 	public $modepaymentid = 0;
 
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
 
 	const STATUS_DRAFT = 0;
@@ -474,10 +477,10 @@ class Don extends CommonObject
 			}
 		}
 
-		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
-			//$res = $this->setValid($user);
-			//if ($res < 0) $error++;
-		}
+		//if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
+		//$res = $this->setValid($user);
+		//if ($res < 0) $error++;
+		//}
 
 		if (!$error) {
 			$this->db->commit();

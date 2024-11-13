@@ -15,7 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+/**
+ * @var Conf $conf
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -24,6 +29,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $object = $GLOBALS['object'];
+/** @var Product $object */
 
 $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>

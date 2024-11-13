@@ -649,7 +649,7 @@ class Project extends CommonObject
 			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
-			$sql .= ", fk_user_modif = ".$user->id;
+			$sql .= ", fk_user_modif = ".((int) $user->id);
 			$sql .= ", usage_opportunity = ".($this->usage_opportunity ? 1 : 0);
 			$sql .= ", usage_task = ".($this->usage_task ? 1 : 0);
 			$sql .= ", usage_bill_time = ".($this->usage_bill_time ? 1 : 0);

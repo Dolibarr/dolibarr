@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,15 @@
 // $object must be defined
 // $permissiondellink must be defined
 
+/**
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var int $permissiondellink
+ */
+
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
 $addlinkids = GETPOST('idtolinkto', 'array:int');
@@ -50,6 +60,7 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 
 		$objecttmp = new $element_prop['classname']($db);
 		'@phan-var-force CommonObject $objecttmp';
+		/** @var CommonObject $objecttmp */
 		$ret = $objecttmp->fetch(0, $addlinkref);
 		if ($ret > 0) {
 			$object->fetch($id);

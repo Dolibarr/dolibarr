@@ -35,12 +35,20 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal', 'productbatch'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$batch  	= GETPOST('batch', 'alpha');
+$batch = GETPOST('batch', 'alpha');
 $objectid  = GETPOSTINT('productid');
 
 // Security check

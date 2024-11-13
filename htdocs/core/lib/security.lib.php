@@ -1200,7 +1200,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *	@param	string		$message					Force error message
  *	@param	int			$http_response_code			HTTP response code
  *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
- *  @return	void
+ *  @return	never
  *  @see accessforbidden()
  */
 function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
@@ -1223,11 +1223,11 @@ function httponly_accessforbidden($message = '1', $http_response_code = 403, $st
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
- *	@param	int			$printheader		Show header before
- *  @param  int			$printfooter        Show footer after
- *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
- *  @param  array|null  $params         	More parameters provided to hook
- *  @return	void
+ *	@param	int<0,1>	$printheader		Show header before
+ *  @param  int<0,1>	$printfooter        Show footer after
+ *  @param  int<0,1>	$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  ?array<string,mixed>	$params More parameters provided to hook
+ *  @return	never
  *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)

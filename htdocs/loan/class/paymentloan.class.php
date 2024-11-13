@@ -78,7 +78,7 @@ class PaymentLoan extends CommonObject
 	public $amount_insurance;
 
 	/**
-	 * @var float|int
+	 * @var null|float|int
 	 */
 	public $amount_interest;
 
@@ -116,6 +116,9 @@ class PaymentLoan extends CommonObject
 	 * @var string
 	 */
 	public $type_label;
+	/**
+	 * @var int
+	 */
 	public $chid;
 	/**
 	 * @var string
@@ -131,6 +134,9 @@ class PaymentLoan extends CommonObject
 	 * @var int
 	 */
 	public $bank_account;
+	/**
+	 * @var int
+	 */
 	public $bank_line;
 
 
@@ -552,7 +558,7 @@ class PaymentLoan extends CommonObject
 				$label,
 				$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

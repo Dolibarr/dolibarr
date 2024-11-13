@@ -40,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
@@ -390,7 +399,7 @@ if ($sourcetype != 'salary') {
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
 	if ($type == 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 	} else {
@@ -417,7 +426,7 @@ if ($sourcetype != 'salary') {
 	}
 } else {
 	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
 	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
@@ -530,7 +539,7 @@ if ($resql) {
 		print $langs->trans("AmountTTC");
 	}
 	print '</td>';
-	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="right">'.$langs->trans("PendingSince").'</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -551,7 +560,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-				$bac->fetch(0, '', $obj->socid);
+				$bac->fetch($obj->soc_rib_id ?? 0, '', $obj->socid);
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
@@ -561,7 +570,7 @@ if ($resql) {
 				$salary = null;
 			} else {
 				$bac = new UserBankAccount($db);
-				$bac->fetch(0, '', $obj->uid);
+				$bac->fetch($obj->soc_rib_id ?? 0, '', $obj->uid);
 
 				$salary = new Salary($db);
 				$salary->fetch($obj->rowid);
@@ -621,6 +630,7 @@ if ($resql) {
 					print img_warning($langs->trans("IBANNotDefined"));
 				}
 			} else {
+				$langs->load("banks");
 				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
@@ -628,17 +638,22 @@ if ($resql) {
 			// RUM
 			if (empty($type) || $type == 'direct-debit') {
 				print '<td>';
-				$rumtoshow = $thirdpartystatic->display_rib('rum');
-				if ($rumtoshow) {
-					print $rumtoshow;
-					$format = $thirdpartystatic->display_rib('format');
-					if ($type != 'bank-transfer') {
-						if ($format) {
-							print ' ('.$format.')';
-						}
-					}
+				if (!empty($bac->rum)) {
+					print $bac->rum;
 				} else {
-					print img_warning($langs->trans("NoBankAccountDefined"));
+					$rumToShow = $thirdpartystatic->display_rib('rum');
+					if ($rumToShow) {
+						print $rumToShow;
+						$format = $thirdpartystatic->display_rib('format');
+						if ($type != 'bank-transfer') {
+							if ($format) {
+								print ' ('.$format.')';
+							}
+						}
+					} else {
+						$langs->load("banks");
+						print img_warning($langs->trans("NoBankAccountDefined"));
+					}
 				}
 				print '</td>';
 			}

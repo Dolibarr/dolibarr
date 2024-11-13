@@ -39,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
 
@@ -102,7 +110,7 @@ if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
 }
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 if ($search_status < -2) {
 	$search_status = '';
@@ -195,8 +203,8 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
-			'position' => $val['position'],
+			'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => (int) $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
@@ -227,9 +235,11 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = 0;
-$permissiontodelete = 0;
-$permissiontoadd = 0;
+$permissiontoread = ($user->hasRight('adherent', 'lire') == 1);
+$permissiontodelete = ($user->hasRight('adherent', 'supprimer') == 1);
+$permissiontoadd = ($user->hasRight('adherent', 'creer') == 1);
+$uploaddir = $conf->adherent->dir_output;
+$error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -283,7 +293,6 @@ if (empty($reshook)) {
 	// Close
 	if ($massaction == 'close' && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
-		$error = 0;
 		$nbclose = 0;
 
 		$db->begin();
@@ -313,7 +322,6 @@ if (empty($reshook)) {
 	// Create external user
 	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 		$tmpmember = new Adherent($db);
-		$error = 0;
 		$nbcreated = 0;
 
 		$db->begin();
@@ -350,7 +358,6 @@ if (empty($reshook)) {
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
-		$error = 0;
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
@@ -381,10 +388,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->hasRight('adherent', 'lire');
-	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
-	$permissiontoadd = $user->hasRight('adherent', 'creer');
-	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

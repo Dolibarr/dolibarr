@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,17 @@
  * $type, $text, $description, $line
  */
 
-// Protection to avoid direct call of template
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+ // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
@@ -180,7 +191,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmark1 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }
 

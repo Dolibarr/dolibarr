@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -241,7 +246,7 @@ $server->register(
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
@@ -346,7 +351,7 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {

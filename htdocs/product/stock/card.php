@@ -46,6 +46,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -610,9 +619,7 @@ if ($action == 'create') {
 
 			print "</div>";
 
-
 			// Show list of products into warehouse
-
 
 			$totalarray = array();
 			$totalarray['val'] = array();
@@ -734,6 +741,7 @@ if ($action == 'create') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				$units = 0;
 				$sameunits = true;
 
 				while ($i < $num) {
@@ -845,8 +853,6 @@ if ($action == 'create') {
 
 					print "</tr>";
 
-					$i++;
-
 					// Define $unit and $sameunits
 					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						if ($i == 0) {
@@ -855,6 +861,8 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
+
+					$i++;
 				}
 				$db->free($resql);
 

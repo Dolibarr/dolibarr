@@ -945,7 +945,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * generatec default input field
+	 * Generate default input field
 	 *
 	 * @return string
 	 */
