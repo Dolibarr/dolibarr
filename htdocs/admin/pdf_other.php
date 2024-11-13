@@ -453,7 +453,7 @@ if (isModEnabled('invoice')) {
 	}
 	print '</td></tr>';
 	*/
-	
+
 	/* Keep this option hidden for the moment to avoid options inflation. We'll see later if it is used enough...
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT"), $langs->trans("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACTMore"));
