@@ -163,7 +163,7 @@ class pdf_strato extends ModelePDFContract
 		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts", "compta"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('CONTRACT_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('CONTRACT_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('CONTRACT_DRAFT_WATERMARK');
 		}
 
@@ -672,7 +672,7 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities($titlekey);
 		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
