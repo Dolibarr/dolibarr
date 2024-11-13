@@ -174,7 +174,7 @@ class EcmFiles extends CommonObject
 		'fullpath_orig' => array('type' => 'varchar(750)', 'label' => 'FullPathOrig', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "full path of original filename, when file is uploaded from a local computer"),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		'keywords' => array('type' => 'varchar(750)', 'label' => 'Keywords', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "list of keywords, separated with comma. Must be limited to most important keywords."),
-		'content' => array('type' => 'html', 'label' => 'Content', 'enabled' => 'getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")', 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax200', 'help' => "Text content of file", 'showoncombobox' => 2, 'validate' => 1,'comment' => "Text content if option to store txt content was set."),
+		'content' => array('type' => 'html', 'label' => 'Content', 'enabled' => 'getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")', 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax200', 'help' => "Text content of file", 'showoncombobox' => 2, 'validate' => 1,'comment' => "Text content if option to store txt content was set."),
 		'cover' => array('type' => 'text', 'label' => 'Cover', 'enabled' => 1, 'visible' => 0, 'position' => 130, 'comment' => "is this file a file to use for a cover"),
 		'position' => array('type' => 'integer', 'label' => 'Position', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 140, 'index' => 1, 'comment' => "position of file among others"),
 		'gen_or_uploaded' => array('type' => 'varchar(12)', 'label' => 'GenOrUpload', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "'generated' or 'uploaded'"),
@@ -317,7 +317,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'fullpath_orig,';
 		$sql .= 'description,';
 		$sql .= 'keywords,';
-		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 			$sql .= 'content,';
 		}
 		$sql .= 'cover,';
@@ -341,7 +341,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->fullpath_orig) ? 'NULL' : "'".$this->db->escape($this->fullpath_orig)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->keywords) ? 'NULL' : "'".$this->db->escape($this->keywords)."'").',';
-		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 			$sql .= ' '.(!isset($this->content) ? 'NULL' : "'".$this->db->escape($this->content)."'").',';
 		}
 		$sql .= ' '.(!isset($this->cover) ? 'NULL' : "'".$this->db->escape($this->cover)."'").',';
@@ -426,7 +426,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fullpath_orig,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
-		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 			$sql .= " t.content,";
 		}
 		$sql .= " t.cover,";
@@ -507,7 +507,7 @@ class EcmFiles extends CommonObject
 				$this->fullpath_orig = $obj->fullpath_orig;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
-				if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+				if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 					$this->content = $obj->content;
 				}
 				$this->cover = $obj->cover;
@@ -571,7 +571,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fullpath_orig,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
-		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 			$sql .= " t.content,";
 		}
 		$sql .= " t.cover,";
@@ -646,7 +646,7 @@ class EcmFiles extends CommonObject
 				$line->fullpath_orig = $obj->fullpath_orig;
 				$line->description = $obj->description;
 				$line->keywords = $obj->keywords;
-				if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+				if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 					$line->content = $obj->content;
 				}
 				$line->cover = $obj->cover;
@@ -751,7 +751,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' fullpath_orig = '.(isset($this->fullpath_orig) ? "'".$this->db->escape($this->fullpath_orig)."'" : "null").',';
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' keywords = '.(isset($this->keywords) ? "'".$this->db->escape($this->keywords)."'" : "null").',';
-		if (getDolGlobalString("MAIN_USE_FULL_TEXT_INDEXATION")) {
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
 			$sql .= ' content = '.(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").',';
 		}
 		$sql .= ' cover = '.(isset($this->cover) ? "'".$this->db->escape($this->cover)."'" : "null").',';

@@ -271,8 +271,8 @@ class FormFile
 				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
 
 				$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow);
-				if (getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION')) {
-					$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION').')</span>';
+				if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
+					$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT').')</span>';
 				}
 
 				$out .= ' ';
