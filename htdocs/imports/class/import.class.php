@@ -453,16 +453,15 @@ class Import
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		/* Not used. This is not a business object. To convert it we must herit from CommonObject
 		if (!$error) {
-			if (!$notrigger) {
-				/* Not used. This is not a business object. To convert it we must herit from CommonObject
 				// Call trigger
 				$result=$this->call_trigger('IMPORT_DELETE',$user);
 				if ($result < 0) $error++;
 				// End call triggers
-				 */
 			}
 		}
+		*/
 
 		// Commit or rollback
 		if ($error) {

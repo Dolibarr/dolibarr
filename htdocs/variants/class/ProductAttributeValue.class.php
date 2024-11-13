@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->isextrafieldmanaged = 0;
+		$this->isextrafieldmanaged = 1;
 		$this->entity = $conf->entity;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -177,6 +177,11 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Value"));
 			$error++;
 		}
+		// Position to use
+		if (empty($this->position)) {
+			$positionmax = $this->getMaxAttributesValuesPosition($this->fk_product_attribute);
+			$this->position = $positionmax + 1;
+		}
 		if ($error) {
 			dol_syslog(__METHOD__ . ' ' . $this->errorsToString(), LOG_ERR);
 			return -1;
@@ -204,6 +209,10 @@ class ProductAttributeValue extends CommonObjectLine
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -269,6 +278,7 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->fk_product_attribute = $obj->fk_product_attribute;
 			$this->ref = $obj->ref;
 			$this->value = $obj->value;
+			$this->fetch_optionals();
 		}
 		$this->db->free($resql);
 
@@ -287,43 +297,37 @@ class ProductAttributeValue extends CommonObjectLine
 	{
 		$return = array();
 
-		$sql = "SELECT ";
-
-		if ($only_used) {
-			$sql .= "DISTINCT ";
-		}
-
-		$sql .= "v.fk_product_attribute, v.rowid, v.ref, v.value FROM " . MAIN_DB_PREFIX . "product_attribute_value v ";
-
-		if ($only_used) {
-			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination2val c2v ON c2v.fk_prod_attr_val = v.rowid ";
-			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ";
-			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product p ON p.rowid = c.fk_product_child ";
-		}
+		$sql = "SELECT v.fk_product_attribute, v.rowid, v.ref, v.value FROM " . MAIN_DB_PREFIX . "product_attribute_value v ";
 
 		$sql .= "WHERE v.fk_product_attribute = " . ((int) $prodattr_id);
 
 		if ($only_used) {
-			$sql .= " AND c2v.rowid IS NOT NULL AND p.tosell = 1";
+			$sql .= " AND EXISTS (SELECT c2v.fk_prod_attr_val ";
+			$sql .= "FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val c2v ";
+			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ";
+			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product p ON p.rowid = c.fk_product_child";
+			$sql .= " WHERE c2v.rowid IS NOT NULL AND p.tosell = 1 AND c2v.fk_prod_attr_val = v.rowid)";
 		}
 
 		$sql .= " ORDER BY v.position ASC";
 
 		$query = $this->db->query($sql);
 
-		while ($result = $this->db->fetch_object($query)) {
-			if (empty($returnonlydata)) {
-				$tmp = new ProductAttributeValue($this->db);
-			} else {
-				$tmp = new stdClass();
+		if ($query) {
+			while ($result = $this->db->fetch_object($query)) {
+				if (empty($returnonlydata)) {
+					$tmp = new ProductAttributeValue($this->db);
+				} else {
+					$tmp = new stdClass();
+				}
+
+				$tmp->fk_product_attribute = $result->fk_product_attribute;
+				$tmp->id = $result->rowid;
+				$tmp->ref = $result->ref;
+				$tmp->value = $result->value;
+
+				$return[] = $tmp;
 			}
-
-			$tmp->fk_product_attribute = $result->fk_product_attribute;
-			$tmp->id = $result->rowid;
-			$tmp->ref = $result->ref;
-			$tmp->value = $result->value;
-
-			$return[] = $tmp;
 		}
 
 		return $return;
@@ -454,7 +458,12 @@ class ProductAttributeValue extends CommonObjectLine
 				$error++;
 			}
 		}
-
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -462,6 +471,27 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->db->rollback();
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Get max value used for position of attributes
+	 * @param int $fk_product_attribute Id of attribute
+	 *
+	 * @return int  Max value of position in table of attributes
+	 */
+	public function getMaxAttributesValuesPosition($fk_product_attribute)
+	{
+		// Search the last position of attributes
+		$sql = "SELECT max(position) FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
+		$sql .= ' AND fk_product_attribute='.(int) $fk_product_attribute;
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$row = $this->db->fetch_row($resql);
+			return $row[0];
+		}
+		return 0;
 	}
 
 	/**

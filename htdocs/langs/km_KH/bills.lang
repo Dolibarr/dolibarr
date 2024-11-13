@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=ស្វែងរកវិក្កយ�
 SendEmailsRemindersOnSupplierInvoiceDueDate=ផ្ញើការរំលឹកតាមអ៊ីមែលសម្រាប់វិក្កយបត្រអ្នកផ្គត់ផ្គង់ដែលមានសុពលភាព និងមិនទាន់បង់ប្រាក់
 PaymentMadeForSeveralInvoices=ការទូទាត់ត្រូវបានធ្វើឡើងសម្រាប់វិក្កយបត្រជាច្រើន។
 SituationInvoiceProgressCurrent=វិក័យប័ត្រដំណើរការ
+INVOICE_ADD_EPC_QR_CODEPay=ស្កែនកូដ QR នេះដើម្បីទូទាត់ជាមួយស្មាតហ្វូនដែលគាំទ្រការទូទាត់ដោយប្រើលេខកូដ EPC QR ។

@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
@@ -55,7 +64,7 @@ if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->hasRight('facture', 'lire');
+$permissiontoread = ($user->hasRight('facture', 'lire') == 1);
 
 
 /*
@@ -78,7 +87,7 @@ if ($action == 'builddoc' && $permissiontoread) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
-		dol_print_error($db, $obj->error);
+		dol_print_error($db, $rap->error);
 	}
 
 	$year = GETPOSTINT("reyear");

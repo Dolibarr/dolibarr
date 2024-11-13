@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013-2016      Jean-François Ferry  <hello@librethic.io>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket", "mails"));
@@ -211,7 +220,9 @@ if ($object->id) {
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+
 	// same as above for every messages
+	/* disabled. Too many bugs. All file of a ticket must be stored into ticket. File must be linked to an event by column agenda_id into llx_ecmfiles.
 	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
 	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
 	$resql = $db->query($sql);
@@ -236,6 +247,7 @@ if ($object->id) {
 			$filearray = array_merge($filearray, $file_msg_array);
 		}
 	}
+	*/
 
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {

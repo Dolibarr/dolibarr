@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @var int|string		Date of payment
-	 * @deprecated
+	 * @deprecated Use $datep
 	 * @see $datep
 	 */
 	public $datepaye = '';
@@ -80,18 +80,19 @@ class PaymentSalary extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount
 	 * @see $amount
+	 * @var float|string
 	 */
 	public $total;
 
 	/**
-	 * @var float			Total amount of payment
+	 * @var float	Total amount of payment
 	 */
 	public $amount;
 
 	/**
-	 * @var array			Array of amounts
+	 * @var array<float|string>	Array of amounts
 	 */
 	public $amounts = array();
 
@@ -102,7 +103,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $num_payment
 	 */
 	public $num_paiement;
 
@@ -114,6 +115,7 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @inheritdoc
+	 * @var int
 	 */
 	public $fk_bank;
 
@@ -295,7 +297,7 @@ class PaymentSalary extends CommonObject
 						//$deposits=$tmpsalary->getSumDepositsUsed();
 						$deposits = 0;
 						$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-						$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
+						$remaintopay = price2num((float) $tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 						if ($remaintopay == 0) {
 							$result = $tmpsalary->setPaid($user);
 						} else {
@@ -365,6 +367,7 @@ class PaymentSalary extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datepaye = $this->db->jdate($obj->datep);
+				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_paiement = $obj->num_payment;
@@ -440,7 +443,7 @@ class PaymentSalary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 		$sql .= " fk_salary=".(isset($this->fk_salary) ? $this->fk_salary : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datepaye) != 0 ? "'".$this->db->idate($this->datepaye)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
@@ -637,7 +640,7 @@ class PaymentSalary extends CommonObject
 				$label,
 				-$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
@@ -768,9 +771,6 @@ class PaymentSalary extends CommonObject
 			if (!$result) {
 				$error++;
 				$this->error = 'Error -1 '.$this->db->error();
-			}
-
-			if (!$error) {
 			}
 
 			if (!$error) {
@@ -952,9 +952,9 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params params to construct tooltip data
-	 * @return array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

@@ -38,7 +38,7 @@ create table llx_product
   description                   text,
   note_public                   text,
   note                          text,
-  customcode                    varchar(32),                        -- Optional custom code
+  customcode                    varchar(32),                        -- Customs|Commodity|HS|TARIC code see https://github.com/Dolibarr/dolibarr/issues/31679
   fk_country                    integer DEFAULT NULL,               -- Optional id of original country
   fk_state                      integer DEFAULT NULL,               -- Optional id of original state/province
   price                         double(24,8) DEFAULT 0,				-- price without tax
@@ -90,7 +90,7 @@ create table llx_product
   volume                        float        DEFAULT NULL,
   volume_units                  tinyint      DEFAULT NULL,
   stockable_product             integer      DEFAULT 1 NOT NULL,
-  stock                         real,                               -- Current physical stock (DENORMALIZED FIELD)
+  stock                         real,                               -- DENORMALIZED FIELD. Current physical stock.
   pmp                           double(24,8) DEFAULT 0 NOT NULL,    -- To store valuation of stock calculated using average price method, for this product
   fifo                          double(24,8),                       -- To store valuation of stock calculated using fifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
   lifo                          double(24,8),                       -- To store valuation of stock calculated using lifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.

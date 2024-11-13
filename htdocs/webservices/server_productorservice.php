@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -88,11 +92,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string')
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string')
 	)
 );
 // Define WSDL Return object
@@ -103,51 +107,51 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string')
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string')
 	)
 );
 
 $productorservice_fields = array(
-	'id' => array('name'=>'id', 'type'=>'xsd:string'),
-	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
-	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-	'type' => array('name'=>'type', 'type'=>'xsd:string'),
-	'label' => array('name'=>'label', 'type'=>'xsd:string'),
-	'description' => array('name'=>'description', 'type'=>'xsd:string'),
-	'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
-	'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
-	'note' => array('name'=>'note', 'type'=>'xsd:string'),
-	'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
-	'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
-	'barcode' => array('name'=>'barcode', 'type'=>'xsd:string'),
-	'barcode_type' => array('name'=>'barcode_type', 'type'=>'xsd:string'),
-	'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
-	'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
-	'customcode' => array('name'=>'customcode', 'type'=>'xsd:string'),
+	'id' => array('name' => 'id', 'type' => 'xsd:string'),
+	'ref' => array('name' => 'ref', 'type' => 'xsd:string'),
+	'ref_ext' => array('name' => 'ref_ext', 'type' => 'xsd:string'),
+	'type' => array('name' => 'type', 'type' => 'xsd:string'),
+	'label' => array('name' => 'label', 'type' => 'xsd:string'),
+	'description' => array('name' => 'description', 'type' => 'xsd:string'),
+	'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
+	'date_modification' => array('name' => 'date_modification', 'type' => 'xsd:dateTime'),
+	'note' => array('name' => 'note', 'type' => 'xsd:string'),
+	'status_tobuy' => array('name' => 'status_tobuy', 'type' => 'xsd:string'),
+	'status_tosell' => array('name' => 'status_tosell', 'type' => 'xsd:string'),
+	'barcode' => array('name' => 'barcode', 'type' => 'xsd:string'),
+	'barcode_type' => array('name' => 'barcode_type', 'type' => 'xsd:string'),
+	'country_id' => array('name' => 'country_id', 'type' => 'xsd:string'),
+	'country_code' => array('name' => 'country_code', 'type' => 'xsd:string'),
+	'customcode' => array('name' => 'customcode', 'type' => 'xsd:string'),
 
-	'price_net' => array('name'=>'price_net', 'type'=>'xsd:string'),
-	'price' => array('name'=>'price', 'type'=>'xsd:string'),
-	'price_min_net' => array('name'=>'price_min_net', 'type'=>'xsd:string'),
-	'price_min' => array('name'=>'price_min', 'type'=>'xsd:string'),
+	'price_net' => array('name' => 'price_net', 'type' => 'xsd:string'),
+	'price' => array('name' => 'price', 'type' => 'xsd:string'),
+	'price_min_net' => array('name' => 'price_min_net', 'type' => 'xsd:string'),
+	'price_min' => array('name' => 'price_min', 'type' => 'xsd:string'),
 
-	'price_base_type' => array('name'=>'price_base_type', 'type'=>'xsd:string'),
+	'price_base_type' => array('name' => 'price_base_type', 'type' => 'xsd:string'),
 
-	'vat_rate' => array('name'=>'vat_rate', 'type'=>'xsd:string'),
-	'vat_npr' => array('name'=>'vat_npr', 'type'=>'xsd:string'),
-	'localtax1_tx' => array('name'=>'localtax1_tx', 'type'=>'xsd:string'),
-	'localtax2_tx' => array('name'=>'localtax2_tx', 'type'=>'xsd:string'),
+	'vat_rate' => array('name' => 'vat_rate', 'type' => 'xsd:string'),
+	'vat_npr' => array('name' => 'vat_npr', 'type' => 'xsd:string'),
+	'localtax1_tx' => array('name' => 'localtax1_tx', 'type' => 'xsd:string'),
+	'localtax2_tx' => array('name' => 'localtax2_tx', 'type' => 'xsd:string'),
 
-	'stock_alert' => array('name'=>'stock_alert', 'type'=>'xsd:string'),
-	'stock_real' => array('name'=>'stock_real', 'type'=>'xsd:string'),
-	'stock_pmp' => array('name'=>'stock_pmp', 'type'=>'xsd:string'),
-	'warehouse_ref' => array('name'=>'warehouse_ref', 'type'=>'xsd:string'), // Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
+	'stock_alert' => array('name' => 'stock_alert', 'type' => 'xsd:string'),
+	'stock_real' => array('name' => 'stock_real', 'type' => 'xsd:string'),
+	'stock_pmp' => array('name' => 'stock_pmp', 'type' => 'xsd:string'),
+	'warehouse_ref' => array('name' => 'warehouse_ref', 'type' => 'xsd:string'), // Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
 
-	'canvas' => array('name'=>'canvas', 'type'=>'xsd:string'),
-	'import_key' => array('name'=>'import_key', 'type'=>'xsd:string'),
+	'canvas' => array('name' => 'canvas', 'type' => 'xsd:string'),
+	'import_key' => array('name' => 'import_key', 'type' => 'xsd:string'),
 
-	'dir' => array('name'=>'dir', 'type'=>'xsd:string'),
-	'images' => array('name'=>'images', 'type'=>'tns:ImagesArray')
+	'dir' => array('name' => 'dir', 'type' => 'xsd:string'),
+	'images' => array('name' => 'images', 'type' => 'tns:ImagesArray')
 );
 
 
@@ -171,7 +175,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 			$type = 'xsd:string';
 		}
 
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 
@@ -219,10 +223,10 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'photo' => array('name'=>'photo', 'type'=>'xsd:string'),
-		'photo_vignette' => array('name'=>'photo_vignette', 'type'=>'xsd:string'),
-		'imgWidth' => array('name'=>'imgWidth', 'type'=>'xsd:string'),
-		'imgHeight' => array('name'=>'imgHeight', 'type'=>'xsd:string')
+		'photo' => array('name' => 'photo', 'type' => 'xsd:string'),
+		'photo_vignette' => array('name' => 'photo_vignette', 'type' => 'xsd:string'),
+		'imgWidth' => array('name' => 'imgWidth', 'type' => 'xsd:string'),
+		'imgHeight' => array('name' => 'imgHeight', 'type' => 'xsd:string')
 	)
 );
 
@@ -236,9 +240,9 @@ $server->wsdl->addComplexType(
 	'',
 	array(
 		//'limit' => array('name'=>'limit','type'=>'xsd:string'),
-		'type' => array('name'=>'type', 'type'=>'xsd:string'),
-		'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
-		'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
+		'type' => array('name' => 'type', 'type' => 'xsd:string'),
+		'status_tobuy' => array('name' => 'status_tobuy', 'type' => 'xsd:string'),
+		'status_tosell' => array('name' => 'status_tosell', 'type' => 'xsd:string'),
 	)
 );
 
@@ -271,9 +275,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getProductOrService',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'lang'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string', 'lang' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'product'=>'tns:product'),
+	array('result' => 'tns:result', 'product' => 'tns:product'),
 	$ns,
 	$ns.'#getProductOrService',
 	$styledoc,
@@ -285,9 +289,9 @@ $server->register(
 $server->register(
 	'createProductOrService',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'product'=>'tns:product'),
+	array('authentication' => 'tns:authentication', 'product' => 'tns:product'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#createProductOrService',
 	$styledoc,
@@ -299,9 +303,9 @@ $server->register(
 $server->register(
 	'updateProductOrService',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'product'=>'tns:product'),
+	array('authentication' => 'tns:authentication', 'product' => 'tns:product'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#updateProductOrService',
 	$styledoc,
@@ -313,9 +317,9 @@ $server->register(
 $server->register(
 	'deleteProductOrService',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'listofid'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'listofid' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'nbdeleted'=>'xsd:int'),
+	array('result' => 'tns:result', 'nbdeleted' => 'xsd:int'),
 	$ns,
 	$ns.'#deleteProductOrService',
 	$styledoc,
@@ -327,9 +331,9 @@ $server->register(
 $server->register(
 	'getListOfProductsOrServices',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'filterproduct'=>'tns:filterproduct'),
+	array('authentication' => 'tns:authentication', 'filterproduct' => 'tns:filterproduct'),
 	// Exit values
-	array('result'=>'tns:result', 'products'=>'tns:ProductsArray2'),
+	array('result' => 'tns:result', 'products' => 'tns:ProductsArray2'),
 	$ns,
 	$ns.'#getListOfProductsOrServices',
 	$styledoc,
@@ -341,9 +345,9 @@ $server->register(
 $server->register(
 	'getProductsForCategory',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'lang'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'lang' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'products'=>'tns:ProductsArray2'),
+	array('result' => 'tns:result', 'products' => 'tns:ProductsArray2'),
 	$ns,
 	$ns.'#getProductsForCategory',
 	$styledoc,
@@ -355,12 +359,12 @@ $server->register(
 /**
  * Get produt or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	string		$ref_ext			Ref external of object
  * @param   string      $lang               Lang to force
- * @return	mixed
+ * @return array{product?:mixed[],result:array{result_code:string,result_label:string}} Array result
  */
 function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '', $lang = '')
 {
@@ -472,8 +476,8 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 
 				// Create
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'product'=>$productorservice_result_fields
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'product' => $productorservice_result_fields
 				);
 			} else {
 				$error++;
@@ -488,7 +492,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 	//var_dump($objectresp);exit;
 	return $objectresp;
@@ -498,9 +502,9 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 /**
  * Create an invoice
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$product			Product
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array{id:string,ref:string,ref_ext:string,type:string,label:string,description:string,date_creation:string,date_modification:string,note:string,status_tobuy:string,status_tosell:string,barcode:string,barcode_type:string,country_id:string,country_code:string,customcode:string,price_net:string,price:string,price_min_net:string,price_min:string,price_base_type:string,vat_rate:string,vat_npr:string,localtax1_tx:string,localtax2_tx:string,stock_alert:string,stock_real:string,stock_pmp:string,warehouse_ref:string,canvas:string,import_key:string,dir:string,images:array<array{photo:string,photo_vignette:string,imgWidth:string,imgHeight:string}>}		$product			Product
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createProductOrService($authentication, $product)
 {
@@ -555,22 +559,22 @@ function createProductOrService($authentication, $product)
 		$newobject->note_private = empty($product['note_private']) ? '' : $product['note_private'];
 		$newobject->status = empty($product['status_tosell']) ? 0 : $product['status_tosell'];
 		$newobject->status_buy = empty($product['status_tobuy']) ? 0 : $product['status_tobuy'];
-		$newobject->price = isset($product['price_net']) ? $product['price_net'] : 0;
-		$newobject->price_ttc = isset($product['price']) ? $product['price'] : 0;
+		$newobject->price = isset($product['price_net']) ? (float) $product['price_net'] : 0;
+		$newobject->price_ttc = isset($product['price']) ? (float) $product['price'] : 0;
 		$newobject->tva_tx = empty($product['vat_rate']) ? 0 : $product['vat_rate'];
 		$newobject->price_base_type = $product['price_base_type'];
 		$newobject->date_creation = $now;
 
 		if (!empty($product['barcode'])) {
 			$newobject->barcode = $product['barcode'];
-			$newobject->barcode_type = $product['barcode_type'];
+			$newobject->barcode_type = (int) $product['barcode_type'];
 		}
 
-		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
-		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
-		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? $product['stock_alert'] : null;
+		$newobject->stock_reel = isset($product['stock_real']) ? (int) $product['stock_real'] : null;
+		$newobject->pmp = isset($product['pmp']) ? (float) $product['pmp'] : 0;
+		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? (float) $product['stock_alert'] : null;
 
-		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
+		$newobject->country_id = isset($product['country_id']) ? (int) $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
 			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
@@ -613,7 +617,7 @@ function createProductOrService($authentication, $product)
 
 		if (!$error) {
 			// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled)) {
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && isModEnabled('stock')) {
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal = $newobject->stock_reel;
@@ -644,7 +648,7 @@ function createProductOrService($authentication, $product)
 
 		if (!$error) {
 			$db->commit();
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 		} else {
 			$db->rollback();
 			$error++;
@@ -654,7 +658,7 @@ function createProductOrService($authentication, $product)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -664,9 +668,9 @@ function createProductOrService($authentication, $product)
 /**
  * Update a product or service
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$product			Product
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array{id:string,ref:string,ref_ext:string,type:string,label:string,description:string,date_creation:string,date_modification:string,note:string,status_tobuy:string,status_tosell:string,barcode:string,barcode_type:string,country_id:string,country_code:string,customcode:string,price_net:string,price:string,price_min_net:string,price_min:string,price_base_type:string,vat_rate:string,vat_npr:string,localtax1_tx:string,localtax2_tx:string,stock_alert:string,stock_real:string,stock_pmp:string,warehouse_ref:string,canvas:string,import_key:string,dir:string,images:array<array{photo:string,photo_vignette:string,imgWidth:string,imgHeight:string}>}		$product			Product
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function updateProductOrService($authentication, $product)
 {
@@ -719,28 +723,28 @@ function updateProductOrService($authentication, $product)
 		if (isset($product['ref_ext'])) {
 			$newobject->ref_ext = $product['ref_ext'];
 		}
-		$newobject->type = $product['type'];
+		$newobject->type = (int) $product['type'];
 		$newobject->label = $product['label'];
 		$newobject->description = $product['description'];
 		$newobject->note = $product['note'];
-		$newobject->status = $product['status_tosell'];
-		$newobject->status_buy = $product['status_tobuy'];
-		$newobject->price = $product['price_net'];
-		$newobject->price_ttc = $product['price'];
+		$newobject->status = (int) $product['status_tosell'];
+		$newobject->status_buy = (int) $product['status_tobuy'];
+		$newobject->price = (float) $product['price_net'];
+		$newobject->price_ttc = (float) $product['price'];
 		$newobject->tva_tx = $product['vat_rate'];
 		$newobject->price_base_type = $product['price_base_type'];
 		$newobject->date_creation = $now;
 
 		if ($product['barcode']) {
 			$newobject->barcode = $product['barcode'];
-			$newobject->barcode_type = $product['barcode_type'];
+			$newobject->barcode_type = (int) $product['barcode_type'];
 		}
 
-		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
-		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
-		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? $product['stock_alert'] : null;
+		$newobject->stock_reel = isset($product['stock_real']) ? (int) $product['stock_real'] : null;
+		$newobject->pmp = isset($product['pmp']) ? (float) $product['pmp'] : 0;
+		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? (float) $product['stock_alert'] : null;
 
-		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
+		$newobject->country_id = isset($product['country_id']) ? (int) $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
 			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
@@ -766,7 +770,7 @@ function updateProductOrService($authentication, $product)
 			$error++;
 		} else {
 			// Update stock if stock count is provided and differs from database after creation or update
-			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled)) {
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && isModEnabled('stock')) {
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal = $newobject->stock_reel;
@@ -811,7 +815,7 @@ function updateProductOrService($authentication, $product)
 
 		if (!$error) {
 			$db->commit();
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 		} else {
 			$db->rollback();
 			$error++;
@@ -821,7 +825,7 @@ function updateProductOrService($authentication, $product)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -831,9 +835,9 @@ function updateProductOrService($authentication, $product)
 /**
  * Delete a product or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$listofidstring		List of id with comma
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function deleteProductOrService($authentication, $listofidstring)
 {
@@ -894,7 +898,7 @@ function deleteProductOrService($authentication, $listofidstring)
 		if (!$error) {
 			$db->commit();
 			//$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'listofid'=>$listofiddeleted);
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'nbdeleted'=>count($listofiddeleted));
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'nbdeleted' => count($listofiddeleted));
 		} else {
 			$db->rollback();
 			$error++;
@@ -905,10 +909,10 @@ function deleteProductOrService($authentication, $listofidstring)
 
 	if ($error) {
 		//$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'listofid'=>$listofiddeleted);
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted' => 0);
 	} elseif (count($listofiddeleted) == 0) {
 		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
-		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.implode(',', $listofid).' found'), 'nbdeleted'=>0);
+		$objectresp = array('result' => array('result_code' => 'NOT_FOUND', 'result_label' => 'No product or service with id '.implode(',', $listofid).' found'), 'nbdeleted' => 0);
 	}
 
 	return $objectresp;
@@ -918,9 +922,9 @@ function deleteProductOrService($authentication, $listofidstring)
 /**
  * getListOfProductsOrServices
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$filterproduct		Filter fields
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array<string,mixed>		$filterproduct		Filter fields
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
@@ -963,7 +967,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$arrayproducts[] = array('id'=>$obj->rowid, 'ref'=>$obj->ref, 'ref_ext'=>$obj->ref_ext);
+				$arrayproducts[] = array('id' => $obj->rowid, 'ref' => $obj->ref, 'ref_ext' => $obj->ref_ext);
 				$i++;
 			}
 		} else {
@@ -975,13 +979,13 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 
 	if ($error) {
 		$objectresp = array(
-			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
-			'products'=>$arrayproducts
+			'result' => array('result_code' => $errorcode, 'result_label' => $errorlabel),
+			'products' => $arrayproducts
 		);
 	} else {
 		$objectresp = array(
-			'result'=>array('result_code' => 'OK', 'result_label' => ''),
-			'products'=>$arrayproducts
+			'result' => array('result_code' => 'OK', 'result_label' => ''),
+			'products' => $arrayproducts
 		);
 	}
 
@@ -992,10 +996,10 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 /**
  * Get list of products for a category
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Category id
  * @param	string		$lang				Force lang
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getProductsForCategory($authentication, $id, $lang = '')
 {
@@ -1109,13 +1113,13 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 					// Retour
 					$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'products'=> $products
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'products' => $products
 					);
 				} else {
 					$errorcode = 'NORECORDS_FOR_ASSOCIATION';
 					$errorlabel = 'No products associated'.$sql;
-					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+					$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			} else {
@@ -1131,7 +1135,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

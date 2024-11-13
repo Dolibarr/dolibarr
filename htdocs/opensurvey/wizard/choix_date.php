@@ -30,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
@@ -150,6 +158,7 @@ if (GETPOST('confirmation')) {
 					}
 				}
 
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
 					$choixdate .= ",";
 					$choixdate .= $_SESSION["totalchoixjour"][$i];

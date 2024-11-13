@@ -930,6 +930,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 	// Recursive function to copy all subdirectories and contents:
 	if (is_dir($ossrcfile)) {
 		$dir_handle = opendir($ossrcfile);
+		$tmpresult = 0;  // Initialised before loop to keep old behavior, may be needed inside loop
 		while ($file = readdir($dir_handle)) {
 			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {
 				if (is_dir($ossrcfile."/".$file)) {
@@ -998,19 +999,19 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *  - Database indexes for files are updated.
  *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
- * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
- * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string	$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
- * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
- * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
- * @param	int		$indexdatabase		Index new file into database.
- * @param	array	$moreinfo			Array with more information to set in index table
+ * @param	string  	$srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string		$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string		$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
+ * @param   int<0,1>	$overwriteifexists  Overwrite file if exists (1 by default)
+ * @param   int<0,1>	$testvirus          Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int<0,1>	$indexdatabase		Index new file into database.
+ * @param	array<string,mixed>	$moreinfo			Array with more information to set in index table
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
 function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
 {
-	global $user, $db, $conf;
+	global $user, $db;
 	$result = false;
 
 	dol_syslog("files.lib.php::dol_move srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
@@ -1135,6 +1136,12 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['position'])) {
+						$ecmfile->position = $moreinfo['position'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
+						$ecmfile->cover = $moreinfo['cover'];
 					}
 
 					$resultecm = $ecmfile->create($user);
@@ -1518,7 +1525,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
-			$listofdir = glob($globencoded);
+			$listofdir = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
+
 			if (!empty($listofdir) && is_array($listofdir)) {
 				foreach ($listofdir as $filename) {
 					if ($nophperrors) {
@@ -1795,9 +1803,12 @@ function dol_meta_create($object)
 			dol_mkdir($dir);
 		}
 
+		$meta = '';
 		if (is_dir($dir)) {
 			if (is_countable($object->lines) && count($object->lines) > 0) {
 				$nblines = count($object->lines);
+			} else {
+				$nblines = 0;
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
 			$meta = "REFERENCE=\"".$object->ref."\"
@@ -1867,19 +1878,20 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * All information used are in db, conf, langs, user and _FILES.
  * Note: This function can be used only into a HTML page context.
  *
- * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
- * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$updatesessionordb		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
- * @param	string	$varfiles				_FILES var name
- * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
- * @param	string	$link					Link to add (to add a link instead of a file)
- * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
- * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
- * @param   Object  $object                 Object used to set 'src_object_*' fields
+ * @param	string		$upload_dir			Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
+ * @param	int<0,1>	$allowoverwrite		1=Allow overwrite existing file
+ * @param	int<-1,1>	$updatesessionordb	1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
+ * @param	string		$varfiles			_FILES var name
+ * @param	string		$savingdocmask		Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+ * @param	?string		$link				Link to add (to add a link instead of a file)
+ * @param   string		$trackid			Track id (used to prefix name of session vars to avoid conflict)
+ * @param	int<0,1>	$generatethumbs		1=Generate also thumbs for uploaded image files
+ * @param   ?Object		$object				Object used to set 'src_object_*' fields
+ * @param	string		$forceFullTestIndexation		'1'=Force full text storage in database even if global option not set (consume a high level of data)
  * @return	int                             Return integer <=0 if KO, >0 if OK
  * @see dol_remove_file_process()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '')
 {
 	global $db, $user, $conf, $langs;
 
@@ -2116,17 +2128,19 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
  *  @param      Object  $object         Object used to set 'src_object_*' fields
+ *  @param		string	$forceFullTextIndexation		'1'=Force full text indexation even if global option not set
  *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
-function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null, $forceFullTextIndexation = '')
 {
 	global $db, $user, $conf;
 
 	$result = 0;
+	$error = 0;
 
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
-	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a tmp dir
+	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
 		$filename = basename(preg_replace('/\.noexe$/', '', $file));
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
@@ -2167,7 +2181,15 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		}
 
 		// Use a convertisser Doc to Text
-		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');
+		if (empty($useFullTextIndexation) && $forceFullTextIndexation == '1') {
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {
+				$useFullTextIndexation = 'pdftotext';
+			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {
+				$useFullTextIndexation = 'docling';
+			}
+		}
+
 		//$useFullTextIndexation = 1;
 		if ($useFullTextIndexation) {
 			$ecmfile->filepath = $rel_dir;
@@ -2177,39 +2199,78 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 			$textforfulltextindex = '';
 			$keywords = '';
+			$cmd = '';
 			if (preg_match('/\.pdf/i', $filename)) {
 				// TODO Move this into external submodule files
 
 				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
 
-				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
-				$outputfile = $conf->admin->dir_temp.'/tmppdttotext.'.$user->id.'.out'; // File used with popen method
+				// Use the method pdftotext to generate a HTML
+				if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+					$utils = new Utils($db);
+					$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
 
-				// We also exclude '/temp/' dir and 'documents/admin/documents'
-				// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
-				$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+					// We also exclude '/temp/' dir and 'documents/admin/documents'
+					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-				if (!$result['error']) {
-					$txt = $result['output'];
-					$matches = array();
-					if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
-						$keywords = $matches[1];
+					if (!$resultexec['error']) {
+						$txt = $resultexec['output'];
+						$matches = array();
+						if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+							$keywords = $matches[1];
+						}
+						if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+							$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+						}
+					} else {
+						dol_syslog($resultexec['error']);
+						$error++;
 					}
-					if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
-						$textforfulltextindex = dol_string_nospecial($matches[1]);
+				}
+
+				// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
+				if (preg_match('/docling/i', $useFullTextIndexation)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+					$utils = new Utils($db);
+					$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+
+					// We also exclude '/temp/' dir and 'documents/admin/documents'
+					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+					if (!$resultexec['error']) {
+						$txt = $resultexec['output'];
+						//$matches = array();
+						//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+						//	$keywords = $matches[1];
+						//}
+						//if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+						//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+						//}
+						$textforfulltextindex = $txt;
+					} else {
+						dol_syslog($resultexec['error']);
+						$error++;
 					}
 				}
 			}
 
-			$ecmfile->description = $textforfulltextindex;
+			if ($cmd) {
+				$ecmfile->description = 'File content generated by '.$cmd;
+			}
+			$ecmfile->content = $textforfulltextindex;
 			$ecmfile->keywords = $keywords;
 		}
 
-		$result = $ecmfile->create($user);
-		if ($result < 0) {
-			dol_syslog($ecmfile->error);
+		if (!$error) {
+			$result = $ecmfile->create($user);
+			if ($result < 0) {
+				dol_syslog($ecmfile->error);
+			}
 		}
 	}
 
@@ -2351,6 +2412,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		dol_syslog("dol_compress_file mode=".$mode." inputfile=".$inputfile." outputfile=".$outputfile);
 
 		$data = implode("", file(dol_osencode($inputfile)));
+		$compressdata = null;
 		if ($mode == 'gz' && function_exists('gzencode')) {
 			$foundhandler = 1;
 			$compressdata = gzencode($data, 9);
@@ -2385,6 +2447,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 					new RecursiveDirectoryIterator($rootPath, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
+				'@phan-var-force SplFileInfo[] $files';
 
 				foreach ($files as $name => $file) {
 					// Skip directories (they would be added automatically)
@@ -2437,7 +2500,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 			}
 		}
 
-		if ($foundhandler) {
+		if ($foundhandler && is_string($compressdata)) {
 			$fp = fopen($outputfile, "w");
 			fwrite($fp, $compressdata);
 			fclose($fp);
@@ -2466,7 +2529,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  *
  * @param 	string 	$inputfile		File to uncompress
  * @param 	string	$outputdir		Target dir name
- * @return 	array					array('error'=>'Error code') or array() if no error
+ * @return 	array{error?:string}	array('error'=>'Error code') or array() if no error
  * @see dol_compress_file(), dol_compress_dir()
  */
 function dol_uncompress($inputfile, $outputdir)
@@ -2601,7 +2664,7 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$mode			'zip'
  * @param	string	$excludefiles   A regex pattern to exclude files. For example: '/\.log$|\/temp\//'
  * @param	string	$rootdirinzip	Add a root dir level in zip file
- * @param	string	$newmask		Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask		Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_file()
  */
@@ -2657,6 +2720,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					new RecursiveDirectoryIterator($inputdir, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
+				'@phan-var-force SplFileInfo[] $files';
 
 				//var_dump($inputdir);
 				foreach ($files as $name => $file) {
@@ -2807,11 +2871,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
 	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
-		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) {
+		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity has no sense
+		if (isModEnabled('multicompany') && (empty($entity) || empty($conf->medias->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
+		} */
+		if (empty($entity)) {
+			$entity = 1;
 		}
 		$accessallowed = 1;
-		$original_file = $conf->medias->multidir_output[$entity].'/'.$original_file;
+		$original_file = (empty($conf->medias->multidir_output[$entity]) ? $conf->medias->dir_output : $conf->medias->multidir_output[$entity]).'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.(log|json)$/', basename($original_file)));
@@ -2909,19 +2977,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->multidir_output[$entity].'/'.$original_file;
-	} elseif (($modulepart == 'apercusupplier_proposal' || $modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output)) {
+	} elseif (($modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output)) {
 		// Wrapping pour les apercu supplier proposal
 		if ($fuser->hasRight('supplier_proposal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->supplier_proposal->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'apercusupplier_order' || $modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
+	} elseif (($modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les apercu supplier order
 		if ($fuser->hasRight('fournisseur', 'commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'apercusupplier_invoice' || $modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
+	} elseif (($modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping pour les apercu supplier invoice
 		if ($fuser->hasRight('fournisseur', $lire)) {
 			$accessallowed = 1;
@@ -3246,7 +3314,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'payment') {
-			// Wrapping pour les rapport de paiements
+		// Wrapping pour les rapport de paiements
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3584,12 +3652,12 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param	array				$file_list	        Array for response
+ * @param array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
- * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
- * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
- * @param   array               $checksumconcat     Array of checksum
- * @return  array               			        Array of filenames
+ * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
+ * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)
+ * @param   string[]			$checksumconcat     Array of checksum
+ * @return	array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array of filenames
  */
 function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {

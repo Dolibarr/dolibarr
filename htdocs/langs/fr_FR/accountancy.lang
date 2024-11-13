@@ -420,9 +420,9 @@ AccountancyNoUnletteringModified=Aucune annulation de lettrage modifiée
 AccountancyOneUnletteringModifiedSuccessfully=Une annulation de lettrage modifiée avec succès
 AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées avec succès
 ## Closure
-AccountancyClosureStep1=Étape 1 : Valider et verrouiller les mouvements
-AccountancyClosureStep2=Étape 2 : Clôturer l'exercice
-AccountancyClosureStep3=Étape 3 : Extraire les entrées (facultatif)
+AccountancyClosureStep1=Valider et verrouiller les mouvements
+AccountancyClosureStep2=Clôturer l'exercice
+AccountancyClosureStep3=Extraire les entrées (facultatif)
 AccountancyClosureClose=Clôturer l'exercice fiscal
 AccountancyClosureAccountingReversal=Extraire et enregistrer les entrées des « A nouveaux »
 AccountancyClosureStep3NewFiscalPeriod=Prochain exercice fiscal

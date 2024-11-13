@@ -131,13 +131,13 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 				$obj = $this->db->fetch_object($result);
 				if ($old != $obj->email) {
 					$target[$j] = array(
-						'email' => $obj->email,
-						'id' => $obj->id,
-						'firstname' => $obj->firstname,
-						'lastname' => $obj->lastname,
-						//'other' => $obj->label,
+						'email' => (string) $obj->email,
+						'id' => (int) $obj->id,
+						'firstname' => (string) $obj->firstname,
+						'lastname' => (string) $obj->lastname,
+						'other' => '', // (string) $obj->label,
 						'source_url' => $this->url($obj->id),
-						'source_id' => $obj->id,
+						'source_id' => (int) $obj->id,
 						'source_type' => 'myobject@mymodule'
 					);
 					$old = $obj->email;

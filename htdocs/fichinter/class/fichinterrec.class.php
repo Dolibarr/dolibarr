@@ -46,11 +46,6 @@ class FichinterRec extends Fichinter
 	public $table_element_line = 'fichinterdet_rec';
 
 	/**
-	 * @var string Fieldname with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
-
-	/**
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'title';
@@ -60,16 +55,10 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
-
 	/**
 	 * @var string title
 	 */
 	public $title;
-	public $number;
-	public $date;
-	public $amount;
-	public $tva;
-	public $total;
 
 	/**
 	 * @var int
@@ -81,6 +70,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $frequency;
 
+	/**
+	 * @var int
+	 */
 	public $id_origin;
 
 	/**
@@ -93,7 +85,14 @@ class FichinterRec extends Fichinter
 	 */
 	public $propalid;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_last_gen;
+
+	/**
+	 * @var datetime|string
+	 */
 	public $date_when;
 
 	/**
@@ -107,7 +106,7 @@ class FichinterRec extends Fichinter
 	public $nb_gen_max;
 
 	/**
-	 * int rank
+	 * @var int rank
 	 */
 	public $rang;
 
@@ -116,6 +115,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $special_code;
 
+	/**
+	 * @var int
+	 */
 	public $usenewprice = 0;
 
 	/**
@@ -248,7 +250,7 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->remise_percent,
 						'HT',
 						0,
-						'',
+						0,
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
@@ -638,7 +640,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '')
 	{
-		global $langs, $hookmanager;
+		global $action, $langs, $hookmanager;
 
 		$result = '';
 		$label = $langs->trans("ShowInterventionModel").': '.$this->ref;
@@ -649,13 +651,11 @@ class FichinterRec extends Fichinter
 			return $url;
 		}
 
-		$picto = 'intervention';
-
 		$link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= $link.img_object($label, $picto, 'class="classfortooltip"').$linkend;
+			$result .= $link.img_object($label, $this->picto, 'class="classfortooltip"').$linkend;
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';
@@ -663,7 +663,7 @@ class FichinterRec extends Fichinter
 		if ($withpicto != 2) {
 			$result .= $link.$this->ref.$linkend;
 		}
-		global $action;
+
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -672,6 +672,7 @@ class FichinterRec extends Fichinter
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 

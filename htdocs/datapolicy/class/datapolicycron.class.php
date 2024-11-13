@@ -34,8 +34,14 @@ class DataPolicyCron
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $error;
 
+	/**
+	 * @var string
+	 */
 	public $output;
 
 

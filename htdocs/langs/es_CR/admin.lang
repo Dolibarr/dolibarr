@@ -1471,7 +1471,6 @@ SetToYesIfGroupIsComputationOfOtherGroups=Establézcalo en sí si este grupo es 
 COMPANY_AQUARIUM_NO_PREFIX=No use el prefijo, solo copie el código de cliente o proveedor
 COMPANY_DIGITARIA_CLEAN_REGEX=Filtro Regex para limpiar valor (COMPANY_DIGITARIA_CLEAN_REGEX)
 RemoveSpecialWordsHelp=Especifique las palabras que se limpiarán antes de calcular la cuenta del cliente o proveedor. Usar una ";" entre cada palabra
-GDPRContact=Delegado de Protección de Datos (contacto DPO, Privacidad de Datos o RGPD)
 HelpOnTooltip=Texto de ayuda para mostrar en la información sobre herramientas
 HelpOnTooltipDesc=Coloque texto o una clave de traducción aquí para que el texto se muestre en una información sobre herramientas cuando este campo aparezca en un formulario
 YouCanDeleteFileOnServerWith=Puede eliminar este archivo en el servidor con la línea de comandos: <br> %s

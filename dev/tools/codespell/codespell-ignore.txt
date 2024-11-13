@@ -86,6 +86,11 @@ espace
 methode
 datee
 
+# Translation keys
+addin
+amountin
+alltime
+
 # other
 blacklists
 confirmactionxxx

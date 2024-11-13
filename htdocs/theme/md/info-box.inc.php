@@ -33,6 +33,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
+.prospect-back {
+	background-color: #a7c5b0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #65953d !important;
 	color: #FFF !important;
@@ -602,6 +609,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .kanban .box-flex-item {
 	line-height: 1.4em;
+}
+.kanban .box-flex-item-5lines {
+	line-height: 1.18em;
 }
 
 /* css for small kanban */

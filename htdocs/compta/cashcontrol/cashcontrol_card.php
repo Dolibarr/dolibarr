@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks"));
 
@@ -108,6 +117,7 @@ $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("ta
 /*
  * Actions
  */
+$error = 0;
 
 if (empty($backtopage)) {
 	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
@@ -138,7 +148,6 @@ if ($action == "reopen" && $permissiontoadd) {
 }
 
 if ($action == "start" && $permissiontoadd) {
-	$error = 0;
 	if (!GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
 		$action = 'create';
@@ -160,9 +169,8 @@ if ($action == "start" && $permissiontoadd) {
 		$action = 'start';
 		$error++;
 	}
-	$error = 0;
 	foreach ($arrayofpaymentmode as $key => $val) {
-		$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
+		$object->$key = (float) price2num(GETPOST($key.'_amount', 'alpha'));
 	}
 
 	if (!$error) {
@@ -170,7 +178,7 @@ if ($action == "start" && $permissiontoadd) {
 		$object->month_close = GETPOSTINT('closemonth');
 		$object->year_close = GETPOSTINT('closeyear');
 
-		$object->opening = price2num(GETPOST('opening', 'alpha'));
+		$object->opening = (float) price2num(GETPOST('opening', 'alpha'));
 		$object->posmodule = GETPOST('posmodule', 'alpha');
 		$object->posnumber = GETPOST('posnumber', 'alpha');
 
@@ -206,9 +214,9 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$object->year_close = GETPOST('closeyear', 'int');
 	*/
 
-	$object->cash = price2num(GETPOST('cash_amount', 'alpha'));
-	$object->card = price2num(GETPOST('card_amount', 'alpha'));
-	$object->cheque = price2num(GETPOST('cheque_amount', 'alpha'));
+	$object->cash = (float) price2num(GETPOST('cash_amount', 'alpha'));
+	$object->card = (float) price2num(GETPOST('card_amount', 'alpha'));
+	$object->cheque = (float) price2num(GETPOST('cheque_amount', 'alpha'));
 
 	$result = $object->update($user);
 

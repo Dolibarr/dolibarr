@@ -63,30 +63,82 @@ abstract class CommonObjectLine extends CommonObject
 	public $picto = 'line';
 
 	/**
-	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @var ?int		ID of the unit of measurement (rowid in llx_c_units table)
 	 * @see measuringUnitString()
 	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
+	/**
+	 * @var int|''
+	 */
 	public $date_debut_prevue;
+	/**
+	 * @var int|''
+	 */
 	public $date_debut_reel;
+	/**
+	 * @var int|''
+	 */
 	public $date_fin_prevue;
+	/**
+	 * @var int|''
+	 */
 	public $date_fin_reel;
 
-	public $weight;
-	public $weight_units;
-	public $width;
-	public $width_units;
-	public $height;
-	public $height_units;
-	public $length;
-	public $length_units;
-	public $surface;
-	public $surface_units;
-	public $volume;
-	public $volume_units;
 
+	/**
+	 * @var float|string
+	 */
+	public $weight;
+
+	/**
+	 * @var int|string
+	 */
+	public $weight_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string
+	 */
+	public $length;
+	/**
+	 * @var int|string
+	 */
+	public $length_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string
+	 */
+	public $width;
+	/**
+	 * @var int|string
+	 */
+	public $width_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string|null
+	 */
+	public $height;
+	/**
+	 * @var int|string|null
+	 */
+	public $height_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string|null
+	 */
+	public $surface;
+	/**
+	 * @var int|string|null
+	 */
+	public $surface_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var float|string|null
+	 */
+	public $volume;
+	/**
+	 * @var int|string|null
+	 */
+	public $volume_units;	// scale -3, 0, 3, 6
+	/**
+	 * @var ?array<string,array<string,string>>
+	 */
 	public $multilangs;
 
 	/**
@@ -147,7 +199,13 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float Quantity
 	 */
 	public $qty;
+	/**
+	 * @var int
+	 */
 	public $duree;
+	/**
+	 * @var float|string
+	 */
 	public $remise_percent;
 
 	/**
@@ -168,6 +226,9 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float
 	 */
 	public $subprice;
+	/**
+	 * @var float|string
+	 */
 	public $tva_tx;
 
 	/**
@@ -216,7 +277,7 @@ abstract class CommonObjectLine extends CommonObject
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
-	 *	@return	string|int 		Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
+	 *	@return	string|int<-1,1>	Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -260,13 +321,45 @@ abstract class CommonObjectLine extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int         		$limit        	Limit the number of lines returned
 	 * @param  int         		$offset       	Offset
-	 * @param  string|array		$filter       	Filter as an Universal Search string.
+	 * @param  string|string[]	$filter       	Filter as an Universal Search string.
 	 * 											Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      		$filtermode   	No more used
-	 * @return array|int        	         	int <0 if KO, array of pages if OK
+	 * @return self[]|int<-1,-1>        	         	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		return 0;
+		return -1;  // NOK because nothing done.
+	}
+
+	/**
+	 * Return clicable link of object line (with eventually picto)
+	 * May (should) also return information about the associated "parent" object.
+	 * To overload
+	 *
+	 * @param      int			$withpicto                Add picto into link
+	 * @return     string          			          String with URL
+	 */
+	public function getNomUrl($withpicto = 0)
+	{
+		$parentattribute = $this->fk_parent_attribute;
+
+		/*
+		if ($parentattribute) {
+			return 'Parent #'.$this->$parentattribute.' - Line #'.$this->id;
+		} else {
+			return 'Line #'.$this->id;
+		}
+		*/
+
+		$parent_element_properties = getElementProperties($this->parent_element);
+		$parent_classname = $parent_element_properties['classname'];
+		$parent_element = new $parent_classname($this->db);
+		/** @var CommonObject $parent_element */
+		$parentattribute = $this->fk_parent_attribute;
+		if ($parentattribute && method_exists($parent_element, 'fetch')) {
+			$parent_element->fetch($this->$parentattribute); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+		}
+
+		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id; // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 	}
 }

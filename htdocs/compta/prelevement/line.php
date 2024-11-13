@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
@@ -153,7 +161,7 @@ $head = array();
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.((int) $id).'&type='.urlencode($type);
 $head[$h][1] = $title;
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 if ($id) {
@@ -164,7 +172,7 @@ if ($id) {
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
-		print dol_get_fiche_head($head, (string) $hselected, $title, -1, 'payment');
+		print dol_get_fiche_head($head, $hselected, $title, -1, 'payment');
 
 		print '<table class="border centpercent tableforfield">';
 

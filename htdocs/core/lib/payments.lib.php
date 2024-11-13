@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * It loads tabs from modules looking for the entity payment
  *
  * @param Paiement $object Current payment object
- * @return array Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs for the payment section
  */
 function payment_prepare_head(Paiement $object)
 {
@@ -73,7 +74,7 @@ function payment_prepare_head(Paiement $object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param 	int		$id		ID of bank line
- * @return 	array 			Tabs for the Bankline section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs for the Banline section
  */
 function bankline_prepare_head($id)
 {
@@ -108,7 +109,7 @@ function bankline_prepare_head($id)
  * It loads tabs from modules looking for the entity payment_supplier
  *
  * @param Paiement $object Current payment object
- * @return array Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the payment section
  */
 function payment_supplier_prepare_head(Paiement $object)
 {
@@ -155,7 +156,7 @@ function payment_supplier_prepare_head(Paiement $object)
  * Return array of valid payment mode
  *
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', 'stripe', ...)
- * @return	array						Array of valid payment method
+ * @return	array<string,string>		Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {

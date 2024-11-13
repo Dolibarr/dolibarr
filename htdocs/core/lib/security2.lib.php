@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +49,12 @@ function dol_getwebuser($mode)
 /**
  *  Return a login if login/pass was successful
  *
- *	@param		string	$usertotest			Login value to test
- *	@param		string	$passwordtotest		Password value to test
- *	@param		string	$entitytotest		Instance of data we must check
- *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
- *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
- *  @return		string						Login or '' or '--bad-login-validity--'
+ *	@param	string		$usertotest		Login value to test
+ *	@param	string		$passwordtotest	Password value to test
+ *	@param	int|string	$entitytotest	Instance of data we must check
+ *	@param	string[]	$authmode		Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
+ *	@param	'api'|'dav'|'ws'|''	$context	Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
+ *  @return	string						Login or '' or '--bad-login-validity--'
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
@@ -175,6 +176,7 @@ if (!function_exists('dol_loginfunction')) {
 		*/
 
 		// Select templates dir
+		$template_dir = '';
 		if (!empty($conf->modules_parts['tpl'])) {	// Using this feature slow down application
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl/'));
 			foreach ($dirtpls as $reldir) {
@@ -210,7 +212,7 @@ if (!function_exists('dol_loginfunction')) {
 					session_set_cookie_params($sessioncookieparams);
 				}
 
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', !empty($dolibarr_main_force_https), true);
+				setcookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0, "/", '', !empty($dolibarr_main_force_https), true);
 			}
 		}
 
@@ -269,22 +271,20 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Security graphical code
-		$captcha = 0;
-		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			$captcha = 1;
-			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+		$captcha = '';
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 		}
 
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 				$helpcenterlink = 1;
 			}
 		}
@@ -394,6 +394,7 @@ function encodedecode_dbpassconf($level = 0)
 			$lineofpass = 0;
 
 			$reg = array();
+			$mode = '';
 			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save encrypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
@@ -479,8 +480,8 @@ function encodedecode_dbpassconf($level = 0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		array		$replaceambiguouschars	Discard ambiguous characters. For example array('I').
+ * @param		bool		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
+ * @param		?array<string>	$replaceambiguouschars	Discard ambiguous characters. For example array('I').
  * @param       int         $length                 Length of random string (Used only if $generic is true)
  * @return		string		    					New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
@@ -542,6 +543,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
 		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
 		$genhandler = new $nomclass($db, $conf, $langs, $user);
+		'@phan-var-force ModeleGenPassword $genhandler';
 		$generated_password = $genhandler->getNewGeneratedPassword();
 		unset($genhandler);
 	}
@@ -583,7 +585,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',

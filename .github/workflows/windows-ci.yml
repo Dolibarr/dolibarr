@@ -2,13 +2,13 @@
 name: Win CI
 # yamllint disable-line rule:truthy
 on:
-  # push:
-  # pull_request:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:
@@ -36,11 +36,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup MariaDB
-        uses: ankane/setup-mariadb@v1
-        with:
-          # mariadb-version: ${{ matrix.mariadb-version }}
-          database: travis  # Specify your database name
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -62,21 +57,28 @@ jobs:
         id: cache
         uses: actions/cache/restore@v4
         env:
-          HASH: ${{ hashFiles('htdocs/install/**') }}
+          HASH: ${{ hashFiles('htdocs/install/**', 'htdocs/filefunc.inc.php') }}
           KEY_ROOT: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
-          enableCrossOsArchive: true 
+          enableCrossOsArchive: true
           path: |
             ./db_init.sql
             ./db_init.sql.md5
+            ./.cache/mariadb
           key: ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
           restore-keys: |
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.head_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-
-            ${{ env.KEY_ROOT }}-
+            # ${{ env.KEY_ROOT }}-
+
+      - name: Setup MariaDB
+        uses: frederic34/setup-mariadb@v1
+        with:
+          # mariadb-version: ${{ matrix.mariadb-version }}
+          database: travis  # Specify your database name
 
       - name: Create local php.ini with open_basedir restrictions
         shell: cmd
@@ -114,6 +116,7 @@ jobs:
         # Note this is bash (MSYS) on Windows
         shell: bash
         run: |
+          # shellcheck disable=SC2129
           ECHO "#[group]Directory contents to verify cache files, ..."
           ls -l
           ECHO "#[endgroup]"
@@ -128,10 +131,12 @@ jobs:
           ls -l
           ECHO "#[endgroup]"
           # Export some tool paths to reuse the from CMD shell.
-          echo "TAIL=$(cygpath -w "$(which tail)")" >> "$GITHUB_ENV"
-          echo "GREP=$(cygpath -w "$(which grep)")" >> "$GITHUB_ENV"
-          echo "TEE=$(cygpath -w "$(which tee)")" >> "$GITHUB_ENV"
-          echo "BASEDIR=$(realpath .)" >> "$GITHUB_ENV"
+          {
+          echo "TAIL=$(cygpath -w "$(which tail)")"
+          echo "GREP=$(cygpath -w "$(which grep)")"
+          echo "TEE=$(cygpath -w "$(which tee)")"
+          echo "BASEDIR=$(realpath .)"
+          } >> "$GITHUB_ENV"
 
       - name: Run PHPUnit tests
         # continue-on-error: true
@@ -184,8 +189,9 @@ jobs:
         if: ${{ ! cancelled() }}
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
-          enableCrossOsArchive: true 
+          enableCrossOsArchive: true
           key: ${{ steps.cache.outputs.cache-primary-key }}
           path: |
             ./db_init.sql
             ./db_init.sql.md5
+            ./.cache/mariadb

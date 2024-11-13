@@ -118,6 +118,8 @@ NoRecordedShipments=Aucune expédition client
 BoxCustomersOutstandingBillReached=Clients dont l'en-cours de facturation est dépassé
 BoxTitleLastFediverseInfos=Les %s derniers messages de %s
 BoxLastFediverseInfos=Dernières mises à jour de Fediverse : Actualités et Tendances
+NoOpenedProjectsOpportunities=Aucune opportunités ouvertes
+NoOpenedProjects=Aucun projet ouvert
 # Pages
 UsersHome=Accueil des utilisateurs et groupes
 MembersHome=Accueil des adhérents

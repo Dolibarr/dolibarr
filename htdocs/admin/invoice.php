@@ -9,6 +9,7 @@
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
@@ -70,6 +80,7 @@ if ($action == 'updateMask') {
 	$maskreplacement = GETPOST('maskreplacement', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
+	$res = 0;
 	if ($maskconstinvoice && preg_match('/_MASK_/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
@@ -377,8 +388,9 @@ foreach ($dirmodels as $reldir) {
 							$facture = new Facture($db);
 							$facture->initAsSpecimen();
 
-							// Example for standard invoice
 							$htmltooltip = '';
+
+							// Example for standard invoice
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$facture->type = 0;
 							$nextval = $module->getNextValue($mysoc, $facture);
@@ -393,21 +405,22 @@ foreach ($dirmodels as $reldir) {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-							// Example for replacement
-							$facture->type = 1;
-							$nextval = $module->getNextValue($mysoc, $facture);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
+							// Example for replacement invoice
+							if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT')) {
+								$facture->type = 1;
+								$nextval = $module->getNextValue($mysoc, $facture);
+								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+									$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
+									if ($nextval) {
+										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+											$nextval = $langs->trans($nextval);
+										}
+										$htmltooltip .= $nextval.'<br>';
+									} else {
+										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-
 							// Example for credit invoice
 							$facture->type = 2;
 							$nextval = $module->getNextValue($mysoc, $facture);
@@ -442,7 +455,7 @@ foreach ($dirmodels as $reldir) {
 
 							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
+									dol_htmloutput_mesg($module->error, array(), 'error', 1);
 								}
 							}
 
@@ -755,6 +768,17 @@ print "</select>";
 print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
+
+// Structured communication
+// Specific to Belgium - See core/lib/functions_be.lib.php
+if ($mysoc->country_code == 'BE') {
+	print '<tr class="oddeven"><td>' . $langs->trans("InvoicePaymentManageStructuredCommunication") . '&nbsp;';
+	print $form->textwithpicto('', $langs->trans("InvoicePaymentManageStructuredCommunicationHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION');
+	print '</td></tr>';
+}
+
 print "</table>";
 print '</div>';
 

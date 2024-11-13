@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/accounting.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -172,6 +173,45 @@ class AccountingAccountTest extends CommonClassTest
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+
+		return $result;
+	}
+
+	/**
+	 * testGetCurrentPeriodOfFiscalYear
+	 *
+	 * @return  int				Result of delete
+	 *
+	 * @depends testAccountingAccountDelete
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testGetCurrentPeriodOfFiscalYear()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+
+		$result = getCurrentPeriodOfFiscalYear($db, $conf, null, 'tzserver');
+		var_dump($result);
+
+		print __METHOD__." date_start = ".dol_print_date($result['date_start'], 'dayhour', 'gmt')."\n";
+		print __METHOD__." date_end   = ".dol_print_date($result['date_end'], 'dayhour', 'gmt')."\n";
+
+		$this->assertArrayHasKey('date_start', $result);
+		$this->assertArrayHasKey('date_end', $result);
+
+
+		$result = getCurrentPeriodOfFiscalYear($db, $conf, null, 'gmt');
+		var_dump($result);
+
+		print __METHOD__." date_start = ".dol_print_date($result['date_start'], 'dayhour', 'gmt')."\n";
+		print __METHOD__." date_end   = ".dol_print_date($result['date_end'], 'dayhour', 'gmt')."\n";
+
+		$this->assertArrayHasKey('date_start', $result);
+		$this->assertArrayHasKey('date_end', $result);
 
 		return $result;
 	}

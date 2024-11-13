@@ -50,7 +50,6 @@ require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';               
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
-
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -193,17 +192,53 @@ class EmailCollector extends CommonObject
 	 */
 	public $import_key;
 
+	/**
+	 * @var string
+	 */
 	public $host;
+	/**
+	 * @var string
+	 */
 	public $port;
+	/**
+	 * @var string
+	 */
 	public $hostcharset;
+	/**
+	 * @var string
+	 */
 	public $login;
+	/**
+	 * @var string
+	 */
 	public $password;
+	/**
+	 * @var int
+	 */
 	public $acces_type;
+	/**
+	 * @var string
+	 */
 	public $oauth_service;
+	/**
+	 * @var string
+	 */
 	public $imap_encryption;
+	/**
+	 * @var int<0,1>
+	 */
 	public $norsh;
+	/**
+	 * @var string
+	 */
 	public $source_directory;
+	/**
+	 * @var string
+	 */
 	public $target_directory;
+	/**
+	 * @var int
+	 */
 	public $maxemailpercollect;
 
 	/**
@@ -211,14 +246,32 @@ class EmailCollector extends CommonObject
 	 */
 	public $datelastresult;
 
+	/**
+	 * @var string
+	 */
 	public $codelastresult;
+	/**
+	 * @var string
+	 */
 	public $lastresult;
+	/**
+	 * @var int|string
+	 */
 	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * @var array<array{id:int,status:int,rulevalue:string,type:'to'|'from'|'bcc'|'cc'|'subject'|'body'|'header'|'seene'|'unseen'|'unanswered'|'answered'|'smaller'|'larger'|'withtrackingidinmsgid'|'withouttrackingidinmsgid'|'withtrackingid'|'withouttrackingid'|'isanwser'|'isnotanswer'|'replyto'}>
+	 */
 	public $filters;
+	/**
+	 * @var array<array{type:string,actionparam:string,status:int,position:int}>
+	 */
 	public $actions;
 
+	/**
+	 * @var string
+	 */
 	public $debuginfo;
 
 	const STATUS_DISABLED = 0;
@@ -1011,6 +1064,7 @@ class EmailCollector extends CommonObject
 						if (property_exists($object, $tmpproperty)) {
 							$valuecurrent = $object->$tmpproperty;
 						} else {
+							// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 							$valuecurrent = $tmp[$tmpproperty];
 						}
 					}
@@ -1031,6 +1085,7 @@ class EmailCollector extends CommonObject
 										if (property_exists($object, $keytoreplace)) {
 											$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
 										} else {
+											// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 											$substitutionarray['__'.$keytoreplace.'__'] = $tmp[$keytoreplace];
 										}
 									}
@@ -1104,6 +1159,10 @@ class EmailCollector extends CommonObject
 		$searchfilterexcludesubjectarray = array();
 		$operationslog = '';
 		$rulesreplyto = array();
+		$connectstringsource = '';
+		$connectstringtarget = '';
+		$connection = false;
+		$arrayofemail = array();
 
 		$now = dol_now();
 
@@ -1119,6 +1178,8 @@ class EmailCollector extends CommonObject
 			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('MailboxSourceDirectory'));
 			return -1;
 		}
+
+		$client = null;
 
 		$sourcedir = $this->source_directory;
 		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
@@ -1144,15 +1205,18 @@ class EmailCollector extends CommonObject
 				} else {
 					$keyforprovider = '';
 				}
-				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-				$OAUTH_SERVICENAME = 'Unknown';
-				if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
-					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
-					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
-					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+				if (!empty($supportedoauth2array)) {
+					$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+					$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+					$OAUTH_SERVICENAME = $nameofservice;
+				} else {
+					$OAUTH_SERVICENAME = 'Unknown';
 				}
+
+				$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
@@ -1160,7 +1224,7 @@ class EmailCollector extends CommonObject
 
 				$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+				$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1182,11 +1246,22 @@ class EmailCollector extends CommonObject
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
-						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+
+						$scopes = array();
+						if (preg_match('/^Microsoft/', $OAUTH_SERVICENAME)) {
+							//$extraparams = $tokenobj->getExtraParams();
+							$tmp = explode('-', $OAUTH_SERVICENAME);
+							$scopes = explode(',', getDolGlobalString('OAUTH_'.strtoupper($tmp[0]).(empty($tmp[1]) ? '' : '-'.$tmp[1]).'_SCOPE'));
+						}
+
+						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $scopes);
+
 						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
-						// We have to save the token because Google give it only once
+
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
+
+						// We have to save the token because answer give it only once
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
@@ -1234,6 +1309,8 @@ class EmailCollector extends CommonObject
 
 			try {
 				$client->connect();
+
+				$connection = true;
 			} catch (ConnectionFailedException $e) {
 				$this->error = $e->getMessage();
 				$this->errors[] = $this->error;
@@ -1263,7 +1340,7 @@ class EmailCollector extends CommonObject
 			$this->debuginfo .= 'connectstringsource = '.$connectstringsource.', $connectstringtarget='.$connectstringtarget.'<br>';
 
 			$connection = imap_open($connectstringsource, $this->login, $this->password);
-			if (!$connection) {
+			if ($connection === false) {
 				$this->error = 'Failed to open IMAP connection '.$connectstringsource.' '.imap_last_error();
 				return -3;
 			}
@@ -1278,6 +1355,7 @@ class EmailCollector extends CommonObject
 			//$search='ALL';
 		}
 
+		$criteria = array();
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			// Use PHPIMAP external library
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
@@ -1563,8 +1641,9 @@ class EmailCollector extends CommonObject
 		$nbemailok = 0;
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
+		$arrayofemail = array();
 
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP') && is_object($client)) {
 			try {
 				// Uncomment this to output debug info
 				//$client->getConnection()->enableDebug();
@@ -1612,6 +1691,7 @@ class EmailCollector extends CommonObject
 					$Query->leaveUnread();
 				}
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
+				dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));	// @phpstan-ignore-line
 				//var_dump($arrayofemail);
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
@@ -1619,7 +1699,7 @@ class EmailCollector extends CommonObject
 				dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
 				return -1;
 			}
-		} else {
+		} elseif ($connection !== false) {
 			// Scan IMAP dir (for native IMAP, the source dir is inside the $connection variable)
 			$arrayofemail = imap_search($connection, $search, SE_UID, $charset);
 
@@ -1637,7 +1717,7 @@ class EmailCollector extends CommonObject
 		$arrayofemailtodelete = array();	// Track email to delete to make the deletion at end.
 
 		// Loop on each email found
-		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
+		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0 && $connection !== false) {
 			// Loop to get part html and plain
 			/*
 			 0 multipart/mixed
@@ -1676,7 +1756,7 @@ class EmailCollector extends CommonObject
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
 
 				$matches = array();
-				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
+				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)(\r\n|\s$)/m', $header, $matches);
 				$headers = array_combine($matches[1], $matches[2]);
 
 
@@ -2565,7 +2645,7 @@ class EmailCollector extends CommonObject
 
 								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
 									// We make another search on thirdparty
-									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We have this initial main data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty.'.';
 
 									$tmpobject = new stdClass();
 									$tmpobject->element = 'generic';
@@ -2581,7 +2661,7 @@ class EmailCollector extends CommonObject
 									$namealiastouseforthirdparty = $tmpobject->name_alias;
 									$emailtouseforthirdparty = $tmpobject->email;
 
-									$operationslog .= '<br>We try to search existing thirdparty with '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We try to search existing thirdparty with idtouseforthirdparty='.$idtouseforthirdparty.' emailtouseforthirdparty='.$emailtouseforthirdparty.' nametouseforthirdparty='.$nametouseforthirdparty.' namealiastouseforthirdparty='.$namealiastouseforthirdparty;
 
 									// Try to find the thirdparty that match the most the information we have
 									$result = $thirdpartystatic->findNearest($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
@@ -2595,8 +2675,8 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											//search into contacts of thirdparty
-											$resultContact = $contactstatic->fetch(0, '', '', $emailtouseforthirdparty);
+											// Search into contacts of thirdparties to try to guess the thirdparty to use
+											$resultContact = $contactstatic->findNearest(0, '', '', '', $emailtouseforthirdparty, '', 0);
 											if ($resultContact > 0) {
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
@@ -2619,7 +2699,7 @@ class EmailCollector extends CommonObject
 
 											// Create thirdparty
 											$thirdpartystatic = new Societe($db);
-											$thirdpartystatic->name = $nametouseforthirdparty;
+											$thirdpartystatic->name = (string) $nametouseforthirdparty;
 											if (!empty($namealiastouseforthirdparty)) {
 												if ($namealiastouseforthirdparty != $nametouseforthirdparty) {
 													$thirdpartystatic->name_alias = $namealiastouseforthirdparty;
@@ -2652,12 +2732,12 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {
+									} else {	// $result > 0 is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);
 
-										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id);
+										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name);
 									}
 								}
 							}
@@ -2936,7 +3016,7 @@ class EmailCollector extends CommonObject
 									'recruitment/recruitmentcandidature' => array('table' => 'recruitment_recruitmentcandidature',
 										'fields' => array('ref'),
 										'class' => 'recruitment/class/recruitmentcandidature.class.php',
-										'object' => ' RecruitmentCandidature'),
+										'object' => 'RecruitmentCandidature'),
 									'societe' => array('table' => 'societe',
 										'fields' => array('code_client', 'code_fournisseur'),
 										'class' => 'societe/class/societe.class.php',
@@ -3130,6 +3210,7 @@ class EmailCollector extends CommonObject
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
 								$errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+								$modele = null;
 
 								// Set project ref if not yet defined
 								if (empty($projecttocreate->ref)) {
@@ -3281,6 +3362,7 @@ class EmailCollector extends CommonObject
 								// This may overwrite any $projecttocreate->xxx properties.
 								$errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
+								$modele = 'UNDEFINED';
 								// Set ticket ref if not yet defined
 								if (empty($tickettocreate->ref)) {
 									// Get next Ref
@@ -3462,8 +3544,8 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
-								$hookmanager->initHooks(['emailcolector']);
 							}
+							$hookmanager->initHooks(['emailcolector']);
 
 							$parameters = array(
 								'connection' =>  $connection,
@@ -3579,7 +3661,7 @@ class EmailCollector extends CommonObject
 			foreach ($arrayofemailtodelete as $imapemailnum => $imapemail) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemailnum);
 
-				$operationslog .= "<br> move email ".$imapemailnum.($mode> 0 ? ' (test)' : '');
+				$operationslog .= "<br> move email ".$imapemailnum.($mode > 0 ? ' (test)' : '');
 
 				if (empty($mode) && empty($error)) {
 					$tmptargetdir = $targetdir;
@@ -3614,7 +3696,7 @@ class EmailCollector extends CommonObject
 			foreach ($arrayofemailtodelete as $imapemail => $msgid) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemail." ".$msgid);
 
-				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode> 0 ? ' (test)' : '');
+				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode > 0 ? ' (test)' : '');
 
 				if (empty($mode) && empty($error)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);

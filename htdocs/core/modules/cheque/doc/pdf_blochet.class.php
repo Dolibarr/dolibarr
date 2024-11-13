@@ -2,8 +2,9 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public $line_per_page;
 
+	/**
+	 * @var string
+	 */
 	public $ref_ext;
 
 
@@ -86,17 +90,22 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
-		// Retrieves transmitter
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 
 		// Define column position
 		$this->line_height = 5;
 		$this->line_per_page = 40;
 		$this->tab_height = 200; //$this->line_height * $this->line_per_page;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+		// Retrieves issuer
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -200,7 +209,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->Body($pdf, $pagenb, $pages, $outputlangs);
 
 		// Pied de page
-		$this->_pagefoot($pdf, '', $outputlangs);
+		$this->_pagefoot($pdf, null, $outputlangs);
 		if (method_exists($pdf, 'AliasNbPages')) {
 			$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
@@ -279,14 +288,14 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(10, 32);
-		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
+		$pdf->MultiCell(22, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 		pdf_bank($pdf, $outputlangs, 32, 32, $this->account, 1);
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(114, 15);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
-		$pdf->Rect(9, 14, 192, 35);
+		$pdf->RoundedRect(9, 14, 192, 35, $this->corner_radius, '1234', 'D');
 		$pdf->line(9, 19, 112, 19);
 		$pdf->line(9, 25, 112, 25);
 		//$pdf->line(9, 31, 201, 31);
@@ -297,7 +306,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		// Number of cheques
 		$posy = 51;
-		$pdf->Rect(9, $posy, 192, 6);
+		$pdf->RoundedRect(9, $posy, 192, 6, $this->corner_radius, '1234', 'D');
 		$pdf->line(55, $posy, 55, $posy + 6);
 		$pdf->line(140, $posy, 140, $posy + 6);
 		$pdf->line(170, $posy, 170, $posy + 6);
@@ -336,7 +345,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->MultiCell(20, 2, $outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 8, 201, $this->tab_top + 8);
 
-		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
+		$pdf->RoundedRect(9, $this->tab_top, 192, $this->tab_height + 10, $this->corner_radius, '1234', 'D');
 	}
 
 
@@ -416,10 +425,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	Object		$object				Object to show
+	 *  @param	?CommonObject	$object			Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
-	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	mixed
+	 *  @param	int<0,1>	$hidefreetext		1=Hide free text
+	 *  @return	int
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

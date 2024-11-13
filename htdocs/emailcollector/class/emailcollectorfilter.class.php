@@ -85,14 +85,38 @@ class EmailCollectorFilter extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '1', 'arrayofkeyval' => array('0' => 'Disabled', '1' => 'Enabled')),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $fk_emailcollector;
+	/**
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * @var string
+	 */
 	public $rulevalue;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
@@ -386,33 +410,33 @@ class EmailCollectorFilter extends CommonObject
 			return $this->labelStatus[$status];
 		} elseif ($mode == 2) {
 			if ($status == 1) {
-				return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+				return img_picto($this->labelStatus[$status], 'statut4', '', 0, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			} elseif ($status == 0) {
-				return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+				return img_picto($this->labelStatus[$status], 'statut5', '', 0, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			}
 		} elseif ($mode == 3) {
 			if ($status == 1) {
-				return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+				return img_picto($this->labelStatus[$status], 'statut4', '', 0, 0, 0, '', 'valignmiddle');
 			} elseif ($status == 0) {
-				return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+				return img_picto($this->labelStatus[$status], 'statut5', '', 0, 0, 0, '', 'valignmiddle');
 			}
 		} elseif ($mode == 4) {
 			if ($status == 1) {
-				return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+				return img_picto($this->labelStatus[$status], 'statut4', '', 0, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			} elseif ($status == 0) {
-				return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+				return img_picto($this->labelStatus[$status], 'statut5', '', 0, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			}
 		} elseif ($mode == 5) {
 			if ($status == 1) {
-				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', 0, 0, 0, '', 'valignmiddle');
 			} elseif ($status == 0) {
-				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', 0, 0, 0, '', 'valignmiddle');
 			}
 		} elseif ($mode == 6) {
 			if ($status == 1) {
-				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', 0, 0, 0, '', 'valignmiddle');
 			} elseif ($status == 0) {
-				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', 0, 0, 0, '', 'valignmiddle');
 			}
 		}
 		return "";

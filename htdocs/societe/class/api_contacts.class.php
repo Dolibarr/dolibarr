@@ -33,7 +33,7 @@ class Contacts extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'lastname',
@@ -127,7 +127,7 @@ class Contacts extends DolibarrApi
 		if (empty($email)) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
-			$result = $this->contact->fetch('', '', '', $email);
+			$result = $this->contact->fetch(0, null, '', $email);
 		}
 
 		if (!$result) {
@@ -292,6 +292,8 @@ class Contacts extends DolibarrApi
 	 * Create contact object
 	 *
 	 * @param   array   $request_data   Request datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of contact
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
@@ -333,6 +335,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of contact to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object|false				Updated object, false when issue toupdate
 	 *
 	 * @throws RestException 401
@@ -388,7 +392,9 @@ class Contacts extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  integer
+	 * @return  array[]
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 */
 	public function delete($id)
 	{
@@ -403,8 +409,18 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete(DolibarrApiAccess::$user);
+		$this->contact->oldcopy = clone $this->contact; // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact deleted'
+			)
+		);
 	}
 
 	/**
@@ -412,6 +428,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param   int		$id   Id of contact
 	 * @param   array   $request_data   Request datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of user
 	 *
 	 * @url	POST {id}/createUser

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "compta", "loan"));
@@ -85,7 +94,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -98,7 +107,7 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit;
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -107,8 +116,8 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = price2num(GETPOST('capital'));
-			$rate = price2num(GETPOST('rate'));
+			$capital = (float) price2num(GETPOST('capital'));
+			$rate = (float) price2num(GETPOST('rate'));
 
 			if (!$capital) {
 				$error++;
@@ -137,7 +146,7 @@ if (empty($reshook)) {
 				$object->capital = $capital;
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
-				$object->nbterm = GETPOST('nbterm');
+				$object->nbterm = (float) price2num(GETPOST('nbterm'));
 				$object->rate = $rate;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -182,7 +191,7 @@ if (empty($reshook)) {
 
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = price2num(GETPOST('capital'));
+			$capital = (float) price2num(GETPOST('capital'));
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
@@ -191,9 +200,9 @@ if (empty($reshook)) {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
 				$object->capital = $capital;
-				$object->nbterm = GETPOSTINT("nbterm");
-				$object->rate = price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = price2num(GETPOSTINT('insurance_amount'));
+				$object->nbterm = (float) price2num(GETPOSTINT("nbterm"));
+				$object->rate = (float) price2num(GETPOST("rate", 'alpha'));
+				$object->insurance_amount = (float) price2num(GETPOSTINT('insurance_amount'));
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -242,7 +251,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setlabel' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
+		$result = $object->setValueFrom('label', GETPOST('label'), '', null, 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -264,7 +273,6 @@ $outputlangs = $langs;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
-
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 
@@ -330,7 +338,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
-		// Projet associe
+		// Linked Project
 		$langs->loadLangs(array("projects"));
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
@@ -360,6 +368,7 @@ if ($action == 'create') {
 
 	// Accountancy
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
@@ -449,6 +458,7 @@ if ($id > 0) {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
+					$maxlength = 0;
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
@@ -550,6 +560,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
@@ -581,6 +592,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
@@ -612,6 +624,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';

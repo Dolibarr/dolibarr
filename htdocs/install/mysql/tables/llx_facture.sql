@@ -79,7 +79,7 @@ create table llx_facture
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- payment term (30 days, end of month...)
   fk_mode_reglement		integer,								-- payment mode (Virement, Prelevement)
   date_lim_reglement	date,									-- due date
-
+  payment_reference     varchar(25),                            -- SEPA and any other national or custom payment id
   note_private			text,
   note_public			text,
   model_pdf				varchar(255),
@@ -102,7 +102,7 @@ create table llx_facture
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format
-  
+  is_also_delivery_note tinyint DEFAULT 0 NOT NULL,             -- 0=default, 1=can act also as a delivery note (for countries that accept invoices as delivery notes)
   fk_multicurrency		integer,
   multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,

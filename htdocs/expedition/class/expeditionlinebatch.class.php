@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,18 +39,43 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public $table_element = 'expeditiondet_batch';
 
+	/**
+	 * @var null|int|string
+	 */
 	public $sellby;
+	/**
+	 * @var null|int|string
+	 */
 	public $eatby;
+	/**
+	 * @var ?string
+	 */
 	public $batch;
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
-	public $dluo_qty; // deprecated, use qty
+	/**
+	 * @var null|float
+	 * @deprecated Use $qty
+	 */
+	public $dluo_qty;
+	/**
+	 * @var int
+	 */
 	public $entrepot_id;
+	/**
+	 * @var int
+	 */
 	public $fk_origin_stock;		// rowid in llx_product_batch table (not useful)
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;			// warehouse ID
+	/**
+	 * @var int
+	 */
 	public $fk_expeditiondet;
 
 
@@ -134,10 +160,10 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= $id_line_expdet;
 		$sql .= ", ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : ("'".$this->db->idate($this->sellby))."'");
 		$sql .= ", ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : ("'".$this->db->idate($this->eatby))."'");
-		$sql .= ", ".(!isset($this->batch) ? 'NULL' : ("'".$this->db->escape($this->batch)."'"));
+		$sql .= ", ".(!empty($this->batch) ? 'NULL' : ("'".$this->db->escape($this->batch)."'"));
 		$sql .= ", ".(!isset($this->qty) ? ((!isset($this->dluo_qty)) ? 'NULL' : $this->dluo_qty) : $this->qty); // dluo_qty deprecated, use qty
-		$sql .= ", ".(!isset($this->fk_origin_stock) ? 'NULL' : $this->fk_origin_stock);
-		$sql .= ", ".(!isset($this->fk_warehouse) ? 'NULL' : $this->fk_warehouse);
+		$sql .= ", ".((int) $this->fk_origin_stock);
+		$sql .= ", ".(empty($this->fk_warehouse) ? 'NULL' : $this->fk_warehouse);
 		$sql .= ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -195,9 +221,9 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Retrieve all batch number detailed information of a shipment line
 	 *
-	 * @param	int			$id_line_expdet		id of shipment line
-	 * @param	int			$fk_product			If provided, load also detailed information of lot
-	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
+	 * @param	int			$id_line_expdet			id of shipment line
+	 * @param	int			$fk_product				If provided, load also detailed information of lot
+	 * @return	int<-1,-1>|ExpeditionLineBatch[]	-1 if KO, array of ExpeditionLineBatch if OK
 	 */
 	public function fetchAll($id_line_expdet, $fk_product = 0)
 	{

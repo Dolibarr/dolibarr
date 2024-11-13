@@ -1,7 +1,13 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var Conf $conf
+ */
+?>
 /* <style type="text/css" > */
 
 /*
@@ -341,7 +347,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .prospect-back {
-	background-color: #b7d5c0 !important;
+	background-color: #a7c5b0 !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -580,6 +586,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .kanban .box-flex-item {
 	line-height: 1.4em;
+}
+.kanban .box-flex-item-5lines {
+	line-height: 1.2em;
 }
 
 /* css for small kanban */

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +39,20 @@ if (!defined('NOBROWSERNOTIF')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -50,7 +61,12 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $email    = GETPOST('email', 'alpha');
-$backtopage = '';
+$firstname    = GETPOST('firstname', 'alpha');
+$lastname    = GETPOST('lastname', 'alpha');
+$birthday    = GETPOST('birthday', 'alpha');
+$phone    	 = GETPOST('phone', 'alpha');
+$message	 = GETPOST('message', 'alpha');
+$requestedremuneration = GETPOST('requestedremuneration', 'alpha');
 
 $ref = GETPOST('ref', 'alpha');
 
@@ -63,25 +79,26 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new RecruitmentJobPosition($db);
 
-if (!$action) {
-	if (!$ref) {
-		print $langs->trans('ErrorBadParameters')." - ref missing";
-		exit;
-	} else {
-		$object->fetch('', $ref);
-	}
+if (!$ref) {
+	print $langs->trans('ErrorBadParameters')." - ref missing";
+	exit;
 }
+
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+$backtopage = $urlwithroot.'/public/recruitment/index.php';
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
+if (!isModEnabled("recruitment")) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
+$object->fetch(0, $ref);
+$user->loadDefaultValues();
+$errmsg = "";
 
 /*
  * Actions
@@ -92,56 +109,95 @@ if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	}
-	$action = 'view';
 }
 
-if ($action == "view" || $action == "presend" || $action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+if ($action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
-	$display_ticket = false;
+	$db->begin();
 	if (!strlen($ref)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")));
-		$action = '';
+		$action = 'view';
 	}
 	if (!strlen($email)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
-		$action = '';
+		$action = 'view';
 	} else {
 		if (!isValidEmail($email)) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorEmailInvalid"));
-			$action = '';
+			$action = 'view';
+		}
+	}
+	if (!strlen($lastname)) {
+		$error++;
+		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")));
+		$action = 'view';
+	}
+
+	if (!$error) {
+		$sql = "SELECT rrc.rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rrc";
+		$sql .= " WHERE rrc.email = '". $db->escape($email)."'";
+		$sql .= " AND rrc.entity = ". getEntity($object->element, 0);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorRecruitmmentCandidatureAlreadyExists", $email), null, 'errors');
+			}
+		} else {
+			dol_print_error($db);
+			$error++;
+		}
+	}
+
+	if (!$error) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+		$candidature = new RecruitmentCandidature($db);
+
+		$candidature->firstname = GETPOST('firstname', 'alpha');
+		$candidature->lastname = GETPOST('lastname', 'alpha');
+		$candidature->email = GETPOST('email', 'alpha');
+		$candidature->phone = GETPOST('phone', 'alpha');
+		$candidature->date_birth = GETPOST('birthday', 'alpha');
+		$candidature->requestedremuneration = GETPOST('requestedremuneration', 'alpha');
+		$candidature->description = GETPOST('message', 'alpha');
+		$candidature->fk_recruitmentjobposition = $object->id;
+
+		$candidature->ip = getUserRemoteIP();
+
+		// Test MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($candidature, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $candidature->errors);
+		}
+		if (!$error) {
+			$result = $candidature->create($user);
+			if ($result <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $candidature->errors);
+			}
+		}
+		if (!$error) {
+			$candidature->validate($user);
+			if ($result <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $candidature->errors);
+			}
 		}
 	}
 
 	if (!$error) {
-		$ret = $object->fetch('', $ref);
-	}
-
-	/*
-	if (!$error && $action == "dosubmit")	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
-	{
-		// Test MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
-
-		// TODO Create job application
-
-
-
-		if (!$error)
-		{
-			$action = 'view';
-		}
-	}
-	*/
-
-	if ($error || $errors) {
-		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "dosubmit") {	// Test on permission not required here
-			$action = 'presend';
-		} else {
-			$action = '';
-		}
+		$db->commit();
+		setEventMessages($langs->trans("RecruitmentCandidatureSaved"), null);
+		header("Location: " . $backtopage);
+		exit;
+	} else {
+		$db->rollback();
+		$action = "view";
 	}
 }
 
@@ -158,6 +214,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  * View
  */
 
+$form = new Form($db);
 $now = dol_now();
 
 $head = '';
@@ -180,7 +237,7 @@ $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
-
+dol_htmloutput_errors($errmsg);
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -254,16 +311,16 @@ if (getDolGlobalString('RECRUITMENT_NEWFORM_TEXT')) {
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
-	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
+	$text .= '<tr><td class="textpublicpayment" colspan=2><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
 	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
 	$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
 	$text .= '</td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment"><h1 class="paddingleft paddingright">'.$object->label.'</h1><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment" colspan=2><h1 class="paddingleft paddingright">'.$object->label.'</h1><br></td></tr>'."\n";
 }
 print $text;
 
 // Output payment summary form
-print '<tr><td class="left">';
+print '<tr><td class="left" colspan=2>';
 
 print '<div with="100%" id="tablepublicpayment">';
 print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
@@ -333,6 +390,38 @@ print "\n";
 if ($action != 'dosubmit') {
 	if ($found && !$error) {
 		// We are in a management option and no error
+		print '</td></tr>'."\n";
+		print '<tr><td class="titlefieldcreate fieldrequired left">'.$langs->trans("Lastname").'</td><td class="left">';
+		print '<input type="text" class="flat minwidth400 --success" name="lastname" maxlength="128" value="'.$lastname.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Firstname").'</td><td class="left">';
+		print '<input type="text" class="flat minwidth400 --success" name="firstname" maxlength="128" value="'.$firstname.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate fieldrequired left">'.$langs->trans("Email").'</td><td class="left">';
+		print img_picto("", "email").'<input type="text" class="flat minwidth100 --success" name="email" value="'.$email.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Phone").'</td><td class="left">';
+		print img_picto("", "phone").'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left minwidth300">'.$langs->trans("DateOfBirth").'</td><td class="left">';
+		print $form->selectDate($birthday, 'birthday', 0, 0, 1, "", 1, 0);
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("RequestedRemuneration").'</td><td class="left">';
+		print '<input type="text" class="flat minwidth100 --success" name="requestedremuneration" value="'.$requestedremuneration.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Message").'</td><td class="left">';
+		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_5.'" name="message">'.$message.'</textarea>';
+		print '</td></tr>'."\n";
+
+		print '<tr><td colspan=2>';
+		print $form->buttonsSaveCancel('Submit', 'Cancel');
+		print '</td></tr>'."\n";
 	} else {
 		dol_print_error_email('ERRORSUBMITAPPLICATION');
 	}

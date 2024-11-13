@@ -55,6 +55,13 @@ if (is_numeric($entity)) {
 }
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 
@@ -221,7 +228,7 @@ if ($action == "importSignature") {
 								// TODO Get position of box from PDF template
 
 								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
-											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+									$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
 								} else {
 									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
 								}
@@ -288,7 +295,15 @@ if ($action == "importSignature") {
 							$error++;
 							$response = "error in trigger " . $object->error;
 						} else {
-							$response = "success";
+							$soc = new Societe($db);
+							$soc->id = $object->socid;
+							$result = $soc->setAsCustomer();
+							if ($result < 0) {
+								$error++;
+								$response = $db->lasterror();
+							} else {
+								$response = "success";
+							}
 						}
 					} else {
 						$response = "success";
@@ -434,6 +449,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'CONTRACT_MODIFY');
 			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
@@ -518,17 +535,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = 111;
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -544,9 +561,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 111;
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -569,7 +586,7 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 				$user = new User($db);
-				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
+				$object->setSignedStatus($user, Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
@@ -907,30 +924,8 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 			}
-
-			if (!$error) {
-				$db->begin();
-
-				$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition";
-				$sql .= " SET signed_status = " . ((int) $object::STATUS_SIGNED) ;
-				$sql .= " WHERE rowid = " . ((int) $object->id);
-
-				dol_syslog(__FILE__, LOG_DEBUG);
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-				} else {
-					$num = $db->affected_rows($resql);
-				}
-
-				if (!$error) {
-					$db->commit();
-					$response = "success";
-					setEventMessages("ExpeditionSigned", null, 'warnings');
-				} else {
-					$db->rollback();
-				}
-			}
+			$user = new User($db);
+			$object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'SHIPPING_MODIFY');
 		}
 	} else {
 		$error++;
@@ -950,7 +945,7 @@ echo $response;
  *
  * @param 	TCPDF 		$pdf		PDF handler
  * @param	Translate	$langs		Language
- * @param	array		$params		Array of params
+ * @param	array<string,int|float|string|mixed[]>		$params		Array of params
  * @return	void
  */
 function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)

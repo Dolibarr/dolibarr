@@ -18,5 +18,9 @@
 
 
 ALTER TABLE llx_c_regions ADD INDEX idx_c_regions_fk_pays (fk_pays);
+
+-- This unique key is also created into llx_c_departments
+-- This may generate a warning "Duplicate key name 'uk_code_region'" to ignore
 ALTER TABLE llx_c_regions ADD UNIQUE INDEX uk_code_region (code_region);
+
 ALTER TABLE llx_c_regions ADD CONSTRAINT fk_c_regions_fk_pays	FOREIGN KEY (fk_pays)     REFERENCES llx_c_country (rowid);

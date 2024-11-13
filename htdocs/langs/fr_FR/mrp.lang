@@ -140,3 +140,4 @@ QtyCantBeSplit= Quantité non fractionnable
 NoRemainQtyToDispatch=Aucune quantité restant à fractionner
 THMOperatorEstimatedHelp=Coût estimé de l'opérateur par heure. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
 THMMachineEstimatedHelp=Coût estimé de la machine par heure. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
+BadValueForquantityToConsume=La quantité à consommer d'un composant ne peut être 0 ou négative

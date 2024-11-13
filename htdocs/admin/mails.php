@@ -5,6 +5,7 @@
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
@@ -74,9 +84,10 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'update' && !$cancel) {
-	if (!$error && !GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
+	if (!GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MAIN_MAIL_EMAIL_FROM")), null, 'errors');
 		$action = 'edit';
@@ -1025,9 +1036,9 @@ if ($action == 'edit') {
 
 	if (!in_array($action, array('testconnect', 'test', 'testhtml')) && !getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		$text = '';
-		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
-			//$text .= $langs->trans("WarningPHPMail", $listofmethods['mail'], $listofmethods['smtps']); // To encourage to use SMTPS
-		}
+		//if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
+		//	$text .= $langs->trans("WarningPHPMail", $listofmethods['mail'], $listofmethods['smtps']); // To encourage to use SMTPS
+		//}
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
 			// mthode php mail
@@ -1091,12 +1102,12 @@ if ($action == 'edit') {
 						if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
 							|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
 							$foundforemail++;
-							$text .= ($text ? '<br>' : '').$langs->trans("ActualMailDNSRecordFound", $dnstype, implode(', ', $listofemails), $info['txt']);
+							$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitylow">'.$info['txt'].'</span>');
 						}
 					}
 				}
 				if (!$foundforemail) {
-					$text .= ($text ? '<br>' : '').$langs->trans("ActualMailDNSRecordFound", $dnstype, implode(', ', $listofemails), '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
+					$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
 				}
 			}
 		}
@@ -1155,7 +1166,7 @@ if ($action == 'edit') {
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
 
-		$formmail->withlayout = 1;		// Note: MAIN_EMAIL_USE_LAYOUT must be set
+		$formmail->withlayout = 'emailing';		// Note: MAIN_EMAIL_USE_LAYOUT must be set
 		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');	// Note: Module AI must be enabled
 
 		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
