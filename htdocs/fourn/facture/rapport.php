@@ -74,7 +74,7 @@ $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user-
  * Actions
  */
 
-if ($action == 'builddoc' && $permissiontoread) {
+if ($action == 'builddoc' && !empty($permissiontoread)) {
 	$rap = new pdf_paiement_fourn($db);
 
 	$outputlangs = $langs;
@@ -97,7 +97,7 @@ if ($action == 'builddoc' && $permissiontoread) {
 }
 
 // Delete file from disk
-if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
+if ($action == 'removedoc' && !empty($permissiontoread) && $fileToRemove) {
 	$fileDirectory = dirname($dir.'/'.$fileToRemove);
 	if (dol_delete_file($dir.'/'.$fileToRemove)) {
 		// Delete empty directory after file deletion
