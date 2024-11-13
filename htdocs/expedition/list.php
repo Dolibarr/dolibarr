@@ -1260,17 +1260,6 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 
 	print '</td>';
 }
-// Date shipping
-if (!empty($arrayfields['e.date_expedition']['checked'])) {
-	print '<td class="liste_titre center">';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_dateshipping_start ? $search_dateshipping_start : -1, 'search_dateshipping_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-	print '</div>';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_dateshipping_end ? $search_dateshipping_end : -1, 'search_dateshipping_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-	print '</div>';
-	print '</td>';
-}
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1279,6 +1268,17 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '</div>';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
+// Date shipping
+if (!empty($arrayfields['e.date_expedition']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_dateshipping_start ? $search_dateshipping_start : -1, 'search_dateshipping_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_dateshipping_end ? $search_dateshipping_end : -1, 'search_dateshipping_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
 }
@@ -1631,19 +1631,19 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date shipping
-		if (!empty($arrayfields['e.date_expedition']['checked'])) {
+		// Date delivery planned
+		if (!empty($arrayfields['e.date_delivery']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_expedition), "dayhour");
+			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date delivery planned
-		if (!empty($arrayfields['e.date_delivery']['checked'])) {
+		// Date shipping
+		if (!empty($arrayfields['e.date_expedition']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
+			print dol_print_date($db->jdate($obj->date_expedition), "dayhour");
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
