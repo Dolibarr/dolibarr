@@ -15313,12 +15313,6 @@ parameters:
 			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
-			message: '#^Method pdf_standard_member\:\:write_file\(\) has parameter \$object with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -29209,21 +29203,15 @@ parameters:
 			path: ../../htdocs/product/stock/productlot_card.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/productlot_card.php
-
-		-
 			message: '#^Variable \$batch might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
+			count: 1
 			path: ../../htdocs/product/stock/productlot_document.php
 
 		-
 			message: '#^Variable \$productid might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
+			count: 1
 			path: ../../htdocs/product/stock/productlot_document.php
 
 		-
