@@ -32,20 +32,6 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- new fichinter categorie
-create table llx_categorie_fichinter
-(
-  fk_categorie  integer NOT NULL,
-  fk_fichinter  integer NOT NULL,
-  import_key    varchar(14)
-)ENGINE=innodb;
-
-ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter (fk_categorie, fk_fichinter);
-ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_fichinter (fk_fichinter);
-ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_fk_fichinter    FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
-
 -- Clean very old temporary tables (created during v9 migration or repair)
 
 DROP TABLE tmp_llx_accouting_account;
@@ -64,6 +50,23 @@ ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
 
 -- V21 migration
+
+CREATE TABLE llx_categorie_fichinter
+(
+  fk_categorie  integer NOT NULL,
+  fk_fichinter  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter(fk_categorie, fk_fichinter);
+-- VPGSQL8.2 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter (fk_categorie, fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_fichinter (fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_fk_fichinter    FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
+
 
 ALTER TABLE llx_blockedlog DROP INDEX entity_action;
 ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
@@ -345,4 +348,3 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
-
