@@ -2,6 +2,8 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +31,14 @@
  */
 class FormAdmin
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
 	public $db;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
@@ -47,25 +56,25 @@ class FormAdmin
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *  @param      string|array	$selected       Language pre-selected. Can be an array if $multiselect is 1.
+	 *  @param      string|string[]	$selected       Language pre-selected. Can be an array if $multiselect is 1.
 	 *  @param      string			$htmlname       Name of HTML select
-	 *  @param      int				$showauto       Show 'auto' choice
-	 *  @param      array			$filter         Array of keys to exclude in list (opposite of $onlykeys)
-	 *  @param		int|string		$showempty		'1'=Add empty value or 'string to show'
-	 *  @param      int				$showwarning    Show a warning if language is not complete
-	 *  @param		int				$disabled		Disable edit of select
+	 *  @param      int<0,1>		$showauto       Show 'auto' choice
+	 *  @param      string[]		$filter         Array of keys to exclude in list (opposite of $onlykeys)
+	 *  @param		int<1,1>|string	$showempty		'1'=Add empty value or 'string to show'
+	 *  @param      int<0,1>		$showwarning    Show a warning if language is not complete
+	 *  @param		int<0,1>		$disabled		Disable edit of select
 	 *  @param		string			$morecss		Add more css styles
-	 *  @param      int         	$showcode       1=Add language code into label at begining, 2=Add language code into label at end
-	 *  @param		int				$forcecombo		Force to use combo box (so no ajax beautify effect)
-	 *  @param		int				$multiselect	Make the combo a multiselect
-	 *  @param		array			$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
-	 *  @param		int				$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
+	 *  @param      int<0,2>       	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end
+	 *  @param		int<0,1>		$forcecombo		Force to use combo box (so no ajax beautify effect)
+	 *  @param		int<0,1>		$multiselect	Make the combo a multiselect
+	 *  @param		string[]		$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
+	 *  @param		int<0,1>		$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
 	 *  @return		string							Return HTML select string with list of languages
 	 */
 	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		if (getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')) {
 			if (!is_array($filter)) {
@@ -175,9 +184,9 @@ class FormAdmin
 	 *
 	 *    @param	string		$selected        Preselected menu value
 	 *    @param    string		$htmlname        Name of html select
-	 *    @param    array		$dirmenuarray    Array of directories to scan
+	 *    @param    string[]	$dirmenuarray    Array of directories to scan
 	 *    @param    string		$moreattrib      More attributes on html select tag
-	 *    @return	integer|null
+	 *    @return	integer|void
 	 */
 	public function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
 	{
@@ -201,7 +210,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index') {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && substr($file, 0, 5) != 'index') {
 								if (preg_match('/lib\.php$/i', $file)) {
 									continue; // We exclude library files
 								}
@@ -215,9 +224,10 @@ class FormAdmin
 									continue; // We exclude all menu manager files
 								}
 
-								$filelib = preg_replace('/\.php$/i', '', $file);
+								$filetoshow = preg_replace('/\.php$/i', '', $file);
+								$filetoshow = ucfirst(preg_replace('/_menu$/i', '', $filetoshow));
 								$prefix = '';
-								// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
+								// 0=Recommended, 1=Experimental, 2=Development, 3=Other
 								if (preg_match('/^eldy/i', $file)) {
 									$prefix = '0';
 								} elseif (preg_match('/^smartphone/i', $file)) {
@@ -226,10 +236,18 @@ class FormAdmin
 									$prefix = '3';
 								}
 
+								$morelabel = '';
+								if (preg_match('/^auguria/i', $file)) {
+									$morelabel .= ' <span class="opacitymedium">('.$langs->trans("Unstable").')</span>';
+								}
 								if ($file == $selected) {
-									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected>'.$filelib.'</option>';
+									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected data-html="'.dol_escape_htmltag($filetoshow.$morelabel).'">';
+									$menuarray[$prefix.'_'.$file] .= $filetoshow.$morelabel;
+									$menuarray[$prefix.'_'.$file] .= '</option>';
 								} else {
-									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'">'.$filelib.'</option>';
+									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" data-html="'.dol_escape_htmltag($filetoshow.$morelabel).'">';
+									$menuarray[$prefix.'_'.$file] .= $filetoshow.$morelabel;
+									$menuarray[$prefix.'_'.$file] .= '</option>';
 								}
 							}
 						}
@@ -241,11 +259,12 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Output combo list of menus
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		print '<select class="flat minwidth150" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 		$oldprefix = '';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			$newprefix = $tab[0];
+
 			if ($newprefix == '1' && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1)) {
 				continue;
 			}
@@ -254,7 +273,7 @@ class FormAdmin
 			}
 			if ($newprefix != $oldprefix) {	// Add separators
 				// Affiche titre
-				print '<option value="-1" disabled>';
+				print '<option value="-2" disabled>';
 				if ($newprefix == '0') {
 					print '-- '.$langs->trans("VersionRecommanded").' --';
 				}
@@ -270,9 +289,14 @@ class FormAdmin
 				print '</option>';
 				$oldprefix = $newprefix;
 			}
-			print $val."\n"; // Show menu entry
+
+			print $val."\n"; // Show menu entry ($val contains the <option> tags)
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
+
+		return;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -301,7 +325,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 								$filelib = preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
 								if (preg_match('/^index/i', $filelib)) {
 									continue;
@@ -331,12 +355,10 @@ class FormAdmin
 
 		ksort($menuarray);
 
-		// Affichage liste deroulante des menus
-		print '<select class="flat maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'">';
-		$oldprefix = '';
+		// Show combo list of menu handlers
+		print '<select class="flat maxwidth150" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
-			$newprefix = $tab[0];
 			print '<option value="'.$key.'"';
 			if ($key == $selected) {
 				print '	selected';
@@ -370,31 +392,31 @@ class FormAdmin
 		print '<option value="-1">&nbsp;</option>';
 
 		$arraytz = array(
-			"Pacific/Midway"=>"GMT-11:00",
-			"Pacific/Fakaofo"=>"GMT-10:00",
-			"America/Anchorage"=>"GMT-09:00",
-			"America/Los_Angeles"=>"GMT-08:00",
-			"America/Dawson_Creek"=>"GMT-07:00",
-			"America/Chicago"=>"GMT-06:00",
-			"America/Bogota"=>"GMT-05:00",
-			"America/Anguilla"=>"GMT-04:00",
-			"America/Araguaina"=>"GMT-03:00",
-			"America/Noronha"=>"GMT-02:00",
-			"Atlantic/Azores"=>"GMT-01:00",
-			"Africa/Abidjan"=>"GMT+00:00",
-			"Europe/Paris"=>"GMT+01:00",
-			"Europe/Helsinki"=>"GMT+02:00",
-			"Europe/Moscow"=>"GMT+03:00",
-			"Asia/Dubai"=>"GMT+04:00",
-			"Asia/Karachi"=>"GMT+05:00",
-			"Indian/Chagos"=>"GMT+06:00",
-			"Asia/Jakarta"=>"GMT+07:00",
-			"Asia/Hong_Kong"=>"GMT+08:00",
-			"Asia/Tokyo"=>"GMT+09:00",
-			"Australia/Sydney"=>"GMT+10:00",
-			"Pacific/Noumea"=>"GMT+11:00",
-			"Pacific/Auckland"=>"GMT+12:00",
-			"Pacific/Enderbury"=>"GMT+13:00"
+			"Pacific/Midway" => "GMT-11:00",
+			"Pacific/Fakaofo" => "GMT-10:00",
+			"America/Anchorage" => "GMT-09:00",
+			"America/Los_Angeles" => "GMT-08:00",
+			"America/Dawson_Creek" => "GMT-07:00",
+			"America/Chicago" => "GMT-06:00",
+			"America/Bogota" => "GMT-05:00",
+			"America/Anguilla" => "GMT-04:00",
+			"America/Araguaina" => "GMT-03:00",
+			"America/Noronha" => "GMT-02:00",
+			"Atlantic/Azores" => "GMT-01:00",
+			"Africa/Abidjan" => "GMT+00:00",
+			"Europe/Paris" => "GMT+01:00",
+			"Europe/Helsinki" => "GMT+02:00",
+			"Europe/Moscow" => "GMT+03:00",
+			"Asia/Dubai" => "GMT+04:00",
+			"Asia/Karachi" => "GMT+05:00",
+			"Indian/Chagos" => "GMT+06:00",
+			"Asia/Jakarta" => "GMT+07:00",
+			"Asia/Hong_Kong" => "GMT+08:00",
+			"Asia/Tokyo" => "GMT+09:00",
+			"Australia/Sydney" => "GMT+10:00",
+			"Pacific/Noumea" => "GMT+11:00",
+			"Pacific/Auckland" => "GMT+12:00",
+			"Pacific/Enderbury" => "GMT+13:00"
 		);
 		foreach ($arraytz as $lib => $gmt) {
 			print '<option value="'.$lib.'"';
@@ -419,7 +441,7 @@ class FormAdmin
 	 * 	@param		int		$forcecombo		Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string					Return HTML output
 	 */
-	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0, $forcecombo = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = '', $showempty = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -432,6 +454,8 @@ class FormAdmin
 		if ($filter) {
 			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";
 		}
+
+		$paperformat = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -478,11 +502,11 @@ class FormAdmin
 
 
 	/**
-	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
+	 * Function to show the combo select to chose a type of field (varchar, int, email, ...)
 	 *
-	 * @param	string	$htmlname				Name of HTML select component
-	 * @param	string	$type					Type preselected
-	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @param	string		$htmlname				Name of HTML select component
+	 * @param	string		$type					Type preselected
+	 * @param	array<string,string[]>	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
 	 * @return 	string							The combo HTML select component
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())

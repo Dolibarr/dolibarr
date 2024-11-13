@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2021	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
@@ -49,7 +58,7 @@ $type = $db->type;
 
 
 $help_url = 'EN:Restores|FR:Restaurations|ES:Restauraciones';
-llxHeader('', '', $help_url);
+llxHeader('', '', $help_url, '', 0, 0, '', '', '', 'mod-admin page-tools_dolibarr_import');
 
 ?>
 <script type="text/javascript">
@@ -142,7 +151,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		print '<fieldset id="mysql_options">';
 		print '<legend>'.$langs->trans('RestoreMySQL').'</legend>';
 		print '<div class="formelementrow centpercent">';
-		// Parameteres execution
+		// Parameters execution
 		$command = $db->getPathOfRestore();
 	if (preg_match("/\s/", $command)) {
 		$command = $command = escapeshellarg($command); // Use quotes on command
@@ -166,7 +175,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand", $command, ($showpass ? $paramclear : $paramcrypted)).'</textarea><br>';
 		print ajax_autoselect('restorecommand');
 
-	if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) {
+	if (!GETPOST("showpass") && $dolibarr_main_db_pass) {
 		print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
 	}
 		//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
@@ -176,7 +185,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<fieldset id="postgresql_options">';
 	print '<legend>Restore PostgreSQL</legend>';
 	print '<div class="formelementrow">';
-	// Parameteres execution
+	// Parameters execution
 	$command = $db->getPathOfRestore();
 	if (preg_match("/\s/", $command)) {
 		$command = $command = escapeshellarg($command); // Use quotes on command
@@ -205,8 +214,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<br>';
 	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand", $command, ($showpass ? $paramclear : $paramcrypted)).'</textarea><br>';
 	print ajax_autoselect('restorecommand');
-	//if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
-	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	print '</div>';
 
 	print '<br>';

@@ -3,6 +3,7 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,16 @@
 // $object
 // $filearray
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
-
+/**
+ * @var CommonObject $object
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -60,8 +66,11 @@ $disablemove = 1;
 if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
 	$disablemove = 0;
 }
-
-
+$parameters = array();
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);
+if ($reshook) {
+	$disablemove = $hookmanager->resArray['disablemove'];
+}
 
 /*
  * Confirm form to delete a file
@@ -70,7 +79,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'deletefile' || $action == 'deletelink') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
 	print $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
+		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
 		$langs->trans('DeleteFile'),
 		$langs->trans('ConfirmDeleteFile'),
 		'confirm_deletefile',
@@ -93,6 +102,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 			'facture',
 			'commande',
 			'propal',
+			'payment',
 			'supplier_proposal',
 			'ficheinter',
 			'contract',
@@ -120,8 +130,8 @@ if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
 
-// Show upload form (document and links)
-$formfile->form_attach_new_file(
+// Get the form to add files (upload and links)
+$tmparray = $formfile->form_attach_new_file(
 	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
 	'',
 	0,
@@ -131,8 +141,20 @@ $formfile->form_attach_new_file(
 	$object,
 	'',
 	1,
-	$savingdocmask
+	$savingdocmask,
+	1,
+	'formuserfile',
+	'',
+	'',
+	0,
+	0,
+	0,
+	2
 );
+
+$formToUploadAFile = $tmparray['formToUploadAFile'];
+$formToAddALink = $tmparray['formToAddALink'];
+
 
 // List of document
 $formfile->list_of_documents(
@@ -153,11 +175,26 @@ $formfile->list_of_documents(
 	$upload_dir,
 	$sortfield,
 	$sortorder,
-	$disablemove
+	$disablemove,
+	0,
+	-1,
+	'',
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
 
-print "<br>";
+
+print "<br><br>";
+
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
+$formfile->listOfLinks(
+	$object,
+	$permission,
+	$action,
+	GETPOSTINT('linkid'),
+	$param,
+	'formaddlink',
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+);
+
 print "<br>";

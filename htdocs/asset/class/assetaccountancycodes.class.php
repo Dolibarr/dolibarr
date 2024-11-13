@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class AssetAccountancyCodes extends CommonObject
 {
 	/**
-	 * @var array  Array with all accountancy codes info by mode.
+	 * @var array<string,array<string,string|array<string,array{label:string,columnbreak?:bool}>>>  Array with all accountancy codes info by mode.
 	 *  Note : 'economic' mode is mandatory and is the primary accountancy codes
 	 *         'depreciation_asset' and 'depreciation_expense' is mandatory and is used for write depreciation in bookkeeping
 	 */
@@ -47,7 +48,7 @@ class AssetAccountancyCodes extends CommonObject
 				'receivable_on_assignment' => array('label' => 'AssetAccountancyCodeReceivableOnAssignment'),
 				'proceeds_from_sales' => array('label' => 'AssetAccountancyCodeProceedsFromSales'),
 				'vat_collected' => array('label' => 'AssetAccountancyCodeVatCollected'),
-				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible'),
+				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible','column_break' => true),
 			),
 		),
 		'accelerated_depreciation' => array(
@@ -64,14 +65,14 @@ class AssetAccountancyCodes extends CommonObject
 	);
 
 	/**
-	 * @var array  Array with all accountancy codes by mode.
+	 * @var array<string,array<string,string>>  Array with all accountancy codes by mode.
 	 */
 	public $accountancy_codes = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -81,7 +82,7 @@ class AssetAccountancyCodes extends CommonObject
 	/**
 	 *  Fill accountancy_codes property of object (using for data sent by forms)
 	 *
-	 *  @return	array					Array of values
+	 *  @return	array<string,array<string,string>>		Array of values
 	 */
 	public function setAccountancyCodesFromPost()
 	{

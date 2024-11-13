@@ -1,9 +1,10 @@
 <?php
 /**
- * Copyright (C) 2015	Charlie BENKE       <charlie@patas-monkey.com>
- * Copyright (C) 2019	Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015	    Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2019	    Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,8 @@
  * Returns an array with the tabs for the "salaries" section
  * It loads tabs from modules looking for the entity salaries
  *
- * @param Paiement $object Current salaries object
- * @return array Tabs for the salaries section
+ * @param Salary $object Current salaries object
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the salaries section
  */
 function salaries_prepare_head($object)
 {
@@ -96,9 +97,9 @@ function salaries_prepare_head($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
- *  @return	array		head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function salaries_admin_prepare_head()
 {

@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = 活动组织
 EventOrganizationDescription = 通过项目模块组织活动
 EventOrganizationDescriptionLong= 管理活动的组织（演出、会议、与会者或演讲者，以及用于推荐、投票或注册的公共页面）
-#
-# Menu
-#
 EventOrganizationMenuLeft = 已组织的活动
 EventOrganizationConferenceOrBoothMenuLeft = 会议或展位
-
 PaymentEvent=活动的付款
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=注册
 EventOrganizationSetup=活动组织设置
 EventOrganization=活动组织
-Settings=设置
 EventOrganizationSetupPage = 活动组织设置页面
 EVENTORGANIZATION_TASK_LABEL = 在项目通过验证时自动创建的任务标签
 EVENTORGANIZATION_TASK_LABELTooltip = 当您验证要组织的活动时，可以在项目中自动创建一些任务 <br> <br> 例如：<br> 发送会议电话 <br> 发送展位电话 <br> 验证会议推荐 <br> 验证展位申请 <br> 为与会者开放活动订阅 <br> 向演讲者发送活动提醒 <br> 向展位主办方发送活动提醒 <br> 向与会者发送活动提醒
@@ -49,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = 从批量操作“群发电子�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 从与会者清单上的批量操作“群发电子邮件”时使用的电子邮件模板
 EVENTORGANIZATION_FILTERATTENDEES_CAT = 在用于创建/添加与会者的表单中，限定合作方的类别
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = 在用于创建/添加与会者的表单中，限定合作方的性质
-
-#
 # Object
-#
 OrganizedEvent=已组织的活动
 EventOrganizationConfOrBooth= 会议或展位
-EventOrganizationConfOrBoothes=会议或展位
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = 管理活动的组织
 ConferenceOrBooth = 会议或展位
 ConferenceOrBoothTab = 会议或展位
@@ -64,10 +50,7 @@ DateOfRegistration = 注册日期
 ConferenceOrBoothAttendee = 会议或展位与会者
 ApplicantOrVisitor=申请人或访客
 Speaker=演讲者
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = 您的会议申请已收到
 YourOrganizationEventBoothRequestWasReceived = 您的展位申请已收到
 EventOrganizationEmailAskConf = 申请会议
@@ -77,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = 活动报名
 EventOrganizationMassEmailAttendees = 与与会者沟通
 EventOrganizationMassEmailSpeakers = 与演讲者沟通
 ToSpeakers=致演讲者
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=允许人们推荐会议
 AllowUnknownPeopleSuggestConfHelp=允许陌生人推荐他们想要召开的会议
 AllowUnknownPeopleSuggestBooth=允许人们申请展位
@@ -89,27 +69,29 @@ PriceOfRegistration=注册价格
 PriceOfRegistrationHelp=注册或参加活动所需支付的价格
 PriceOfBooth=展位认购价
 PriceOfBoothHelp=展位认购价
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=链接会议的 ICS
-ConferenceOrBoothInformation=会议或展位信息
+ConferenceOrBoothInformation=Conference Or Booth information
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=与会者
-ListOfAttendeesOfEvent=活动项目的与会者清单
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = 下载 ICS 的链接
 EVENTORGANIZATION_SECUREKEY = 用于确保推荐会议的公共注册页面的密钥安全种子
 SERVICE_BOOTH_LOCATION = 用于有关展位位置的发票行的服务
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 用于有关与会者订阅活动的发票行的服务
 NbVotes=票数
-#
 # Status
-#
 EvntOrgDraft = 草稿
 EvntOrgSuggested = 推荐
 EvntOrgConfirmed = 已确认
 EvntOrgNotQualified = 不合格
 EvntOrgDone = 完成
 EvntOrgCancelled = 已取消
-#
-# Public page
-#
+# Other
 SuggestForm = 推荐页面
 SuggestOrVoteForConfOrBooth = 推荐或投票页面
 EvntOrgRegistrationHelpMessage = 在这里，您可以为会议投票或为活动推荐一个新会议。您也可以在活动期间申请展位。
@@ -132,6 +114,7 @@ EventType = 活动类型
 LabelOfBooth=展位标签
 LabelOfconference=会议标签
 ConferenceIsNotConfirmed=无法注册，会议尚未确定
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s 必须位于 %s 之前
 DateMustBeAfterThan=%s 必须位于 %s 之后
 MaxNbOfAttendeesReached=已达到最大参与人数
@@ -144,13 +127,8 @@ OrganizationEventBulkMailToAttendees=这是关于您作为与会者参加活动�
 OrganizationEventBulkMailToSpeakers=这是对您作为演讲者参加活动的提醒
 OrganizationEventLinkToThirdParty=链接到合作方（客户、供应商或合作伙伴）
 OrganizationEvenLabelName=会议或展位的公开名称
-
 NewSuggestionOfBooth=展位申请
 NewSuggestionOfConference=申请召开会议
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = 欢迎来到会议或展位推荐页面。
 EvntOrgRegistrationConfWelcomeMessage = 欢迎来到会议推荐页面。
 EvntOrgRegistrationBoothWelcomeMessage = 欢迎来到展位推荐页面。
@@ -158,8 +136,8 @@ EvntOrgVoteHelpMessage = 在这里，您可以查看项目的推荐活动并为�
 VoteOk = 您的投票已被接受。
 AlreadyVoted = 您已经为本次活动投过票了。
 VoteError = 投票时出现错误，请重试。
-
 SubscriptionOk=您的注册已被记录
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = 确认您的活动订阅
 Attendee = 与会者
 PaymentConferenceAttendee = 会议与会者付款
@@ -169,8 +147,8 @@ RegistrationAndPaymentWereAlreadyRecorder=已记录邮箱 <b> %s </b> 的注册�
 EmailAttendee=与会者邮箱
 EmailCompany=公司邮箱
 EmailCompanyForInvoice=公司邮箱（用于发票，如果与会者邮箱不同）
-ErrorSeveralCompaniesWithEmailContactUs=已发现多家公司拥有此电子邮件地址，因此我们无法自动验证您的注册。请通过 %s 联系我们进行手动验证
-ErrorSeveralCompaniesWithNameContactUs=已找到多家使用该名称的公司，因此我们无法自动验证您的注册。请通过 %s 联系我们进行手动验证
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=本次活动不对外开放任何公开操作
 MaxNbOfAttendees=最大与会者人数
 DateStartEvent=活动开始日期
@@ -178,6 +156,7 @@ DateEndEvent=活动结束日期
 ModifyStatus=修改状态
 ConfirmModifyStatus=确认状态修改
 ConfirmModifyStatusQuestion=您确定要变更这 %s 条已选记录吗？
-RecordsUpdated = %s 条记录已更新
-RecordUpdated = 记录已更新
-NoRecordUpdated = 没有记录被更新
+RecordsUpdated=%s 条记录已更新
+RecordUpdated=记录已更新
+NoRecordUpdated=没有记录被更新
+ProfitPerValidatedAttendee=Profit per attendee

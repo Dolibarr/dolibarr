@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +44,19 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = GETPOST('socid', 'int') || GETPOST('id_fourn', 'int');
+
+$id = GETPOSTINT('socid');
+if ($id == 0) {
+	$id = GETPOSTINT('id_fourn');
+}
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -75,15 +88,15 @@ $return_arr = array();
 // Define filter on text typed
 $socid = GETPOST('newcompany');
 if (!$socid) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if (!$socid) {
-	$socid = GETPOST('id_fourn', 'int');
+	$socid = GETPOSTINT('id_fourn');
 }
 
 // Generate list of companies
 if (! $socid) {
-	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+	echo json_encode(array('nom' => 'ErrorBadParameter', 'label' => 'ErrorBadParameter', 'key' => 'ErrorBadParameter', 'value' => 'ErrorBadParameter'));
 	exit;
 }
 
@@ -147,6 +160,7 @@ if ($resql) {
 		if ($socid) {
 			$label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 		}
+		$row_array = array();
 		$row_array['label'] = $label;
 
 		$row_array['value'] = $row['nom'];
@@ -175,5 +189,5 @@ if ($resql) {
 
 	echo json_encode($return_arr);
 } else {
-	echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
+	echo json_encode(array('nom' => 'Error', 'label' => 'Error', 'key' => 'Error', 'value' => 'Error'));
 }

@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Kunskapsbas
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Hantera en kunskapsbas eller helpdesk-bas
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Konfiguration av kunskapsbas
-Settings = Inställningar
 KnowledgeManagementSetupPage = Inställningar för kunskapsbas
-
-
-#
 # About page
-#
-About = Om
 KnowledgeManagementAbout = Om kunskapsbasen
 KnowledgeManagementAboutPage = Kunskapsbasens om-sida
-
 KnowledgeManagementArea = Kunskapsbas
 MenuKnowledgeRecord = Kunskapsbas
+MenuKnowledgeRecordShort = Kunskapsbas
 ListKnowledgeRecord = Lista över artiklar
 NewKnowledgeRecord = Ny artikel
 ValidateReply = Bekräfta lösning
@@ -47,8 +33,13 @@ KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafält för artikel
 GroupOfTicket=Grupp av ärenden
 YouCanLinkArticleToATicketCategory=Du kan länka artikeln till en ärendegrupp (så att artikeln markeras på alla ärenden i denna grupp)
-SuggestedForTicketsInGroup=Föreslås vid skapande av ärende
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Ange som föråldrad
 ConfirmCloseKM=Bekräftar du att denna artikel är föråldrad och skall stängas?
 ConfirmReopenKM=Vill du återställa den här artikeln till statusen "Bekräftad"?
+BoxLastKnowledgerecordDescription=Senaste %s artiklarna
+BoxLastKnowledgerecord=Senaste artiklarna
+BoxLastKnowledgerecordContent=Senaste artiklarna
+BoxLastKnowledgerecordModifiedContent=Senast ändrade artiklar
+BoxLastModifiedKnowledgerecordDescription=Senaste %s ändrade artiklar
+BoxLastModifiedKnowledgerecord=Senast ändrade artiklar

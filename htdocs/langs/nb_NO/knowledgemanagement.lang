@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Kunnskapsstyringssystem
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Help-Desk-base
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Oppsett av Kunnskapsstyringssystem
-Settings = Innstillinger
 KnowledgeManagementSetupPage = Kunnskapsstyringssystemets oppsettside
-
-
-#
 # About page
-#
-About = Om
 KnowledgeManagementAbout = Om kunnskapsadministrasjon
 KnowledgeManagementAboutPage = Om Kunnskapsadministrasjon side
-
 KnowledgeManagementArea = Kunnskapsadministrasjon
 MenuKnowledgeRecord = Kunnskapsbase
+MenuKnowledgeRecordShort = Kunnskapsbase
 ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikkel
 ValidateReply = Valider løsningen
@@ -46,9 +32,14 @@ KnowledgeRecords = Artikler
 KnowledgeRecord = Artikkel
 KnowledgeRecordExtraFields = Ekstra felt for artikkel
 GroupOfTicket=Billettgrupper
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Foreslått for billetter når gruppen er
-
+YouCanLinkArticleToATicketCategory=Du kan koble artikkelen til en billettgruppe (slik at artikkelen vil bli uthevet på alle billetter i denne gruppen)
+SuggestedForTicketsInGroup=Foreslått ved opprettelse av supportsedler
 SetObsolete=Angi som foreldet
 ConfirmCloseKM=Bekrefter du at avslutningen av denne artikkelen som foreldet?
 ConfirmReopenKM=Vil du gjenopprette denne artikkelen til status "Validert"?
+BoxLastKnowledgerecordDescription=Siste %s artikler
+BoxLastKnowledgerecord=Siste artikler
+BoxLastKnowledgerecordContent=Siste artikler
+BoxLastKnowledgerecordModifiedContent=Sist endrede artikler
+BoxLastModifiedKnowledgerecordDescription=Siste %s endrede artikler
+BoxLastModifiedKnowledgerecord=Sist endrede artikler

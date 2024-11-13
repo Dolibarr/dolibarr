@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017 Pierre-Henry Favre  <phf@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,18 +39,25 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
-$res = 0;
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'trips'));
 
-$fk_expense = GETPOST('fk_expense', 'int');
-$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
-$vatrate = GETPOST('vatrate', 'int');
-$qty = GETPOST('qty', 'int');
+$fk_expense = GETPOSTINT('fk_expense');
+$fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
+$vatrate = GETPOSTINT('vatrate');
+$qty = GETPOSTINT('qty');
 
 // Security check
 $result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');

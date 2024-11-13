@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
- * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2023      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016	    Sergio Sanchis			<sergiosanchis@hotmail.com>
+ * Copyright (C) 2017	    Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,18 @@ if (!defined('NOREQUIRETRAN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
-$time = dol_now();
 $action = GETPOST('action', 'aZ09');
+
+$time = dol_now();
 $listofreminderids = GETPOST('listofreminderids', 'aZ09');
 
 // Security check
@@ -53,7 +62,7 @@ $listofreminderids = GETPOST('listofreminderids', 'aZ09');
  * Actions
  */
 
-if ($action == 'stopreminder') {
+if ($action == 'stopreminder') {	// Test on permission not required here. Endpoint can be called
 	dol_syslog("Clear notification for listofreminderids=".$listofreminderids);
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 
@@ -65,7 +74,6 @@ if ($action == 'stopreminder') {
 	if (!$resql) {
 		dol_print_error($db);
 	}
-	//}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -95,11 +103,11 @@ $eventfound = array();
 //$eventfound[]=array('type'=>'agenda', 'id'=>1, 'tipo'=>'eee', 'location'=>'aaa');
 
 // TODO Remove use of $_SESSION['auto_check_events_not_before']. Seems not used.
-if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow', 'int')) {
+if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOSTINT('forcechecknow')) {
 	/*$time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined
 	if (!empty($_SESSION['auto_check_events_not_before']))
 	{
-		// We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
+		// We start scan from the not before so if two tabs were opened at different moments and we close one (so the js timer),
 		// then we are not losing periods
 		$starttime = $_SESSION['auto_check_events_not_before'];
 		// Protection to avoid too long sessions
@@ -128,14 +136,16 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	$sql = 'SELECT a.id as id_agenda, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
-	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".((int) $conf->entity);	// No sharing of entity for alerts
+	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."'";
+	$sql .= " AND ar.status = 0";
+	$sql .= " AND ar.entity = ".((int) $conf->entity);	// No sharing of entity for alerts
 	$sql .= $db->order('datep', 'ASC');
 	$sql .= $db->plimit(10); // Avoid too many notification at once
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			// Message must be formated and translated to be used with javascript directly
+			// Message must be formatted and translated to be used with javascript directly
 			$event = array();
 			$event['type'] = 'agenda';
 			$event['id_reminder'] = $obj->id_reminder;

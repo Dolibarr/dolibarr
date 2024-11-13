@@ -6,7 +6,7 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $form  = new Form($db);
 
 // Load translation files required by the page
@@ -49,14 +57,15 @@ $toselect = GETPOST('toselect', 'array');
 
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'societe', $socid, '&societe');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
+
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $object = new Societe($db);
 $permissiontodelete = $user->hasRight('societe', 'supprimer');
@@ -85,6 +94,7 @@ if ($reshook < 0) {
 $parameters = array('id'=>$socid);
 
 // List of mass actions available
+$arrayofmassactions = array();
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
@@ -92,7 +102,7 @@ if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 
@@ -119,14 +129,11 @@ if ($socid) {
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
 
-	if (isModEnabled('notification')) {
-		$langs->load("mails");
-	}
 	$head = societe_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
@@ -173,13 +180,12 @@ if ($socid) {
 	}
 
 	print '</table>';
-
 	print '</div>';
 
 	print dol_get_fiche_end();
 
 	print '<br>';
-	$params = '';
+	$params = array();
 	$backtopage = $_SERVER['PHP_SELF'].'?socid='.$object->id;
 	$newcardbutton = dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
 
@@ -194,7 +200,10 @@ if ($socid) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
-	print '</form>';
+
+	if (empty($conf->dol_optimize_smallscreen)) {
+		print '</form>';
+	}
 }
 
 // End of page

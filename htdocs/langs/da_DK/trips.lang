@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Optaget af
 AUTHORPAIEMENT=Betalt af
 AddTrip=Opret omkostningsrapport
@@ -13,6 +13,8 @@ byEX_EXP=for linje (begrænsning til %s)
 byEX_MON=efter måned (begrænsning til %s)
 byEX_YEA=efter år (begrænsning til %s)
 CANCEL_USER=Slettet af
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Konto (fra kontoplanen) bruges som standard til "brugere" på udgiftsrapporter
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Den dedikerede konto, der er defineret på brugerkortet, vil kun blive brugt til underreskontering. Denne vil blive brugt til Hovedbog, og også som standardværdien for Subreskontro, hvis der ikke er defineret en dedikeret regnskabskonto på brugeren.
 CarCategory=Køretøjskategori
 ClassifyRefunded=Klassificer 'refunderet'
 CompanyVisited=Besøgt firma / organisation
@@ -24,7 +26,7 @@ ConfirmPaidTrip=Er du sikker på, at du vil ændre status for denne udgiftsrappo
 ConfirmRefuseTrip=Er du sikker på, at du vil nægte denne udgiftsrapport?
 ConfirmSaveTrip=Er du sikker på, at du vil bekræfte denne udgiftsrapport?
 ConfirmValideTrip=Er du sikker på, at du vil godkende denne udgiftsrapport?
-DATE_CANCEL=Annulleringsdato
+DATE_CANCEL=Afbestillingsdato
 DATE_PAIEMENT=Betalingsdato
 DATE_REFUS=Nægte dato
 DATE_SAVE=Bekræftelsesdato
@@ -39,7 +41,7 @@ expenseReportCoef=Koefficient
 expenseReportCoefUndefined=(værdi ikke defineret)
 expenseReportOffset=Offset
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=Område deaktiveret - se c_exp_tax_range dictionay
+expenseReportRangeDisabled=Range deaktiveret - se c_exp_tax_range-ordbogen
 expenseReportRangeFromTo=fra %d til %d
 expenseReportRangeMoreThan=mere end %d
 expenseReportTotalForFive=Eksempel med <u> d </ u> = 5
@@ -91,9 +93,9 @@ nolimitbyEX_EXP=efter linie (ingen begrænsning)
 nolimitbyEX_MON=efter måned (ingen begrænsning)
 nolimitbyEX_YEA=efter år (ingen begrænsning)
 NoTripsToExportCSV=Ingen udgiftsrapport til eksport for denne periode.
-NOT_AUTHOR=Du er ikke forfatteren af ​​denne udgiftsrapport. Drift aflyst.
+NOT_AUTHOR=Du er ikke forfatteren til denne udgiftsrapport. Operation annulleret.
 OnExpense=Udgiftslinje
-PDFStandardExpenseReports=Standard skabelon til at generere et PDF-dokument til udgiftsrapport
+PDFStandardExpenseReports=Standardskabelon til at generere et PDF-dokument til en udgiftsrapport
 PaidTrip=Betal en udgiftsrapport
 REFUSEUR=Nægtet af
 RangeIk=Mileage rækkevidde
@@ -103,10 +105,10 @@ ShowExpenseReport=Vis omkostningsrapport
 ShowTrip=Vis omkostningsrapport
 TripCard=Udgiftsrapport kort
 TripId=Id udgiftsrapport
-TripNDF=Informationsomkostningsrapport
+TripNDF=Informationsudgiftsrapport
 TripSociete=Informationsselskab
 Trips=Udgiftsrapporter
-TripsAndExpenses=Udgifter rapporter
+TripsAndExpenses=Udgiftsrapporter
 TripsAndExpensesStatistics=Omkostningsrapporteringstatistik
 TypeFees=Typer af gebyrer
 UploadANewFileNow=Upload et nyt dokument nu
@@ -115,6 +117,10 @@ VALIDOR=Godkendt af
 ValidateAndSubmit=Bekræft og indsend for godkendelse
 ValidatedWaitingApproval=Bekræftet (venter på godkendelse)
 ValideTrip=Godkendelse af udgiftsrapport
+ExpenseReportPayments=Udgiftsrapport betalinger
+TaxUndefinedForThisCategory = Skat er udefineret for denne kategori
+errorComputeTtcOnMileageExpense=Fejl ved beregning af kilometerudgifter
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Kun elementer i udkaststatus kan slettes i masseaktion
 
 ## Dictionary
 EX_BRE=Morgenmad

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2020-2021	Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2020-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
-$id = GETPOST('id', 'int');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 
 $object = new Adherent($db);
@@ -43,7 +52,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Define variables to know what current user can do on users
 	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
-	// Define variables to know what current user can do on properties of user linked to edited member
+	// Define variables to know what the current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))
@@ -98,6 +107,7 @@ $v->setPhoneNumber($object->fax, "TYPE=WORK;FAX");
 $country = $object->country_code ? $object->country : '';
 
 $v->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK;POSTAL");
+// @phan-suppress-next-line PhanDeprecatedFunction  (setLabel is the old method, new is setAddress)
 $v->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
 
 $v->setEmail($object->email);
@@ -147,7 +157,7 @@ if ($company->id) {
 	}
 }
 
-// Personal informations
+// Personal information
 $v->setPhoneNumber($object->phone_perso, "TYPE=HOME;VOICE");
 if ($object->birth) {
 	$v->setBirthday($object->birth);

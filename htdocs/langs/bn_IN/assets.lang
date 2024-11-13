@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+NewAsset=নতুন সম্পদ
+AccountancyCodeAsset=অ্যাকাউন্টিং কোড (সম্পদ)
+AccountancyCodeDepreciationAsset=অ্যাকাউন্টিং কোড (অবচরণ সম্পদ অ্যাকাউন্ট)
+AccountancyCodeDepreciationExpense=অ্যাকাউন্টিং কোড (অবচরণ খরচ অ্যাকাউন্ট)
+AssetsLines=সম্পদ
+DeleteType=মুছে ফেলা
+DeleteAnAssetType=একটি সম্পদ মডেল মুছুন
+ConfirmDeleteAssetType=আপনি কি এই সম্পদ মডেল মুছে ফেলার বিষয়ে নিশ্চিত?
+ShowTypeCard=মডেল দেখান '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=সম্পদ
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=সম্পদের বিবরণ
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=সম্পদ সেটআপ
+AssetSetupPage=সম্পদ সেটআপ পৃষ্ঠা
+ExtraFieldsAssetModel=পরিপূরক বৈশিষ্ট্য (সম্পদ মডেল)
+
+AssetsType=সম্পদ মডেল
+AssetsTypeId=সম্পদ মডেল আইডি
+AssetsTypeLabel=সম্পদ মডেল লেবেল
+AssetsTypes=সম্পদের মডেল
+ASSET_ACCOUNTANCY_CATEGORY=স্থায়ী সম্পদ অ্যাকাউন্টিং গ্রুপ
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets=সম্পদ
+MenuNewAsset=নতুন সম্পদ
+MenuAssetModels=মডেল সম্পদ
+MenuListAssets=তালিকা
+MenuNewAssetModel=নতুন সম্পদের মডেল
+MenuListAssetModels=তালিকা
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=আপনি কি সত্যিই এই সম্পদ সরাতে চান?
+
+#
+# Tab
+#
+AssetDepreciationOptions=অবচয় বিকল্প
+AssetAccountancyCodes=অ্যাকাউন্টিং অ্যাকাউন্ট
+AssetDepreciation=অবচয়
+
+#
+# Asset
+#
+Asset=সম্পদ
+Assets=সম্পদ
+AssetReversalAmountHT=বিপরীত পরিমাণ (ট্যাক্স ছাড়া)
+AssetAcquisitionValueHT=অধিগ্রহণের পরিমাণ (কর ছাড়া)
+AssetRecoveredVAT=উদ্ধারকৃত ভ্যাট
+AssetReversalDate=বিপরীত তারিখ
+AssetDateAcquisition=অধিগ্রহণের তারিখ
+AssetDateStart=শুরুর তারিখ
+AssetAcquisitionType=অধিগ্রহণের ধরন
+AssetAcquisitionTypeNew=নতুন
+AssetAcquisitionTypeOccasion=ব্যবহৃত
+AssetType=সম্পদের ধরন
+AssetTypeIntangible=অধরা
+AssetTypeTangible=বাস্তব
+AssetTypeInProgress=চলমান
+AssetTypeFinancial=আর্থিক
+AssetNotDepreciated=অবমূল্যায়ন নয়
+AssetDisposal=নিষ্পত্তি
+AssetConfirmDisposalAsk=আপনি কি <b> %s</b> সম্পদের নিষ্পত্তি করার বিষয়ে নিশ্চিত?
+AssetConfirmReOpenAsk=আপনি কি <b> %s</b> সম্পদ পুনরায় খুলতে চান?
+
+#
+# Asset status
+#
+AssetInProgress=চলমান
+AssetDisposed=নিষ্পত্তি
+AssetRecorded=অ্যাকাউন্টেড
+
+#
+# Asset disposal
+#
+AssetDisposalDate=নিষ্পত্তির তারিখ
+AssetDisposalAmount=নিষ্পত্তি মূল্য
+AssetDisposalType=নিষ্পত্তির ধরন
+AssetDisposalDepreciated=স্থানান্তরের বছর অবমূল্যায়ন করুন
+AssetDisposalSubjectToVat=ভ্যাট সাপেক্ষে নিষ্পত্তি
+
+#
+# Asset model
+#
+AssetModel=সম্পদের মডেল
+AssetModels=সম্পদের মডেল
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=অর্থনৈতিক অবচয়
+AssetDepreciationOptionAcceleratedDepreciation=ত্বরিত অবচয় (কর)
+AssetDepreciationOptionDepreciationType=অবচয় প্রকার
+AssetDepreciationOptionDepreciationTypeLinear=রৈখিক
+AssetDepreciationOptionDepreciationTypeDegressive=অধঃপতনশীল
+AssetDepreciationOptionDepreciationTypeExceptional=ব্যতিক্রমী
+AssetDepreciationOptionDegressiveRate=অধঃপতন হার
+AssetDepreciationOptionAcceleratedDepreciation=ত্বরিত অবচয় (কর)
+AssetDepreciationOptionDuration=সময়কাল
+AssetDepreciationOptionDurationType=সময়কাল টাইপ করুন
+AssetDepreciationOptionDurationTypeAnnual=বার্ষিক
+AssetDepreciationOptionDurationTypeMonthly=মাসিক
+AssetDepreciationOptionDurationTypeDaily=দৈনিক
+AssetDepreciationOptionRate=হার (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=অবচয় বেস (ভ্যাট বাদে)
+AssetDepreciationOptionAmountBaseDeductibleHT=কর্তনযোগ্য ভিত্তি (ভ্যাট বাদে)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=মোট পরিমাণ শেষ অবচয় (ভ্যাট বাদে)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=অর্থনৈতিক অবমূল্যায়ন
+AssetAccountancyCodeAsset=সম্পদ
+AssetAccountancyCodeDepreciationAsset=অবচয়
+AssetAccountancyCodeDepreciationExpense=অবচয় ব্যয়
+AssetAccountancyCodeValueAssetSold=নিষ্পত্তিকৃত সম্পদের মূল্য
+AssetAccountancyCodeReceivableOnAssignment=নিষ্পত্তি উপর প্রাপ্য
+AssetAccountancyCodeProceedsFromSales=নিষ্পত্তি থেকে আয়
+AssetAccountancyCodeVatCollected=সংগৃহীত ভ্যাট
+AssetAccountancyCodeVatDeductible=সম্পদের উপর ভ্যাট আদায় করা হয়েছে
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=ত্বরিত অবচয় (কর)
+AssetAccountancyCodeAcceleratedDepreciation=হিসাব
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=অবচয় ব্যয়
+AssetAccountancyCodeProvisionAcceleratedDepreciation=দখল/বিধান
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=অবচয় ভিত্তিতে (ভ্যাট বাদে)
+AssetDepreciationBeginDate=অবচয় শুরু
+AssetDepreciationDuration=সময়কাল
+AssetDepreciationRate=হার (%%)
+AssetDepreciationDate=অবচয় তারিখ
+AssetDepreciationHT=অবচয় (ভ্যাট বাদে)
+AssetCumulativeDepreciationHT=ক্রমবর্ধমান অবচয় (ভ্যাট বাদে)
+AssetResidualHT=অবশিষ্ট মান (ভ্যাট বাদে)
+AssetDispatchedInBookkeeping=অবচয় রেকর্ড করা হয়েছে
+AssetFutureDepreciationLine=ভবিষ্যৎ অবচয়
+AssetDepreciationReversal=উল্টো
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=সম্পদের আইডি বা পাওয়া মডেল প্রদান করা হয়নি
+AssetErrorFetchAccountancyCodesForMode='%s' অবচয় মোডের জন্য অ্যাকাউন্টিং অ্যাকাউন্টগুলি পুনরুদ্ধার করার সময় ত্রুটি
+AssetErrorDeleteAccountancyCodesForMode='%s' অবচয় মোড থেকে অ্যাকাউন্টিং অ্যাকাউন্টগুলি মুছে ফেলার সময় ত্রুটি
+AssetErrorInsertAccountancyCodesForMode=অবচয় মোড '%s' এর অ্যাকাউন্টিং অ্যাকাউন্ট সন্নিবেশ করার সময় ত্রুটি
+AssetErrorFetchDepreciationOptionsForMode='%s' অবচয় মোডের বিকল্পগুলি পুনরুদ্ধার করার সময় ত্রুটি
+AssetErrorDeleteDepreciationOptionsForMode='%s' অবচয় মোড বিকল্পগুলি মুছে ফেলার সময় ত্রুটি
+AssetErrorInsertDepreciationOptionsForMode='%s' অবচয় মোড বিকল্পগুলি সন্নিবেশ করার সময় ত্রুটি
+AssetErrorFetchDepreciationLines=রেকর্ড করা অবচয় লাইন পুনরুদ্ধার করার সময় ত্রুটি
+AssetErrorClearDepreciationLines=রেকর্ড করা অবচয় লাইন শুদ্ধ করার সময় ত্রুটি (উল্টানো এবং ভবিষ্যত)
+AssetErrorAddDepreciationLine=একটি অবচয় লাইন যোগ করার সময় ত্রুটি
+AssetErrorCalculationDepreciationLines=অবচয় লাইন গণনা করার সময় ত্রুটি (পুনরুদ্ধার এবং ভবিষ্যত)
+AssetErrorReversalDateNotProvidedForMode='%s' অবচয় পদ্ধতির জন্য বিপরীত তারিখ প্রদান করা হয় না
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=রিভার্সাল তারিখটি '%s' অবচয় পদ্ধতির জন্য চলতি অর্থবছরের শুরুর চেয়ে বেশি বা সমান হতে হবে
+AssetErrorReversalAmountNotProvidedForMode=অবচয় মোড '%s'-এর জন্য বিপরীত পরিমাণ প্রদান করা হয় না।
+AssetErrorFetchCumulativeDepreciation=অবচয় লাইন থেকে সঞ্চিত অবচয় পরিমাণ পুনরুদ্ধার করার সময় ত্রুটি
+AssetErrorSetLastCumulativeDepreciation=শেষ সঞ্চিত অবচয় পরিমাণ রেকর্ড করার সময় ত্রুটি

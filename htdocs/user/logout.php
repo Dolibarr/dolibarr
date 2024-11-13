@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Xavier Dutoit         <doli@sydesy.com>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,14 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);	// TODO Really ? It at least delete the session file ?!
 }
 
-//global $conf, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+$error = 0;
 
 // Call trigger
 $result = $user->call_trigger('USER_LOGOUT', $user);
@@ -72,7 +80,7 @@ if ($reshook < 0) {
 }
 
 // Define url to go after disconnect
-$urlfrom = empty($_SESSION["urlfrom"]) ? '' : $_SESSION["urlfrom"];
+$urlfrom = empty($_SESSION["urlfrom"]) ? GETPOST('urlfrom') : $_SESSION["urlfrom"];
 
 // Define url to go
 $url = DOL_URL_ROOT."/index.php"; // By default go to login page
@@ -80,7 +88,7 @@ if ($urlfrom) {
 	$url = DOL_URL_ROOT.$urlfrom;
 }
 if (getDolGlobalString('MAIN_LOGOUT_GOTO_URL')) {
-	$url = $conf->global->MAIN_LOGOUT_GOTO_URL;
+	$url = getDolGlobalString('MAIN_LOGOUT_GOTO_URL');
 }
 
 if (GETPOST('dol_hide_topmenu')) {
@@ -97,6 +105,15 @@ if (GETPOST('dol_no_mouse_hover')) {
 }
 if (GETPOST('dol_use_jmobile')) {
 	$url .= (preg_match('/\?/', $url) ? '&' : '?').'dol_use_jmobile=1';
+}
+
+// Logout openid_connect sessions using OIDC logout URL if defined
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && !empty($_SESSION['OPENID_CONNECT']) && getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL")) {
+	// We need the full URL
+	if (strpos($url, '/') === 0) {
+		$url = DOL_MAIN_URL_ROOT . $url;
+	}
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&returnTo=' . urlencode($url);
 }
 
 // Destroy session

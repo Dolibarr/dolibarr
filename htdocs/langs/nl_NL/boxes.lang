@@ -112,10 +112,12 @@ BoxTitleSuspenseAccount=Aantal niet-toegewezen lijnen
 NumberOfLinesInSuspenseAccount=Aantal regels in tussenrekening
 SuspenseAccountNotDefined=Suspense-account is niet gedefinieerd
 BoxLastCustomerShipments=Laatste klantzendingen
-BoxTitleLastCustomerShipments=Laatste %s klantverzendingen
+BoxTitleLastCustomerShipments=Laatste %s gewijzigde Klant zendingen
 BoxTitleLastLeaveRequests=Laatste %s aangepaste verlofverzoeken
 NoRecordedShipments=Geen geregistreerde klantverzending
-BoxCustomersOutstandingBillReached=Klanten met bereikt limiet
+BoxCustomersOutstandingBillReached=Klanten met openstaande limiet bereikt
+BoxTitleLastFediverseInfos=Laatste %s berichten van %s
+BoxLastFediverseInfos=Laatste Fediverse-updates: nieuws en trends
 # Pages
 UsersHome=Thuisgebruikers en groepen
 MembersHome=Thuis lidmaatschap

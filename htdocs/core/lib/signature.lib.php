@@ -1,6 +1,8 @@
 <?php
 /**
  * Copyright (C) 2013	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +24,34 @@
  *
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
- * @param   Object  		$obj  		object (needed to make multicompany good links)
+ * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
+ * @param	string			$mode		Mode
  * @return	string						Url string
  */
-function showOnlineSignatureUrl($type, $ref, $obj = null)
+function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("payment", "paybox"));
+	$langs->loadLangs(array("payment", "paybox", "stripe"));
 
 	$servicename = 'Online';
 
-	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
-	$url = getOnlineSignatureUrl(0, $type, $ref, $obj);
+	$out = '';
+	if ($mode != 'short') {
+		$out .= img_picto('', 'globe', 'class="pictofixedwidth"');
+	}
+	$out .= '<span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
+	$url = getOnlineSignatureUrl(0, $type, $ref, 1, $obj);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
 	} else {
-		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
+		$out .= '<input type="text" id="onlinesignatureurl" class="'.($mode == 'short' ? 'centpercentminusx' : 'quatrevingtpercentminusx').'" value="'.$url.'">';
 	}
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
-	$out .= ajax_autoselect("onlinesignatureurl", 0);
+	$out .= ajax_autoselect("onlinesignatureurl", '');
 	return $out;
 }
 
@@ -52,16 +59,16 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
 /**
  * Return string with full Url
  *
- * @param   int				$mode				0=True url, 1=Url formated with colors
+ * @param   int				$mode				0=True url, 1=Url formatted with colors
  * @param   string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
- * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @param   int     		$localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
  * @return	string								Url string
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
-	global $conf, $dolibarr_main_url_root;
+	global $dolibarr_main_url_root;
 
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0
@@ -74,7 +81,6 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	}
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot
@@ -91,6 +97,10 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 
 	if ($type == 'proposal') {
 		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
 
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
@@ -131,6 +141,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}*/
 	} elseif ($type == 'contract') {
 		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=contract&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'contract_ref';
@@ -146,6 +161,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	} elseif ($type == 'fichinter') {
 		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'fichinter_ref';
@@ -159,8 +179,13 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
-	} else {
-		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'ONLINE_SIGNATURE_SECURITY_TOKEN');
+	} else {	// For example $type = 'societe_rib'
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		if (strpos($securekeyseed, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
+			return 'Invalid parameter '.dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
+		}
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= $type.'_ref';
@@ -172,7 +197,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $obj->entity), '0');
 		}
 	}
 

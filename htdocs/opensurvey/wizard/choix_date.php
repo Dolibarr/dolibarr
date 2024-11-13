@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
@@ -37,7 +47,9 @@ if (!$user->hasRight('opensurvey', 'write')) {
 $_SESSION["formatsondage"] = "D";
 
 $erreur = false;
-$erreurNbchoice = 0;
+$erreurNb = 0;
+$choixdate = '';
+
 
 /*
  * Actions
@@ -76,8 +88,8 @@ if (GETPOST('confirmation')) {
 						$debutcreneau = explode(":", $creneaux[1]);
 						$fincreneau = explode(":", $creneaux[2]);
 
-						//comparaison des heures de fin et de debut
-						//si correctes, on entre les données dans la variables de session
+						// Compare hours for start and end
+						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -89,8 +101,8 @@ if (GETPOST('confirmation')) {
 						$debutcreneau = preg_split("/h/i", $creneaux[1]);
 						$fincreneau = preg_split("/h/i", $creneaux[2]);
 
-						//comparaison des heures de fin et de debut
-						//si correctes, on entre les données dans la variables de session
+						// Compare hours for start and end
+						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -136,7 +148,7 @@ if (GETPOST('confirmation')) {
 						$erreur = true;
 					}
 
-					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
+					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty((string) $j, $_SESSION['horaires'.$i]) === false) {
 						if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
 							$_SESSION["horaires$i"][$j] = '';
 						} else {
@@ -146,6 +158,7 @@ if (GETPOST('confirmation')) {
 					}
 				}
 
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
 					$choixdate .= ",";
 					$choixdate .= $_SESSION["totalchoixjour"][$i];
@@ -155,7 +168,7 @@ if (GETPOST('confirmation')) {
 							$choixdate .= ",";
 							$choixdate .= $_SESSION["totalchoixjour"][$i];
 							$choixdate .= "@";
-							// On remplace la virgule et l'arobase pour ne pas avoir de problème par la suite
+							// Replace the comma and the '@' token to avoid issues
 							$choixdate .= str_replace(array(',', '@'), array('&#44;', '&#64;'), $_SESSION["horaires$i"][$j]);
 						}
 					}
@@ -178,7 +191,7 @@ if (GETPOST('confirmation')) {
 
 	// Add survey into database
 	if (!$erreur && $erreurNb == 0) {
-		$_SESSION["toutchoix"] = substr("$choixdate", 1);
+		$_SESSION["toutchoix"] = substr($choixdate, 1);
 		unset($_SESSION["nbrecaseshoraires"]);
 
 		ajouter_sondage();
@@ -205,7 +218,7 @@ if (GETPOST('reset')) {
  */
 
 if (!isset($_SESSION['description']) && !isset($_SESSION['mail'])) {
-	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
+	dol_print_error(null, $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
 }
 
@@ -248,18 +261,18 @@ if (!isset($_SESSION['annee'])) {
 	$_SESSION['annee'] = date('Y');
 }
 
-//mise a jour des valeurs de session si bouton retour a aujourd'hui
+// Update value of date period into the session
 if (!issetAndNoEmpty('choixjourajout') && !issetAndNoEmpty('choixjourretrait') && (issetAndNoEmpty('retourmois') || issetAndNoEmpty('retourmois_x'))) {
 	$_SESSION["jour"] = date("j");
 	$_SESSION["mois"] = date("n");
 	$_SESSION["annee"] = date("Y");
 }
 
-//mise a jour des valeurs de session si mois avant
+// Update value of date period into the session
 if (issetAndNoEmpty('moisavant_x') || issetAndNoEmpty('moisavant')) {
 	if ($_SESSION["mois"] == 1) {
-		$_SESSION["mois"]   = 12;
-		$_SESSION["annee"]  = $_SESSION["annee"] - 1;
+		$_SESSION["mois"]  = 12;
+		$_SESSION["annee"] -= 1;
 	} else {
 		$_SESSION["mois"] -= 1;
 	}
@@ -277,7 +290,7 @@ if (issetAndNoEmpty('moisavant_x') || issetAndNoEmpty('moisavant')) {
 	}
 }
 
-//mise a jour des valeurs de session si mois apres
+// Update value of date period into the session
 if (issetAndNoEmpty('moisapres_x') || issetAndNoEmpty('moisapres')) {
 	if ($_SESSION["mois"] == 12) {
 		$_SESSION["mois"] = 1;
@@ -286,7 +299,7 @@ if (issetAndNoEmpty('moisapres_x') || issetAndNoEmpty('moisapres')) {
 		$_SESSION["mois"] += 1;
 	}
 
-	//On sauvegarde les heures deja entrées
+	// On sauvegarde les heures deja entrées
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		for ($i = 0; $i < $nbofchoice; $i++) {
@@ -299,7 +312,7 @@ if (issetAndNoEmpty('moisapres_x') || issetAndNoEmpty('moisapres')) {
 	}
 }
 
-//mise a jour des valeurs de session si annee avant
+// Update value of date period into the session
 if (issetAndNoEmpty('anneeavant_x') || issetAndNoEmpty('anneeavant')) {
 	$_SESSION["annee"] -= 1;
 
@@ -316,7 +329,7 @@ if (issetAndNoEmpty('anneeavant_x') || issetAndNoEmpty('anneeavant')) {
 	}
 }
 
-//mise a jour des valeurs de session si annee apres
+// Update value of date period into the session
 if (issetAndNoEmpty('anneeapres_x') || issetAndNoEmpty('anneeapres')) {
 	$_SESSION["annee"] += 1;
 
@@ -333,51 +346,71 @@ if (issetAndNoEmpty('anneeapres_x') || issetAndNoEmpty('anneeapres')) {
 	}
 }
 
-//valeurs du nombre de jour dans le mois et du premier jour du mois
-$nbrejourmois = date("t", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"]));
-$premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"])) - 1;
+// valeurs du nombre de jour dans le mois et du premier jour du mois
+$nbrejourmois = idate("t", dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]));
+$premierjourmois = (int) dol_print_date(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]), "%w") - 1;
+//var_dump(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]));
+//var_dump($premierjourmois);
 
-//traduction de la valeur du mois
-if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
-	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
+// TODO Support option getDolGlobalString('MAIN_START_WEEK') == 0 (sunday = first day of week)
+
+// translate month
+if (is_int($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
+	$motmois = dol_print_date(mktime(0, 0, 0, (int) $_SESSION["mois"], 10), '%B');
 } else {
 	$motmois = dol_print_date(dol_now(), '%B');
 }
 
 
-//Debut du formulaire et bandeaux de tete
+// Start form
 print '<form name="formulaire" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
-//affichage de l'aide pour les jours
+// Show help for days
 print '<div class="bodydate">'."\n";
 print $langs->trans("OpenSurveyStep2")."\n";
 print '</div>'."\n";
 
-//debut du tableau qui affiche le calendrier
+// Show array with the calendar
 print '<div class="corps">'."\n";
 print '<div class="center">'."\n";
-print '<table align="center">'."\n"; // The div class=center has no effect on table, so we must keep the align=center for table
-print '<tr><td><input type="image" class="buttonwebsite" name="anneeavant" value="<<" src="../img/rewind.png"></td>';
-print '<td><input type="image" class="buttonwebsite" name="moisavant" value="<" src="../img/previous.png"></td>';
-print '<td width="150px" class="center"> '.$motmois.' '.$_SESSION["annee"].'<br>';
-print '<input type="image" name="retourmois" class="buttonreset" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh', '', 0, 1).'">';
+print '<table class="center">'."\n"; // The div class=center has no effect on table, so we must keep the align=center for table
+print '<tr>';
+print '<td>';
+print '<button type="submit" name="anneeavant" value="<<">'.img_picto($langs->trans("PreviousYear"), 'chevron-double-left', 'class="double"').'</button>';
+//print '<input type="image" class="buttonwebsite" name="anneeavant" value="<<" src="../img/rewind.png">';
 print '</td>';
-print '<td><input type="image" class="buttonwebsite" name="moisapres" value=">" src="../img/next.png"></td>';
-print '<td><input type="image" class="buttonwebsite" name="anneeapres" value=">>" src="../img/fforward.png"></td><td></td><td></td><td></td><td></td><td></td><td>';
+print '<td>';
+print '<button type="submit" name="moisavant" value="<">'.img_picto($langs->trans("PreviousMonth"), 'chevron-left', 'class="double"').'</button>';
+//print '<input type="image" class="buttonwebsite" name="moisavant" value="<" src="../img/previous.png">';
+print '</td>';
+print '<td width="150px" class="center size15x">'.$motmois.' '.$_SESSION["annee"].'<br>';
+//print '<input type="image" name="retourmois" class="buttonreset" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh', '', 0, 1).'">';
+print '</td>';
+print '<td>';
+print '<button type="submit" name="moisapres" value=">">'.img_picto($langs->trans("NextMonth"), 'chevron-right', 'class="double"').'</button>';
+//print '<input type="image" class="buttonwebsite" name="moisapres" value=">" src="../img/next.png">';
+print '</td>';
+print '<td>';
+print '<button type="submit" name="anneeapres" value=">>">'.img_picto($langs->trans("NextYear"), 'chevron-double-right', 'class="double"').'</button>';
+//print '<input type="image" class="buttonwebsite" name="anneeapres" value=">>" src="../img/fforward.png">';
 print '</td></tr>'."\n";
 print '</table>'."\n";
 print '</div>'."\n";
 
+print '<br>';
+
 print '<div class="center calendrier">'."\n";
-print '<table align="center">'."\n"; // The div class=center has no effect on table, so we must keep the align=center for table
+print '<table class="center">'."\n"; // The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr>'."\n";
 
-//affichage des jours de la semaine en haut du tableau
+// show list of days in title line
 for ($i = 0; $i < 7; $i++) {
-	print '<td align="center" class="joursemaine">'.dol_print_date(mktime(0, 0, 0, 0, $i, 10), '%A').'</td>';
+	print '<td class="center joursemaine">';
+	print dol_print_date(mktime(0, 0, 0, 0, $i, 10), (empty($conf->dol_optimize_smallscreen) ? '%A' : '%a'));
+	print '</td>';
 }
 
 print '</tr>'."\n";
@@ -411,7 +444,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		for ($i = 0; $i < $cle; $i++) {
 			$horairesi = GETPOST("horaires".$i);
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
+				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty((string) $i, $_POST['horaires'.$i]) === true) {
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];
 				}
 			}
@@ -420,7 +453,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		for ($i = $cle; $i < $nbofchoice; $i++) {
 			$k = $i + 1;
-			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
+			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty((string) $i, $_POST['horaires'.$i]) === true) {
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 					$horairesi = GETPOST("horaires".$i, 'array');
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];
@@ -502,7 +535,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 		}
 
 		// If no red button, we show green or grey button with number of day
-		if (isset($dejafait) === false || $dejafait != $numerojour) {
+		if (!isset($dejafait) || $dejafait != $numerojour) {
 			// green button
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td class="center libre"><input type="submit" class="bouton ON centpercent nomarginleft buttonwebsite" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
@@ -530,17 +563,18 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 	print $langs->trans("SelectDayDesc")."<br>\n";
 	print '</div><br>';
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
 	for ($i = 0; $i < $_SESSION["nbrecaseshoraires"]; $i++) {
 		$j = $i + 1;
-		print '<td classe="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
+		print '<td class="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
-		print '<td classe="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+		print '<td class="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
 	}
 
 	print '</tr>'."\n";
@@ -555,11 +589,11 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 		//affichage des cases d'horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
+				// When an error is found, the checkbox background is red
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
 			} else {
-				//sinon la case est vide normalement
+				// Else the color is empty (in principle)
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}
@@ -567,21 +601,21 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 	}
 
 	print '</table>'."\n";
+	print '</div>';
 
 	// show buttons to cancel, delete days or create survey
-	print '<table>'."\n";
-	print '<tr>'."\n";
-	print '<td><input type="submit" class="button small" name="reset" value="'.dol_escape_htmltag($langs->trans("RemoveAllDays")).'"></td>';
-	print '<td><input type="submit" class="button small" name="reporterhoraires" value="'.dol_escape_htmltag($langs->trans("CopyHoursOfFirstDay")).'"></td>';
-	print '<td><input type="submit" class="button small" name="resethoraires" value="'.dol_escape_htmltag($langs->trans("RemoveAllHours")).'"></td></tr>'."\n";
-	print'<tr><td colspan="3"><br><br></td></tr>'."\n";
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="confirmation" value="'.$langs->trans("CreatePoll").'"></td></tr>'."\n";
-	print '</table>'."\n";
+	print '<br><div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<input type="submit" class="button small" name="reset" value="'.dol_escape_htmltag($langs->trans("RemoveAllDays")).'">';
+	print '<input type="submit" class="button small" name="reporterhoraires" value="'.dol_escape_htmltag($langs->trans("CopyHoursOfFirstDay")).'">';
+	print '<input type="submit" class="button small" name="resethoraires" value="'.dol_escape_htmltag($langs->trans("RemoveAllHours")).'">'."\n";
+	print '<br><br>'."\n";
+	print '<input type="submit" class="button" name="confirmation" value="'.$langs->trans("CreatePoll").'">'."\n";
+	print '</div>';
 }
 
 print '</tr>'."\n";
 print '</table>'."\n";
-print '<a name=bas></a>'."\n";
+print '<a name="bas"></a>'."\n";
 //fin du formulaire et bandeau de pied
 print '</form>'."\n";
 //bandeau de pied

@@ -9,31 +9,30 @@ ActionsOnResource=Bu kaynakla ilgili etkinlikler
 ResourcePageIndex=Kaynak listesi
 ResourceSingular=Kaynak
 ResourceCard=Kaynak kartı
+NewResource=Yeni Kaynaklar
 AddResource=Bir kaynak oluştur
 ResourceFormLabel_ref=Kaynak adı
-ResourceType=Kaynak türü
 ResourceFormLabel_description=Kaynak açıklaması
-
+ResourceType=Kaynak türü
+ResourceTypeID=Kaynak türü kimliği
+ResourceTypeLabel=Kaynak türü etiketi
 ResourcesLinkedToElement=Öğeye bağlantılı kaynaklar
 
 ShowResource=Kaynak göster
-
 ResourceElementPage=Öğe kaynağı
 ResourceCreatedWithSuccess=Kaynak oluşturma başarılı
 RessourceLineSuccessfullyDeleted=Kaynak satır silinmesi başarılı
 RessourceLineSuccessfullyUpdated=Kaynak satır güncellemesi başarılı
 ResourceLinkedWithSuccess=Kaynak bağlantılama başarılı
-
 ConfirmDeleteResource=Bu kaynağı silmeyi onayla
 RessourceSuccessfullyDeleted=Kaynak silme başarılı
 DictionaryResourceType=Kaynak türleri
-
 SelectResource=Kaynak seç
-
 IdResource=Id kaynağı
 AssetNumber=Seri numarası
 ResourceTypeCode=Kaynak türü kodu
 ImportDataset_resource_1=Kaynaklar
-
 ErrorResourcesAlreadyInUse=Bazı kaynaklar kullanımda
 ErrorResourceUseInEvent=%s öğe %s olayda kullanıldı
+MaxUsers=Maksimum kullanıcı (yerler, koltuklar vb.)
+MaxUsersLabel=Maksimum kullanıcı

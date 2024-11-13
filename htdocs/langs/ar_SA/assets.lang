@@ -168,7 +168,7 @@ AssetDepreciationReversal=انعكاس، ارتداد، انقلاب
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=لم يتم توفير معرف الأصل أو صوت النموذج
+AssetErrorAssetOrAssetModelIDNotProvide=لم يتم تقديم معرف الأصل أو النموذج الذي تم العثور عليه
 AssetErrorFetchAccountancyCodesForMode=خطأ عند استرداد حسابات المحاسبة لوضع الإهلاك "%s"
 AssetErrorDeleteAccountancyCodesForMode=حدث خطأ عند حذف حسابات المحاسبة من وضع الإهلاك "%s"
 AssetErrorInsertAccountancyCodesForMode=خطأ عند إدخال حسابات المحاسبة في وضع الإهلاك "%s"

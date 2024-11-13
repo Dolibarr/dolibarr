@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2024		MDW								<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  * Prepare array with list of tabs
  *
  * @param   Reception	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function reception_prepare_head(Reception $object)
 {
@@ -111,9 +112,9 @@ function reception_prepare_head(Reception $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function reception_admin_prepare_head()
 {
@@ -122,7 +123,7 @@ function reception_admin_prepare_head()
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('reception');
-	$extrafields->fetch_name_optionals_label('commande_fournisseur_dispatch');
+	$extrafields->fetch_name_optionals_label('receptiondet_batch');
 
 	$h = 0;
 	$head = array();
@@ -146,9 +147,9 @@ function reception_admin_prepare_head()
 	}
 
 	if (getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/commande_fournisseur_dispatch_extrafields.php';
+		$head[$h][0] = DOL_URL_ROOT.'/admin/receptiondet_batch_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
-		$nbExtrafields = $extrafields->attributes['commande_fournisseur_dispatch']['count'];
+		$nbExtrafields = $extrafields->attributes['receptiondet_batch']['count'];
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}

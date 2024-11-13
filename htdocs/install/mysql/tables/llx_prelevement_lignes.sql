@@ -32,5 +32,6 @@ create table llx_prelevement_lignes
   number              varchar(255),
   cle_rib             varchar(5),
 
-  note                text
+  note                text,
+  tms             	  timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

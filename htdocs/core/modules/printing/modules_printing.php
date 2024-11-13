@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2023 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,12 @@ class PrintingDriver
 	public $error = '';
 
 	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+
+	/**
 	 * @var string Name
 	 */
 	public $name;
@@ -70,8 +77,8 @@ class PrintingDriver
 	 *  Return list of printing driver
 	 *
 	 *  @param  DoliDB  $db                 Database handler
-	 *  @param  integer  $maxfilenamelength  Max length of value to show
-	 *  @return array                       List of drivers
+	 *  @param  int		$maxfilenamelength	Max length of value to show
+	 *  @return array<string,string>		List of drivers
 	 */
 	public static function listDrivers($db, $maxfilenamelength = 0)
 	{
@@ -113,5 +120,62 @@ class PrintingDriver
 		} else {
 			return $this->desc;
 		}
+	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return array<int|string,string|array<string|int,string>>	list of printers
+	 */
+	public function getlistAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return [];
+	}
+
+	/**
+	 *  Print selected file
+	 *
+	 * @param   string      $file       file
+	 * @param   string      $module     module
+	 * @param   string      $subdir     subdir for file
+	 * @return  int                     0 if OK, >0 if KO
+	 */
+	public function printFile($file, $module, $subdir = '')
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
+
+	/**
+	 *  List jobs print
+	 *
+	 *  @param   ?string      $module     module
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listJobs($module = null)
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
 	}
 }

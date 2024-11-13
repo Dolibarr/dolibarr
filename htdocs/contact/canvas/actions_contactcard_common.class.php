@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +19,12 @@
 /**
  *	\file       htdocs/contact/canvas/actions_contactcard_common.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (common)
+ *	\brief      File for the class Thirdparty contact card controller (common)
  */
 
 /**
  *	\class      ActionsContactCardCommon
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *	\brief      Common Abstract Class for contact managmeent
  */
 abstract class ActionsContactCardCommon
 {
@@ -32,14 +33,31 @@ abstract class ActionsContactCardCommon
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
-	//! Object container
+	//!
+	/**
+	 * @var Contact Object container
+	 */
 	public $object;
 
 	/**
@@ -156,7 +174,7 @@ abstract class ActionsContactCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -176,7 +194,7 @@ abstract class ActionsContactCardCommon
 			}
 
 			// Public or private
-			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
+			$selectarray = array('0' => $langs->trans("ContactPublic"), '1' => $langs->trans("ContactPrivate"));
 			$this->tpl['select_visibility'] = $form->selectarray('priv', $selectarray, $this->object->priv, 0);
 		}
 
@@ -193,7 +211,7 @@ abstract class ActionsContactCardCommon
 
 			$this->object->load_ref_elements();
 
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;
@@ -203,12 +221,12 @@ abstract class ActionsContactCardCommon
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
 				$i++;
 			}
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
 				$i++;
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation ? $this->object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 				$i++;
@@ -249,7 +267,7 @@ abstract class ActionsContactCardCommon
 			$this->tpl['phone_perso'] = dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_mobile'] = dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['fax'] = dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
+			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 1);
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
@@ -285,7 +303,7 @@ abstract class ActionsContactCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->socid = GETPOST("socid", 'int');
+		$this->object->socid = GETPOSTINT("socid");
 		$this->object->lastname			= GETPOST("name");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
@@ -294,13 +312,13 @@ abstract class ActionsContactCardCommon
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town				= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id");
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone_pro = GETPOST("phone_pro");
 		$this->object->phone_perso = GETPOST("phone_perso");
 		$this->object->phone_mobile = GETPOST("phone_mobile");
 		$this->object->fax = GETPOST("fax");
 		$this->object->email			= GETPOST("email");
-		$this->object->priv				= GETPOST("priv");
+		$this->object->priv				= GETPOSTINT("priv");
 		$this->object->note				= GETPOST("note", "restricthtml");
 		$this->object->canvas = GETPOST("canvas");
 
@@ -308,14 +326,17 @@ abstract class ActionsContactCardCommon
 		if ($this->object->country_id) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".((int) $this->object->country_id);
 			$resql = $this->db->query($sql);
+			$obj = null;
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 			} else {
 				dol_print_error($this->db);
 			}
-			$this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
-			$this->object->country_code = $obj->code;
-			$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			if ($obj !== null) {
+				$this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+				$this->object->country_code = $obj->code;
+				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			}
 		}
 	}
 }

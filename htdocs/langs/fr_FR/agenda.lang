@@ -8,8 +8,6 @@ LocalAgenda=Calendrier par défaut
 ActionsOwnedBy=Propriétaire de l'événement
 ActionsOwnedByShort=Propriétaire
 AffectedTo=Affecté à
-Event=Evénement
-Events=Événements
 EventsNb=Nombre d'événements
 ListOfActions=Liste des événements
 EventReports=Rapport des évènements
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mes événem. terminés
 ListOfEvents=Liste des événements (calendrier par défaut)
 ActionsAskedBy=Événements enregistrés par
 ActionsToDoBy=Événements affectés à
-ActionsDoneBy=Événements réalisés par
 ActionAssignedTo=Evénement assigné à
 ViewCal=Vue mois
 ViewDay=Vue jour
@@ -89,6 +86,8 @@ ShippingSentByEMail=Bon d'expédition %s envoyé par email
 ShippingValidated= Expédition %s validée
 InterventionSentByEMail=Intervention %s envoyé par email
 ProjectSentByEMail=Projet %s envoyé par email
+ProjectDeletedInDolibarr=Projet %s supprimé
+ProjectClosedInDolibarr=Projet %s fermé
 ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
@@ -101,7 +100,7 @@ PRODUCT_MODIFYInDolibarr=Produit %s modifié
 PRODUCT_DELETEInDolibarr=Produit%ssupprimé
 HOLIDAY_CREATEInDolibarr=Demande de congé %s créée
 HOLIDAY_MODIFYInDolibarr=Demande de congé %s modifiée
-HOLIDAY_APPROVEInDolibarr=Demande de congé %s approuvée 
+HOLIDAY_APPROVEInDolibarr=Demande de congé %s approuvée
 HOLIDAY_VALIDATEInDolibarr=Demande de congé %s validée
 HOLIDAY_DELETEInDolibarr=Demande de congé %s supprimée
 EXPENSE_REPORT_CREATEInDolibarr=Note de frais %s créée
@@ -129,17 +128,21 @@ MRP_MO_DELETEInDolibarr=OF supprimé
 MRP_MO_CANCELInDolibarr=OF annulé
 PAIDInDolibarr=%s payé
 ENABLEDISABLEInDolibarr=Utilisateur activé ou désactivé
+CANCELInDolibarr=Annulé
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
 DateActionEnd=Date de fin
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
-AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions n'appartenant pas à l'utilisateur <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur est propriétaire <b>%s</b> (utilisez <b>logina=!%s</b> pour les événements n'appartenant pas à l'utilisateur).
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
+AgendaUrlOptionsType=<b>actiontype=%s</b> pour récupérer des événements automatiques ou manuels
+AgendaUrlOptionsCode=<b>actioncode=%s</b> pour récupérer uniquement les événements avec un code donné
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b>pour limiter les événements aux %sderniers jours (%s jours par défaut)
+AgendaUrlOptionsLimit=<b>limit=50</b> pour limiter aux 50 derniers événements (%s par défaut et maximum).
 AgendaShowBirthdayEvents=Anniversaires des contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -184,13 +187,11 @@ Until=jusqu'à
 DataFromWasMerged=Les données de %s ont été fusionnées
 AgendaShowBookcalCalendar=Calendrier de réservation : %s
 MenuBookcalIndex=Rendez-vous en ligne
-BookcalLabelAvailabilityHelp=Libellé de la plage de disponibilité. Par exemple:<br>Disponibilité générale<br>Disponibilité pendant les vacances de Noël
+BookcalLabelAvailabilityHelp=Libellé de la plage de disponibilité. Par exemple :<br>Disponibilité générale<br>Disponibilité pendant les vacances de Noël
 DurationOfRange=Durée des plages
 BookCalSetup = Prise de rendez-vous en ligne
-Settings = Paramètres
 BookCalSetupPage = Page de configuration de rendez-vous en ligne
 BOOKCAL_PUBLIC_INTERFACE_TOPIC = Titre de l'interface
-About = À propos
 BookCalAbout = À propos de BookCal
 BookCalAboutPage = Page à propos de BookCal
 Calendars=Calendriers
@@ -198,6 +199,10 @@ Availabilities=Disponibilités
 NewAvailabilities=Nouvelles disponibilités
 NewCalendar=Nouveau calendrier
 ThirdPartyBookCalHelp=L'événement réservé dans ce calendrier sera automatiquement lié à ce tiers.
-AppointmentDuration = Durée du rendez-vous : %s
+AppointmentDuration = Durée du rendez-vous : %s
 BookingSuccessfullyBooked=Votre réservation a été enregistrée
 BookingReservationHourAfter=Nous confirmons la réservation de votre rendez-vous à la date %s
+BookcalBookingTitle=Rendez-vous en ligne
+Transparency = Transparence
+ReadMore = Lire plus
+ReadLess = Lire moins

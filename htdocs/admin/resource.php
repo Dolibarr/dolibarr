@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016  Florian HENRY	<florian.henry@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "resource"));
 
@@ -60,7 +69,7 @@ if ($action == 'updateoptions') {
  * View
  */
 
-llxHeader('', $langs->trans('ResourceSetup'));
+llxHeader('', $langs->trans('ResourceSetup'), '', '', 0, 0, '', '', '', 'mod-admin page-resource');
 
 $form = new Form($db);
 
@@ -83,7 +92,7 @@ print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '<td></td>';
 
 
-// Utilisation formulaire Ajax sur choix produit
+// Use an Ajax form for the product choice
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax)) {
@@ -93,12 +102,12 @@ if (empty($conf->use_javascript_ajax)) {
 } else {
 	print '<td width="60" class="right">';
 	$arrval = array(
-			'0'=>$langs->trans("No"),
-			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		$langs->trans("No"),
+		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalInt('RESOURCE_USE_SEARCH_TO_SELECT'));
 	print '</td>';
 	print '<td class="right">';
 	print '<input type="submit" class="button small" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';

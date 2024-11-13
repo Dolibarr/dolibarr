@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -34,11 +35,24 @@
  * $type, $text, $description, $line
  */
 
-// Protection to avoid direct call of template
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+ // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -53,7 +67,24 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Description
-print '<th class="linecoldescription">'.$langs->trans('Description').'</th>';
+print '<th class="linecoldescription">'.$langs->trans('Description');
+$constant = get_class($object)."::STATUS_DRAFT";
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && defined($constant) && $object->status == constant($constant)) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'servicedateforalllines') {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=servicedateforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	}
+	if (GETPOST('mode', 'aZ09') == 'servicedateforalllines') {
+		print '&nbsp;&nbsp;<div class="classvatforalllines inline-block nowraponall">';
+		$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		print $form->selectDate('', 'alldate_start', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
+		print ' '.$langs->trans('to').' ';
+		print $form->selectDate('', 'alldate_end', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
+		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		print '</div>';
+	}
+}
+print '</th>';
 
 // Supplier ref
 if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
@@ -68,6 +99,7 @@ if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') || getDolGlobalString('FACTU
 	print $langs->trans('VAT');
 }
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
@@ -108,6 +140,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
@@ -127,6 +160,9 @@ print '</th>';
 // Fields for situation invoice
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<th class="linecolcycleref right">'.$langs->trans('Progress').'</th>';
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
+	}
 	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';
 }
 
@@ -142,7 +178,8 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
 		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
-		if ($user->hasRight("propal", "creer")) {
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
 				print '<div class="classmarginforalllines inline-block nowraponall">';
@@ -154,7 +191,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmark1 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }
 

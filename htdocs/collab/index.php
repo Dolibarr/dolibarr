@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website"));
 
@@ -36,12 +46,14 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+'@phan-var-force WebsitePage $objectpage';
+
 $conf->dol_hide_leftmenu = 1; // Force hide of left menu.
 
 $error = 0;
 $website = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 $action = GETPOST('action', 'aZ09');
 
 if (GETPOST('delete')) {
@@ -76,7 +88,8 @@ if (empty($action)) {
 	$action = 'preview';
 }
 
-
+$permissiontoadd = $user->hasRight('collab', 'read');
+$permissiontodelete = $user->hasRight('collab', 'delete');
 
 
 /*
@@ -92,7 +105,7 @@ if (GETPOST('refreshpage')) {
 
 
 // Add a collab page
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
 
 	$objectpage->title = GETPOST('WEBSITE_TITLE');
@@ -125,7 +138,7 @@ if ($action == 'add') {
 }
 
 // Update page
-if ($action == 'delete') {
+if ($action == 'delete' && $permissiontodelete) {
 	$db->begin();
 
 	$res = $object->fetch(0, $website);
@@ -163,7 +176,7 @@ $form = new Form($db);
 
 $help_url = '';
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.newToken().'">';

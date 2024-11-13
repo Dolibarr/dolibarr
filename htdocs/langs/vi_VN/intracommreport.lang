@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = báo cáo nội bộ
+Module68000Desc = Quản lý báo cáo nội bộ (Hỗ trợ định dạng DEB/DES của Pháp)
+IntracommReportSetup = Thiết lập mô-đun báo cáo nội bộ
+IntracommReportAbout = Giới thiệu về báo cáo nội bộ
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=Loại diễn viên
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Giới thiệu về Niveau d'obligation sur les
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'nghĩa vụ trên chuyến thám hiểm
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Danh mục dịch vụ thuộc loại "Frais de port"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Số khai báo
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=báo cáo nội bộ
+MenuIntracommReportNew=Khai báo mới
 MenuIntracommReportList=Danh sách
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Khai báo mới
+Declaration=Tuyên ngôn
+AnalysisPeriod=Giai đoạn phân tích
+TypeOfDeclaration=Loại khai báo
+DEB=Tờ khai trao đổi hàng hóa (DEB)
+DES=Khai báo trao đổi dịch vụ (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Chuẩn bị tệp XML ở định dạng ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Danh sách các khai báo được tạo
+IntracommReportNumber=Số khai báo
+IntracommReportPeriod=Giai đoạn phân tích
+IntracommReportTypeDeclaration=Loại khai báo
+IntracommReportDownload=tải xuống tệp XML
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Phương tiện giao thông

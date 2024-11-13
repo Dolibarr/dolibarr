@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2014-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,30 +25,47 @@
 
 // $error must have been initialized to 0
 // $action must be defined
-// $arrayofparameters must be set for action 'update'
+// $arrayofparameters must be set to list of parameters to update for action 'update' on constants
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var FormSetup $formSetup
+ * @var Translate $langs
+ * @var User $user
+ * @var string $action
+ * @var int $error
+ * @var ?int $nomessageinupdate
+ * @var ?int $nomessageinsetmoduleoptions
+ */
 
 if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
 
+'
+@phan-var-force FormSetup $formSetup
+';
 
-if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin)) {
+$upload_dir = null;
+
+if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
 			if (!empty($val['type']) && preg_match('/category:/', $val['type'])) {
-				if (GETPOST($key, 'int') == '-1') {
+				if (GETPOSTINT($key) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($key, 'int');
+					$val_const = GETPOSTINT($key);
 				}
+			} elseif ($val['type'] == 'html') {
+				$val_const = GETPOST($key, 'restricthtml');
 			} else {
 				$val_const = GETPOST($key, 'alpha');
 			}

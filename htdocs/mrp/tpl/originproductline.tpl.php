@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +18,27 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var CommonObject $this
+ * @var Conf $conf
+ * @var Form $form
+ * @var MoLine $line
+ * @var Translate $langs
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
-global $db;
+'@phan-var-force CommonObject $this';
 
-if (!empty($form) && !is_object($form)) {
+global $db, $langs;
+
+/** @var DoliDB $db */
+
+if (empty($form) || !is_object($form)) {
 	$form = new Form($db);
 }
 
@@ -35,9 +49,14 @@ $qtytoconsumeforline = $this->tpl['qty'] / (!empty($this->tpl['efficiency']) ? $
 $qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
 
 $tmpproduct = new Product($db);
-$tmpproduct->fetch($line->fk_product);
+if ($line->fk_product > 0) {
+	$tmpproduct->fetch($line->fk_product);
+}
 $tmpbom = new BOM($db);
-$res = $tmpbom->fetch($line->fk_bom_child);
+$res = 0;
+if ($line->fk_bom_child > 0) {
+	$res = $tmpbom->fetch($line->fk_bom_child);
+}
 
 ?>
 
@@ -63,14 +82,21 @@ print '</td>';
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 // Unit
 print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
-print '<td class="center">'.(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
-if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
-	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+// Stock
+print '<td class="center">';
+if ($tmpproduct->isStockManaged()) {
+	print(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
+	if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
+		print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+	}
 }
 print '</td>';
-print '<td class="center">'.((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
-if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['virtual_stock'] < $this->tpl['seuil_stock_alerte'])) {
-	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+print '<td class="center">';
+if ($tmpproduct->isStockManaged()) {
+	print((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
+	if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['virtual_stock'] < $this->tpl['seuil_stock_alerte'])) {
+		print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+	}
 }
 print '</td>';
 print '<td class="center">'.($this->tpl['qty_frozen'] ? yn($this->tpl['qty_frozen']) : '').'</td>';
@@ -98,7 +124,7 @@ print '</tr>'."\n";
 
 // Select of all the sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
-$sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
+$sql .= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -136,7 +162,7 @@ if ($resql) {
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
 		} else {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * (float) $line->qty, 0, '', 0, 0).'</td>';
 		}
 
 		// Unit

@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022      Harry Winner Kamdem  <harry@sense.africa>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,18 +104,18 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					// Check crypted password
 					$cryptType = '';
 					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-						$cryptType = $conf->global->DATABASE_PWD_ENCRYPTED;
+						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
 					}
 
 					// By default, we use default setup for encryption rule
 					if (!in_array($cryptType, array('auto'))) {
 						$cryptType = 'auto';
 					}
-					// Check crypted password according to crypt algorithm
+					// Check encrypted password according to encryption algorithm
 					if ($cryptType == 'auto') {
 						if ($passcrypted && dol_verifyHash($passtyped, $passcrypted, '0')) {
 							$passok = true;
-							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - hash ".$cryptType." of pass is ok");
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication ok - hash ".$cryptType." of pass is ok");
 						}
 					}
 
@@ -123,7 +124,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						if ((!$passcrypted || $passtyped)
 							&& ($passclear && ($passtyped == $passclear))) {
 							$passok = true;
-							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found old pass in database", LOG_WARNING);
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication ok - found old pass in database", LOG_WARNING);
 						}
 					}
 
@@ -145,7 +146,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						global $mc;
 
 						if (!isset($mc)) {
-							!isModEnabled('multicompany'); // Global not available, disable $conf->multicompany->enabled for safety
+							unset($conf->multicompany->enabled); // Global not available, disable $conf->multicompany->enabled for safety
 						} else {
 							$ret = $mc->checkRight($obj->rowid, $entitytotest);
 							if ($ret < 0) {

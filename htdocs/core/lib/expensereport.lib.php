@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_prepare_head($object)
 {
@@ -81,7 +82,7 @@ function expensereport_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'add', 'external');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
 
@@ -93,7 +94,7 @@ function expensereport_prepare_head($object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param	PaymentExpenseReport	$object		Current payment object
- * @return	array								Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
@@ -124,21 +125,19 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
 
-	$h = 0;
-	$head = array();
-
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('expensereport');
 
 	$h = 0;
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport.php";
 	$head[$h][1] = $langs->trans("ExpenseReports");

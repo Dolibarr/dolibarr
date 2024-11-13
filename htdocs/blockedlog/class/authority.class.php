@@ -316,7 +316,7 @@ class BlockedLogAuthority
 				if ($res['content'] === 'blockalreadyadded' || $res['content'] === 'blockadded') {
 					$block->setCertified();
 				} else {
-					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
+					$this->error = $langs->trans('ImpossibleToContactAuthority', $url);
 					return -1;
 				}
 			}

@@ -253,23 +253,23 @@ class Odf
 						break;
 					case 'strong':
 					case 'b':
-						$odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'i':
 					case 'em':
-						$odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'u':
-						$odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 's':
-						$odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'sub':
-						$odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'sup':
-						$odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'span':
 						if (isset($tag['attributes']['style'])) {
@@ -304,14 +304,14 @@ class Odf
 							}
 							if (strlen($odtStyles) > 0) {
 								// Generate a unique id for the style (using microtime and random because some CPUs are really fast...)
-								$key = floatval(str_replace('.', '', microtime(true))) + rand(0, 10);
+								$key = str_replace('.', '', (string) microtime(true)) . uniqid(mt_rand());
 								$customStyles[$key] = $odtStyles;
-								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 							}
 						}
 						break;
 					default:
-						$odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations);
+						$odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode);
 						break;
 				}
 			}
@@ -556,10 +556,15 @@ IMG;
 	 */
 	private function _parse($type = 'content')
 	{
+		if ($type == 'content') $xml = &$this->contentXml;
+		elseif ($type == 'styles') $xml = &$this->stylesXml;
+		elseif ($type == 'meta') $xml = &$this->metaXml;
+		else return;
+
 		// Search all tags found into condition to complete $this->vars, so we will proceed all tests even if not defined
-		$reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+		$reg='@\[!--\sIF\s([\[\]{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
-		preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+		preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 
 		//var_dump($this->vars);exit;
 		foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
@@ -575,13 +580,13 @@ IMG;
 			// If value is true (not 0 nor false nor null nor empty string)
 			if ($value) {
 				//dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
-				//$sav=$this->contentXml;
+				//$sav=$xml;
 				// Remove the IF tag
-				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
+				$xml = str_replace('[!-- IF '.$key.' --]', '', $xml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
-				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
-				$this->contentXml = preg_replace($reg, '', $this->contentXml);
-				/*if ($sav != $this->contentXml)
+				$reg = '@(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$xml = preg_replace($reg, '', $xml);
+				/*if ($sav != $xml)
 				 {
 				 dol_syslog("We found a IF and it was processed");
 				 //var_dump($sav);exit;
@@ -590,16 +595,16 @@ IMG;
 				// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
 
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
-				//$sav=$this->contentXml;
+				//$sav=$xml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
-				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
-				preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+				$reg = '@\[!--\sIF\s' . preg_quote($key, '@') . '\s--\](.*)(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
-					if (!empty($match[3])) $this->contentXml = str_replace($match[0], $match[3], $this->contentXml);
+					if (!empty($match[3])) $xml = str_replace($match[0], $match[3], $xml);
 				}
 				// Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
-				$this->contentXml = preg_replace($reg, '', $this->contentXml);
-				/*if ($sav != $this->contentXml)
+				$xml = preg_replace($reg, '', $xml);
+				/*if ($sav != $xml)
 				 {
 				 dol_syslog("We found a IF and it was processed");
 				 //var_dump($sav);exit;
@@ -608,9 +613,7 @@ IMG;
 		}
 
 		// Static substitution
-		if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
-		if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
-		if ($type == 'meta')	$this->metaXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->metaXml);
+		$xml = str_replace(array_keys($this->vars), array_values($this->vars), $xml);
 	}
 
 	/**
@@ -737,7 +740,7 @@ IMG;
 			// Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
 			$this->addImageToManifest($imageValue);
 		}
-		if (! $this->file->addFromString('./META-INF/manifest.xml', $this->manifestXml)) {
+		if (! $this->file->addFromString('META-INF/manifest.xml', $this->manifestXml)) {
 			throw new OdfException('Error during file export: manifest.xml');
 		}
 		$this->file->close();
@@ -840,7 +843,7 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:'.(getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').'\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 
@@ -925,7 +928,7 @@ IMG;
 				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
 					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
 					readfile($name.".pdf");
 				}
 			}

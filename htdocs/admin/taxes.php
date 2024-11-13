@@ -5,6 +5,8 @@
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'objects', 'companies', 'products'));
@@ -71,7 +81,7 @@ if ($action == 'update') {
 	$error = 0;
 
 	// Tax mode
-	$tax_mode = GETPOST('tax_mode', 'int');
+	$tax_mode = GETPOSTINT('tax_mode');
 
 	$db->begin();
 
@@ -99,6 +109,12 @@ if ($action == 'update') {
 			$valuesellservice = 'payment';
 			$valuebuyservice = 'payment';
 			break;
+		default:
+			$valuesellproduct = null;
+			$valuebuyproduct = null;
+			$valuesellservice = null;
+			$valuebuyservice = null;
+			break;
 	}
 
 	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', $valuesellproduct, 'chaine', 0, '', $conf->entity);
@@ -122,7 +138,7 @@ if ($action == 'update') {
 
 	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOST("deadline_day_vat", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
 
 	if (!$error) {
 		$db->commit();
@@ -143,7 +159,7 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader('', $langs->trans("TaxSetup"));
+llxHeader('', $langs->trans("TaxSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-taxes');
 
 $form = new Form($db);
 if (isModEnabled('accounting')) {
@@ -153,7 +169,7 @@ if (isModEnabled('accounting')) {
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
-//print dol_get_fiche_head(null, '', '', -1);
+//print dol_get_fiche_head([], '', '', -1);
 
 if (empty($mysoc->tva_assuj)) {
 	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
@@ -162,14 +178,15 @@ if (empty($mysoc->tva_assuj)) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVAINTRA') ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.getDolGlobalString('MAIN_INFO_TVAINTRA').'">';
 	print '</td></tr>';
 
-	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
+	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATPaymentFrequency").'</label></td>';
 	if (!$conf->use_javascript_ajax) {
 		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
@@ -177,12 +194,12 @@ if (empty($mysoc->tva_assuj)) {
 	} else {
 		print '<td width="120">';
 		$listval = array(
-			'0'=>$langs->trans(""),
-			'1'=>$langs->trans("Monthly"),
-			'2'=>$langs->trans("Quarterly"),
-			'3'=>$langs->trans("Annual"),
+			'0' => $langs->trans(""),
+			'1' => $langs->trans("Monthly"),
+			'2' => $langs->trans("Quarterly"),
+			'3' => $langs->trans("Annual"),
 		);
-		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, $conf->global->MAIN_INFO_VAT_RETURN);
+		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, getDolGlobalString('MAIN_INFO_VAT_RETURN'));
 		print "</td>";
 	}
 	print '</tr>';
@@ -191,35 +208,44 @@ if (empty($mysoc->tva_assuj)) {
 	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION') ? $conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION : '').'">';
 	print '</td></tr>';
 
+	$key = 'CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT';
+	print '<tr><td>'.$langs->trans($key).'</td><td>'.ajax_constantonoff($key).'</td></tr>';
+
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 
+
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 
-	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	// Case for the parameters TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
 	// Standard
-	print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="0"'.(empty($tax_mode) ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" id="tax_mode0" name="tax_mode" value="0"'.(empty($tax_mode) ? ' checked' : '').'> <label for="tax_mode0">'.$langs->trans('OptionVATDefault').'</label></td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDefaultDesc'));
 	print "</td></tr>\n";
 	// On debit for services
-	print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" id="tax_mode1" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> <label for="tax_mode1">'.$langs->trans('OptionVATDebitOption').'</label></td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 	// On payment for both products and services
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-		print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> '.$langs->trans('OptionPaymentForProductAndServices').'</td>';
+		print '<tr class="oddeven"><td><input type="radio" id="tax_mode2"  name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> <label for="tax_mode2">'.$langs->trans('OptionPaymentForProductAndServices').'</label></td>';
 		print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
 	}
 	print "</table>\n";
+	print '</div>';
+
 
 	print '<br>';
-	print load_fiche_titre('', '', '', 0, 0, '', '-> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault"));
+	print load_fiche_titre('', '', '', 0, '', '', '-> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault"));
 	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="oddeven"><td class="titlefield">&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
@@ -266,6 +292,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 }
 
 print "<br>\n";
@@ -278,22 +305,8 @@ print '</div>';
 
 print '</form>';
 
-// Options
 
-echo '<div>';
-echo '<table class="noborder centpercent">';
-echo '<thead>';
-echo '<tr class="liste_titre"><th>'.$langs->trans('Parameter').'</th><th>'.$langs->trans('Value').'</th></tr>';
-echo '</thead>';
-echo '<tbody>';
-
-$key = 'CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT';
-echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
-
-echo '</tbody>';
-echo '</table>';
-echo '</div>';
-
+print '<br>';
 
 if (isModEnabled('accounting')) {
 	$langs->load("accountancy");

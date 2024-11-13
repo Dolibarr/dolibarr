@@ -1,6 +1,8 @@
 <?php
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'multicurrency'));
@@ -100,7 +109,7 @@ if ($action == 'add_currency') {
 	$error = 0;
 
 	if (GETPOST('updatecurrency', 'alpha')) {
-		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
+		$fk_multicurrency = GETPOSTINT('fk_multicurrency');
 		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
@@ -117,11 +126,11 @@ if ($action == 'add_currency') {
 			}
 		}
 	} elseif (GETPOST('deletecurrency', 'alpha')) {
-		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
+		$fk_multicurrency = GETPOSTINT('fk_multicurrency');
 		$currency = new MultiCurrency($db);
 
 		if ($currency->fetch($fk_multicurrency) > 0) {
-			if ($currency->delete() > 0) {
+			if ($currency->delete($user) > 0) {
 				setEventMessages($langs->trans('RecordDeleted'), array());
 			} else {
 				setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
@@ -148,7 +157,7 @@ $sql = "SELECT code_iso, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currenc
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		$TAvailableCurrency[$obj->code_iso] = array('code'=>$obj->code_iso, 'active'=>$obj->active);
+		$TAvailableCurrency[$obj->code_iso] = array('code' => $obj->code_iso, 'active' => $obj->active);
 	}
 }
 
@@ -173,7 +182,7 @@ $form = new Form($db);
 $page_name = "MultiCurrencySetup";
 $help_url = '';
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-multicurrency');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -207,7 +216,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', null, null, 0, 0, 0, 2, 0, 1);
+	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);

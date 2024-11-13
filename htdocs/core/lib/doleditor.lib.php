@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/lib/doleditor.lib.php
- *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
+ *		\brief      Ensemble de functions de base pour la gestion des utilisaterus et groups
  */
 
 /**
@@ -53,7 +53,7 @@ function show_skin($fuser, $edit = 0)
 
 	$colspan = 2;
 
-	$thumbsbyrow = 6;
+
 	print '<table class="noborder centpercent">';
 
 	$var = false;
@@ -87,8 +87,8 @@ function show_skin($fuser, $edit = 0)
 			$handle = opendir($dirskin);
 			if (is_resource($handle)) {
 				while (($subdir = readdir($handle)) !== false) {
-					if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) <> '.'
-							&& substr($subdir, 0, 3) <> 'CVS' && !preg_match('/common|phones/i', $subdir)) {
+					if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) != '.'
+							&& substr($subdir, 0, 3) != 'CVS' && !preg_match('/common|phones/i', $subdir)) {
 						// Disable not stable themes (dir ends with _exp or _dev)
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 							continue;

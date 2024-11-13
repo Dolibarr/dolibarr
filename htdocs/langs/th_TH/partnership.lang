@@ -16,77 +16,82 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=การจัดการหุ้นส่วน
+PartnershipDescription=การจัดการหุ้นส่วนโมดูล
+PartnershipDescriptionLong= การจัดการหุ้นส่วนโมดูล
+Partnership=ห้างหุ้นส่วน
+Partnerships=ห้างหุ้นส่วน
+AddPartnership=เพิ่มห้างหุ้นส่วน
+CancelPartnershipForExpiredMembers=ห้างหุ้นส่วน: ยกเลิกการเป็นหุ้นส่วนของสมาชิกที่สมัครสมาชิกหมดอายุ
+PartnershipCheckBacklink=ความร่วมมือ: ตรวจสอบลิงก์ย้อนกลับที่อ้างอิง
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=ห้างหุ้นส่วนใหม่
+NewPartnershipbyWeb=เพิ่มคำขอเป็นหุ้นส่วนของคุณสำเร็จแล้ว เราอาจติดต่อคุณเร็ว ๆ นี้...
+ListOfPartnerships=รายชื่อห้างหุ้นส่วน
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=การตั้งค่าหุ้นส่วน
+PartnershipAbout=เกี่ยวกับห้างหุ้นส่วน
+PartnershipAboutPage=ห้างหุ้นส่วนจำกัดเพจ
+partnershipforthirdpartyormember=สถานะพันธมิตรจะต้องตั้งค่าเป็น 'บุคคลที่สาม' หรือ 'สมาชิก'
+PARTNERSHIP_IS_MANAGED_FOR=ห้างหุ้นส่วนจำกัดจัดการเพื่อ
+PARTNERSHIP_BACKLINKS_TO_CHECK=ลิงก์ย้อนกลับเพื่อตรวจสอบ
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb วันก่อนการยกเลิกสถานะของห้างหุ้นส่วนเมื่อการสมัครสมาชิกหมดอายุ
+ReferingWebsiteCheck=ตรวจสอบการอ้างอิงเว็บไซต์
+ReferingWebsiteCheckDesc=คุณสามารถเปิดใช้งานคุณสมบัติเพื่อตรวจสอบว่าพันธมิตรของคุณได้เพิ่มลิงก์ย้อนกลับไปยังโดเมนเว็บไซต์ของคุณบนเว็บไซต์ของพวกเขาเอง
+PublicFormRegistrationPartnerDesc=Dolibarr สามารถให้ URL/เว็บไซต์สาธารณะแก่คุณเพื่อให้ผู้เยี่ยมชมภายนอกสามารถขอเป็นส่วนหนึ่งของโปรแกรมหุ้นส่วนได้
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=ลบห้างหุ้นส่วน
+PartnershipDedicatedToThisThirdParty=ความร่วมมือที่อุทิศให้กับบุคคลที่สามนี้
+PartnershipDedicatedToThisMember=ห้างหุ้นส่วนที่อุทิศให้กับสมาชิกรายนี้
 DatePartnershipStart=วันที่เริ่มต้น
 DatePartnershipEnd=วันที่สิ้นสุด
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+ReasonDecline=ปฏิเสธเหตุผล
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=มีห้างหุ้นส่วนอยู่แล้ว
+ManagePartnership=จัดการหุ้นส่วน
+BacklinkNotFoundOnPartnerWebsite=ไม่พบลิงก์ย้อนกลับบนเว็บไซต์พันธมิตร
+ConfirmClosePartnershipAsk=คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเป็นหุ้นส่วนนี้
+PartnershipType=ประเภทห้างหุ้นส่วน
+PartnershipRefApproved=พันธมิตร %s ได้รับการอนุมัติแล้ว
+KeywordToCheckInWebsite=หากคุณต้องการตรวจสอบว่ามีคำหลักที่ระบุอยู่ในเว็บไซต์ของพันธมิตรแต่ละราย ให้กำหนดคำหลักนี้ที่นี่
+PartnershipDraft=ร่าง
+PartnershipAccepted=ได้รับการยอมรับ
+PartnershipRefused=ปฏิเสธ
+PartnershipCanceled=ยกเลิก
+PartnershipManagedFor=พันธมิตรเป็น
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=ความเป็นหุ้นส่วนจะถูกยกเลิกในไม่ช้า
+SendingEmailOnPartnershipRefused=ห้างหุ้นส่วนปฏิเสธ
+SendingEmailOnPartnershipAccepted=ยอมรับความร่วมมือแล้ว
+SendingEmailOnPartnershipCanceled=ห้างหุ้นส่วนถูกยกเลิก
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=ความเป็นหุ้นส่วนจะถูกยกเลิกในไม่ช้า
+YourPartnershipRefusedTopic=ห้างหุ้นส่วนปฏิเสธ
+YourPartnershipAcceptedTopic=ยอมรับความร่วมมือแล้ว
+YourPartnershipCanceledTopic=ห้างหุ้นส่วนถูกยกเลิก
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=เราต้องการแจ้งให้คุณทราบว่าการเป็นหุ้นส่วนของเราจะถูกยกเลิกในเร็วๆ นี้ (เราไม่ได้รับการต่ออายุหรือมีคุณสมบัติไม่ตรงตามข้อกำหนดเบื้องต้นสำหรับการเป็นหุ้นส่วนของเรา) โปรดติดต่อเราหากคุณได้รับสิ่งนี้เนื่องจากมีข้อผิดพลาด
+YourPartnershipRefusedContent=เราขอแจ้งให้คุณทราบว่าคำขอเป็นหุ้นส่วนของคุณถูกปฏิเสธ ไม่เป็นไปตามข้อกำหนดเบื้องต้น โปรดติดต่อเราหากต้องการข้อมูลเพิ่มเติม
+YourPartnershipAcceptedContent=เราขอแจ้งให้คุณทราบว่าคำขอเป็นหุ้นส่วนของคุณได้รับการยอมรับแล้ว
+YourPartnershipCanceledContent=เราขอแจ้งให้ทราบว่าความร่วมมือของเราได้ถูกยกเลิกแล้ว โปรดติดต่อเราหากต้องการข้อมูลเพิ่มเติม
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=จำนวนข้อผิดพลาดสำหรับการตรวจสอบ URL ล่าสุด
+LastCheckBacklink=วันที่ตรวจสอบ URL ล่าสุด
 
-#
-# Status
-#
-PartnershipDraft=ร่าง
-PartnershipAccepted=Accepted
-PartnershipRefused=ปฏิเสธ
-PartnershipCanceled=ยกเลิก
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=คำขอหุ้นส่วนใหม่
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=หน้านี้ต้องมีอย่างน้อยหนึ่งลิงก์ไปยังหนึ่งในโดเมนต่อไปนี้: %s
+
+IPOfApplicant=IP ของผู้สมัคร

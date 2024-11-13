@@ -2,6 +2,8 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +57,7 @@ if (!defined('NOREQUIREAJAX')) {
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
 $needlogin = 1;
+// Keep $_GET here, GETPOST is not available yet
 if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
@@ -68,6 +71,10 @@ if (isset($_GET["modulepart"])) {
 	}
 	// Medias files
 	if ($_GET["modulepart"] == 'medias') {
+		$needlogin = 0;
+	}
+	// Common files (files into /public/theme/common)
+	if ($_GET["modulepart"] == 'common') {
 		$needlogin = 0;
 	}
 	// User photo when user has made its profile public (for virtual credi card)
@@ -96,7 +103,9 @@ if (!$needlogin) {
 	}
 }
 
-// For multicompany
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -105,31 +114,56 @@ if (is_numeric($entity)) {
 /**
  * Header empty
  *
- * @ignore
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
 }
 /**
  * Footer empty
  *
- * @ignore
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
 }
 
 require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); 	// Do not use urldecode here ($_GET are already decoded by PHP).
-$hashp = GETPOST('hashp', 'aZ09', 1);				// Must be read only by GET
-$modulepart = GETPOST('modulepart', 'alpha', 1);	// Must be read only by GET
+$original_file = GETPOST('file', 'alphanohtml');
+$hashp = GETPOST('hashp', 'aZ09', 1);
+$extname = GETPOST('extname', 'alpha', 1);
+$modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity);
+$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -156,14 +190,21 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	// Add param cache=abcdef
+	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
+	// We are here when param cache=xxx to force a cache policy:
+	//  xxx=1 means cache of 3600s
+	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
 	if (empty($dolibarr_nocache)) {
-		header('Cache-Control: max-age=3600, public, must-revalidate');
+		if (GETPOST('cache', 'alpha') != '1') {
+			$delaycache = 3600 * 24 * 7;
+		} else {
+			$delaycache = 3600;
+		}
+		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + 3600).' GMT');	// This is to avoid to have Expires set by proxy or web server
-		//header('Expires: '.strtotime('+1 hour');
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 	} else {
+		// If any cache on files were disable by config file (for test purpose)
 		header('Cache-Control: no-cache');
 	}
 	//print $dolibarr_nocache; exit;
@@ -172,6 +213,7 @@ if (GETPOST("cache", 'alpha')) {
 // If we have a hash public (hashp), we guess the original_file.
 if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
 	$result = $ecmfile->fetch(0, '', '', '', $hashp);
 	if ($result > 0) {
@@ -194,9 +236,12 @@ if (!empty($hashp)) {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
+
+		if ($extname) {
+			$original_file = getImageFileNameForSize($original_file, $extname);
+		}
 	} else {
-		$langs->load("errors");
-		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
+		httponly_accessforbidden("ErrorFileNotFoundWithSharedLink", 403, 1);
 	}
 }
 
@@ -231,7 +276,7 @@ if ($refname == 'thumbs') {
 
 // Check that file is allowed for view with viewimage.php
 if (!empty($original_file) && !dolIsAllowedForPreview($original_file)) {
-	httponly_accessforbidden('This file is not qualified for preview', 403);
+	httponly_accessforbidden('This file extension is not qualified for preview', 403);
 }
 
 // Security check
@@ -256,7 +301,9 @@ if (!empty($hashp)) {
 	$sqlprotectagainstexternals = '';
 } elseif (GETPOSTINT("publictakepos")) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
-		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories
+		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
+		// TODO Replace this with a call of getPublicImageOfObject like used by website so
+		// only shared images are visible
 	}
 } else {
 	// Basic protection (against external users only)
@@ -305,6 +352,22 @@ if ($modulepart == 'barcode') {
 		$code = GETPOST("code", 'restricthtml'); // This can be rich content (qrcode, datamatrix, ...)
 	}
 
+	// If $code is virtualcard_xxx_999.vcf, it is a file to read to get code
+	$reg = array();
+	if (preg_match('/^virtualcard_([^_]+)_(\d+)\.vcf$/', $code, $reg)) {
+		$vcffile = '';
+		if ($reg[1] == 'user') {
+			$vcffile = $conf->user->dir_temp.'/'.$code;
+		} elseif ($reg[1] == 'contact') {
+			$vcffile = $conf->contact->dir_temp.'/'.$code;
+		}
+
+		if ($vcffile) {
+			$code = file_get_contents($vcffile);
+		}
+	}
+
+
 	if (empty($generator) || empty($encoding)) {
 		print 'Error: Parameter "generator" or "encoding" not defined';
 		exit;
@@ -331,7 +394,10 @@ if ($modulepart == 'barcode') {
 
 	// Load barcode class
 	$classname = "mod".ucfirst($generator);
+
 	$module = new $classname($db);
+	'@phan-var-force ModeleBarCode $module';
+	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}
@@ -344,8 +410,8 @@ if ($modulepart == 'barcode') {
 	// Output files on browser
 	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
 
-	// This test is to avoid error images when image is not available (for example thumbs).
-	if (!dol_is_file($fullpath_original_file) && empty($_GET["noalt"])) {
+	if (!dol_is_file($fullpath_original_file) && !GETPOSTINT("noalt", 1)) {
+		// This test is to replace error images with a nice "notfound image" when image is not available (for example when thumbs not yet generated).
 		$fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		/*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
 		print $error;

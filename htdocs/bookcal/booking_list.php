@@ -5,7 +5,8 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,9 @@
  */
 
 /**
- *	\file       htdocs/compta/facture/prelevement.php
- *	\ingroup    facture
- *	\brief      Management of direct debit order or credit tranfer of invoices
+ *	\file       htdocs/bookcal/booking_list.php
+ *	\ingroup    bookcal
+ *	\brief      Management of direct debit order or credit transfer of invoices
  */
 
 // Load Dolibarr environment
@@ -34,17 +35,25 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_calendar.lib.php';
 
 // load module libraries
 require_once __DIR__.'/class/calendar.class.php';
 
-// Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "other"));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+// Load translation files required by the page
+$langs->loadLangs(array("agenda", "other"));
+
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 
@@ -94,7 +103,8 @@ if (!$permissiontoread) {
  * Actions
  */
 
-$parameters = '';
+$parameters = array();
+$helpurl = '';
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -110,7 +120,7 @@ $form = new Form($db);
 $now = dol_now();
 $title = $langs->trans('Calendar')." - ".$langs->trans('Bookings');
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-bookcal page-list');
 
 
 if ($object->id > 0) {
@@ -186,12 +196,13 @@ if ($object->id > 0) {
 	print '</tr>';
 
 
-	$sql = "SELECT ac.id, ac.ref, ac.datep as date_start, ac.datep2 as date_end, ac.label, acr.fk_element";
+	$sql = "SELECT ac.id, ac.ref, ac.datep as date_start, ac.datep2 as date_end, ac.label, acr.fk_element as elementid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as ac";
 	$sql .= " JOIN ".MAIN_DB_PREFIX."actioncomm_resources as acr on acr.fk_actioncomm = ac.id";
 	$sql .= " WHERE ac.fk_bookcal_calendar = ".((int) $object->id);
 	$sql .= " AND ac.code = 'AC_RDV'";
 	$sql .= " AND acr.element_type = 'socpeople'";
+
 	$resql = $db->query($sql);
 
 	$num = 0;
@@ -201,10 +212,10 @@ if ($object->id > 0) {
 		$tmpcontact = new Contact($db);
 		$tmpactioncomm = new ActionComm($db);
 
-		$num = $db->num_rows($result);
+		$num = $db->num_rows($resql);
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			$tmpcontact->fetch($obj->fk_element);
+			$tmpcontact->fetch($obj->elementid);
 			$tmpactioncomm->fetch($obj->id);
 
 			print '<tr class="oddeven">';
@@ -227,7 +238,6 @@ if ($object->id > 0) {
 			print '<td class="minwidth75">';
 			print $tmpcontact->getNomUrl(1, -1);
 			print '</td>';
-
 
 			print "</tr>\n";
 			$i++;

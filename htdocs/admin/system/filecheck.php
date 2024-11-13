@@ -2,8 +2,9 @@
 /* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,15 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
 if (!$user->admin) {
@@ -44,7 +54,7 @@ $error = 0;
 
 @set_time_limit(300);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_filecheck');
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
@@ -53,20 +63,20 @@ print '<span class="opacitymedium">'.$langs->trans("FileCheckDesc").'</span><br>
 // Version
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
-	// Compare version with last install database version (upgrades never occured)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
+	// Compare version with last install database version (upgrades never occurred)
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
 print '</td></tr>'."\n";
@@ -79,17 +89,17 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX').'.xml'.getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT'));
 
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
-	$xmlfile = $xmlfile.'.zip';
+	$xmlfile .= '.zip';
 }
 
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote', 'alphanohtml');
 if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
-	$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+	$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 }
 $param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
 if (empty($xmlremote) && getDolGlobalString($param)) {
@@ -118,6 +128,8 @@ $enableremotecheck = true;
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
+
+print '<div class="divsection">';
 print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile)) {
 	print '<input type="radio" name="target" id="checkboxlocal" value="local"'.((!GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"' : '').'"> <label for="checkboxlocal">'.$langs->trans("LocalSignature").'</label> = ';
@@ -140,7 +152,9 @@ if ($enableremotecheck) {
 	}
 	print '<br>';
 }
-print '<br><div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
+print '</div>';
+
+print '<div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
 print '</form>';
 print '<br>';
 print '<br>';
@@ -176,7 +190,14 @@ if (GETPOST('target') == 'remote') {
 	if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 		$xmlfile = $xmlarray['content'];
 		//print "xmlfilestart".$xmlfile."xmlfileend";
-		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+			libxml_disable_entity_loader(true);
+		}
+
+		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 	} else {
 		$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 		setEventMessages($errormsg, null, 'errors');
@@ -227,7 +248,7 @@ if (empty($error) && !empty($xml)) {
 		}
 
 		if ($i == 0) {
-			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -247,16 +268,17 @@ if (empty($error) && !empty($xml)) {
 
 		// Fill file_list with files in signature, new files, modified files
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
+		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
 		// Complete with list of new files
 		foreach ($scanfiles as $keyfile => $valfile) {
 			$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 			if (!in_array($tmprelativefilename, $file_list['insignature'])) {
 				$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-				$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+				$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
 			}
 		}
 
-		// Files missings
+		// Files missing
 		$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 		$out .= '<div class="div-table-responsive-no-min">';
@@ -284,7 +306,7 @@ if (empty($error) && !empty($xml)) {
 				$out .= "</tr>\n";
 			}
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -337,7 +359,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -371,12 +393,12 @@ if (empty($error) && !empty($xml)) {
 					$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
 				}
 				$out .= '</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 				$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
 				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 				$totalsize += $size;
 				$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
-				$out .= '<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+				$out .= '<td class="right nowraponall">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
 				$out .= "</tr>\n";
 			}
 			$out .= '<tr class="liste_total">';
@@ -388,7 +410,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -406,12 +428,13 @@ if (empty($error) && !empty($xml)) {
 	{
 		$file_list = array();
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
+		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
 	}*/
 
 
 	asort($checksumconcat); // Sort list of checksum
 	//var_dump($checksumconcat);
-	$checksumget = md5(join(',', $checksumconcat));
+	$checksumget = md5(implode(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
 	//var_dump(count($file_list['added']));

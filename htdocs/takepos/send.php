@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019	Thibault FOUCART      <support@ptibogxiv.net>
  * Copyright (C) 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,14 @@ require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$facid = GETPOST('facid', 'int');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+$facid = GETPOSTINT('facid');
 $action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
@@ -64,7 +72,7 @@ $customer->fetch($invoice->socid);
  * Actions
  */
 
-if ($action == "send") {
+if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
@@ -97,6 +105,7 @@ if ($action == "send") {
 
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
+$head = '';
 top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 ?>

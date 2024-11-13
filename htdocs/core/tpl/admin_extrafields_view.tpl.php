@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,21 @@
  * $elementtype
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Form $form
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var string $elementtype
+ * @var string $textobject
+ */
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 global $action, $form, $langs;
 
@@ -46,7 +58,7 @@ if ($action == 'delete') {
 $title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '' : $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
 /*} else {
 	$newcardbutton = '';
 }*/
@@ -74,7 +86,7 @@ print img_picto('A-Z', '1downarrow.png');
 print '</span>';
 print '</td>';
 print '<td>'.$langs->trans("LabelOrTranslationKey").'</td>';
-print '<td>'.$langs->trans("TranslationString").'</td>';
+//print '<td>'.$langs->trans("TranslationString").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td class="right">'.$langs->trans("Size").'</td>';
@@ -99,7 +111,7 @@ print "</tr>\n";
 
 if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
 	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value) {
-		/*if (! dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
+		/*if (! (int) dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
 			// TODO Uncomment this to exclude extrafields of modules not enabled. Add a link to "Show extrafields disabled"
 			// continue;
 		}*/
@@ -121,11 +133,18 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			print '</td>'."\n";
 		}
 		// Position
-		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
-		// Label
-		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key])."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
+		print "<td>".dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
+		// Label and label translated
+		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150 subtitle">';
+		print dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]);
+		if ($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]) != $extrafields->attributes[$elementtype]['label'][$key]) {
+			print '<br><span class="subtitle small opacitymedium inline-block" title="'.dolPrintHTMLForAttribute($langs->trans("LabelTranslatedInCurrentLanguage")).'">';
+			print $langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]);
+		}
+		print '</span>';
+		print "</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
 		// Label translated
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
+		//print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
 		// Key
 		print '<td title="'.dol_escape_htmltag($key).'" class="tdoverflowmax100">'.dol_escape_htmltag($key)."</td>\n";
 		// Type
@@ -147,7 +166,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Visible
 		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['list'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['list'][$key])."</td>\n";
 		// Print on PDF
-		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
 		// Summable
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		// CSS

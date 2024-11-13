@@ -110,7 +110,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '229', 'VS
 
 
 -- France: Catégories niveau II - Extrait de https://www.insee.fr/fr/information/2028129 - Dernière mise à jour Septembre 2022
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'00','Organisme de placement collectif en valeurs mobilières sans personnalité morale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'09','Organisme de placement collectif en valeurs mobilières sans personnalité morale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'10','Entrepreneur individuel');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'21','Indivision');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','Société créée de fait');

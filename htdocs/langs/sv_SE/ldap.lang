@@ -29,3 +29,5 @@ LDAPPasswordHashType=Lösenord hashtyp
 LDAPPasswordHashTypeExample=Typ av lösenordshash som används på servern
 SupportedForLDAPExportScriptOnly=Stöds endast av ett LDAP-exportskript
 SupportedForLDAPImportScriptOnly=Stöds endast av ett LDAP-importskript
+LDAPUserAccountControl = userAccountControl vid skapande (active directory)
+LDAPUserAccountControlExample = 512 Normal Account / 546 Normal Account + No Passwd + Disabled (se: https://fr.wikipedia.org/wiki/Active_Directory)

@@ -5,7 +5,8 @@
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,20 +34,28 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("categories");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
-$nosearch = GETPOST('nosearch', 'int');
+$nosearch = GETPOSTINT('nosearch');
 
 $categstatic = new Categorie($db);
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categoryindex'));
 
 if (!$user->hasRight('categorie', 'lire')) {
@@ -176,7 +185,7 @@ if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 
 // Define data (format for treeview)
 $data = array();
-$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 foreach ($fulltree as $key => $val) {
 	$categstatic->id = $val['id'];
 	$categstatic->ref = $val['label'];
@@ -204,19 +213,20 @@ foreach ($fulltree as $key => $val) {
 	$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 	$entry .= '</td>';
 
+	// Add column counter
 	$entry .= $counter;
 
-	$entry .= '<td class="right" width="20px;">';
-	$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'">'.img_view().'</a>';
+	$entry .= '<td class="right" width="30px;">';
+	$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.urlencode($type).$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type)).'">'.img_view().'</a>';
 	$entry .= '</td>';
-	$entry .= '<td class="right" width="20px;">';
+	$entry .= '<td class="right" width="30px;">';
 	if ($user->hasRight('categorie', 'creer')) {
-		$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . '&type=' . $type . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type) . '">' . img_edit() . '</a>';
+		$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . '&type=' . urlencode($type) . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
 	}
 	$entry .= '</td>';
-	$entry .= '<td class="right" width="20px;">';
+	$entry .= '<td class="right" width="30px;">';
 	if ($user->hasRight('categorie', 'supprimer')) {
-		$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . '&type=' . $type . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type . $moreparam) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type . $moreparam) . '">' . img_delete() . '</a>';
+		$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . '&type=' . urlencode($type) . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type) . $moreparam) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type) . $moreparam) . '">' . img_delete() . '</a>';
 	}
 	$entry .= '</td>';
 
@@ -237,7 +247,7 @@ foreach ($data as $record) {
 }
 
 
-print '<table class="liste nohover centpercent">';
+print '<table class="liste nohover centpercent noborder">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if ($morethan1level && !empty($conf->use_javascript_ajax)) {
 	print '<div id="iddivjstreecontrol">';

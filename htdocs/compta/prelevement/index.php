@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +35,25 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'prelevement', '', 'bons');
 
-$usercancreate = $user->rights->prelevement->bons->creer;
+$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
 
 
 /*
@@ -93,7 +102,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right"><span class="amount">';
-print price($bprev->SommeAPrelever('direct-debit'), '', '', 1, -1, -1, 'auto');
+print price($bprev->SommeAPrelever('direct-debit'), 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 
@@ -101,12 +110,12 @@ print '</span></td></tr></table></div><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut as status, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
 $sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_demande as pfd";
@@ -119,7 +128,7 @@ if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture = f.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -141,10 +150,14 @@ if ($resql) {
 
 			$invoicestatic->id = $obj->rowid;
 			$invoicestatic->ref = $obj->ref;
-			$invoicestatic->statut = $obj->fk_statut;
+			$invoicestatic->statut = $obj->status;
+			$invoicestatic->status = $obj->status;
 			$invoicestatic->paye = $obj->paye;
 			$invoicestatic->type = $obj->type;
-			$alreadypayed = $invoicestatic->getSommePaiement();
+
+			$totalallpayments = $invoicestatic->getSommePaiement(0);
+			$totalallpayments += $invoicestatic->getSumCreditNotesUsed(0);
+			$totalallpayments += $invoicestatic->getSumDepositsUsed(0);
 
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
@@ -177,7 +190,7 @@ if ($resql) {
 			print '</td>';
 
 			print '<td class="right">';
-			print $invoicestatic->getLibStatut(3, $alreadypayed);
+			print $invoicestatic->getLibStatut(3, $totalallpayments);
 			print '</td>';
 			print '</tr>';
 			$i++;

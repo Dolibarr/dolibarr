@@ -32,13 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
-	const EVENT_ACTION_DICT = array( // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
+	// List of translation key to use for the description of each event.
+	// TODO reduce this list of of events to use keep USER_CREATE, USER_MODIFY & USER_DELETE and use $user->context['audit'] = 'text to add' to complete message of event.
+	const EVENT_ACTION_DICT = array(
 		'USER_LOGIN' => 'UserLogged',
 		'USER_LOGIN_FAILED' => 'UserLoginFailed',
 		'USER_LOGOUT' => 'UserLogoff',
 		'USER_CREATE' => 'NewUserCreated',
 		'USER_MODIFY' => 'EventUserModified',
-		'USER_NEW_PASSWORD' => 'NewUserPassword',
+		'USER_NEW_PASSWORD' => 'UserPasswordChange',
 		'USER_ENABLEDISABLE' => 'UserEnabledDisabled',
 		'USER_DELETE' => 'UserDeleted',
 		'USERGROUP_CREATE' => 'NewGroupCreated',
@@ -69,7 +71,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		$this->family 		= "core";
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
-		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
+		$this->version 		= self::VERSIONS['prod'];
 		$this->picto 		= 'technic';
 		$this->event_label 	= '';
 		$this->event_desc 	= '';
@@ -88,7 +90,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @return	int					if KO: <0, if no trigger ran: 0, if OK: >0
 	 * @throws	Exception			dol_syslog can throw Exceptions
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (getDolGlobalString('MAIN_LOGEVENTS_DISABLE_ALL')) {
 			return 0; // Log events is disabled (hidden features)
@@ -106,6 +108,9 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		// Actions
 		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+
+		// Set the label of event from the action code and the object properties
+		// Take the message code into EVENT_ACTION_DICT and complete with $object properties like $object->context['audit']
 		$this->initEventData(InterfaceLogevents::EVENT_ACTION_DICT[$action], $object);
 
 		// Add entry in event table
@@ -142,7 +147,11 @@ class InterfaceLogevents extends DolibarrTriggers
 	private function initEventData($key_text, $object)
 	{
 		$this->event_date = dol_now();
-		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
+
+		$this->event_label = $this->event_desc = $key_text;
+		if (property_exists($object, 'login')) {
+			$this->event_label .= ' : ' . $object->login;
+		}
 		if ($key_text == InterfaceLogevents::EVENT_ACTION_DICT['USER_ENABLEDISABLE']) { // TODO should be refactored using an object property for event data.
 			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
 		}

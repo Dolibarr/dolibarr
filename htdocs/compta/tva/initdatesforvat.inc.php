@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,11 @@
  *  \brief          Set value for date_start and date_end
  */
 
+ /**
+ * @var Conf $conf
+ */
+
+
 $now = dol_now();
 $current_date = dol_getdate($now);
 if (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) {
@@ -28,7 +34,7 @@ if (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) {
 }
 
 // Date range
-$year = GETPOST("year", "int");
+$year = GETPOSTINT("year");
 if (empty($year)) {
 	$year_current = $current_date['year'];
 	$year_start = $year_current;
@@ -36,15 +42,15 @@ if (empty($year)) {
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzserver');
 // Set default period if not defined
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
-		if (GETPOST("month", 'int')) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), 'tzserver');
-			$date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), 'tzserver');
+		if (GETPOSTINT("month")) {
+			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), 'tzserver');
+			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), 'tzserver');
 		} else {
 			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');

@@ -22,7 +22,7 @@
 
 /**
  * 		\defgroup   tax		Module taxes
- * 		\brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
+ * 		\brief      Module pour inclure des functions de saisies des taxes (tva) et charges sociales
  *      \file       htdocs/core/modules/modTax.class.php
  *      \ingroup    tax
  *      \brief      Description and activation file for the module taxes

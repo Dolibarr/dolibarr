@@ -61,9 +61,9 @@ class FormContract
 	 *	@param	int		$showRef	Show customer and supplier reference on each contract (when found)
 	 *  @param	int		$noouput	1=Return the output instead of display
 	 *  @param	string	$morecss	More CSS
-	 *	@return int         		Nbr of contract if OK, <0 if KO
+	 *	@return int|string          If nooutput = 0: Nbr of contract if OK, <0 if KO, If nooutput = 1: The HTML select string
 	 */
-	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
+	public function select_contract($socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
@@ -98,7 +98,7 @@ class FormContract
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
 				$ret .= '<option value="0">&nbsp;</option>';
 			}
@@ -190,7 +190,7 @@ class FormContract
 	 *  @param	int		$noouput	1=Return the output instead of display
 	 *  @return string|void         html string
 	 */
-	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
+	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
 	{
 		global $langs;
 

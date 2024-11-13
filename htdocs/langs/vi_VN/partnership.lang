@@ -4,89 +4,73 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
+ModulePartnershipName=Quản lý quan hệ đối tác
+PartnershipDescription=Mô-đun quản lý quan hệ đối tác
+PartnershipDescriptionLong= Mô-đun quản lý quan hệ đối tác
+Partnership=quan hệ đối tác
+Partnerships=Quan hệ đối tác
+AddPartnership=Thêm quan hệ đối tác
+CancelPartnershipForExpiredMembers=Quan hệ đối tác: Hủy quan hệ đối tác của các thành viên với đăng ký đã hết hạn
+PartnershipCheckBacklink=Quan hệ đối tác: Kiểm tra backlink giới thiệu
 # Menu
-#
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
-
-#
+NewPartnership=Quan hệ đối tác mới
+NewPartnershipbyWeb=Yêu cầu hợp tác của bạn đã được thêm thành công. Chúng tôi có thể liên hệ với bạn sớm...
+ListOfPartnerships=Danh sách hợp tác
 # Admin page
-#
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
-
-#
+PartnershipSetup=Thiết lập quan hệ đối tác
+PartnershipAbout=Giới thiệu về quan hệ đối tác
+PartnershipAboutPage=Quan hệ đối tác về trang
+partnershipforthirdpartyormember=Trạng thái đối tác phải được đặt thành 'bên thứ ba' hoặc 'thành viên'
+PARTNERSHIP_IS_MANAGED_FOR=Quan hệ đối tác được quản lý cho
+PARTNERSHIP_BACKLINKS_TO_CHECK=Liên kết ngược để kiểm tra
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ngày trước khi hủy trạng thái hợp tác khi đăng ký đã hết hạn
+ReferingWebsiteCheck=Kiểm tra trang web giới thiệu
+ReferingWebsiteCheckDesc=Bạn có thể bật tính năng để kiểm tra xem đối tác của bạn đã thêm liên kết ngược vào tên miền trang web của bạn trên trang web riêng của họ chưa.
+PublicFormRegistrationPartnerDesc=Dolibarr có thể cung cấp cho bạn URL/trang web công khai để cho phép khách truy cập bên ngoài yêu cầu tham gia chương trình hợp tác.
 # Object
-#
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Xóa quan hệ đối tác
+PartnershipDedicatedToThisThirdParty=Quan hệ đối tác dành riêng cho bên thứ ba này
+PartnershipDedicatedToThisMember=Quan hệ đối tác dành riêng cho thành viên này
 DatePartnershipStart=Ngày bắt đầu
 DatePartnershipEnd=Ngày kết thúc
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=Lý do từ chối
+ReasonDeclineOrCancel=Lý do từ chối hoặc hủy bỏ
+PartnershipAlreadyExist=Quan hệ đối tác đã tồn tại
+ManagePartnership=Quản lý quan hệ đối tác
+BacklinkNotFoundOnPartnerWebsite=Không tìm thấy backlink trên trang web đối tác
+ConfirmClosePartnershipAsk=Bạn có chắc chắn muốn hủy bỏ mối quan hệ hợp tác này không?
+PartnershipType=Loại hình hợp tác
+PartnershipRefApproved=Đã phê duyệt quan hệ đối tác %s
+KeywordToCheckInWebsite=Nếu bạn muốn kiểm tra xem một từ khóa nhất định có xuất hiện trên trang web của từng đối tác hay không, hãy xác định từ khóa này tại đây
 PartnershipDraft=Dự thảo
 PartnershipAccepted=Đã được chấp nhận
 PartnershipRefused=Bị từ chối
 PartnershipCanceled=Đã hủy
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=Đối tác là
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Quan hệ đối tác sẽ sớm bị hủy bỏ
+SendingEmailOnPartnershipRefused=Quan hệ đối tác bị từ chối
+SendingEmailOnPartnershipAccepted=Đã chấp nhận quan hệ đối tác
+SendingEmailOnPartnershipCanceled=Đã hủy quan hệ đối tác
+YourPartnershipWillSoonBeCanceledTopic=Quan hệ đối tác sẽ sớm bị hủy bỏ
+YourPartnershipRefusedTopic=Quan hệ đối tác bị từ chối
+YourPartnershipAcceptedTopic=Đã chấp nhận quan hệ đối tác
+YourPartnershipCanceledTopic=Đã hủy quan hệ đối tác
+YourPartnershipWillSoonBeCanceledContent=Chúng tôi muốn thông báo cho bạn rằng mối quan hệ hợp tác của chúng tôi sẽ sớm bị hủy bỏ (chúng tôi chưa được gia hạn hoặc chưa đáp ứng được điều kiện tiên quyết cho mối quan hệ hợp tác của chúng tôi). Vui lòng liên hệ với chúng tôi nếu bạn nhận được thông tin này do nhầm lẫn.
+YourPartnershipRefusedContent=Chúng tôi muốn thông báo cho bạn rằng yêu cầu hợp tác của bạn đã bị từ chối. Điều kiện tiên quyết chưa được đáp ứng. Vui lòng liên hệ với chúng tôi nếu bạn cần thêm thông tin.
+YourPartnershipAcceptedContent=Chúng tôi muốn thông báo cho bạn rằng yêu cầu hợp tác của bạn đã được chấp nhận.
+YourPartnershipCanceledContent=Chúng tôi muốn thông báo cho bạn rằng quan hệ đối tác của chúng tôi đã bị hủy bỏ. Vui lòng liên hệ với chúng tôi nếu bạn cần thêm thông tin.
+CountLastUrlCheckError=Số lỗi trong lần kiểm tra URL cuối cùng
+LastCheckBacklink=Ngày kiểm tra URL lần cuối
+NewPartnershipRequest=Yêu cầu hợp tác mới
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Trang này phải chứa ít nhất một liên kết đến một trong các tên miền sau: %s
+IPOfApplicant=IP của người nộp đơn

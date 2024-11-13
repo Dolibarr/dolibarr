@@ -9,9 +9,10 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017-2023  Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
@@ -48,29 +57,30 @@ $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
+$mode = GETPOST('mode', 'aZ');
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $search_ref				= GETPOST('search_ref', 'alpha');
-$search_date_startday	= GETPOST('search_date_startday', 'int');
-$search_date_startmonth	= GETPOST('search_date_startmonth', 'int');
-$search_date_startyear	= GETPOST('search_date_startyear', 'int');
-$search_date_endday		= GETPOST('search_date_endday', 'int');
-$search_date_endmonth	= GETPOST('search_date_endmonth', 'int');
-$search_date_endyear	= GETPOST('search_date_endyear', 'int');
+$search_date_startday	= GETPOSTINT('search_date_startday');
+$search_date_startmonth	= GETPOSTINT('search_date_startmonth');
+$search_date_startyear	= GETPOSTINT('search_date_startyear');
+$search_date_endday		= GETPOSTINT('search_date_endday');
+$search_date_endmonth	= GETPOSTINT('search_date_endmonth');
+$search_date_endyear	= GETPOSTINT('search_date_endyear');
 $search_date_start		= dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end		= dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_company			= GETPOST('search_company', 'alpha');
-$search_payment_type	= GETPOST('search_payment_type');
+$search_payment_type	= GETPOST('search_payment_type', 'alpha');
 $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOST('search_bank_account', 'int');
 $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
-$search_sale            = GETPOST('search_sale', 'int');
+$search_sale            = GETPOSTINT('search_sale');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield				= GETPOST('sortfield', 'aZ09comma');
 $sortorder				= GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -86,28 +96,29 @@ if (!$sortfield) {
 	$sortfield = "p.datep";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'p.ref'=>"RefPayment",
-	's.nom'=>"ThirdParty",
-	'p.num_paiement'=>"Numero",
-	'p.amount'=>"Amount",
+	'p.ref' => "RefPayment",
+	's.nom' => "ThirdParty",
+	'p.num_paiement' => "Numero",
+	'p.amount' => "Amount",
 );
 
 $arrayfields = array(
-	'p.ref'				=>array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
-	'p.datep'			=>array('label'=>"Date", 'checked'=>1, 'position'=>20),
-	's.nom'				=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
-	'c.libelle'			=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
-	'p.num_paiement'	=>array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
-	'ba.label'			=>array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("banque"))),
-	'p.amount'			=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
+	'p.ref'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
+	'p.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
+	'p.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enable' => (isModEnabled("bank"))),
+	'p.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
 
@@ -139,7 +150,7 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -172,8 +183,10 @@ if (empty($reshook)) {
 /*
  * View
  */
+$title = $langs->trans('ListPayment');
+$help_url = '';
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -181,26 +194,32 @@ $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $paymentfournstatic = new PaiementFourn($db);
 
-$sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement as num_payment,';
-$sql .= ' s.rowid as socid, s.nom as name, s.email,';
-$sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
-$sql .= ' ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal,';
-$sql .= ' SUM(pf.amount)';
+$sql = 'SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount';
+$sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
+$sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
+$sql .= ', s.rowid as socid, s.nom as name, s.email';
+// We need an aggregate because we added a left join to get the thirdparty. In real world, it should be the same thirdparty if payment is same (but not in database structure)
+// so SUM(pf.amount) should be equal to p.amount but if we filter on $socid, it may differ
+$sql .= ", SUM(pf.amount) as totalamount, COUNT(f.rowid) as nbinvoices";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid = pf.fk_paiementfourn';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid = pf.fk_facturefourn';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
+
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid = pf.fk_paiementfourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid = pf.fk_facturefourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
+
+$sql .= ' WHERE f.entity IN ('.getEntity('supplier_invoice').')';		// TODO We should use p.entity that does not exists yet in this table
+if ($socid > 0) {
+	$sql .= " AND EXISTS (SELECT f.fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
+	$sql .= " WHERE p.rowid = pf.fk_paiementfourn AND pf.fk_facturefourn = f.rowid AND f.fk_soc = ".((int) $socid).")";
 }
 
-$sql .= ' WHERE f.entity = '.((int) $conf->entity);
-if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.((int) $socid);
-}
+// Search criteria
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
@@ -208,20 +227,23 @@ if ($search_date_start) {
 	$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
 }
 if ($search_date_end) {
-	$sql .=" AND p.datep <= '" . $db->idate($search_date_end) . "'";
+	$sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
 }
 
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
 if ($search_payment_type != '') {
-	$sql .= " AND c.code='".$db->escape($search_payment_type)."'";
+	$sql .= " AND c.code = '".$db->escape($search_payment_type)."'";
 }
 if ($search_cheque_num != '') {
 	$sql .= natural_search('p.num_paiement', $search_cheque_num);
 }
 if ($search_amount) {
-	$sql .= natural_search('p.amount', $search_amount, 1);
+	$sql .= " AND (".natural_search('p.amount', $search_amount, 1, 1);
+	$sql .= " OR ";
+	$sql .= natural_search('pf.amount', $search_amount, 1, 1);
+	$sql .= ")";
 }
 if ($search_bank_account > 0) {
 	$sql .= ' AND b.fk_account = '.((int) $search_bank_account);
@@ -241,22 +263,36 @@ if ($search_sale && $search_sale != '-1') {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-$sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle,';
+$sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, s.rowid, s.nom, s.email, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
 
-$sql .= $db->order($sortfield, $sortorder);
-
+// Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {		// if total resultset is smaller then paging size (filtering), goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(DISTINCT p.rowid) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -284,22 +320,22 @@ if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
@@ -328,19 +364,20 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -354,7 +391,7 @@ if ($moreforfilter) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if (!empty($massactionbutton)) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -435,7 +472,7 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -465,6 +502,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.rowid', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -494,7 +532,7 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 }
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -534,6 +572,7 @@ while ($i < $imaxinloop) {
 	$paymentfournstatic->id = $objp->rowid;
 	$paymentfournstatic->ref = $objp->ref;
 	$paymentfournstatic->datepaye = $db->jdate($objp->datep);
+	$paymentfournstatic->amount = $objp->amount;
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -618,7 +657,7 @@ while ($i < $imaxinloop) {
 
 		// Pyament type
 		if (!empty($arrayfields['c.libelle']['checked'])) {
-			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
+			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != "PaymentType".$objp->paiement_type ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
 			print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -660,15 +699,20 @@ while ($i < $imaxinloop) {
 
 		// Amount
 		if (!empty($arrayfields['p.amount']['checked'])) {
-			print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
+			print '<td class="right">';
+			if ($objp->nbinvoices > 1 || ($objp->totalamount && $objp->amount != $objp->totalamount)) {
+				print $form->textwithpicto('', $langs->trans("PaymentMadeForSeveralInvoices"));
+			}
+			print '<span class="amount">'.price($objp->amount).'</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'amount';
 			}
 			if (empty($totalarray['val']['amount'])) {
-				$totalarray['val']['amount'] = $objp->pamount;
+				$totalarray['val']['amount'] = $objp->amount;
 			} else {
-				$totalarray['val']['amount'] += $objp->pamount;
+				$totalarray['val']['amount'] += $objp->amount;
 			}
 		}
 

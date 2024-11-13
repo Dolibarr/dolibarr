@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Maxime Kohlhaas <maxime@atm-consulting.fr>
  * Copyright (C) 2017 Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +38,21 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 $langs->loadLangs(array("main", "errors"));
 
@@ -52,6 +61,9 @@ $version = constant('DOL_VERSION');
 $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -62,7 +74,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_MEMBERS_TYPES, $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME, $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION, $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS);
+$required_fields = array(getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS'));
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElementType")));
@@ -70,7 +82,7 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 if (!isset($argv[1])) {
 	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -90,7 +102,7 @@ foreach ($argv as $key => $val) {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -100,7 +112,7 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
 print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_MEMBER_TYPE_DN')."\n";
 print 'Filter=(' . getDolGlobalString('LDAP_KEY_MEMBERS_TYPES').'=*)'."\n";
 print "----- To Dolibarr database:\n";
@@ -121,18 +133,18 @@ if (!$confirmed) {
 
 if (!getDolGlobalString('LDAP_MEMBER_TYPE_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members types not defined inside Dolibarr");
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_TYPE_DN'), getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), $required_fields, 0, array(getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -186,11 +198,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 
