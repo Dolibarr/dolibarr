@@ -11,7 +11,7 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 560+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 500+ occurrences
-    // PhanUndeclaredGlobalVariable : 340+ occurrences
+    // PhanUndeclaredGlobalVariable : 350+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 270+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 180+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
@@ -33,10 +33,10 @@ return [
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
     // PhanUndeclaredMethod : 10+ occurrences
     // PhanPluginBothLiteralsBinaryOp : 8 occurrences
-    // PhanPluginSuspiciousParamPosition : 8 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 7 occurrences
-    // PhanParamTooMany : 5 occurrences
+    // PhanPluginSuspiciousParamPosition : 7 occurrences
     // PhanPossiblyNullTypeMismatchProperty : 5 occurrences
+    // PhanParamTooMany : 4 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanEmptyFQSENInClasslike : 3 occurrences
     // PhanInvalidFQSENInClasslike : 3 occurrences
@@ -46,7 +46,6 @@ return [
     // PhanTypeMismatchDimAssignment : 2 occurrences
     // PhanTypeSuspiciousStringExpression : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
-    // PhanParamTooFew : 1 occurrence
     // PhanTypeConversionFromArray : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
@@ -246,7 +245,6 @@ return [
         'htdocs/core/modules/barcode/doc/phpbarcode.modules.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/barcode/mod_barcode_product_standard.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/core/modules/bom/mod_bom_advanced.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/cheque/modules_chequereceipts.php' => ['PhanParamTooFew', 'PhanPluginSuspiciousParamPosition'],
         'htdocs/core/modules/commande/doc/pdf_einstein.modules.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/commande/modules_commande.php' => ['PhanPluginUnknownPropertyType'],
@@ -272,7 +270,6 @@ return [
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/oauth/github_oauthcallback.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/modules/printing/printgcp.modules.php' => ['PhanTypeMismatchDimFetch'],
-        'htdocs/core/modules/printsheet/modules_labels.php' => ['PhanParamTooMany'],
         'htdocs/core/modules/product/doc/pdf_standard.modules.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/doc/pdf_timespent.modules.php' => ['PhanUndeclaredProperty'],
@@ -573,7 +570,7 @@ return [
         'htdocs/reception/list.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/reception/note.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/recruitment/admin/setup.php' => ['PhanEmptyForeach'],
-        'htdocs/recruitment/admin/setup_candidatures.php' => ['PhanEmptyForeach', 'PhanPluginUnknownObjectMethodCall'],
+        'htdocs/recruitment/admin/setup_candidatures.php' => ['PhanEmptyForeach'],
         'htdocs/recruitment/class/recruitmentcandidature.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/class/recruitmentjobposition.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
