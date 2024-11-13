@@ -2551,6 +2551,7 @@ class Setup extends DolibarrApi
 
 				// Fill file_list with files in signature, new files, modified files
 				$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
+				'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
 				// Complete with list of new files
 				foreach ($scanfiles as $keyfile => $valfile) {
 					$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
@@ -2578,7 +2579,7 @@ class Setup extends DolibarrApi
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
 						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+						$out .= '<td class="center">'.(array_key_exists('expectedmd5', $file) ? $file['expectedmd5'] : '').'</td>'."\n";
 						$out .= "</tr>\n";
 					}
 				} else {
@@ -2657,7 +2658,7 @@ class Setup extends DolibarrApi
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
 						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeSuspiciousStringExpression
 						$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
 						$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 						$totalsize += $size;

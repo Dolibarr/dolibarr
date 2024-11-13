@@ -238,6 +238,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 $permissiontoread = 0;
 $permissiontodelete = 0;
 $permissiontoadd = 0;
+$error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -291,7 +292,6 @@ if (empty($reshook)) {
 	// Close
 	if ($massaction == 'close' && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
-		$error = 0;
 		$nbclose = 0;
 
 		$db->begin();
@@ -321,7 +321,6 @@ if (empty($reshook)) {
 	// Create external user
 	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 		$tmpmember = new Adherent($db);
-		$error = 0;
 		$nbcreated = 0;
 
 		$db->begin();
@@ -358,7 +357,6 @@ if (empty($reshook)) {
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
-		$error = 0;
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));

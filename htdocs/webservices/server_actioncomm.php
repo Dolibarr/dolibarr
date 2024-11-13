@@ -135,7 +135,6 @@ $actioncomm_fields = array(
 	'fk_element' => array('name' => 'fk_element', 'type' => 'xsd:string'),
 	'elementtype' => array('name' => 'elementtype', 'type' => 'xsd:string'));
 
-
 $elementtype = 'actioncomm';
 
 //Retrieve all extrafield for actioncomm
@@ -434,8 +433,8 @@ function getListActionCommType($authentication)
  * Create ActionComm
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array		$actioncomm		    $actioncomm
- * @return	array							Array result
+ * @param	array{id:string,ref:string,ref_ext:string,type_id:string,type_code:string,type:string,label:string,datep:int,datef:int,datec:int,datem:int,note:string,percentage:string,author:string,usermod:string,userownerid:string,priority:string,fulldayevent:string,location:string,socid:string,contactid:string,projectid:string,fk_element:string,elementtype:string}	$actioncomm		    $actioncomm
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createActionComm($authentication, $actioncomm)
 {
@@ -462,18 +461,18 @@ function createActionComm($authentication, $actioncomm)
 		$newobject->datep = $actioncomm['datep'];
 		$newobject->datef = $actioncomm['datef'];
 		$newobject->type_code = $actioncomm['type_code'];
-		$newobject->socid = $actioncomm['socid'];
-		$newobject->fk_project = $actioncomm['projectid'];
+		$newobject->socid = (int) $actioncomm['socid'];
+		$newobject->fk_project = (int) $actioncomm['projectid'];
 		$newobject->note = $actioncomm['note'];
 		$newobject->note_private = $actioncomm['note'];
-		$newobject->contact_id = $actioncomm['contactid'];
-		$newobject->userownerid = $actioncomm['userownerid'];
+		$newobject->contact_id = (int) $actioncomm['contactid'];
+		$newobject->userownerid = (int) $actioncomm['userownerid'];
 		$newobject->label = $actioncomm['label'];
-		$newobject->percentage = $actioncomm['percentage'];
-		$newobject->priority = $actioncomm['priority'];
-		$newobject->fulldayevent = $actioncomm['fulldayevent'];
+		$newobject->percentage = (int) $actioncomm['percentage'];
+		$newobject->priority = (int) $actioncomm['priority'];
+		$newobject->fulldayevent = (int) $actioncomm['fulldayevent'];
 		$newobject->location = $actioncomm['location'];
-		$newobject->fk_element = $actioncomm['fk_element'];
+		$newobject->fk_element = (int) $actioncomm['fk_element'];
 		$newobject->elementtype = $actioncomm['elementtype'];
 
 		$elementtype = 'actioncomm';
@@ -518,8 +517,8 @@ function createActionComm($authentication, $actioncomm)
  * Create ActionComm
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array		$actioncomm		    $actioncomm
- * @return	array							Array result
+ * @param	array{id:string,ref:string,ref_ext:string,type_id:string,type_code:string,type:string,label:string,datep:int,datef:int,datec:int,datem:int,note:string,percentage:string,author:string,usermod:string,userownerid:string,priority:string,fulldayevent:string,location:string,socid:string,contactid:string,projectid:string,fk_element:string,elementtype:string}	$actioncomm		    $actioncomm
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function updateActionComm($authentication, $actioncomm)
 {
@@ -558,17 +557,17 @@ function updateActionComm($authentication, $actioncomm)
 			$object->datep = $actioncomm['datep'];
 			$object->datef = $actioncomm['datef'];
 			$object->type_code = $actioncomm['type_code'];
-			$object->socid = $actioncomm['socid'];
-			$object->contact_id = $actioncomm['contactid'];
-			$object->fk_project = $actioncomm['projectid'];
+			$object->socid = (int) $actioncomm['socid'];
+			$object->contact_id = (int) $actioncomm['contactid'];
+			$object->fk_project = (int) $actioncomm['projectid'];
 			$object->note = $actioncomm['note'];
-			$object->userownerid = $actioncomm['userownerid'];
+			$object->userownerid = (int) $actioncomm['userownerid'];
 			$object->label = $actioncomm['label'];
-			$object->percentage = $actioncomm['percentage'];
-			$object->priority = $actioncomm['priority'];
-			$object->fulldayevent = $actioncomm['fulldayevent'];
+			$object->percentage = (int) $actioncomm['percentage'];
+			$object->priority = (int) $actioncomm['priority'];
+			$object->fulldayevent = (int) $actioncomm['fulldayevent'];
 			$object->location = $actioncomm['location'];
-			$object->fk_element = $actioncomm['fk_element'];
+			$object->fk_element = (int) $actioncomm['fk_element'];
 			$object->elementtype = $actioncomm['elementtype'];
 
 			$elementtype = 'actioncomm';

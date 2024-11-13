@@ -70,23 +70,20 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
-/*if (($mode == 'test' || $mode == 'setup') && empty($driver))
-{
+/*if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
 	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
 	exit;
 }*/
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 
 	$setupconstarray = GETPOST('setupdriver', 'array');
 
 	foreach ($setupconstarray as $setupconst) {
-		//print '<pre>'.print_r($setupconst, true).'</pre>';
-
 		$constname = dol_escape_htmltag($setupconst['varname']);
 		$constvalue = dol_escape_htmltag($setupconst['value']);
 		$consttype = dol_escape_htmltag($setupconst['type']);

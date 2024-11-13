@@ -65,7 +65,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
-$donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+$donation_date = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
 $public_donation = GETPOSTINT("public");
 
@@ -104,6 +104,8 @@ $permissiontodelete = $user->hasRight('don', 'supprimer');
 /*
  * Actions
  */
+
+$error = 0;
 
 $parameters = array();
 
@@ -180,8 +182,6 @@ if (empty($reshook)) {
 			exit;
 		}
 
-		$error = 0;
-
 		if (empty($donation_date)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$action = "create";
@@ -234,8 +234,6 @@ if (empty($reshook)) {
 			header("Location: index.php");
 			exit;
 		}
-
-		$error = 0;
 
 		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOSTINT("socid") > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');

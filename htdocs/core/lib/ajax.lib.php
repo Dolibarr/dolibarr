@@ -127,12 +127,15 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 								if (data != null)
 								{
 									response($.map( data, function(item) {
+										console.log("Received answer from ajax GET, we populate array to return to the jquery autocomplete");
 										if (autoselect == 1 && data.length == 1) {
 											$("#search_'.$htmlnamejquery.'").val(item.value);
 											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
 										}
 										var label = "";
-										if (item.label != null) {
+										if (item.labelhtml != null) {
+											label = item.labelhtml.toString();
+										} else if (item.label != null) {
 											label = item.label.toString();
 										}
 										var update = {};
@@ -148,7 +151,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 											});
 										}
 
-										console.log("Return value from GET to the rest of code");
 										return { label: label,
 												 value: item.value,
 												 id: item.key,

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,17 @@
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var FormSetup $formSetup
+ * @var Translate $langs
+ * @var User $user
+ * @var string $action
+ * @var int $error
+ * @var ?int $nomessageinupdate
+ * @var ?int $nomessageinsetmoduleoptions
+ */
 
 if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();

@@ -378,7 +378,8 @@ class Conf extends stdClass
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
-			'websitetemplates' => array()
+			'websitetemplates' => array(),
+			//'captcha' => array()	// Can be removed,this does not generates warning
 		);
 
 		// First level object that are modules.
