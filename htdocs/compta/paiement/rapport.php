@@ -96,11 +96,11 @@ if ($action == 'builddoc' && $permissiontoread) {
 
 // Delete file from disk
 if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
-	$directory = dirname($dir.'/'.$fileToRemove);
+	$fileDirectory = dirname($dir.'/'.$fileToRemove);
 	if (dol_delete_file($dir.'/'.$fileToRemove)) {
 		// Delete empty directory after file deletion
-		if (empty(dol_dir_list($directory))) {
-			dol_delete_dir($directory);
+		if (empty(dol_dir_list($fileDirectory))) {
+			dol_delete_dir($fileDirectory);
 		}
 		setEventMessages($langs->trans("FileWasRemoved", $fileToRemove), null, 'mesgs');
 	} else {
