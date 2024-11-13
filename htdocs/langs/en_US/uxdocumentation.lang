@@ -43,7 +43,9 @@ DocButtonSubmenuDescription=Fill the $url parameter with an array of url in orde
 DocTableTitle=Tables
 DocTableMainDescription=
 DocTableBasic=Table
-DocTableBasicDesription=Table description
+DocTableBasicDescription=Table description
+DocTableWithFilters=Filters
+DocTableWithFiltersDescription=Filters descriptions
 
 #Progress bars
 DocProgressBarsTitle = Progress bars
