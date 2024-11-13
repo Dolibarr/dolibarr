@@ -2027,36 +2027,11 @@ if ($action == 'create') {
 	print '<td colspan="3">'.dol_print_date($object->date_creation, "dayhour")."</td>\n";
 	print '</tr>';
 
-	// Delivery sending date
-	print '<tr><td height="10">';
-	print '<table class="nobordernopadding centpercent"><tr><td>';
-	print $langs->trans('DateShipping');
-	print '</td>';
-
-	if ($action != 'editdate_shipping') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_shipping&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingDate'), 1).'</a></td>';
-	}
-	print '</tr></table>';
-	print '</td><td colspan="2">';
-	if ($action == 'editdate_shipping') {
-		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'liv_', 1, 1, 0, "setdate_shipping", 1, 0);
-		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
-		print '</form>';
-	} else {
-		print $object->date_shipping ? dol_print_date($object->date_shipping, 'dayhour') : '&nbsp;';
-	}
-	print '</td>';
-	print '</tr>';
-
 	// Delivery date planned
 	print '<tr><td height="10">';
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
-
 	if ($action != 'editdate_livraison') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 	}
@@ -2071,6 +2046,29 @@ if ($action == 'create') {
 		print '</form>';
 	} else {
 		print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Delivery sending date
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
+	print $langs->trans('DateShipping');
+	print '</td>';
+	if ($action != 'editdate_shipping') {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_shipping&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingDate'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($action == 'editdate_shipping') {
+		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setdate_livraison">';
+		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'liv_', 1, 1, 0, "setdate_shipping", 1, 0);
+		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->date_shipping ? dol_print_date($object->date_shipping, 'dayhour') : '&nbsp;';
 	}
 	print '</td>';
 	print '</tr>';
