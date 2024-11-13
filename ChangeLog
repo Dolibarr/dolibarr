@@ -13,7 +13,7 @@ FIX: #30768 allocate the correct invoice_line_id to the element timespent (#3076
 FIX: #30772 Accountancy document export - The project filter on expenses report don't work (#30824)
 FIX: #30836
 FIX: #30960 show and search extrafields (#31026)
-FIX: Add same security test whe nuploading files from API than from GUI (#31114)
+FIX: Add same security test when uploading files from API than from GUI (#31114)
 FIX: ajaxik URL in ExpenseReport to load coef calculation (#30918)
 FIX: attached file on first page load (#30694)
 FIX: autoselect the fiscal period by default
@@ -28,11 +28,11 @@ FIX: column position on PDF of payments
 FIX: const  WORKFLOW_RECEPTION_CLASSIFY_NEWD_INVOICE (#31601)
 FIX: Debug extrafields for bank lines
 FIX: email templates for expense report not visible
-FIX: Error message overwrited when a error occurs during update of product multilangs (#30841)
+FIX: Error message overwritten when a error occurs during update of product multilangs (#30841)
 FIX: error return missing in mo creation when qty to consume is <= 0 (#31134)
 FIX: Extrafield following between rec invoice and classic invoice (#31445)
 FIX: Fatal error on create loan schedule (#30656)
-FIX: Fix bug select columns and acces to the public ticket list from the public ticket card (case when we have connected to another client before, the track id stocked in session overwrite the new track id from the public ticket card) (#31000)
+FIX: Fix bug select columns and access to the public ticket list from the public ticket card (case when we have connected to another client before, the track id stocked in session overwrite the new track id from the public ticket card) (#31000)
 FIX: fixed search filter for projects resetting when set to empty (#30902)
 FIX: if you call fetchLines several times, your $object->lines contains duplicates (#31167)
 FIX: If you have no stock of your product, an error is displayed when you delete the reception. (#31504)
