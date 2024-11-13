@@ -539,7 +539,7 @@ IMG;
 	private function _parse($type='content')
 	{
 	    // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
-	    $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+	    $reg='@\[!--\sIF\s([\[\]{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
 	    preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
 
