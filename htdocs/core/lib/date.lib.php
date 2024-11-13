@@ -130,7 +130,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn' || $duration_unit == 'min') {
 		return $time + (60 * $duration_value);
 	}
 	if ($duration_unit == 'h') {
@@ -338,7 +338,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
 	if ($duration_unit == 's') {
 		$result = $duration_value / 3600;
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn' || $duration_unit == 'min') {
 		$result = $duration_value / 60;
 	}
 	if ($duration_unit == 'h') {

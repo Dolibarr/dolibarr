@@ -562,9 +562,9 @@ if ($result) {
 					$resultmid = $db->query($sqlmid);
 					if ($resultmid) {
 						$objmid = $db->fetch_object($resultmid);
-						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] = isset($tabtp[$obj->rowid][$objmid->accountancy_account_capital]) ? $tabtp[$obj->rowid][$objmid->accountancy_account_capital] - $objmid->amount_capital : $amounttouse;
-						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] = isset($tabtp[$obj->rowid][$objmid->accountancy_account_insurance]) ? $tabtp[$obj->rowid][$objmid->accountancy_account_insurance] - $objmid->amount_insurance : $amounttouse;
-						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] = isset($tabtp[$obj->rowid][$objmid->accountancy_account_interest]) ? $tabtp[$obj->rowid][$objmid->accountancy_account_interest] - $objmid->amount_interes : $amounttouse;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] = isset($objmid->amount_capital) ? $tabtp[$obj->rowid][$objmid->accountancy_account_capital] - $objmid->amount_capital : 0;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] = isset($objmid->amount_insurance) ? $tabtp[$obj->rowid][$objmid->accountancy_account_insurance] - $objmid->amount_insurance : 0;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] = isset($objmid->amount_interest) ? $tabtp[$obj->rowid][$objmid->accountancy_account_interest] - $objmid->amount_interest : 0;
 					}
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);

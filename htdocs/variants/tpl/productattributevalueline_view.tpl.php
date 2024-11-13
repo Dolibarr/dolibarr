@@ -64,8 +64,9 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	$coldisplay++;
 	if (empty($disableedit)) { ?>
 		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
-		<?php print img_edit().'</a>';
-	}
+		<?php print img_edit(); ?>
+		</a>
+	<?php }
 	print '</td>';
 
 	print '<td class="linecoldelete center width25">';
@@ -101,7 +102,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 }
 
 if ($action == 'selectlines') { ?>
-	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>" ></td>
+	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>"></td>
 <?php }
 
 print "</tr>\n";

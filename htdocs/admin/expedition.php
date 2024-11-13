@@ -418,42 +418,30 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
-print load_fiche_titre($langs->trans('CreationOptions'), '', '');
-
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans('Name').'</td>';
-print '<td></td>';
-print '<td class="center" width="60">'.$langs->trans('Status').'</td>';
-
-print "</tr>\n";
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
-print '</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="center" >';
-print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
-print '</td></tr>';
-
-print '</table><br>';
-print '<br>';
 
 
 /*
  * Other options
- *
  */
+
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_param">';
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print "</tr>";
+print "<td></td>\n";
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
+print '</td></tr>';
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -463,7 +451,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<tr><td>';
+print '<tr><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnShippings"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SHIPPING_FREE_TEXT';
 if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
@@ -476,14 +464,16 @@ if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 print "</td></tr>\n";
 
 print '<tr><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip');
+print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('SHIPPING_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
 
 // Allow OnLine Sign
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
-print '<td class="center">';
+print '<td>'.$langs->trans("AllowOnLineSign");
+print '</td>';
+print '<td>';
 print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 

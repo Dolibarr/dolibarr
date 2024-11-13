@@ -999,7 +999,7 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, c.tms as date_modification,";
+		$sql .= " c.datec as date_creation, c.tms as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
@@ -1053,6 +1053,8 @@ class Contact extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->user_creation_id     = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->state_id		= $obj->state_id;
 				$this->state_code	= $obj->state_code;

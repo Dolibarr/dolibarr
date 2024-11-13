@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
- * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023-2024  Nick Fragoulis
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2012		Cedric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016		Meziane Sof					<virtualsof@yahoo.fr>
+ * Copyright (C) 2017-2018	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024	Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 /**
  *    \file       htdocs/fourn/facture/card-rec.php
- *    \ingroup    invoice fournisseurs
+ *    \ingroup    supplier invoice
  *    \brief      Page to show predefined invoice
  */
 
@@ -478,7 +478,7 @@ if (empty($reshook)) {
 		}
 		if ($qty < 0) {
 			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
+			setEventMessages($langs->trans('ErrorQtyForSupplierInvoiceCantBeNegative'), null, 'errors');
 			$error++;
 		}
 
@@ -542,8 +542,8 @@ if (empty($reshook)) {
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
-				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+				$tva_tx = get_default_tva($object->thirdparty, $mysoc, $prod->id);
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
 				}
@@ -551,7 +551,7 @@ if (empty($reshook)) {
 				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 				$pqp = (GETPOSTINT('pbq') ? GETPOSTINT('pbq') : 0);
 
-				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
+				$datapriceofproduct = $prod->getSellPrice($object->thirdparty, $mysoc, $pqp);
 
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
@@ -666,8 +666,8 @@ if (empty($reshook)) {
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 			$info_bits = 0;
 			if ($tva_npr) {
 				$info_bits |= 0x01;
@@ -785,7 +785,7 @@ if (empty($reshook)) {
 			$special_code = 3;
 		}
 
-		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2) ?: 0;
 
 		// Check minimum price
 		$productid = GETPOSTINT('productid');
@@ -819,7 +819,7 @@ if (empty($reshook)) {
 		}
 		if ($qty < 0) {
 			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
+			setEventMessages($langs->trans('ErrorQtyForSupplierInvoiceCantBeNegative'), null, 'errors');
 			$error++;
 		}
 
@@ -931,7 +931,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Third party
-		print '<tr><td class="titlefieldcreate">' . $langs->trans("Customer") . '</td><td>' . $object->thirdparty->getNomUrl(1, 'customer') . '</td>';
+		print '<tr><td class="titlefieldcreate">' . $langs->trans("Supplier") . '</td><td>' . $object->thirdparty->getNomUrl(1, 'supplier') . '</td>';
 		print '</tr>';
 
 		// Invoice subtype
@@ -944,7 +944,7 @@ if ($action == 'create') {
 		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
 		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
-		// Help of substitution key
+		// Help for substitution key
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
 
 		$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%m') . ')';
@@ -1113,7 +1113,7 @@ if ($action == 'create') {
 			$disableedit = 1;
 			$disablemove = 1;
 			$disableremove = 1;
-			$object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printObjectLines('', $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1613,7 +1613,7 @@ if ($action == 'create') {
 			$canchangeproduct = 0;
 
 			$object->statut = $object->suspended;
-			$object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line

@@ -1360,7 +1360,7 @@ class Form
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
-				print $langs->trans("RefOrLabel") . ' : ';
+				$out .= $langs->trans("RefOrLabel") . ' : ';
 			} elseif ($hidelabel > 1) {
 				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {
@@ -1752,7 +1752,7 @@ class Form
 	 */
 	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '')
 	{
-		global $conf, $langs, $hookmanager, $action;
+		global $conf, $user, $langs, $hookmanager, $action;
 
 		$langs->load('companies');
 
@@ -1812,6 +1812,7 @@ class Form
 			$sql .= " LEFT OUTER JOIN  " . $this->db->prefix() . "societe as s ON s.rowid=sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (" . getEntity('contact') . ")";
+		$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = " . ((int) $socid);
 		}

@@ -3917,25 +3917,41 @@ abstract class CommonObject
 
 					if ($diff_on_current_total) {
 						// This should not happen, we should always have in table: total_ttc = total_ht + total_vat + total_localtax1 + total_localtax2
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
-						dol_syslog('We found inconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
+						$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+						$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
+						$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+						dol_syslog('Warn1: We found inconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
 						$resqlfix = $this->db->query($sqlfix);
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
 						}
 						$obj->total_tva = $tmpcal[1];
 						$obj->total_ttc = $tmpcal[2];
+						$obj->multicurrency_total_tva = $tmpcal[17];
+						$obj->multicurrency_total_ttc = $tmpcal[18];
 					} elseif ($diff_when_using_price_ht) {
-						// After calculation from HT, total is consistent but we have found a difference between VAT part in calculation and into database and
-						// we ask to force the use of rounding on line (like done on calculation) so we force update of line
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
-						dol_syslog('We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-						$resqlfix = $this->db->query($sqlfix);
-						if (!$resqlfix) {
-							dol_print_error($this->db, 'Failed to update line');
+						// If total_ht calculated from unit price is different than the one in database, we do nothing, this may be a regular case to have also a different VAT, that can be explained
+						// because price was entered included tax and we round the unit price without tax to store it in database (so recalculation will give different results).
+						if ((float) $tmpcal[0] == (float) $obj->total_ht) {
+							// After calculation from HT, total is consistent and total_ht is same, but we have found a difference between VAT part calculated from unit price and the VAT part into database,
+							// and we ask to force the use of rounding on line (like done on calculation) so this should not happen, so we force the update of line to fix.
+
+							// This part of code must be called only to fix corrupted data due to the use of the feature to round total instead of rounding lines.
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
+							$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+							$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
+							$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+							dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							$resqlfix = $this->db->query($sqlfix);
+							if (!$resqlfix) {
+								dol_print_error($this->db, 'Failed to update line');
+							}
+							$obj->total_tva = $tmpcal[1];
+							$obj->total_ttc = $tmpcal[2];
+							$obj->multicurrency_total_tva = $tmpcal[17];
+							$obj->multicurrency_total_ttc = $tmpcal[18];
 						}
-						$obj->total_tva = $tmpcal[1];
-						$obj->total_ttc = $tmpcal[2];
 					}
 				}
 
@@ -4249,8 +4265,8 @@ abstract class CommonObject
 
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->getElementType());
+		$targettype = (!empty($targettype) ? $targettype : $this->getElementType());
 
 		/*if (empty($sourceid) && empty($targetid))
 		 {
@@ -9144,7 +9160,7 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICOT', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
@@ -9152,7 +9168,7 @@ abstract class CommonObject
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 								break;
 							case "edit":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICOT', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}

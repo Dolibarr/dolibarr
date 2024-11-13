@@ -783,6 +783,16 @@ if ($step == 4 && $datatoimport) {
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
+
+	if (!empty($obj->error)) {
+		$langs->load("errors");
+		$param = '&datatoimport='.$datatoimport.'&format='.$format;
+		setEventMessages($obj->error, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+		exit;
+	}
+
+
 	if ($model == 'csv') {
 		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;

@@ -434,7 +434,10 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'c_holiday_types', 'email_template', 'default_values', 'overwrite_trans');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
+		if (getDolGlobalString('HOLIDAY_ALLOW_ZERO_IN_DIC')) { // this constant break the dictionary admin without Multicompany
+			$addzero[] = 'c_holiday_types';
+		}
 		if (in_array($element, $addzero)) {
 			$out .= '0,';
 		}
@@ -603,8 +606,12 @@ function getBrowserInfo($user_agent)
 		$version = end($reg);
 	} elseif (preg_match('/l[iy]n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
 		// MS products at end
-		$name = 'lynxlinks';
+		$name = 'textbrowser';
 		$version = empty($reg[3]) ? '' : $reg[3];
+	} elseif (preg_match('/w3m\/([\d\.]+)/i', $user_agent, $reg)) {
+		// MS products at end
+		$name = 'textbrowser';
+		$version = empty($reg[1]) ? '' : $reg[1];
 	}
 
 	if ($tablet) {
@@ -1037,8 +1044,8 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Sanitizing for special parameters.
-	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
-	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
+	// Note: There is no reason to allow the backtopage/backtopageforcancel/backtopagejs, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
+	if (preg_match('/backtopage/', $paramname) || $paramname == 'backtolist' || $paramname == 'backtourl') {
 		$out = str_replace('\\', '/', $out);								// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
 		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retrieve it after other replacements.
 		do {
@@ -1836,6 +1843,17 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 	}
 
 	return 'Bad parameter for stringforquotes in dol_escape_php';
+}
+
+/**
+ *  Returns text escaped for all protocols (so only alpha chars and numbers)
+ *
+ *  @param      string		$stringtoescape		String to escape
+ *  @return     string     		 				Escaped string for XML content.
+ */
+function dol_escape_all($stringtoescape)
+{
+	return preg_replace('/[^a-z0-9_]/i', '', $stringtoescape);
 }
 
 /**
@@ -2946,7 +2964,16 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+		$totalallpayments = $object->getSommePaiement(0);
+		$totalallpayments += $object->getSumCreditNotesUsed(0);
+		$totalallpayments += $object->getSumDepositsUsed(0);
+		$tmptxt = $object->getLibStatut(6, $totalallpayments);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5, $totalallpayments);
+		}
+		$morehtmlstatus .= $tmptxt;
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -6333,7 +6360,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page) {
-						$pagelist .= '<li class="pagination pageplusone"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						$pagelist .= '<li class="pagination pageplusone valignmiddle"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
 						$pagelist .= '/';
 					}
 				} else {
@@ -10366,7 +10393,8 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array();
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode", "str_rot13", "hex2bin")); // decode string functions used to obfuscated function name
+		// @phpcs:ignore
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64"."_"."decode", "rawurl"."decode", "url"."decode", "str"."_rot13", "hex"."2bin")); // name of forbidden functions are split to avoid false positive
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
@@ -12264,6 +12292,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                              $arrayforbutaction = array(
  *                                                                                                                              10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
  *                                                                                                                              20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                              30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                              );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param int|boolean	$userRight  	User action right
@@ -12329,17 +12358,18 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$langs->load($subbutton['lang']);
 				}
 
-				if (!empty($subbutton['urlroot'])) {
-					$tmpurl = $subbutton['urlroot'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				if (!empty($subbutton['urlraw'])) {
+					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
-					$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$subbuttonparam = array();
 				if (!empty($subbutton['attr'])) {
 					$subbuttonparam['attr'] = $subbutton['attr'];
 				}
-				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? $subbutton['isDropDown'] : $params['isDropDown']);
+				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown']??false)  : $params['isDropDown']);
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
@@ -12351,10 +12381,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$langs->load($subbutton['lang']);
 				}
 
-				if (!empty($subbutton['urlroot'])) {
-					$tmpurl = $subbutton['urlroot'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				if (!empty($subbutton['urlraw'])) {
+					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
-					$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], $params);
@@ -12488,6 +12519,42 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		return $hookmanager->resPrint;
 	}
 }
+
+
+/**
+ * An function to complete dropdown url in dolGetButtonAction
+ *
+ * @param string 				$url 			the Url to complete
+ * @param array|array<string> 	$params 		params of dolGetButtonAction function
+ * @param bool 					$addDolUrlRoot 	to add root url
+ * @return string
+ */
+function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDolUrlRoot = true)
+{
+	if (empty($url)) {
+		return '';
+	}
+
+	$parsedUrl = parse_url($url);
+	if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'mailto', 'tel'])) || strpos($url, '#') === 0) {
+		return $url;
+	}
+
+	if (!empty($parsedUrl['query'])) {
+		// Use parse_str() function to parse the string passed via URL
+		parse_str($parsedUrl['query'], $urlQuery);
+		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
+			$url.= '&amp;backtopage='.urlencode($params['backtopage']);
+		}
+	}
+
+	if (!isset($parsedUrl['scheme']) && $addDolUrlRoot) {
+		$url = DOL_URL_ROOT.$url;
+	}
+
+	return $url;
+}
+
 
 /**
  * Add space between dolGetButtonTitle

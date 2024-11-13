@@ -1,6 +1,6 @@
 name: "CI"
 
-on: [push, pull_request]
+on: [push]
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml
@@ -32,7 +32,6 @@ jobs:
     uses: ./.github/workflows/gh-travis.yml
     with:
       gh_event: ${{ github.event_name }}
-
 
 # Note (not tested, from https://github.com/orgs/community/discussions/38361)
 # To cancel jobs if one failes, the following action may help

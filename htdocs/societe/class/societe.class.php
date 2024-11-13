@@ -920,6 +920,7 @@ class Societe extends CommonObject
 		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
+
 		if (empty($this->client)) {
 			$this->client = 0;
 		}
@@ -1372,7 +1373,7 @@ class Societe extends CommonObject
 		$this->address		= trim((string) $this->address);
 		$this->zip 			= trim((string) $this->zip);
 		$this->town 		= trim((string) $this->town);
-		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim((string) $this->state_id) : 0;
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) $this->state_id : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
@@ -2077,7 +2078,7 @@ class Societe extends CommonObject
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
-				$result = 1;
+				$result = $this->id;
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();

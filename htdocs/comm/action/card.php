@@ -356,7 +356,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	}
 
 	if (!$error) {
-		// Initialisation object actioncomm
+		// Initialisation of object actioncomm
 		$object->priority = GETPOSTISSET("priority") ? GETPOSTINT("priority") : 0;
 		$object->fulldayevent = ($fulldayevent ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
@@ -365,11 +365,15 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		if (GETPOST("elementtype", 'alpha')) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
 				$hasPermissionOnLinkedObject = 1;
+			} elseif ($user->hasRight($modulecodetouseforpermissioncheck, $submodulecodetouseforpermissioncheck, 'read')) {
+				$hasPermissionOnLinkedObject = 1;
 			}
+
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
@@ -430,7 +434,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 	if (GETPOSTISSET("contactid")) {
-		$object->contact = $contact;
+		$object->contact_id = GETPOSTINT("contactid");
+
+		$object->contact = $contact;	// For backward compatibility
 	}
 
 	if (GETPOSTINT('socid') > 0) {

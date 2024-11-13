@@ -2635,6 +2635,62 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
+	 * Check for module compliance with Dolibarr rules and law
+	 * If a module is reported by this function,it is surely a malware. Delete it as soon as possible.
+	 *
+	 * @return int|string 	Return integer <0 if Error, 0 == not compliant, 'string' with message if module not compliant
+	 */
+	public function checkForCompliance()
+	{
+		global $conf, $langs;
+
+		// Get list of illegal modules name or ID
+		if (empty($conf->cache['noncompliantmodules'])) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+			$urlforblacklistmodules = 'https://ping.dolibarr.org/modules-blacklist.txt';
+
+			$result = getURLContent($urlforblacklistmodules, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
+			if (isset($result['content']) && $result['http_code'] == 200) {
+				$langs->load("errors");
+
+				// Security warning :  be careful with remote data content, the module editor could be hacked (or evil) so limit to a-z A-Z 0-9 _ . -
+				$arrayoflines = preg_split("/[\n,]/", $result['content']);
+				foreach ($arrayoflines as $line) {
+					$tmpfieldsofline = explode(';', $line);
+					$modulekey = strtolower($tmpfieldsofline[0]);
+					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
+					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = $tmpfieldsofline[2];
+					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
+					if (!empty($tmpfieldsofline[4])) {
+						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');
+						$listofillegalurl = '';
+						foreach (explode(" ", $tmpfieldsofline[4]) as $illegalurl) {
+							$listofillegalurl .= ($listofillegalurl ? ' '.$langs->trans("or").' ' : '').'<b>'.preg_replace('/[^a-z0-9\.\-]/', '', $illegalurl).'</b>';
+						}
+						$message2 = str_replace('{s}', $listofillegalurl, $message2);
+						$conf->cache['noncompliantmodules'][$modulekey]['message2'] = $message2;
+					}
+				}
+			}
+		}
+
+		if (!empty($conf->cache['noncompliantmodules'])) {
+			$modulekey = strtolower($this->name);
+			if (in_array($modulekey, array_keys($conf->cache['noncompliantmodules']))) {
+				$answer = trim($conf->cache['noncompliantmodules'][$modulekey]['message']);
+				if (!empty($conf->cache['noncompliantmodules'][$modulekey]['message2'])) {
+					$answer .= '<br>'.$conf->cache['noncompliantmodules'][$modulekey]['message2'];
+				}
+				return $answer;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Helper method to declare dictionaries one at a time (rather than declaring dictionaries property by property).
 	 *
 	 * @param array $dictionaryArray Array describing one dictionary. Keys are:
