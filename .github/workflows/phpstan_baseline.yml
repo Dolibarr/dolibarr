@@ -22,10 +22,10 @@ env:
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
 jobs:
   phpstan:
-    permissions:
-      contents: write
-      pull-requests: write
     runs-on: ubuntu-latest
+    permissions: write-all
+      # contents: write
+      # pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
