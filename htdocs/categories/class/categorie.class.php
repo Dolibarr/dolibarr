@@ -88,7 +88,7 @@ class Categorie extends CommonObject
 		'website_page' => 11,
 		'ticket'       => 12,
 		'knowledgemanagement' => 13,
-		'fichinter'    => 14,
+		'fichinter' => 14,
 	);
 
 	/**
@@ -143,15 +143,15 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'  => 'Product',
+		'product' => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
-		'member'   => 'Adherent',
-		'contact'  => 'Contact',
-		'user'     => 'User',
-		'account'  => 'Account', // old for bank account
-		'bank_account'  => 'Account',
-		'project'  => 'Project',
+		'member' => 'Adherent',
+		'contact' => 'Contact',
+		'user' => 'User',
+		'account' => 'Account', // old for bank account
+		'bank_account' => 'Account',
+		'project' => 'Project',
 		'warehouse' => 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
@@ -190,10 +190,10 @@ class Categorie extends CommonObject
 	public $MAP_OBJ_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'societe',
-		'member'   => 'adherent',
-		'contact'  => 'socpeople',
-		'account'  => 'bank_account', // old for bank account
-		'project'  => 'projet',
+		'member' => 'adherent',
+		'contact' => 'socpeople',
+		'account' => 'bank_account', // old for bank account
+		'project' => 'projet',
 		'warehouse' => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
 		'fichinter' => 'fichinter',
@@ -702,7 +702,7 @@ class Categorie extends CommonObject
 			'categorie_contact' => 'fk_categorie',
 			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
-			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('fichinter')),
+			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ficheinter')),
 			'categorie_member' => 'fk_categorie',
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
