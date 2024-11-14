@@ -599,6 +599,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 if ($type == Categorie::TYPE_CUSTOMER) {
 	if ($user->hasRight("societe", "read")) {
 		$permission = $user->hasRight('societe', 'creer');
+		$showclassifyform = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($socs < 0) {
@@ -624,7 +625,6 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
@@ -679,6 +679,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 if ($type == Categorie::TYPE_SUPPLIER) {
 	if ($user->hasRight("fournisseur", "read")) {
 		$permission = $user->hasRight('societe', 'creer');
+		$showclassifyform = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 
@@ -705,7 +706,6 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
@@ -763,6 +763,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 		$permission = $user->hasRight('adherent', 'creer');
+		$showclassifyform = $user->hasRight('adherent', 'creer');
 
 		$members = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($members < 0) {
@@ -788,7 +789,6 @@ if ($type == Categorie::TYPE_MEMBER) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
@@ -1015,8 +1015,8 @@ if ($type == Categorie::TYPE_PROJECT) {
 	if ($user->hasRight("project", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-		$permission = ($user->hasRight('projet', 'creer') == 1);
-		$showclassifyform = ($user->hasRight('projet', 'creer') == 1);
+		$permission = $user->hasRight('projet', 'creer');
+		$showclassifyform = $user->hasRight('projet', 'creer');
 
 		$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($objects < 0) {
@@ -1246,6 +1246,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 if ($type == Categorie::TYPE_TICKET) {
 	if ($user->hasRight("ticket", "read")) {
 		$permission = $user->hasRight('categorie', 'creer');
+		$showclassifyform = $user->hasRight('categorie', 'creer');
 
 		$tickets = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($tickets < 0) {
@@ -1271,7 +1272,6 @@ if ($type == Categorie::TYPE_TICKET) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Ticket"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'ticket', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
