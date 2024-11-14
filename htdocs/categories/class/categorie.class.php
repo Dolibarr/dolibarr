@@ -88,7 +88,7 @@ class Categorie extends CommonObject
 		'website_page' => 11,
 		'ticket'       => 12,
 		'knowledgemanagement' => 13,
-		'fichinter'    => 14
+		'fichinter'    => 14,
 	);
 
 	/**
@@ -111,7 +111,7 @@ class Categorie extends CommonObject
 		11 => 'website_page',
 		12 => 'ticket',
 		13 => 'knowledgemanagement',
-		14 => 'fichinter'
+		14 => 'fichinter',
 	);
 
 	/**
@@ -180,7 +180,7 @@ class Categorie extends CommonObject
 		'website_page' => 'WebsitePageCategoriesArea',
 		'ticket' => 'TicketCategoriesArea',
 		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea',
-		'fichinter' => 'FichinterCategoriesArea'
+		'fichinter' => 'FichinterCategoriesArea',
 	);
 
 	/**
@@ -196,7 +196,7 @@ class Categorie extends CommonObject
 		'project'  => 'projet',
 		'warehouse' => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
-		'fichinter' => 'fichinter'
+		'fichinter' => 'fichinter',
 	);
 
 	/**
@@ -260,6 +260,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
+	 * @see Categorie::TYPE_FICHINTER
 	 */
 	public $type;
 
@@ -1078,12 +1079,12 @@ class Categorie extends CommonObject
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
 					$categories[$i]['id'] = $category_static->id;
-					$categories[$i]['fk_parent']		= $category_static->fk_parent;
-					$categories[$i]['label']			= $category_static->label;
+					$categories[$i]['fk_parent'] = $category_static->fk_parent;
+					$categories[$i]['label'] = $category_static->label;
 					$categories[$i]['description'] = $category_static->description;
-					$categories[$i]['color']    		= $category_static->color;
-					$categories[$i]['position']    		= $category_static->position;
-					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['color'] = $category_static->color;
+					$categories[$i]['position'] = $category_static->position;
+					$categories[$i]['socid'] = $category_static->socid;
 					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
