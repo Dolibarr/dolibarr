@@ -111,6 +111,8 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 		return $list;
 	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction to generate document on disk
@@ -167,7 +169,8 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0) {
+		// TODO: write_file seems invalid, function is likely no longer used - delete ?
+		if ($obj->write_file($id, $outputlangs) > 0) { // @phan-suppress-current-line PhanParamTooFew,PhanPluginSuspiciousParamPosition
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		} else {

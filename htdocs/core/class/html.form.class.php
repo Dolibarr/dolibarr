@@ -9228,7 +9228,6 @@ class Form
 	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
 	{
 		global $conf, $langs;
-
 		$out = '';
 
 		if ($addjscombo < 0) {
