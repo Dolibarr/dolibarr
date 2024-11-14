@@ -1259,6 +1259,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 					$position = 900;
 				}
 				// $alwayseditable
+				$alwayseditable=0;
 				if ($fieldname == 'label') {
 					$alwayseditable = 1;
 				}
@@ -1295,7 +1296,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				if (preg_match('/^fk_proj/', $obj->Field)) {
 					$picto = 'project';
 				}
-
 
 				// Build the property string
 				$stringforproperties .= "'".$obj->Field."'=>array('type'=>'".$type."', 'label'=>'".$label."',";
