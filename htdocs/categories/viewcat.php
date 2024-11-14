@@ -9,7 +9,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2023-2024		Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
-	}} elseif ($type == Categorie::TYPE_FICHINTER && $user->hasRight('ficheinter', 'write')) {
+	} elseif ($type == Categorie::TYPE_FICHINTER && $user->hasRight('ficheinter', 'write')) {
 		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$tmpobject = new Fichinter($db);
 		$result = $tmpobject->fetch($removeelem);
