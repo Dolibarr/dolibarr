@@ -1373,6 +1373,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 			$newcardbutton = '';
 
 			$langs->load('interventions');
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Intervention"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_intervention', 0, $newcardbutton, '', $limit);
 			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
