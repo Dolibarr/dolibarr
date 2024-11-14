@@ -1352,7 +1352,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddFichinterIntoCategory").' &nbsp;';
-				print $formfichinter->select_interventions(0, '', 'elemid');
+				print $formfichinter->select_interventions(0, 0, 'elemid');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
