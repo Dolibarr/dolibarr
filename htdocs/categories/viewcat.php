@@ -1175,7 +1175,6 @@ if ($type == Categorie::TYPE_USER) {
 	}
 }
 
-
 // List of warehouses
 if ($type == Categorie::TYPE_WAREHOUSE) {
 	if ($user->hasRight("stock", "read")) {
@@ -1327,7 +1326,7 @@ if ($type == Categorie::TYPE_TICKET) {
 	}
 }
 
-// List of Fichinter
+// List of Interventions
 if ($type == Categorie::TYPE_FICHINTER) {
 	if ($user->hasRight("fichinter", "lire")) {
 		$permission = $user->hasRight('categorie', 'creer');
