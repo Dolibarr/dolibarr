@@ -86,7 +86,7 @@ class Categorie extends CommonObject
 		'actioncomm'   => 10,
 		'website_page' => 11,
 		'ticket'       => 12,
-		'knowledgemanagement' => 13
+		'knowledgemanagement' => 13,
 	);
 
 	/**
@@ -108,7 +108,7 @@ class Categorie extends CommonObject
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		13 => 'knowledgemanagement',
 	);
 
 	/**
@@ -153,7 +153,7 @@ class Categorie extends CommonObject
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
-		'knowledgemanagement' => 'KnowledgeRecord'
+		'knowledgemanagement' => 'KnowledgeRecord',
 	);
 
 	/**
@@ -175,7 +175,7 @@ class Categorie extends CommonObject
 		'actioncomm' => 'ActioncommCategoriesArea',
 		'website_page' => 'WebsitePageCategoriesArea',
 		'ticket' => 'TicketCategoriesArea',
-		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea'
+		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea',
 	);
 
 	/**
@@ -190,7 +190,7 @@ class Categorie extends CommonObject
 		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
 		'warehouse' => 'entrepot',
-		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
+		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
 	);
 
 	/**
