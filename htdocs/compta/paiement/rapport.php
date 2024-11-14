@@ -95,9 +95,10 @@ if ($action == 'builddoc' && !empty($permissiontoread)) {
 }
 
 // Delete file from disk
-if ($action == 'removedoc' && !empty($permissiontoread) && $fileToRemove) {
-	$fileDirectory = dirname($dir.'/'.$fileToRemove);
-	if (dol_delete_file($dir.'/'.$fileToRemove)) {
+if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
+	$fullpathfile = dol_sanitizePathName($dir.'/'.$fileToRemove);
+	$fileDirectory = dirname($fullpathfile);
+	if (dol_delete_file($fullpathfile)) {
 		// Delete empty directory after file deletion
 		if (empty(dol_dir_list($fileDirectory))) {
 			dol_delete_dir($fileDirectory);
@@ -154,7 +155,7 @@ if ($year) {
 		print '<td>'.$langs->trans("Reporting").'</td>';
 		print '<td class="right">'.$langs->trans("Size").'</td>';
 		print '<td class="right">'.$langs->trans("Date").'</td>';
-		print '<td class="right">'.$langs->trans("Delete").'</td>';
+		print '<td class="right"></td>';
 		print '</tr>';
 
 		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', SORT_DESC, 1));
