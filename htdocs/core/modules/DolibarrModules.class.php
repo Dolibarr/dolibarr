@@ -1609,6 +1609,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		global $conf, $user;
 
+		if (empty($user)) {
+			$user = new User($this->db);
+		}
+
 		$err = 0;
 
 		if (is_array($this->cronjobs)) {
