@@ -116,12 +116,12 @@ if ($confirm == 'no') {
 		exit;
 	}
 }
-
 $parameters = array('type' => $type, 'id' => $id, 'label' => $label);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission not required here. Done later according to type of object.
 	$tmpobject = null;
+	$elementtype = '';
 	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
@@ -165,6 +165,8 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
+	} else {
+		dol_print_error(null, "Not supported value of type = ".$type);
 	}
 
 	$result = $object->del_type($tmpobject, $elementtype);
@@ -188,70 +190,60 @@ if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && 
 }
 
 if ($elemid && $action == 'addintocategory') {	// Test on permission not required here. Done just after depending on object type
-	if (($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) ||
-	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
-	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
-	 ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) ||
-	 ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) ||
-	 ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) ||
-	 ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) ||
-	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
-	 ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer'))
-	) {
-		$newobject = null;
-		if ($type == Categorie::TYPE_PRODUCT) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$newobject = new Product($db);
-			$elementtype = 'product';
-		} elseif ($type == Categorie::TYPE_CUSTOMER) {
-			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-			$newobject = new Societe($db);
-			$elementtype = 'customer';
-		} elseif ($type == Categorie::TYPE_SUPPLIER) {
-			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-			$newobject = new Societe($db);
-			$elementtype = 'supplier';
-		} elseif ($type == Categorie::TYPE_TICKET) {
-			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-			$newobject = new Ticket($db);
-			$elementtype = 'ticket';
-		} elseif ($type == Categorie::TYPE_PROJECT) {
-			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-			$newobject = new Project($db);
-			$elementtype = 'project';
-		} elseif ($type == Categorie::TYPE_MEMBER) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-			$newobject = new Adherent($db);
-			$elementtype = 'member';
-		} elseif ($type == Categorie::TYPE_CONTACT) {
-			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-			$newobject = new Contact($db);
-			$elementtype = 'contact';
-		} elseif ($type == Categorie::TYPE_USER) {
-			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-			$newobject = new User($db);
-			$elementtype = 'user';
-		} elseif ($type == Categorie::TYPE_ACCOUNT) {
-			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-			$newobject = new Account($db);
-			$elementtype = 'bank_account';
-		} else {
-			dol_print_error(null, "Not supported value of type = ".$type);
-		}
-		if ($newobject !== null) {
-			$result = $newobject->fetch($elemid);
-		}
+	$newobject = null;
+	$elementtype = '';
+	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$newobject = new Product($db);
+		$elementtype = 'product';
+	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$newobject = new Societe($db);
+		$elementtype = 'customer';
+	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$newobject = new Societe($db);
+		$elementtype = 'supplier';
+	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+		$newobject = new Ticket($db);
+		$elementtype = 'ticket';
+	} elseif ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$newobject = new Project($db);
+		$elementtype = 'project';
+	} elseif ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$newobject = new Adherent($db);
+		$elementtype = 'member';
+	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		$newobject = new Contact($db);
+		$elementtype = 'contact';
+	} elseif ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$newobject = new User($db);
+		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer')) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$newobject = new Account($db);
+		$elementtype = 'bank_account';
+	} else {
+		dol_print_error(null, "Not supported value of type = ".$type);
+	}
+	if ($newobject !== null) {
+		$result = $newobject->fetch($elemid);
+	}
 
-		// Add into category
-		$result = $object->add_type($newobject, $elementtype);
-		if ($result >= 0) {
-			setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
+	// Add into category
+	$result = $object->add_type($newobject, $elementtype);
+	if ($result >= 0) {
+		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
+	} else {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		} else {
-			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
-			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -264,7 +256,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofjs = array(
+	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
+);
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 $help_url = '';
@@ -845,6 +840,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 if ($type == Categorie::TYPE_CONTACT) {
 	if ($user->hasRight("societe", "read")) {
 		$permission = $user->hasRight('societe', 'creer');
+		$showclassifyform = $user->hasRight('societe', 'creer');
 
 		$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if (is_numeric($contacts) && $contacts < 0) {
@@ -872,7 +868,6 @@ if ($type == Categorie::TYPE_CONTACT) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
@@ -933,6 +928,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$permission = $user->hasRight('banque', 'creer');
+		$showclassifyform = $user->hasRight('banque', 'creer');
 
 		$accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($accounts < 0) {
@@ -958,7 +954,6 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
@@ -1096,6 +1091,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 if ($type == Categorie::TYPE_USER) {
 	if ($user->hasRight("user", "user", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$showclassifyform = $user->hasRight("user", "user", "creer");
 
 		$users = $object->getObjectsInCateg($type);
 		if ($users < 0) {
@@ -1122,7 +1118,6 @@ if ($type == Categorie::TYPE_USER) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, '', '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';

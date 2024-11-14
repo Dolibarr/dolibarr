@@ -3919,30 +3919,6 @@ parameters:
 			path: ../../htdocs/categories/photos.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''bank_account'' and ''bank_account'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between Account\|Adherent\|Contact\|Product\|Project\|Societe\|Ticket\|User and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: '#^Variable \$elementtype might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
