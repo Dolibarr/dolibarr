@@ -155,7 +155,7 @@ if ($year) {
 		print '<td>'.$langs->trans("Reporting").'</td>';
 		print '<td class="right">'.$langs->trans("Size").'</td>';
 		print '<td class="right">'.$langs->trans("Date").'</td>';
-		print '<td class="right">'.$langs->trans("Delete").'</td>';
+		print '<td class="right"></td>';
 		print '</tr>';
 
 		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', SORT_DESC, 1));
