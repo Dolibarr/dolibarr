@@ -72,7 +72,7 @@ $permissiontoread = (bool) $user->hasRight('facture', 'lire');
  * Actions
  */
 
-if ($action == 'builddoc' && !empty($permissiontoread)) {
+if ($action == 'builddoc' && $permissiontoread != 0) {
 	$rap = new pdf_paiement($db);
 
 	$outputlangs = $langs;
@@ -95,7 +95,7 @@ if ($action == 'builddoc' && !empty($permissiontoread)) {
 }
 
 // Delete file from disk
-if ($action == 'removedoc' && !empty($permissiontoread) && $fileToRemove) {
+if ($action == 'removedoc' && $permissiontoread != 0 && $fileToRemove) {
 	$fullpathfile = dol_sanitizePathName($dir.'/'.$fileToRemove);
 	$fileDirectory = dirname($fullpathfile);
 	if (dol_delete_file($fullpathfile)) {
