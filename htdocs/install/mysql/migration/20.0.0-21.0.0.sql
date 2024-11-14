@@ -158,7 +158,7 @@ CREATE TABLE llx_bank_import
   fk_duplicate_of		integer			NULL,
   status				smallint		NOT NULL,
   datec					datetime		NOT NULL,
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_author	    integer         NOT NULL,
   fk_user_modif		    integer,
   import_key			varchar(14),

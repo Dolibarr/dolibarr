@@ -192,7 +192,7 @@ class CodingSqlTest extends CommonClassTest
 
 				$result = strpos($filecontent, 'timestamp,');
 				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found type timestamp with option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found type timestamp without option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
 
 				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
 					// Test for migration files only

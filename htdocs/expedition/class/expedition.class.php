@@ -1206,6 +1206,9 @@ class Expedition extends CommonObject
 		if (isset($this->model_pdf)) {
 			$this->model_pdf = trim($this->model_pdf);
 		}
+		if (!empty($this->date_expedition)) {
+			$this->date_shipping = $this->date_expedition;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -1220,7 +1223,7 @@ class Expedition extends CommonObject
 		$sql .= " fk_user_author = ".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
 		$sql .= " date_valid = ".(dol_strlen($this->date_valid) != 0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
 		$sql .= " fk_user_valid = ".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
-		$sql .= " date_expedition = ".(dol_strlen($this->date_expedition) != 0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
+		$sql .= " date_expedition = ".(dol_strlen($this->date_shipping) != 0 ? "'".$this->db->idate($this->date_shipping)."'" : 'null').",";
 		$sql .= " date_delivery = ".(dol_strlen($this->date_delivery) != 0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql .= " fk_address = ".(isset($this->fk_delivery_address) ? $this->fk_delivery_address : "null").",";
 		$sql .= " fk_shipping_method = ".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";

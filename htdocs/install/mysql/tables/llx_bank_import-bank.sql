@@ -40,7 +40,7 @@ CREATE TABLE llx_bank_import
   fk_duplicate_of		integer			NULL,                  	-- to flag this record as a duplicate of another one
   status				smallint		NOT NULL,               -- 0=just imported
   datec					datetime		NOT NULL,		        -- date creation
-  tms					timestamp,						        -- date of last modification
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,	-- date of last modification
   fk_user_author	    integer         NOT NULL, 		   		-- user who created the record
   fk_user_modif		    integer,					            -- user who modified the record
   import_key			varchar(14),					        -- import key
