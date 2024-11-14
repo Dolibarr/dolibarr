@@ -9,6 +9,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2023-2024		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,6 +166,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
+	}} elseif ($type == Categorie::TYPE_FICHINTER && $user->hasRight('ficheinter', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$tmpobject = new Fichinter($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'fichinter';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
@@ -208,6 +214,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$newobject = new Ticket($db);
 		$elementtype = 'ticket';
+	} elseif ($type == Categorie::TYPE_FICHINTER && $user->hasRight('ficheinter', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$newobject = new Fichinter($db);
+		$elementtype = 'fichinter';
 	} elseif ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$newobject = new Project($db);
@@ -1313,6 +1323,89 @@ if ($type == Categorie::TYPE_TICKET) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'ticket');
+		accessforbidden("NotEnoughPermissions", 0, 0);
+	}
+}
+
+// List of Fichinter
+if ($type == Categorie::TYPE_FICHINTER) {
+	if ($user->hasRight("fichinter", "lire")) {
+		$permission = ($user->rights->categorie->creer || $user->rights->categorie->creer);
+
+		$fichinters = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		if ($fichinters < 0) {
+			dol_print_error($db, $object->error, $object->errors);
+		} else {
+			// Form to add record into a category
+			$showclassifyform = 1;
+			if ($showclassifyform) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
+				$formfichinter = new FormIntervention($db);
+
+				print '<br>';
+				print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+				print '<input type="hidden" name="type" value="'.$typeid.'">';
+				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				print '<input type="hidden" name="action" value="addintocategory">';
+				print '<table class="noborder centpercent">';
+				print '<tr class="liste_titre"><td>';
+				print $langs->trans("AddFichinterIntoCategory").' &nbsp;';
+				print $formfichinter->select_interventions('', '', 'elemid');
+				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+				print '</tr>';
+				print '</table>';
+				print '</form>';
+			}
+
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="list">';
+
+			print '<br>';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($fichinters);
+			$nbtotalofrecords = '';
+			$newcardbutton = '';
+
+			print_barre_liste($langs->trans("Intervention"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_intervention', 0, $newcardbutton, '', $limit);
+			print '<table class="noborder centpercent">'."\n";
+			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
+
+			if (count($fichinters) > 0) {
+				$i = 0;
+				foreach ($fichinters as $fichinter) {
+					$i++;
+					if ($i > $limit) break;
+
+					print "\t".'<tr class="oddeven">'."\n";
+					print '<td class="nowrap tdtop">';
+					print $fichinter->getNomUrl(1);
+					print "</td>\n";
+					print '<td class="tdtop">'.$fichinter->description."</td>\n";
+					// Link to delete from category
+					print '<td class="right">';
+					if ($permission) {
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$fichinter->id."'>";
+						print $langs->trans("DeleteFromCat");
+						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+						print "</a>";
+					}
+					print '</td>';
+					print "</tr>\n";
+				}
+			} else {
+				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
+			}
+			print "</table>\n";
+			print '</form>'."\n";
+		}
+	} else {
+		print_barre_liste($langs->trans("Intervention"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'fichinter');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
