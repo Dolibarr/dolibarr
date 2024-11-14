@@ -295,7 +295,7 @@ if ($object->id > 0) {
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 	} else {
-		$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
+		$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 	}
 
 	$morehtmlref = '';
