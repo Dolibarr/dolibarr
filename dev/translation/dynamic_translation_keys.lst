@@ -1204,6 +1204,7 @@ Feature
 FeatureIsSupportedInInOutModeOnly
 Features
 FichinterNoContractLinked
+FichintersCategoriesArea
 FieldNeedSource
 FieldTarget
 FieldTitle
@@ -1398,7 +1399,7 @@ KeepEmptyForAsap
 KnowledgeManagementAbout
 KnowledgeManagementAboutPage
 KnowledgeManagementSetup
-KnowledgemanagementsCategoriesArea
+KnowledgemanagementCategoriesArea
 LDAPFieldSkype
 LDAPFieldSkypeExample
 LEAVE_OTHER

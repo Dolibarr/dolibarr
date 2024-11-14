@@ -178,9 +178,9 @@ class Categorie extends CommonObject
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
 		'website_page' => 'WebsitePageCategoriesArea',
-		'ticket' => 'TicketCategoriesArea',
-		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea',
-		'fichinter' => 'FichinterCategoriesArea',
+		'ticket' => 'TicketsCategoriesArea',
+		'knowledgemanagement' => 'KnowledgemanagementsCategoriesArea',
+		'fichinter' => 'FichintersCategoriesArea',
 	);
 
 	/**
