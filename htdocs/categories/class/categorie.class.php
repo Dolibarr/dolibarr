@@ -702,7 +702,7 @@ class Categorie extends CommonObject
 			'categorie_contact' => 'fk_categorie',
 			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
-			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ficheinter')),
+			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('fichinter')),
 			'categorie_member' => 'fk_categorie',
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
