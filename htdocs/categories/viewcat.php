@@ -519,6 +519,7 @@ $typeid = $type;
 if ($type == Categorie::TYPE_PRODUCT) {
 	if ($user->hasRight("product", "read") || $user->hasRight("service", "read")) {
 		$permission = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
+		$showclassifyform = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 
 		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($prods < 0) {
@@ -544,7 +545,6 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("ProductsAndServices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
