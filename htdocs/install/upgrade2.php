@@ -514,8 +514,14 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			*/
 
 			// Scripts for 20.0
-			$afterversionarray = explode('.', '19.0.9');
+			/*$afterversionarray = explode('.', '19.0.9');
 			$beforeversionarray = explode('.', '20.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			}*/
+
+			// Scripts for 21.0
+			$afterversionarray = explode('.', '20.0.9');
+			$beforeversionarray = explode('.', '21.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_productlot_path();
 			}
