@@ -96,8 +96,9 @@ if ($action == 'builddoc' && $permissiontoread) {
 
 // Delete file from disk
 if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
-	$fileDirectory = dirname($dir.'/'.$fileToRemove);
-	if (dol_delete_file($dir.'/'.$fileToRemove)) {
+	$fullpathfile = dol_sanitizePathName($dir.'/'.$fileToRemove);
+	$fileDirectory = dirname($fullpathfile);
+	if (dol_delete_file($fullpathfile)) {
 		// Delete empty directory after file deletion
 		if (empty(dol_dir_list($fileDirectory))) {
 			dol_delete_dir($fileDirectory);
