@@ -1015,7 +1015,8 @@ if ($type == Categorie::TYPE_PROJECT) {
 	if ($user->hasRight("project", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-		$permission = $user->hasRight('projet', 'creer');
+		$permission = ($user->hasRight('projet', 'creer') == 1);
+		$showclassifyform = ($user->hasRight('projet', 'creer') == 1);
 
 		$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($objects < 0) {
@@ -1041,7 +1042,6 @@ if ($type == Categorie::TYPE_PROJECT) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Project"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
-			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
