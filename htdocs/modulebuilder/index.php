@@ -1286,13 +1286,16 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				}
 
 				// type
-				$picto = $obj->Picto;
+				if (isset($obj->Picto)) {
+					$picto = $obj->Picto;
+				}
 				if ($obj->Field == 'fk_soc') {
 					$picto = 'company';
 				}
 				if (preg_match('/^fk_proj/', $obj->Field)) {
 					$picto = 'project';
 				}
+
 
 				// Build the property string
 				$stringforproperties .= "'".$obj->Field."'=>array('type'=>'".$type."', 'label'=>'".$label."',";
