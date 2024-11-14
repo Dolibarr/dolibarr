@@ -30715,36 +30715,6 @@ parameters:
 			path: ../../htdocs/projet/tasks/time.php
 
 		-
-			message: '#^Parameter \#1 \$hour of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#2 \$minute of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
