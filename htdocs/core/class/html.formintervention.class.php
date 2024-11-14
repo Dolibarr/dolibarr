@@ -74,7 +74,7 @@ class FormIntervention
 		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
 		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
 		$sql .= " WHERE f.entity = ".$conf->entity;
-		if ($socid != '') {
+		if ($socid >= 0) {
 			if ($socid == '0') {
 				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
 			} else {
