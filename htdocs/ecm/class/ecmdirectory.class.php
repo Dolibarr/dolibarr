@@ -316,7 +316,7 @@ class EcmDirectory extends CommonObject
 			} else {
 				$value = 0;
 				if ($obj = $this->db->fetch_object($resql)) {
-					$value = (int)$obj->nb;
+					$value = (int) $obj->nb;
 				}
 			}
 		}
