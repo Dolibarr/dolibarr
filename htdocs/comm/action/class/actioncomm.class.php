@@ -1938,7 +1938,7 @@ class ActionComm extends CommonObject
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $this->code)) {
+		if (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {
