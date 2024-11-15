@@ -34237,12 +34237,6 @@ parameters:
 			path: ../../htdocs/societe/price.php
 
 		-
-			message: '#^Variable \$extralabels might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/societe/price.php
-
-		-
 			message: '#^Variable \$prodcustprice might not be defined\.$#'
 			identifier: variable.undefined
 			count: 36
