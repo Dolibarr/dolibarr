@@ -333,12 +333,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			$type = $val['type'];
 			$type = preg_replace('/:.*$/', '', $type); // For case type = 'integer:Societe:societe/class/societe.class.php'
 
-			if ($type == 'html'||$type == 'chkbxlst') {
+			if ($type == 'html') {
 				$type = 'text'; // html modulebuilder type is a text type in database
 			} elseif ($type == 'price') {
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'chkbxlst') {
+				$type = 'varchar(128)';
 			} elseif ($type == 'mail') {
 				$type = 'varchar(128)';
 			} elseif ($type == 'phone') {
