@@ -237,8 +237,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$thirdparty->address = GETPOST('address', 'alpha');
 			$thirdparty->zip = GETPOST('zip', 'int');
 			$thirdparty->town = GETPOST('town', 'alpha');
-			$thirdparty->country_id = GETPOSTINT('country_id', 'int');
-			$thirdparty->state_id = GETPOSTINT('state_id', 'int');
+			$thirdparty->country_id = GETPOSTINT('country_id');
+			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
 			$thirdparty->code_client = 'auto';
 			$thirdparty->code_fournisseur = 'auto';
