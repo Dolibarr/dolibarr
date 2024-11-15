@@ -782,6 +782,9 @@ class DolGraph
 	{
 		// phpcs:enable
 		$max = $this->GetMaxValueInData();
+		if (!isset($max)) {
+			$max = 0;
+		}
 		if ($max != 0) {
 			$max++;
 		}
