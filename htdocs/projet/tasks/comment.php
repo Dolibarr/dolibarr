@@ -56,6 +56,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOSTINT('planned_workloadhour') != '' || GETPOSTINT('planned_workloadmin') != '') ? (GETPOSTINT('planned_workloadhour') > 0 ? GETPOSTINT('planned_workloadhour') * 3600 : 0) + (GETPOSTINT('planned_workloadmin') > 0 ? GETPOSTINT('planned_workloadmin') * 60 : 0) : '');
+$mode = GETPOST('mode', 'alpha');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projecttaskcommentcard', 'globalcard'));
@@ -70,6 +71,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // include comment actions
 include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
+// Security check
+$socid = 0;
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
 	if ($projectstatic->fetch(0, $project_ref) > 0) {
@@ -86,9 +89,6 @@ if (!empty($project_ref) && !empty($withproject)) {
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
-
-// Security check
-$socid = 0;
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
