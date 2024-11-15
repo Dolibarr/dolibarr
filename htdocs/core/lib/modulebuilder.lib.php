@@ -333,7 +333,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			$type = $val['type'];
 			$type = preg_replace('/:.*$/', '', $type); // For case type = 'integer:Societe:societe/class/societe.class.php'
 
-			if ($type == 'html') {
+			if ($type == 'html'||$type == 'chkbxlst') {
 				$type = 'text'; // html modulebuilder type is a text type in database
 			} elseif ($type == 'price') {
 				$type = 'double'; // html modulebuilder type is a text type in database
