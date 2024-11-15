@@ -795,9 +795,7 @@ class DolGraph
 		}
 
 		$res = 0;
-		if (is_numeric($max)) {
-			$res = ceil($max / $factor) * $factor;
-		}
+		$res = ceil($max / $factor) * $factor;
 
 		//print "max=".$max." res=".$res;
 		return (int) $res;
