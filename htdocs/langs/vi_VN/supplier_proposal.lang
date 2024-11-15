@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Đã được chấp nhận
 SupplierProposalStatusNotSignedShort=Đã từ chối
 CopyAskFrom=Tạo yêu cầu giá bằng cách sao chép yêu cầu hiện có
 CreateEmptyAsk=Tạo yêu cầu trống
-ConfirmCloneAsk=Bạn có chắc chắn muốn sao chép yêu cầu giá <b>%s</b> ?
 ConfirmReOpenAsk=Bạn có chắc chắn muốn mở lại yêu cầu giá <b>%s</b> ?
 SendAskByMail=Gửi yêu cầu giá qua thư
 SendAskRef=Gửi yêu cầu giá %s

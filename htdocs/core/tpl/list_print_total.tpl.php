@@ -1,5 +1,26 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 
+/**
+ * @var DoliDB $db
+ * @var Form $form
+ * @var Translate $langs
+ */
 '@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
 
 // Move fields of totalizable into the common array pos and val
@@ -11,7 +32,7 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 }
 // Show total line
 if (isset($totalarray['pos'])) {
-	print '<tfoot>';
+	//print '<tfoot>';
 	print '<tr class="liste_total">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
@@ -84,7 +105,7 @@ if (isset($totalarray['pos'])) {
 			}
 		}
 	}
-	print '</tfoot>';
+	//print '</tfoot>';
 }
 
 /** print a total cell value according to its type
@@ -103,7 +124,7 @@ function printTotalValCell($type, $val)
 	switch ($type) {
 		case 'duration':
 			print '<td class="right">';
-			print(!empty($val) ? convertSecondToTime($val, 'allhourmin') : 0);
+			print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
 			print '</td>';
 			break;
 		case 'string':	// This type is no more used. type is now varchar(x)

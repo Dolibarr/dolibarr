@@ -21,7 +21,6 @@ MenuDoneMyActions=எனது நிறுத்தப்பட்ட நிக
 ListOfEvents=நிகழ்வுகளின் பட்டியல் (இயல்பு காலண்டர்)
 ActionsAskedBy=நிகழ்வுகள் மூலம் தெரிவிக்கப்பட்டது
 ActionsToDoBy=நிகழ்வுகள் ஒதுக்கப்பட்டுள்ளன
-ActionsDoneBy=செய்த நிகழ்வுகள்
 ActionAssignedTo=நிகழ்வு ஒதுக்கப்பட்டது
 ViewCal=மாத பார்வை
 ViewDay=பகல் காட்சி
@@ -135,12 +134,14 @@ AgendaModelModule=நிகழ்வுக்கான ஆவண வார்ப
 DateActionStart=தொடக்க தேதி
 DateActionEnd=கடைசி தேதி
 AgendaUrlOptions1=வெளியீட்டை வடிகட்ட பின்வரும் அளவுருக்களையும் நீங்கள் சேர்க்கலாம்:
-AgendaUrlOptions3= <b> logina=%s </b> ஒரு பயனருக்குச் சொந்தமான செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்துகிறது <b> %s a0901b7.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> பயனருக்குச் சொந்தமில்லாத செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்தும்.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> பயனருக்கு ஒதுக்கப்பட்ட செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்த <b> %s %s a09fowner (மற்றும் பிற)
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b> திட்டத்துடன் இணைக்கப்பட்ட செயல்களுக்கு வெளியீட்டைக் கட்டுப்படுத்த, <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> தானியங்கி நிகழ்வுகளை விலக்க.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> விடுமுறை நாட்கள்=1 </b> விடுமுறை நிகழ்வுகளைச் சேர்க்க.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=தொடர்புகளின் பிறந்தநாள்
 AgendaHideBirthdayEvents=தொடர்புகளின் பிறந்தநாளை மறை
 Busy=பரபரப்பு
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

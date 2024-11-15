@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_toolowstock = GETPOST('search_toolowstock');
@@ -96,7 +105,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productreassortlist'));
 
 if ($user->socid) {
@@ -227,7 +236,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {
@@ -422,14 +431,12 @@ if ($resql) {
 	$moreforfilter .= '<label for="search_toolowstock">'.$langs->trans("StockTooLow").' </label><input type="checkbox" id="search_toolowstock" name="search_toolowstock" value="1"'.($search_toolowstock ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter)) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		print '</div>';
-	}
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();

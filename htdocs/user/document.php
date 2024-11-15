@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
@@ -46,27 +55,25 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
-$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
-$canreadgroup = $canreaduser;
-$caneditgroup = $canedituser;
+$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontoread = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
+$permissiontoedit = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontodisable = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
+$permissiontoreadgroup = $permissiontoread;
+$permissiontoeditgroup = $permissiontoedit;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
-	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
 // Define value to know what current user can do on properties of edited user
 if ($id) {
 	// $user est le user qui edite, $id est l'id de l'utilisateur edite
-	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
-	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "password")));
+	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
+	$permissiontoeditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
-$permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permtoedit = $caneditfield;
+$permissiontoadd = $permissiontoedit;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permtoedit = $permissiontoedit;
 
 // Security check
 $socid = 0;
@@ -75,9 +82,12 @@ if ($user->socid > 0) {
 }
 $feature2 = 'user';
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id != $id && !$canreaduser) {
+if ($user->id != $id && !$permissiontoread) {
 	accessforbidden();
 }
 
@@ -102,16 +112,11 @@ if (!$sortfield) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
 	// For users, the upload_dir is always $conf->user->entity for the moment
 	$upload_dir = $conf->user->dir_output."/".$object->id;
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
-
-
 
 /*
  * Actions

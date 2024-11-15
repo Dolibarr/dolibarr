@@ -28,8 +28,16 @@ require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/bookcal/class/calendar.class.php');
-dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_calendar.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "companies", "other", "mails"));
@@ -40,7 +48,7 @@ $lineid = GETPOSTINT('lineid');
 $socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Calendar($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
@@ -49,7 +57,7 @@ $hookmanager->initHooks(array('calendarcontact', 'globalcard')); // Note that co
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
@@ -118,7 +126,7 @@ if ($action == 'addcontact' && $permission) {
 $title = $langs->trans('Calendar')." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

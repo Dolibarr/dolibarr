@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills"));
@@ -282,7 +291,7 @@ if ($action == 'create') {
 
 		print '<td class="right">'.price($sumpaid)."</td>";
 
-		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
+		print '<td class="right">'.price((float) $objp->amount - $sumpaid)."</td>";
 
 		print '<td class="center">';
 		if ($sumpaid < $objp->amount) {
@@ -292,7 +301,7 @@ if ($action == 'create') {
 			if (!empty($conf->use_javascript_ajax)) {
 				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			} */
-			$valuetoshow = GETPOSTISSET($namef) ? GETPOST($namef) : ($objp->amount - $sumpaid);
+			$valuetoshow = GETPOSTISSET($namef) ? GETPOST($namef) : ((float) $objp->amount - $sumpaid);
 
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$valuetoshow.'">';
 			print '<input type="text" class="right width75" name="'.$namef.'" id="'.$namef.'" value="'.$valuetoshow.'">';

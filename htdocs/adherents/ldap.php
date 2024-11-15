@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +19,9 @@
  */
 
 /**
- *       \file       htdocs/adherents/ldap.php
- *       \ingroup    ldap member
- *       \brief      Page fiche LDAP adherent
+ *  \file		htdocs/adherents/ldap.php
+ *  \ingroup	ldap member
+ *  \brief		Page fiche LDAP adherent
  */
 
 // Load Dolibarr environment
@@ -29,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "ldap", "admin"));
@@ -104,7 +114,10 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder');
+$title = $langs->trans("Member");
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_ldap');
 
 $head = member_prepare_head($object);
 

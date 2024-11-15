@@ -73,6 +73,11 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'CUSTOMER',      'Contact client suivi commande', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'SHIPPING',      'Contact client livraison commande', 1);
 
+-- Shipment / Expedition
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Loading facility', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Delivery facility', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Customer shipping contact', 1);
+
 -- Intervention / Fichinter
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERREPFOLL',  'Responsable suivi de l''intervention', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERVENING',   'Intervenant', 1);

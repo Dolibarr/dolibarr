@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=إدارة الشراكة
 PartnershipDescription=وحدة إدارة الشراكة
 PartnershipDescriptionLong= وحدة إدارة الشراكة
@@ -24,17 +20,11 @@ Partnerships=الشراكه
 AddPartnership=أضف شراكة
 CancelPartnershipForExpiredMembers=الشراكة: إلغاء شراكة الأعضاء المنتهية صلاحيتها
 PartnershipCheckBacklink=الشراكة: تحقق من إحالة الروابط الخلفية
-
-#
 # Menu
-#
 NewPartnership=شراكة جديدة
 NewPartnershipbyWeb=تمت إضافة طلب الشراكة الخاص بك بنجاح. قد نتواصل معك قريبا...
 ListOfPartnerships=قائمة الشراكات
-
-#
 # Admin page
-#
 PartnershipSetup=إعدادات الشراكة
 PartnershipAbout=حول الشراكة
 PartnershipAboutPage=صفحة حول الشراكة 
@@ -45,17 +35,14 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=عدد من الأيا�
 ReferingWebsiteCheck=تحقق من إحالة الموقع
 ReferingWebsiteCheckDesc=يمكنك تمكين ميزة للتحقق من أن شركائك قد أضافوا رابطًا خلفيًا إلى مجالات موقع الويب الخاص بك على موقع الويب الخاص بهم.
 PublicFormRegistrationPartnerDesc=يمكن أن توفر لك Dolibarr عنوان URL / موقع ويب عام للسماح للزوار الخارجيين بطلب الانضمام إلى برنامج الشراكة.
-
-#
 # Object
-#
 DeletePartnership=حذف شراكة
 PartnershipDedicatedToThisThirdParty=شراكة مخصصة لهذا الطرف الثالث
 PartnershipDedicatedToThisMember=شراكة مكرسة لهذا العضو
 DatePartnershipStart=تاريخ البدء
 DatePartnershipEnd=تاريخ الانتهاء
 ReasonDecline=سبب الرفض
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=سبب الرفض أو الإلغاء
 PartnershipAlreadyExist=الشراكة موجودة بالفعل
 ManagePartnership=إدارة الشراكة
 BacklinkNotFoundOnPartnerWebsite=الرابط الخلفي غير موجود على موقع الشريك
@@ -68,31 +55,22 @@ PartnershipAccepted=قبلت
 PartnershipRefused=رفض
 PartnershipCanceled=ملغي
 PartnershipManagedFor=الشركاء هم
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=سيتم إلغاء الشراكة قريبًا
 SendingEmailOnPartnershipRefused=رفضت الشراكة
 SendingEmailOnPartnershipAccepted=قبلت الشراكة
 SendingEmailOnPartnershipCanceled=تم إلغاء الشراكة
-
 YourPartnershipWillSoonBeCanceledTopic=سيتم إلغاء الشراكة قريبًا
 YourPartnershipRefusedTopic=رفضت الشراكة
 YourPartnershipAcceptedTopic=قبلت الشراكة
 YourPartnershipCanceledTopic=تم إلغاء الشراكة
-
 YourPartnershipWillSoonBeCanceledContent=نود أن نعلمك أنه سيتم إلغاء شراكتنا قريبًا (لم نحصل على التجديد أو لم يتم استيفاء أحد المتطلبات الأساسية لشراكتنا). يرجى الاتصال بنا إذا تلقيت هذا بسبب خطأ.
 YourPartnershipRefusedContent=نود أن نعلمك أنه قد تم رفض طلب الشراكة الخاص بك. لم يتم استيفاء المتطلبات الأساسية. ارجوك اتصل بنا ان كنت تريد مزيد من المعلومات.
 YourPartnershipAcceptedContent=نود أن نعلمك أنه قد تم قبول طلب الشراكة الخاص بك.
 YourPartnershipCanceledContent=نود أن نعلمك أنه تم إلغاء شراكتنا. ارجوك اتصل بنا ان كنت تريد مزيد من المعلومات.
-
 CountLastUrlCheckError=عدد الأخطاء الخاصة بآخر فحص لعنوان URL
 LastCheckBacklink=تاريخ آخر فحص لعنوان URL
-
 NewPartnershipRequest=طلب شراكة جديد
 NewPartnershipRequestDesc=يسمح لك هذا النموذج بطلب أن تكون جزءًا من أحد برامج الشراكة الخاصة بنا. إذا كنت بحاجة إلى مساعدة لملء هذا النموذج ، فيرجى الاتصال عبر البريد الإلكتروني <b> %s </b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=يجب أن تحتوي هذه الصفحة على رابط واحد على الأقل إلى أحد النطاقات التالية: %s
-
 IPOfApplicant=الملكية الفكرية لمقدم الطلب
-

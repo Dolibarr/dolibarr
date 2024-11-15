@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array('bills', 'other', 'companies'));
 
 $id = GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id');
@@ -51,8 +60,8 @@ $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercarddocument'));
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Get parameters
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -97,7 +106,7 @@ $form = new Form($db);
 
 $title = $object->ref." - ".$langs->trans('Documents');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_document');
 
 if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);

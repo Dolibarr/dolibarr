@@ -1,7 +1,13 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var Conf $conf
+ */
+?>
 /* <style type="text/css" > */
 
 /*
@@ -23,7 +29,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
+	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
 	border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
@@ -257,12 +263,6 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
 }
-/*.info-box-sm .info-box-content-warning {
-	background: #ffd7a3;
-}*/
-/*.info-box-icon.info-box-icon-module-enabled {
-	background: #e4f0e4 !important;
-}*/
 
 .info-box-number {
 	display: block;
@@ -340,6 +340,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php } ?>
 }
 
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.prospect-back {
+	background-color: #a7c5b0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
@@ -362,17 +375,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
@@ -571,6 +586,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .kanban .box-flex-item {
 	line-height: 1.4em;
+}
+.kanban .box-flex-item-5lines {
+	line-height: 1.2em;
 }
 
 /* css for small kanban */

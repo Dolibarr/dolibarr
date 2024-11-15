@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
  * $langs
- *
  * $parameters
- * $cols
+ */
+
+ /**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var string $action
+ * @var array<string,mixed> $parameters
  */
 
 // Protection to avoid direct call of template
@@ -30,6 +39,14 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+'
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force Conf $conf
+@phan-var-force Translate $langs
+@phan-var-force array<string,mixed> $parameters
+';
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_edit.tpl.php -->

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("bills");
 
 $chid = GETPOSTINT("rowid");
@@ -44,12 +52,16 @@ if ($user->socid > 0) {
 
 $object = new Don($db);
 
+$permissiontoread = $user->hasRight('don', 'lire');
+$permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -58,7 +70,7 @@ if ($action == 'add_payment') {
 		exit;
 	}
 
-	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 
 	if (!(GETPOST("paymenttype") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
@@ -79,8 +91,8 @@ if ($action == 'add_payment') {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
-				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num(GETPOST($key));
+				$other_chid = (int) substr($key, 7);
+				$amounts[$other_chid] = (float) price2num(GETPOST($key));
 			}
 		}
 
@@ -95,12 +107,12 @@ if ($action == 'add_payment') {
 
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
-			$payment->chid         = $chid;
+			$payment->chid        = $chid;
 			$payment->datep     = $datepaid;
-			$payment->amounts      = $amounts; // Tableau de montant
-			$payment->paymenttype  = GETPOSTINT("paymenttype");
-			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$payment->note_public  = GETPOST("note_public", 'restricthtml');
+			$payment->amounts     = $amounts; // Tableau de montant
+			$payment->paymenttype = GETPOSTINT("paymenttype");
+			$payment->num_payment = GETPOST("num_payment", 'alphanohtml');
+			$payment->note_public = GETPOST("note_public", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $payment->create($user);
@@ -186,7 +198,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaid : -1) : 0;
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $object->date, '', 1, $langs->trans("DonationDate"));
 	print "</td>";

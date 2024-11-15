@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin", "products"));
@@ -59,11 +68,11 @@ print '</a>';
 print '<br>';
 print '<br>';
 
-// Recupere la version de PHP
+// Get PHP version
 $phpversion = version_php();
 print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."\n";
 
-// Recupere la version du serveur web
+// Get version web server
 print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
 
 print '<hr>';
@@ -637,9 +646,20 @@ if ($resql) {
 	print '<br>';
 	$db->free($resql);
 }
+
+// Perf advice on max size on list
+$MAXRECOMMENDED = 20;
+if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > $MAXRECOMMENDED) {
+	print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveALargeAmountOfRecordOnLists", getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT'), $MAXRECOMMENDED);
+} else {
+	print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("MaxNbOfRecordOnListIsOk", getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT'), $MAXRECOMMENDED);
+}
+
 print '</div>';
 
+
 // Browser
+
 print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong><br>';
 print '<div class="divsection">';
@@ -683,6 +703,7 @@ print 'MAIN_CACHE_COUNT : ';
 print yn(getDolGlobalInt('MAIN_CACHE_COUNT'));
 //.' '.img_picto('', 'warning.png');
 print '<br>';
+
 
 print '</div>';
 

@@ -20,7 +20,7 @@
 $force_install_nophpinfo = true;
 
 /** @var int	$force_install_noedit 				1 = Lock and hide environment variables, 2 = Lock all set variables */
-$force_install_noedit = 2;
+$force_install_noedit = 3;
 
 /** @var string	$force_install_message	 			Information message */
 $force_install_message = 'Welcome to your Dolibarr Docker install';
@@ -71,4 +71,4 @@ $force_install_dolibarrlogin = 'admin';
 $force_install_lockinstall = true;
 
 /** @var string $force_install_module				Enable module(s) (Comma separated class names list) */
-$force_install_module = 'modSociete,modFournisseur,modFacture';
+$force_install_module = '';

@@ -29,13 +29,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
 
-$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel');
 
+$chid = GETPOSTINT("id");
 $amounts = array();
 
 // Security check
@@ -51,7 +60,7 @@ $charge = new ChargeSociales($db);
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $user->hasRight('tax', 'charges', 'creer')) {
 	$error = 0;
 
 	if ($cancel) {
@@ -178,7 +187,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent">';
 

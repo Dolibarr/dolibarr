@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 
 	if (empty($user->rights->website)) {
 		$user->rights->website = new stdClass();
@@ -170,5 +171,24 @@ class WebsiteTest extends CommonClassTest
 		$result = dolKeepOnlyPhpCode($s);
 		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
 		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+	}
+
+	/**
+	 * testGetImageFromHtmlContent
+	 *
+	 * @return void
+	 */
+	public function testGetImageFromHtmlContent()
+	{
+		// Example of usage
+		$htmlContent = '<p>Some text before.</p><img src="image1.jpg"><p>Some text in between.</p><img src="/mydir/image2.jpg"><p>Some text after.</p>';
+
+		$firstImage = getImageFromHtmlContent($htmlContent, 1);
+		print __METHOD__." result firstImage=".$firstImage."\n";
+		$this->assertEquals('image1.jpg', $firstImage, ' failed to get firstimage');
+
+		$secondImage = getImageFromHtmlContent($htmlContent, 2);
+		print __METHOD__." result secondImage=".$secondImage."\n";
+		$this->assertEquals('/mydir/image2.jpg', $secondImage, ' failed to get second image');
 	}
 }

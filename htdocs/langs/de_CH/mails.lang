@@ -2,7 +2,6 @@
 Mailing=Mailversand
 EMailings=E-Mail-Kampagne
 MailCard=E-Mail-Kampagnenkarte
-MailTitle=Titel
 MailErrorsTo=Fehler an
 MailText=E-Mail-Text
 MailMessage=E-Mail Text

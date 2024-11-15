@@ -39,6 +39,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'other', 'holiday'));
+
 $action             = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction         = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $mode      = GETPOST('mode', 'alpha');
@@ -78,10 +89,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Load translation files required by the page
-$langs->loadLangs(array('users', 'other', 'holiday'));
-
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
@@ -181,7 +189,9 @@ $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
 $title = $langs->trans('CPTitreMenu');
-llxHeader('', $title);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-view_log');
 
 $sqlwhere = '';
 

@@ -178,7 +178,7 @@ LastBills=En son %s fatura
 LatestTemplateInvoices=En son %s şablon fatura
 LatestCustomerTemplateInvoices=En son %s müşteri şablon faturası
 LatestSupplierTemplateInvoices=En son %s tedarikçi şablon faturası
-LastCustomersBills=En yeni %s müşteri faturaları
+LastCustomersBills=En yeni %s müşteri faturaları 
 LastSuppliersBills=En son %s tedarikçi faturası
 AllBills=Tüm faturalar
 AllCustomerTemplateInvoices=Tüm şablon faturaları
@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Doğrulama tarihi = %s olan ödenmemiş 
 SendEmailsRemindersOnSupplierInvoiceDueDate=Doğrulanmış ve ödenmemiş tedarikçi faturaları için e-postayla hatırlatma gönder
 PaymentMadeForSeveralInvoices=Birden fazla fatura için ödeme yapıldı
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=EPC QR koduyla ödemeyi destekleyen bir akıllı telefonla ödeme yapmak için bu QR kodunu tarayın.

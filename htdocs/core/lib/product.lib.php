@@ -6,6 +6,9 @@
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +35,7 @@
  * Prepare array with list of tabs
  *
  * @param   Product	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
 {
@@ -73,7 +76,7 @@ function product_prepare_head($object)
 	// if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	if ((isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'read') || $user->hasRight('supplier_invoice', 'read'))
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
-		) {
+	) {
 		if ($usercancreadprice) {
 			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
@@ -93,6 +96,10 @@ function product_prepare_head($object)
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translations");
+		$nbTranslations = !empty($object->multilangs) ? count($object->multilangs) : 0;
+		if ($nbTranslations > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTranslations.'</span>';
+		}
 		$head[$h][2] = 'translation';
 		$h++;
 	}
@@ -192,6 +199,7 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
@@ -238,7 +246,7 @@ function product_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   ProductLot	$object		Object related to tabs
- * @return  array		     		Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function productlot_prepare_head($object)
 {
@@ -314,16 +322,18 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object information.
-*
-*  @return	array   	        head array with tabs
-*/
+ *  Return array head with list of tabs to view object information.
+ *
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
 function product_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_price');
+	$extrafields->fetch_name_optionals_label('product_customer_price');
 	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
 
 	$h = 0;
@@ -358,6 +368,24 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductLevelExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_price']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'levelAttributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'customerAttributes';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
@@ -377,7 +405,7 @@ function product_admin_prepare_head()
 /**
  * Return array head with list of tabs to view object information.
  *
- * @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_lot_admin_prepare_head()
 {
@@ -694,7 +722,7 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -814,7 +842,7 @@ function show_stats_for_batch($batch, $socid)
 		print '</tr>';
 	}
 
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -830,31 +858,31 @@ function show_stats_for_batch($batch, $socid)
  *	Return translation label of a unit key.
  *  Function kept for backward compatibility.
  *
- *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
+ *  @param	string  	$unitscale			Scale of unit: '0', '-3', '6', ...
  *	@param  string		$measuring_style    Style of unit: weight, volume,...
- *	@param	int			$unit               ID of unit (rowid in llx_c_units table)
+ *	@param	int			$unitid             ID of unit (rowid in llx_c_units table)
  *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *  @param	Translate	$outputlangs		Language object
  *	@return	string	   			         	Unit string
  * 	@see	measuringUnitString() formproduct->selectMeasuringUnits()
  */
-function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $use_short_label = 0, $outputlangs = null)
+function measuring_units_string($unitscale = '', $measuring_style = '', $unitid = 0, $use_short_label = 0, $outputlangs = null)
 {
-	return measuringUnitString($unit, $measuring_style, $scale, $use_short_label, $outputlangs);
+	return measuringUnitString($unitid, $measuring_style, $unitscale, $use_short_label, $outputlangs);
 }
 
 /**
  *	Return translation label of a unit key
  *
- *	@param	int			$unit               ID of unit (rowid in llx_c_units table)
+ *	@param	int			$unitid             ID of unit (rowid in llx_c_units table)
  *	@param  string		$measuring_style    Style of unit: 'weight', 'volume', ..., '' = 'net_measure' for option PRODUCT_ADD_NET_MEASURE
- *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
+ *  @param	string  	$unitscale			Scale of unit: '0', '-3', '6', ...
  *  @param	int			$use_short_label	1=Use very short label ('g' instead of 'gram'), not translated. 2=Use translated short label.
  *  @param	Translate	$outputlangs		Language object
  *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
-function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0, $outputlangs = null)
+function measuringUnitString($unitid, $measuring_style = '', $unitscale = '', $use_short_label = 0, $outputlangs = null)
 {
 	global $langs, $db;
 	global $measuring_unit_cache;
@@ -863,24 +891,24 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 		$outputlangs = $langs;
 	}
 
-	if (empty($measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label])) {
+	if (empty($measuring_unit_cache[$unitid.'_'.$measuring_style.'_'.$unitscale.'_'.$use_short_label])) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
 
-		if ($measuring_style == '' && $scale == '') {
+		if ($measuring_style == '' && $unitscale == '') {
 			$arrayforfilter = array(
-				't.rowid' => $unit,
+				't.rowid' => $unitid,
 				't.active' => 1
 			);
-		} elseif ($scale !== '') {
+		} elseif ($unitscale !== '') {
 			$arrayforfilter = array(
-				't.scale' => $scale,
+				't.scale' => $unitscale,
 				't.unit_type' => $measuring_style,
 				't.active' => 1
 			);
 		} else {
 			$arrayforfilter = array(
-				't.rowid' => $unit,
+				't.rowid' => $unitid,
 				't.unit_type' => $measuring_style,
 				't.active' => 1
 			);
@@ -901,22 +929,22 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 			} else {
 				$labeltoreturn = '';
 			}
-			$measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label] = $labeltoreturn;
+			$measuring_unit_cache[$unitid.'_'.$measuring_style.'_'.$unitscale.'_'.$use_short_label] = $labeltoreturn;
 			return $labeltoreturn;
 		}
 	} else {
-		return $measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label];
+		return $measuring_unit_cache[$unitid.'_'.$measuring_style.'_'.$unitscale.'_'.$use_short_label];
 	}
 }
 
 /**
  *	Transform a given unit scale into the square of that unit, if known.
  *
- *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unitscale       Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
  * 	@see	formproduct->selectMeasuringUnits
  */
-function measuring_units_squared($unit)
+function measuring_units_squared($unitscale)
 {
 	$measuring_units = array();
 	$measuring_units[0] = 0; // m -> m3
@@ -925,7 +953,7 @@ function measuring_units_squared($unit)
 	$measuring_units[-3] = -6; // mm -> mm2
 	$measuring_units[98] = 98; // foot -> foot2
 	$measuring_units[99] = 99; // inch -> inch2
-	return $measuring_units[$unit];
+	return $measuring_units[$unitscale];
 }
 
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $id = GETPOST('id', 'intcomma');
 $ref = GETPOST('ref', 'alpha');
@@ -43,7 +51,7 @@ $mine = ($mode == 'mine' ? 1 : 0);
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
@@ -76,12 +84,12 @@ $contactstatic = new Contact($db);
 $task = new Task($db);
 
 $arrayofcss = array('/includes/jsgantt/jsgantt.css');
-
+$arrayofjs = [];
 if (!empty($conf->use_javascript_ajax)) {
-	$arrayofjs = array(
-	'/includes/jsgantt/jsgantt.js',
-	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
-	);
+	$arrayofjs = [
+		'/includes/jsgantt/jsgantt.js',
+		'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
+	];
 }
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
@@ -91,7 +99,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
-llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-project page-card_ganttview');
 
 if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// To verify role of users
@@ -252,7 +260,7 @@ if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'cree
 	}
 }
 
-$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', (int) $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 $linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss' => 'reposition'));
 $linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly btnTitleSelected'));

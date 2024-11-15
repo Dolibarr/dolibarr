@@ -12,7 +12,8 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,13 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'sendings'));
 
@@ -112,9 +120,9 @@ $extrafields->fetch_name_optionals_label($object->table_element_line);
 $extrafields->fetch_name_optionals_label($objectorder->table_element_line);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptioncard', 'globalcard'));
 
 $date_delivery = dol_mktime(GETPOSTINT('date_deliveryhour'), GETPOSTINT('date_deliverymin'), 0, GETPOSTINT('date_deliverymonth'), GETPOSTINT('date_deliveryday'), GETPOSTINT('date_deliveryyear'));
@@ -170,6 +178,8 @@ if (isModEnabled("reception")) {
 	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -208,10 +218,10 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Reopen
-	if ($action == 'reopen' && $permissiontoadd) {
+	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
 		$result = $object->reOpen();
 	}
 
@@ -244,7 +254,7 @@ if (empty($reshook)) {
 
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 
 	if ($action == 'setref_supplier' && $permissiontoadd) {
@@ -288,11 +298,11 @@ if (empty($reshook)) {
 	// Create reception
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
-		$predef = '';
 
 		$db->begin();
 
 		$object->note = GETPOST('note', 'alpha');
+		$object->note_private = GETPOST('note', 'alpha');
 		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOSTINT('projectid');
@@ -307,6 +317,7 @@ if (empty($reshook)) {
 		// avec info diverses + qte a livrer
 
 		if ($object->origin == "supplierorder") {
+			$object->origin = 'order_supplier';
 			$classname = 'CommandeFournisseur';
 		} else {
 			$classname = ucfirst($object->origin);
@@ -437,6 +448,30 @@ if (empty($reshook)) {
 				if ($ret <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					// Define output language
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$object->fetch_thirdparty();
+						$outputlangs = $langs;
+						$newlang = '';
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						$model = $object->model_pdf;
+						$ret = $object->fetch($object->id); // Reload to get new records
+
+						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						if ($result < 0) {
+							dol_print_error($db, $object->error, $object->errors);
+						}
+					}
 				}
 			}
 		} else {
@@ -481,7 +516,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 				}
 			}
 		}
@@ -495,7 +530,7 @@ if (empty($reshook)) {
 		}
 
 		// TODO add alternative status
-		/*} elseif ($action == 'reopen' && (!empty($user->rights->reception->creer) || !empty($user->rights->reception->reception_advance->validate))) {
+		/*} elseif ($action == 'reopen' && ($user->hasRights('reception', 'creer') || $user->hasRights('reception', 'reception_advance', 'validate'))) {
 			$result = $object->setStatut(0);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -517,27 +552,27 @@ if (empty($reshook)) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'settracking_number') {
+		if ($action == 'settracking_number') {	// Test on permission to add
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
-		if ($action == 'settracking_url') {
+		if ($action == 'settracking_url') {		// Test on permission to add
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
-		if ($action == 'settrueWeight') {
+		if ($action == 'settrueWeight') {		// Test on permission to add
 			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
-		if ($action == 'settrueWidth') {
+		if ($action == 'settrueWidth') {		// Test on permission to add
 			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
-		if ($action == 'settrueHeight') {
+		if ($action == 'settrueHeight') {		// Test on permission to add
 			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
-		if ($action == 'settrueDepth') {
+		if ($action == 'settrueDepth') {		// Test on permission to add
 			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
-		if ($action == 'setshipping_method_id') {
+		if ($action == 'setshipping_method_id') {	// Test on permission to add
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
@@ -870,7 +905,7 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $objectsrc->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $objectsrc->note_public, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -878,7 +913,7 @@ if ($action == 'create') {
 			if ($objectsrc->note_private && !$user->socid) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $objectsrc->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $objectsrc->note_private, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -947,10 +982,10 @@ if ($action == 'create') {
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($list) > 1) {
+			if (is_countable($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
-				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);
+				print $form->selectarray('model', $list, getDolGlobalString('RECEPTION_ADDON_PDF'));
 				print "</td></tr>\n";
 			}
 
@@ -962,7 +997,7 @@ if ($action == 'create') {
 			$numAsked = 0;
 
 			/**
-			 * @var array $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
+			 * @var array<string,int> $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
 			 *                             extrafields from HTTP query can be assigned to the correct dispatch line
 			*/
 			$suffix2numAsked = array();
@@ -1559,7 +1594,7 @@ if ($action == 'create') {
 		if (!empty($object->trueWeight)) {
 			print ' ('.$langs->trans("SumOfProductWeights").': ';
 		}
-		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 		if (!empty($object->trueWeight)) {
 			print ')';
 		}
@@ -1611,16 +1646,16 @@ if ($action == 'create') {
 	// If reception volume not defined we use sum of products
 	if ($calculatedVolume > 0) {
 		if ($volumeUnit < 50) {
-			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT", 'no'));
 		} else {
-			print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
+			print $calculatedVolume.' '.measuringUnitString(0, "volume", (string) $volumeUnit);
 		}
 	}
 	if ($totalVolume > 0) {
 		if ($calculatedVolume) {
 			print ' ('.$langs->trans("SumOfProductVolumes").': ';
 		}
-		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'));
 		//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 		if ($calculatedVolume) {
 			print ')';
@@ -2215,7 +2250,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
 		print '</div><div class="fichehalfright">';

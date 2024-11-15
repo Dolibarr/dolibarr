@@ -38,25 +38,48 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 {
 	public $name = 'Standard'; // Model Name
 
-	public $code_modifiable; // Editable code
+	/**
+	 * @var int<0,1> Editable code
+	 */
+	public $code_modifiable;
 
-	public $code_modifiable_invalide; // Modified code if it is invalid
+	/**
+	 * @var int<0,1> Modified code if it is invalid
+	 */
+	public $code_modifiable_invalide;
 
-	public $code_modifiable_null; // Modified code if it is null
+	/**
+	 * @var int<0,1> Modified code if it is null
+	 */
+	public $code_modifiable_null;
 
-	public $code_null; // Optional code
+	/**
+	 * @var int<0,1> Optional code
+	 */
+	public $code_null;
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $searchcode; // Search string
+	/**
+	 * @var string Search string
+	 */
+	public $searchcode;
 
-	public $numbitcounter; // Number of digits the counter
+	/**
+	 * Number of digits for the counter (not bits, but digits)
+	 *
+	 * @var int<0,max>
+	 */
+	public $numbitcounter;
 
-	public $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
+	/**
+	 * @var int<0,1>	If the prefix field of third party must be filled when using {pre}
+	 */
+	public $prefixIsRequired;
 
 
 	/**
@@ -122,12 +145,16 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
-	 * @param	?Societe	$objthirdparty	Object third-party
-	 * @return	string						Return string example
+	 * @param	?Translate		$langs			Object langs
+	 * @param	?CommonObject	$objthirdparty	Object third-party / Societe
+	 * @return	string							Return string example
 	 */
-	public function getExample($langs, $objthirdparty = null)
+	public function getExample($langs = null, $objthirdparty = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objthirdparty, '');
 		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');
@@ -231,17 +258,22 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Societe		$thirdparty			Object third-party
-	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *	@param	Societe|Product	$thirdparty	Object third party
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
-	 *  @return int								0 if OK
+	 *  @return int<-7,0>						0 if OK
 	 * 											-1 ErrorBadCustomerCodeSyntax
 	 * 											-2 ErrorCustomerCodeRequired
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
 	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $thirdparty, $thirdparty_type, $type)
 	{
+		if (!$thirdparty instanceof Societe) {
+			dol_syslog(get_class($this)."::verif called with ".get_class($thirdparty)." Expected Societe", LOG_ERR);
+			return -7;
+		}
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$result = 0;

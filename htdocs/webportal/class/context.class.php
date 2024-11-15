@@ -32,14 +32,14 @@ require_once __DIR__ . '/webPortalTheme.class.php';
 class Context
 {
 	/**
-	 * @var Context Singleton
+	 * @var ?Context Singleton
 	 * @access private
 	 * @static
 	 */
 	private static $_instance = null;
 
 	/**
-	 * @var	DoliDb	$db		Database handler
+	 * @var	DoliDB	$db		Database handler
 	 */
 	public $db;
 
@@ -96,7 +96,7 @@ class Context
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors = array();
 
@@ -105,16 +105,39 @@ class Context
 	 */
 	public $action;
 
+	/**
+	 * @var string tpl directory
+	 */
 	public $tplDir;
+
+	/**
+	 * @var string tpl path
+	 */
 	public $tplPath;
+
+	/**
+	 * @var stdClass
+	 */
 	public $topMenu;
 
+	/**
+	 * @var string root url
+	 */
 	public $rootUrl;
 
+	/**
+	 * @var string[]
+	 */
 	public $menu_active = array();
 
+	/**
+	 * @var array{mesgs:string[],warnings:string[],errors:string[]}|array{} event messages
+	 */
 	public $eventMessages = array();
 
+	/**
+	 * @var string token key
+	 */
 	public $tokenKey = 'token';
 
 	/**
@@ -142,7 +165,6 @@ class Context
 	 * @var CommonObject Logged partnership
 	 */
 	public $logged_partnership = null;
-
 
 	/**
 	 * @var WebPortalTheme Theme data
@@ -303,7 +325,7 @@ class Context
 	 * Get root url
 	 *
 	 * @param	string			$controller		Controller name
-	 * @param	string|array	$moreParams		More parameters
+	 * @param	string|array<string,mixed>	$moreParams		More parameters
 	 * @param	bool			$addToken		Add token hash only if $controller is set
 	 * @return	string
 	 * @deprecated see getControllerUrl()
@@ -317,7 +339,7 @@ class Context
 	 * Get controller url according to context
 	 *
 	 * @param	string			$controller		Controller name
-	 * @param	string|array	$moreParams		More parameters
+	 * @param	string|array<string,mixed>	$moreParams		More parameters
 	 * @param	bool			$addToken		Add token hash only if controller is set
 	 * @return	string
 	 */
@@ -347,9 +369,9 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param 	string			$controller				Controller
-	 * @param 	string|array	$moreParams				More parameters
-	 * @param	array			$Tparams				Parameters
+	 * @param 	string						$controller		Controller
+	 * @param 	string|array<string,mixed>	$moreParams		More parameters
+	 * @param	array<string,mixed>			$Tparams		Parameters
 	 * @return	string
 	 */
 	public static function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())
@@ -455,7 +477,7 @@ class Context
 	/**
 	 * Set errors
 	 *
-	 * @param 	array	$errors		Errors
+	 * @param 	string|string[]	$errors		Errors
 	 * @return	void
 	 */
 	public function setError($errors)
@@ -535,9 +557,9 @@ class Context
 	 * Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
 	 * Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
-	 * @param	string		$mesg	Message string
-	 * @param	array|null	$mesgs	Message array
-	 * @param	string		$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @param	string			$mesg	Message string
+	 * @param	string[]|null	$mesgs	Message array
+	 * @param	string			$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
 	 * @return	void
 	 */
 	public function setEventMessages($mesg, $mesgs, $style = 'mesgs')
@@ -546,7 +568,7 @@ class Context
 			dol_syslog(__METHOD__ . ' Try to add a message in stack, but value to add is empty message', LOG_WARNING);
 		} else {
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
-				dol_print_error('', 'Bad parameter style=' . $style . ' for setEventMessages');
+				dol_print_error(null, 'Bad parameter style=' . $style . ' for setEventMessages');
 			}
 			if (empty($mesgs)) {
 				$this->setEventMessage($mesg, $style);

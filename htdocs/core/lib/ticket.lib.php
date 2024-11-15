@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 /**
  * Build tabs for admin page
  *
- * @return array
+ * @return array<array{0:string,1:string,2:string}>
  */
 function ticketAdminPrepareHead()
 {
@@ -79,7 +79,7 @@ function ticketAdminPrepareHead()
  *  Build tabs for a Ticket object
  *
  *  @param	Ticket	  $object		Object Ticket
- *  @return array				          Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ticket_prepare_head($object)
 {
@@ -186,10 +186,10 @@ function showDirectPublicLink($object)
 		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span><br>';
 		if ($url) {
 			$out .= '<div class="urllink">';
-			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" value="'.$url.'">';
+			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" spellcheck="false" value="'.$url.'">';
 			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
-			$out .= ajax_autoselect("directpubliclink", 0);
+			$out .= ajax_autoselect("directpubliclink", '');
 		} else {
 			$out .= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
 		}
@@ -218,12 +218,12 @@ function generate_random_id($car = 16)
 /**
  * Show http header, open body tag and show HTML header banner for public pages for tickets
  *
- * @param  string $title       Title
- * @param  string $head        Head array
- * @param  int    $disablejs   More content into html header
- * @param  int    $disablehead More content into html header
- * @param  array  $arrayofjs   Array of complementary js files
- * @param  array  $arrayofcss  Array of complementary css files
+ * @param  string		$title       Title
+ * @param  string		$head        Head array
+ * @param  int<0,1>		$disablejs   More content into html header
+ * @param  int<0,1>		$disablehead More content into html header
+ * @param  string[]		$arrayofjs   Array of complementary js files
+ * @param  string[]		$arrayofcss  Array of complementary css files
  * @return void
  */
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])

@@ -4,9 +4,10 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
@@ -44,17 +53,18 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
+
+$result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTINT('type');
 $tobuy = GETPOSTINT('tobuy');
 $salert = GETPOST('salert', 'alpha');
@@ -83,6 +93,10 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 //MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
 	$fk_entrepot = $lastWarehouseID;
+}
+//If the warehouse is set to the default selected user
+if (!GETPOSTISSET('fk_warehouse') && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+	$fk_entrepot = $user->fk_warehouse;
 }
 
 $texte = '';
@@ -116,7 +130,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 }
 
 if ($virtualdiffersfromphysical) {
-	$usevirtualstock = !getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT') ? 1 : 0;
+	$usevirtualstock = getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT') ? 0 : 1;
 } else {
 	$usevirtualstock = 0;
 }
@@ -151,8 +165,8 @@ if ($draftorder == 'on') {
 	$draftchecked = "checked";
 }
 
-// Create orders
-if ($action == 'order' && GETPOST('valid')) {
+// Create purchase orders
+if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'commande', 'creer')) {
 	$linecount = GETPOSTINT('linecount');
 	$box = 0;
 	$errorQty = 0;
@@ -202,7 +216,7 @@ if ($action == 'order' && GETPOST('valid')) {
 						// If we use multicurrency
 						if (isModEnabled('multicurrency') && !empty($productsupplier->fourn_multicurrency_code) && $productsupplier->fourn_multicurrency_code != $conf->currency) {
 							$line->multicurrency_code 		= $productsupplier->fourn_multicurrency_code;
-							$line->fk_multicurrency 		= $productsupplier->fourn_multicurrency_id;
+							$line->fk_multicurrency 		= (int) $productsupplier->fourn_multicurrency_id;
 							$line->multicurrency_subprice 	= $productsupplier->fourn_multicurrency_unitprice;
 							$line->multicurrency_total_ht	= $line->multicurrency_subprice * $qty;
 							$line->multicurrency_total_tva	= $line->multicurrency_total_ht * $tva;
@@ -212,10 +226,12 @@ if ($action == 'order' && GETPOST('valid')) {
 						$line->total_ht = $productsupplier->fourn_pu * $qty;
 						$line->total_tva = $line->total_ht * $tva;
 						$line->total_ttc = $line->total_ht + $line->total_tva;
-						$line->remise_percent = $productsupplier->remise_percent;
-						$line->ref_fourn = $productsupplier->ref_supplier;
+						$line->remise_percent = (float) $productsupplier->remise_percent;
+						$line->ref_fourn = $productsupplier->ref_supplier;	// deprecated
+						$line->ref_supplier = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
+
 						$suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
 					}
 				} elseif ($idprod == -1) {
@@ -253,7 +269,7 @@ if ($action == 'order' && GETPOST('valid')) {
 
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
-						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
 					$result = $order->addline(
 						$line->desc,
@@ -275,7 +291,7 @@ if ($action == 'order' && GETPOST('valid')) {
 						null,
 						0,
 						$line->fk_unit,
-						$line->multicurrency_subprice ?? 0
+						$line->multicurrency_subprice
 					);
 				}
 				if ($result < 0) {
@@ -297,12 +313,12 @@ if ($action == 'order' && GETPOST('valid')) {
 
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
-						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
 					$order->lines[] = $line;
 				}
-				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
-				$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+				$order->cond_reglement_id = (int) $order->thirdparty->cond_reglement_supplier_id;
+				$order->mode_reglement_id = (int) $order->thirdparty->mode_reglement_supplier_id;
 
 				$id = $order->create($user);
 				if ($id < 0) {
@@ -396,7 +412,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= ' AND p.fk_product_type = 1';
 	} else {
@@ -959,10 +975,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Desired stock
-		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
+		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? ($objp->desiredstockpse ? $desiredstockwarehouse : img_info($langs->trans('ProductValuesUsedBecauseNoValuesForThisWarehouse')) . '0') : $desiredstock).'</td>';
 
 		// Limit stock for alert
-		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $alertstockwarehouse : $alertstock).'</td>';
+		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? ($objp->seuil_stock_alertepse ? $alertstockwarehouse : img_info($langs->trans('ProductValuesUsedBecauseNoValuesForThisWarehouse')) . '0') : $alertstock).'</td>';
 
 		// Current stock (all warehouses)
 		print '<td class="right">' . $warning . $stock;

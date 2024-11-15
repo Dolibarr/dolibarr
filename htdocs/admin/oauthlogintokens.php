@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,16 @@ use OAuth\Common\Consumer\Credentials;
 
 $supportedoauth2array = getSupportedOauth2Array();
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
@@ -59,23 +70,20 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
-/*if (($mode == 'test' || $mode == 'setup') && empty($driver))
-{
+/*if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
 	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
 	exit;
 }*/
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 
 	$setupconstarray = GETPOST('setupdriver', 'array');
 
 	foreach ($setupconstarray as $setupconst) {
-		//print '<pre>'.print_r($setupconst, true).'</pre>';
-
 		$constname = dol_escape_htmltag($setupconst['varname']);
 		$constvalue = dol_escape_htmltag($setupconst['value']);
 		$consttype = dol_escape_htmltag($setupconst['type']);
@@ -250,7 +258,7 @@ if ($mode == 'setup' && $user->admin) {
 				$provider.'_NAME',
 				$provider.'_ID',
 				$provider.'_SECRET',
-				$provider.'_URLAUTHORIZE',	// For custom oauth links
+				$provider.'_URL',			// For custom oauth links
 				$provider.'_SCOPE'			// For custom oauth links
 			);
 		}
@@ -336,7 +344,6 @@ if ($mode == 'setup' && $user->admin) {
 				print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
 				$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 				print '<!-- data stored into field token: '.$storage->token.' -->';
-				//print $storage->token.'<br>';
 				//print $tokenobj->getExtraParams()['id_token'].'<br>';
 				//print $tokenobj->getAccessToken().'<br>';
 			} catch (Exception $e) {
@@ -439,16 +446,14 @@ if ($mode == 'setup' && $user->admin) {
 				if (is_object($tokenobj)) {
 					//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
 					if ($urltodelete) {
-						print '<a class="button smallpaddingimp reposition" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+						print '<a class="button button-delete smallpaddingimp reposition marginright" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a>';
 					} else {
-						print '<span class="opacitymedium">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span><br>';
+						print '<span class="opacitymedium marginright">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span>';
 					}
 				}
 				// Request remote token
 				if ($urltorenew) {
-					print '<a class="button smallpaddingimp reposition" href="'.$urltorenew.'">'.$langs->trans('GetAccess').'</a>';
-					print $form->textwithpicto('', $langs->trans('RequestAccess'));
-					print '<br>';
+					print '<a class="button smallpaddingimp reposition classfortooltip marginright" href="'.$urltorenew.'" title="'.dolPrintHTMLForAttribute($langs->trans('RequestAccess')).'">'.$langs->trans('GetAccess').'</a>';
 				}
 				// Request remote token
 				if ($urltorefresh && $refreshtoken) {
@@ -463,26 +468,42 @@ if ($mode == 'setup' && $user->admin) {
 			print '</td>';
 			print '</tr>';
 
-			print '<tr class="oddeven">';
-			print '<td>';
-			//var_dump($key);
-			print $langs->trans("Token").'</td>';
-			print '<td colspan="2">';
-
 			if (is_object($tokenobj)) {
+				print '<tr class="oddeven">';
+				print '<td>';
+				//var_dump($key);
+				print $langs->trans("TokenRawValue").'</td>';
+				print '<td colspan="2">';
+				if (is_object($tokenobj)) {
+					print '<textarea class="quatrevingtpercent small" rows="'.ROWS_4.'">'.var_export($tokenobj, true).'</textarea><br>'."\n";
+				}
+				print '</td>';
+				print '</tr>'."\n";
+
+				print '<tr class="oddeven">';
+				print '<td>';
+				//var_dump($key);
+				print $langs->trans("AccessToken").'</td>';
+				print '<td colspan="2">';
 				$tokentoshow = $tokenobj->getAccessToken();
-				print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span><br>';
+				print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span>';
 				//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
 				//print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
 				//var_dump($tokenobj->getExtraParams());
 				/*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
 				 print ''.join(',',$tokenobj->getExtraParams());
 				 print '</textarea>';*/
-			}
-			print '</td>';
-			print '</tr>'."\n";
 
-			if (is_object($tokenobj)) {
+				print '<span class="opacitymedium"> &nbsp; - &nbsp; ';
+				print $langs->trans("ExpirationDate").': ';
+				print '</span>';
+				print $expiredat;
+
+				print $expire ? ' ('.$langs->trans("TokenExpired").')' : ' ('.$langs->trans("TokenNotExpired").')';
+
+				print '</td>';
+				print '</tr>'."\n";
+
 				// Token refresh
 				print '<tr class="oddeven">';
 				print '<td>';
@@ -491,28 +512,6 @@ if ($mode == 'setup' && $user->admin) {
 				print '</td>';
 				print '<td colspan="2">';
 				print '<span class="" title="'.dol_escape_htmltag($refreshtoken).'">'.showValueWithClipboardCPButton($refreshtoken, 1, dol_trunc($refreshtoken, 32)).'</span>';
-				print '</td>';
-				print '</tr>';
-
-				// Token expired
-				print '<tr class="oddeven">';
-				print '<td>';
-				//var_dump($key);
-				print $langs->trans("TOKEN_EXPIRED");
-				print '</td>';
-				print '<td colspan="2">';
-				print yn($expire);
-				print '</td>';
-				print '</tr>';
-
-				// Token expired at
-				print '<tr class="oddeven">';
-				print '<td>';
-				//var_dump($key);
-				print $langs->trans("TOKEN_EXPIRE_AT");
-				print '</td>';
-				print '<td colspan="2">';
-				print $expiredat;
 				print '</td>';
 				print '</tr>';
 			}
@@ -542,6 +541,9 @@ if ($mode == 'test' && $user->admin) {
 		$classname = 'printing_'.$driver;
 		$langs->load($driver);
 		$printer = new $classname($db);
+
+		'@phan-var-force PrintingDriver $printer';
+
 		//print '<pre>'.print_r($printer, true).'</pre>';
 		if (count($printer->getlistAvailablePrinters())) {
 			if ($printer->listAvailablePrinters() == 0) {

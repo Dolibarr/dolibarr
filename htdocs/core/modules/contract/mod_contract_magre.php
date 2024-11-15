@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_magre extends ModelNumRefContracts
 {
-
 	// variables inherited from ModelNumRefContracts class
 	public $name = 'Magre';
 	public $version = 'dolibarr';
@@ -89,12 +89,18 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$contract = new Contrat($db);
+		$contract->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $contract);
+
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -107,7 +113,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@param	Societe			$objsoc     third party object
 	 *	@param	Contrat			$contract	contract object
-	 *	@return string|int      			Next value if OK, 0 if KO
+	 *	@return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{

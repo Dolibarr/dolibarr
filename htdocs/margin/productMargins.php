@@ -2,6 +2,7 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2020		Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
@@ -71,7 +80,7 @@ if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Product($db);
 $hookmanager->initHooks(array('marginproductlist'));
 
@@ -96,7 +105,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Products"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Products"), '', '', 0, 0, '', '', '', 'mod-margin page-productmargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
