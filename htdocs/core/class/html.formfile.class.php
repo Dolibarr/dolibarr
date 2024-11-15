@@ -507,7 +507,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled));
+			$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
 		}
 
 		$hookmanager->initHooks(array('formfile'));
