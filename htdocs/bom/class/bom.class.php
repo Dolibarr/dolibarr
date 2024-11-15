@@ -34,9 +34,6 @@ if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
 
 /**
  * Class for BOM
@@ -1471,8 +1468,12 @@ class BOM extends CommonObject
 					}
 				} else {
 					// Convert qty of line into hours
-					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
-					$qtyhourforline = convertDurationtoHour((float) $line->qty, $unitforline);
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($this->db);
+					$measuringUnits->fetch($line->fk_unit);
+
+					// The unit is a unit for time, so the $measuringUnits->scale is not a power of 10, but directly the factor to change unit into seconds
+					$qtyhourforline = $line->qty * (int) $measuringUnits->scale / 3600;
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
