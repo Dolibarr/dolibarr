@@ -71,7 +71,7 @@ if (empty($dolibarr_nocache)) {
 ?>
 /* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
 jQuery(document).ready(function () {
-	<?php if (empty($conf->dol_no_mouse_hover)): ?>
+	<?php if (empty($conf->dol_no_mouse_hover)) : ?>
 	/* for standard tooltip */
 	jQuery(".classfortooltip").tooltip({
 		tooltipClass: "mytooltip",
@@ -108,7 +108,7 @@ jQuery(document).ready(function () {
 		elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
-				url:"<?= DOL_URL_ROOT ?>/core/ajax/ajaxtooltip.php",
+				url:"<?php echo DOL_URL_ROOT; ?>/core/ajax/ajaxtooltip.php",
 				type: "post",
 				async: true,
 				data: params,
@@ -135,7 +135,7 @@ jQuery(document).ready(function () {
 	jQuery(".classfortooltiponclicktext").dialog({
 		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
 		maxHeight: window.innerHeight-60,
-		width: <?= ($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700) ?>,
+		width: <?php echo ($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700); ?>,
 		modal: true,
 		autoOpen: false
 	}).css("z-index: 5000");
@@ -227,7 +227,7 @@ jQuery(document).ready(function () {
 	// Click on the preview picto
 	jQuery(".documentpreview").click(function () {
 		console.log("We click on preview for element with href="+$(this).attr('href')+" mime="+$(this).attr('mime'));
-		document_preview($(this).attr('href'), $(this).attr('mime'), dol_escape_js(<?= $langs->transnoentities("Preview") ?>));
+		document_preview($(this).attr('href'), $(this).attr('mime'), dol_escape_js(<?php echo $langs->transnoentities("Preview"); ?>));
 		return false;
 	});
 });
@@ -323,7 +323,7 @@ jQuery(document).ready(function() {
 			$(this).parent().children(".clipboardCPButton").hide();
 			$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 		} else {
-			lastchild.innerHTML = '<div class="clipboardCPTextDivInside opacitymedium"><?= dol_escape_js($langs->trans('Error')) ?></div>';
+			lastchild.innerHTML = '<div class="clipboardCPTextDivInside opacitymedium"><?php echo dol_escape_js($langs->trans('Error')); ?></div>';
 		}
 		setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 	});
