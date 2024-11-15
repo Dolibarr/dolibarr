@@ -23,9 +23,9 @@ env:
 jobs:
   phpstan:
     runs-on: ubuntu-latest
-    permissions: write-all
-      # contents: write
-      # pull-requests: write
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,8 +63,8 @@ jobs:
           commit_email: dolibarr-bot@users.noreply.github.com
           commit_message: PHPStan > Update baseline
           target_branch: develop
-          pr_create: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && 1 || 0 }}
-          # pr_create: 1
+          # pr_create: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && 1 || 0 }}
+          pr_create: 1
           pr_title: PHPStan > Update baseline
           pr_reviewer: eldy
           pr_body: |
