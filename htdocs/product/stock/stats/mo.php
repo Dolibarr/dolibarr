@@ -101,6 +101,8 @@ $formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Productlot($db);
+	$batch = '';
+	$objectid = 0;
 	if ($ref) {
 		$tmp = explode('_', $ref);
 		$objectid = $tmp[0];
@@ -125,6 +127,7 @@ if ($id > 0 || !empty($ref)) {
 		$head = productlot_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
+		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
