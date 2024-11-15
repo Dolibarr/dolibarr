@@ -3919,30 +3919,6 @@ parameters:
 			path: ../../htdocs/categories/photos.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 9
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''bank_account'' and ''bank_account'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between Account\|Adherent\|Contact\|Product\|Project\|Societe\|Ticket\|User and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
-			message: '#^Variable \$elementtype might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/categories/viewcat.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -4609,12 +4585,6 @@ parameters:
 			path: ../../htdocs/comm/propal/card.php
 
 		-
-			message: '#^Parameter \#4 \$url of function dolGetButtonAction expects array\<int, array\{lang\: string, enabled\: bool, perm\: bool, label\: string, url\: string, urlroot\?\: string, isDropDown\?\: int\<0, 1\>\}\>\|string, array\{0\: array\{lang\: ''orders'', enabled\: bool, perm\: 0\|1, label\: ''AddOrder'', url\: non\-falsy\-string\}, 1\: array\{lang\: ''interventions'', enabled\: bool, perm\: 0\|1, label\: ''AddIntervention'', url\: non\-falsy\-string\}\|array\{lang\: ''orders'', enabled\: bool, perm\: bool, label\: ''AddPurchaseOrder'', url\: non\-falsy\-string\}, 2\: array\{lang\: ''contracts'', enabled\: bool, perm\: 0\|1, label\: ''AddContract'', url\: non\-falsy\-string\}\|array\{lang\: ''interventions'', enabled\: bool, perm\: 0\|1, label\: ''AddIntervention'', url\: non\-falsy\-string\}, 3\?\: array\{lang\: ''contracts'', enabled\: bool, perm\: 0\|1, label\: ''AddContract'', url\: non\-falsy\-string\}\|array\{lang\: ''invoice'', enabled\: bool, perm\: 0\|1, label\: ''CreateBill'', url\: non\-falsy\-string\}, 4\?\: array\{lang\: ''invoice'', enabled\: bool, perm\: 0\|1, label\: ''CreateBill'', url\: non\-falsy\-string\}\} given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/comm/propal/card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -5026,12 +4996,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../htdocs/commande/card.php
-
-		-
-			message: '#^Parameter \#4 \$url of function dolGetButtonAction expects array\<int, array\{lang\: string, enabled\: bool, perm\: bool, label\: string, url\: string, urlroot\?\: string, isDropDown\?\: int\<0, 1\>\}\>\|string, array\{0\: array\{lang\: ''interventions'', enabled\: bool, perm\: 0\|1, label\: ''AddIntervention'', url\: non\-falsy\-string\}, 1\: array\{lang\: ''contracts'', enabled\: bool, perm\: 0\|1, label\: ''AddContract'', url\: non\-falsy\-string\}, 2\: array\{lang\: ''bills'', enabled\: bool, perm\: bool, label\: ''CreateBill'', url\: non\-falsy\-string\}\|array\{lang\: ''sendings'', enabled\: bool, perm\: 0\|1, label\: ''CreateShipment'', url\: non\-falsy\-string\}, 3\?\: array\{lang\: ''bills'', enabled\: bool, perm\: bool, label\: ''CreateBill'', url\: non\-falsy\-string\}\}\|array\{0\: array\{lang\: ''orders'', enabled\: bool, perm\: bool, label\: ''AddPurchaseOrder'', url\: non\-falsy\-string\}, 1\: array\{lang\: ''interventions'', enabled\: bool, perm\: 0\|1, label\: ''AddIntervention'', url\: non\-falsy\-string\}, 2\: array\{lang\: ''contracts'', enabled\: bool, perm\: 0\|1, label\: ''AddContract'', url\: non\-falsy\-string\}, 3\: array\{lang\: ''bills'', enabled\: bool, perm\: bool, label\: ''CreateBill'', url\: non\-falsy\-string\}\|array\{lang\: ''sendings'', enabled\: bool, perm\: 0\|1, label\: ''CreateShipment'', url\: non\-falsy\-string\}, 4\?\: array\{lang\: ''bills'', enabled\: bool, perm\: bool, label\: ''CreateBill'', url\: non\-falsy\-string\}\} given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/commande/card.php
 
 		-
@@ -30751,36 +30715,6 @@ parameters:
 			path: ../../htdocs/projet/tasks/time.php
 
 		-
-			message: '#^Parameter \#1 \$hour of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#2 \$minute of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/projet/tasks/time.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -31885,30 +31819,6 @@ parameters:
 			path: ../../htdocs/public/test/test_arrays.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/public/test/test_badges.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/public/test/test_badges.php
-
-		-
-			message: '#^Parameter \#7 \$params of function dolGetButtonAction expects array\{confirm\?\: array\{url\?\: string, title\?\: string, content\?\: string, action\-btn\-label\?\: string, cancel\-btn\-label\?\: string, modal\?\: bool\}, attr\?\: array\<string, mixed\>, areDropdownButtons\?\: bool, backtopage\?\: string, lang\?\: string, enabled\?\: bool, perm\?\: int\<0, 1\>, label\?\: string, \.\.\.\}, array\{confirm\: true\} given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/public/test/test_buttons.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/public/test/test_buttons.php
-
-		-
 			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -31919,18 +31829,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/public/test/test_exec.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/test/test_forms.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/public/test/test_forms.php
 
 		-
 			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'

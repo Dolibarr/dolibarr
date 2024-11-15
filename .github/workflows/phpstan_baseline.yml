@@ -23,6 +23,9 @@ env:
 jobs:
   phpstan:
     runs-on: ubuntu-latest
+    permissions: write-all
+      # contents: write
+      # pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,7 +54,7 @@ jobs:
             phpstan-cache-${{ env.PHP_VERSION }}-
       - uses: ruudk/phpstan-baseline-refresh-create-pr-action@main
         with:
-          github_token: ${{ secrets.PAT_GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           phpstan_path: phpstan
           configuration_path: phpstan.neon.dist
           phpstan_additional_arguments: --memory-limit 7G -a build/phpstan/bootstrap_action.php

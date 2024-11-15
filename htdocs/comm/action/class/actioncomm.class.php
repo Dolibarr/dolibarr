@@ -1328,7 +1328,7 @@ class ActionComm extends CommonObject
 
 		$resarray = array();
 
-		dol_syslog(get_class()."::getActions", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getActions", LOG_DEBUG);
 
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
