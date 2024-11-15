@@ -76,55 +76,55 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$errors = 0;
 		$static_object = new Target($this->db);
 		$target_url = $static_object->fetchAll();
-		if (is_array($target_url)) {
-			foreach ($target_url as $key => $tmpobject) {
-				$actionarray = explode(",", $tmpobject->trigger_codes);
-				if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
-					// Build the answer object
-					$resobject = new stdClass();
-					$resobject->triggercode = $action;
-					$resobject->object = dol_clone($object, 2);
+		if (!is_array($target_url)) {
+			return 0;
+		}
+		foreach ($target_url as $key => $tmpobject) {
+			$actionarray = explode(",", $tmpobject->trigger_codes);
+			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
+				// Build the answer object
+				$resobject = new stdClass();
+				$resobject->triggercode = $action;
+				$resobject->object = dol_clone($object, 2);
 
-					if (property_exists($resobject->object, 'fields')) {
-						unset($resobject->object->fields);
-					}
-					if (property_exists($resobject->object, 'error')) {
-						unset($resobject->object->error);
-					}
-					if (property_exists($resobject->object, 'errors')) {
-						unset($resobject->object->errors);
-					}
+				if (property_exists($resobject->object, 'fields')) {
+					unset($resobject->object->fields);
+				}
+				if (property_exists($resobject->object, 'error')) {
+					unset($resobject->object->error);
+				}
+				if (property_exists($resobject->object, 'errors')) {
+					unset($resobject->object->errors);
+				}
 
-					$jsonstr = json_encode($resobject);
+				$jsonstr = json_encode($resobject);
 
-					$headers = array(
-						'Content-Type: application/json'
-						//'Accept: application/json'
-					);
+				$headers = array(
+					'Content-Type: application/json'
+					//'Accept: application/json'
+				);
 
-					$method = 'POSTALREADYFORMATED';
-					if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_AS_PARAM_STRING')) {		// For compatibility with v20- versions
-						$method = 'POST';
-					}
+				$method = 'POSTALREADYFORMATED';
+				if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_AS_PARAM_STRING')) {		// For compatibility with v20- versions
+					$method = 'POST';
+				}
 
-					// warning; the test page use its own call
-					$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
+				// warning; the test page use its own call
+				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
 
-					if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
-						$nbPosts++;
-					} else {
-						$errors++;
-						$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
-						$this->errors[] = $errormsg;
-						/*if (!empty($response['content'])) {
-							$this->errors[] = dol_trunc($response['content'], 200);
-						}*/
-						dol_syslog($errormsg, LOG_ERR);
-					}
+				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
+					$nbPosts++;
+				} else {
+					$errors++;
+					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$this->errors[] = $errormsg;
+					/*if (!empty($response['content'])) {
+						$this->errors[] = dol_trunc($response['content'], 200);
+					}*/
+					dol_syslog($errormsg, LOG_ERR);
 				}
 			}
 		}
-
 		if (!empty($errors)) {
 			return $errors * -1;
 		}
