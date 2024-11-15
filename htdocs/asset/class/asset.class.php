@@ -815,7 +815,7 @@ class Asset extends CommonObject
 		}
 
 		if (! empty($this->not_depreciated)) {
-			return 0;
+			return 1;
 		}
 
 		// Get depreciation options
