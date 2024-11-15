@@ -259,7 +259,7 @@ if (isModEnabled('order')) {
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), $langs->trans("PdfAddTermOfSaleHelp"));
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_ORDER');

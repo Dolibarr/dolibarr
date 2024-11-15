@@ -1103,7 +1103,7 @@ class Categorie extends CommonObject
 			return -1;
 		}
 		if (!count($categories)) {
-			return 0;
+			return [];
 		}
 
 		return $categories;
