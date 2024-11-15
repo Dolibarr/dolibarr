@@ -3542,7 +3542,7 @@ class CommandeFournisseur extends CommonOrder
 
 					// Build array with quantity deliverd by product
 					foreach ($supplierorderdispatch->lines as $line) {
-						if(array_key_exists($line->fk_product,$qtydelivered)) {
+						if (array_key_exists($line->fk_product, $qtydelivered)) {
 							$qtydelivered[$line->fk_product] += $line->qty;
 						} else {
 							$qtydelivered[$line->fk_product] = $line->qty;
@@ -3553,7 +3553,7 @@ class CommandeFournisseur extends CommonOrder
 						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
 							continue;
 						}
-						if(array_key_exists($line->fk_product,$qtywished)) {
+						if( array_key_exists($line->fk_product, $qtywished)) {
 							$qtywished[$line->fk_product] += $line->qty;
 						} else {
 							$qtywished[$line->fk_product] = $line->qty;
