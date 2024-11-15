@@ -528,7 +528,6 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		if ($idaction > 0) {
 			if (!$object->error) {
-
 				if (count($listofresourceid)) {
 					foreach ($listofresourceid as $resource_id => $val) {
 						$resource_type = 'dolresource';
@@ -1870,7 +1869,7 @@ if ($id > 0) {
 
 	// Confirmation suppression action
 	if ($action == 'delete') {
-		print $form->formconfirm("card.php?id=" . urlencode((string)($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
+		print $form->formconfirm("card.php?id=" . urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
 
 	if ($action == 'edit') {
