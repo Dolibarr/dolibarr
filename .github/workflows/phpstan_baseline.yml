@@ -8,13 +8,13 @@ on:
   # We want to be able to manually refresh the baseline too
   workflow_dispatch:
 
-  workflow_call:
-    inputs:
-      gh_event:
-        required: true
-        type: string
+  #workflow_call:
+  #  inputs:
+  #    gh_event:
+  #      required: true
+  #      type: string
   # Run PHPStan analyse on pull requests
-  pull_request:
+  #pull_request:
 
 env:
   PHP_VERSION: '8.2'

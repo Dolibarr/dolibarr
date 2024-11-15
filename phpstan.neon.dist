@@ -31,7 +31,7 @@ parameters:
 		- htdocs/core/class/lessc.class.php
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
-	# checkAlwaysTrueStrictComparison: false
+	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
