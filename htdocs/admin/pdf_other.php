@@ -227,7 +227,7 @@ if (isModEnabled('propal')) {
 	*/
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), $langs->trans("PdfAddTermOfSaleHelp"));
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_PROPAL');
