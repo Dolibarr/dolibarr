@@ -687,7 +687,11 @@ class Context
 
 		$sql = "SELECT sa.rowid as id, sa.pass_crypted";
 		$sql .= " FROM " . $this->db->prefix() . "societe_account as sa";
-		$sql .= " WHERE BINARY sa.login = '" . $this->db->escape($login) . "'"; // case sensitive
+		if ($this->db->type == 'pgsql') {
+			$sql .= " WHERE sa.login LIKE '" . $this->db->escape($login) . "'"; // case sensitive (PGSQL)
+		} else {
+			$sql .= " WHERE BINARY sa.login = '" . $this->db->escape($login) . "'"; // case sensitive (MySQL)
+		}
 		//$sql .= " AND BINARY sa.pass_crypted = '" . $this->db->escape($pass) . "'"; // case sensitive
 		$sql .= " AND sa.site = 'dolibarr_portal'";
 		$sql .= " AND sa.status = 1";
