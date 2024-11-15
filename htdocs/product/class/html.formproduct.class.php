@@ -631,7 +631,7 @@ class FormProduct
 			$return .= '</select>';
 		}
 
-		$return .= ajax_combobox($name);
+		$return .= ajax_combobox($name, [], 0, 0, 'resolve', '123456789'); // we don't want ajaxcombobox replace clearing option
 
 		return $return;
 	}
