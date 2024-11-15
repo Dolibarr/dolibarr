@@ -1339,18 +1339,33 @@ class ExtraFields
 					$val2 = $valarray[0];
 					$parent = '';
 					if (!empty($valarray[1])) {
-						$parent = $valarray[1];
-					}
-					$out .= '<option value="'.$key2.'"';
-					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
-					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-					$out .= '>';
-					if ($langfile && $val2) {
-						$out .= $langs->trans($val2);
+						$parent = explode(':', $valarray[1]);
+						$object = new $extrafieldsobjectkey($this->db);
+						$object->fetch($objectid);
+						if ($object->array_options[$parent[0]] == $parent[1]) {
+							$out .= '<option value="'.$key2.'"';
+							$out .= (((string) $value == (string) $key2) ? ' selected' : '');
+							$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+							$out .= '>';
+							if ($langfile && $val2) {
+								$out .= $langs->trans($val2);
+							} else {
+								$out .= $val2;
+							}
+							$out .= '</option>';
+						}
 					} else {
-						$out .= $val2;
+						$out .= '<option value="'.$key2.'"';
+						$out .= (((string) $value == (string) $key2) ? ' selected' : '');
+
+						$out .= '>';
+						if ($langfile && $val2) {
+							$out .= $langs->trans($val2);
+						} else {
+							$out .= $val2;
+						}
+						$out .= '</option>';
 					}
-					$out .= '</option>';
 				}
 				$out .= '</select>';
 			}
