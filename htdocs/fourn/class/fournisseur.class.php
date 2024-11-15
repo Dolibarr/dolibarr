@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
-	public $next_prev_filter = "te.fournisseur = 1"; // Used to add a filter in Form::showrefnav method
+	public $next_prev_filter = "te.fournisseur:=:1"; // Used to add a filter in Form::showrefnav method
 
 
 	/**

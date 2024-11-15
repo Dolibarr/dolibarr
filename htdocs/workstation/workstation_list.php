@@ -55,6 +55,8 @@ $backtopage  = GETPOST('backtopage', 'alpha');                                  
 $optioncss   = GETPOST('optioncss', 'aZ');                                                      // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
+
+// Load variables for pagination
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
@@ -159,12 +161,14 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
+// Permissions
 $permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
 $permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');
 $permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete');
 
 // Security check
 restrictedArea($user, $object->element, 0, $object->table_element, 'workstation');
+
 
 
 /*
@@ -229,6 +233,7 @@ $title = $langs->trans("Workstations");
 $help_url = 'EN:Module_Workstation';
 $morejs = array();
 $morecss = array();
+// llxHeader -> look down at section Output page
 
 
 // Build and execute select
@@ -242,6 +247,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -260,6 +266,7 @@ if (!empty($groups)) {
 if (!empty($resources)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_resource wr ON (wr.fk_workstation = t.rowid)';
 }
+
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -796,10 +803,12 @@ while ($i < $imaxinloop) {
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';

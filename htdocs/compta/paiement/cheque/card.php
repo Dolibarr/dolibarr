@@ -232,7 +232,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('banqu
 }
 
 if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
-	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
+	$reject_date = dol_mktime(0, 0, 0, GETPOSTINT('rejectdate_month'), GETPOSTINT('rejectdate_day'), GETPOSTINT('rejectdate_year'));
 	$rejected_check = GETPOSTINT('bankid');
 
 	$object->fetch($id);

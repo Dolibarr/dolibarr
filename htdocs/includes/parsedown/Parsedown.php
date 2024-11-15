@@ -894,7 +894,7 @@ class Parsedown
 	#
 	# Table
 
-	protected function blockTable($Line, ?array $Block = null)
+	protected function blockTable($Line, array $Block = null)
 	{
 		if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
 		{

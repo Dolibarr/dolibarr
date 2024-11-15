@@ -48,6 +48,7 @@ if (!empty($user->socid)) {
 $result = restrictedArea($user, 'fournisseur', 0, 'facture_fourn', 'facture');
 
 $action = GETPOST('action', 'aZ09');
+$fileToRemove = GETPOST('removefile', 'alpha');
 
 $socid = 0;
 if ($user->socid > 0) {
@@ -93,6 +94,20 @@ if ($action == 'builddoc' && $permissiontoread) {
 	}
 
 	$year = GETPOSTINT("reyear");
+}
+
+// Delete file from disk
+if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
+	$fileDirectory = dirname($dir.'/'.$fileToRemove);
+	if (dol_delete_file($dir.'/'.$fileToRemove)) {
+		// Delete empty directory after file deletion
+		if (empty(dol_dir_list($fileDirectory))) {
+			dol_delete_dir($fileDirectory);
+		}
+		setEventMessages($langs->trans("FileWasRemoved", $fileToRemove), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", $fileToRemove), null, 'errors');
+	}
 }
 
 
@@ -158,6 +173,7 @@ if ($year) {
 		print '<td>'.$langs->trans("Reporting").'</td>';
 		print '<td class="right">'.$langs->trans("Size").'</td>';
 		print '<td class="right">'.$langs->trans("Date").'</td>';
+		print '<td class="right"></td>';
 		print '</tr>';
 
 		if (is_resource($handle)) {
@@ -167,7 +183,9 @@ if ($year) {
 					$relativepath = $year.'/'.$file;
 					print '<tr class="oddeven"><td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_fournisseur', 'payments/'.$relativepath, 0).'</td>';
 					print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-					print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td></tr>';
+					print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
+					print '<td class="right"><a href="rapport.php?removefile='.urlencode($relativepath).'&action=removedoc&token='.newToken().'">'.img_delete().'</a></td>';
+					print '</tr>';
 				}
 			}
 			closedir($handle);

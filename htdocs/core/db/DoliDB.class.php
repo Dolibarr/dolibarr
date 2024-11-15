@@ -122,9 +122,10 @@ abstract class DoliDB implements Database
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
+	 * @param	int		$mode			0=Use, 1=Force
 	 * @return	string					SQL string
 	 */
-	public function hintindex($nameofindex)
+	public function hintindex($nameofindex, $mode = 1)
 	{
 		return '';
 	}

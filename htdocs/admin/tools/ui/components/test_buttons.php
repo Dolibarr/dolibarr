@@ -50,33 +50,33 @@ llxHeader('', 'Documentation and examples for theme');
 
 	<div class="bd-example">
 	<?php
-		$n = 1;
-		$label = 'My action label used for accessibility visually for impaired people';
-		$html = '<span class="fa fa-clone" ></span> My default action';
-		$actionType = 'default';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = '#'.$id;
-		$userRight = 1;
-		$params = array();
+	$n = 1;
+	$label = 'My action label used for accessibility visually for impaired people';
+	$html = '<span class="fa fa-clone" ></span> My default action';
+	$actionType = 'default';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = '#'.$id;
+	$userRight = 1;
+	$params = array();
 
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
-
-
-		$html = '<span class="fa fa-clone" ></span> My delete action';
-		$actionType = 'delete';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 
-		$html = '<span class="fa fa-clone" ></span> My danger action';
-		$actionType = 'danger';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	$html = '<span class="fa fa-clone" ></span> My delete action';
+	$actionType = 'delete';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+
+
+	$html = '<span class="fa fa-clone" ></span> My danger action';
+	$actionType = 'danger';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 	?>
 	</div>
@@ -85,31 +85,31 @@ llxHeader('', 'Documentation and examples for theme');
 
 	<div class="bd-example">
 	<?php
-		$label = 'My action label used for accessibility visually for impaired people';
-		$html = '<span class="fa fa-clone" ></span> My default action';
-		$actionType = 'default';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = '#'.$id;
-		$userRight = 0;
+	$label = 'My action label used for accessibility visually for impaired people';
+	$html = '<span class="fa fa-clone" ></span> My default action';
+	$actionType = 'default';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = '#'.$id;
+	$userRight = 0;
 
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
-
-
-		$html = '<span class="fa fa-clone" ></span> My delete action';
-		$actionType = 'delete';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 
-		$html = '<span class="fa fa-clone" ></span> My danger action';
-		$actionType = 'danger';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	$html = '<span class="fa fa-clone" ></span> My delete action';
+	$actionType = 'delete';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+
+
+	$html = '<span class="fa fa-clone" ></span> My danger action';
+	$actionType = 'danger';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 	?>
 	</div>
@@ -129,7 +129,7 @@ llxHeader('', 'Documentation and examples for theme');
 		$url = '#'.$id;
 		$userRight = 1;
 		$params = array(
-			'confirm' => true
+		'confirm' => true
 		);
 
 		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
@@ -142,13 +142,13 @@ llxHeader('', 'Documentation and examples for theme');
 		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
 
 		$params = array(
-			'confirm' => array(
+		'confirm' => array(
 				'url' => 'your confirm action url',
 				'title' => 'Your title to display',
 				'action-btn-label' => 'Your confirm label',
 				'cancel-btn-label' => 'Your cancel label',
 				'content' => 'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>'
-			)
+		)
 		);
 
 		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
@@ -168,7 +168,7 @@ llxHeader('', 'Documentation and examples for theme');
 		$url = '#'.$id;
 		$userRight = 0;
 		$params = array(
-			'confirm' => true
+		'confirm' => true
 		);
 
 		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
@@ -181,13 +181,13 @@ llxHeader('', 'Documentation and examples for theme');
 		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
 
 		$params = array(
-			'confirm' => array(
+		'confirm' => array(
 				'url' => 'your confirm action url',
 				'title' => 'Your title to display',
 				'action-btn-label' => 'Your confirm label',
 				'cancel-btn-label' => 'Your cancel label',
 				'content' => 'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>'
-			)
+		)
 		);
 
 		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);

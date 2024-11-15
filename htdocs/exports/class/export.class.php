@@ -504,7 +504,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -610,7 +610,7 @@ class Export
 							if (!empty($ValueField) && $ValueField == $obj->rowid) {
 								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.dolPrintHTML($labeltoshow).'</option>';
 							} else {
-								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
 							}
 							$i++;
 						}
@@ -833,13 +833,19 @@ class Export
 										return -1;
 									}
 
-									$methodName = $item['method'];
+									$methodName = dol_escape_all($item['method']);
 									$params = [];
 									if (!empty($item['method_params'])) {
+										// Example used for export of "Stocks and location (warehouse) with batch" in field "Date of last movement"
 										foreach ($item['method_params'] as $paramName) {
-											$params[] = $obj->$paramName ?? null;
+											if (property_exists($obj, $paramName)) {
+												$params[] = $obj->$paramName;
+											} else {
+												$params[] = $paramName;
+											}
 										}
 									}
+									//var_dump($tmpObject);var_dump($methodName);var_dump($params);exit;
 									$value = $tmpObject->$methodName(...$params);
 								}
 								$obj->$alias = $value;

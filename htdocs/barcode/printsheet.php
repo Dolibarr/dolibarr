@@ -157,7 +157,7 @@ if (empty($reshook)) {
 			// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
 			$stdobject = new GenericObject($db);
 			$stdobject->barcode_type = $fk_barcode_type;
-			$result = $stdobject->fetch_barcode();
+			$result = $stdobject->fetchBarCode();
 			if ($result <= 0) {
 				$error++;
 				setEventMessages('Failed to get bar code type information '.$stdobject->error, $stdobject->errors, 'errors');
@@ -171,8 +171,8 @@ if (empty($reshook)) {
 
 		if (!$error && $stdobject !== null) {
 			$code = $forbarcode;
-			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
-			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
+			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetchBarCode). Engine.
+			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetchBarCode). Example 'ean', 'isbn', ...
 
 			$diroutput = $conf->barcode->dir_temp;
 			dol_mkdir($diroutput);
@@ -441,7 +441,7 @@ if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';
-	$form->select_produits(GETPOSTINT('productid'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
+	$form->select_produits(GETPOSTINT('productid'), 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
 	print ' &nbsp; <input type="submit" class="button small" id="submitproduct" name="submitproduct" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }

@@ -39,6 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+
 
 /**
  * @var Conf $conf
@@ -125,16 +128,9 @@ if (empty($reshook)) {
 			$paymentservice = GETPOST('paymentservice');
 
 			// Get chosen iban id
-			$iban = explode(" / ", GETPOST('ribList'))[0];
-			$sql = "SELECT rowid FROM ".$db->prefix()."societe_rib WHERE iban_prefix = '".$db->escape($iban)."'" ;
-			$resql = $object->db->query($sql);
-			if ($resql) {
-				if ($resql->num_rows) {
-					$selectedRibObj = $object->db->fetch_object($resql);
-				}
-			}
+			$iban = GETPOSTINT('accountcustomerid');
 			$amount = GETPOST('withdraw_request_amount', 'alpha');
-			$result = $object->demande_prelevement($user, price2num($amount), $newtype, $sourcetype, 0, $selectedRibObj->rowid ?? 0);
+			$result = $object->demande_prelevement($user, price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -803,24 +799,26 @@ if ($object->id > 0) {
 				//print '</td>';
 				//print '<td class="left nowraponall">';
 
-				$ribList = $object->thirdparty->get_all_rib();
-				$ribForSelection = [];
-				$defaultRib = '';
-				foreach ($ribList as $rib) {
-					$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
-					$ribForSelection[$rib->id] = $ribString;
-					if ($rib->default_rib == 1) {
-						$defaultRib = $ribString;
+				// if societe rib in model invoice, we preselect it
+				$selectedRib = '';
+				if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
+					$facturerec = new FactureRec($db);
+					$facturerec->fetch($object->fk_fac_rec_source);
+					if ($facturerec->fk_societe_rib) {
+						$companyBankAccount = new CompanyBankAccount($db);
+						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
+						$selectedRib = $companyBankAccount->id;
 					}
 				}
 
-				$selectedRib= $defaultRib;
-				$listeOfRibs = GETPOST('ribList');
-				$selectedRib = $form->formIban(!empty($listeOfRibs) ? $listeOfRibs: $defaultRib, 'ribList', 0, $type, 0, $ribForSelection);
+				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
 
-				if (!empty($rib->iban)) {
-					if (!$rib->verif()) {
-						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
+				$defaultRibId = $object->thirdparty->getDefaultRib();
+				if ($defaultRibId) {
+					$companyBankAccount = new CompanyBankAccount($db);
+					$res = $companyBankAccount->fetch($defaultRibId);
+					if ($res > 0 && !$companyBankAccount->verif()) {
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
 					}
 				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 						print img_warning($langs->trans("NoDefaultIBANFound"));

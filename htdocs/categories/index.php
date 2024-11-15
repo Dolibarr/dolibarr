@@ -52,7 +52,7 @@ $nosearch = GETPOSTINT('nosearch');
 
 $categstatic = new Categorie($db);
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array

@@ -1088,23 +1088,47 @@ class BlockedLog
 
 		$previoussignature = '';
 
-		$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
+		// Fast search of previous record by searching with beforeid - 1. This is very fast and will work 99% of time.
 		if ($beforeid) {
-			$sql .= " AND rowid < ".(int) $beforeid;
-		}
-		$sql .= " ORDER BY rowid DESC LIMIT 1";
-		$sql .= ($withlock ? " FOR UPDATE " : "");
+			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " AND rowid = ".((int) $beforeid - 1);
+			$sql .= ($withlock ? " FOR UPDATE " : "");
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			if ($obj) {
-				$previoussignature = $obj->signature;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$previoussignature = $obj->signature;
+				}
+			} else {
+				dol_print_error($this->db);
+				exit;
 			}
-		} else {
-			dol_print_error($this->db);
-			exit;
+		}
+
+		if (empty($previoussignature)) {
+			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			if ($beforeid) {
+				$sql.= $this->db->hintindex('entity_rowid', 1);
+			}
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			if ($beforeid) {
+				$sql .= " AND rowid < ".(int) $beforeid;
+			}
+			$sql .= " ORDER BY rowid DESC LIMIT 1";
+			$sql .= ($withlock ? " FOR UPDATE " : "");
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$previoussignature = $obj->signature;
+				}
+			} else {
+				dol_print_error($this->db);
+				exit;
+			}
 		}
 
 		if (empty($previoussignature)) {

@@ -495,6 +495,8 @@ if (empty($numref)) {
 		$obj = $db->fetch_object($resql);
 		$total = $obj->amount;
 		$db->free($resql);
+	} else {
+		$total = 0;
 	}
 
 	$totalc = $totald = 0;

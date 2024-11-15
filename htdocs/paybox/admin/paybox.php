@@ -34,6 +34,7 @@ $servicename = 'PayBox';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
