@@ -762,7 +762,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
 			}
 		}
-		if (is_array($extralabels)) {
+		if (!empty($extralabels) && is_array($extralabels)) {
 			foreach ($extralabels as $key => $val) {
 				if (!empty($arrayfields['ef.'.$key]['checked'])) {
 					print getTitleFieldOfList($arrayfields['ef.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
