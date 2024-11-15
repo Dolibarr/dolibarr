@@ -11323,7 +11323,7 @@ function printCommonFooter($zone = 'private')
 										}
 
 										let tmpvalueisempty = false;
-										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '') {
+										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1) {
 											tmpvalueisempty = true;
 										}
 										if (tmpvalue === '0' && tmptypefield == 'select') {
