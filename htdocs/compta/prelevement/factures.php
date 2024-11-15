@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
@@ -68,7 +77,7 @@ if (!$sortorder) {
 $object = new BonPrelevement($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
@@ -417,7 +426,8 @@ if ($resql) {
 		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
 		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
 			$langs->load("errors");
-			print img_warning("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested));
+			// Warning, amount of file (%s) differs from the sum of lines (%s)
+			print img_warning($langs->trans("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested)));
 		}
 		print price($totalamount_requested);
 		print "</td>\n";

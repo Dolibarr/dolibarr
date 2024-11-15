@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Personalbeschaffung
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Verwalten und verfolgen Sie Rekrutierungs-Kampagnen für offene Stellen
-
-#
 # Admin page
-#
 RecruitmentSetup = Rekrutierung-Konfiguration
 RecruitmentSetupPage = Geben Sie hier die Konfiguration der Haupteinstellungen für das Modul Rekrutierung ein
 RecruitmentArea=Personalbeschaffungsbereich
 PublicInterfaceRecruitmentDesc=Öffentliche Seiten von Stellen sind öffentliche URLs um offene Stellen anzeigen und darauf antworten zu können. Für jede offene Stelle existiert ein eigener Link zu jedem Stelleneintrag.
 EnablePublicRecruitmentPages=Öffentliche Seiten mit offenen Stellen aktivieren
 
-#
-# About page
-#
-RecruitmentAbout = Über Rekrutierung
-RecruitmentAboutPage = Seite 'Über Personalbeschaffung' 
 NbOfEmployeesExpected=Erwartete Anzahl von Mitarbeitern
 JobLabel=Bezeichnung der beruflichen Position
 WorkPlace=Arbeitsort
@@ -47,7 +34,6 @@ PositionToBeFilled=Offene Stelle
 PositionsToBeFilled=Offene Stellen
 ListOfPositionsToBeFilled=Liste der offenen Stellen
 NewPositionToBeFilled=Neue offene Stelle(n)
-
 JobOfferToBeFilled=Zu besetzende Stelle
 ThisIsInformationOnJobPosition=Information über die zu besetzende Stelle
 ContactForRecruitment=Ansprechpartner für die Rekrutierung

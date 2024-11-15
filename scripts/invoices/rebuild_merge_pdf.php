@@ -2,6 +2,8 @@
 <?php
 /*
  * Copyright (C) 2009-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +41,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Include Dolibarr environment
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 // After this $db is an opened handler to database. We close it at end of file.
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php";
@@ -85,7 +88,7 @@ $datebeforedate = '';
 $paymentdateafter = '';
 $paymentdatebefore = '';
 $paymentonbankid = 0;
-$thirdpartiesid = 0;
+$thirdpartiesid = array();
 
 foreach ($argv as $key => $value) {
 	$found = false;
@@ -213,6 +216,9 @@ foreach ($argv as $key => $value) {
 		rebuild_merge_pdf_usage();
 		exit(1);
 	}
+
+	$thirdpartiesid = array_map('intval', $thirdpartiesid);
+	'@phan-var-force int[] $thirdpartiesid';
 }
 
 // Check if an option and a filter has been provided
@@ -232,7 +238,7 @@ if (in_array('bank', $filter) && in_array('nopayment', $filter)) {
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result = rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid, $thirdpartiesid, $fileprefix);
+$result = rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, (string) $paymentonbankid, $thirdpartiesid, $fileprefix);
 
 // -------------------- END OF YOUR CODE --------------------
 

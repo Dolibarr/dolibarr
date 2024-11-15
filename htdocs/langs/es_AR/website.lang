@@ -2,7 +2,9 @@
 ReadPerm=Leído
 WebsiteAccounts=Cuentas de sitio web
 WebPortalAccessHidden=Escondido
-WebPortalOrderListMenu=Órdenes
+WebPortalOrderListTitle=Ordenes de Venta
 WebPortalMemberCardTitle=Ficha de miembro
-WebPortalMemberCardDesc=Ficha de miembro
 WebPortalPropal=Propuesta
+removeFilter=Quitar filtro
+requiredField=Campo requerido
+unitPrice=Precio unitario

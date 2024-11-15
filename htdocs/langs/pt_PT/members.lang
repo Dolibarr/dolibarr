@@ -200,8 +200,8 @@ MembersStatisticsDesc=Escolha as estatísticas que você deseja ler ...
 MenuMembersStats=Estatística
 LastMemberDate=Última assinatura data
 LatestSubscriptionDate=Último Contribuição data
-MemberNature=Natureza do membro
-MembersNature=Natureza do membros
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s posso publicar minha assinatura no <a target="_blank" href="%s">registro público</a>
 MembershipPublic=Associação pública
 NewMemberbyWeb=Novo membro acrescentou. Aguardando aprovação
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

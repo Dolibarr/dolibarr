@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,18 @@ include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ */
+
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
@@ -40,8 +52,8 @@ $step = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This page may be long. We are increasing the time allowed.
+// Only works if not in safe_mode.
 $err = error_reporting();
 error_reporting(0);
 @set_time_limit(120);
@@ -239,7 +251,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$name = substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
-		$ok = run_sql($dir.$file, 0, '', 1);
+		$ok = run_sql($dir.$file, 0, 0, 1);
 	}
 }
 
@@ -517,7 +529,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$name=preg_replace('/\'/','',$name);
 			*/
 
-			$tmp = explode('.', $obj->logo);
+			$tmp = explode('.', (string) $obj->logo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -591,7 +603,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 			 $name=preg_replace('/\'/','',$name);
 			 */
 
-			$tmp = explode('.', $obj->photo);
+			$tmp = explode('.', (string) $obj->photo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -843,7 +855,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, true);
+		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
@@ -919,7 +931,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 					$id = $reg[1];
 				}
 
-				if ($id || $ref) {
+				if (($id || $ref) && $object_instance !== null) {
 					//print 'Fetch '.$id.' or '.$ref.'<br>';
 					$result = $object_instance->fetch($id, $ref);
 					//print $result.'<br>';

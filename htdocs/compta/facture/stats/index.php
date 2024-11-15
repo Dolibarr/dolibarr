@@ -5,6 +5,8 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +39,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
@@ -60,7 +70,7 @@ $categ_id = GETPOSTINT('categ_id');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
-$custcats = GETPOST('custcats', 'array');
+$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -111,18 +121,18 @@ if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 
@@ -319,7 +329,7 @@ if (isModEnabled('category')) {
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	print $form->multiselectarray('select_categ_categ_id', $cate_arbo, GETPOST('select_categ_categ_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
 }
@@ -332,11 +342,11 @@ print '</td></tr>';
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
-	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '1,2'=>$langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
+	$liststatus = array('0' => $langs->trans("BillStatusDraft"), '1' => $langs->trans("BillStatusNotPaid"), '2' => $langs->trans("BillStatusPaid"), '1,2' => $langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3' => $langs->trans("BillStatusCanceled"));
 	print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 if ($mode == 'supplier') {
-	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
+	$liststatus = array('0' => $langs->trans("BillStatusDraft"), '1' => $langs->trans("BillStatusNotPaid"), '2' => $langs->trans("BillStatusPaid"));
 	print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 print '</td></tr>';
@@ -370,7 +380,7 @@ print '</tr>';
 
 $oldyear = 0;
 foreach ($data as $val) {
-	$year = $val['year'];
+	$year = (int) $val['year'];
 	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 

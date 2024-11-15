@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -39,6 +41,13 @@ if (!defined('NOREQUIREMENU')) {
 }
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -111,9 +120,9 @@ print '<div class="login_block_getinfo">'."\n";
 $toprightmenu .= '<div class="login_block_user">';
 
 // Login name with photo and tooltip
-$mode = -1;
+$picto = -1;
 $toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-$toprightmenu .= $user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+$toprightmenu .= $user->getNomUrl($picto, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
 $toprightmenu .= '</div></div>';
 
 $toprightmenu .= '</div>'."\n";

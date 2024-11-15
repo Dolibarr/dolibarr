@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -38,7 +38,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -115,15 +115,14 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, null);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -134,9 +133,9 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc	    Object thirdparty
-	 *  @param  Productlot		$object		Object we need next value for
-	 *  @return string|int      			Value if OK, 0 if KO
+	 *  @param	?Societe	$objsoc		Object thirdparty
+	 *  @param  ?Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0
 	 */
 	public function getNextValue($objsoc, $object)
 	{

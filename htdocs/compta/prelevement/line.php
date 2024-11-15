@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
@@ -84,6 +93,7 @@ $error = 0;
 
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
+		$datarej = null;
 		if (GETPOSTINT('remonth')) {
 			$daterej = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		}
@@ -151,11 +161,12 @@ $head = array();
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.((int) $id).'&type='.urlencode($type);
 $head[$h][1] = $title;
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 if ($id) {
 	$lipre = new LignePrelevement($db);
+	$bon = null;
 
 	if ($lipre->fetch($id) >= 0) {
 		$bon = new BonPrelevement($db);
@@ -264,7 +275,7 @@ if ($id) {
 	print '<div class="tabsAction">';
 
 	if ($action == '') {
-		if ($bon->statut == BonPrelevement::STATUS_CREDITED) {
+		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
 					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';

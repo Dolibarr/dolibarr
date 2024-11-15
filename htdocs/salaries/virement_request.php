@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
- * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdrawals"));
 
@@ -74,7 +84,6 @@ if ($user->socid) {
 }
 
 
-
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
@@ -83,7 +92,7 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salaryinfo', 'globalcard'));
 
 $object = new Salary($db);
@@ -153,7 +162,7 @@ if ($reshook < 0) {
 }
 
 
-if ($action == "new") {
+if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
@@ -185,8 +194,6 @@ if ($action == "delete" && $permissiontodelete) {
 		}
 	}
 }
-
-
 
 
 /*
@@ -427,7 +434,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	$resteapayer = $object->amount - $totalpaid;
+	$resteapayer = (float) $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -475,7 +482,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
-			print '<input type="hidden" name="action" value="new" />';
+			print '<input type="hidden" name="action" value="add" />';
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
@@ -490,7 +497,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
-				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="action" value="add" />';
 				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
@@ -520,14 +527,8 @@ print '</div>';
 print '<div>';
 
 
-/*
- * Withdraw receipts
- */
 $bprev = new BonPrelevement($db);
 
-/*
-	 * Withdrawals
-	 */
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';

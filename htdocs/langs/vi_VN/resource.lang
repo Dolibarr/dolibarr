@@ -9,33 +9,30 @@ ActionsOnResource=Sự kiện về tài nguyên này
 ResourcePageIndex=Danh sách tài nguyên
 ResourceSingular=Tài nguyên
 ResourceCard=Thẻ tài nguyên
+NewResource=Tạo tài nguyên
 AddResource=Tạo tài nguyên
 ResourceFormLabel_ref=Tên tài nguyên
-ResourceType=Loại tài nguyên
 ResourceFormLabel_description=Mô tả tài nguyên
-
+ResourceType=Loại tài nguyên
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Tài nguyên được liên kết tới các thành phần
 
 ShowResource=Hiển thị tài nguyên
-
 ResourceElementPage=Các tài nguyên thành tố
 ResourceCreatedWithSuccess=Đã tạo tài nguyên thành công
 RessourceLineSuccessfullyDeleted=Đầu mối tài nguyên đã được xóa thành công
 RessourceLineSuccessfullyUpdated=Đầu mối tài nguyên đã được cập nhật thành công
 ResourceLinkedWithSuccess=Liên kết tài nguyên thành công
-
 ConfirmDeleteResource=Xác nhận xóa tài nguyên này
 RessourceSuccessfullyDeleted=Đã xóa tài nguyên thành công
 DictionaryResourceType=Loại tài nguyên
-
 SelectResource=Chọn tài nguyên
-
 IdResource=ID Tài nguyên
 AssetNumber=Số sê-ri
 ResourceTypeCode=Mã loại tài nguyên
 ImportDataset_resource_1=Tài nguyên
-
 ErrorResourcesAlreadyInUse=Một số tài nguyên đang được sử dụng
 ErrorResourceUseInEvent=%s được sử dụng trong %s sự kiện
-
-MaxUsers=Maximum users (places, seats, etc.)
+MaxUsers=Người dùng tối đa (địa điểm, chỗ ngồi, v.v.)
+MaxUsersLabel=Maximum users

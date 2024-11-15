@@ -16,6 +16,7 @@
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,15 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins'));
 if (isModEnabled('productbatch')) {
@@ -76,7 +86,7 @@ $mode = GETPOST('mode', 'alpha');
 $fourn_id = GETPOSTINT("fourn_id");
 
 // Search Criteria
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
@@ -154,7 +164,7 @@ if ((string) $type == '0') {
 	}
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new Product($db);
 $hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
@@ -208,9 +218,9 @@ if (isModEnabled('barcode')) {
 	$fieldstosearchall['p.barcode'] = 'Gencod';
 	$fieldstosearchall['pfp.barcode'] = 'GencodBuyPrice';
 }
-// Personalized search criteria. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
+// Personalized search criteria. Example: getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS') = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
 if (getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS')) {
-	$fieldstosearchall = dolExplodeIntoArray($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS);
+	$fieldstosearchall = dolExplodeIntoArray(getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS'));
 }
 
 if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -293,10 +303,11 @@ $arrayfields = array(
 
 // MultiPrices
 if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+	$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+	for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty($conf->global->$keyforlabel)) {
-			$labelp = $i.' - '.$langs->transnoentitiesnoconv($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			$labelp = $i.' - '.$langs->transnoentitiesnoconv(getDolGlobalString($keyforlabel));
 		} else {
 			$labelp = $langs->transnoentitiesnoconv("SellingPrice")." ".$i;
 		}
@@ -305,7 +316,6 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 	}
 }
 
-//var_dump($arraypricelevel);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -326,6 +336,7 @@ if ($search_type == '0') {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -396,7 +407,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $massaction == 'switchonsalestatus' && $permissiontoadd) {
+	if ($massaction == 'switchonsalestatus' && $permissiontoadd) {
 		$product = new Product($db);
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);
@@ -407,7 +418,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if (!$error && $massaction == 'switchonpurchasestatus' && $permissiontoadd) {
+	if ($massaction == 'switchonpurchasestatus' && $permissiontoadd) {
 		$product = new Product($db);
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);
@@ -1305,6 +1316,7 @@ if (!empty($arrayfields['p.label']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_product_type']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -2145,7 +2157,7 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['p.fk_country']['checked'])) {
-			print '<td>'.getCountry($obj->fk_country, 0, $db).'</td>';
+			print '<td>'.getCountry($obj->fk_country, '', $db).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2154,7 +2166,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.fk_state']['checked'])) {
 			print '<td>';
 			if (!empty($obj->fk_state)) {
-				print  getState($obj->fk_state, 0, $db);
+				print  getState($obj->fk_state, '0', $db);
 			}
 			print '</td>';
 			if (!$i) {

@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2022 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2015 	Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2022 	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,30 @@
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $captcha
+ *
+ * @var int<0,1> $dol_hide_leftmenu
+ * @var int<0,1> $dol_hide_topmenu
+ * @var int<0,1> $dol_no_mouse_hover
+ * @var int<0,1> $dol_optimize_smallscreen
+ * @var int<0,1> $dol_use_jmobile
+ * @var string $focus_element
+ * @var string $login
+ * @var string $main_authentication
+ * @var string $main_home
+ * @var string $password
+ * @var string $session_name
+ * @var string $title
+ * @var string $titletruedolibarrversion
+ * @var string $urllogo
+ * @var int<0,1> $forgetpasslink
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -39,6 +64,38 @@ if ($size > 10000) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+'
+@phan-var-force HookManager $hookmanager
+@phan-var-force string $action
+@phan-var-force string $captcha
+@phan-var-force int<0,1> $dol_hide_leftmenu
+@phan-var-force int<0,1> $dol_hide_topmenu
+@phan-var-force int<0,1> $dol_no_mouse_hover
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force int<0,1> $dol_use_jmobile
+@phan-var-force string $focus_element
+@phan-var-force string $login
+@phan-var-force string $main_authentication
+@phan-var-force string $main_home
+@phan-var-force string $password
+@phan-var-force string $session_name
+@phan-var-force string $titletruedolibarrversion
+@phan-var-force string $urllogo
+@phan-var-force int<0,1> $forgetpasslink
+';
+
+/**
+ * @var HookManager $hookmanager
+ * @var string $action
+ * @var string $captcha
+ * @var string $message
+ * @var string $title
+ */
+
+
+/*
+ * View
+ */
 
 header('Cache-Control: Public, must-revalidate');
 
@@ -103,8 +160,32 @@ if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$disablenofollow = 0;
 }
 
+// If OpenID Connect is set as an authentication
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
+	// Set a cookie to transfer rollback page information
+	$prefix = dol_getprefix('');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
+		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+	}
+
+	// Auto redirect if OpenID Connect is the only authentication
+	if ($conf->file->main_authentication === 'openid_connect') {
+		// Avoid redirection hell
+		if (empty(GETPOST('openid_mode'))) {
+			dol_include_once('/core/lib/openid_connect.lib.php');
+			header("Location: " . openid_connect_get_url(), true, 302);
+		} elseif (!empty($_SESSION['dol_loginmesg'])) {
+			// Show login error without the login form
+			print '<div class="center login_main_message"><div class="error">' . dol_escape_htmltag($_SESSION['dol_loginmesg']) . '</div></div>';
+		}
+		// We shouldn't continue executing this page
+		exit();
+	}
+}
+
 top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
+$helpcenterlink = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
@@ -139,10 +220,10 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-		$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+	print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">
@@ -151,8 +232,8 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
-<input type="hidden" name="actionlogin" value="login">
-<input type="hidden" name="loginfunction" value="loginfunction" />
+<input type="hidden" name="actionlogin" id="actionlogin" value="login">
+<input type="hidden" name="loginfunction" id="loginfunction" value="loginfunction" />
 <input type="hidden" name="backtopage" value="<?php echo GETPOST('backtopage'); ?>" />
 <!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
@@ -227,29 +308,46 @@ if ($disablenofollow) {
 
 <?php
 if (!empty($captcha)) {
-		// Add a variable param to force not using cache (jmobile)
+	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
 		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-		// TODO: provide accessible captcha variants?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tagtd none valignmiddle tdinputlogin nowrap">
 
-	<span class="fa fa-unlock"></span>
-	<span class="span-icon-security inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
-	</span>
-	<span class="nowrap inline-block">
-	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a>
-	</span>
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
 
-	</div></div>
-	<?php
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		$captchaobj = null;
+
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			/** @var ModeleCaptcha $captchaobj */
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+
+			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+				print $captchaobj->getCaptchaCodeForForm($php_self); // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+			}
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
 }
 
 if (!empty($morelogincontent)) {
@@ -324,26 +422,26 @@ if ($forgetpasslink || $helpcenterlink) {
 	}
 
 	if ($helpcenterlink) {
-		$url = DOL_URL_ROOT.'/support/index.php'.$moreparam;
-		if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
-			$url = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
-		}
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
+		echo '<a class="alogin" href="'.dol_escape_htmltag($helpcenterlink).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
 		echo '</a>';
 	}
 	echo '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+	dol_include_once('/core/lib/openid_connect.lib.php');
 	$langs->load("users");
 
 	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$state = hash('sha256', session_id());
-	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state='.$state;
+	if (!getDolGlobalString("MAIN_AUTHENTICATION_OPENID_URL")) {
+		$url = openid_connect_get_url();
+	} else {
+		$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state=' . openid_connect_get_state();
+	}
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
@@ -398,22 +496,39 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 
 
 <?php
+$message = '';
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
-	?>
-	<div class="center login_main_message">
-	<?php
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
-	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
-		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning" role="alert">';
+}
+if (!empty($message)) {
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
 	} else {
-		print '<div class="error" role="alert">';
+		?>
+		<div class="center login_main_message">
+		<?php
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			print '<div class="warning" role="alert">';
+		} else {
+			print '<div class="error" role="alert">';
+		}
+		print dol_escape_htmltag($message);
+		print '</div>'; ?>
+		</div>
+		<?php
 	}
-	print dol_escape_htmltag($message);
-	print '</div>'; ?>
-	</div>
-	<?php
 }
 
 // Add commit strip
@@ -432,7 +547,8 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 			libxml_disable_entity_loader(true);
 		}
 
-		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
+		// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);
 	}
@@ -456,9 +572,8 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
 <?php
-if (getDolGlobalString('MAIN_HTML_FOOTER')) {
-	print $conf->global->MAIN_HTML_FOOTER;
-}
+
+print getDolGlobalString('MAIN_HTML_FOOTER');
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option) {
@@ -472,45 +587,12 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
-// TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
-	foreach ($tmptagarray as $tmptag) {
-		print "\n";
-		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
-		print "
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
-					<script>
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
+// Can add extra content
+$parameters = array();
+$dummyobject = new stdClass();
+$result = $hookmanager->executeHooks('getLoginPageExtraContent', $parameters, $dummyobject, $action);
+print $hookmanager->resPrint;
 
-					gtag('config', '".trim($tmptag)."');
-					</script>";
-		print "\n";
-	}
-}
-
-// TODO Replace this with a hook
-// Google Adsense (need Google module)
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
-	if (empty($conf->dol_use_jmobile)) {
-		?>
-	<div class="center"><br>
-		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-	</div>
-		<?php
-	}
-}
 ?>
 
 

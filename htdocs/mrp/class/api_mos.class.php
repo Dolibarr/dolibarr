@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
+/* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Maxime Kohlhaas             <maxime@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,9 +413,9 @@ class Mos extends DolibarrApi
 								$moline->fk_product = $value["objectid"];
 								$moline->fk_warehouse = $value["fk_warehouse"];
 								$moline->qty = $qtytoprocess;
-								$moline->batch = $tmpproduct->status_batch;
+								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toproduce';
-								$moline->fk_mrp_production = "";
+								$moline->fk_mrp_production = 0;
 								$moline->fk_stock_movement = $idstockmove;
 								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -431,9 +432,9 @@ class Mos extends DolibarrApi
 								$moline->fk_product = $value["objectid"];
 								$moline->fk_warehouse = $value["fk_warehouse"];
 								$moline->qty = $qtytoprocess;
-								$moline->batch = $tmpproduct->status_batch;
+								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toconsume';
-								$moline->fk_mrp_production = "";
+								$moline->fk_mrp_production = 0;
 								$moline->fk_stock_movement = $idstockmove;
 								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -457,13 +458,13 @@ class Mos extends DolibarrApi
 							$moline->fk_product = $value["objectid"];
 							$moline->fk_warehouse = $value["fk_warehouse"];
 							$moline->qty = $qtytoprocess;
-							$moline->batch = $tmpproduct->status_batch;
+							$moline->batch = (string) $tmpproduct->status_batch;
 							if ($arrayname == "arraytoconsume") {
 								$moline->role = 'consumed';
 							} else {
 								$moline->role = 'produced';
 							}
-							$moline->fk_mrp_production = "";
+							$moline->fk_mrp_production = 0;
 							$moline->fk_stock_movement = $idstockmove;
 							$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -528,7 +529,7 @@ class Mos extends DolibarrApi
 							$moline->fk_product = $line->fk_product;
 							$moline->fk_warehouse = $line->fk_warehouse;
 							$moline->qty = $qtytoprocess;
-							$moline->batch = $tmpproduct->status_batch;
+							$moline->batch = (string) $tmpproduct->status_batch;
 							$moline->role = 'consumed';
 							$moline->fk_mrp_production = $line->id;
 							$moline->fk_stock_movement = $idstockmove;
@@ -588,7 +589,7 @@ class Mos extends DolibarrApi
 							$moline->fk_product = $line->fk_product;
 							$moline->fk_warehouse = $line->fk_warehouse;
 							$moline->qty = $qtytoprocess;
-							$moline->batch = $tmpproduct->status_batch;
+							$moline->batch = (string) $tmpproduct->status_batch;
 							$moline->role = 'produced';
 							$moline->fk_mrp_production = $line->id;
 							$moline->fk_stock_movement = $idstockmove;

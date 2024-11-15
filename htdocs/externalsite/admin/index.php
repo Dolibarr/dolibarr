@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,21 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 if (!$user->admin) {
 	accessforbidden();
 }
-
-// Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -79,7 +88,7 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-externalsite page-index');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalSiteSetup"), $linkback, 'title_setup');

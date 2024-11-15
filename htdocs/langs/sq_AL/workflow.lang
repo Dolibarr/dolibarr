@@ -9,27 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Krijoni automatikisht një faturë klie
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Krijo automatikisht një faturë klienti pas mbylljes së një porosie shitjeje (fatura e re do të ketë të njëjtën shumë si porosia)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Në krijimin e biletave, krijoni automatikisht një ndërhyrje.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasifikoni propozimet e burimeve të lidhura si të faturuara kur një porosi shitjeje është caktuar të faturohet (dhe nëse shuma e porosisë është e njëjtë me shumën totale të propozimeve të lidhura të nënshkruara)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasifikoni propozimet e burimeve të lidhura si të faturuara kur një faturë klienti vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të propozimeve të lidhura të nënshkruara)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasifikoni porosinë e shitjeve me burim të lidhur si të faturuar kur një faturë e klientit vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të porosive të lidhura të shitjeve). Nëse keni 1 faturë të vërtetuar për n porosi, kjo mund t'i vendosë gjithashtu të gjitha porositë të faturuara.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasifikoni porositë e shitjeve me burime të lidhura si të faturuara kur një faturë klienti është caktuar të paguhet (dhe nëse shuma e faturës është e njëjtë me shumën totale të porosive të shitjeve të lidhura). Nëse keni 1 grup faturë të faturuar për n porosi, kjo mund t'i vendosë gjithashtu të gjitha porositë të faturohen.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikoni porositë e shitjeve me burim të lidhur si të dërguara kur një dërgesë vërtetohet (dhe nëse sasia e dërguar nga të gjitha dërgesat është e njëjtë si në porosinë për përditësim)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Klasifiko porosinë e shitjes me burim të lidhur si të dërguar kur një dërgesë mbyllet (dhe nëse sasia e dërguar nga të gjitha dërgesat është e njëjtë si në porosinë për përditësim)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kur një porosi shitjeje është caktuar si e faturuar, klasifikoni propozimet e burimit të lidhur si të faturuara (dhe nëse shuma e porosisë është e njëjtë me shumën totale të propozimeve të lidhura të nënshkruara)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kur një faturë klienti vërtetohet, klasifikoni propozimet e burimit të lidhur si të faturuara (dhe nëse shuma e faturës është e njëjtë me shumën totale të propozimeve të lidhura të nënshkruara)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kur një faturë klienti është caktuar të paguhet, klasifikoni porositë e shitjeve me burim të lidhur si të faturuara (dhe nëse shuma e faturës është e njëjtë me shumën totale të porosive të shitjeve të lidhura). Nëse gjeneroni 1 faturë për n porosi, kjo mund t'i vendosë gjithashtu të gjitha porositë si të faturuara.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kur një faturë klienti vërtetohet, klasifikoni të gjitha porositë e shitjeve me burim të lidhur si të faturuara (dhe nëse shuma e faturës është e njëjtë me shumën totale të porosive të shitjeve me burim të lidhur). Nëse gjeneroni 1 faturë të zakonshme për n porosi, kjo mund t'i vendosë të gjitha porositë burimore si të faturuara.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Kur një faturë klienti vërtetohet, klasifikoni porosinë e lidhur të shitjes (nëse ka vetëm një) si të faturuar, nëse shuma totale e porosisë së lidhur të shitjes është e barabartë me shumën totale të të gjitha faturave të lëshuara prej saj. Nëse krijoni n fatura për 1 porosi, kjo ju lejon të vendosni porosinë si të faturuar sapo të vërtetohen të gjitha faturat.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kur një dërgesë vërtetohet, klasifikoni porositë e shitjeve me burim të lidhur si të dërguara (dhe nëse sasia e dërguar nga të gjitha dërgesat është e njëjtë si në porosinë për përditësim)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Kur një dërgesë mbyllet, klasifikoni porosinë e shitjes me burim të lidhur si të dërguar (dhe nëse sasia e dërguar nga të gjitha dërgesat është e njëjtë si në porosinë për përditësim)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klasifiko propozimin e shitësit me burim të lidhur si të faturuar kur fatura e shitësit vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të propozimeve të lidhura)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Kur vërtetohet një faturë e shitësit, klasifikoni propozimin e shitësit me burim të lidhur si të faturuar (dhe nëse shuma e faturës është e njëjtë me shumën totale të propozimeve të lidhura)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasifiko porosinë e blerjes me burim të lidhur si të faturuar kur fatura e shitësit vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të porosive të lidhura)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klasifiko porosinë e blerjes me burim të lidhur siç është marrë kur një pritje vërtetohet (dhe nëse sasia e marrë nga të gjitha pritjet është e njëjtë si në porosinë e blerjes për përditësim)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Klasifiko porosinë e blerjes me burim të lidhur siç është marrë kur një pritje mbyllet (dhe nëse sasia e marrë nga të gjitha pritjet është e njëjtë si në porosinë e blerjes për përditësim)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kur vërtetohet një faturë shitësi, klasifikoni porosinë e blerjes me burim të lidhur si të faturuar (dhe nëse shuma e faturës është e njëjtë me shumën totale të porosive të lidhura)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Kur vërtetohet një pritje, klasifikojeni porosinë e blerjes me burim të lidhur si të marrë (dhe nëse sasia e marrë nga të gjitha pritjet është e njëjtë si në porosinë e blerjes për përditësim)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Kur një pritje mbyllet, klasifikoni porositë e blerjes me burim të lidhur si të pranuara (dhe nëse sasia e marrë nga të gjitha pritjet e lëshuara nga porosia e blerjes është e njëjtë si në porosinë e blerjes për përditësim)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klasifikoni dërgesën me burim të lidhur si të mbyllur kur një faturë klienti vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të dërgesave të lidhura)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Klasifikoni dërgesën me burim të lidhur si të faturuar kur një faturë klienti vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të dërgesave të lidhura)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Kur vërtetohet një faturë klienti, klasifikoni dërgesën me burim të lidhur si të mbyllur (dhe nëse shuma e faturës është e njëjtë me shumën totale të dërgesave të lidhura)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Kur një faturë klienti vërtetohet, klasifikoni dërgesën e burimit të lidhur si të faturuar (dhe nëse shuma e faturës është e njëjtë me shumën totale të dërgesave të lidhura)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Klasifikoni pritjet me burim të lidhur si të faturuara kur një faturë blerjeje vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të pritjeve të lidhura)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Klasifikoni pritjet me burim të lidhur si të faturuara kur një faturë blerjeje vërtetohet (dhe nëse shuma e faturës është e njëjtë me shumën totale të pritjeve të lidhura)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Kur vërtetohet një faturë blerjeje, klasifikoni pritjet me burim të lidhur si të mbyllura (dhe nëse shuma e faturës është e njëjtë me shumën totale të pritjeve të lidhura)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Kur vërtetohet një faturë blerjeje, klasifikoni pritjet me burim të lidhur si të faturuara (dhe nëse shuma e faturës është e njëjtë me shumën totale të pritjeve të lidhura)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Kur krijoni një biletë, lidhni të gjitha kontratat e disponueshme të palëve të treta që përputhen
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Kur lidhni kontrata, kërkoni midis atyre të kompanive prindërore
+descWORKFLOW_TICKET_LINK_CONTRACT=Kur krijohet një biletë, lidheni atë me kontratat e disponueshme, që përputhen me të njëjtën palë të tretë se bileta
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Kur lidhni automatikisht një biletë me kontratat, kërkoni kontrata midis atyre të kompanive mëmë
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Mbyllni të gjitha ndërhyrjet e lidhura me biletën kur një biletë është e mbyllur
 AutomaticCreation=Krijimi automatik

@@ -79,14 +79,16 @@ class Paiement extends CommonObject
 	public $date;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $montant;
 
@@ -96,12 +98,17 @@ class Paiement extends CommonObject
 	public $amount;
 
 	/**
-	 * @var float							Total amount of payment (in the currency of the bank account)
+	 * @var float							Total amount of payment (in the currency of the invoice/bank account)
 	 */
 	public $multicurrency_amount;
 
 	/**
-	 * @var float[] array: invoice ID => amount for that invoice (in the main currency)
+	 * @var string							The currency of the total of payment (so the currency of the invoice/bank account)
+	 */
+	public $multicurrency_currency;
+
+	/**
+	 * @var array<float|string> array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
@@ -125,6 +132,9 @@ class Paiement extends CommonObject
 	 */
 	public $pos_change = 0.0;
 
+	/**
+	 * @var int
+	 */
 	public $author;
 
 	/**
@@ -166,7 +176,7 @@ class Paiement extends CommonObject
 	public $ext_payment_id;
 
 	/**
-	 * @var string Id of prelevement
+	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
 
@@ -285,8 +295,9 @@ class Paiement extends CommonObject
 
 	/**
 	 *  Create payment of invoices into database.
-	 *  Use this->amounts to have list of invoices for the payment.
+	 *  It uses this->amounts and ->multicurrency_amounts to get the list of detail of payment for each invoices for the payment.
 	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  This will set also ->amount and ->multicurrency_amount at end.
 	 *
 	 *  @param	User	  $user                	Object user
 	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
@@ -316,9 +327,10 @@ class Paiement extends CommonObject
 		}
 
 		$currencyofpayment = '';
+		$currencyofinvoices = '';
 		$currencytxofpayment = '';
 
-		foreach ($amounts as $key => $value) {	// How payment is dispatched
+		foreach ($amounts as $key => $value) {	// How payment is dispatched. $key is ID of invoice
 			if (empty($value)) {
 				continue;
 			}
@@ -330,18 +342,35 @@ class Paiement extends CommonObject
 				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
-			if (empty($currencyofpayment)) {
-				$currencyofpayment = isset($this->multicurrency_code[$key]) ? $this->multicurrency_code[$key] : "";
-			} elseif ($currencyofpayment != $this->multicurrency_code[$key]) {
+
+			// Set the currency of the invoice
+			$currencyofinvoiceforthisline = empty($this->multicurrency_code[$key]) ? $conf->currency : $this->multicurrency_code[$key];
+			// If a payment was enter into section of foreign currency of invoice, we want to pay in the currency if invoice
+			$currencyofpaymentforthisline = empty($this->multicurrency_amounts[$key]) ? $conf->currency : $this->multicurrency_code[$key];
+
+			//var_dump("Invoice ID: ".$key.", amount in company cur:".$this->amounts[$key]." amount in invoice cur:".$this->multicurrency_amounts[$key]." => currencyofinvoice= ".$currencyofinvoiceforthisline." - currencyofpaymentforthisline =".$currencyofpaymentforthisline);
+
+			if (empty($currencyofinvoices)) {
+				$currencyofinvoices = $currencyofinvoiceforthisline;
+			} elseif ($currencyofinvoices != $currencyofinvoiceforthisline) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
 			}
+
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $currencyofpaymentforthisline;
+			} elseif ($currencyofpayment != $currencyofpaymentforthisline) {
+				// If we have invoices with different currencies in the payment, we stop here
+				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+				return -1;
+			}
+
 			if (empty($currencytxofpayment)) {
 				$currencytxofpayment = isset($this->multicurrency_tx[$key]) ? $this->multicurrency_tx[$key] : "";
 			}
 
-			$totalamount_converted += $value_converted;
+			$totalamount_converted += $value_converted;	// Total in currency of the invoice
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
 			$newvalue = price2num($value, 'MT');
@@ -350,6 +379,9 @@ class Paiement extends CommonObject
 			if (!empty($newvalue)) {
 				$atleastonepaymentnotnull++;
 			}
+
+			//var_dump('currencytxofpayment = '.$currencytxofpayment." totalamount_converted =".$totalamount_converted);
+			//print '<br>';
 		}
 
 		if (empty($currencyofpayment)) {	// Should not happen. For the case the multicurrency_code was not saved into invoices
@@ -362,13 +394,23 @@ class Paiement extends CommonObject
 			$bankaccount = new Account($this->db);
 			$bankaccount->fetch($this->fk_account);
 			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
-			if ($currencyofpayment != $bankcurrencycode && $currencyofpayment != $conf->currency && $bankcurrencycode != $conf->currency) {
-				$langs->load("errors");
-				$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
-				return -1;
+
+			if ($bankcurrencycode != $conf->currency) {
+				// If we try to pay on a bank with a different currency
+				if ($bankcurrencycode != $currencyofinvoices && $currencyofinvoices != $conf->currency) {
+					$langs->load("errors");
+					$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofinvoices, $bankcurrencycode);
+					return -1;
+				}
+				if ($bankcurrencycode != $currencyofpayment && $currencyofpayment != $conf->currency) {
+					$langs->load("errors");
+					$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
+					return -1;
+				}
+			} else {
+				// No problem in this case
 			}
 		}
-
 
 		$totalamount = (float) price2num($totalamount);
 		$totalamount_converted = (float) price2num($totalamount_converted);
@@ -464,10 +506,18 @@ class Paiement extends CommonObject
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();
 									$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+									'
+									@phan-var-force array<string,float> $amount_ht
+									@phan-var-force array<string,float> $amount_tva
+									@phan-var-force array<string,float> $amount_ttc
+									@phan-var-force array<string,float> $multicurrency_amount_ht
+									@phan-var-force array<string,float> $multicurrency_amount_tva
+									@phan-var-force array<string,float> $multicurrency_amount_ttc
+									';
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
-									$discount->fetch('', $invoice->id);
+									$discount->fetch(0, $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
@@ -478,6 +528,14 @@ class Paiement extends CommonObject
 										$i = 0;
 										foreach ($invoice->lines as $line) {
 											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+												if (!array_key_exists($line->tva_tx, $amount_ht)) {
+													$amount_ht[$line->tva_tx] = 0.0;
+													$amount_tva[$line->tva_tx] = 0.0;
+													$amount_ttc[$line->tva_tx] = 0.0;
+													$multicurrency_amount_ht[$line->tva_tx] = 0.0;
+													$multicurrency_amount_tva[$line->tva_tx] = 0.0;
+													$multicurrency_amount_ttc[$line->tva_tx] = 0.0;
+												}
 												$amount_ht[$line->tva_tx] += $line->total_ht;
 												$amount_tva[$line->tva_tx] += $line->total_tva;
 												$amount_ttc[$line->tva_tx] += $line->total_ttc;
@@ -495,7 +553,7 @@ class Paiement extends CommonObject
 											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
-											$discount->tva_tx = abs($tva_tx);
+											$discount->tva_tx = abs((float) $tva_tx);
 
 											$result = $discount->create($user);
 											if ($result < 0) {
@@ -514,6 +572,8 @@ class Paiement extends CommonObject
 
 								// Set invoice to paid
 								if (!$error) {
+									$invoice->context['actionmsgmore'] = 'Invoice set to paid by the payment->create() of payment '.$this->ref.' because the remain to pay is 0';
+
 									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0) {
 										$this->error = $invoice->error;
@@ -580,9 +640,12 @@ class Paiement extends CommonObject
 		}
 
 		if (!$error) {
+			// Set some properties that may be used by other process after calling the create
 			$this->amount = $total;
 			$this->total = $total; // deprecated
 			$this->multicurrency_amount = $mtotal;
+			$this->multicurrency_currency = $currencyofinvoices;
+
 			$this->db->commit();
 			return $this->id;
 		} else {
@@ -603,8 +666,6 @@ class Paiement extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		$error = 0;
-
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -707,6 +768,9 @@ class Paiement extends CommonObject
 		$error = 0;
 		$bank_line_id = 0;
 
+		// Note: ->amount (amount in company currency) ant multicurrency_amount (amount in )was set by the ->create beforecalling this.
+		// The create had also checked that currency of payment is same than currency of bank account
+
 		if (isModEnabled("bank")) {
 			if ($accountid <= 0) {
 				$this->error = 'Bad value for parameter accountid='.$accountid;
@@ -736,9 +800,20 @@ class Paiement extends CommonObject
 				$totalamount = $this->total; // For backward compatibility
 			}
 
-			// if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
-			if (isModEnabled('multicurrency') && $conf->currency != $acc->currency_code) {
-				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency
+			// this->amount is amount of payment in company currency
+			// this->multicurrency_amount of payment in other currency
+			// this->multicurrency_currency is the currency of the payment (may be same than the company one)
+			if ($this->multicurrency_currency == $conf->currency) {
+				if ($this->amount != $this->multicurrency_amount) {
+					// Add protection, should not happen
+					$error++;
+					$this->error = 'Payment in same currency than company but this->amount != this->multicurrency_amount';
+				}
+			}
+
+			// if company currency != bank currency, then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
+			if ($conf->currency != $acc->currency_code) {
+				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency of invoice
 				$totalamount_main_currency = $this->amount;		// We will also save the amount in main currency into column llx_bank.amount_main_currency
 			}
 
@@ -756,12 +831,12 @@ class Paiement extends CommonObject
 				$label,
 				$totalamount, // Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
 				$accountancycode,
-				null,
+				0,
 				'',
 				$totalamount_main_currency
 			);
@@ -801,7 +876,7 @@ class Paiement extends CommonObject
 							$fac = new Facture($this->db);
 							$fac->fetch($key);
 							$fac->fetch_thirdparty();
-							if (!in_array($fac->thirdparty->id, $linkaddedforthirdparty)) { // Not yet done for this thirdparty
+							if (!in_array($fac->thirdparty->id, $linkaddedforthirdparty)) { // Not yet done for this thirdparty  @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 								$result = $acc->add_url_line(
 									$bank_line_id,
 									$fac->thirdparty->id,
@@ -889,7 +964,7 @@ class Paiement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
+	 *      Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					Return integer <0 if KO, >0 if OK
@@ -952,9 +1027,6 @@ class Paiement extends CommonObject
 			}
 
 			if (!$error) {
-			}
-
-			if (!$error) {
 				$this->datepaye = $date;
 				$this->date = $date;
 
@@ -999,11 +1071,11 @@ class Paiement extends CommonObject
 	/**
 	 * Validate payment
 	 *
-	 * @param	User|null	$user		User making validation
+	 * @param	?User		$user		User making validation
 	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 */
-	public function valide(User $user = null)
+	public function valide($user = null)
 	{
 		return $this->validate($user);
 	}
@@ -1011,10 +1083,10 @@ class Paiement extends CommonObject
 	/**
 	 * Validate payment
 	 *
-	 * @param	User|null	$user		User making validation
+	 * @param	?User		$user		User making validation
 	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function validate(User $user = null)
+	public function validate($user = null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.((int) $this->id);
 
@@ -1032,10 +1104,10 @@ class Paiement extends CommonObject
 	/**
 	 * Reject payment
 	 *
-	 * @param	User|null	$user		User making reject
+	 * @param	?User		$user		User making reject
 	 * @return  int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function reject(User $user = null)
+	public function reject($user = null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.((int) $this->id);
 
@@ -1086,7 +1158,7 @@ class Paiement extends CommonObject
 	 *  Return list of invoices the payment is related to.
 	 *
 	 *  @param	string		$filter         Filter
-	 *  @return int|array					Return integer <0 if KO or array of invoice id
+	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
@@ -1120,7 +1192,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of amounts of payments.
 	 *
-	 *  @return int|array					Array of amount of payments
+	 *  @return int|array<int,float>			Array of amount of payments
 	 *  @see getBillsArray()
 	 */
 	public function getAmountsArray()
@@ -1210,7 +1282,8 @@ class Paiement extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModeleNumRefPayments $obj';
+
 			$numref = $obj->getNextValue($soc, $this);
 
 			/**
@@ -1280,10 +1353,10 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@param	string	$option			What the link points to
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS

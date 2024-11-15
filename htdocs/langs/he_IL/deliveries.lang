@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=מְסִירָה
 DeliveryRef=Ref משלוח
-DeliveryCard=קבלת מלאי
+DeliveryCard=Delivery receipt
 DeliveryOrder=קבלת משלוח
 DeliveryDate=תאריך משלוח
 CreateDeliveryOrder=צור קבלה על משלוח

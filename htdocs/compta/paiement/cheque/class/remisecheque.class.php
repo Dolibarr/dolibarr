@@ -50,18 +50,47 @@ class RemiseCheque extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var string
+	 */
 	public $num;
+	/**
+	 * @var string
+	 */
 	public $intitule;
-	//! Numero d'erreur Plage 1024-1279
+	/**
+	 * @var int<-1033,-1024>|int<-18,-18>|int<-2,0> Error number from 1024 to 1279
+	 */
 	public $errno;
 
+	/**
+	 * @var string
+	 */
 	public $type = 'CHQ';		// 'CHQ', 'TRA', ...
 
+	/**
+	 * @var float
+	 */
 	public $amount;
+	/**
+	 * @var int|string
+	 */
 	public $date_bordereau;
+	/**
+	 * @var int
+	 */
 	public $account_id;
+	/**
+	 * @var string
+	 */
 	public $account_label;
+	/**
+	 * @var int
+	 */
 	public $author_id;
+	/**
+	 * @var int
+	 */
 	public $nbcheque;
 
 	/**
@@ -143,7 +172,7 @@ class RemiseCheque extends CommonObject
 	 *	@param	User	$user 			User making creation
 	 *	@param  int		$account_id 	Bank account for cheque receipt
 	 *  @param  int		$limit          Limit ref of cheque to this
-	 *  @param	array	$toRemise		array with cheques to remise
+	 *  @param	int[]	$toRemise		array with cheques to remise
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $account_id, $limit, $toRemise)
@@ -268,7 +297,7 @@ class RemiseCheque extends CommonObject
 		} else {
 			$this->errno = -1;
 			$this->error = $this->db->lasterror();
-			$this->errno = $this->db->lasterrno();
+			// $this->errno = $this->db->lasterrno();
 		}
 
 		if (!$this->errno && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_CHEQUE'))) {
@@ -452,7 +481,8 @@ class RemiseCheque extends CommonObject
 			}
 
 			$obj = new $classname();
-			'@phan-var-force CommonNumRefGenerator $obj';
+			'@phan-var-force ModeleNumRefChequeReceipts $obj';
+
 			$numref = "";
 			$numref = $obj->getNextValue($mysoc, $this);
 
@@ -461,7 +491,7 @@ class RemiseCheque extends CommonObject
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db, "ChequeReceipts::getNextNumRef ".$obj->error);
+				dol_print_error($db, "ChequeReceipts::getNextValue ".$obj->error);
 				return "";
 			}
 
@@ -593,7 +623,7 @@ class RemiseCheque extends CommonObject
 
 			$classname = 'BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);
-			'@phan-var-force CommonDocGenerator $module';
+			'@phan-var-force ModeleChequeReceipts $docmodel';
 
 			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -778,7 +808,7 @@ class RemiseCheque extends CommonObject
 				$invoice->fetch($obj->fk_facture);
 				$invoice->setUnpaid($user);
 
-				$rejectedPayment->amounts[$obj->fk_facture] = price2num($obj->amount) * -1;
+				$rejectedPayment->amounts[$obj->fk_facture] = (float) price2num($obj->amount) * -1;
 			}
 
 			$result = $rejectedPayment->create($user);
@@ -898,10 +928,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option						Sur quoi pointe le lien
+	 *	@param	string	$option						Indicate where the link points to
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -998,11 +1028,11 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

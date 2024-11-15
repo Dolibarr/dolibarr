@@ -176,7 +176,7 @@ class FormCardWebPortal
 		$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');    // if not set, $backtopage will be used
 		$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$object = new $objectclass($this->db);
 		//$extrafields = new ExtraFields($db);
 		$hookmanager->initHooks(array('webportal' . $elementEn . 'card', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -190,7 +190,7 @@ class FormCardWebPortal
 		}
 
 		// Load object
-		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 		// Security check (enable the most restrictive one)
 		if (!isModEnabled('webportal')) {
@@ -207,7 +207,7 @@ class FormCardWebPortal
 		$this->backtopagejsfields = $backtopagejsfields;
 		$this->cancel = $cancel;
 		$this->elementEn = $elementEn;
-		$this->id = $id;
+		$this->id = (int) $id;
 		$this->object = $object;
 		$this->permissiontoread = $permissiontoread;
 		$this->permissiontoadd = $permissiontoadd;
@@ -482,6 +482,7 @@ class FormCardWebPortal
 		}
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			if ($object->morphy == 'mor' && !empty($object->societe)) {
 				$html .= dol_htmlentities($object->societe);
 				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
@@ -617,7 +618,7 @@ class FormCardWebPortal
 					$cardRight = true;
 				}
 			}
-			if ($cardRight === true) {
+			if ($cardRight) {
 				$html .= '</div>';
 				$html .= '<div class="card-right">';
 			}

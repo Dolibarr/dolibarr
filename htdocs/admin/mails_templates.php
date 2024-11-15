@@ -11,7 +11,8 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langsArray = array("errors", "admin", "mails", "languages");
 
@@ -61,6 +70,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $mode = GETPOST('mode', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 $id = $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
@@ -98,7 +108,7 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('emailtemplates'));
 
 
@@ -938,7 +948,7 @@ if (GETPOST('from', 'alpha')) {
 // There is several pages
 if ($num > $listlimit) {
 	print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 	print '</td></tr>';
 }
 
@@ -959,11 +969,11 @@ foreach ($fieldlist as $field => $value) {
 		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth75" value="'.dol_escape_htmltag($search_label).'"></td>';
 	} elseif ($value == 'lang') {
 		print '<td class="liste_titre">';
-		print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth100');
+		print $formadmin->select_language($search_lang, 'search_lang', 0, array(), 1, 0, 0, 'maxwidth100');
 		print '</td>';
 	} elseif ($value == 'fk_user') {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth100', 1);
+		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), 0, 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -1075,9 +1085,8 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>';
 
+$nbqualified = 0;
 if ($num) {
-	$nbqualified = 0;
-
 	// Lines with values
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
@@ -1123,7 +1132,7 @@ if ($num) {
 				print "</tr>\n";
 
 				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
-				print '<td colspan="10">';
+				print '<td colspan="10" class="paddingleft" style="padding-left: 20px">';
 
 				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
@@ -1155,22 +1164,22 @@ if ($num) {
 						}
 
 						if ($tmpfieldlist == 'content') {
-							print $form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							print $form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'<br>';
 							$okforextended = true;
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%', ($action != 'edit' ? 1 : 0));
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%', ($action != 'edit' ? 1 : 0));
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
 							print '<br>'."\n";
-							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'<br>';
 							$okforextended = true;
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 					}
@@ -1231,8 +1240,7 @@ if ($num) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=preview&token='.newToken().'">'.img_view().'</a>';
 					}
 					if ($iserasable) {
-						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
-						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().$param.'">'.img_delete().'</a>';
 					}
 					print '</td>';
 				}
@@ -1376,8 +1384,8 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		array<int|string,null|int|float|string>	$fieldlist		Array of fields and their values
+ * 	@param		?Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'preview'=show in readonly the template, 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
@@ -1397,7 +1405,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin && $context != 'preview') {
-				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
+				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(-1); // Me
@@ -1423,7 +1431,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				if ($context == 'edit') {
 					$selectedlang = $obj->lang;
 				}
-				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth100');
+				print $formadmin->select_language($selectedlang, 'langcode', 0, array(), 1, 0, 0, 'maxwidth100');
 			} else {
 				if (!empty($obj->lang)) {
 					print $obj->lang.' - '.$langs->trans('Language_'.$obj->lang);

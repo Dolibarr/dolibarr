@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -122,26 +131,6 @@ print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
-// Enable Captcha code
-print '<tr class="oddeven">';
-print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
-print '<td class="right">';
-if (function_exists("imagecreatefrompng")) {
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
-	} else {
-		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-		}
-	}
-} else {
-	$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
-	print $desc;
-}
-print '</td></tr>';
-
 // Enable advanced perms
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
@@ -167,7 +156,7 @@ print '<br>';
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 

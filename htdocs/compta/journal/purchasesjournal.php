@@ -5,7 +5,8 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('companies', 'other', 'bills', 'compta'));
 
@@ -49,13 +59,16 @@ $date_endyear = GETPOST('date_endyear');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['purchasejournallist']);
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['purchasejournallist']);
 
 /*
  * Actions
@@ -74,17 +87,17 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 
 $form = new Form($db);
 
-$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 //$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
 	$pastmonthyear--;
 }
 
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear);
+$date_end = dol_mktime(23, 59, 59, (int) $date_endmonth, (int) $date_endday, (int) $date_endyear);
 
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
@@ -182,7 +195,7 @@ if ($result) {
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name);
+		$tabcompany[$obj->rowid] = array('id' => $obj->socid, 'name' => $obj->name);
 
 		$i++;
 	}

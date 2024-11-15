@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,7 +200,7 @@ fputs($fp, '  </dir>'."\n");
 fputs($fp, '</dolibarr_htdocs_dir>'."\n");
 
 asort($checksumconcat); // Sort list of checksum
-//var_dump($checksumconcat);
+
 fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
 fputs($fp, md5(join(',', $checksumconcat))."\n");
 fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n");

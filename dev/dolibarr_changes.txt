@@ -114,23 +114,8 @@ PHP TCPDF:
       * @public
 
 * Replace in tcpdf.php:
-            if (isset($this->imagekeys)) {
-                foreach($this->imagekeys as $file) {
-                    unlink($file);
-                }
-            }
-with
-            if (isset($this->imagekeys)) {
-                foreach($this->imagekeys as $file) {
-				// DOL CHANGE If we keep this, source image files are physically destroyed
-				// unlink($file);
-                }
-            }
-
-* Replace in tcpdf.php:
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
@@ -138,7 +123,6 @@ with
 with
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
@@ -147,16 +131,16 @@ with
 			'imagekeys',
 
 * Replace in tcpdf.php:
-			if (!@TCPDF_STATIC::file_exists($file)) {
+			if (!@this->fileExists($file)) {
 				return false;
 			}
 with
-			if (!@TCPDF_STATIC::file_exists($file)) {
+			if (!@this->fileExists($file)) {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
-				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+				//var_dump($file.' '.(!@this->fileExists($file)));
 				//return false;
                 $tfile = str_replace(' ', '%20', $file);
-				if (@TCPDF_STATIC::file_exists($tfile)) {
+				if (@this->fileExists($tfile)) {
 					$file = $tfile;
 				}
 			}
@@ -191,7 +175,7 @@ with
         }
         elseif (strpos($filename, '://') === false)
 
-* To avoid to have QRcode changed because generated with a random mask, replace:
+* In tecnickcom/tcpdf/include/barcodes/qrcode.php To avoid to have QRcode changed because generated with a random mask, replace:
 	define('QR_FIND_FROM_RANDOM', 2);
 with
 	define('QR_FIND_FROM_RANDOM', false);
@@ -214,19 +198,6 @@ into
 In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
-
-* In tecnickcom/tcpdf/include/tcpdf_static, in function intToRoman, right at the beginning
-  of the function, replace:
-
-	$roman = '';
-
-	with:
-
-	$roman = '';
-	if ($number >= 4000) {
-		// do not represent numbers above 4000 in Roman numerals
-		return strval($number);
-	}
 
 * Add this at begin of tcpdf_autoconfig.php
 
@@ -384,7 +355,9 @@ PHP PARSEDOWN
 
 PHP OAUTH
 ---------
-Add into Class Google of file OAuth2/Service/Google:
+Restore old OAuth2/Service/Google.php file and OAuth2/Service/Microsoft.php and OAuth2/Service/Microsoft2.php
+
+Or add into Class Google of file OAuth2/Service/Google:
 
     // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
     public $approvalPrompt='auto';
@@ -396,6 +369,17 @@ Add into Class Google of file OAuth2/Service/Google:
         }
         $this->approvalPrompt = $prompt;
     }
+
+
+Modify function
+
+    public function getAuthorizationEndpoint()
+    {
+		// LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+		//return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
+		$url = 'https://accounts.google.com/o/oauth2/auth?'.($this->approvalPrompt?'approval_prompt='.$this->approvalPrompt.'&':'').'access_type='.$this->accessType;
+		return new Uri($url);
+	}
 
 
 

@@ -34,7 +34,7 @@
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
- *  @see dol_decode()
+ *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -65,7 +65,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode()
+ *  @see dol_encode(), dolDecrypt
  */
 function dol_decode($chain, $key = '1')
 {
@@ -107,10 +107,13 @@ function dolGetRandomBytes($length)
 	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
 }
 
+
+define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
+
 /**
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
- *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
  *	@param   string		$chain		String to encode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
@@ -120,7 +123,7 @@ function dolGetRandomBytes($length)
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -139,7 +142,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
-		$ciphering = 'AES-256-CTR';
+		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
 	}
 
 	$newchain = $chain;
@@ -241,6 +244,10 @@ function dol_hash($chain, $type = '0', $nosalt = 0)
 {
 	// No need to add salt for password_hash
 	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+		if (strpos($chain, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error instead of fatal error.
+			return 'Invalid string to encrypt. Contains a null character.';
+		}
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
@@ -391,6 +398,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$parentfortableentity = '';
 
 	// Fix syntax of $features param to support non standard module names.
+	// @todo : use elseif ?
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -447,6 +455,24 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	// if commonObjectLine : Using many2one related commonObject
+	// @see commonObjectLine::parentElement
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+		$features = substr($features, 0, -3);
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+		$features = substr($features, 0, -4);
+	} elseif ($features == 'commandefournisseurdispatch') {
+		$features = 'commandefournisseur';
+	} elseif ($features == 'invoice_supplier_det_rec') {
+		$features = 'invoice_supplier_rec';
+	}
+	// @todo check : project_task
+	// @todo possible ?
+	// elseif (substr($features, -3, 3) == 'det') {
+	// 	$features = substr($features, 0, -3);
+	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
+	// 	$features = substr($features, 0, -4);
+	// }
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -839,10 +865,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
  * This function is also called by restrictedArea() that check before if module is enabled and if permission of user for $action is ok.
  *
  * @param 	User				$user					User to check
- * @param 	array				$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
+ * @param 	string[]			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
  * @param 	int|string|Object	$object					Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  * @param 	string				$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- * @param 	array|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param 	string[]|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional).
  * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
@@ -1173,8 +1199,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *
  *	@param	string		$message					Force error message
  *	@param	int			$http_response_code			HTTP response code
- *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
- *  @return	void
+ *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	never
  *  @see accessforbidden()
  */
 function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
@@ -1197,11 +1223,11 @@ function httponly_accessforbidden($message = '1', $http_response_code = 403, $st
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
- *	@param	int			$printheader		Show header before
- *  @param  int			$printfooter        Show footer after
- *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
- *  @param  array|null  $params         	More parameters provided to hook
- *  @return	void
+ *	@param	int<0,1>	$printheader		Show header before
+ *  @param  int<0,1>	$printfooter        Show footer after
+ *  @param  int<0,1>	$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  ?array<string,mixed>	$params More parameters provided to hook
+ *  @return	never
  *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
@@ -1237,7 +1263,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 
@@ -1268,7 +1294,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  *	Return the max allowed for file upload.
  *  Analyze among: upload_max_filesize, post_max_size, MAIN_UPLOAD_DOC
  *
- *  @return	array		Array with all max size for file upload
+ *	@return array{max:string,maxmin:mixed,maxphptoshow:int|string,maxphptoshowparam:''|'post_max_size'|'upload_max_filesize'}	Array with all max sizes for file upload
  */
 function getMaxFileSizeArray()
 {
@@ -1277,36 +1303,36 @@ function getMaxFileSizeArray()
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp = $maxphp * 1;
+		$maxphp = (int) ((float) $maxphp * 1);
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024 * 1024);
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1;
+		$maxphp2 = (int) ((float) $maxphp2) * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024 * 1024);
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;

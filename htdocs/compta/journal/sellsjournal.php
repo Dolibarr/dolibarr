@@ -7,7 +7,8 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'bills', 'compta'));
 
@@ -51,13 +61,16 @@ $date_endyear = GETPOST('date_endyear');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['selljournallist']);
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['selljournallist']);
 
 /*
  * Actions
@@ -78,17 +91,17 @@ $morequery = '&date_startyear='.$date_startyear.'&date_startmonth='.$date_startm
 llxHeader('', $langs->trans("SellsJournal"), '', '', 0, 0, '', '', $morequery);
 
 
-$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 //$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
 	$pastmonthyear--;
 }
 
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear);
+$date_end = dol_mktime(23, 59, 59, (int) $date_endmonth, (int) $date_endday, (int) $date_endyear);
 
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
@@ -113,7 +126,7 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
+$sql .= " s.rowid as socid, s.nom as name, s.code_compta as code_compta_client, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell,";
@@ -167,7 +180,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 		// les variables
 		$cptcli = ((getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-		$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
+		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
@@ -226,7 +239,7 @@ if ($result) {
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
+		$tabcompany[$obj->rowid] = array('id' => $obj->socid, 'name' => $obj->name, 'client' => $obj->client);
 		$i++;
 	}
 } else {

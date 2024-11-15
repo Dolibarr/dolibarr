@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
  * $langs
  * $form
  */
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Form $form
+ * @var FormAdmin $formadmin
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
+'@phan-var-force FormAdmin $formadmin';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -65,7 +77,7 @@ foreach ($object->fields as $key => $val) {
 	print '</td>';
 	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
-		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+		print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
 		$value = GETPOSTINT($key);
@@ -105,7 +117,7 @@ foreach ($object->fields as $key => $val) {
 	} else {
 		if ($key == 'lang') {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
-			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}
