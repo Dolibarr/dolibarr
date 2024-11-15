@@ -29149,12 +29149,6 @@ parameters:
 			path: ../../htdocs/product/stock/productlot_list.php
 
 		-
-			message: '#^Variable \$show_files might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
 			message: '#^Variable \$draftchecked in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
