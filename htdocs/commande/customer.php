@@ -5,6 +5,7 @@
  * Copyright (C) 2012	   Andreu Bisquerra Gaya	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 
 // Secrutiy check
@@ -49,10 +58,11 @@ $langs->loadLangs(array("companies", "orders"));
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -68,7 +78,7 @@ if (!$sortfield) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-commande page-customer');
 
 $thirdpartystatic = new Societe($db);
 
@@ -76,8 +86,8 @@ $thirdpartystatic = new Societe($db);
  * Mode List
  */
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
-$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea,";
+$sql .= " st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -165,7 +175,7 @@ if ($resql) {
 	print '</td>';
 
 	print '<td colspan="2" class="liste_titre right">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 
 	print "</tr>\n";
@@ -186,9 +196,9 @@ if ($resql) {
 
 		print $result;
 		print '</td>';
-		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td>'.dolPrintLabel($obj->town).'</td>';
+		print '<td class="left">'.dolPrintLabel($obj->code_client).'</td>';
+		print '<td class="left">'.dolPrintLabel($obj->code_compta_client).'</td>';
 		print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;

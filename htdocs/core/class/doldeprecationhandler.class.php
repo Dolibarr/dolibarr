@@ -232,7 +232,7 @@ trait DolDeprecationHandler
 		// Define deprecated properties and their replacements
 		return array(
 			// 'oldProperty' => 'newProperty',
-			// Add  deprecated properties and their replacements in subclass implementation
+			// Add deprecated properties and their replacements in subclass implementation
 		);
 	}
 

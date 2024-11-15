@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,10 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
 
 /*
  * View
@@ -274,7 +278,7 @@ function formatDate(date,format)
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
+	var year=date.getFullYear();
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -344,7 +348,7 @@ function getDateFromFormat(val,format)
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
+	var year=now.getFullYear();
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -563,21 +567,24 @@ function hideMessage(fieldId,message) {
  * @param	string	code		Code
  * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
- * @param	int		strict		Strict
+ * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
- * @param	int		value       Value to set
  * @param   string  token       Token
+ * @param	int		value       Value to set
+ * @param	int		userconst	1=On/Off of user constant instead of global const
  * @return   boolean
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
 		token: token,
-		value: value
+		value: value,
+		userconst: userconst
 	},
 	function() {	/* handler for success of post */
 		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
@@ -666,23 +673,26 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
- * @param	{string}	code		Code
- * @param	{string}	input		Array of complementary actions to do if success
- * @param	{int}		entity		Entity
- * @param	{int}		strict		Strict
- * @param   {int}     forcereload Force reload
- * @param   {int}     userid      User id
- * @param   {string}  token       Token
+ * @param	string		url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
+ * @param	string		code		Code
+ * @param	string		input		Array of complementary actions to do if success
+ * @param	int			entity		Entity
+ * @param	int			strict		Strict
+ * @param   int     	forcereload Force reload
+ * @param   int     	userid      User id
+ * @param   string  	token       Token
+ * @param	int			userconst	1=On/Off of user constant instead of global const
  * @return  boolean
  */
-function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function delConstant(url, code, input, entity, strict, forcereload, userid, token, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "del",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		userconst: userconst
 	},
 	function() {
 		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
@@ -976,8 +986,8 @@ function newpopup(url, title) {
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
 	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,location=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen = window.open(tmp, title, wfeatures);
 
 	return false;
 }
@@ -1092,6 +1102,127 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+/**
+ * Get the list of operators for a given field type
+ */
+function getOperatorsForFieldType(type) {
+	// Define the list of operators for each general field category
+	const operatorList = {
+		text: {
+			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
+			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			StartsWith: '<?php print dol_escape_js($langs->trans('StartsWith')); ?>',
+			EndsWith: '<?php print dol_escape_js($langs->trans('EndsWith')); ?>'
+		},
+		number: {
+			'=': '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			'!=': '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			'<': '<?php print dol_escape_js($langs->trans('IsLowerThan')); ?>',
+			'>': '<?php print dol_escape_js($langs->trans('IsHigherThan')); ?>',
+			'<=': '<?php print dol_escape_js($langs->trans('IsLowerThanOrEqual')); ?>',
+			'>=': '<?php print dol_escape_js($langs->trans('IsHigherThanOrEqual')); ?>',
+		},
+		date: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			IsBefore: '<?php print dol_escape_js($langs->trans('IsBefore')); ?>',
+			IsAfter: '<?php print dol_escape_js($langs->trans('IsAfter')); ?>',
+			IsOnOrBefore: '<?php print dol_escape_js($langs->trans('IsOnOrBefore')); ?>',
+			IsOnOrAfter: '<?php print dol_escape_js($langs->trans('IsOnOrAfter')); ?>'
+		},
+		html: {
+			Contains: '<?php print $langs->trans('Contains'); ?>'
+		}
+	};
+
+
+	// Determine the general category for the given type using regex
+	let generalType = "";
+
+	console.log('Get list of operators for type='+type);
+
+	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
+		generalType = "text";
+	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
+		generalType = "number";
+	} else if (/^(date|datetime|timestamp)$/i.test(type)) {
+		generalType = "date";
+	} else if (/^(tinyint|smallint)\(\d+\)$/i.test(type)) {
+		generalType = "number";
+	} else if (/^html$/i.test(type)) {
+		generalType = "html";
+	} else {
+		// Handle unknown or unsupported types
+		return [];
+	}
+
+	// Return the operators for the general type, or an empty array if not found
+	return operatorList[generalType] || [];
+}
+
+/**
+ * Generate a filter string based on the given column, operator, context and field type
+ */
+function generateFilterString(column, operator, context, fieldType) {
+	let filter = "";
+
+	switch (operator) {
+		case "Contains":
+			filter = column + " like \'%" + context + "%\'";
+			break;
+		case "DoesNotContain":
+			filter = column + " notlike \'%" + context + "%\'";
+			break;
+		case "Is":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "IsNot":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "StartsWith":
+			filter = column + " like \'" + context + "%\'";
+			break;
+		case "EndsWith":
+			filter = column + " like \'%" + context + "\'";
+			break;
+		case "=":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "!=":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "<":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case ">":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "<=":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case ">=":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		case "IsBefore":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case "IsAfter":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "IsOnOrBefore":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case "IsOnOrAfter":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		default:
+			filter = "";
+	}
+
+	return filter;
+}
 
 // Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
 (function() {
@@ -1321,20 +1452,57 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
-	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-			 var offset = parentholder.offset();
-		var widthdocument = $(document).width();
-		var left = offset.left;
-		var right = widthdocument - offset.left - parentholder.width();
-		var widthpopup = parentholder.children(".dropdown-content").width();
-		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-		if (widthpopup + right >= widthdocument) {
-			right = 10;
+		let parentHolder = jQuery(event.target).parent();
+		let dropDownContent = parentHolder.children(".dropdown-content");
+		let offset = parentHolder.offset();
+		let widthDocument = $(document).width();
+		let heightDocument = $(document).height();
+		let right = widthDocument - offset.left - parentHolder.width();
+		let widthPopup = parentHolder.children(".dropdown-content").width();
+		if (widthPopup + right >= widthDocument) {
+			//right = 10;
 		}
-		parentholder.toggleClass("open");
-		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+
+		parentHolder.toggleClass("open");	/* If open, it closes, if closed, it opens */
+
+		// Check tooltip is in viewport
+		let dropDownContentTop = dropDownContent.offset().top;
+		let dropDownContentLeft = dropDownContent.offset().left;
+		let dropDownContentHeight = dropDownContent.outerHeight();
+		let dropDownContentBottom = dropDownContentTop + dropDownContentHeight;
+		let viewportBottom = $(window).scrollTop() + $(window).height();
+
+		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
+		if(parentHolder.hasClass('open')
+			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
+			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
+		){
+			parentHolder.addClass("--up");
+		}else{
+			parentHolder.removeClass("--up");
+		}
+
+		// Change dropdown left/right offset if dropdown is close to left viewport
+		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+			parentHolder.addClass("--left");
+		}else{
+			parentHolder.removeClass("--left");
+		}
+	});
+
+	// Close drop down
+	jQuery(document).on("click", function(event) {
+		// search if click was outside drop down
+		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
+			/* console.log("click close butAction - we click outside"); */
+			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+			if (parentholder){
+				// Hide the menus.
+				parentholder.removeClass("open --up --left");
+			}
+		}
 	});
 });
 

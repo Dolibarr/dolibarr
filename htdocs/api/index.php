@@ -4,6 +4,7 @@
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,6 +107,13 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -267,8 +275,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
-								//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-								if ($file_searched == 'api_login.class.php' && getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
+								//$conf->global->API_DISABLE_LOGIN_API = 1;
+								if ($file_searched == 'api_login.class.php' && getDolGlobalString('API_DISABLE_LOGIN_API')) {
 									continue;
 								}
 

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
- * Copyright (C) 2018-2023 Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+/* Copyright (C) 2017		Franck Moreau				<franck.moreau@theobald.com>
+ * Copyright (C) 2018-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
@@ -62,11 +75,14 @@ if ($object->paid > 0 && count($echeances->lines) == 0) {
 	$pay_without_schedule = 0;
 }
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
+
 /*
  * Actions
  */
 
-if ($action == 'createecheancier' && empty($pay_without_schedule)) {
+if ($action == 'createecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -81,7 +97,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$new_echeance->datec = dol_now();
 		$new_echeance->tms = dol_now();
 		$new_echeance->datep = $date;
-		$new_echeance->amount_capital = $mens - (float) $int;
+		$new_echeance->amount_capital = (float) $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;
 		$new_echeance->fk_typepayment = 3;
@@ -90,9 +106,9 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$new_echeance->fk_user_modif = $user->id;
 		$result = $new_echeance->create($user);
 		if ($result < 0) {
-			setEventMessages($new_echeance->error, $echeance->errors, 'errors');
+			setEventMessages($new_echeance->error, $new_echeance->errors, 'errors');
 			$db->rollback();
-			unset($echeances->lines);
+			$echeances->lines = [];
 			break;
 		}
 		$echeances->lines[] = $new_echeance;
@@ -103,7 +119,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 	}
 }
 
-if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
+if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -115,7 +131,7 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 		$new_echeance = new LoanSchedule($db);
 		$new_echeance->fetch($id);
 		$new_echeance->tms = dol_now();
-		$new_echeance->amount_capital = $mens - (float) $int;
+		$new_echeance->amount_capital = (float) $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;
 		$new_echeance->fk_user_modif = $user->id;
@@ -135,13 +151,18 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 	}
 }
 
+
 /*
  * View
  */
 
+$form = new Form($db);
+$formproject = new FormProjets($db);
+
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_schedule');
 
 $head = loan_prepare_head($object);
 print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'money-bill-alt');

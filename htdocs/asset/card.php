@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "other"));
 
@@ -42,7 +51,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'as
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Asset($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output.'/temp/massgeneration/'.$user->id;
@@ -67,7 +76,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = $user->hasRight('asset', 'read');
 $permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -135,7 +144,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = '';
-	} elseif ($action == "add") {
+	} elseif ($action == "add" && $permissiontoadd) {
 		$object->supplier_invoice_id = GETPOSTINT('supplier_invoice_id');
 	}
 
@@ -188,7 +197,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 	if (GETPOSTISSET('supplier_invoice_id')) {
-		$object->fields['supplier_invoice_id'] = array('type' => 'integer:FactureFournisseur:fourn/class/fournisseur.facture.class.php:1:entity IN (__SHARED_ENTITIES__)', 'label' => 'SupplierInvoice', 'enabled' => '1', 'noteditable' => '1', 'position' => 280, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => '1',);
+		$object->fields['supplier_invoice_id'] = array('type' => 'integer:FactureFournisseur:fourn/class/fournisseur.facture.class.php:1:entity IN (__SHARED_ENTITIES__)', 'label' => 'SupplierInvoice', 'enabled' => '1', 'noteditable' => 1, 'position' => 280, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => '1',);
 		print '<input type="hidden" name="supplier_invoice_id" value="' . GETPOSTINT('supplier_invoice_id') . '">';
 	}
 
@@ -407,7 +416,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('asset'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

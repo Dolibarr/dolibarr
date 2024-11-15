@@ -191,21 +191,22 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				}
 
 				// Send email to customer
-				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
+				if (!getDolGlobalInt('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
 					// if contact selected send to email's contact else send to email's thirdparty
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
+					$contactObj = null;
 
 					if (!empty($contactid)) {
-						$contact = new Contact($this->db);
-						$res = $contact->fetch($contactid);
+						$contactObj = new Contact($this->db);
+						$res = $contactObj->fetch($contactid);
 					}
 
-					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
-						$sendto = $contact->email;
+					if ($contactObj !== null && !empty($contactObj->email) && !empty($contactObj->statut)) {
+						$sendto = $contactObj->email;
 					} elseif (!empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
 						$sendto = $object->thirdparty->email;
@@ -256,13 +257,14 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
+					$contactObj = null;
 
 					if ($contactid > 0) {
 						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
 						// Refuse email if not
-						$contact = new Contact($this->db);
-						$res = $contact->fetch($contactid);
-						if (! in_array($contact, $linked_contacts)) {
+						$contactObj = new Contact($this->db);
+						$res = $contactObj->fetch($contactid);
+						if (! in_array($contactObj, $linked_contacts)) {
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
@@ -272,8 +274,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					$sendto = '';
-					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
-						$sendto = $contact->email;
+					if ($contactObj !== null && $res > 0 && !empty($contactObj->email) && !empty($contactObj->statut)) {
+						$sendto = $contactObj->email;
 					} elseif (!empty($linked_contacts) && ($contactid == -2 || (GETPOST('massaction', 'alpha') == 'close' && GETPOST('confirm', 'alpha') == 'yes'))) {
 						// if sending to all contacts or sending to contacts while mass closing
 						$temp_emails = [];
@@ -350,6 +352,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$trackid = 'tic'.$object->id;
 
+		$old_MAIN_MAIL_AUTOCOPY_TO = null;
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';

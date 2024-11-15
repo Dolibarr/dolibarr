@@ -21,7 +21,6 @@ MenuDoneMyActions=Mine avsluttede handlinger
 ListOfEvents=Liste over hendelser (standardkalender)
 ActionsAskedBy=Handlinger registrert av
 ActionsToDoBy=Handlinger tildelt
-ActionsDoneBy=Handlinger utført av
 ActionAssignedTo=Hendelse tilordnet
 ViewCal=Månedsvisning
 ViewDay=Dagsvisning
@@ -135,12 +134,14 @@ AgendaModelModule=Dokumentmaler for hendelse
 DateActionStart=Startdato
 DateActionEnd=Sluttdato
 AgendaUrlOptions1=Du kan også bruke følgende parametere til å filtrere listen:
-AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet av en bruker <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger som ikke eies av brukeren <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> for å begrense utdata til handlinger som eies av en bruker <b>%s</b> (bruk logina=!%s</b> for arrangementer som ikke eies av brukeren).
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatiske hendelser.
+AgendaUrlOptionsType=<b>actiontype=%s</b> for å få enten automatiske eller manuelle hendelser
+AgendaUrlOptionsCode=<b>actioncode=%s</b> for kun å få hendelser med en gitt kode
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> for å inkludere hendelser i ferie.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> for å begrense til hendelser siste %s dager (standard er %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> for å begrense til de siste 50 hendelsene (standard og maks er%s).
 AgendaShowBirthdayEvents=Kontakters fødselsdag
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Bookingen din er lagret
 BookingReservationHourAfter=Vi bekrefter reservasjonen av møtet på datoen %s
 BookcalBookingTitle=Online avtale
 Transparency = Åpenhet
+ReadMore = Les mer
+ReadLess = Les mindre

@@ -21,7 +21,6 @@ MenuDoneMyActions=Moje ukončené události
 ListOfEvents=Seznam událostí (výchozí kalendář)
 ActionsAskedBy=Nahlášené události
 ActionsToDoBy=Přiřazené události
-ActionsDoneBy=Provedené události
 ActionAssignedTo=Událost přiřazena
 ViewCal=Měsíční zobrazení
 ViewDay=Denní zobrazení
@@ -135,12 +134,14 @@ AgendaModelModule=Šablony dokumentů pro události
 DateActionStart=Datum zahájení
 DateActionEnd=Datum ukončení
 AgendaUrlOptions1=Můžete také přidat následující parametry filtrování výstupu:
-AgendaUrlOptions3=<b>logina=%s</b> omezuje výstup na akce vlastněné uživatelem <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s</b> omezit výstup na akce, které nevlastní uživatel <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b> logint = %s</b> omezit výstup na akce přiřazené uživateli <b> %s</b>(majitel a další).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pro omezení výstupu na akce spojené s projektem <b> __ PROJECT_ID __ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> pro vyloučení automatických událostí.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> pro zahrnutí událostí svátků.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Narozeniny kontaktů
 AgendaHideBirthdayEvents=Skrýt narozeniny kontaktů
 Busy=Zaneprázdněný
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

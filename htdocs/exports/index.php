@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,14 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("exports");
 
@@ -43,7 +52,7 @@ $form = new Form($db);
 
 $help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones|DE:Modul_DatenExporte';
 
-llxHeader('', $langs->trans("ExportsArea"), $help_url);
+llxHeader('', $langs->trans("ExportsArea"), $help_url, '', 0, 0, '', '', '', 'mod-exports page-index');
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
@@ -53,7 +62,7 @@ print '<br>';
 
 print '<div class="center">';
 if (count($export->array_export_code)) {
-	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'creer'));
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'lire'));
 }
 print '</div>';
 print '<br>';

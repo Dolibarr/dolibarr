@@ -93,12 +93,12 @@ class FunctionsLibTest extends CommonClassTest
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT') != 5) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') != 2) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
 			die(1);
 		}
@@ -239,7 +239,7 @@ class FunctionsLibTest extends CommonClassTest
 		// A real search string
 		$filter = "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < '2016-01-01 12:30:00') or (t.nature IS NULL))", $sql);
 
 		// A real search string
 		$filter = "(t.fieldstring:=:'aaa ttt')";
@@ -351,6 +351,11 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($result, 'Check isValidEmail '.$input);
 
 		$input = "1234.abcdefg@domainame.com.br";
+		$result = isValidEmail($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'Check isValidEmail '.$input);
+
+		$input = "1234.abcdefg@domainame.entreprises";
 		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'Check isValidEmail '.$input);
@@ -528,7 +533,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//Internet Explorer 11
+		// Internet Explorer 11
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
@@ -537,7 +542,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//Internet Explorer 11 bis
+		// Internet Explorer 11 bis
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; NP06; rv:11.0) like Gecko';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
@@ -546,7 +551,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//iPad
+		// iPad
 		$user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('safari', $tmp['browsername']);
@@ -555,11 +560,19 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
 
-		//Lynx
+		// Lynx
 		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
 		$tmp = getBrowserInfo($user_agent);
-		$this->assertEquals('lynxlinks', $tmp['browsername']);
+		$this->assertEquals('textbrowser', $tmp['browsername']);
 		$this->assertEquals('2.8.8', $tmp['browserversion']);
+		$this->assertEquals('unknown', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
+
+		// W3M
+		$user_agent = 'w3m/1.2.3-git123456';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('textbrowser', $tmp['browsername']);
+		$this->assertEquals('1.2.3', $tmp['browserversion']);
 		$this->assertEquals('unknown', $tmp['browseros']);
 		$this->assertEquals('classic', $tmp['layout']);
 	}
@@ -1106,10 +1119,10 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
-	* testDolEscapeHtmlTag
-	*
-	* @return	void
-	*/
+	 * testDolEscapeHtmlTag
+	 *
+	 * @return	void
+	 */
 	public function testDolEscapeHtmlTag()
 	{
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
@@ -1123,6 +1136,18 @@ class FunctionsLibTest extends CommonClassTest
 		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
 		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
+
+
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		</div>';
+
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
 	}
 
 
@@ -1182,19 +1207,19 @@ class FunctionsLibTest extends CommonClassTest
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code);
-		$this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+		$this->assertEquals('<span class="paddingright">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
-		$this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+		$this->assertEquals('<span class="paddingright">1234567890</span>', $phone, 'Phone for FR 2');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+		$this->assertEquals('<span class="paddingright">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
 
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
 	}
 
 

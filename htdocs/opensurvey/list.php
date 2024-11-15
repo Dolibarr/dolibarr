@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("opensurvey");
 
@@ -40,7 +49,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'opensurveylist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 
 $id = GETPOST('id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -59,7 +68,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Opensurveysondage($db);
 $opensurvey_static = new Opensurveysondage($db);
 
@@ -235,7 +244,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -311,7 +320,7 @@ $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_
 $moreforfilter.= '</div>';*/
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -343,7 +352,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -437,8 +446,9 @@ while ($i < min($num, $limit)) {
 		}
 		print '</td>';
 	}
+
 	// Ref
-	print '<td>';
+	print '<td class="tdoverflowmax150">';
 	print $opensurvey_static->getNomUrl(1);
 	print '</td>';
 	if (!$i) {
@@ -446,13 +456,13 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Title
-	print '<td>'.dol_htmlentities($obj->title).'</td>';
+	print '<td class="tdoverflowmax125">'.dol_htmlentities($obj->title).'</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
 	// Type
-	print '<td>';
+	print '<td class="tdoverflowmax100">';
 	$type = ($obj->format == 'A') ? 'classic' : 'date';
 	print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 	print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate");
@@ -461,7 +471,7 @@ while ($i < min($num, $limit)) {
 		$totalarray['nbfield']++;
 	}
 
-	print '<td>';
+	print '<td class="tdoverflowmax100">';
 	// Author
 	if ($obj->fk_user_creat) {
 		$userstatic = new User($db);

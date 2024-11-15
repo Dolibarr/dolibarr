@@ -3,8 +3,9 @@
  * Copyright (C) 2008-2009  Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
- * Copyright (C) 2016       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2016-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'categories', 'companies', 'salaries'));
 
@@ -49,15 +58,14 @@ $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('banktreso', 'globalcard'));
+
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 $vline = GETPOST('vline');
 $page = GETPOSTISSET("page") ? GETPOST("page") : 0;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('banktreso', 'globalcard'));
-
 
 /*
  * View
@@ -276,7 +284,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 			if ($tmpobj->family == 'invoice') {
 				$facturestatic->ref = $tmpobj->ref;
 				$facturestatic->id = $tmpobj->objid;
-				$facturestatic->type = $tmpobj->type;
+				$facturestatic->type = (int) $tmpobj->type;
 				$ref = $facturestatic->getNomUrl(1, '');
 
 				$societestatic->id = $tmpobj->socid;

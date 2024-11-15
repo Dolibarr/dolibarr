@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Жазған:
 AUTHORPAIEMENT=Төлеген
 AddTrip=Шығындар есебін жасаңыз
@@ -13,6 +13,8 @@ byEX_EXP=жол бойынша (%s шектеуі)
 byEX_MON=ай бойынша (%s шектеуі)
 byEX_YEA=жыл бойынша (%s шектеуі)
 CANCEL_USER=Жойған
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Шығындар туралы есептердегі "пайдаланушылар" үшін әдепкі бойынша пайдаланылатын шот (Шот жоспарынан).
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Пайдаланушы картасында анықталған арнайы есептік жазба тек ішкі бухгалтерлік есеп үшін пайдаланылады. Бұл Бас кітап үшін, сондай-ақ пайдаланушыда арнайы есепке алу шоты анықталмаған болса, ішкі кітап есебінің әдепкі мәні ретінде пайдаланылады.
 CarCategory=Көлік санаты
 ClassifyRefunded=«Қайтарылған» жіктеу
 CompanyVisited=Келген компания/ұйым
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=жыл бойынша (шектеусіз)
 NoTripsToExportCSV=Осы кезеңде экспортқа шығыс туралы есеп жоқ.
 NOT_AUTHOR=Сіз бұл шығыс есебінің авторы емессіз. Операция тоқтатылды.
 OnExpense=Шығындар сызығы
-PDFStandardExpenseReports=Шығындар есебі үшін PDF құжатын құруға арналған стандартты үлгі
+PDFStandardExpenseReports=Шығындар есебі үшін PDF құжатын жасауға арналған стандартты үлгі
 PaidTrip=Шығындар есебін төлеңіз
 REFUSEUR=Бас тартты
 RangeIk=Жүгіру диапазоны
@@ -115,6 +117,10 @@ VALIDOR=Мақұлдаған
 ValidateAndSubmit=Тексеріңіз және бекітуге жіберіңіз
 ValidatedWaitingApproval=Тексерілді (мақұлдауды күтуде)
 ValideTrip=Шығындар есебін бекіту
+ExpenseReportPayments=Шығындар туралы есеп төлемдері
+TaxUndefinedForThisCategory = Бұл санат үшін салық анықталмаған
+errorComputeTtcOnMileageExpense=Профайл шығынын есептеу қатесі
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Тек жоба күйіндегі элементтерді жаппай әрекетте жоюға болады
 
 ## Dictionary
 EX_BRE=Таңғы ас

@@ -4,6 +4,7 @@
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +31,17 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('mailingindex'));
 
 // Load translation files required by the page
@@ -55,9 +64,13 @@ llxHeader('', $title, $help_url);
 
 print load_fiche_titre($title);
 
-//print '<table class="notopnoleftnoright" width="100%">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
-print '<div class="fichecenter"><div class="fichethirdleft">';
+
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 $titlesearch = $langs->trans("SearchAMailing");
 if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
@@ -147,12 +160,13 @@ if (is_resource($handle)) {
 print "</table><br>";
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 /*
  * List of last emailings
  */
+
 $limit = 10;
 $sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat, m.messtype";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
@@ -211,7 +225,7 @@ if ($result) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 
 $parameters = array('user' => $user);

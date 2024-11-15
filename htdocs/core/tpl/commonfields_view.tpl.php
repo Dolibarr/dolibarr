@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
  * $langs
  *
  * $keyforbreak may be defined to key to switch on second column
+ */
+
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Form $form
+ * @var FormAdmin $formadmin
+ * @var Translate $langs
+ *
+ * @var string $action
  */
 
 // Protection to avoid direct call of template
@@ -47,18 +58,18 @@ foreach ($object->fields as $key => $val) {
 	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4 && abs($val['visible']) != 5) {
 		continue;
 	}
-
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) {
 		continue; // We don't want this field
 	}
-	if (in_array($key, array('ref', 'status'))) {
-		continue; // Ref and status are already in dol_banner
+
+	if (in_array($key, array('rowid', 'ref', 'status'))) {
+		continue; // rowid, ref and status are already in dol_banner
 	}
 
 	$value = $object->$key;
 
 	print '<tr class="field_'.$key.'"><td';
-	print ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).' fieldname_'.$key;
+	print ' class="'.(empty($val['tdcss']) ? 'titlefieldmiddle' : $val['tdcss']).' fieldname_'.$key;
 	//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		print ' tdtop';
@@ -211,8 +222,9 @@ foreach ($object->fields as $key => $val) {
 
 
 print '<div class="fichehalfright">';
-print '<div class="underbanner clearboth"></div>';
-
+if (empty($nounderbanner)) {
+	print '<div class="underbanner clearboth"></div>';
+}
 print '<table class="border centpercent tableforfield">';
 
 print $rightpart;

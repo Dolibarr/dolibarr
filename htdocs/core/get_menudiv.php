@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -67,6 +69,13 @@ if (!defined('DISABLE_SELECT2')) {
 }
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -103,10 +112,10 @@ top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body class="getmenudiv">'."\n";
 
-// Javascript to make menu active like Jmobile did.
+// JavaScript to make menu active like Jmobile did.
 print '
 <style>
-    /*Lets hide the non active LIs by default*/
+    /* Hide the non active LIs by default*/
     body {
         font-size: 16px;
     }
@@ -155,7 +164,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print '
+print '
         background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
@@ -191,9 +200,9 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print 'background-position-y: 1px;';
-	print 'padding-left: 20px;';
-	print '
+print 'background-position-y: 1px;';
+print 'padding-left: 20px;';
+print '
 	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;
@@ -284,9 +293,12 @@ if (!class_exists('MenuManager')) {
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 	}
 }
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->loadMenu('all', 'all'); // Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->showmenu('jmobile');
 
 print '</body>';

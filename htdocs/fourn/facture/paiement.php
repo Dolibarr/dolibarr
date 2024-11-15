@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
@@ -32,7 +32,7 @@
 /**
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
- *	\brief      Payment page for supplier invoices
+ *	\brief      Payment page for supplier/purchase invoices
  */
 
 // Load Dolibarr environment
@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
@@ -99,7 +107,7 @@ if ($user->socid > 0) {
 
 $object = new PaiementFourn($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $extrafields = new ExtraFields($db);
 
@@ -110,11 +118,13 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 $arrayfields = array();
 
+$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 
 
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
 	if (!empty($backtopageforcancel)) {
@@ -148,9 +158,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
-		$error = 0;
-
+	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $permissiontoadd) {
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$paiement_id = 0;
 		$totalpayment = 0;
@@ -268,8 +276,6 @@ if (empty($reshook)) {
 	 * Action confirm_paiement
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes') {
-		$error = 0;
-
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		$multicurrency_code = array();
@@ -387,7 +393,7 @@ $formother = new FormOther($db);
 $supplierstatic = new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('', $langs->trans('ListPayment'), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-paiement');
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement') {
 	$object = new FactureFournisseur($db);
@@ -503,7 +509,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
 			print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
-			print dol_get_fiche_head(null);
+			print dol_get_fiche_head([]);
 
 			print '<table class="border centpercent">';
 

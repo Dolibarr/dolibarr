@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
@@ -45,15 +55,15 @@ if (empty($year)) {
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q");
 	if (empty($q)) {
 		if (GETPOST("month")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
-			$date_end = dol_get_last_day($year_start, GETPOST("month"), false);
+			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
+			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
@@ -104,13 +114,15 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['customerlocaltaxlist']);
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
-$hookmanager->initHooks(['customerlocaltaxlist']);
 
 $calc = 0;
 /*
@@ -142,7 +154,7 @@ $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 $calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
 // Affiche en-tete du rapport
-$description='';
+$description = '';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
 	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
@@ -211,7 +223,7 @@ if ($calc == 0 || $calc == 2) {
 	$parameters["direction"] = 'sell';
 	$parameters["type"] = 'localtax'.$local;
 
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -239,8 +251,8 @@ if ($calc == 0 || $calc == 2) {
 				print '<td class="nowrap">'.$intra.'</td>';
 				print '<td class="nowrap right">'.price($coll->amount).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				$totalamount += $coll->amount;
+				$total += ($local == 1 ? $coll->localtax1 : $coll->localtax2);
 				print "</tr>\n";
 				$i++;
 			}
@@ -304,8 +316,8 @@ if ($calc == 0 || $calc == 1) {
 				print '<td class="nowrap">'.$intra."</td>";
 				print '<td class="nowrap right">'.price($coll->amount).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				$totalamount += $coll->amount;
+				$total += ($local == 1 ? $coll->localtax1 : $coll->localtax2);
 				print "</tr>\n";
 				$i++;
 			}

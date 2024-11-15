@@ -3,8 +3,11 @@ VersionLastInstall=Versión de instalación inicial
 VersionLastUpgrade=Última actualización de la versión
 ConfirmPurgeSessions=¿De verdad quieres purgar todas las sesiones? Esto desconectará a todos los usuarios (excepto a usted).
 SetupArea=Parametrizaje
+UseSearchToSelectCompanyTooltip=También si tiene un gran número de terceros (> 100 000), puede aumentar la velocidad mediante el establecimiento COMPANY_DONOTSEARCH_ANYWHERE constante a 1 en Configuración-> Otros. La búsqueda será limitada a la creación de cadena.
+UseSearchToSelectContactTooltip=También si usted tiene un gran número de terceros (> 100 000), puede aumentar la velocidad mediante el establecimiento CONTACT_DONOTSEARCH_ANYWHERE constante a 1 en Configuración-> Otros. La búsqueda será limitada a la creación de cadena.
 NotConfigured=Módulo / Aplicación no configurada
 GenericMaskCodes3=Cualquier otro carácter en la máscara se quedará sin cambios. <br>No se permiten espacios <br>
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 Module1780Desc=Crear etiquetas/Categoría (Productos, clientes, proveedores, contactos y miembros)
 Permission254=Modificar la contraseña de otros usuarios
 Permission255=Eliminar o desactivar otros usuarios
@@ -31,3 +34,4 @@ WatermarkOnDraftSupplierProposal=Marca de agua en solicitudes de precios a prove
 LDAPMemberObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPUserObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+HelpCssOnViewDesc=The CSS used when viewing the field.

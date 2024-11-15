@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,13 @@ require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
@@ -54,7 +62,7 @@ if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('takeposproductsearch')); // new context for product search hooks
 
 $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price level from thirdparty.
@@ -67,7 +75,7 @@ $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price l
 
 $thirdparty = new Societe($db);
 
-if ($action == 'getProducts') {
+if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	$tosell = GETPOSTISSET('tosell') ? GETPOSTINT('tosell') : '';
 	$limit = GETPOSTISSET('limit') ? GETPOSTINT('limit') : 0;
 	$offset = GETPOSTISSET('offset') ? GETPOSTINT('offset') : 0;
@@ -122,7 +130,7 @@ if ($action == 'getProducts') {
 	} else {
 		echo 'Failed to load category with id='.dol_escape_htmltag($category);
 	}
-} elseif ($action == 'search' && $term != '') {
+} elseif ($action == 'search' && $term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
 
 	// Search barcode into thirdparties. If found, it means we want to change thirdparties.
@@ -153,7 +161,7 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {	// A root category is defined, we must filter on products inside this category tree
 		$object = new Categorie($db);
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
-		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
+		$arrayofcateg = $object->get_full_arbo('product', getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 1);
 		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
 			foreach ($arrayofcateg as $val) {
 				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
@@ -395,7 +403,7 @@ if ($action == 'getProducts') {
 	} else {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
-} elseif ($action == "opendrawer" && $term != '') {
+} elseif ($action == "opendrawer" && $term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
@@ -410,7 +418,7 @@ if ($action == 'getProducts') {
 			print 'Failed to init printer with ID='.getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term);
 		}
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run') && $user->hasRight('facture', 'lire')) {
 	top_httphead('application/html');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
@@ -422,7 +430,7 @@ if ($action == 'getProducts') {
 		$object->fetch($id);
 		$ret = $printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 	}
-} elseif ($action == 'getInvoice') {
+} elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -433,7 +441,7 @@ if ($action == 'getProducts') {
 	}
 
 	echo json_encode($object);
-} elseif ($action == 'thecheck') {
+} elseif ($action == 'thecheck' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 
 	$place = GETPOST('place', 'alpha');

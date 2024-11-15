@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Tuyển dụng
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Quản lý và theo dõi các chiến dịch tuyển dụng cho các vị trí công việc mới
-
-#
 # Admin page
-#
 RecruitmentSetup = Cài đặt tuyển dụng
 RecruitmentSetupPage = Nhấn vào đây để thiết lập các tùy chọn chính cho module tuyển dụng
 RecruitmentArea=Khu vực tuyển dụng
 PublicInterfaceRecruitmentDesc=Các trang công khai về việc làm là các URL công khai để hiển thị và trả lời các công việc đang mở. Có một liên kết khác nhau cho mỗi công việc đang mở, được tìm thấy trên mỗi bản ghi công việc.
 EnablePublicRecruitmentPages=Kích hoạt các trang công khai của việc làm đang mở
 
-#
-# About page
-#
-RecruitmentAbout = Giới thiệu tuyển dụng
-RecruitmentAboutPage = Tuyển dụng về trang
 NbOfEmployeesExpected=Số lượng nhân viên dự kiến
 JobLabel=Nhãn vị trí công việc
 WorkPlace=Nơi làm việc
@@ -47,7 +34,6 @@ PositionToBeFilled=Vị trí công việc
 PositionsToBeFilled=Vị trí công việc
 ListOfPositionsToBeFilled=Danh sách vị trí công việc
 NewPositionToBeFilled=Vị trí công việc mới
-
 JobOfferToBeFilled=Vị trí công việc cần tuyển
 ThisIsInformationOnJobPosition=Thông tin vị trí công việc cần điền
 ContactForRecruitment=Liên hệ tuyển dụng
@@ -77,4 +63,4 @@ WeAreRecruiting=Chúng tôi đang tuyển dụng. Đây là danh sách các vị
 NoPositionOpen=Không có vị trí nào mở vào lúc này
 ConfirmClose=Xác nhận hủy
 ConfirmCloseAsk=Bạn có chắc chắn muốn hủy ứng tuyển tuyển dụng này không
-recruitment=Tuyển dụng
+Recruitment=Tuyển dụng

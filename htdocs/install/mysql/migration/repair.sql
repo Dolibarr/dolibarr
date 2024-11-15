@@ -313,7 +313,7 @@ drop table tmp_societe_double;
 -- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
 drop table tmp_accounting_account_double;
 --select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
-create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
+create table tmp_accounting_account_double as (select account_number, fk_pcg_version, entity, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version, entity having count(rowid) >= 2);
 --select * from tmp_accounting_account_double;
 delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
 drop table tmp_accounting_account_double;
@@ -428,10 +428,10 @@ drop table tmp_bank_url_expense_user;
 
 
 -- Delete duplicate accounting account, but only if not used
-DROP TABLE tmp_llx_accouting_account;
-CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
---SELECT * from tmp_llx_accouting_account;
-DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+DROP TABLE tmp_llx_accounting_account;
+CREATE TABLE tmp_llx_accounting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
+--SELECT * from tmp_llx_accounting_account;
+DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accounting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
@@ -680,3 +680,6 @@ alter table llx_product_attribute_combination_price_level drop index fk_product_
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
+-- delete a constant that should not be set
+DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;

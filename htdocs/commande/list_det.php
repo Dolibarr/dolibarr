@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
- * Copyright (C) 2021-2023 	Anthony Berton			<anthony.berton@bb2a.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
  */
 
 /**
- *	\file       htdocs/commande/list.php
+ *	\file       htdocs/commande/list_det.php
  *	\ingroup    order
  *	\brief      Page to list orders
  */
@@ -53,6 +54,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
@@ -82,6 +91,7 @@ $search_dateorder_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateorder_end_
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_start_month'), GETPOSTINT('search_datedelivery_start_day'), GETPOSTINT('search_datedelivery_start_year'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_end_month'), GETPOSTINT('search_datedelivery_end_day'), GETPOSTINT('search_datedelivery_end_year'));
 
+$search_product_category_array = array();
 if (isModEnabled('category')) {
 	$search_product_category_array = GETPOST("search_category_".Categorie::TYPE_PRODUCT."_list", "array");
 	$searchCategoryProductOperator = 0;
@@ -108,7 +118,7 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
@@ -154,7 +164,7 @@ if (!$sortorder) {
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlistdetail'));
 $extrafields = new ExtraFields($db);
@@ -213,10 +223,10 @@ $arrayfields = array(
 	'c.fk_warehouse' => array('label' => 'Warehouse', 'checked' => 0, 'enabled' => (!isModEnabled('stock') && !getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER') ? 0 : 1), 'position' => 110),
 	'u.login' => array('label' => "Author", 'checked' => 1, 'position' => 115),
 	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 116),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
 	'c.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 120),
 	'c.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 125),
 	'c.date_cloture' => array('label' => "DateClosing", 'checked' => 0, 'position' => 130),
@@ -246,6 +256,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'commande', $id, '');
 
+$permissiontoread = false;
 
 /*
  * Actions
@@ -706,7 +717,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-commande page-list_det');
 
 	$param = '';
 
@@ -961,7 +972,7 @@ if ($resql) {
 
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -1297,6 +1308,7 @@ if ($resql) {
 
 	// Détail commande
 	if (!empty($arrayfields['rowid']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
 		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 	}
@@ -1463,6 +1475,7 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$productstat_cache = array();
+	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_sdtat_cache';
 	$productstat_cachevirtual = array();
 	$getNomUrl_cache = array();
 
@@ -1487,6 +1500,7 @@ if ($resql) {
 
 	// Détail commande
 	$totalqty = 0;
+	$oldref = null;
 
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
@@ -1546,7 +1560,7 @@ if ($resql) {
 		$projectstatic->title = $obj->project_label;
 
 		$marginInfo = array();
-		if ($with_margin_info === true) {
+		if ($with_margin_info) {
 			$generic_commande->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
 			$total_ht += $obj->total_ht;
@@ -1679,7 +1693,7 @@ if ($resql) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
@@ -1768,8 +1782,8 @@ if ($resql) {
 		}
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
+			print '<td class="center" title="'.$langs->trans($arrayfields['c.date_delivery']['label']).': '.dol_print_date($db->jdate($obj->date_delivery), 'dayhour').'">';
+			print dol_print_date($db->jdate($obj->date_delivery), 'day');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1805,7 +1819,7 @@ if ($resql) {
 		// Channel
 		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 			print '<td>';
-			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
+			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', 0);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2090,6 +2104,7 @@ if ($resql) {
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && isModEnabled('stock')) {
+				$text_icon = '';
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
 
@@ -2109,7 +2124,7 @@ if ($resql) {
 							$productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 						} else {
 							$generic_product->stock_reel = $productstat_cache[$obj->fk_product]['stock_reel'];
-							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+							$generic_product->stock_theorique = $productstat_cachevirtual[$obj->fk_product]['stock_reel'];
 						}
 
 						if ($reliquat > $generic_product->stock_reel) {
@@ -2167,10 +2182,10 @@ if ($resql) {
 						}
 					}
 					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}
@@ -2190,7 +2205,11 @@ if ($resql) {
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed).'</td>';
+			print '<td class="center">';
+			if ($obj->billed) {
+				print yn($obj->billed, $langs->trans("Billed"));
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

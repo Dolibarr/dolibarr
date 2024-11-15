@@ -91,7 +91,6 @@ BankTransactionLine=Transacción bancaria
 AllAccounts=Todas las cuentas bancarias y de efectivo
 ShowAllAccounts=Mostrar todas las cuentas
 FutureTransaction=Transacción futura Incapaz de conciliar.
-EventualyAddCategory=Eventualmente, especifique una categoría en la que clasificar los registros
 ToConciliate=¿Para conciliar?
 ThenCheckLinesAndConciliate=Luego, compruebe las líneas presentes en el extracto bancario y haga click
 DefaultRIB=Predeterminado BAN

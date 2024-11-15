@@ -19,6 +19,7 @@
 CREATE TABLE llx_hrm_evaluation(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity INTEGER DEFAULT 1 NOT NULL,     -- multi company id
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
 	label varchar(255),
 	description text,
@@ -34,7 +35,6 @@ CREATE TABLE llx_hrm_evaluation(
 	status smallint NOT NULL,
 	date_eval date,
 	fk_user integer NOT NULL,
-	fk_job integer NOT NULL,
-	last_main_doc varchar(255)
+	fk_job integer NOT NULL
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

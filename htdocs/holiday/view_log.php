@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+/* Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'other', 'holiday'));
 
 $action             = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction         = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -77,10 +89,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Load translation files required by the page
-$langs->loadLangs(array('users', 'other', 'holiday'));
-
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
@@ -89,7 +98,7 @@ $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_mo
 $arrayfields = array();
 $arrayofmassactions = array();
 
-if (empty($conf->holiday->enabled)) {
+if (!isModEnabled('holiday')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -180,7 +189,9 @@ $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
 $title = $langs->trans('CPTitreMenu');
-llxHeader('', $title);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-view_log');
 
 $sqlwhere = '';
 
@@ -286,7 +297,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->hasRight('holiday', 'write'));
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -336,7 +347,7 @@ if (!empty($arrayfields['cpl.rowid']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month ? (string) $search_month : '').'">';
 	print $formother->selectyear($search_year, 'search_year', 1, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 	print '</td>';
 }
@@ -344,7 +355,7 @@ if (!empty($arrayfields['cpl.date_action']['checked'])) {
 // Filter: Validator
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$validator = new UserGroup($db);
-	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+	$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
 	foreach ($valideurobjects as $val) {
@@ -559,8 +570,8 @@ while ($i < min($num, $limit)) {
 }
 
 if ($log_holiday == '2') {
-	print '<tr class="opacitymedium">';
-	print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
+	print '<tr>';
+	print '<td colspan="10"><span class="opacitymedium">'.$langs->trans('NoRecordFound').'</span></td>';
 	print '</tr>';
 }
 

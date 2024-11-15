@@ -97,12 +97,13 @@ dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$
 
 $error = 0;
 
+
 /*
  *	Actions
  */
 
 // If install, check password and password_verification used to create admin account
-if ($action == "set") {
+if ($action == "set") {		// Test on permissions not required here
 	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
@@ -126,7 +127,7 @@ if ($action == "set") {
 
 $morehtml = '';
 
-pHeader($langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
 print '<br>';
 
 // Test if we can run a first install process
@@ -523,7 +524,7 @@ if ($action == "set") {
 
 		print "<br>";
 
-		$morehtml = '<br><div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
 		$morehtml .= '</a></div><br>';
 	} else {
@@ -533,7 +534,7 @@ if ($action == "set") {
 
 		print "<br>";
 
-		$morehtml = '<br><div class="center"><a href="../install/index.php">';
+		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../install/index.php">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		$morehtml .= '</a></div>';
 	}

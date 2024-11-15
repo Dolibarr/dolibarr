@@ -111,7 +111,6 @@ BackToAccount=Voltar para conta
 ShowAllAccounts=Mostrar todas as contas
 FutureTransaction=Transação no futuro. Impossível reconciliar
 SelectChequeTransactionAndGenerate=Selecione/filtre os cheques que devem ser incluídos no recibo do depósito do cheque. Em seguida, clique em "Criar".
-EventualyAddCategory=Eventualmente, especifique a categoria na qual os registros será classificado
 ToConciliate=Conciliar?
 ThenCheckLinesAndConciliate=Então, verifique as linhas presente no estrato bancário e clique
 DefaultRIB=BAN padrão

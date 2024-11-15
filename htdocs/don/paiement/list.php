@@ -5,6 +5,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -76,7 +85,7 @@ if (!$sortfield) {
 	$sortfield = "pd.rowid";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -102,7 +111,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('donationlist'));
 
 // Security check
@@ -407,7 +416,7 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 
 // Filter: Amount
 if (!empty($arrayfields['pd.amount']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="6" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
 }
@@ -443,6 +452,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.rowid']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pd.rowid']['label'], $_SERVER["PHP_SELF"], "pd.rowid", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -471,7 +481,7 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['pd.amount']['label'], $_SERVER["PHP_SELF"], "pd.amount", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['pd.amount']['label'], $_SERVER["PHP_SELF"], "pd.amount", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 
@@ -613,7 +623,7 @@ while ($i < $imaxinloop) {
 
 	// Amount
 	if (!empty($arrayfields['pd.amount']['checked'])) {
-		print '<td ><span class="amount">' . price($obj->amount) . '</span></td>';
+		print '<td class="right"><span class="amount">' . price($obj->amount) . '</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'amount';

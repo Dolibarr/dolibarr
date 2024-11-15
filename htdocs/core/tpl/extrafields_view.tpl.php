@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
- * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
+ * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formObjectOptions. Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -25,7 +25,14 @@
  * $parameters
  * $cols
  */
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -130,7 +137,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			print '>';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
-			print '<td class="titlefield">';
+			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 
@@ -256,7 +263,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '</form>';
 			} else {
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
-				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element);
+				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 			}
 
 			print '</td>';

@@ -1,15 +1,15 @@
 #---------------------------------------------------------
 # Spec file to build a rpm file
 #
-# This is an example to build a rpm file. You can use this 
-# file to build a package for your own distributions and 
+# This is an example to build a rpm file. You can use this
+# file to build a package for your own distributions and
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
 Name: dolibarr
 Version: __VERSION__
 Release: __RELEASE__
-Summary: ERP and CRM software for small and medium companies or foundations 
+Summary: ERP and CRM software for small and medium companies or foundations
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones o autónomos
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, auto-entrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
@@ -26,7 +26,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Productivity/Office/Management
 Requires: apache2, apache2-mod_php, php >= 5.3.0, php-gd, php-ldap, php-imap, php-mysql, php-openssl, dejavu
-Requires: mysql-community-server, mysql-community-server-client 
+Requires: mysql-community-server, mysql-community-server-client
 %if 0%{?suse_version}
 BuildRequires: update-desktop-files fdupes
 %endif
@@ -36,24 +36,24 @@ AutoReqProv: no
 
 
 %description
-An easy to use CRM & ERP open source/free software package for small  
-and medium companies, foundations or freelances. It includes different 
-features for Enterprise Resource Planning (ERP) and Customer Relationship 
+An easy to use CRM & ERP open source/free software package for small
+and medium companies, foundations or freelances. It includes different
+features for Enterprise Resource Planning (ERP) and Customer Relationship
 Management (CRM) but also for different other activities.
-Dolibarr was designed to provide only features you need and be easy to 
+Dolibarr was designed to provide only features you need and be easy to
 use.
 
 %description -l es
 Un software ERP y CRM para pequeñas y medianas empresas, asociaciones
-o autónomos. Incluye diferentes funcionalidades para la Planificación 
+o autónomos. Incluye diferentes funcionalidades para la Planificación
 de Recursos Empresariales (ERP) y Gestión de la Relación con los
-Clientes (CRM) así como para para otras diferentes actividades. 
+Clientes (CRM) así como para para otras diferentes actividades.
 Dolibarr ha sido diseñado para suministrarle solamente las funcionalidades
 que necesita y haciendo hincapié en su facilidad de uso.
-    
+
 %description -l fr
-Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs, 
-artisans ou associations. Il permet de gérer vos clients, prospect, 
+Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs,
+artisans ou associations. Il permet de gérer vos clients, prospect,
 fournisseurs, devis, factures, comptes bancaires, agenda, campagnes mailings
 et bien d'autres choses dans une interface pensée pour la simplicité.
 
@@ -61,9 +61,9 @@ et bien d'autres choses dans une interface pensée pour la simplicité.
 Un programmo gestionale per piccole e medie
 imprese, fondazioni e liberi professionisti. Include varie funzionalità per
 Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori
-attività. Progettato per poter fornire solo ciò di cui hai bisogno 
+attività. Progettato per poter fornire solo ciò di cui hai bisogno
 ed essere facile da usare.
-Programmo web, progettato per poter fornire solo ciò di 
+Programmo web, progettato per poter fornire solo ciò di
 cui hai bisogno ed essere facile da usare.
 
 
@@ -102,7 +102,7 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
-%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source  
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
 # Lang
@@ -111,8 +111,8 @@ echo "%dir %{_datadir}/%{name}/htdocs/langs" >> %{name}.lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
   lang=$(basename $i)
-  lang1=`expr substr $lang 1 2`; 
-  lang2=`expr substr $lang 4 2 | tr "[:upper:]" "[:lower:]"`; 
+  lang1=`expr substr $lang 1 2`;
+  lang2=`expr substr $lang 4 2 | tr "[:upper:]" "[:lower:]"`;
   echo "%dir %{_datadir}/%{name}/htdocs/langs/${lang}" >> %{name}.lang
   if [ "$lang1" = "$lang2" ] ; then
     echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
@@ -166,6 +166,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/accountancy
 %_datadir/dolibarr/htdocs/adherents
 %_datadir/dolibarr/htdocs/admin
+%_datadir/dolibarr/htdocs/ai
 %_datadir/dolibarr/htdocs/api
 %_datadir/dolibarr/htdocs/asset
 %_datadir/dolibarr/htdocs/asterisk
@@ -236,6 +237,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webhook
+%_datadir/dolibarr/htdocs/webportal
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/workstation
@@ -269,7 +271,7 @@ export apachegroup='www';
 # Remove dolibarr install/upgrade lock file if it exists
 %{__rm} -f $docdir/install.lock
 
-# Create empty directory for uploaded files and generated documents 
+# Create empty directory for uploaded files and generated documents
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
 
@@ -279,7 +281,7 @@ echo Create document directory $docdir
 # If a conf already exists and its content was already completed by installer
 export config=%{_sysconfdir}/dolibarr/conf.php
 if [ -s $config ] && grep -q "File generated by" $config
-then 
+then
   # File already exist. We add params not found.
   echo Add new params to overwrite path to use shared libraries/fonts
   grep -q -c "dolibarr_lib_FPDI_PATH" $config      || [ ! -d "/usr/share/php/fpdi" ]   || echo "<?php \$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi'; ?>" >> $config
@@ -291,7 +293,7 @@ then
   grep -q -c "dolibarr_js_JQUERY" $config          || [ ! -d "/usr/share/javascript/jquery" ]    || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config
   grep -q -c "dolibarr_js_JQUERY_UI" $config       || [ ! -d "/usr/share/javascript/jquery-ui" ] || echo "<?php \$dolibarr_js_JQUERY_UI='/javascript/jquery-ui'; ?>" >> $config
   grep -q -c "dolibarr_js_JQUERY_FLOT" $config     || [ ! -d "/usr/share/javascript/flot" ]      || echo "<?php \$dolibarr_js_JQUERY_FLOT='/javascript/flot'; ?>" >> $config
-  grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/DejaVuSans-Bold.ttf'; ?>" >> $config      
+  grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/DejaVuSans-Bold.ttf'; ?>" >> $config
 fi
 
 # Create a config link dolibarr.conf
@@ -331,9 +333,9 @@ fi
 echo
 echo "----- Dolibarr %version-%release - (c) Dolibarr dev team -----"
 echo "Dolibarr files are now installed (into /usr/share/dolibarr)."
-echo "To finish installation and use Dolibarr, click on the menu" 
+echo "To finish installation and use Dolibarr, click on the menu"
 echo "entry Dolibarr ERP-CRM or call the following page from your"
-echo "web browser:"  
+echo "web browser:"
 echo "http://localhost/dolibarr/"
 echo "-------------------------------------------------------"
 echo
@@ -346,10 +348,10 @@ if [ "x$1" = "x0" ] ;
 then
   # Remove
   echo "Removed package"
-  
+
   # Define vars
   export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-  
+
   # Remove apache link
   if [ -L $apachelink ] ;
   then
@@ -357,7 +359,7 @@ then
     %{__rm} -f $apachelink
     status=purge
   fi
-  
+
   # Restart web servers if required
   if [ "x$status" = "xpurge" ] ;
   then

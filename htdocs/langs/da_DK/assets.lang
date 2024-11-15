@@ -1,65 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Aktiver
-NewAsset = Nyt aktiv
-AccountancyCodeAsset = Regnskabskode (aktiv)
-AccountancyCodeDepreciationAsset = Regnskabskode (afskrivning aktiv konto)
-AccountancyCodeDepreciationExpense = Regnskabskode (afskrivningskostnadskonto)
-NewAssetType=Ny aktivtype
-AssetsTypeSetup=Aktiv type setup
-AssetTypeModified=Aktiv type redigeret
-AssetType=Aktiv type
+NewAsset=Nyt aktiv
+AccountancyCodeAsset=Regnskabskode (aktiv)
+AccountancyCodeDepreciationAsset=Regnskabskode (afskrivning aktiv konto)
+AccountancyCodeDepreciationExpense=Regnskabskode (afskrivningskostnadskonto)
 AssetsLines=Aktiver
 DeleteType=Slet
-DeleteAnAssetType=Slet en aktiv type
-ConfirmDeleteAssetType=Er du sikker på du ønsker at slette denne aktiv type
-ShowTypeCard=Vis type ' %s'
-
+DeleteAnAssetType=Slet en aktivmodel
+ConfirmDeleteAssetType=Er du sikker på, at du vil slette denne aktivmodel?
+ShowTypeCard=Vis model '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Aktiver
+ModuleAssetsName=Aktiver
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Aktiver beskrivelse
-
-#
+ModuleAssetsDesc=Aktiver beskrivelse
 # Admin page
-#
-AssetsSetup = Indstillinger for aktiver
-Settings = Indstillinger
-AssetsSetupPage = Indstillingsside for aktiver
-ExtraFieldsAssetsType = Komplementære attributter (aktiv type)
-AssetsType=Asset type
-AssetsTypeId=Aktivtype id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Aktiver typer
-
-#
+AssetSetup=Indstillinger for aktiver
+AssetSetupPage=Indstillingsside for aktiver
+ExtraFieldsAssetModel=Komplementære attributter (aktivets model)
+AssetsType=Aktiv model
+AssetsTypeId=Aktiv model-id
+AssetsTypeLabel=Aktiv model etiket
+AssetsTypes=Aktiv modeller
+ASSET_ACCOUNTANCY_CATEGORY=Regnskabsgruppe for anlægsaktiver
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Forholdsmæssig periode i dage til beregning af amortisering over et år
 # Menu
-#
-MenuAssets = Aktiver
-MenuNewAsset = Nyt aktiv
-MenuTypeAssets = Indtast aktiver
-MenuListAssets = Liste
-MenuNewTypeAssets = Ny
-MenuListTypeAssets = Liste
-
-#
+MenuAssets=Aktiver
+MenuNewAsset=Nyt aktiv
+MenuAssetModels=Modelaktiver
+MenuListAssets=Liste
+MenuNewAssetModel=Nyt aktivs model
+MenuListAssetModels=Liste
 # Module
-#
-NewAssetType=Ny aktivtype
-NewAsset=Nyt aktiv
+ConfirmDeleteAsset=Vil du virkelig fjerne dette aktiv?
+# Tab
+AssetDepreciationOptions=Afskrivningsmuligheder
+AssetAccountancyCodes=Regnskabskonti
+AssetDepreciation=Afskrivninger
+# Asset
+Asset=Aktiv
+Assets=Aktiver
+AssetReversalAmountHT=Tilbageførselsbeløb (uden afgifter)
+AssetAcquisitionValueHT=Anskaffelsesbeløb (uden afgifter)
+AssetRecoveredVAT=Refunderet moms
+AssetReversalDate=Tilbageførselsdato
+AssetDateAcquisition=Overtagelsesdato
+AssetDateStart=Dato for opstart
+AssetAcquisitionType=Type af erhvervelse
+AssetAcquisitionTypeNew=Ny
+AssetAcquisitionTypeOccasion=Brugt
+AssetType=Type af aktiv
+AssetTypeIntangible=Immaterielle
+AssetTypeTangible=Håndgribelig
+AssetTypeInProgress=I gang
+AssetTypeFinancial=Finansiel
+AssetNotDepreciated=Ikke afskrevet
+AssetDisposal=Bortskaffelse
+AssetConfirmDisposalAsk=Er du sikker på, at du vil afhænde aktivet <b> %s </b>?
+AssetConfirmReOpenAsk=Er du sikker på, at du vil genåbne aktivet <b> %s </b>?
+# Asset status
+AssetInProgress=I gang
+AssetDisposed=Bortskaffes
+AssetRecorded=Regnskabet
+# Asset disposal
+AssetDisposalDate=Dato for bortskaffelse
+AssetDisposalAmount=Bortskaffelsesværdi
+AssetDisposalType=Type af bortskaffelse
+AssetDisposalDepreciated=Afskriv på overførselsåret
+AssetDisposalSubjectToVat=Momspligtig bortskaffelse
+# Asset model
+AssetModel=Aktivets model
+AssetModels=Assets modeller
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Økonomisk afskrivning
+AssetDepreciationOptionAcceleratedDepreciation=Accelereret afskrivning (skat)
+AssetDepreciationOptionDepreciationType=Afskrivningstype
+AssetDepreciationOptionDepreciationTypeLinear=Lineær
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
+AssetDepreciationOptionDepreciationTypeExceptional=Enestående
+AssetDepreciationOptionDegressiveRate=Degressiv rate
+AssetDepreciationOptionDuration=Varighed
+AssetDepreciationOptionDurationType=Type varighed
+AssetDepreciationOptionDurationTypeAnnual=Årligt
+AssetDepreciationOptionDurationTypeMonthly=Månedlige
+AssetDepreciationOptionDurationTypeDaily=Daglige
+AssetDepreciationOptionRate=Pris (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Afskrivningsgrundlag (ekskl. moms)
+AssetDepreciationOptionAmountBaseDeductibleHT=Fradragsgrundlag (ekskl. moms)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Samlet beløb sidste afskrivning (ekskl. moms)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Økonomisk afskrivning
+AssetAccountancyCodeAsset=Aktiv
+AssetAccountancyCodeDepreciationAsset=Afskrivninger
+AssetAccountancyCodeDepreciationExpense=Afskrivninger
+AssetAccountancyCodeValueAssetSold=Værdien af afhændet aktiv
+AssetAccountancyCodeReceivableOnAssignment=Tilgodehavende ved bortskaffelse
+AssetAccountancyCodeProceedsFromSales=Udbytte fra bortskaffelse
+AssetAccountancyCodeVatCollected=Opkrævet moms
+AssetAccountancyCodeVatDeductible=Genvundet moms på aktiver
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelereret afskrivning (skat)
+AssetAccountancyCodeAcceleratedDepreciation=Konto
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Afskrivninger
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Tilbagetagelse/hensættelse
+# Asset depreciation
+AssetBaseDepreciationHT=Afskrivningsgrundlag (ekskl. moms)
+AssetDepreciationBeginDate=Start af afskrivning pr
+AssetDepreciationDuration=Varighed
+AssetDepreciationRate=Pris (%%)
+AssetDepreciationDate=Afskrivningsdato
+AssetDepreciationHT=Afskrivning (ekskl. moms)
+AssetCumulativeDepreciationHT=Akkumulerede afskrivninger (ekskl. moms)
+AssetResidualHT=Restværdi (ekskl. moms)
+AssetDispatchedInBookkeeping=Afskrivninger registreret
+AssetFutureDepreciationLine=Fremtidige afskrivninger
+AssetDepreciationReversal=Tilbageførsel
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Id for aktivet eller den fundne model er ikke angivet
+AssetErrorFetchAccountancyCodesForMode=Fejl ved hentning af regnskabskontiene for '%s' afskrivningstilstand
+AssetErrorDeleteAccountancyCodesForMode=Fejl ved sletning af regnskabskonti fra '%s' afskrivningstilstand
+AssetErrorInsertAccountancyCodesForMode=Fejl ved indsættelse af regnskabskontiene for afskrivningstilstanden '%s'
+AssetErrorFetchDepreciationOptionsForMode=Fejl ved hentning af muligheder for '%s' afskrivningstilstand
+AssetErrorDeleteDepreciationOptionsForMode=Fejl ved sletning af '%s' indstillingerne for afskrivningstilstand
+AssetErrorInsertDepreciationOptionsForMode=Fejl ved indsættelse af '%s' indstillingerne for afskrivningstilstand
+AssetErrorFetchDepreciationLines=Fejl ved hentning af registrerede afskrivningslinjer
+AssetErrorClearDepreciationLines=Fejl ved udrensning af registrerede afskrivningslinjer (tilbageførsel og fremtidig)
+AssetErrorAddDepreciationLine=Fejl ved tilføjelse af en afskrivningslinje
+AssetErrorCalculationDepreciationLines=Fejl ved beregning af afskrivningslinjerne (inddrivelse og fremtidig)
+AssetErrorReversalDateNotProvidedForMode=Tilbageførselsdatoen er ikke angivet for '%s'-afskrivningsmetoden
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Tilbageførselsdatoen skal være større end eller lig med begyndelsen af indeværende regnskabsår for '%s' afskrivningsmetoden
+AssetErrorReversalAmountNotProvidedForMode=Tilbageførselsbeløbet er ikke angivet for afskrivningstilstanden '%s'.
+AssetErrorFetchCumulativeDepreciation=Fejl ved hentning af det akkumulerede afskrivningsbeløb fra afskrivningslinjen
+AssetErrorSetLastCumulativeDepreciation=Fejl ved registrering af det sidste akkumulerede afskrivningsbeløb

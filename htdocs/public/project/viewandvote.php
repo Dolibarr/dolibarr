@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
 
@@ -68,6 +77,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $errmsg = '';
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
@@ -236,7 +246,7 @@ print "\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -274,8 +284,8 @@ if (getDolGlobalString('PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH')) {
 
 print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.dol_escape_htmltag($project->title).'".<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.dol_htmlentitiesbr($project->note_public).'</td></tr>'."\n";
 print $text;
 print '</table>'."\n";
 

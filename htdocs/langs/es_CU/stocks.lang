@@ -75,7 +75,6 @@ RealStockDesc=El stock físico/real es el stock que se encuentra actualmente en 
 RealStockWillAutomaticallyWhen=El stock real se modificará de acuerdo con esta regla (según se define en el módulo Stock):
 VirtualStock=Acciones virtuales
 VirtualStockAtDateDesc=Stock virtual una vez finalizados todos los pedidos pendientes que se tiene previsto tramitar antes de la fecha elegida
-AtDate=en la fecha
 IdWarehouse=almacén de identificación
 LieuWareHouse=Almacén de localización
 WarehousesAndProducts=almacenes y productos

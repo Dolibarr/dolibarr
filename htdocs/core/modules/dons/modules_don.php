@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +40,9 @@ abstract class ModeleDon extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB  $db     			Database handler
-	 *  @param  integer $maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -54,6 +55,17 @@ abstract class ModeleDon extends CommonDocGenerator
 
 		return $list;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write the object to document file to disk
+	 *
+	 *  @param	Don			$don			Donation object
+	 *  @param	Translate	$outputlangs	Lang object for output language
+	 *  @param	string		$currency		Currency code
+	 *  @return	int<-1,1>					>0 if OK, <0 if KO
+	 */
+	abstract public function write_file($don, $outputlangs, $currency = '');
 }
 
 

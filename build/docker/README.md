@@ -1,34 +1,23 @@
-# How to use it ?
+# How to use run Dolibarr with docker ?
 
-The docker-compose.yml file is a sample of a config file to use to build and run Dolibarr in the current workspace with Docker.
-This docker image is intended for development usage.
-For production usage you should consider other contributor reference like https://hub.docker.com/r/tuxgasy/dolibarr 
 
-Before build/run, define the variable HOST_USER_ID as following:
+## For a fast run of a demo of the local version, you can build the docker image from this current repository by running
 
-        export HOST_USER_ID=$(id -u)
 
-Go in repository build/docker :
+sudo docker-compose build
 
-        cd build/docker
+sudo -s
 
-And then, you can run :
+export HOST_USER_ID=$(id -u)
+export HOST_GROUP_ID=$(id -g)
+export MYSQL_ROOT_PWD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo)
 
-        docker-compose up
+docker-compose up -d
 
-This will run 4 containers Docker : Dolibarr, MariaDB, PhpMyAdmin and MailDev.
 
-The URL to go to the Dolibarr is :
+Warning: There is no persistency of data. This process is for dev purpose only.
 
-        http://0.0.0.0
 
-The URL to go to PhpMyAdmin is (login/password is root/root) :
+## For a more robust or a production usage
 
-        http://0.0.0.0:8080
-
-In Dolibarr configuration Email let PHP mail function, To see all mail send by Dolibarr go to maildev
-
-        http://0.0.0.0:8081
-
-Setup the database connection during the installation process, please use mariadb (name of the database container) as database host.
-Setup documents folder, during the installation process, to /var/documents
+If you want to execute an official Docker package, you can find it and read the doc on ihttps://hub.docker.com/r/dolibarr/dolibarr 

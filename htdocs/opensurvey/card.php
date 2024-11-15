@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
@@ -56,15 +65,14 @@ if ($result <= 0) {
 	exit;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
 $permissiontoread = $user->hasRight('opensurvey', 'read');
 $permissiontoadd = $user->hasRight('opensurvey', 'write');
-// permission delete doesn't exists
-$permissiontodelete = $user->hasRight('opensurvey', 'write');
+$permissiontodelete = $user->hasRight('opensurvey', 'write');	// permission delete doesn't exists
 
 
 /*
@@ -83,32 +91,32 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	if ($action == 'delete_confirm') {
+	if ($action == 'delete_confirm' && $permissiontodelete) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
-		$result = $object->delete($user, '', $numsondage);
+		$result = $object->delete($user, 0, $numsondage);
 
 		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
 		exit();
 	}
 
 	// Close
-	if ($action == 'close') {
+	if ($action == 'close' && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
 		$object->update($user);
 	}
 
-	// Reopend
-	if ($action == 'reopen') {
+	// Valid or Reopend
+	if (($action == 'reopen' || $action == 'validate') && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
 		$object->update($user);
 	}
 
 	// Update
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoadd) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -140,7 +148,7 @@ if (empty($reshook)) {
 	}
 
 	// Add comment
-	if (GETPOST('ajoutcomment')) {
+	if (GETPOST('ajoutcomment') && $permissiontoadd) {
 		$error = 0;
 
 		if (!GETPOST('comment', "alphanohtml")) {
@@ -165,7 +173,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete comment
-	if ($action == 'deletecomment') {
+	if ($action == 'deletecomment' && $permissiontoadd) {
 		$idcomment = GETPOSTINT('idcomment');
 		if ($idcomment > 0) {
 			// Security check
@@ -177,7 +185,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit') {
+	if ($action == 'edit' && $permissiontoadd) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -201,7 +209,7 @@ $title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
-llxHeader('', $title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Define format of choices
@@ -209,7 +217,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -238,7 +246,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Type
 $type = ($object->format == "A") ? 'classic' : 'date';
-print '<tr><td class="titlefieldmax45">'.$langs->trans("Type").'</td><td>';
+print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td><td>';
 print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
 
@@ -247,16 +255,16 @@ print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
-	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+	print '<input class="width300" type="text" name="nouveautitre" value="'.dolPrintHTML($object->title).'">';
 } else {
-	print dol_htmlentities($object->title);
+	print dolPrintHTML($object->title);
 }
 print '</td></tr>';
 
 // Description
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
 	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
@@ -324,7 +332,7 @@ if ($object->fk_user_creat > 0) {
 	print $userstatic->getLoginUrl(-1);
 } else {
 	if ($action == 'edit') {
-		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
+		print '<input type="text" name="nouvelleadresse" class="minwidth200" value="'.$object->mail_admin.'">';
 	} else {
 		print dol_print_email($object->mail_admin, 0, 0, 1, 0, 1, 1);
 	}
@@ -341,9 +349,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
-if ($action != 'edit') {
-	print ajax_autoselect("opensurveyurl", $url, 'image');
-}
+//if ($action != 'edit') {
+print ajax_autoselect("opensurveyurl", $url, 'image');
+//}
 
 print '</td></tr>';
 
@@ -375,6 +383,11 @@ print '<div class="tabsAction">';
 if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
+
+	if ($object->status == Opensurveysondage::STATUS_DRAFT) {
+		// Validate button
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Valid").'</a>';
+	}
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
 		// Close button
@@ -412,7 +425,7 @@ $comments = $object->getComments();
 if (!empty($comments)) {
 	foreach ($comments as $comment) {
 		if ($user->hasRight('opensurvey', 'write')) {
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
+			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', 0, 0, 0, '', '', 0).'</a> ';
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";

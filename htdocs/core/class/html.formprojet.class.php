@@ -1,7 +1,7 @@
 <?php
-/* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
- * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
- * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
+/* Copyright (c) 2013 		Florian Henry  				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015 		Marcos García  				<marcosgdf@gmail.com>
+ * Copyright (C) 2018 		Charlene Benke 				<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -46,6 +46,9 @@ class FormProjets extends Form
 	public $errors = array();
 
 
+	/**
+	 * @var int
+	 */
 	public $nboftasks;
 
 
@@ -149,7 +152,8 @@ class FormProjets extends Form
 	 * @param string	$htmlid 		Html id to use instead of htmlname
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
-	 * @return int|string|array         HTML string or array of option or <0 if KO
+	 * @return int|string|array<array{key:int,value:string,ref:string,labelx:string,label:string,disabled:bool}>         HTML string or array of option or <0 if KO
+
 	 */
 	public function select_projects_list($socid = -1, $selected = 0, $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
@@ -325,20 +329,20 @@ class FormProjets extends Form
 	/**
 	 *  Output a combo list with tasks qualified for a third party
 	 *
-	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param int $selected Id task preselected
-	 * @param string $htmlname Name of HTML select
-	 * @param int $maxlength Maximum length of label
-	 * @param int $option_only Return only html options lines without the select tag
-	 * @param string $show_empty Add an empty line ('1' or string to show for empty line)
-	 * @param int $discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
-	 * @param int $forcefocus Force focus on field (works with javascript only)
-	 * @param int $disabled Disabled
-	 * @param string $morecss More css added to the select component
-	 * @param string $projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
-	 * @param string $showmore 'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
-	 * @param User $usertofilter User object to use for filtering
-	 * @param int 	$nooutput 		1=Return string, do not send to output
+	 * @param int 		$socid 			Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param int 		$selected 		Id task preselected
+	 * @param string 	$htmlname 		Name of HTML select
+	 * @param int 		$maxlength 		Maximum length of label
+	 * @param int 		$option_only 	Return only html options lines without the select tag
+	 * @param string 	$show_empty 	Add an empty line ('1' or string to show for empty line)
+	 * @param int 		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
+	 * @param int 		$forcefocus 	Force focus on field (works with javascript only)
+	 * @param int 		$disabled 		Disabled
+	 * @param string 	$morecss 		More css added to the select component
+	 * @param string 	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
+	 * @param string 	$showmore 		'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
+	 * @param User 		$usertofilter 	User object to use for filtering
+	 * @param int 		$nooutput 		1=Return string, do not send to output
 	 *
 	 * @return int|string                   Nbr of tasks if OK, <0 if KO. If nooutput=1: Return a HTML select string.
 	 */
@@ -391,7 +395,7 @@ class FormProjets extends Form
 			// Use select2 selector
 			if (empty($option_only) && !empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, [], 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss .= ' minwidth150imp';
 			}
@@ -402,7 +406,7 @@ class FormProjets extends Form
 			if (!empty($show_empty)) {
 				$out .= '<option value="0" class="optiongrey">';
 				if (!is_numeric($show_empty)) {
-					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">aaa';
+					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">';
 					$out .= $show_empty;
 					//if (!empty($conf->use_javascript_ajax)) $out .= '</span>';
 				} else {
@@ -546,7 +550,7 @@ class FormProjets extends Form
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') {
-			return ''; // Special cas of element we never link to a project (already always done)
+			return ''; // Special case of element we never link to a project (already always done)
 		}
 
 		$linkedtothirdparty = false;
@@ -818,7 +822,7 @@ class FormProjets extends Form
 	 * @param string $htmlNameInvoice Name of HTML select for Invoice
 	 * @param string $htmlNameInvoiceLine Name of HTML select for Invoice Line
 	 * @param string $morecss More css added to the select component
-	 * @param array $filters Array of filters
+	 * @param array<string,int>	$filters Array of filters
 	 * @param int $lineOnly return only option for line
 	 * @return string                    HTML Select
 	 */
@@ -877,7 +881,7 @@ class FormProjets extends Form
 				}
 				$out .= '</select>';
 			} else {
-				dol_print_error($this->db->lasterror);
+				dol_print_error($this->db, $this->db->lasterror);
 				return '';
 			}
 		}
@@ -906,7 +910,7 @@ class FormProjets extends Form
 			if (empty($lineOnly)) {
 				if (!empty($conf->use_javascript_ajax)) {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, '', 0, 0);
+					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, [], 0, 0);
 					$out .= $comboenhancement;
 					$morecss = 'minwidth200imp maxwidth500';
 				}
@@ -929,7 +933,7 @@ class FormProjets extends Form
 				$out .= '</select>';
 			}
 		} else {
-			dol_print_error($this->db->lasterror);
+			dol_print_error($this->db, $this->db->lasterror);
 			return '';
 		}
 

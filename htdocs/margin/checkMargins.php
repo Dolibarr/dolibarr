@@ -3,6 +3,7 @@
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +20,24 @@
  */
 
 /**
- * \file htdocs/margin/checkMargins.php
+ * \file 	htdocs/margin/checkMargins.php
  * \ingroup margin
- * \brief Check margins
+ * \brief 	Check margins
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
@@ -76,6 +86,8 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
 	$action = 'update';
 }
 
+$permissiontocreate = $user->hasRight('facture', 'creer');
+
 
 /*
  * Actions
@@ -99,7 +111,7 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontocreate) {
 		$datapost = $_POST;
 
 		foreach ($datapost as $key => $value) {
@@ -152,9 +164,9 @@ $productstatic = new Product($db);
 
 $form = new Form($db);
 
-$title = $langs->trans("Margins");
+$title = $langs->trans("MarginDetails");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-margin page-checkmargins');
 
 // print load_fiche_titre($text);
 
@@ -251,7 +263,7 @@ if ($result) {
 
 	print '<br>';
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {
 		$labelcostprice = 'BuyingPrice';

@@ -10,6 +10,7 @@
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  * Copyright (C) 2023	   William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
@@ -110,7 +119,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
 
@@ -121,7 +130,7 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicereclist'));
 
 // Fetch optionals attributes and labels
@@ -740,6 +749,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.titre']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -859,8 +869,7 @@ while ($i < $imaxinloop) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				//print $langs->trans("CreateBill");
+				print img_picto($langs->trans("CreateBill"), 'add', 'class="none"');
 				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));

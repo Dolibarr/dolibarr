@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 hét
 AvailabilityTypeAV_2W=2 hét
 AvailabilityTypeAV_3W=3 hét
 AvailabilityTypeAV_1M=1 hónap
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Reprezentatív nyomon követési ajánlat
 TypeContact_propal_external_BILLING=Az ügyfélszámla kapcsolattartója
 TypeContact_propal_external_CUSTOMER=Ügyfélkapcsolat nyomon követési ajánlat
 TypeContact_propal_external_SHIPPING=Ügyfélkapcsolat a szállításhoz
-
 # Document models
 CantBeNoSign=nem állítható be nincs aláírva
 CaseFollowedBy=Az esetet követi a
@@ -122,3 +120,5 @@ SignSociete_rib=Aláírja a megbízást
 SignPropal=Ajánlat elfogadása
 Signed=aláírva
 SignedOnly=Csak aláírva
+ExpeditionSigned=A szállítmány aláírva
+SignExpedition=Szállítás aláírása

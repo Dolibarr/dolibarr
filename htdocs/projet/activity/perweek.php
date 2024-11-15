@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
@@ -44,7 +53,7 @@ $mode = GETPOST("mode", 'alpha');
 $id = GETPOSTINT('id');
 $taskid = GETPOSTINT('taskid');
 
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perweekcard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'timespent';
 
 $mine = 0;
 if ($mode == 'mine') {
@@ -92,7 +101,7 @@ $first_month = $prev['first_month'];
 $first_year = $prev['first_year'];
 $week = $prev['week'];
 
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next = dol_get_next_week($first_day, (int) $week, $first_month, $first_year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
@@ -273,13 +282,13 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 					$tmpduration = explode(':', $amountoadd);
 					$newduration = 0;
 					if (!empty($tmpduration[0])) {
-						$newduration += ($tmpduration[0] * 3600);
+						$newduration += (int) ((float) $tmpduration[0] * 3600);
 					}
 					if (!empty($tmpduration[1])) {
-						$newduration += ($tmpduration[1] * 60);
+						$newduration += (int) ((float) $tmpduration[1] * 60);
 					}
 					if (!empty($tmpduration[2])) {
-						$newduration += ($tmpduration[2]);
+						$newduration += ((int) $tmpduration[2]);
 					}
 
 					if ($newduration > 0) {
@@ -331,10 +340,10 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 			$param = '';
 			$param .= ($mode ? '&mode='.urlencode($mode) : '');
 			$param .= ($projectid ? 'id='.urlencode((string) ($projectid)) : '');
-			$param .= ($search_usertoprocessid ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+			$param .= ($search_usertoprocessid ? '&search_usertoprocessid='.urlencode((string) $search_usertoprocessid) : '');
 			$param .= ($day ? '&day='.urlencode((string) ($day)) : '').($month ? '&month='.urlencode((string) ($month)) : '').($year ? '&year='.urlencode((string) ($year)) : '');
 			$param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
-			$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+			$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode((string) $search_usertoprocessid) : '');
 			$param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
 			$param .= ($search_declared_progress ? '&search_declared_progress='.urlencode($search_declared_progress) : '');
 			$param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
@@ -413,9 +422,10 @@ $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-$tasksarray = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+$tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+$tasksarraywithoutfilter = array();
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
-	$tasksarraywithoutfilter = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+	$tasksarraywithoutfilter = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
 $projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
 $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
@@ -424,14 +434,14 @@ $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, (
 //var_dump($taskrole);
 
 
-llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
+llxHeader("", $title, "", '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod-project project-activity page-activity_perweek');
 
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param = '';
 $param .= ($mode ? '&mode='.urlencode($mode) : '');
 $param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
-$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
+$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode((string) $search_usertoprocessid) : '');
 $param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
 $param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
 $param .= ($search_task_label ? '&search_task_label='.urlencode($search_task_label) : '');
@@ -448,7 +458,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
+$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, ($conf->dol_optimize_smallscreen ? 0 : 1)).' ';
 $nav .= ' <button type="submit" name="submitdateselect" value="x" class="nobordertransp button_search_x"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
@@ -556,14 +566,21 @@ $moreforfilter = '';
  }*/
 
 // If the user can view user other than himself
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
 $includeonly = 'hierarchyme';
 if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
-$moreforfilter .= '</div>';
+$selecteduser = $search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id;
+$moreforfiltertmp = $form->select_dolusers($selecteduser, 'search_usertoprocessid', 0, null, 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
+if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"');
+	$moreforfilter .= $moreforfiltertmp;
+	$moreforfilter .= '</div>';
+} else {
+	$moreforfilter .= '<input type="hidden" name="search_usertoprocessid" value="'.$selecteduser.'">';
+}
 
 if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -581,7 +598,7 @@ if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -654,7 +671,7 @@ $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
 	print '<th class="right minwidth75 maxwidth100" title="'.dol_escape_htmltag($langs->trans("ProgressDeclared")).'">'.$langs->trans("ProgressDeclared").'</th>';
@@ -663,11 +680,10 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
 	print '<span class="nowraponall">';
 	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
-	//print '<span class="nopadding userimg"><div class="valignmiddle userphoto inline-block center marginrightonlyshort">'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
 	print '</span>';
 	print '</th>';
-	print '<th class="right maxwidth75 maxwidth100">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
@@ -688,23 +704,30 @@ for ($idw = 0; $idw < 7; $idw++) {
 		$cssonholiday .= 'onholidayafternoon ';
 	}
 
+	$year = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%Y');
+	$month = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%m');
+	$day = (int) dol_print_date($dayinloopfromfirstdaytoshow, '%d');
+
 	print '<th width="6%" class="center bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+	print '<a href="'.DOL_URL_ROOT.'/projet/activity/perday.php?year='.$year.'&month='.$month.'&day='.$day.'">';
 	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
-	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
+	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</a></th>';
 }
+
 //print '<td></td>';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-
 
 print "</tr>\n";
 
 $colspan = 1 + (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : 2);
 
-if ($conf->use_javascript_ajax) {
-	print '<tr class="liste_total">';
+// Show lines with total
+if ($conf->use_javascript_ajax && count($tasksarray) >= getDolGlobalInt('NBLINES_TO_DUPLICATE_TOTAL_TIMESPENT_ON_TOP', 10)) {
+	print '<tr class="liste_total hideonsmartphone">';
 	print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 	print $langs->trans("Total");
-	print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
+	$htmltooltip = $langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0);
+	print '<span class="opacitymediumbycolor"> <div class="totalDayAll inline-block bold">&nbsp;</div> '.($usertoprocess->weeklyhours ? ' / '.$form->textwithpicto(price($usertoprocess->weeklyhours, 1, $langs, 0, 0), $htmltooltip) : '').'</strong></span>';
 	print '</td>';
 	if (!empty($arrayfields['timeconsumed']['checked'])) {
 		print '<td class="liste_total"></td>';
@@ -728,14 +751,15 @@ if ($conf->use_javascript_ajax) {
 		}
 		print '<td class="liste_total center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
-	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+	print '<td class="liste_total center"></td>';
 	print '</tr>';
 }
 
 
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask = ((!isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
+$restrictviewformytask = getDolGlobalInt('PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED', 2);
+
 if (count($tasksarray) > 0) {
 	//var_dump($tasksarray);				// contains only selected tasks
 	//var_dump($tasksarraywithoutfilter);	// contains all tasks (if there is a filter, not defined if no filter)
@@ -796,13 +820,15 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';
 		}
+		$j = 0;
 		for ($idw = 0; $idw < 7; $idw++) {
+			$j++;
 			$cssweekend = '';
 			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 				$cssweekend = 'weekend';
 			}
 
-			print '<td class="center hide'.$idw.' '.($cssweekend ? ' '.$cssweekend : '').'">';
+			print '<td class="center hide'.$idw.' '.($cssweekend ? ' '.$cssweekend : '').($j <= 1 ? ' borderleft' : '').'">';
 			$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 			$timeonothertasks = ($totalforeachday[$tmpday] - $totalforvisibletasks[$tmpday]);
 			if ($timeonothertasks) {
@@ -820,14 +846,17 @@ if (count($tasksarray) > 0) {
 		print '<tr class="liste_total">';
 		print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 		print $langs->trans("Total");
-		print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
+		$htmltooltip = $langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0);
+		print '<span class="opacitymediumbycolor"> <div class="totalDayAll inline-block bold">&nbsp;</div> '.($usertoprocess->weeklyhours ? ' / '.$form->textwithpicto(price($usertoprocess->weeklyhours, 1, $langs, 0, 0), $htmltooltip) : '').'</strong></span>';
 		print '</td>';
 		if (!empty($arrayfields['timeconsumed']['checked'])) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';
 		}
 
+		$j = 0;
 		for ($idw = 0; $idw < 7; $idw++) {
+			$j++;
 			$cssweekend = '';
 			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 				$cssweekend = 'weekend';
@@ -844,9 +873,9 @@ if (count($tasksarray) > 0) {
 				$cssonholiday .= 'onholidayafternoon ';
 			}
 
-			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+			print '<td class="liste_total center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
-		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+		print '<td class="liste_total center"></td>';
 		print '</tr>';
 	}
 } else {

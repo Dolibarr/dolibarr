@@ -74,7 +74,7 @@ class FormIntervention
 		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
 		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
 		$sql .= " WHERE f.entity = ".$conf->entity;
-		if ($socid != '') {
+		if ($socid >= 0) {
 			if ($socid == '0') {
 				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
 			} else {
@@ -88,7 +88,7 @@ class FormIntervention
 		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$out .= '<select id="interventionid" class="flat" name="'.dol_escape_htmltag($htmlname).'">';
+			$out .= '<select id="'.dol_escape_htmltag($htmlname).'" class="flat" name="'.dol_escape_htmltag($htmlname).'">';
 			if ($showempty) {
 				$out .= '<option value="0">';
 				if (!is_numeric($showempty)) {

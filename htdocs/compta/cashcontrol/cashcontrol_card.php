@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks"));
 
@@ -86,11 +95,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user
@@ -101,13 +110,15 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
+$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
+$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+
 
 /*
  * Actions
  */
+$error = 0;
 
-$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
-$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
 	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
 }
@@ -120,14 +131,14 @@ if (!getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH') && !getDolGlobalString('
 
 
 if (GETPOST('cancel', 'alpha')) {
-	if ($action == 'valid') {
+	if ($action == 'valid') {	// Test on permission not required here
 		$action = 'view';
 	} else {
 		$action = 'create';
 	}
 }
 
-if ($action == "reopen") {
+if ($action == "reopen" && $permissiontoadd) {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -136,8 +147,7 @@ if ($action == "reopen") {
 	$action = 'view';
 }
 
-if ($action == "start") {
-	$error = 0;
+if ($action == "start" && $permissiontoadd) {
 	if (!GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
 		$action = 'create';
@@ -153,15 +163,14 @@ if ($action == "start") {
 		$action = 'create';
 		$error++;
 	}
-} elseif ($action == "add") {
+} elseif ($action == "add" && $permissiontoadd) {
 	if (GETPOST('opening', 'alpha') == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InitialBankBalance")), null, 'errors');
 		$action = 'start';
 		$error++;
 	}
-	$error = 0;
 	foreach ($arrayofpaymentmode as $key => $val) {
-		$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
+		$object->$key = (float) price2num(GETPOST($key.'_amount', 'alpha'));
 	}
 
 	if (!$error) {
@@ -169,7 +178,7 @@ if ($action == "start") {
 		$object->month_close = GETPOSTINT('closemonth');
 		$object->year_close = GETPOSTINT('closeyear');
 
-		$object->opening = price2num(GETPOST('opening', 'alpha'));
+		$object->opening = (float) price2num(GETPOST('opening', 'alpha'));
 		$object->posmodule = GETPOST('posmodule', 'alpha');
 		$object->posnumber = GETPOST('posnumber', 'alpha');
 
@@ -194,7 +203,7 @@ if ($action == "start") {
 	}
 }
 
-if ($action == "valid") {	// validate = close
+if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$object->fetch($id);
 
 	$db->begin();
@@ -205,9 +214,9 @@ if ($action == "valid") {	// validate = close
 	$object->year_close = GETPOST('closeyear', 'int');
 	*/
 
-	$object->cash = price2num(GETPOST('cash_amount', 'alpha'));
-	$object->card = price2num(GETPOST('card_amount', 'alpha'));
-	$object->cheque = price2num(GETPOST('cheque_amount', 'alpha'));
+	$object->cash = (float) price2num(GETPOST('cash_amount', 'alpha'));
+	$object->card = (float) price2num(GETPOST('card_amount', 'alpha'));
+	$object->cheque = (float) price2num(GETPOST('cheque_amount', 'alpha'));
 
 	$result = $object->update($user);
 
@@ -830,7 +839,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
 					if ($key == 'cash') {
-						$deltaforcash = ($object->opening - $initialbalanceforterminal[$terminalid]['cash']);
+						$deltaforcash = ((float) $object->opening - $initialbalanceforterminal[$terminalid]['cash']);
 						print price($theoricalamountforterminal[$terminalid][$key] + $deltaforcash).'<br>';
 					} else {
 						print price($theoricalamountforterminal[$terminalid][$key]).'<br>';

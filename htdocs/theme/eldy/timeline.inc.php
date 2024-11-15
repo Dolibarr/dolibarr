@@ -205,6 +205,10 @@ a.timeline-btn:hover
 	color: #fff !important;
 }
 
+.timeline-item .messaging-title {
+	word-break: break-all;
+}
+
 .timeline-documents-container{
 
 }

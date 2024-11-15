@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
@@ -44,6 +53,7 @@ $res = 0;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
@@ -84,7 +94,7 @@ $formproduct = new FormProduct($db);
 $arrayofjs = array();
 $arrayofcss = array("/takepos/css/colorbox.css");
 
-llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_bar');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -123,7 +133,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td><td class="">'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Parameters").'</td><td class=""></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven value"><td>';

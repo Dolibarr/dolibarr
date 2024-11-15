@@ -30,7 +30,14 @@ require "../main.inc.php";
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation.lib.php';
-//require_once "../class/myclass.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "workstation"));
@@ -72,6 +79,8 @@ if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstWorkstation', 'aZ09');
 	$maskorder = GETPOST('maskWorkstation', 'alpha');
 
+	$res = 0;
+
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
 	}
@@ -90,6 +99,7 @@ if ($action == 'updateMask') {
 
 	$nameofclass = ucfirst($tmpobjectkey);
 	$tmpobject = new $nameofclass($db);
+	'@phan-var-force Workstation $tmpobject';
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -108,7 +118,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFWorkstation $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -187,6 +197,7 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($arrayofparameters as $key => $val) {
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
@@ -227,13 +238,8 @@ if ($action == 'edit') {
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
-		/*
-		 * Orders Numbering model
-		 */
+		// Orders Numbering model
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
@@ -262,7 +268,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
-							'@phan-var-force CommonNumRefGenerator $module';
+							'@phan-var-force ModeleNumRefWorkstation $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -305,6 +311,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								$nameofclass = ucfirst($myTmpObjectKey);
 								$mytmpinstance = new $nameofclass($db);
+								'@phan-var-force Workstation $mytmpinstance';
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -340,9 +347,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 
 	if ($myTmpObjectArray['includedocgeneration']) {
-		/*
-		 * Document templates generators
-		 */
+		// Document templates generators
 		$setupnotempty++;
 		$type = strtolower($myTmpObjectKey);
 
@@ -404,7 +409,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
-									'@phan-var-force CommonDocGenerator $module';
+									'@phan-var-force ModelePDFWorkstation $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -419,7 +424,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}

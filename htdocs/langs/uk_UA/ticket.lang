@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Заявки
 Module56000Desc=Система заявок для управління питаннями або запитами
-
 Permission56001=Дивіться заявки
 Permission56002=Редагувати заявки
 Permission56003=Видалити заявки
 Permission56004=Управління заявками
 Permission56005=Перегляньте заявки всіх контрагентів (не діє для зовнішніх користувачів, завжди обмежуйтеся третьою стороною, від якої вони залежать)
 Permission56006=Експортні квитки
-
 Tickets=Заявки
 TicketDictType=Заявка - Типи
 TicketDictCategory=Квиток - групи
 TicketDictSeverity=Заявка - серйозності
 TicketDictResolution=Заявка - Резолюція
-
 TicketTypeShortCOM=Комерційне питання
 TicketTypeShortHELP=Запит на функціональну допомогу
 TicketTypeShortISSUE=Проблема або помилка
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Проблема
 TicketTypeShortREQUEST=Запит на зміну або покращення
 TicketTypeShortPROJET=Проект
 TicketTypeShortOTHER=Інший
-
 TicketSeverityShortLOW=Низька
 TicketSeverityShortNORMAL=Нормальний
 TicketSeverityShortHIGH=Високий
 TicketSeverityShortBLOCKING=Критичний, блокуючий
-
 TicketCategoryShortOTHER=Інший
-
 ErrorBadEmailAddress=Поле "%s" неправильне
 MenuTicketMyAssign=Мої заявки
 MenuTicketMyAssignNonClosed=Мої відкриті заявки
 MenuListNonClosed=Відкриті заявки
-
 TypeContact_ticket_internal_CONTRIBUTOR=Дописувач
 TypeContact_ticket_internal_SUPPORTTEC=Призначений користувач
 TypeContact_ticket_external_SUPPORTCLI=Контакти з клієнтами / відстеження інцидентів
 TypeContact_ticket_external_CONTRIBUTOR=Зовнішній учасник
-
 OriginEmail=Електронна пошта репортера
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Надішліть повідомлення про квиток електронною поштою
-
 ExportDataset_ticket_1=Заявки
-
 # Status
 Read=Прочитані
 Assigned=Призначений
 NeedMoreInformation=Чекаємо відгуку журналіста
 NeedMoreInformationShort=Чекаємо зворотного зв'язку
-TicketAnswered=Answered
 Waiting=Очікування
 SolvedClosed=Вирішено
 Deleted=Видалено
-
 # Dict
-Type=Тип
 Severity=Тяжкість
 TicketGroupIsPublic=Група публічна
 TicketGroupIsPublicDesc=Якщо група квитків є загальнодоступною, вона буде видима у формі під час створення квитка з загальнодоступного інтерфейсу
-
 # Email templates
 MailToSendTicketMessage=Щоб надіслати електронну пошту з квитка
-
-#
 # Admin page
-#
 TicketSetup=Налаштування квиткового модуля
 TicketSettings=Налаштування
 TicketPublicAccess=Загальнодоступний інтерфейс, який не потребує ідентифікації, доступний за наступною URL-адресою
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Використовуйте графічний код (CAP
 TicketUseCaptchaCodeHelp=Додає перевірку CAPTCHA під час створення нового квитка.
 TicketsAllowClassificationModificationIfClosed=Дозволяє змінювати класифікацію закритих квитків
 TicketsAllowClassificationModificationIfClosedHelp=Дозволяє змінювати класифікацію (тип, групу заявок, серйозність), навіть якщо заявки закрито.
-
-#
 # Index & list page
-#
 TicketsIndex=Квиткова зона
 TicketList=Список заявок
 TicketAssignedToMeInfos=На цій сторінці відображається список заявок, створений або призначений поточним користувачем
@@ -175,10 +152,7 @@ ShowAsConversation=Показати як список бесід
 MessageListViewType=Показати як список таблиці
 ConfirmMassTicketClosingSendEmail=Автоматично надсилати електронні листи під час закриття квитків
 ConfirmMassTicketClosingSendEmailQuestion=Ви хочете повідомити третіх осіб про закриття цих квитків?
-
-#
 # Ticket card
-#
 Ticket=Квиток
 TicketCard=Квиткова картка
 CreateTicket=Створити квиток
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Забагато часу минуло з м
 TicketNoContractFoundToLink=Не знайдено жодного контракту, який би автоматично пов’язано з цим квитком. Будь ласка, зв’яжіть договір вручну.
 TicketManyContractsLinked=Багато контрактів були автоматично пов’язані з цим квитком. Обов’язково перевірте, що слід вибрати.
 TicketRefAlreadyUsed=Посилання [%s] уже використовується, ваше нове посилання [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Квиток %s читає %s
 NoLogForThisTicket=Ще немає журналу для цього квитка
 TicketLogAssignedTo=Квиток %s призначено для %s
 TicketLogPropertyChanged=Квиток %s змінено: класифікація з %s до %s
 TicketLogClosedBy=Квиток %s закрито %s
 TicketLogReopen=Квиток %s знову відкрити
-
-#
 # Public pages
-#
 TicketSystem=Квиткова система
 ShowListTicketWithTrackId=Відображення списку квитків із ідентифікатора треку
 ShowTicketWithTrackId=Показати квиток з ідентифікатора треку
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Це автоматичний електронний 
 TicketNewEmailBodyInfosTicket=Інформація для моніторингу квитка
 TicketNewEmailBodyInfosTrackId=Номер відстеження квитка: %s
 TicketNewEmailBodyInfosTrackUrl=Ви можете переглянути хід оформлення заявки, натиснувши наступне посилання
-TicketNewEmailBodyInfosTrackUrlCustomer=Ви можете переглянути хід оформлення квитка в спеціальному інтерфейсі, натиснувши наступне посилання
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Ви можете ознайомитися з історією цього квитка, натиснувши наступне посилання
 TicketEmailPleaseDoNotReplyToThisEmail=Будь ласка, не відповідайте безпосередньо на цей електронний лист! Використовуйте посилання, щоб відповісти в інтерфейсі.
 TicketPublicInfoCreateTicket=Ця форма дозволяє записати заявку на підтримку в нашій системі управління.
 TicketPublicPleaseBeAccuratelyDescribe=Будь ласка, точно опишіть свій запит. Надайте якомога більше інформації, щоб ми могли правильно визначити ваш запит.
 TicketPublicMsgViewLogIn=Будь ласка, введіть ідентифікатор відстеження квитка
-TicketTrackId=Загальнодоступний ідентифікатор відстеження
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Один із ваших ідентифікаторів відстеження
 ErrorTicketNotFound=Квиток з ідентифікатором відстеження %s не знайдено!
 Subject=Тема
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Кількість заявок за місяць
 NbOfTickets=Кількість заявок
 ExternalContributors=Зовнішні учасники
 AddContributor=Додайте зовнішнього учасника
-
 # notifications
 TicketCloseEmailSubjectCustomer=Квиток закритий
 TicketCloseEmailBodyCustomer=Це автоматичне повідомлення про те, що квиток %s щойно закрито.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Одержувач сповіщення
 TicketNotificationLogMessage=Повідомлення журналу
 TicketNotificationEmailBodyInfosTrackUrlinternal=Перегляд квитка в інтерфейсі
 TicketNotificationNumberEmailSent=Надіслано сповіщення електронною поштою: %s
-
 ActionsOnTicket=Події за квитком
-
-#
 # Boxes
-#
 BoxLastTicket=Останні створені квитки
 BoxLastTicketDescription=Останні створені квитки %s
 BoxLastTicketContent=

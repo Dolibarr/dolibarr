@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Ishga qabul qilish
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Yangi ish joylariga ishga qabul qilish kampaniyalarini boshqaring va kuzatib boring
-
-#
 # Admin page
-#
 RecruitmentSetup = Ishga qabul qilishni sozlash
 RecruitmentSetupPage = Ishga qabul qilish moduli uchun asosiy variantlarni sozlashni kiriting
 RecruitmentArea=Ishga qabul qilish maydoni
 PublicInterfaceRecruitmentDesc=Ishlarning ochiq sahifalari - bu ochiq ish joylarini ko'rsatish va ularga javob berish uchun ochiq URL manzillar. Har bir ochiq ish uchun har bir ish yozuvida bir xil havola mavjud.
 EnablePublicRecruitmentPages=Ochiq ish joylarining ommaviy sahifalarini yoqing
 
-#
-# About page
-#
-RecruitmentAbout = Ishga qabul qilish to'g'risida
-RecruitmentAboutPage = Sahifa haqida yollash
 NbOfEmployeesExpected=Kutilayotgan ishchilar soni
 JobLabel=Ish joyining yorlig'i
 WorkPlace=Ish joyi
@@ -47,7 +34,6 @@ PositionToBeFilled=Ish joyi
 PositionsToBeFilled=Ish joylari
 ListOfPositionsToBeFilled=Ish joylari ro'yxati
 NewPositionToBeFilled=Yangi ish joylari
-
 JobOfferToBeFilled=To'ldirilishi kerak bo'lgan ish joyi
 ThisIsInformationOnJobPosition=To'ldirilishi kerak bo'lgan lavozim to'g'risida ma'lumot
 ContactForRecruitment=Ishga qabul qilish uchun murojaat qiling
@@ -77,4 +63,4 @@ WeAreRecruiting=Biz ishga qabul qilamiz. Bu to'ldirilishi kerak bo'lgan ochiq la
 NoPositionOpen=Ayni paytda hech qanday lavozim ochilmagan
 ConfirmClose=Bekor qilishni tasdiqlang
 ConfirmCloseAsk=Haqiqatan ham bu ishga yollash nomzodini bekor qilmoqchimisiz
-recruitment=Ishga qabul qilish
+Recruitment=Ishga qabul qilish

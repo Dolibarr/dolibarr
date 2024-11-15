@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +60,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Init vars
 $errmsg = '';
 $num = 0;
 $error = 0;
+$errors = [];
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$eventtype = GETPOST("eventtype");
+$eventtype = GETPOSTINT("eventtype");
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
@@ -94,7 +104,7 @@ if ($securekeytocompare != $securekeyreceived) {
 // Load translation files
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -103,7 +113,9 @@ $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
 $arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='booth@eventorganization'");
-
+if ($arrayofconfboothtype == -1) {
+	$arrayofconfboothtype = [];
+}
 // Security check
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
@@ -117,13 +129,13 @@ if (empty($conf->eventorganization->enabled)) {
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -195,7 +207,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous public ssubmission. Check is done on the secureket + mitigation.
 	$error = 0;
 
 	$urlback = '';
@@ -232,10 +244,11 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 
+	$thirdparty = null;
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+		$resultfetchthirdparty = $thirdparty->fetch(0, $societe);
 
 		if ($resultfetchthirdparty < 0) {
 			// If an error was found
@@ -273,6 +286,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 			$modCodeClient = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -284,14 +298,14 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
-				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$thirdparty->country_code = getCountry($thirdparty->country_id, '2', $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, '', $db, $langs);
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
 		if (!$error) {
 			$contact = new Contact($db);
-			$resultcontact = $contact->fetch('', '', '', $email);
+			$resultcontact = $contact->fetch(0, null, '', $email);
 			if ($resultcontact <= 0) {
 				// Need to create a contact
 				$contact->socid = $thirdparty->id;
@@ -343,6 +357,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 					}
 					$modCodeFournisseur = new $module($db);
+					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -415,6 +430,7 @@ if (empty($reshook) && $action == 'add') {
 					$errmsg .= $conforbooth->error;
 				} else {
 					// If this is a paying booth, we have to redirect to payment page and create an invoice
+					$facture = null;
 					if (!empty((float) $project->price_booth)) {
 						$productforinvoicerow = new Product($db);
 						$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_BOOTH_LOCATION'));
@@ -450,10 +466,10 @@ if (empty($reshook) && $action == 'add') {
 							}
 						}
 
-						if (!$error) {
+						if (!$error && is_object($facture)) {
 							// Add line to draft invoice
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, 0, 'HT', 0, 1);
 							if ($result <= 0) {
 								$contact->error = $facture->error;
 								$contact->errors = $facture->errors;
@@ -466,7 +482,7 @@ if (empty($reshook) && $action == 'add') {
 								$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
 								if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 									if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-										$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+										$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 									} else {
 										$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 									}
@@ -485,7 +501,7 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
-	if (!$error) {
+	if (!$error && is_object($thirdparty)) {
 		$db->commit();
 
 		// Sending mail
@@ -505,6 +521,8 @@ if (empty($reshook) && $action == 'add') {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 		}
 
+		$subject = '';
+		$msg = '';
 		if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 			$subject = $arraydefaultmessage->topic;
 			$msg     = $arraydefaultmessage->content;
@@ -523,7 +541,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$ishtml = dol_textishtml($texttosend); // May contain urls
 
-		$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid);
+		$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid);
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -532,7 +550,7 @@ if (empty($reshook) && $action == 'add') {
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 		}
 
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 		header("Location: ".$redirection);
 		exit;
@@ -559,7 +577,7 @@ print '<br>';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, '', 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
@@ -600,7 +618,7 @@ if ($project->location) {
 	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
 }
 if ($project->note_public) {
-	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
+	print '<br><!-- note public --><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
 }
 
 print '</div>';
@@ -661,20 +679,20 @@ print '<span class="star">*</span>';
 print '</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
 	//print $country_code;
 	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
+		$new_country_id = getCountry($country_code, '3', $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
 		if ($new_country_id) {
 			$country_id = $new_country_id;
 		}
 	}
 }
-$country_code = getCountry($country_id, 2, $db, $langs);
+$country_code = getCountry($country_id, '2', $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State

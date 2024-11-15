@@ -2,6 +2,8 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
@@ -78,12 +88,13 @@ if (!empty($enddatemonth)) {
 	$enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
 }
 
+$hookmanager->initHooks(array('marginagentlist'));
+
 // Security check
 $result = restrictedArea($user, 'margins');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
-$hookmanager->initHooks(array('marginagentlist'));
 
 /*
  * Actions
@@ -103,7 +114,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"), '', '', 0, 0, '', '', '', 'mod-margin page-agentmargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -205,7 +216,7 @@ print '<span class="opacitymedium">'.$langs->trans("MarginPerSaleRepresentativeW
 
 $param = '';
 if (!empty($agentid)) {
-	$param .= "&amp;agentid=".urlencode($agentid);
+	$param .= "&amp;agentid=".urlencode((string) $agentid);
 }
 if (!empty($startdateday)) {
 	$param .= "&amp;startdateday=".urlencode((string) ($startdateday));
@@ -226,7 +237,9 @@ if (!empty($enddateyear)) {
 	$param .= "&amp;enddateyear=".urlencode((string) ($enddateyear));
 }
 
-
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::agentMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {

@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organizimi i eventit
 EventOrganizationDescription = Organizimi i ngjarjes përmes projektit të modulit
 EventOrganizationDescriptionLong= Menaxhoni organizimin e një ngjarjeje (shfaqje, konferenca, pjesëmarrës ose folës, me faqe publike për sugjerim, votim ose regjistrim)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Ngjarje të organizuara
 EventOrganizationConferenceOrBoothMenuLeft = Konferencë Ose Kabinë
-
 PaymentEvent=Pagesa e ngjarjes
-
-#
+EventFee=Tarifa e ngjarjes
 # Admin page
-#
 NewRegistration=Regjistrimi
 EventOrganizationSetup=Konfigurimi i organizimit të ngjarjeve
 EventOrganization=Organizimi i eventit
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modeli i postës elektronike pë
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modeli i emailit për t'u përdorur kur dërgoni email nga masakcioni "Dërgo email" në listën e pjesëmarrësve
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Në formën për të krijuar/shtuar një pjesëmarrës, e kufizon listën e palëve të treta tek palët e treta në kategori
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Në formën për të krijuar/shtuar një pjesëmarrës, e kufizon listën e palëve të treta tek palët e treta me natyrën
-
-#
 # Object
-#
 OrganizedEvent=Ngjarje e organizuar
 EventOrganizationConfOrBooth= Konferencë Ose Kabinë
-EventOrganizationConfOrBoothes=Konferenca apo Kabina
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Menaxhoni organizimin e një ngjarjeje
 ConferenceOrBooth = Konferencë Ose Kabinë
 ConferenceOrBoothTab = Konferencë Ose Kabinë
@@ -63,10 +50,7 @@ DateOfRegistration = Data e regjistrimit
 ConferenceOrBoothAttendee = Pjesëmarrës në Konferencë ose Booth
 ApplicantOrVisitor=Aplikanti ose vizitori
 Speaker=Folësi
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Kërkesa juaj për konferencë u mor
 YourOrganizationEventBoothRequestWasReceived = Kërkesa juaj për kabinë u mor
 EventOrganizationEmailAskConf = Kërkesa për konferencë
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Regjistrimi për një ngjarje
 EventOrganizationMassEmailAttendees = Komunikimi me të pranishmit
 EventOrganizationMassEmailSpeakers = Komunikimi me folësit
 ToSpeakers=Tek folësit
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Lejoni njerëzit të sugjerojnë konferenca
 AllowUnknownPeopleSuggestConfHelp=Lejoni njerëz të panjohur të sugjerojnë një konferencë që duan të bëjnë
 AllowUnknownPeopleSuggestBooth=Lejoni njerëzit të aplikojnë për një kabinë
@@ -91,27 +72,26 @@ PriceOfBoothHelp=Çmimi i abonimit për të qëndruar në një kabinë
 EventOrganizationICSLinkProject=Lidhni ICS për ngjarjen
 EventOrganizationICSLink=Lidhni ICS për konferenca
 ConferenceOrBoothInformation=Informacione për Konferencën ose Bothin
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Të pranishmit
-ListOfAttendeesOfEvent=Lista e pjesëmarrësve të projektit të ngjarjes
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Shkarko lidhjen ICS
 EVENTORGANIZATION_SECUREKEY = Seed për të siguruar çelësin për faqen e regjistrimit publik për të sugjeruar një konferencë
 SERVICE_BOOTH_LOCATION = Shërbimi i përdorur për rreshtin e faturës për vendndodhjen e kabinës
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Shërbimi i përdorur për rreshtin e faturës në lidhje me një abonim pjesëmarrës në një ngjarje
 NbVotes=Numri i votave
-
-#
 # Status
-#
 EvntOrgDraft = Draft
 EvntOrgSuggested = Sugjeruar
 EvntOrgConfirmed = E konfirmuar
 EvntOrgNotQualified = I pakualifikuar
 EvntOrgDone = U krye
 EvntOrgCancelled = Anulluar
-
-#
 # Other
-#
 SuggestForm = Faqja e sugjerimeve
 SuggestOrVoteForConfOrBooth = Faqe për sugjerim ose votim
 EvntOrgRegistrationHelpMessage = Këtu mund të votoni për një konferencë ose të sugjeroni një të re për ngjarjen. Ju gjithashtu mund të aplikoni për të pasur një stendë gjatë ngjarjes.
@@ -134,6 +114,7 @@ EventType = Lloji i ngjarjes
 LabelOfBooth=Etiketa e kabinës
 LabelOfconference=Etiketa e konferencës
 ConferenceIsNotConfirmed=Regjistrimi nuk ofrohet, konferenca nuk është konfirmuar ende
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s duhet të jetë përpara %s
 DateMustBeAfterThan=%s duhet të jetë pas %s
 MaxNbOfAttendeesReached=Është arritur numri maksimal i pjesëmarrësve
@@ -175,6 +156,7 @@ DateEndEvent=Data e përfundimit të ngjarjes
 ModifyStatus=Ndrysho statusin
 ConfirmModifyStatus=Konfirmo modifikimin e statusit
 ConfirmModifyStatusQuestion=Jeni i sigurt që dëshironi të modifikoni %s rekordet e zgjedhura?
-RecordsUpdated = %s Regjistrimet u përditësuan
-RecordUpdated = Regjistri u përditësua
-NoRecordUpdated = Asnjë regjistrim nuk u përditësua
+RecordsUpdated=%s Regjistrimet u përditësuan
+RecordUpdated=Regjistri u përditësua
+NoRecordUpdated=Asnjë regjistrim nuk u përditësua
+ProfitPerValidatedAttendee=Fitimi për pjesëmarrës

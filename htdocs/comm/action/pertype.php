@@ -5,8 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
@@ -119,7 +126,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
@@ -146,17 +153,17 @@ if ($end_h <= $begin_h) {
 }
 
 // working days
-$tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS') ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
+$tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
 $begin_d = 1;
 $end_d = 53;
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
-	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'));
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
-	$mode = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_pertype');
 }
 
 // View by month
@@ -186,7 +193,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
@@ -295,7 +302,7 @@ if ($filter) {
 	$param .= "&search_filter=".urlencode($filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -313,7 +320,7 @@ if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
 if ($mode != 'show_pertype') {
-	$param .= '&mode='.urlencode($mode);
+	$param .= '&mode='.urlencode((string) $mode);
 }
 if ($begin_h != '') {
 	$param .= '&begin_h='.urlencode($begin_h);
@@ -430,38 +437,37 @@ if ($conf->use_javascript_ajax) {
 
 $massactionbutton = '';
 
-$viewmode = '';
+$viewmode = '<div class="navmode inline-block">';
+
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewList").'</span></a>';
 
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewCal").'</span></a>';
 
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewWeek").'</span></a>';
 
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewDay").'</span></a>';
 
 $viewmode .= '<a class="btnTitle btnTitleSelected reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
-
-$viewmode .= '<span class="marginrightonly"></span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow" title="'.dolPrintHTML($langs->trans("ViewPerUser")).'">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
 $parameters = array();
@@ -472,6 +478,11 @@ if (empty($reshook)) {
 } elseif ($reshook > 1) {
 	$viewmode = $hookmanager->resPrint;
 }
+
+$viewmode .= '</div>';
+
+$viewmode .= '<span class="marginrightonly"></span>';
+
 
 $newparam = '';
 $newcardbutton = '';
@@ -504,7 +515,7 @@ $s = $newtitle;
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', (string) $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 print '</div>';
 
 
@@ -693,6 +704,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -722,9 +734,9 @@ if ($resql) {
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true;
@@ -822,13 +834,13 @@ $labelbytype = array();
 $sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 $resql = $db->query($sql);
 while ($obj = $db->fetch_object($resql)) {
-	$typeofevents[$obj->code] = $obj->code;
-	$colorsbytype[$obj->code] = $obj->color;
-	$labelbytype[$obj->code] = $obj->label;
+	$typeofevents[(string) $obj->code] = (string) $obj->code;
+	$colorsbytype[(string) $obj->code] = (string) $obj->color;
+	$labelbytype[(string) $obj->code] = (string) $obj->label;
 }
 
 // Loop on each user to show calendar
-$todayarray = dol_getdate($now, 'fast');
+$todayarray = dol_getdate($now, true);
 $sav = $tmpday;
 $showheader = true;
 $var = false;
@@ -849,9 +861,9 @@ foreach ($typeofevents as $typeofevent) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
 		// $curtime is a gmt time, but we want the day, month, year in user TZ
-		$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
-		$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
-		$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+		$tmpday = (int) dol_print_date($curtime, "%d", "tzuserrel");
+		$tmpmonth = (int) dol_print_date($curtime, "%m", "tzuserrel");
+		$tmpyear = (int) dol_print_date($curtime, "%Y", "tzuserrel");
 		//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 		$style = 'cal_current_month';
@@ -949,20 +961,20 @@ $db->close();
 /**
  * Show event line of a particular day for a user
  *
- * @param	User    $username		Login
+ * @param	string  $username		Login
  * @param   int		$day            Day
  * @param   int		$month          Month
  * @param   int		$year           Year
  * @param   int		$monthshown     Current month shown in calendar view
  * @param   string	$style          Style to use for this day
- * @param   array	$eventarray    	Array of events
+ * @param   array<int,ActionComm[]>	$eventarray      Array of events
  * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar    Nb of characters to show for event line
  * @param   string	$newparam       Parameters on current URL
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
- * @param	boolean	$showheader		Show header
- * @param	array	$colorsbytype	Array with colors by type
+ * @param	bool	$showheader		Show header
+ * @param	array<string,string>	$colorsbytype	Array with colors by type
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */

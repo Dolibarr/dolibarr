@@ -200,8 +200,8 @@ MembersStatisticsDesc=اختيار الإحصاءات التي ترغب في ق�
 MenuMembersStats=إحصائيات
 LastMemberDate=آخر تاريخ للعضوية
 LatestSubscriptionDate=تاريخ آخر مساهمة
-MemberNature=طبيعة العضو
-MembersNature=طبيعة الأعضاء
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=يمكن %s نشر عضويتي في <a target="_blank" href="%s">السجل العام</a>
 MembershipPublic=عضوية عامة
 NewMemberbyWeb=وأضاف عضو جديد. تنتظر الموافقة
@@ -239,10 +239,11 @@ MemberLastname=اسم العائلة للعضو
 MemberCodeDesc=عضو كود فريد لجميع أعضاء
 MemberSubscriptionStartFirstDayOf=تاريخ بدء العضوية يتوافق مع اليوم الأول من أ
 MemberSubscriptionStartAfter=الحد الأدنى للفترة قبل دخول تاريخ البدء حيز التنفيذ الاشتراك باستثناء التجديدات (على سبيل المثال +3 شهر = +3 أشهر، -5 يوم = -5 أيام، +1Y = +1 عام )
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
+SubscriptionLinkedToConciliatedTransaction=ترتبط العضوية بمعاملة موفقة لذا لا يسمح بهذا التعديل.
+ConfirmMassSubsriptionCreation=تأكيد إنشاء الاشتراك
+ConfirmMassSubsriptionCreationQuestion=هل أنت متأكد أنك تريد إنشاء %s الاشتراك(s) المحدد؟
+XSubsriptionCreated=تم إنشاء %s الاشتراك(s)
+XSubsriptionErrors=%s الاشتراك(s) حيث يوجد خطأ
 CreateSubscription=إنشاء الاشتراك
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=لن يتم تنفيذ أي إجراء تكميلي على التسجيل مع هذا الإجراء
+NewMembership=New membership
