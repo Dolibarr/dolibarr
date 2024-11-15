@@ -14016,6 +14016,11 @@ function dolForgeCriteriaCallback($matches)
 		}
 	}
 
+	// Filter on DATE(t.field) if $tmpescaped equal 'YYYY-MM-DD'
+	if (strpos($operand, 'date') !== false && preg_match("/^'\d{4}\-\d{2}\-\d{2}'\$/", $tmpescaped)) {
+		$operand = 'DATE('.$operand.')';
+	}
+
 	return '('.$db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped.')';
 }
 
