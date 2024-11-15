@@ -127,7 +127,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$arrayofimages = array('logo', 'logo_squarred');
 	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
-		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png'.($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES?"|\.svg":"").')$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
