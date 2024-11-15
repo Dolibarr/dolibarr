@@ -296,12 +296,37 @@ class EcmDirectory extends CommonObject
 	 */
 	public function changeNbOfFiles($value)
 	{
+		global $conf;
+
+		if ($value == '+') {
+			$relativepath = $conf->ecm->dir_output . '/' .$this->getRelativePath(); // Ex: dir1/dir2/dir3/
+			$relativepath = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $relativepath);
+			$relativepath = trim($relativepath, '/');
+
+			// Get nb file in relative path
+			$sql = "SELECT COUNT(*) AS nb";
+			$sql .= " FROM " . $this->db->prefix() . "ecm_files";
+			$sql .= " WHERE filepath = '" . $this->db->escape($relativepath) . "'";
+
+			dol_syslog(get_class($this) . "::changeNbOfFiles - Get nb file in relative path", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = "Error " . $this->db->lasterror();
+				return -1;
+			} else {
+				$value = 0;
+				if ($obj = $this->db->fetch_object($resql)) {
+					$value = (int)$obj->nb;
+				}
+			}
+		}
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		if (preg_match('/[0-9]+/', $value)) {
 			$sql .= " cachenbofdoc = ".(int) $value;
 		} else {
-			$sql .= " cachenbofdoc = cachenbofdoc ".$value." 1";
+			$sql .= " cachenbofdoc = cachenbofdoc " . preg_replace('/[^\-]/', '', $value) . " 1";
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
