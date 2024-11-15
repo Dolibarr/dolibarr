@@ -283,7 +283,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	$errormessage = '';
 	$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 	if ($errormessage) {
-		dol_print_error('', $errormessage);
+		dol_print_error(null, $errormessage);
 		return array();
 	}
 
