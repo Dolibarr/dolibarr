@@ -29287,18 +29287,6 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
 
 		-
-			message: '#^Variable \$sortfield might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
 			message: '#^Variable \$text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
