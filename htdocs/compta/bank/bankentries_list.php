@@ -1559,10 +1559,12 @@ if ($resql) {
 		// Payment type
 		if (!empty($arrayfields['type']['checked'])) {
 			print '<td class="tdoverflowmax100">';
-			if(!empty($objp->fk_type))
-				$labeltype = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
-			else
-				$labeltype ="";
+			if (!empty($objp->fk_type)) {
+				$labeltype=($langs->trans("PaymentTypeShort" . $objp->fk_type) != "PaymentTypeShort" . $objp->fk_type) ? $langs->trans("PaymentTypeShort" . $objp->fk_type) : $langs->getLabelFromKey($db,
+					$objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
+			} else {
+				$labeltype="";
+			}
 			if ($labeltype == 'SOLD') {
 				print '&nbsp;'; //$langs->trans("InitialBankBalance");
 			} else {
