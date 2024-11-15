@@ -404,7 +404,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$object->datep = $datep;
 		$object->datef = $datef;
 		$object->percentage = $percentage;
-		$object->duree = (((int)GETPOST('dureehour') * 60) + (int)GETPOST('dureemin')) * 60;
+		$object->duree = ((GETPOSTINT('dureehour') * 60) + GETPOSTINT('dureemin')) * 60;
 
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
@@ -504,10 +504,10 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$selectedrecurrulefreq = $reg1[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
-			$selectedrecurrulebymonthday = (int)$reg2[1];
+			$selectedrecurrulebymonthday = (int) $reg2[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
-			$selectedrecurrulebyday = (int)$reg3[1];
+			$selectedrecurrulebyday = (int) $reg3[1];
 		}
 
 		// Is event recurrent ?
@@ -551,7 +551,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 							$sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
 							$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = '" . $db->escape($resource_type) . "'";
 							$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
-							$sql .= " WHERE er.resource_id = " . ((int)$resource_id);
+							$sql .= " WHERE er.resource_id = " . ((int) $resource_id);
 							$sql .= " AND er.busy = 1";
 							$sql .= " AND (";
 
@@ -981,10 +981,10 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 				$sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
 				$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
 				$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
-				$sql .= " WHERE ac.id <> " . ((int)$object->id);
+				$sql .= " WHERE ac.id <> " . ((int) $object->id);
 				$sql .= " AND er.resource_id IN (";
 				$sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources";
-				$sql .= " WHERE element_id = " . ((int)$object->id);
+				$sql .= " WHERE element_id = " . ((int) $object->id);
 				$sql .= " AND element_type = '" . $db->escape($object->element) . "'";
 				$sql .= " AND busy = 1";
 				$sql .= ")";
@@ -1075,7 +1075,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 						// We update the event, so we recreate the notification event.
 						// First we delete all reminders for the user and the type of reminding (all offset dates).
 						$sqldelete = "DELETE FROM " . MAIN_DB_PREFIX . "actioncomm_reminder";
-						$sqldelete .= " WHERE fk_user = " . ((int)$actionCommReminder->fk_user) . " AND fk_actioncomm = " . ((int)$object->id) . " AND typeremind = '" . $db->escape($remindertype) . "'";
+						$sqldelete .= " WHERE fk_user = " . ((int) $actionCommReminder->fk_user) . " AND fk_actioncomm = " . ((int) $object->id) . " AND typeremind = '" . $db->escape($remindertype) . "'";
 						$resqldelete = $db->query($sqldelete);
 
 						$res = $actionCommReminder->create($user);
@@ -1172,10 +1172,10 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 				$sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
 				$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
 				$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
-				$sql .= " WHERE ac.id <> " . ((int)$object->id);
+				$sql .= " WHERE ac.id <> " . ((int) $object->id);
 				$sql .= " AND er.resource_id IN (";
 				$sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources";
-				$sql .= " WHERE element_id = " . ((int)$object->id);
+				$sql .= " WHERE element_id = " . ((int) $object->id);
 				$sql .= " AND element_type = '" . $db->escape($object->element) . "'";
 				$sql .= " AND busy = 1";
 				$sql .= ")";
@@ -1386,10 +1386,10 @@ if ($action == 'create') {
 			$selectedrecurrulefreq = $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebymonthday = (int)$reg[1];
+			$selectedrecurrulebymonthday = (int) $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebyday = (int)$reg[1];
+			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
