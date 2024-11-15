@@ -3052,7 +3052,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Create intervention
 				$arrayforbutaction[] = array('lang' => 'interventions', 'enabled' => (isModEnabled("intervention") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0), 'perm' => $user->hasRight('ficheinter', 'creer'), 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
-				/*if (isModEnabled('ficheinter')) {
+				/*if (isModEnabled('intervention')) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
