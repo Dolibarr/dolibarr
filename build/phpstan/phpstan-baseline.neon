@@ -11107,12 +11107,6 @@ parameters:
 			path: ../../htdocs/core/class/ctyperesource.class.php
 
 		-
-			message: '#^Property CUnits\:\:\$scale \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../htdocs/core/class/cunits.class.php
-
-		-
 			message: '#^Property CUnits\:\:\$short_label \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -22306,12 +22300,6 @@ parameters:
 			message: '#^Variable \$num might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../htdocs/fourn/commande/card.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../htdocs/fourn/commande/card.php
 
 		-
