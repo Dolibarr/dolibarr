@@ -299,8 +299,8 @@ class EcmDirectory extends CommonObject
 		global $conf;
 
 		if ($value == '+') {
-			$relativepath = $conf->ecm->dir_output . '/' .$this->getRelativePath(); // Ex: dir1/dir2/dir3/
-			$relativepath = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $relativepath);
+			$relativepath = $conf->ecm->dir_output . '/' . $this->getRelativePath(); // Ex: dir1/dir2/dir3/
+			$relativepath = preg_replace('/^' . preg_quote(DOL_DATA_ROOT, '/') . '/', '', $relativepath);
 			$relativepath = trim($relativepath, '/');
 
 			// Get nb file in relative path
