@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2024  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
@@ -62,6 +62,7 @@ class Categorie extends CommonObject
 	const TYPE_WEBSITE_PAGE = 'website_page';
 	const TYPE_TICKET = 'ticket';
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
+	const TYPE_FICHINTER = 'fichinter';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -86,7 +87,8 @@ class Categorie extends CommonObject
 		'actioncomm'   => 10,
 		'website_page' => 11,
 		'ticket'       => 12,
-		'knowledgemanagement' => 13
+		'knowledgemanagement' => 13,
+		'fichinter' => 14,
 	);
 
 	/**
@@ -108,7 +110,8 @@ class Categorie extends CommonObject
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		13 => 'knowledgemanagement',
+		14 => 'fichinter',
 	);
 
 	/**
@@ -140,20 +143,21 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'  => 'Product',
+		'product' => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
-		'member'   => 'Adherent',
-		'contact'  => 'Contact',
-		'user'     => 'User',
-		'account'  => 'Account', // old for bank account
-		'bank_account'  => 'Account',
-		'project'  => 'Project',
+		'member' => 'Adherent',
+		'contact' => 'Contact',
+		'user' => 'User',
+		'account' => 'Account', // old for bank account
+		'bank_account' => 'Account',
+		'project' => 'Project',
 		'warehouse' => 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
-		'knowledgemanagement' => 'KnowledgeRecord'
+		'knowledgemanagement' => 'KnowledgeRecord',
+		'fichinter' => 'Fichinter',
 	);
 
 	/**
@@ -173,9 +177,10 @@ class Categorie extends CommonObject
 		'project' => 'ProjectsCategoriesArea',
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea',
-		'ticket' => 'TicketCategoriesArea',
-		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea'
+		'website_page' => 'WebsitePagesCategoriesArea',
+		'ticket' => 'TicketsCategoriesArea',
+		'knowledgemanagement' => 'KnowledgemanagementsCategoriesArea',
+		'fichinter' => 'FichintersCategoriesArea',
 	);
 
 	/**
@@ -185,12 +190,13 @@ class Categorie extends CommonObject
 	public $MAP_OBJ_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'societe',
-		'member'   => 'adherent',
-		'contact'  => 'socpeople',
-		'account'  => 'bank_account', // old for bank account
-		'project'  => 'projet',
+		'member' => 'adherent',
+		'contact' => 'socpeople',
+		'account' => 'bank_account', // old for bank account
+		'project' => 'projet',
 		'warehouse' => 'entrepot',
-		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
+		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
+		'fichinter' => 'fichinter',
 	);
 
 	/**
@@ -254,6 +260,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
+	 * @see Categorie::TYPE_FICHINTER
 	 */
 	public $type;
 
@@ -273,9 +280,9 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var ?array{string,array{label:string,description:string,note?:string}} multilangs
+	 * @var ?array<string,array{label:string,description:string,note?:string}>	Array for multilangs
 	 */
-	public $multilangs;
+	public $multilangs = array();
 
 	/**
 	 * @var int imgWidth
@@ -459,7 +466,7 @@ class Categorie extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 		$langs->load('categories');
 
 		$type = $this->type;
@@ -695,6 +702,7 @@ class Categorie extends CommonObject
 			'categorie_contact' => 'fk_categorie',
 			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
+			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('intervention')),
 			'categorie_member' => 'fk_categorie',
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
@@ -809,7 +817,7 @@ class Categorie extends CommonObject
 
 			// Call trigger
 			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_LINK', $user);
+			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -869,7 +877,7 @@ class Categorie extends CommonObject
 		if ($this->db->query($sql)) {
 			// Call trigger
 			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_UNLINK', $user);
+			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -1008,7 +1016,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sortorder	Sort order
 	 * @param	int		$limit		Limit for list
 	 * @param	int		$page		Page number
-	 * @return  int<-1,0>|array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array{string,array{label:string,description:string,note?:string}}}> Array of categories, 0 if no cat, -1 on error
+	 * @return  int<-1,0>|array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}> Array of categories, 0 if no cat, -1 on error
 	 */
 	public function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -1071,12 +1079,12 @@ class Categorie extends CommonObject
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
 					$categories[$i]['id'] = $category_static->id;
-					$categories[$i]['fk_parent']		= $category_static->fk_parent;
-					$categories[$i]['label']			= $category_static->label;
+					$categories[$i]['fk_parent'] = $category_static->fk_parent;
+					$categories[$i]['label'] = $category_static->label;
 					$categories[$i]['description'] = $category_static->description;
-					$categories[$i]['color']    		= $category_static->color;
-					$categories[$i]['position']    		= $category_static->position;
-					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['color'] = $category_static->color;
+					$categories[$i]['position'] = $category_static->position;
+					$categories[$i]['socid'] = $category_static->socid;
 					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
@@ -1750,7 +1758,7 @@ class Categorie extends CommonObject
 	 *  @param  	int     $notooltip      		1=Disable tooltip
 	 *  @param  	string  $morecss                Add more css on link
 	 *  @param  	int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return		string					Chaine avec URL
+	 *	@return		string							String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = 0)
 	{
@@ -1806,7 +1814,7 @@ class Categorie extends CommonObject
 			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.$forced_color.($morecss ? ' '.$morecss : '').'"';
 		} else {
-			$linkclose = ($morecss ? ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"' : '');
+			$linkclose = ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		if ($option == 'nolink' || empty($url)) {
@@ -2070,6 +2078,38 @@ class Categorie extends CommonObject
 		// End call triggers
 
 		return 1;
+	}
+
+	/**
+	 * Delete a language for this category
+	 *
+	 * @param string $langtodelete Language code to delete
+	 * @param User   $user         Object user making delete
+	 *
+	 * @return int                            Return integer <0 if KO, >0 if OK
+	 */
+	public function delMultiLangs($langtodelete, $user)
+	{
+		$sql = "DELETE FROM ".$this->db->prefix()."categorie_lang";
+		$sql .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
+
+		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			// Call trigger
+			$result = $this->call_trigger('CATEGORY_DEL_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+			return -1;
+		}
 	}
 
 	/**

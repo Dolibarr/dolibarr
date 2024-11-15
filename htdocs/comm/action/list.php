@@ -39,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
@@ -500,7 +508,7 @@ if ($pid) {
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
-if (!$user->hasRight('societe', 'client', 'voir')) {
+if (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 // Search on sale representative
@@ -760,6 +768,8 @@ $i = 0;
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
+
+$moreforfilter = 1;
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -1139,8 +1149,8 @@ while ($i < $imaxinloop) {
 		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			$societestatic->id = $obj->socid;
-			$societestatic->client = $obj->client;
-			$societestatic->name = $obj->societe;
+			$societestatic->client = (int) $obj->client;
+			$societestatic->name = (string) $obj->societe;
 			$societestatic->email = $obj->socemail;
 
 			print $societestatic->getNomUrl(1, '', 28);

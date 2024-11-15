@@ -1,12 +1,14 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021-2022 Anthony Berton		<bertonanthony@gmail.com>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024	   Nick Fragoulis
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2017	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2019		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2021-2022	Anthony Berton				<bertonanthony@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Nick Fragoulis
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'languages', 'members', 'other', 'products', 'stocks', 'trips'));
@@ -548,8 +559,18 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Hide Ref
+// Hide accounting customer code
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE", $arrval, getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE'));
+}
+print '</td></tr>';
 
+// Hide Ref
 print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_REF');

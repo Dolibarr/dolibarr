@@ -41,6 +41,14 @@ if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
@@ -849,7 +857,7 @@ if ($id > 0) {
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

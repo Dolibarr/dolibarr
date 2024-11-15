@@ -3,12 +3,12 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,15 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "withdrawals"));
@@ -145,9 +154,7 @@ if (empty($reshook)) {
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
-		$object->domiciliation = $object->address;	// deprecated
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -263,7 +270,6 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
@@ -499,7 +505,7 @@ if ($action == 'create') {
 				$arrayselected[] = $cat->id;
 			}
 		}
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -532,7 +538,8 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td>';
-	print $form->selectDate('', 're', 0, 0, 0, 'formsoc');
+	$startdate = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT('reday'), GETPOSTINT("reyear"));
+	print $form->selectDate($startdate, 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -587,6 +594,10 @@ if ($action == 'create') {
 				$name = 'cle_rib';
 				$sizecss = 'minwidth50';
 				$content = $object->cle_rib;
+			} else {
+				$name = 'undefined';
+				$sizecss = 'undefined';
+				$content = 'undefined';
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
@@ -640,10 +651,11 @@ if ($action == 'create') {
 	}
 
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
 		if ($formaccounting->nbaccounts == 0) {
 			$langs->load("errors");
 			$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -657,7 +669,8 @@ if ($action == 'create') {
 
 	// Accountancy journal
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+		/** @var FormAccounting $formaccounting */
+		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';
@@ -950,7 +963,7 @@ if ($action == 'create') {
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
@@ -1060,7 +1073,7 @@ if ($action == 'create') {
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1099,8 +1112,9 @@ if ($action == 'create') {
 		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (isModEnabled('accounting')) {
+			/** @var FormAccounting $formaccounting */
 			print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+			print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
 			if ($formaccounting->nbaccounts == 0) {
 				$langs->load("errors");
 				$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -1113,6 +1127,7 @@ if ($action == 'create') {
 
 		// Accountancy journal
 		if (isModEnabled('accounting')) {
+			/** @var FormAccounting $formaccounting */
 			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
@@ -1171,6 +1186,10 @@ if ($action == 'create') {
 					$name = 'cle_rib';
 					$css = 'width50';
 					$content = $object->cle_rib;
+				} else {
+					$name = 'undefined';
+					$css = 'undefined';
+					$content = 'undefined';
 				}
 
 				print '<tr><td>'.$langs->trans($val).'</td>';

@@ -46,6 +46,15 @@ if (isModEnabled('project')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
 $id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
@@ -56,7 +65,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
-$donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+$donation_date = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
 $public_donation = GETPOSTINT("public");
 
@@ -95,6 +104,8 @@ $permissiontodelete = $user->hasRight('don', 'supprimer');
 /*
  * Actions
  */
+
+$error = 0;
 
 $parameters = array();
 
@@ -171,8 +182,6 @@ if (empty($reshook)) {
 			exit;
 		}
 
-		$error = 0;
-
 		if (empty($donation_date)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$action = "create";
@@ -225,8 +234,6 @@ if (empty($reshook)) {
 			header("Location: index.php");
 			exit;
 		}
-
-		$error = 0;
 
 		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOSTINT("socid") > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
@@ -494,7 +501,7 @@ if ($action == 'create') {
 	if (!isset($note_public)) {
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -506,7 +513,7 @@ if ($action == 'create') {
 		if (!isset($note_private)) {
 			$note_private = $object->getDefaultCreateValueFor('note_private');
 		}
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -955,7 +962,11 @@ if (!empty($id) && $action != 'edit') {
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('don'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link

@@ -38,12 +38,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 $page_y = GETPOSTINT('page_y');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'bills'));
@@ -333,9 +343,9 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 }
 
 
-if ($action == 'removelogo' || $action == 'removelogosquarred') {
+if ($action == 'removelogo' || $action == 'removelogo_squarred') {
 	$constant = "MAIN_INFO_SOCIETE_LOGO";
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
 	}
 
@@ -343,7 +353,7 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 
 	$logofilename = $mysoc->logo;
 	$logofilenamebis = $mysoc->logo_squarred;
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$logofilename = $mysoc->logo_squarred;
 		$logofilenamebis = $mysoc->logo;
 	}
@@ -353,7 +363,7 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 		dol_delete_file($logofile);
 	}
 	dolibarr_del_const($db, $constant, $conf->entity);
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$mysoc->logo_squarred = '';
 	} else {
 		$mysoc->logo = '';
@@ -361,7 +371,7 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 
 	$logofilename = $mysoc->logo_small;
 	$logofilenamebis = $mysoc->logo_squarred_small;
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$logofilename = $mysoc->logo_squarred_small;
 		$logofilenamebis = $mysoc->logo_small;
 	}
@@ -371,7 +381,7 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 		dol_delete_file($logosmallfile);
 	}
 	dolibarr_del_const($db, $constant."_SMALL", $conf->entity);
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$mysoc->logo_squarred_small = '';
 	} else {
 		$mysoc->logo_small = '';
@@ -379,7 +389,7 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 
 	$logofilename = $mysoc->logo_mini;
 	$logofilenamebis = $mysoc->logo_squarred_mini;
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$logofilename = $mysoc->logo_squarred_mini;
 		$logofilenamebis = $mysoc->logo_mini;
 	}
@@ -389,7 +399,7 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 		dol_delete_file($logominifile);
 	}
 	dolibarr_del_const($db, $constant."_MINI", $conf->entity);
-	if ($action == 'removelogosquarred') {
+	if ($action == 'removelogo_squarred') {
 		$mysoc->logo_squarred_mini = '';
 	} else {
 		$mysoc->logo_mini = '';
@@ -407,6 +417,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
+$formfile = new FormFile($db);
 
 $countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' <a href="#trzipbeforecountry">('.$langs->trans("SeeAbove").')</a></span>';
 
@@ -522,94 +533,33 @@ if (isModEnabled('barcode')) {
 }
 
 // Tooltip for both Logo and LogSquarred
-$tooltiplogo = $langs->trans('AvailableFormats').' : png, jpg, jpeg';
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];
+$tooltiplogo = $langs->trans('AvailableFormats').' : png, jpg, jpeg';
 $tooltiplogo .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
 
 // Logo
 print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), $tooltiplogo).'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
-if ($maxmin > 0) {
-	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-}
-print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="logo" id="logo" accept="image/*">';
-print '</div>';
-if (!empty($mysoc->logo_small)) {
-	print '<div class="inline-block valignmiddle marginrightonly">';
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
-	print '</div>';
-	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logo" style="max-height: 80px; max-width: 200px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
-		print '</div>';
-	} elseif (!empty($mysoc->logo)) {
-		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $quality);
-		}
-		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $quality);
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logo" style="max-height: 80px; max-width: 200px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
-		print '</div>';
-	}
-} elseif (!empty($mysoc->logo)) {
-	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logo" style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo).'">';
-		print '</div>';
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
-	} else {
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logo" height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="File has been removed from disk">';
-		print '</div>';
-	}
-}
-print '</div>';
+
+$modulepart = 'mycompany';
+$dirformainimage = $conf->mycompany->dir_output;
+$subdirformainimage = 'logos/';
+$fileformainimage = $mysoc->logo;
+
+print $formfile->showImageToEdit('logo', $modulepart, $dirformainimage, $subdirformainimage, $fileformainimage);
+
 print '</td></tr>';
 
 // Logo (squarred)
 print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), $tooltiplogo).'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
-$maxfilesizearray = getMaxFileSizeArray();
-$maxmin = $maxfilesizearray['maxmin'];
-if ($maxmin > 0) {
-	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-}
-print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="logo_squarred" id="logo_squarred" accept="image/*">';
-print '</div>';
-if (!empty($mysoc->logo_squarred_small)) {
-	print '<div class="inline-block valignmiddle marginrightonly">';
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
-	print '</div>';
-	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {
-		print '<div class="inline-block valignmiddle marginrightonly">';
-		print '<img id="logosquarred" style="height: 80px; width: 80px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
-		print '</div>';
-	} elseif (!empty($mysoc->logo_squarred)) {
-		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $quality);
-		}
-		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logosquarred" style="height: 80px; width: 80px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
-		print '</div>';
-	}
-	print imgAddEditDeleteButton("logosquarred", '', $_SERVER["PHP_SELF"].'?action=removelogosquarred&token='.newToken());
-} elseif (!empty($mysoc->logo_squarred)) {
-	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred)) {
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logosquarred" style="height: 80px; width: 80px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
-		print '</div>';
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
-		print imgAddEditDeleteButton("logosquarred", '', $_SERVER["PHP_SELF"].'?action=removelogosquarred&token='.newToken());
-	} else {
-		print '<div class="inline-block valignmiddle">';
-		print '<img id="logosquarred" style="height: 80px; width: 80px;" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="File has been removed from disk">';
-		print '</div>';
-		print imgAddEditDeleteButton("logosquarred", '', '');
-	}
-}
-print '</div>';
+
+$modulepart = 'mycompany';
+$dirformainimage = $conf->mycompany->dir_output;
+$subdirformainimage = 'logos/';
+$fileformainimage = $mysoc->logo_squarred;
+
+print $formfile->showImageToEdit('logo_squarred', $modulepart, $dirformainimage, $subdirformainimage, $fileformainimage);
+
 print '</td></tr>';
 
 // Note

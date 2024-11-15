@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2020   	Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class Invoices extends DolibarrApi
 	private $invoice;
 
 	/**
-	 * @var FactureRec $templte_invoice {@type FactureRec}
+	 * @var FactureRec $template_invoice {@type FactureRec}
 	 */
 	private $template_invoice;
 
@@ -1539,7 +1539,11 @@ class Invoices extends DolibarrApi
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
-		$paymentobj->datepaye     = $datepaye;
+		if (is_numeric($datepaye)) {
+			$paymentobj->datepaye = $datepaye;
+		} else {
+			$paymentobj->datepaye = dol_stringtotime($datepaye);
+		}
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid = $paymentid;
@@ -1687,7 +1691,11 @@ class Invoices extends DolibarrApi
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
-		$paymentobj->datepaye     = $datepaye;
+		if (is_numeric($datepaye)) {
+			$paymentobj->datepaye = $datepaye;
+		} else {
+			$paymentobj->datepaye = dol_stringtotime($datepaye);
+		}
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid   = $paymentid;

@@ -28,6 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("products", "other"));
 
 $id = GETPOSTINT('id');                             // ID of the parent Product
@@ -416,7 +424,7 @@ if (!empty($id) || !empty($ref)) {
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.((int) $object->type).'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+	$object->next_prev_filter = "fk_product_type:=:".((int) $object->type); // usf filter
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 

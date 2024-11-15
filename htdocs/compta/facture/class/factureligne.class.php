@@ -244,7 +244,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->date_start			= $this->db->jdate($objp->date_start);
 			$this->date_end				= $this->db->jdate($objp->date_end);
 			$this->info_bits			= $objp->info_bits;
-			$this->tva_npr = (($objp->info_bits & 1) == 1) ? 1 : 0;
+			$this->tva_npr = ((($objp->info_bits & 1) == 1) ? 1 : 0);
 			$this->special_code = $objp->special_code;
 			$this->total_ht				= $objp->total_ht;
 			$this->total_tva			= $objp->total_tva;
@@ -256,8 +256,8 @@ class FactureLigne extends CommonInvoiceLine
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
 			$this->pa_ht				= $marginInfos[0];
-			$this->marge_tx				= $marginInfos[1];
-			$this->marque_tx			= $marginInfos[2];
+			$this->marge_tx				= (string) $marginInfos[1];
+			$this->marque_tx			= (string) $marginInfos[2];
 
 			$this->ref = $objp->product_ref; // deprecated
 
@@ -291,9 +291,9 @@ class FactureLigne extends CommonInvoiceLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		                 1 no triggers
-	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
-	 *	@return		int						                 Return integer <0 if KO, >0 if OK
+	 *	@param	int<0,1>	$notrigger						1 no triggers
+	 *  @param	int<0,1>	$noerrorifdiscountalreadylinked	1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return	int											Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{

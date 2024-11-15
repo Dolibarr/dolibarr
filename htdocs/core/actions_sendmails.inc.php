@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -29,11 +30,25 @@
 // $autocopy may be defined (used to know the automatic BCC to add)
 // $triggersendname must be set (can be '')
 // $actiontypecode can be set
-// $object and $uobject may be defined
+// $object and $subject may be defined
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ * @var string $action
+ * @var ?string $subject
+ */
 '
 @phan-var-force Societe      $mysoc
 @phan-var-force CommonObject $object
 ';
+
+$error = 0;
 
 /*
  * Add file in email form

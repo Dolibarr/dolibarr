@@ -1,7 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2021  Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,7 +291,8 @@ class printing_printipp extends PrintingDriver
 	 */
 	public function listJobs($module = null)
 	{
-		global $conf;
+		global $langs;
+
 		$error = 0;
 		$html = '';
 		include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
@@ -304,7 +305,8 @@ class printing_printipp extends PrintingDriver
 			$ipp->setAuthentication($this->user, $this->password);
 		}
 		// select printer uri for module order, propal,...
-		$sql = "SELECT rowid,printer_uri,printer_name FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape((string) $module)."'";
+		$sql = "SELECT rowid, printer_uri, printer_name";
+		$sql .= " FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape((string) $module)."'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -324,22 +326,27 @@ class printing_printipp extends PrintingDriver
 		}
 		$html .= '<table width="100%" class="noborder">';
 		$html .= '<tr class="liste_titre">';
-		$html .= '<td>Id</td>';
-		$html .= '<td>Owner</td>';
-		$html .= '<td>Printer</td>';
-		$html .= '<td>File</td>';
-		$html .= '<td>Status</td>';
-		$html .= '<td>Cancel</td>';
+		$html .= '<td>ID</td>';
+		$html .= '<td>'.$langs->trans("Date").'</td>';
+		$html .= '<td>'.$langs->trans("Owner").'</td>';
+		$html .= '<td>'.$langs->trans("Printer").'</td>';
+		$html .= '<td>'.$langs->trans("File").'</td>';
+		$html .= '<td>'.$langs->trans("Status").'</td>';
+		$html .= '<td>Job URI</td>';
 		$html .= '</tr>'."\n";
+
 		$jobs = $ipp->jobs_attributes;
 
-		//$html .= '<pre>'.print_r($jobs,true).'</pre>';
+		//$html .= '<pre>'.print_r($jobs, true).'</pre>';
+
 		foreach ($jobs as $value) {
 			$html .= '<tr class="oddeven">';
 			$html .= '<td>'.$value->job_id->_value0.'</td>';
+			$html .= '<td>'.$value->date_time_at_creation->_value0.'</td>';
 			$html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
-			$html .= '<td>'.$value->printer_uri->_value0.'</td>';
-			$html .= '<td>'.$value->job_name->_value0.'</td>';
+			$html .= '<td>'.$value->job_printer_uri->_value0.'</td>';
+			$file = $value->job_name->_value0;
+			$html .= '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($file).'">'.dolPrintHTML($file).'</td>';
 			$html .= '<td>'.$value->job_state->_value0.'</td>';
 			$html .= '<td>'.$value->job_uri->_value0.'</td>';
 			$html .= '</tr>';

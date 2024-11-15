@@ -24,6 +24,14 @@
  * \brief	Asset setup page.
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
@@ -534,7 +542,7 @@ if ($action == 'edit') {
 				if (isModEnabled('accounting')) {
 					require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 					$formaccounting = new FormAccounting($db);
-					print $formaccounting->select_account($selected, $constname, 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+					print $formaccounting->select_account($selected, $constname, 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
 				} else {
 					print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
 				}

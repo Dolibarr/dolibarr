@@ -57,6 +57,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -513,7 +521,7 @@ if (empty($reshook)) {
 			$units = GETPOSTINT('units');
 
 			$object->entity				= $conf->entity;
-			$object->ref				= $ref;
+			$object->ref				= (string) $ref;
 			$object->label				= GETPOST('label', $label_security_check);
 			$object->price_base_type	= GETPOST('price_base_type', 'aZ09');
 			$object->mandatory_period	= !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
@@ -582,7 +590,7 @@ if (empty($reshook)) {
 			$stdobject = new GenericObject($db);
 			$stdobject->element = 'product';
 			$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
-			$result = $stdobject->fetch_barcode();
+			$result = $stdobject->fetchBarCode();
 			if ($result < 0) {
 				$error++;
 				$mesg = 'Failed to get bar code type information ';
@@ -753,7 +761,7 @@ if (empty($reshook)) {
 				$object->oldcopy = dol_clone($object, 1);
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-					$object->ref                = $ref;
+					$object->ref                = (string) $ref;
 				}
 				$object->label                  = GETPOST('label', $label_security_check);
 
@@ -772,7 +780,7 @@ if (empty($reshook)) {
 				$object->qc_frequency           = GETPOSTINT('qc_frequency');
 				$object->status                 = GETPOSTINT('statut');
 				$object->status_buy             = GETPOSTINT('statut_buy');
-				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->status_batch = GETPOSTINT('status_batch');
 				$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOSTINT('fk_default_warehouse');
@@ -827,7 +835,7 @@ if (empty($reshook)) {
 				$stdobject = new GenericObject($db);
 				$stdobject->element = 'product';
 				$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
-				$result = $stdobject->fetch_barcode();
+				$result = $stdobject->fetchBarCode();
 				if ($result < 0) {
 					$error++;
 					$mesg = 'Failed to get bar code type information ';
@@ -1462,10 +1470,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('productbatch')) {
 				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
-				print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
+				print $form->selectarray('status_batch', $statutarray, GETPOSTINT('status_batch'));
 				print '</td></tr>';
 				// Product specific batch number management
-				$status_batch = GETPOST('status_batch');
+				$status_batch = GETPOSTINT('status_batch');
 				if ($status_batch !== '0') {
 					$langs->load("admin");
 					$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
@@ -1800,6 +1808,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
 				if (isModEnabled('accounting')) {
+					/** @var FormAccounting $formaccounting */
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2029,7 +2038,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 
-						print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch);
+						print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOSTINT('status_batch') : $object->status_batch);
 
 						print '<span id="statusBatchWarning" class="warning" style="display: none;">';
 						print img_warning().'&nbsp;'.$langs->trans("WarningConvertFromBatchToSerial").'</span>';
@@ -2395,6 +2404,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
 					if (isModEnabled('accounting')) {
+						/** @var FormAccounting $formaccounting */
 						// Accountancy_code_sell
 						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
@@ -2545,7 +2555,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
 						$fk_barcode_type = $object->barcode_type;
 					} else {
-						$object->fetch_barcode();
+						$object->fetchBarCode();
 						$fk_barcode_type = $object->barcode_type;
 						print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 					}
@@ -2755,14 +2765,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($object->isService()) {
 					// Duration
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($db);
+					$durations = [];
+					$plural = '';
+					if ($object->duration_value > 1) {
+						$plural = 's';
+					}
+					$result = $measuringUnits->fetchAll('', 'scale', 0, 0, ['t.active' => 1, 't.unit_type' => 'time']);
+					if ($result !== -1) {
+						foreach ($measuringUnits->records as $record) {
+							$durations[$record->short_label] = dol_ucfirst($record->label) . $plural;
+						}
+					}
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
 					print $object->duration_value;
-					if ($object->duration_value > 1) {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-					} elseif ($object->duration_value > 0) {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
-					}
-					print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
+					print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp;".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 
 					// Mandatory period
 					if ($object->duration_value > 0) {

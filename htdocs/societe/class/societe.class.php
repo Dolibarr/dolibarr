@@ -18,7 +18,7 @@
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
- * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -682,7 +682,13 @@ class Societe extends CommonObject
 	public $code_compta_fournisseur;
 
 	/**
-	 * Accounting code for supplier
+	 * Accounting general account for supplier
+	 * @var string
+	 */
+	public $accountancy_code_supplier_general;
+
+	/**
+	 * Accounting auxiliary account for supplier
 	 * @var string
 	 */
 	public $accountancy_code_supplier;
@@ -848,9 +854,14 @@ class Societe extends CommonObject
 
 	// Multicurrency
 	/**
-	 * @var int ID
+	 * @var int Multicurrency ID
 	 */
 	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	// Warehouse
 	/**
@@ -859,9 +870,10 @@ class Societe extends CommonObject
 	public $fk_warehouse;
 
 	/**
-	 * @var string Multicurrency code
+	 * @var string	Name of file with terms of sales
 	 */
-	public $multicurrency_code;
+	public $termsofsale;
+
 
 	// Fields loaded by fetchPartnerships()
 
@@ -977,6 +989,7 @@ class Societe extends CommonObject
 		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
+
 		if (empty($this->client)) {
 			$this->client = 0;
 		}
@@ -989,6 +1002,7 @@ class Societe extends CommonObject
 
 		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
 		$this->accountancy_code_customer = trim((string) $this->code_compta_client);
+		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general);
 		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
@@ -1089,6 +1103,7 @@ class Societe extends CommonObject
 					$sql .= ", vat_reverse_charge";
 					$sql .= ", accountancy_code_customer_general";
 					$sql .= ", accountancy_code_customer";
+					$sql .= ", accountancy_code_supplier_general";
 					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
@@ -1098,6 +1113,7 @@ class Societe extends CommonObject
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier_general)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
@@ -1310,7 +1326,7 @@ class Societe extends CommonObject
 			$vallabel = $this->$keymin;
 
 			if ($i > 0) {
-				if ($this->isACompany()) {
+				if ($mysoc != null && $this->isACompany()) {
 					// Check for mandatory prof id (but only if country is same than ours)
 					if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id) {
 						$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
@@ -1357,6 +1373,11 @@ class Societe extends CommonObject
 							$error++;
 							$this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 						}
+					}
+					if ($this->tva_assuj && !$vallabel && getDolGlobalString('SOCIETE_VAT_INTRA_MANDATORY')) {
+						$langs->load("errors");
+						$error++;
+						$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").')';
 					}
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
 					// Check for unicity
@@ -1439,7 +1460,7 @@ class Societe extends CommonObject
 		$this->address		= trim((string) $this->address);
 		$this->zip 			= trim((string) $this->zip);
 		$this->town 		= trim((string) $this->town);
-		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim((string) $this->state_id) : 0;
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) $this->state_id : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
@@ -1503,8 +1524,10 @@ class Societe extends CommonObject
 			$this->get_codefournisseur($this, 1);
 		}
 
+		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
 		$this->code_compta_client = trim($this->code_compta_client);
-		$this->code_compta_fournisseur = (empty($this->code_compta_fournisseur) ? '' : trim($this->code_compta_fournisseur));
+		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general);
+		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
 		if (!is_numeric($this->client) && !is_numeric($this->fournisseur)) {
@@ -1583,7 +1606,7 @@ class Societe extends CommonObject
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql .= "entity = ".$this->db->escape($this->entity);
+			$sql .= "entity = ".((int) $this->entity);
 			$sql .= ",nom = '".$this->db->escape($this->name)."'"; // Required
 			$sql .= ",name_alias = '".$this->db->escape($this->name_alias)."'";
 			$sql .= ",ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -1686,6 +1709,7 @@ class Societe extends CommonObject
 				}
 
 				if ($supplier) {
+					$sql .= ", accountancy_code_supplier_general = ".(!empty($this->accountancy_code_supplier_general) ? "'".$this->db->escape($this->accountancy_code_supplier_general)."'" : "null");
 					$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
 				}
 			}
@@ -1779,6 +1803,7 @@ class Societe extends CommonObject
 					$sql .= ", vat_reverse_charge";
 					$sql .= ", accountancy_code_customer_general";
 					$sql .= ", accountancy_code_customer";
+					$sql .= ", accountancy_code_supplier_general";
 					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
@@ -1788,6 +1813,7 @@ class Societe extends CommonObject
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
 					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier_general)."'";
 					$sql .= ", '".$this->db->escape($this->code_compta_fournisseur)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
@@ -1893,12 +1919,12 @@ class Societe extends CommonObject
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf, s.last_main_doc';
 		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql .= ', s.accountancy_code_customer_general, s.code_compta';
-			$sql .= ', s.code_compta_fournisseur';
+			$sql .= ', s.accountancy_code_supplier_general, s.code_compta_fournisseur';
 			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
 			$sql .= ', s.vat_reverse_charge as soc_vat_reverse_charge';
 		} else {
 			$sql .= ', spe.accountancy_code_customer_general, spe.accountancy_code_customer as code_compta';
-			$sql .= ', spe.accountancy_code_supplier as code_compta_fournisseur';
+			$sql .= ', spe.accountancy_code_supplier_general, spe.accountancy_code_supplier as code_compta_fournisseur';
 			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
 			$sql .= ', spe.vat_reverse_charge as spe_vat_reverse_charge';
 		}
@@ -2058,6 +2084,7 @@ class Societe extends CommonObject
 
 				$this->accountancy_code_customer_general = $obj->accountancy_code_customer_general;
 				$this->code_compta_client = $obj->code_compta;
+				$this->accountancy_code_supplier_general = $obj->accountancy_code_supplier_general;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				$this->barcode = $obj->barcode;
@@ -2150,7 +2177,7 @@ class Societe extends CommonObject
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
-				$result = 1;
+				$result = $this->id;
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -2372,7 +2399,6 @@ class Societe extends CommonObject
 	 */
 	public function set_as_client()
 	{
-		global $conf;
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_as_client is deprecated use setAsCustomer instead", LOG_NOTICE);
 		return $this->setAsCustomer();
@@ -2631,8 +2657,8 @@ class Societe extends CommonObject
 	 *
 	 *  @param	User		$user			Object user (not used)
 	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
-	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
-	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 *  @param	?string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 *  @param	?string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
 	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
@@ -3483,7 +3509,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".((int) $this->id);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type = 'ban' AND fk_soc = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error = $this->db->lasterror();
@@ -3503,12 +3529,38 @@ class Societe extends CommonObject
 		}
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getDefaultRib()
+	{
+		// phpcs:enable
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type = 'ban' AND default_rib = 1 AND fk_soc = ". (int) $this->id;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		} else {
+			$num_rows = $this->db->num_rows($resql);
+			$rib_array = array();
+			if ($num_rows) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					return $obj->rowid;
+				}
+			}
+			return 0;
+		}
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Assigns a customer code from the code control module.
 	 *  Return value is stored into this->code_client
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	?Societe	$objsoc		Object thirdparty
 	 *	@param	int			$type		Should be 0 to say customer
 	 *  @return void
 	 */
@@ -3542,7 +3594,7 @@ class Societe extends CommonObject
 	 *  Assigns a vendor code from the code control module.
 	 *  Return value is stored into this->code_fournisseur
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	?Societe	$objsoc		Object thirdparty
 	 *	@param	int			$type		Should be 1 to say supplier
 	 *  @return void
 	 */

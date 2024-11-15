@@ -50,6 +50,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
 // est protegee par le droit qui va bien du module concerne.
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 if (isModEnabled('order')) {
@@ -219,6 +227,9 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$thirdpartystatic->code_compta_client = $obj->code_compta_client;
 				//$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
+				$totalallpayments = $tmpinvoice->getSommePaiement(0);
+				$totalallpayments += $tmpinvoice->getSumCreditNotesUsed(0);
+				$totalallpayments += $tmpinvoice->getSumDepositsUsed(0);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
@@ -251,7 +262,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 
-				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $totalallpayments).'</td>';
 
 				print '</tr>';
 

@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+/* Copyright (C) 2021  		Open-Dsi  				<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		José					<jose.martinez@pichinov.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +26,25 @@
  *
  * $parameters
  */
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var AssetDepreciationOptions $assetdepreciationoptions
+ * @var Translate $langs
+ * @var ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
+ */
+'
+@phan-var-force Conf $conf
+@phan-var-force DoliDB $db
+@phan-var-force ?Form $form
+@phan-var-force HookManager $hookmanager
+@phan-var-force AssetDepreciationOptions $assetdepreciationoptions
+@phan-var-force Translate $langs
+@phan-var-force ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
+';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -76,7 +97,7 @@ if (empty($reshook)) {
 
 		$assetdepreciationoptions->setInfosForMode($mode_key, $class_type, true);
 		$prefix_html_name = $mode_key . '_';
-		$width = ($mode_key == "economic")? "width50p pull-left" : "width50p";
+		$width = ($mode_key == "economic") ? "width50p pull-left" : "width50p";
 		print '<table class="border '. $width .'" id="block_' . $mode_key . '">' . "\n";
 		print '<tr><td class="info-box-title">'.$langs->trans($mode_info['label']).'</td></tr>';
 		if ($mode_key == "economic") {
@@ -137,7 +158,7 @@ if (empty($reshook)) {
 				}
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, $check) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'price') {
-				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? $field_info['default'] : 0));
+				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? dol_eval($field_info['default'], 1) : 0));
 			} elseif ($field_key == 'lang') {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : $assetdepreciationoptions->lang;
 			} else {

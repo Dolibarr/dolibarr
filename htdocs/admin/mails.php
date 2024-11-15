@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
@@ -75,9 +84,10 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'update' && !$cancel) {
-	if (!$error && !GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
+	if (!GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MAIN_MAIL_EMAIL_FROM")), null, 'errors');
 		$action = 'edit';
@@ -1156,7 +1166,7 @@ if ($action == 'edit') {
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
 
-		$formmail->withlayout = 1;		// Note: MAIN_EMAIL_USE_LAYOUT must be set
+		$formmail->withlayout = 'emailing';		// Note: MAIN_EMAIL_USE_LAYOUT must be set
 		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');	// Note: Module AI must be enabled
 
 		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));

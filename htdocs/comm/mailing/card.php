@@ -41,6 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
@@ -428,7 +436,7 @@ if (empty($reshook)) {
 							dol_syslog("comm/mailing/card.php: error for #".$iforemailloop.($mail->error ? ' - '.$mail->error : ''), LOG_WARNING);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql .= " SET statut=-1, error_text='".$db->escape(substr($mail->error, 0, 255))."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
+							$sql .= " SET statut=-1, error_text='".$db->escape(dol_trunc($mail->error, 250))."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
 							$resql2 = $db->query($sql);
 							if (!$resql2) {
 								dol_print_error($db);
@@ -531,7 +539,7 @@ if (empty($reshook)) {
 
 			$trackid = 'emailing-test';
 			$upload_dir_tmp = $upload_dir;
-			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing', '', $upload_dir_tmp);
+			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing', $object->email_replyto, $upload_dir_tmp);
 
 			$result = $mailfile->sendfile();
 			if ($result) {
@@ -791,7 +799,7 @@ if ($action == 'create') {	// aaa
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head(array(), '', '', -3);
+	print dol_get_fiche_head(array(), '', '', -4, '', 0, '', '');
 
 	print '<table class="border centpercent">';
 
@@ -833,6 +841,8 @@ if ($action == 'create') {	// aaa
 
 	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.getDolGlobalString('MAILING_EMAIL_ERRORSTO', getDolGlobalString('MAIN_MAIL_ERRORS_TO')).'"></td></tr>';
 
+	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailReply").'</td><td><input class="flat minwidth200" name="replyto" value="'.getDolGlobalString('MAILING_EMAIL_REPLYTO', getDolGlobalString('MAIN_MAIL_REPLY_TO')).'"></td></tr>';
+
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -852,13 +862,15 @@ if ($action == 'create') {	// aaa
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'emailing';
 	$formmail->withaiprompt = 'html';
+
+	print '<tr class="fieldsforemail"><td></td><td class="tdtop"></td></tr>';
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
 	$out = '';
-	$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
+	$showlinktolayout = ($formmail->withfckeditor ? $formmail->withlayout : '');
 	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
@@ -872,6 +884,7 @@ if ($action == 'create') {	// aaa
 
 	print '</td></tr>';
 	print '</table>';
+
 
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
@@ -1245,7 +1258,7 @@ if ($action == 'create') {	// aaa
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
-				$formmail->withlayout = 0;
+				$formmail->withlayout = '';
 				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
@@ -1374,6 +1387,7 @@ if ($action == 'create') {	// aaa
 			// To
 			if ($object->messtype != 'sms') {
 				print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
+				print '<tr><td>'.$langs->trans("MailReply").'</td><td>'.dol_print_email($object->email_replyto, 0, 0, 0, 0, 1).'</td></tr>';
 			}
 
 			print '</table>';

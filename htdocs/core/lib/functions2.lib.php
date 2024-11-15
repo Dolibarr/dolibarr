@@ -1369,7 +1369,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
-				$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
+				$maskrefclient_sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 			}
 			if ($where) {
 				$maskrefclient_sql .= $where; //use the same optional where as general mask
@@ -1832,7 +1832,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 /**
  *	Returns formatted reduction
  *
- *	@param	int			$reduction		Reduction percentage
+ *	@param	int|float	$reduction		Reduction percentage
  *	@param	Translate	$langs			Output language
  *	@return	string						Formatted reduction
  */
@@ -2405,7 +2405,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  This is the opposite function of colorArrayToHex.
  *  If entry is already an array, return it.
  *
- *  @param	string						$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @param	string|array{0:int,1:int,2:int}		$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array{0:int,1:int,2:int}|array{}	$colorifnotfound	Color code array to return if entry not defined
  *  @return	array{0:int,1:int,2:int}	RGB hex value (without # before). For example: FF00FF
  *  @see	colorArrayToHex(), colorHexToRgb()
@@ -2413,7 +2413,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
 {
 	if (is_array($stringcolor)) {
-		return $stringcolor; // If already into correct output format, we return as is
+		return $stringcolor; // If already in the correct output format, we return as is
 	}
 	$reg = array();
 	$tmp = preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
@@ -2491,12 +2491,12 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			}
 		}
 		if ($brightness > 0) {
-			$color = ($color * (100 + abs($brightness)) / 100);
+			$color = (int) ($color * (100 + abs($brightness)) / 100);
 		} else {
-			$color = ($color * (100 - abs($brightness)) / 100);
+			$color = (int) ($color * (100 - abs($brightness)) / 100);
 		}
 
-		$color   = max(0, min(255, $color)); // Adjust color to stay into valid range
+		$color   = max(0, min(255, (int) $color)); // Adjust color to stay into valid range
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
 
@@ -2596,6 +2596,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
  */
 function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 {
+	$hex = colorArrayToHex(colorStringToArray($hex));
 	$hex = str_replace('#', '', $hex);
 	$red = hexdec(substr($hex, 0, 2)) / 255;
 	$green = hexdec(substr($hex, 2, 2)) / 255;
@@ -2831,7 +2832,7 @@ function price2fec($amount)
  * Check the syntax of some PHP code.
  *
  * @param 	string 			$code 	PHP code to check.
- * @return 	boolean|array 			If false, then check was successful, otherwise an array(message,line) of errors is returned.
+ * @return 	false|array{0:string,1:int}	If false, then check was successful, otherwise an array(message,line) of errors is returned.
  */
 function phpSyntaxError($code)
 {

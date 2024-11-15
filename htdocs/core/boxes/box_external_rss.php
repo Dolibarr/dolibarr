@@ -52,6 +52,7 @@ class box_external_rss extends ModeleBoxes
 	{
 		$this->db = $db;
 		$this->paramdef = $param;
+		$this->urltoaddentry = DOL_URL_ROOT.'/admin/external_rss.php';
 	}
 
 	/**

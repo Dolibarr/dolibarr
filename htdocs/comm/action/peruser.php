@@ -41,6 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
@@ -540,7 +547,7 @@ $s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', (string) $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 
@@ -731,6 +738,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -835,7 +843,7 @@ echo '<div class="div-table-responsive">';
 $colorsbytype = array();
 
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table class="centpercent noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month listwithfilterbefore">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
@@ -1138,14 +1146,14 @@ $db->close();
  * @param   int		$year           Year
  * @param   int		$monthshown     Current month shown in calendar view
  * @param   string	$style          Style to use for this day
- * @param   array	$eventarray    	Array of events
+ * @param   array<int,ActionComm[]>	$eventarray      Array of events
  * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar    Nb of characters to show for event line
  * @param   string	$newparam       Parameters on current URL
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
- * @param	array	$colorsbytype	Array with colors by type
+ * @param	array<string,string>	$colorsbytype	Array with colors by type
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */

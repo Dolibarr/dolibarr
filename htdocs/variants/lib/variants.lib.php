@@ -61,7 +61,12 @@ function productAttributePrepareHead($object)
  */
 function adminProductAttributePrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('product_attribute');
+	$extrafields->fetch_name_optionals_label('product_attribute_value');
+
 	$langs->load("products");
 
 	$h = 0;
@@ -74,11 +79,19 @@ function adminProductAttributePrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductAttributeExtrafields");
+	$nbExtrafields = $extrafields->attributes['product_attribute']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
 	$head[$h][2] = 'product_attribute';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_value_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductAttributeValueExtrafields");
+	$nbExtrafields = $extrafields->attributes['product_attribute_value']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
 	$head[$h][2] = 'product_attribute_value';
 	$h++;
 

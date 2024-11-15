@@ -33,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
@@ -89,7 +97,7 @@ if (empty($reshook)) {
 			accessforbidden();
 		}
 
-		$result = $object->delete($user, '', $numsondage);
+		$result = $object->delete($user, 0, $numsondage);
 
 		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
 		exit();
@@ -209,7 +217,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -238,7 +246,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Type
 $type = ($object->format == "A") ? 'classic' : 'date';
-print '<tr><td class="titlefieldmax45">'.$langs->trans("Type").'</td><td>';
+print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td><td>';
 print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
 
@@ -247,16 +255,16 @@ print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
-	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+	print '<input class="width300" type="text" name="nouveautitre" value="'.dolPrintHTML($object->title).'">';
 } else {
-	print dol_htmlentities($object->title);
+	print dolPrintHTML($object->title);
 }
 print '</td></tr>';
 
 // Description
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
 	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
@@ -342,7 +350,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 //if ($action != 'edit') {
-	print ajax_autoselect("opensurveyurl", $url, 'image');
+print ajax_autoselect("opensurveyurl", $url, 'image');
 //}
 
 print '</td></tr>';

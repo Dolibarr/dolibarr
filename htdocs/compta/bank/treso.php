@@ -3,8 +3,9 @@
  * Copyright (C) 2008-2009  Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
- * Copyright (C) 2016       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2016-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'categories', 'companies', 'salaries'));
@@ -275,7 +284,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 			if ($tmpobj->family == 'invoice') {
 				$facturestatic->ref = $tmpobj->ref;
 				$facturestatic->id = $tmpobj->objid;
-				$facturestatic->type = $tmpobj->type;
+				$facturestatic->type = (int) $tmpobj->type;
 				$ref = $facturestatic->getNomUrl(1, '');
 
 				$societestatic->id = $tmpobj->socid;

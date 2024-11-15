@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -100,11 +105,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 
@@ -116,8 +121,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
@@ -129,8 +134,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'id' => array('name'=>'id', 'type'=>'xsd:int'),
-		'user' => array('name'=>'user', 'type'=>'xsd:int'),
+		'id' => array('name' => 'id', 'type' => 'xsd:int'),
+		'user' => array('name' => 'user', 'type' => 'xsd:int'),
 	)
 );
 
@@ -152,7 +157,7 @@ $server->wsdl->addComplexType(
 
 $project_elements = array();
 foreach ($listofreferent as $key => $label) {
-	$project_elements[$key] = array('name'=>$key, 'type'=>'tns:elementsArray');
+	$project_elements[$key] = array('name' => $key, 'type' => 'tns:elementsArray');
 }
 $server->wsdl->addComplexType(
 	'elements',
@@ -165,17 +170,17 @@ $server->wsdl->addComplexType(
 
 // Define project
 $project_fields = array(
-	'id' => array('name'=>'id', 'type'=>'xsd:string'),
-	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
-	'label' => array('name'=>'label', 'type'=>'xsd:string'),
-	'thirdparty_id' => array('name'=>'thirdparty_id', 'type'=>'xsd:int'),
-	'public' => array('name'=>'public', 'type'=>'xsd:int'),
-	'status' => array('name'=>'status', 'type'=>'xsd:int'),
-	'date_start' => array('name'=>'date_start', 'type'=>'xsd:date'),
-	'date_end' => array('name'=>'date_end', 'type'=>'xsd:date'),
-	'budget' => array('name'=>'budget', 'type'=>'xsd:int'),
-	'description' => array('name'=>'description', 'type'=>'xsd:string'),
-	'elements' => array('name'=>'elements', 'type'=>'tns:elements')
+	'id' => array('name' => 'id', 'type' => 'xsd:string'),
+	'ref' => array('name' => 'ref', 'type' => 'xsd:string'),
+	'label' => array('name' => 'label', 'type' => 'xsd:string'),
+	'thirdparty_id' => array('name' => 'thirdparty_id', 'type' => 'xsd:int'),
+	'public' => array('name' => 'public', 'type' => 'xsd:int'),
+	'status' => array('name' => 'status', 'type' => 'xsd:int'),
+	'date_start' => array('name' => 'date_start', 'type' => 'xsd:date'),
+	'date_end' => array('name' => 'date_end', 'type' => 'xsd:date'),
+	'budget' => array('name' => 'budget', 'type' => 'xsd:int'),
+	'description' => array('name' => 'description', 'type' => 'xsd:string'),
+	'elements' => array('name' => 'elements', 'type' => 'tns:elements')
 );
 
 $elementtype = 'project';
@@ -197,7 +202,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 		} else {
 			$type = 'xsd:string';
 		}
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 if (is_array($extrafield_array)) {
@@ -224,9 +229,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'createProject',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'project'=>'tns:project'),
+	array('authentication' => 'tns:authentication', 'project' => 'tns:project'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string', 'ref' => 'xsd:string'),
 	$ns,
 	$ns.'#createProject',
 	$styledoc,
@@ -238,9 +243,9 @@ $server->register(
 $server->register(
 	'getProject',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'project'=>'tns:project'),
+	array('result' => 'tns:result', 'project' => 'tns:project'),
 	$ns,
 	$ns.'#getProject',
 	$styledoc,
@@ -252,9 +257,9 @@ $server->register(
 /**
  * Create project
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$project			Project info
- * @return	array							array of new order
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array{id:string,ref:string,label:string,thirdparty_id:int,public:int,status:int,date_start:string,date_end:string,budget:int,description:string,elements:array<array{id:int,user:int}>}		$project			Project info
+ * @return array{id?:int,ref?:string,result:array{result_code:string,result_label:string}} Array result
  */
 function createProject($authentication, $project)
 {
@@ -323,7 +328,7 @@ function createProject($authentication, $project)
 
 			if (!$error) {
 				$db->commit();
-				$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+				$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 			} else {
 				$db->rollback();
 				$error++;
@@ -338,7 +343,7 @@ function createProject($authentication, $project)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -347,10 +352,10 @@ function createProject($authentication, $project)
 /**
  * Get a project
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getProject($authentication, $id = '', $ref = '')
 {
@@ -428,8 +433,8 @@ function getProject($authentication, $id = '', $ref = '')
 
 				//Result
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'project'=>$project_result_fields
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'project' => $project_result_fields
 				);
 			} else {
 				$error++;
@@ -444,7 +449,7 @@ function getProject($authentication, $id = '', $ref = '')
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

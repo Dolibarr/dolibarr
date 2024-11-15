@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -59,6 +67,7 @@ $socid = GETPOSTINT('socid');
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
 $error = 0;
+$errors = [];
 
 $now = dol_now();
 
@@ -965,6 +974,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
@@ -1013,7 +1023,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
+			setEventMessages(null, $errors, 'errors');
 		}
 
 
@@ -1021,9 +1031,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		$( document ).ready(function() {
 			$("input.button-save").click("submit", function(e) {
 				console.log("Call valider()");
-	    	    if (document.demandeCP.date_debut_.value != "")
-	    	    {
-		           	if(document.demandeCP.date_fin_.value != "")
+				if (document.demandeCP.date_debut_.value != "")
+				{
+					if(document.demandeCP.date_fin_.value != "")
 		           	{
 		               if(document.demandeCP.valideur.value != "-1") {
 		                 return true;
@@ -1044,7 +1054,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
 		           return false;
 		        }
-	       	});
+			});
 		});
        </script>'."\n";
 
@@ -1200,7 +1210,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1267,7 +1277,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						break;
 				}
 
-				setEventMessages($errors, null, 'errors');
+				setEventMessages(null, $errors, 'errors');
 			}
 
 			// check if the user has the right to read this request
@@ -1406,7 +1416,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<tr>';
 					print '<td>'.$langs->trans('DescCP').'</td>';
 					print '<td class="tdtop">';
-					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}
@@ -1654,7 +1664,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

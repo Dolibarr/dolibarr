@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'fckeditor', 'errors'));
 
@@ -53,13 +62,12 @@ $modules = array(
 	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
 	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
 	'SOCIETE' => 'FCKeditorForCompany',
-	//'PRODUCTDESC' => 'FCKeditorForProduct',
 	'DETAILS' => 'FCKeditorForProductDetails',
 	'USERSIGN' => 'FCKeditorForUserSignature',
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
-	'SPECIALCHAR' => 'SpecialCharActivation',
+	//'SPECIALCHAR' => 'SpecialCharActivation',
 );
 // Conditions for the option to be offered
 $conditions = array(
@@ -72,7 +80,7 @@ $conditions = array(
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('invoice') || isModEnabled("propal") || isModEnabled('order')),
 	'TICKET' => isModEnabled('ticket'),
-	'SPECIALCHAR' => 1,
+	//'SPECIALCHAR' => 1,
 );
 // Picto
 $picto = array(
@@ -85,7 +93,7 @@ $picto = array(
 	'MAILING' => 'email',
 	'MAIL' => 'email',
 	'TICKET' => 'ticket',
-	'SPECIALCHAR' => 'generic'
+	//'SPECIALCHAR' => 'generic'
 );
 
 
@@ -152,12 +160,12 @@ print load_fiche_titre($langs->trans("AdvancedEditor"), $linkback, 'title_setup'
 print '<br>';
 
 if (empty($conf->use_javascript_ajax)) {
-	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
+	setEventMessages(null, array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
-	print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
+	print '<td class="center width100"></td>';
 	print "</tr>\n";
 
 	// Modules
@@ -174,7 +182,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<td>';
 		print $langs->trans($desc);
 		if ($const == 'DETAILS') {
-			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
+			print $form->textwithpicto('', '<span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>');
 		}
 		print '</td>';
 		print '<td class="center centpercent width100">';
@@ -182,7 +190,11 @@ if (empty($conf->use_javascript_ajax)) {
 		if ($value == 0) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			if ($const == 'DETAILS') {
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled").' - '.$langs->trans("FCKeditorForProductDetails2"), 'switch_on', '', 0, 0, 0, '', 'warning').'</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			}
 		}
 
 		print "</td>";
@@ -193,15 +205,45 @@ if (empty($conf->use_javascript_ajax)) {
 
 	print '<br>'."\n";
 
+
+	// Other options
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Other").'</td>';
+	print '<td class="center"></td>';
+	print "</tr>\n";
+
+	$constante = 'FCKEDITOR_ENANLE_SPECIALCHAR';
+	print '<!-- constant = '.$constante.' -->'."\n";
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $langs->trans('SpecialCharActivation');
+	print '</td>';
+	print '<td class="center width100">';
+	$value = getDolGlobalInt($constante, 0);
+	if ($value == 0) {
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	} elseif ($value == 1) {
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+	}
+
+	print "</td>";
+	print '</tr>';
+
+	print '</table>'."\n";
+
+	print '<br>'."\n";
+
+
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page_y" value="">';
 
 	// Skins
-	show_skin(null, 1);
-	print '<br>'."\n";
+	//show_skin(null, 1);
+	//print '<br>'."\n";
 
-	$listofmodes = array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
+	$listofmodes = array('dolibarr_readonly', 'dolibarr_details', 'dolibarr_notes', 'dolibarr_mailings', 'Full', 'Full_inline');
 	$linkstomode = '';
 	foreach ($listofmodes as $newmode) {
 		if ($linkstomode) {

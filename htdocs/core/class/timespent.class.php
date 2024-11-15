@@ -152,7 +152,7 @@ class TimeSpent extends CommonObject
 	 */
 	public $element_date_withhour;
 	/**
-	 * @var float
+	 * @var int Note seems to be int (seconds) even if declared as double in DB.
 	 */
 	public $element_duration;
 	/**

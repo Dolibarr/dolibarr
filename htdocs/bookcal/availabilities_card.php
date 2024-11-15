@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "other"));
 
@@ -110,13 +119,10 @@ if (!$permissiontoread) {
 }
 
 
-
-
-
-
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -125,8 +131,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$backurlforlist = dol_buildpath('/bookcal/availabilities_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
@@ -141,25 +145,24 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	$startday = GETPOSTINT('startday');
+	$startmonth = GETPOSTINT('startmonth');
+	$startyear = GETPOSTINT('startyear');
+	$starthour = GETPOSTINT('startHour');
 
-	$startday = GETPOST('startday', 'int');
-	$startmonth = GETPOST('startmonth', 'int');
-	$startyear = GETPOST('startyear', 'int');
-	$starthour = GETPOST('startHour', 'int');
-
-	if ($starthour == "0") {
+	if (GETPOST('startHour') == "") {
 		$error++;
 		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
 	}
 
 	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
 
-	$endday = GETPOST('endday', 'int');
-	$endmonth = GETPOST('endmonth', 'int');
-	$endyear = GETPOST('endyear', 'int');
-	$endhour = GETPOST('endHour', 'int');
+	$endday = GETPOSTINT('endday');
+	$endmonth = GETPOSTINT('endmonth');
+	$endyear = GETPOSTINT('endyear');
+	$endhour = GETPOSTINT('endHour');
 
-	if ($endhour == "0") {
+	if (GETPOST('endHour') == "") {
 		$error++;
 		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
 	}
@@ -227,27 +230,10 @@ $title = $langs->trans("Availabilities");
 $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities');
 
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
-
-
 // Part to create
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden($langs->trans('NotEnoughPermissions'), 0, 1);
-		exit;
 	}
 
 	print load_fiche_titre($langs->trans("NewAvailabilities"), '', 'object_'.$object->picto);
@@ -589,7 +575,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('availabilities'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('availabilities'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

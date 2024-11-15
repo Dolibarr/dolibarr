@@ -53,6 +53,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $hookmanager->initHooks(array('takeposinvoice'));
 
@@ -170,7 +178,7 @@ $term = empty($_SESSION["takeposterminal"]) ? 1 : $_SESSION["takeposterminal"];
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -1515,6 +1523,8 @@ $( document ).ready(function() {
 				$s .= " - " . $contact->getFullName($langs);
 			}
 		}
+	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
+		print '$("#idcustomer").val("");';
 	}
 	?>
 

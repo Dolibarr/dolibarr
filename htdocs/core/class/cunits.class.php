@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2011 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,21 +32,39 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
  */
 class CUnits extends CommonDict
 {
+	/**
+	 * @var CUnits[]
+	 */
 	public $records = array();
 
-	//var $element='ctypent';			//!< Id that identify managed objects
-	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
+	// public $element = 'cunits';			//!< Id that identify managed objects
+	// public $table_element = 'c_units';	//!< Name of table without prefix where object is stored
 
 	/**
 	 * @var string label
-	 * @deprecated
+	 * @deprecated Use $label
 	 * @see $label
 	 */
 	public $libelle;
 
+	/**
+	 * @var string
+	 */
 	public $sortorder;
+
+	/**
+	 * @var string
+	 */
 	public $short_label;
+
+	/**
+	 * @var string
+	 */
 	public $unit_type;
+
+	/**
+	 * @var ?int
+	 */
 	public $scale;
 
 
@@ -63,9 +82,9 @@ class CUnits extends CommonDict
 	/**
 	 *  Create object into database
 	 *
-	 *  @param      User	$user        User that create
-	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
+	 *  @param	User		$user        User that create
+	 *  @param	int<0,1>	$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return	int					   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -92,7 +111,7 @@ class CUnits extends CommonDict
 			$this->active = (int) $this->active;
 		}
 		if (isset($this->scale)) {
-			$this->scale = trim($this->scale);
+			$this->scale = (int) $this->scale;
 		}
 
 		// Check parameters
@@ -112,7 +131,7 @@ class CUnits extends CommonDict
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";
 		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'").",";
-		$sql .= " ".(!isset($this->scale) ? 'NULL' : "'".$this->db->escape($this->scale)."'");
+		$sql .= " ".(!isset($this->scale) ? 'NULL' : (int) $this->scale);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -161,7 +180,6 @@ class CUnits extends CommonDict
 		$sql .= " t.short_label,";
 		$sql .= " t.scale,";
 		$sql .= " t.unit_type,";
-		$sql .= " t.scale,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix()."c_units as t";
 		$sql_where = array();
@@ -186,14 +204,13 @@ class CUnits extends CommonDict
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id = (int) $obj->rowid;
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
-				$this->scale = $obj->scale;
+				$this->scale = $obj->scale ? (int) $obj->scale : null;
 				$this->unit_type = $obj->unit_type;
-				$this->scale = $obj->scale;
-				$this->active = $obj->active;
+				$this->active = (int) $obj->active;
 			}
 			$this->db->free($resql);
 
@@ -212,9 +229,9 @@ class CUnits extends CommonDict
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	Limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array $filter       	Filter USF
+	 * @param  string|array<string,mixed> $filter  	Filter USF
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return CUnits[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -279,14 +296,14 @@ class CUnits extends CommonDict
 				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
-					$record->id = $obj->rowid;
+					$record->id = (int) $obj->rowid;
 					$record->code = $obj->code;
 					$record->sortorder = $obj->sortorder;
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
-					$record->scale = $obj->scale;
-					$record->active = $obj->active;
+					$record->scale = $obj->scale ? (int) $obj->scale : null;
+					$record->active = (int) $obj->active;
 
 					$this->records[$record->id] = $record;
 				}
@@ -306,9 +323,9 @@ class CUnits extends CommonDict
 	/**
 	 *  Update object into database
 	 *
-	 *  @param      User	$user        User that modify
-	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
+	 *  @param      User		$user        User that modify
+	 *  @param      int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return     int					   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -331,7 +348,7 @@ class CUnits extends CommonDict
 			$this->libelle = trim($this->unit_type);
 		}
 		if (isset($this->scale)) {
-			$this->scale = trim($this->scale);
+			$this->scale = (int) $this->scale;
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
@@ -378,8 +395,8 @@ class CUnits extends CommonDict
 	/**
 	 *  Delete object in database
 	 *
-	 *	@param  User	$user        User that delete
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *	@param  User		$user        User that delete
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
@@ -430,10 +447,10 @@ class CUnits extends CommonDict
 
 	/**
 	 * Unit converter
-	 * @param double $value value to convert
+	 * @param float $value value to convert
 	 * @param int $fk_unit current unit id of value
 	 * @param int $fk_new_unit the id of unit to convert in
-	 * @return double
+	 * @return float
 	 */
 	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
 	{

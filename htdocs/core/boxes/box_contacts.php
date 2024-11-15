@@ -54,6 +54,9 @@ class box_contacts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contact/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedContacts';
 	}
 
 	/**
@@ -66,7 +69,7 @@ class box_contacts extends ModeleBoxes
 	{
 		global $user, $langs, $conf, $hookmanager;
 
-		$langs->load("boxes");
+		$langs->loadLangs(array("boxes", "contracts"));
 
 		$this->max = $max;
 
@@ -106,6 +109,7 @@ class box_contacts extends ModeleBoxes
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
+			$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
 			// Add where from hooks
 			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $contactstatic); // Note that $action and $object may have been modified by hook
@@ -183,13 +187,13 @@ class box_contacts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
-						'asis' => 1
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+				// 		'asis' => 1
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

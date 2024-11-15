@@ -63,6 +63,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
@@ -112,6 +120,8 @@ $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
 $date_delivery = dol_mktime(GETPOSTINT('date_deliveryhour'), GETPOSTINT('date_deliverymin'), 0, GETPOSTINT('date_deliverymonth'), GETPOSTINT('date_deliveryday'), GETPOSTINT('date_deliveryyear'));
 
+$date_shipping = dol_mktime(GETPOSTINT('date_shippinghour'), GETPOSTINT('date_shippingmin'), 0, GETPOSTINT('date_shippingmonth'), GETPOSTINT('date_shippingday'), GETPOSTINT('date_shippingyear'));
+
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -136,7 +146,7 @@ $typeobject = null;
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -187,7 +197,7 @@ if (empty($reshook)) {
 
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 
 	if ($action == 'setref_customer' && $permissiontoadd) {
@@ -232,8 +242,6 @@ if (empty($reshook)) {
 
 	// Create shipment
 	if ($action == 'add' && $permissiontoadd) {
-		$error = 0;
-
 		$db->begin();
 
 		$object->note = GETPOST('note', 'restricthtml');
@@ -260,6 +268,7 @@ if (empty($reshook)) {
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
 		$object->date_delivery = $date_delivery; // Date delivery planned
+		$object->date_shipping = $date_shipping; // Sending date
 		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 		$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
@@ -1031,10 +1040,19 @@ if ($action == 'create') {
 			print "</td>\n";
 			print '</tr>';
 
+			// Date sending
+			print '<tr><td>'.$langs->trans("DateShipping").'</td>';
+			print '<td colspan="3">';
+			print img_picto('', 'action', 'class="pictofixedwidth"');
+			$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
+			print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
+			print "</td>\n";
+			print '</tr>';
+
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -1042,7 +1060,7 @@ if ($action == 'create') {
 			if ($object->note_private && !$user->socid) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -1316,7 +1334,7 @@ if ($action == 'create') {
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						if (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						if ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 							$deliverableQty = $quantityToBeDelivered;
 						} else {
 							$deliverableQty = min($quantityToBeDelivered, $stock);
@@ -1327,7 +1345,7 @@ if ($action == 'create') {
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							// Quantity to send
 							print '<td class="center">';
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
 								if (GETPOSTINT('qtyl'.$indiceAsked)) {
 									$deliverableQty = GETPOSTINT('qtyl'.$indiceAsked);
 								}
@@ -2012,7 +2030,6 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
-
 	if ($action != 'editdate_livraison') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 	}
@@ -2027,6 +2044,29 @@ if ($action == 'create') {
 		print '</form>';
 	} else {
 		print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Delivery sending date
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
+	print $langs->trans('DateShipping');
+	print '</td>';
+	if ($action != 'editdate_shipping') {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_shipping&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingDate'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($action == 'editdate_shipping') {
+		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setdate_livraison">';
+		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'liv_', 1, 1, 0, "setdate_shipping", 1, 0);
+		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->date_shipping ? dol_print_date($object->date_shipping, 'dayhour') : '&nbsp;';
 	}
 	print '</td>';
 	print '</tr>';
@@ -2802,7 +2842,11 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('shipping'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show online signature link

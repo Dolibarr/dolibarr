@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
@@ -858,7 +866,7 @@ print $moreforfilter;
 print '</div>';
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste centpercent">';
+print '<table class="tagtable liste centpercent listwithfilterbefore">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';

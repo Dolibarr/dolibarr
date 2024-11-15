@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
@@ -329,7 +337,7 @@ if ($id > 0 || !empty($ref)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';

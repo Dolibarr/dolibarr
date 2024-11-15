@@ -127,12 +127,15 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 								if (data != null)
 								{
 									response($.map( data, function(item) {
+										console.log("Received answer from ajax GET, we populate array to return to the jquery autocomplete");
 										if (autoselect == 1 && data.length == 1) {
 											$("#search_'.$htmlnamejquery.'").val(item.value);
 											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
 										}
 										var label = "";
-										if (item.label != null) {
+										if (item.labelhtml != null) {
+											label = item.labelhtml.toString();
+										} else if (item.label != null) {
 											label = item.label.toString();
 										}
 										var update = {};
@@ -148,7 +151,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 											});
 										}
 
-										console.log("Return value from GET to the rest of code");
 										return { label: label,
 												 value: item.value,
 												 id: item.key,
@@ -445,7 +447,7 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
  * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
- * @param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ * @param	array<array{method:string,url:string,htmlname:string,params?:array<string,string>}>	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
@@ -553,8 +555,8 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * Add event management script.
  *
  * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
- * @param	array	$events						Add some Ajax events option on change of $htmlname component to call ajax to autofill a HTML element (select#htmlname and #inputautocompletehtmlname)
- * 												Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ * @param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events						Add some Ajax events option on change of $htmlname component to call ajax to autofill a HTML element (select#htmlname and #inputautocompletehtmlname)
+ *                                                                                                                          Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @return	string								Return JS string to manage event
  */
 function ajax_event($htmlname, $events)
@@ -626,21 +628,22 @@ function ajax_event($htmlname, $events)
  * 	On/off button for constant
  *
  * 	@param  string      $code                   Name of constant
- * 	@param  array       $input                  Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
- * 	@param  int|null    $entity                 Entity. Current entity is used if null.
- *  @param  int         $revertonoff            1=Revert on/off
- *  @param  int	        $strict                 0=Default, 1=Only the complementary actions "disabled and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
+ * 	@param  array<string,string[]>	$input      Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param  ?int        $entity                 Entity. Current entity is used if null.
+ *  @param  int<0,1>    $revertonoff            1=Revert on/off
+ *  @param  int<0,1>    $strict                 0=Default, 1=Only the complementary actions "disabled and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
  *  @param  int         $forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
- *  @param  int         $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
- *  @param  int	        $forcenoajax            1 = Force to use a ahref link instead of ajax code.
- *  @param  int         $setzeroinsteadofdel    1 = Set constant to '0' instead of deleting it when $input is empty.
+ *  @param  int<0,2>    $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
+ *  @param  int<0,1>    $forcenoajax            1 = Force to use a ahref link instead of ajax code.
+ *  @param  int<0,1>    $setzeroinsteadofdel    1 = Set constant to '0' instead of deleting it when $input is empty.
  *  @param  string      $suffix                 Suffix to use on the name of the switch picto when option is on. Example: '', '_red'
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
+ *  @param	int			$userconst				1=OnOff for user constant of user $userconst
  * 	@return string
  *  @see ajax_object_onoff() to update the status of an object
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0)
 {
 	global $conf, $langs, $user;
 
@@ -650,7 +653,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	}
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
-		if (empty($conf->global->$code)) {
+		if (!getDolGlobalString($code)) {
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').'href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -665,6 +668,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var entity = \''.dol_escape_js($entity).'\';
 				var strict = \''.dol_escape_js((string) $strict).'\';
 				var userid = \''.dol_escape_js((string) $user->id).'\';
+				var userconst = '.((int) $userconst).';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -676,7 +680,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
 					} else {
-						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);
+						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 1, userconst);
 					}
 				});
 
@@ -688,18 +692,23 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
 					} else {';
 		if (empty($setzeroinsteadofdel)) {
-			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
+			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, userconst);';
 		} else {
-			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
+			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0, userconst);';
 		}
 		$out .= '	}
 				});
 			});
 		</script>'."\n";
 
+		if ($userconst) {
+			$value = getDolUserString($code);
+		} else {
+			$value = getDolGlobalString($code);
+		}
 		$out .= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.(getDolGlobalString($code) ? 'hideobject' : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
-		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.(getDolGlobalString($code) ? '' : 'hideobject').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
 		$out .= "\n";
 	}
 
@@ -715,7 +724,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
  *  @param  string  $text_on    Text if on ('Text' or 'Text:Picto on:Css picto on')
  *  @param  string  $text_off   Text if off ('Text' or 'Text:Picto off:Css picto off')
- *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
+ *  @param  array<string,string[]>   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @param	string	$morecss	More CSS
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on the same page for the same field.
  *  @param	int		$forcenojs	Force the component to work as link post (without javascript) instead of ajax call

@@ -119,12 +119,6 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2);
-		}
-
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
 		$this->posxlot = $this->page_largeur - $this->marge_droite - 135;
@@ -162,19 +156,31 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$this->posxpicture += ($this->posxwarehousedestination - $this->posxwarehousesource);
 			$this->posxwarehousesource = $this->posxwarehousedestination;
 		}*/
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2);
+		}
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
 	 *	@param		StockTransfer	$object				Object StockTransfer to generate (or id if old method)
-	 *	@param		Translate		$outputlangs		Lang output object
+	 *  @param		Translate		$outputlangs		Lang output object
 	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int<0,1>		$hidedetails		Do not show line details
 	 *  @param		int<0,1>		$hidedesc			Do not show desc
 	 *  @param		int<0,1>		$hideref			Do not show ref
-	 *  @return     int<-1,1>      	    				1=OK, 0=KO
+	 *  @return		int<-1,1>							1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -695,7 +701,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {

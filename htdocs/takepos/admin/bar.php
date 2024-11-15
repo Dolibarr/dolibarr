@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
@@ -44,6 +53,7 @@ $res = 0;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();

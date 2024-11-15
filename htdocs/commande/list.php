@@ -55,6 +55,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
@@ -90,7 +98,7 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedeliver
 
 $socid = GETPOSTINT('socid');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
@@ -216,7 +224,7 @@ $arrayfields = array(
 	'c.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 100),
 	'c.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 105),
 	'c.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 110),
-	'u.login' => array('label' => "Author", 'checked' => 1, 'position' => 115),
+	'u.login' => array('label' => "Author", 'checked' => -1, 'position' => 115),
 	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 116),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
@@ -2239,7 +2247,15 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
+			$getNomUrlOption = $search_status != 2 ? 0 : $obj->fk_statut;
+			if (getDolGlobalInt('MAIN_LIST_ORDER_LINK_DONT_USE_STATUS')) {
+				// TODO : This hidden conf must be added to the user's individual conf.
+				//  The user must be able to manage this behavior to adapt it to his use of the software, because depending on the employee's workstation, his use differs.
+				//  This hidden configuration ensures that users are not confused by keeping the same behavior of click, whatever the current filter.
+				//  If the aim is to use a different url when the filter is applied via the link in the left-hand menu, then this detection should be adapted instead.
+				$getNomUrlOption = '';
+			}
+			print $generic_commande->getNomUrl(1, $getNomUrlOption, 0, 0, 0, 1, 1);
 
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -2312,7 +2328,7 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax125" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
 			print dolPrintLabel($obj->alias);
 			print '</td>';
 			if (!$i) {
@@ -2343,7 +2359,7 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->town).'">';
 			print dolPrintLabel($obj->town);
 			print '</td>';
 			if (!$i) {
@@ -2353,7 +2369,7 @@ while ($i < $imaxinloop) {
 
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->zip).'">';
 			print dolPrintLabel($obj->zip);
 			print '</td>';
 			if (!$i) {
@@ -2363,7 +2379,7 @@ while ($i < $imaxinloop) {
 
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dolPrintLabel($obj->state_name)."</td>\n";
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->state_name).'">'.dolPrintLabel($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2561,7 +2577,7 @@ while ($i < $imaxinloop) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {
@@ -2732,33 +2748,36 @@ while ($i < $imaxinloop) {
 
 					$numlines = count($generic_commande->lines); // Loop on each line of order
 					for ($lig = 0; $lig < $numlines; $lig++) {
-						if (isset($generic_commande->expeditions[$generic_commande->lines[$lig]->id])) {
-							$reliquat =  $generic_commande->lines[$lig]->qty - $generic_commande->expeditions[$generic_commande->lines[$lig]->id];
+						$orderLine = $generic_commande->lines[$lig];
+						'@phan-var-force OrderLine $orderLine';
+						if (isset($generic_commande->expeditions[$orderLine->id])) {
+							$reliquat =  $orderLine->qty - $generic_commande->expeditions[$orderLine->id];
 						} else {
-							$reliquat = $generic_commande->lines[$lig]->qty;
+							$reliquat = $orderLine->qty;
 						}
-						if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0) {  // If line is a product and not a service
+						if ($orderLine->product_type == 0 && $orderLine->fk_product > 0) {  // If line is a product and not a service
 							$nbprod++; // order contains real products
-							$generic_product->id = $generic_commande->lines[$lig]->fk_product;
+							$generic_product->id = $orderLine->fk_product;
 
 							// Get local and virtual stock and store it into cache
-							if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
+							if (empty($productstat_cache[$orderLine->fk_product])) {
 								$generic_product->load_stock('nobatch,warehouseopen'); // ->load_virtual_stock() is already included into load_stock()
-								$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
-								$productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+								$productstat_cache[$orderLine->fk_product]['stock_reel'] = $generic_product->stock_reel;
+								$productstat_cachevirtual[$orderLine->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 							} else {
-								$generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
-								$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+								$generic_product->stock_reel = $productstat_cache[$orderLine->fk_product]['stock_reel'];
+								// @phan-suppress-next-line PhanTypeInvalidDimOffset
+								$generic_product->stock_theorique = $productstat_cachevirtual[$orderLine->fk_product]['stock_reel'];
 							}
 
 							if ($reliquat > $generic_product->stock_reel) {
 								$notshippable++;
 							}
 							if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {  // Default code. Default should be this case.
-								$text_info .= $reliquat.' x '.$generic_commande->lines[$lig]->product_ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 20);
+								$text_info .= $reliquat.' x '.$orderLine->product_ref.'&nbsp;'.dol_trunc($orderLine->product_label, 20);
 								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
 								$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
-								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
+								$text_info .= ($reliquat != $orderLine->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($orderLine->qty - $reliquat).')</span>' : '');
 								$text_info .= '<br>';
 							} else {  // BUGGED CODE.
 								// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
@@ -2769,29 +2788,29 @@ while ($i < $imaxinloop) {
 								$stock_order_supplier = 0;
 								if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {    // What about other options ?
 									if (isModEnabled('order')) {
-										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
+										if (empty($productstat_cache[$orderLine->fk_product]['stats_order_customer'])) {
 											$generic_product->load_stats_commande(0, '1,2');
-											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
+											$productstat_cache[$orderLine->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
 										} else {
 											// @phan-suppress-next-line PhanTypeInvalidDimOffset
-											$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
+											$generic_product->stats_commande['qty'] = $productstat_cache[$orderLine->fk_product]['stats_order_customer'];
 										}
 										$stock_order = $generic_product->stats_commande['qty'];
 									}
 									if (isModEnabled("supplier_order")) {
-										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
+										if (empty($productstat_cache[$orderLine->fk_product]['stats_order_supplier'])) {
 											$generic_product->load_stats_commande_fournisseur(0, '3');
-											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
+											$productstat_cache[$orderLine->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
 										} else {
 											// @phan-suppress-next-line PhanTypeInvalidDimOffset
-											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
+											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$orderLine->fk_product]['stats_order_supplier'];
 										}
 										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
 									}
 								}
-								$text_info .= $reliquat.' x '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 20);
+								$text_info .= $reliquat.' x '.$orderLine->ref.'&nbsp;'.dol_trunc($orderLine->product_label, 20);
 								$text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
-								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
+								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $orderLine->qty)) {
 									$warning++;
 									$text_warning .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
@@ -2803,7 +2822,7 @@ while ($i < $imaxinloop) {
 								if (isModEnabled("supplier_order")) {
 									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier;
 								}
-								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
+								$text_info .= ($reliquat != $orderLine->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($orderLine->qty - $reliquat).')</span>' : '');
 								$text_info .= '<br>';
 							}
 						}
@@ -2841,7 +2860,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.facture']['checked'])) {
 			print '<td class="center">';
 			if ($obj->billed) {
-				print yn($obj->billed, 4);
+				print yn($obj->billed, $langs->trans("Billed"));
 			}
 			print '</td>';
 			if (!$i) {

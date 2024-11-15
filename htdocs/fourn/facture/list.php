@@ -50,6 +50,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
 
@@ -62,7 +71,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierinvoicelist';
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_label = GETPOST("search_label", "alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
@@ -106,6 +115,7 @@ $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $sea
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_sup = GETPOST("search_categ_sup", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
+$search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -238,7 +248,7 @@ $permissiontodelete = ($user->hasRight("fournisseur", "facture", "supprimer") ||
 /*
  * Actions
  */
-
+$error = 0;
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -645,6 +655,9 @@ if ($option == 'late') {
 if ($search_label) {
 	$sql .= natural_search('f.libelle', $search_label);
 }
+if ($search_fk_fac_rec_source) {
+	$sql .= " AND f.fk_fac_rec_source = ".(int) $search_fk_fac_rec_source;
+}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -817,6 +830,16 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-facture page-list');
 
+if ($search_fk_fac_rec_source) {
+	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+	$object = new FactureFournisseurRec($db);
+	$object->fetch((int) $search_fk_fac_rec_source);
+
+	$head = supplier_invoice_rec_prepare_head($object);
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+}
+
 if ($socid) {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
@@ -949,6 +972,9 @@ if ($search_categ_sup > 0) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.$search_type_thirdparty;
 }
+if ($search_fk_fac_rec_source) {
+	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -978,10 +1004,12 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
-if (!empty($socid)) {
-	$url .= '&socid='.urlencode((string) ($socid));
+if (!empty($object->socid)) {
+	$url .= '&socid='.urlencode((string) ($object->socid));
 }
-
+if (!empty($object->id)) {
+	$url .= '&fac_rec='.urlencode((string) $object->id);
+}
 $i = 0;
 print '<form method="POST" id="searchFormList" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {

@@ -1,14 +1,14 @@
 <?php
-/* Copyright (c) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
- * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
- * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
+/* Copyright (c) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud			<alexis@atm-consulting.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
- * Copyright (C) 2023-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $name
 	 * @see $name
 	 */
 	public $nom;
@@ -72,6 +72,9 @@ class UserGroup extends CommonObject
 	 */
 	public $name; // Name of group
 
+	/**
+	 * @var int<0,1> global group  Does not seem to be used
+	 */
 	public $globalgroup; // Global group
 
 	/**
@@ -83,7 +86,7 @@ class UserGroup extends CommonObject
 	/**
 	 * Date creation record (datec)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datec;
 
@@ -93,15 +96,28 @@ class UserGroup extends CommonObject
 	public $note;
 
 	/**
-	 * @var User[]
+	 * @var User[]  Array of users
 	 */
-	public $members = array(); // Array of users
+	public $members = array();
 
-	public $nb_rights; // Number of rights granted to the user
-	public $nb_users;  // Number of users in the group
+	/**
+	 * @var int Number of rights granted to the user
+	 */
+	public $nb_rights;
 
-	public $rights;	// Permissions of the group
+	/**
+	 * @var int Number of users in the group
+	 */
+	public $nb_users;
 
+	/**
+	 * @var stdClass Permissions of the group
+	 */
+	public $rights;
+
+	/**
+	 * @var array<string,int> Cache array of already loaded permissions
+	 */
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
 	/**
@@ -109,6 +125,9 @@ class UserGroup extends CommonObject
 	 */
 	public $all_permissions_are_loaded;
 
+	/**
+	 * @var static
+	 */
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
 	public $fields = array(
@@ -896,11 +915,11 @@ class UserGroup extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		array	$info		Info array loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>	$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@return	string				DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{
@@ -925,7 +944,7 @@ class UserGroup extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributes
+	 *	@return		array<string,mixed>		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -996,10 +1015,10 @@ class UserGroup extends CommonObject
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
 	 * 	@param		Translate	$outputlangs	Object langs to use for output
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

@@ -66,8 +66,8 @@ $config['suppress_issue_types'] = [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
-		'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
-		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
+		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
+		'PhanTypeArraySuspiciousNullable',	// About 400 cases
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',		// a lot of false positive, in most cases, we want to keep the code as it is
@@ -97,6 +97,7 @@ $config['suppress_issue_types'] = [
 
 		'PhanPluginUnknownArrayMethodParamType',	// this option costs more time to be supported than it solves time
 		'PhanPluginUnknownArrayMethodReturnType',	// this option costs more time to be supported than it solves time
+		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 ];
 
 return $config;

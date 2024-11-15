@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
@@ -285,6 +293,12 @@ if ($refresh === true) {
 		$x_both = array();
 		//now, from these two arrays, get another array with one rate per line
 		foreach (array_keys($x_coll) as $my_coll_rate) {
+			$x_both[$my_coll_rate] = array(
+				'coll' => array(),
+				'paye' => array(),
+				'detail' => array(),
+				'ptype' => array(),
+			);
 			$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 			$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 			$x_both[$my_coll_rate]['paye']['totalht'] = 0;
@@ -430,7 +444,7 @@ if ($refresh === true) {
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_coll_total_ht += $temp_ht;
 				$subtot_coll_vat += $temp_vat;

@@ -42,6 +42,15 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formintervention.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langsLoad = array('projects', 'bills', 'orders', 'companies');
 if (isModEnabled('eventorganization')) {
@@ -152,6 +161,7 @@ if ($object->fk_project > 0) {
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = '';
@@ -203,8 +213,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
-	$error = 0;
-
 	$timespent_durationhour = GETPOSTINT('timespent_durationhour');
 	$timespent_durationmin = GETPOSTINT('timespent_durationmin');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin)) {
@@ -231,7 +239,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 		}
 
 		if (!$error) {
-			$object->fetch_projet();
+			$object->fetchProject();
 
 			if (empty($object->project->status)) {
 				setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');
@@ -269,8 +277,6 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 }
 
 if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->hasRight('projet', 'lire')) {
-	$error = 0;
-
 	if (!GETPOST("new_durationhour") && !GETPOST("new_durationmin")) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
@@ -295,10 +301,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
-				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_date = dol_mktime(GETPOSTINT("timelinehour"), GETPOSTINT("timelinemin"), 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
 				$object->timespent_withhour = 1;
 			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_date = dol_mktime(12, 0, 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
 			}
 			$object->timespent_fk_user = GETPOSTINT("userid_line");
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
@@ -778,8 +784,6 @@ if ($action == 'confirm_generateinvoice') {
 			$mesg = $langs->trans("InvoiceGeneratedFromTimeSpent", '{s1}');
 			$mesg = str_replace('{s1}', $urltoinvoice, $mesg);
 			setEventMessages($mesg, null, 'mesgs');
-
-			//var_dump($tmpinvoice);
 
 			$db->commit();
 		} else {
@@ -1529,7 +1533,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</td>';
 				print '<td>';
 				$forminter = new FormIntervention($db);
-				print $forminter->select_interventions($projectstatic->thirdparty->id, '', 'interid', 24, $langs->trans('NewInter'), true);
+				print $forminter->select_interventions($projectstatic->thirdparty->id, 0, 'interid', 24, $langs->trans('NewInter'), true);
 				print '</td>';
 				print '</tr>';
 				print '</table>';

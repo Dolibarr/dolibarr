@@ -56,7 +56,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // You can find your endpoint's secret in your webhook settings
 if (GETPOSTISSET('connect')) {
@@ -708,21 +712,24 @@ if ($event->type == 'payout.created') {
 	if ($idthirdparty > 0) {
 		// If the payment mode attached is to a stripe account owned by an external customer in societe_account (so a thirdparty that has a Stripe account),
 		// we can create the payment mode
-		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
+		$companypaymentmode->stripe_card_ref = $event->data->object->id;
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
 		$companypaymentmode->label           = '';
-		$companypaymentmode->number          = $db->escape($event->data->object->id);
-		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->card_type       = $db->escape($event->data->object->card->branding);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->number          = $event->data->object->id;
+		$companypaymentmode->last_four       = $event->data->object->card->last4;
+		$companypaymentmode->card_type       = $event->data->object->card->branding;
+
+		$companypaymentmode->owner_name      = $event->data->object->billing_details->name;
+		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We may still need this formodulebuilder because name of field is "proprio"
+
+		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
+		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
-		$companypaymentmode->type            = $db->escape($event->data->object->type);
-		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+		$companypaymentmode->type            = $event->data->object->type;
+		$companypaymentmode->country_code    = $event->data->object->card->country;
 		$companypaymentmode->status          = $servicestatus;
 
 		// TODO Check that a payment mode $companypaymentmode->stripe_card_ref does not exists yet to avoid to create duplicates
@@ -754,10 +761,10 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
 		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
+		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = (int) $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
 		$companypaymentmode->type            = $db->escape($event->data->object->type);
 		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);

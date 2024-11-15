@@ -101,6 +101,45 @@ session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $butactionbg
+ * @var string $colorbackbody
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinebreak
+ * @var string $colorbacklineimpair1
+ * @var string $colorbacklineimpair2
+ * @var string $colorbacklinepair1
+ * @var string $colorbacklinepair2
+ * @var string $colorbacklinepairchecked
+ * @var string $colorbacklinepairhover
+ * @var string $colorbacktabactive
+ * @var string $colorbacktabcard1
+ * @var string $colorbacktitle1
+ * @var string $colorbackvmenu1
+ * @var string $colorblind_deuteranopes_textSuccess
+ * @var string $colorblind_deuteranopes_textWarning
+ * @var string $colortext
+ * @var string $colortextlink
+ * @var string $colortexttitle
+ * @var string $colortexttitlelink
+ * @var string $colortexttitlenotab
+ * @var string $colortexttitlenotab2
+ * @var string $colortopbordertitle1
+ * @var string $fontsize
+ * @var string $textDanger
+ * @var string $textSuccess
+ * @var string $textWarning
+ * @var string $textbutaction
+ * @var string $toolTipBgColor
+ * @var string $toolTipFontColor
+ */
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
@@ -166,7 +205,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-$useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
+$useboldtitle = getDolGlobalInt('THEME_ELDY_USEBOLDTITLE');
 $borderwidth = 2;
 $userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 
@@ -664,7 +703,7 @@ textarea {
 	margin-bottom:1px;
 	margin-top:1px;
 	}
-input.removedassigned  {
+input.removedassigned, input.removedassignedresource {
 	padding: 2px !important;
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
@@ -813,7 +852,7 @@ select.flat, form.flat select, .pageplusone {
 select.flat, form.flat select, .divadvancedsearchfieldcompinput {
 	height: 2em;
 }
-input.pageplusone, .divadvancedsearchfieldcompinput {
+input.pageplusone {
 	padding-bottom: 4px;
 	padding-top: 4px;
 	margin-right: 4px;
@@ -1107,6 +1146,9 @@ textarea.centpercent {
 }
 .small, small {
 	font-size: 85%;
+}
+.lineheightsmall {
+	line-height: 1.2em;
 }
 .large {
 	font-size: 125%;
@@ -1966,7 +2008,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	cursor: pointer;
 	text-align: center;
 	min-height: 40px;
-	background: #eee;
+	background: #f4f4f4;
 	padding: 20px 10px 20px 10px;
 	flex-grow: 1;
 	flex-shrink: 1;
@@ -2449,7 +2491,7 @@ td.showDragHandle {
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
-	padding-top: 28px;
+	padding-top: 12px;
 <?php } ?>
 }
 .bodyforlist #id-right {
@@ -2631,7 +2673,7 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;';
 	} ?>
 	margin-bottom: 15px;
@@ -2678,6 +2720,7 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 16px);\n";
 	} ?>
+	margin-bottom: 20px;
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2708,6 +2751,10 @@ div.fichehalfright {
 	.fichehalfright-lg .fichehalfright {
 		padding-left:0;
 	}
+}
+
+div.secondcolumn > div > table.noborder {
+	margin-bottom:14px;
 }
 
 /*div.firstcolumn div.box {
@@ -2783,7 +2830,6 @@ td.nobordernopadding.widthpictotitle.col-picto {
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
-	margin-bottom: 4px;
 }
 .pictoobjectwidth {
 	width: 14px;
@@ -3744,6 +3790,7 @@ div.blockvmenulogo
 	width: inherit;
 	height: inherit;
 	image-rendering: -webkit-optimize-contrast;
+	border-radius: 3px;
 }
 #mainmenutd_companylogo::after {
 	content: unset;
@@ -3929,7 +3976,7 @@ div.tabs {
 	height:100%;
 }
 div.tabsElem {
-	margin-top: 6px;
+	margin-top: 12px;
 }		/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
 	font-weight: normal !important;
@@ -3975,59 +4022,7 @@ div.tabBar table.tableforservicepart2:last-child {
 .tableforservicepart1 .tdhrthin {
 	height: unset;
 }
-/* Payment Screen : Pointer cursor in the autofill image */
-.AutoFillAmount {
-	cursor:pointer;
-}
 
-/* ============================================================================== */
-/* Buttons for actions                                                            */
-/* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-}
-div.tabsAction {
-	margin: 20px 0em 20px 0em;
-	padding: 0em 0em;
-	text-align: right;
-}
-div.tabsActionNoBottom {
-	margin-bottom: 0px;
-}
-div.tabsAction > a {
-	margin-bottom: 16px !important;
-}
-
-div.popuptabset {
-	padding: 6px;
-	background: #fff;
-	border: 1px solid #888;
-}
-div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-a.tabTitle {
-	color:rgba(0,0,0,.5);
-	margin-<?php print $right; ?>: 10px;
-	text-shadow:1px 1px 1px #ffffff;
-	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
-	padding: 4px 6px 2px 6px;
-	margin: 0px 6px;
-	text-decoration: none;
-	white-space: nowrap;
-}
-.tabTitleText {
-	display: none;
-}
-.imgTabTitle {
-	max-height: 14px;
-}
 div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
@@ -4037,7 +4032,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 13px 12px;
+	padding: 10px 13px 10px;
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
@@ -4093,6 +4088,63 @@ span.tabspan {
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
 	border-top: 1px solid #D8D8D8;
 }
+
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
+}
+
+
+/* ============================================================================== */
+/* Buttons for actions                                                            */
+/* ============================================================================== */
+
+div.divButAction {
+	margin-bottom: 1.4em;
+}
+div.tabsAction {
+	margin: 20px 0em 20px 0em;
+	padding: 0em 0em;
+	text-align: right;
+}
+div.tabsActionNoBottom {
+	margin-bottom: 0px;
+}
+div.tabsAction > a {
+	margin-bottom: 16px !important;
+}
+
+div.popuptabset {
+	padding: 6px;
+	background: #fff;
+	border: 1px solid #888;
+}
+div.popuptab {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+a.tabTitle {
+	color:rgba(0,0,0,.5);
+	margin-<?php print $right; ?>: 10px;
+	text-shadow:1px 1px 1px #ffffff;
+	font-family: <?php print $fontlist ?>;
+	font-weight: normal;
+	padding: 4px 6px 2px 6px;
+	margin: 0px 6px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.tabTitleText {
+	display: none;
+}
+.imgTabTitle {
+	max-height: 14px;
+}
+
+
 
 /* ============================================================================== */
 /* Buttons for actions                                                            */
@@ -4354,6 +4406,89 @@ table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
 	border-top: unset !important;
 }
+
+/* Management of border radius */
+<?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
+table.noborder:not(.cal_month, .paymenttable) {
+	border-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder.cal_month {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.noborder thead tr:last-child td:first-child,
+table.noborder thead tr:last-child th:first-child {
+	border-bottom-left-radius: unset !important;
+}
+table.noborder thead tr:last-child td:last-child,
+table.noborder thead tr:last-child th:last-child {
+	border-bottom-right-radius: unset !important;
+}
+
+table.liste:not(.listwithfilterbefore) {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:last-child,
+table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:last-child {
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv_nothingafter {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	border-bottom-width: 1px;
+	border-bottom-color: #BBB;
+	border-bottom-style: solid;
+}
+table.liste tr:last-child td:first-child,
+table.liste tr:last-child th:first-child {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table.liste tr:last-child td:last-child,
+table.liste tr:last-child th:last-child {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+}
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+}
+
+
 
 .liste_titre_filter {
 	background: var(--colorbacktitle1) !important;
@@ -4753,17 +4888,15 @@ div.liste_titre_bydiv {
 	border-top-style: solid;
 	<?php } ?>
 	border-collapse: collapse;
-	display: table;
+	/* display: table; */
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
 	width: calc(100% - 2px);	/* -2px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
-/*
 div.liste_titre_bydiv_inlineblock {
 	display: inline-block;
 	width: 100%;
 }
-*/
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
@@ -4792,7 +4925,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 28px;
+	/* height: 28px; */
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -4819,9 +4952,11 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 }
 tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
+/*
 div.liste_titre {
 	padding-left: 3px;
 }
+*/
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
 	font-family: <?php print $fontlist ?>;
@@ -4905,7 +5040,7 @@ div .tdtop:not(.tagtdnote) {
 	border-bottom: 1px solid #AAA !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
-	height: unset;
+/*	height: unset; */
 }
 
 
@@ -5178,6 +5313,46 @@ img.boxhandle, img.boxclose {
 	color: <?php echo $badgeWarning ?>;
 }
 
+.search-component-assistance {
+	display: none;
+	position: absolute;
+	background: var(--colorbackbody);
+	border-width: 1px 1px 2px;
+	border-style: solid;
+	border-color: rgb(204, 204, 204);
+	border-image: none; padding: 9px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	border-radius: 2px;
+	z-index: 1000;
+	top: 208.933px;
+	left: 352.683px;
+	min-width: 600px
+}
+.search-component-assistance .assistance-title {
+	font-size: 15px;
+	font-weight: bold;
+	color: #333;
+	margin: 5px
+}
+.search-component-assistance .separator {
+	border-left: 1px solid #ccc;
+	padding-left: 8px;
+	margin-left: 5px
+}
+.search-component-assistance .end-separator {
+	border-left: 1px solid #ccc;
+	margin-left: 8px;
+}
+.search-component-assistance .assistance-errors {
+	font-size: 12px;
+	color: #333;
+	margin: 5px 0px 5px 0px
+}
+.search-component-assistance .assistance-errors {
+	margin-bottom: 0px;
+	text-align: center;
+}
+
 
 
 /*
@@ -5192,16 +5367,19 @@ div.ok {
   color: #114466;
 }
 
-/* Info admin */
-div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+div.info, div.warning, div.error {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
+	border-radius: 1px;
+}
+
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
-	border-radius: 3px;
 }
 
 /* Warning message */
@@ -5209,13 +5387,7 @@ div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
 div.warning {
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
 	background: #fcf8e3;
-	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -5224,13 +5396,7 @@ div.warning a, div.info a, div.error a {
 /* Error message */
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
-	padding-top: 8px;
-	padding-left: 10px;
-	padding-right: 4px;
-	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
 	background: #EFCFCF;
-	border-radius: 3px;
 }
 
 
@@ -5344,11 +5510,14 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+table.table-fiche-title tr.toptitle {
+	height: 60px;
+}
 div.titre {
 	font-size: 14px;
 	text-decoration: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	/*padding-top: 5px;
+	padding-bottom: 5px;*/
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
@@ -5358,6 +5527,11 @@ div.titre.small {
 div.titre {
 	color: var(--colortexttitlenotab);
 }
+
+td.subtitle {
+	line-height: 1.1em;
+}
+
 .secondary {
 	color: var(--colortexttitlenotab);
 }
@@ -5372,10 +5546,11 @@ table.notopnoleftnoright.table-fiche-title {
 	margin-bottom: 8px;
 }
 
-
+/*
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
+*/
 table.table-fiche-title .col-title div.titre span {
 	line-height: normal;
 }
@@ -6077,7 +6252,7 @@ table.jPicker tr:first-of-type td {
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
-	background-color: #f4f4f4 !important;
+	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 }
 .jPicker .Grid {
@@ -6097,6 +6272,13 @@ table.jPicker {
 }
 .jPicker .Preview div {
 	height: 36px !important;
+}
+.jPicker input[type="button"] {
+	background: var(--butactionbg);
+	color: var(--textbutaction);
+	border-radius: 4px;
+	border-collapse: collapse;
+	border: none;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7072,16 +7254,19 @@ select.multiselectononeline {
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 240px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 240px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
 		min-width: 140px !important;
+	}
+	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 320px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
@@ -8243,6 +8428,10 @@ table.jPicker {
 		font-size: small;
 		width: 122px;
 	}
+
+	.search-component-assistance {
+		min-width: 300px;
+	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -8253,6 +8442,9 @@ table.jPicker {
 	}
 	div#ecm-layout-center {
 		width: 100%;
+	}
+	.search-component-assistance {
+		min-width: 400px;
 	}
 }
 

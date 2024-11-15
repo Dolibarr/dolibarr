@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
@@ -309,15 +317,15 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 if ($mode) {
 	// Print array
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="liste centpercent">';
+	print '<table class="liste centpercent noborder">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$label.'</td>';
+	print '<th>'.$label.'</th>';
 	if (isset($label2)) {
-		print '<td class="center">'.$label2.'</td>';
+		print '<th class="center">'.$label2.'</th>';
 	}
-	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-	print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
-	print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+	print '<th class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></th>';
+	print '<th class="center">'.$langs->trans("LastMemberDate").'</th>';
+	print '<th class="center">'.$langs->trans("LatestSubscriptionDate").'</th>';
 	print '</tr>';
 
 	foreach ($data as $val) {

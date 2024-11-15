@@ -342,7 +342,7 @@ class Thirdparties extends DolibarrApi
 			$this->company->setNoEmail($this->company->no_email);
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1) > 0) {
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->company->error);
@@ -1429,7 +1429,11 @@ class Thirdparties extends DolibarrApi
 			$object = array();
 			foreach ($account as $key => $value) {
 				if (in_array($key, $fields)) {
-					$object[$key] = $value;
+					if ($key == 'iban') {
+						$object[$key] = dolDecrypt($value);
+					} else {
+						$object[$key] = $value;
+					}
 				}
 			}
 			$returnAccounts[] = $object;

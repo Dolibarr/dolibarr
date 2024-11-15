@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/import/import_csv.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $confirm = GETPOST('confirm', 'alpha');
 $filetoimport = GETPOST('filetoimport');
 
@@ -567,7 +575,7 @@ print '<br>';
 //print '<br>';
 
 // Form to upload a file
-print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
+print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
 if (!empty($conf->dol_optimize_smallscreen)) {
@@ -660,7 +668,7 @@ print '<input type="hidden" name="action" value="addline">';
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste centpercent">';
+print '<table class="liste noborder centpercent">';
 
 $param = '';
 

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,8 @@ class box_factures_imp extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('facture', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		$this->msgNoRecords = 'NoUnpaidCustomerBills';
 	}
 
 	/**
@@ -220,10 +222,10 @@ class box_factures_imp extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center" colspan="3"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
-					);
+					// $this->info_box_contents[$line][0] = array(
+					// 	'td' => 'class="center" colspan="3"',
+					// 	'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
+					// );
 				} else {
 					$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
 

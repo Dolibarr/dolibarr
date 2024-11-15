@@ -621,8 +621,8 @@ class AccountancyCategory // extends CommonObject
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
 	 * @param int|array<?string>	$cpt 	Accounting account or array of accounting account
-	 * @param string 	$date_start			Date start
-	 * @param string 	$date_end			Date end
+	 * @param int 		$date_start			Date start
+	 * @param int	 	$date_end			Date end
 	 * @param int<0,1>	$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
 	 * @param string	$thirdparty_code	Third party code
 	 * @param int       $month 				Specific month - Can be empty
@@ -775,7 +775,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @param	int			$active				1= active, 0=not active
-	 * @return	array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
+	 * @return	never|array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
 	 * @see getCatsCpts(), getCptsCat()
 	 */
 	public function getCats($categorytype = -1, $active = 1)
@@ -839,7 +839,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 												Example: "fk_accounting_category = 99"
-	 * @return	array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
+	 * @return	never|array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere = '')

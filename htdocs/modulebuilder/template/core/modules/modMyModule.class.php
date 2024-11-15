@@ -130,7 +130,9 @@ class modMyModule extends DolibarrModules
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
 			// Set this to 1 if the module provides a website template into doctemplates/websites/website_template-mytemplate
-			'websitetemplates' => 0
+			'websitetemplates' => 0,
+			// Set this to 1 if the module provides a captcha driver
+			'captcha' => 0
 		);
 
 		// Data directories to create when module is enabled.
@@ -221,7 +223,7 @@ class modMyModule extends DolibarrModules
 		/* Example:
 		 $this->dictionaries=array(
 		 'langs' => 'mymodule@mymodule',
-		 // List of tables we want to see into dictonnary editor
+		 // List of tables we want to see into dictionary editor
 		 'tabname' => array("table1", "table2", "table3"),
 		 // Label of tables
 		 'tablib' => array("Table1", "Table2", "Table3"),
@@ -317,7 +319,7 @@ class modMyModule extends DolibarrModules
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
-			'fk_menu' => '', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu' => '', // Will be stored into mainmenu + leftmenu. Use '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'top', // This is a Top menu entry
 			'titre' => 'ModuleMyModuleName',
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),

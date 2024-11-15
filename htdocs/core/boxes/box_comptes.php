@@ -60,6 +60,8 @@ class box_comptes extends ModeleBoxes
 		}
 
 		$this->hidden = !$user->hasRight('banque', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/compta/bank/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedBankAccounts';
 	}
 
 	/**
@@ -164,12 +166,6 @@ class box_comptes extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedBankAccounts").'</span>'
-					);
-				}
 
 				$this->db->free($result);
 			} else {

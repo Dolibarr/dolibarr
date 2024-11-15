@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -39,18 +39,27 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "trips", "errors"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
 
-$date_startmonth = GETPOST('date_startmonth');
-$date_startday = GETPOST('date_startday');
-$date_startyear = GETPOST('date_startyear');
-$date_endmonth = GETPOST('date_endmonth');
-$date_endday = GETPOST('date_endday');
-$date_endyear = GETPOST('date_endyear');
+$date_startmonth = GETPOSTINT('date_startmonth');
+$date_startday = GETPOSTINT('date_startday');
+$date_startyear = GETPOSTINT('date_startyear');
+$date_endmonth = GETPOSTINT('date_endmonth');
+$date_endday = GETPOSTINT('date_endday');
+$date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
@@ -67,6 +76,7 @@ $tabtva = array();
 $tabttc = array();
 $tablocaltax1 = array();
 $tablocaltax2 = array();
+$tabuser = array();
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -175,6 +185,7 @@ if ($result) {
 	// Variables
 	$account_salary = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT', 'NotDefined');
 	$account_vat = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
+	$noTaxDispatchingKeepWithLines = getDolGlobalInt('ACCOUNTING_EXPENSEREPORT_DO_NOT_DISPATCH_TAXES'); //If enabled, Tax will NOT get split off from the base entry and credited to a separate tax account (good for non-VAT countries like USA)
 
 	$i = 0;
 	while ($i < $num) {
@@ -221,10 +232,14 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_user] += $obj->total_ttc;
-		$tabht[$obj->rowid][$compta_fees] += $obj->total_ht;
-		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		if ($noTaxDispatchingKeepWithLines) { //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
+			$tabht[$obj->rowid][$compta_fees] += $obj->total_ttc;
+		} else { //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
+			$tabht[$obj->rowid][$compta_fees] += $obj->total_ht;
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+			$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+			$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		}
 		$tabuser[$obj->rowid] = array(
 				'id' => $obj->uid,
 				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),

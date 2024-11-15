@@ -149,6 +149,13 @@ class ImportXlsx extends ModeleImports
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
 
+		$arrayofstreams = stream_get_wrappers();
+		if (!in_array('zip', $arrayofstreams)) {
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorStreamMustBeEnabled', 'zip');
+			return;
+		}
+
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
 			$this->thirdpartyobject = new Societe($this->db);
@@ -650,7 +657,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codeclient(0, 0);
+										$this->thirdpartyobject->get_codeclient(null, 0);
 										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
@@ -659,7 +666,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(null, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
@@ -894,6 +901,7 @@ class ImportXlsx extends ModeleImports
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;
+							$classinstance = null;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
 								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
 									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
@@ -923,7 +931,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} else {
 									$this->errors[$error]['type'] = 'CLASSERROR';
-									if (is_object($classinstance)) {
+									if (is_object($classinstance)) {  // @phpstan-ignore-line
 										$this->errors[$error]['lib'] = implode(
 											"\n",
 											array_merge([$classinstance->error], $classinstance->errors)

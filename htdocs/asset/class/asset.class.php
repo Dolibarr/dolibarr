@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Jose MARTINEZ           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,7 +257,7 @@ class Asset extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -343,13 +344,7 @@ class Asset extends CommonObject
 		//
 		//      // Load source object
 		//      $result = $object->fetchCommon($fromid);
-		//      if ($result > 0 && !empty($object->table_element_line)) {
-		//          $object->fetchLines();
-		//      }
 		//
-		//      // get lines so they will be clone
-		//      //foreach($this->lines as $line)
-		//      //  $line->fetch_optionals();
 		//
 		//      // Reset some properties
 		//      unset($object->id);
@@ -420,6 +415,7 @@ class Asset extends CommonObject
 		//          $this->db->rollback();
 		//          return -1;
 		//      }
+
 		return -1;
 	}
 
@@ -434,36 +430,20 @@ class Asset extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0) {
-			if (!empty($this->table_element_line)) {
-				$this->fetchLines();
-			}
-
 			$res = $this->hasDepreciationLinesInBookkeeping();
 			if ($res < 0) {
 				return -1;
 			} elseif ($res > 0) {
-				$this->fields['date_acquisition']['noteditable'] = '1';
-				$this->fields['date_start']['noteditable'] = '1';
-				$this->fields['acquisition_value_ht']['noteditable'] = '1';
-				$this->fields['recovered_vat']['noteditable'] = '1';
-				$this->fields['reversal_date']['noteditable'] = '1';
-				$this->fields['reversal_amount_ht']['noteditable'] = '1';
+				$this->fields['date_acquisition']['noteditable'] = 1;
+				$this->fields['date_start']['noteditable'] = 1;
+				$this->fields['acquisition_value_ht']['noteditable'] = 1;
+				$this->fields['recovered_vat']['noteditable'] = 1;
+				$this->fields['reversal_date']['noteditable'] = 1;
+				$this->fields['reversal_amount_ht']['noteditable'] = 1;
 			}
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		return 1;
 	}
 
 
@@ -945,6 +925,7 @@ class Asset extends CommonObject
 			// Get fiscal period
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+			// @FIXME getCurrentPeriodOfFiscalYear return the first period found. What if there is several ? And what if not closed ? And what if end date not yet defined.
 			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];
@@ -1027,7 +1008,7 @@ class Asset extends CommonObject
 
 				// Get depreciation period
 				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
-				$depreciation_date_end = dol_time_plus_duree((int) $depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
+				$depreciation_date_end = dol_time_plus_duree(dol_time_plus_duree((int) $depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y')), -1, 'd');
 				$depreciation_amount = $fields['amount_base_depreciation_ht'];
 				if ($fields['duration_type'] == 2) { // Daily
 					$fiscal_period_start = $depreciation_date_start;
@@ -1040,7 +1021,7 @@ class Asset extends CommonObject
 					$fiscal_period_start = $init_fiscal_period_start;
 					$fiscal_period_end = $init_fiscal_period_end;
 				}
-				$cumulative_depreciation_ht = $last_cumulative_depreciation_ht;
+				$cumulative_depreciation_ht = (float) $last_cumulative_depreciation_ht;
 				$depreciation_period_amount = $depreciation_amount - (float) $this->reversal_amount_ht;
 				$start_date = $depreciation_date_start;
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
@@ -1128,9 +1109,19 @@ class Asset extends CommonObject
 								}
 							}
 							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
-						} else { // Annually
-							$nb_days = min($nb_days_in_year, num_between_day($begin_date, $end_date, 1));
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
+							$nb_days_real = num_between_day($begin_date, $end_date, 1);
+							if (($nb_days_real > 366) || (num_between_day($fiscal_period_start, $fiscal_period_end, 1) < $nb_days_in_year)) { // FY Period changed
+								$nb_days = $nb_days_real;
+							} else {
+								$nb_days = min($nb_days_in_year, $nb_days_real);
+							}
+							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						}
+						if (getDolGlobalInt('ASSET_ROUND_INTEGER_NUMBER_UPWARDS') == 1) {
+							if ($idx_loop < $max_loop) { // avoid last depreciation value
+								$depreciation_ht = ceil($depreciation_ht);
+							}
 						}
 
 						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
@@ -1149,12 +1140,13 @@ class Asset extends CommonObject
 
 					// Next fiscal period (+1 day/month/year)
 					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
+					$dates_fiscal_period = getCurrentPeriodOfFiscalYear($this->db, $conf, $fiscal_period_start, 'gmt');
 					if ($fields['duration_type'] == 2) { // Daily
 						$fiscal_period_end = $fiscal_period_start;
 					} elseif ($fields['duration_type'] == 1) { // Monthly
 						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'm'), -1, 'd');
 					} else { // Annually
-						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+						$fiscal_period_end = $dates_fiscal_period['date_end'];
 					}
 					$last_period_date = $disposal_date !== "" && $disposal_date < $depreciation_date_end ? $disposal_date : $depreciation_date_end;
 				} while ($fiscal_period_start < $last_period_date);
@@ -1588,18 +1580,6 @@ class Asset extends CommonObject
 		// $this->property2 = ...
 
 		return $this->initAsSpecimenCommon();
-	}
-
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		return $this->lines;
 	}
 
 	/**

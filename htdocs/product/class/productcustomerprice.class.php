@@ -64,6 +64,9 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $datec = '';
 
 	/**
@@ -81,18 +84,57 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public $ref_customer;
 
+	/**
+	 * @var float|''
+	 */
 	public $price;
+	/**
+	 * @var float|''
+	 */
 	public $price_ttc;
+	/**
+	 * @var float|string|''
+	 */
 	public $price_min;
+	/**
+	 * @var float|string|''
+	 */
 	public $price_min_ttc;
+	/**
+	 * @var string
+	 */
 	public $price_base_type;
+	/**
+	 * @var string
+	 */
 	public $default_vat_code;
+	/**
+	 * @var string
+	 */
 	public $tva_tx;
+	/**
+	 * @var int|string
+	 */
 	public $recuperableonly;
+	/**
+	 * @var string
+	 */
 	public $localtax1_type;
+	/**
+	 * @var float|''
+	 */
 	public $localtax1_tx;
+	/**
+	 * @var string
+	 */
 	public $localtax2_type;
+	/**
+	 * @var float|''
+	 */
 	public $localtax2_tx;
+	/**
+	 * @var string
+	 */
 	public $price_label;
 
 	/**
@@ -159,7 +201,7 @@ class ProductCustomerPrice extends CommonObject
 			$this->price_base_type = trim($this->price_base_type);
 		}
 		if (isset($this->tva_tx)) {
-			$this->tva_tx = (float) $this->tva_tx;
+			$this->tva_tx = trim($this->tva_tx);
 		}
 		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
@@ -184,14 +226,15 @@ class ProductCustomerPrice extends CommonObject
 		// Put here code to add control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
+			$vatRate = (float) $this->tva_tx;
 			if ($this->price_base_type == 'TTC') {
 				$this->price_ttc = price2num($this->price, 'MU');
-				$this->price = (float) price2num($this->price) / (1 + ($this->tva_tx / 100));
+				$this->price = (float) price2num($this->price) / (1 + ($vatRate / 100));
 				$this->price = price2num($this->price, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min_ttc = price2num($this->price_min, 'MU');
-					$this->price_min = (float) price2num($this->price_min) / (1 + ($this->tva_tx / 100));
+					$this->price_min = (float) price2num($this->price_min) / (1 + ($vatRate / 100));
 					$this->price_min = price2num($this->price_min, 'MU');
 				} else {
 					$this->price_min = 0;
@@ -199,12 +242,12 @@ class ProductCustomerPrice extends CommonObject
 				}
 			} else {
 				$this->price = price2num($this->price, 'MU');
-				$this->price_ttc = ($this->recuperableonly != 1) ? (float) price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
+				$this->price_ttc = ($this->recuperableonly != 1) ? (float) price2num($this->price) * (1 + ($vatRate / 100)) : $this->price;
 				$this->price_ttc = price2num($this->price_ttc, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min = price2num($this->price_min, 'MU');
-					$this->price_min_ttc = (float) price2num($this->price_min) * (1 + ($this->tva_tx / 100));
+					$this->price_min_ttc = (float) price2num($this->price_min) * (1 + ($vatRate / 100));
 					$this->price_min_ttc = price2num($this->price_min_ttc, 'MU');
 					// print 'X'.$newminprice.'-'.$price_min;
 				} else {
@@ -383,7 +426,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	string 			$sortfield 	Sort field
 	 * @param 	int 			$limit 		Limit page
 	 * @param 	int 			$offset 	offset
-	 * @param 	string|array 	$filter 	Filter USF.
+	 * @param 	string|array<string,string> $filter		Filter USF.
 	 * @return 	int 						Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
@@ -513,12 +556,12 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param 	string 	$sortorder 	order
-	 * @param 	string 	$sortfield 	field
-	 * @param 	int 	$limit 		page
-	 * @param 	int 	$offset 	offset
-	 * @param 	array 	$filter 	Filter for sql request
-	 * @return 	int 			Return integer <0 if KO, >0 if OK
+	 * @param 	string				$sortorder 	order
+	 * @param 	string				$sortfield 	field
+	 * @param 	int					$limit 		page
+	 * @param 	int					$offset 	offset
+	 * @param 	array<string,mixed>	$filter 	Filter for sql request
+	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllLog($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
@@ -622,10 +665,10 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param User $user that modifies
-	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param User		$user					User making modification
+	 * @param int<0,1>	$notrigger				Triggers after, 1=disable triggers
+	 * @param int<0,1>	$forceupdateaffiliate	Update price on each soc child
+	 * @return int								Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
@@ -647,31 +690,31 @@ class ProductCustomerPrice extends CommonObject
 			$this->ref_customer = trim($this->ref_customer);
 		}
 		if (isset($this->price)) {
-			$this->price = trim($this->price);
+			$this->price = trim((string) $this->price);
 		}
 		if (isset($this->price_ttc)) {
-			$this->price_ttc = trim($this->price_ttc);
+			$this->price_ttc = trim((string) $this->price_ttc);
 		}
 		if (isset($this->price_min)) {
-			$this->price_min = trim($this->price_min);
+			$this->price_min = trim((string) $this->price_min);
 		}
 		if (isset($this->price_min_ttc)) {
-			$this->price_min_ttc = trim($this->price_min_ttc);
+			$this->price_min_ttc = trim((string) $this->price_min_ttc);
 		}
 		if (isset($this->price_base_type)) {
 			$this->price_base_type = trim($this->price_base_type);
 		}
 		if (isset($this->tva_tx)) {
-			$this->tva_tx = (float) $this->tva_tx;
+			$this->tva_tx = trim($this->tva_tx);
 		}
 		if (isset($this->recuperableonly)) {
-			$this->recuperableonly = trim($this->recuperableonly);
+			$this->recuperableonly = trim((string) $this->recuperableonly);
 		}
 		if (isset($this->localtax1_tx)) {
-			$this->localtax1_tx = trim($this->localtax1_tx);
+			$this->localtax1_tx = trim((string) $this->localtax1_tx);
 		}
 		if (isset($this->localtax2_tx)) {
-			$this->localtax2_tx = trim($this->localtax2_tx);
+			$this->localtax2_tx = trim((string) $this->localtax2_tx);
 		}
 		if (isset($this->fk_user)) {
 			$this->fk_user = (int) $this->fk_user;
@@ -687,14 +730,15 @@ class ProductCustomerPrice extends CommonObject
 		// Put here code to add a control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
+			$vatRate = (float) $this->tva_tx;
 			if ($this->price_base_type == 'TTC') {
 				$this->price_ttc = price2num($this->price, 'MU');
-				$this->price = (float) price2num($this->price) / (1 + ($this->tva_tx / 100));
+				$this->price = (float) price2num($this->price) / (1 + ($vatRate / 100));
 				$this->price = price2num($this->price, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min_ttc = price2num($this->price_min, 'MU');
-					$this->price_min = (float) price2num($this->price_min) / (1 + ($this->tva_tx / 100));
+					$this->price_min = (float) price2num($this->price_min) / (1 + ($vatRate / 100));
 					$this->price_min = price2num($this->price_min, 'MU');
 				} else {
 					$this->price_min = 0;
@@ -702,12 +746,12 @@ class ProductCustomerPrice extends CommonObject
 				}
 			} else {
 				$this->price = price2num($this->price, 'MU');
-				$this->price_ttc = ($this->recuperableonly != 1) ? (float) price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
+				$this->price_ttc = ($this->recuperableonly != 1) ? (float) price2num($this->price) * (1 + ($vatRate / 100)) : $this->price;
 				$this->price_ttc = price2num($this->price_ttc, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min = price2num($this->price_min, 'MU');
-					$this->price_min_ttc = (float) price2num($this->price_min) * (1 + ($this->tva_tx / 100));
+					$this->price_min_ttc = (float) price2num($this->price_min) * (1 + ($vatRate / 100));
 					$this->price_min_ttc = price2num($this->price_min_ttc, 'MU');
 					// print 'X'.$newminprice.'-'.$price_min;
 				} else {
@@ -780,7 +824,7 @@ class ProductCustomerPrice extends CommonObject
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."product_customer_price SET";
 
-		$sql .= " entity=".$conf->entity.",";
+		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " datec='".$this->db->idate(dol_now())."',";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
@@ -798,7 +842,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " localtax2_tx=".(isset($this->localtax2_tx) ? (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx) : "null").",";
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";
 		$sql .= " localtax2_type=".(!empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'").",";
-		$sql .= " fk_user=".$user->id.",";
+		$sql .= " fk_user=".((int) $user->id).",";
 		$sql .= " price_label=".(isset($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
@@ -850,8 +894,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
 	{
-		global $conf;
-
 		if (getDolGlobalString('PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES')) {
 			return 0;
 		}
@@ -1083,6 +1125,9 @@ class PriceByCustomerLine extends CommonObjectLine
 	 */
 	public $entity;
 
+	/**
+	 * @var string|int
+	 */
 	public $datec = '';
 
 	/**
@@ -1100,24 +1145,66 @@ class PriceByCustomerLine extends CommonObjectLine
 	 */
 	public $fk_soc;
 
+	/**
+	 * @var float
+	 */
 	public $price;
+	/**
+	 * @var float
+	 */
 	public $price_ttc;
+	/**
+	 * @var float
+	 */
 	public $price_min;
+	/**
+	 * @var float
+	 */
 	public $price_min_ttc;
+	/**
+	 * @var string
+	 */
 	public $price_base_type;
+	/**
+	 * @var string
+	 */
 	public $default_vat_code;
+	/**
+	 * @var string
+	 */
 	public $tva_tx;
+	/**
+	 * @var int|string
+	 */
 	public $recuperableonly;
+	/**
+	 * @var float
+	 */
 	public $localtax1_tx;
+	/**
+	 * @var float
+	 */
 	public $localtax2_tx;
 
 	/**
 	 * @var int User ID
 	 */
 	public $fk_user;
+	/**
+	 * @var string
+	 */
 	public $price_label;
 
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $socname;
+	/**
+	 * @var string
+	 */
 	public $prodref;
 }
