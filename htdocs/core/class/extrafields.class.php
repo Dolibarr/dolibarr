@@ -1094,6 +1094,7 @@ class ExtraFields
 			$form = new Form($this->db);
 		}
 
+		$currentObjectId = $objectid;
 		$out = '';
 
 		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
@@ -1118,6 +1119,7 @@ class ExtraFields
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		//var_dump('key='.$key.' '.$value.' '.$moreparam.' '.$keysuffix.' '.$keyprefix.' '.$objectid.' '.$extrafieldsobjectkey.' '.$mode);
@@ -1932,6 +1934,12 @@ class ExtraFields
 		}
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
+		}
+
+		// If alwayseditable is false, and object is not in draft, then showOutputField
+		$currentObject = fetchObjectByElement($currentObjectId, $extrafieldsobjectkey);
+		if ($alwayseditable == 0 && $currentObject->status != $currentObject::STATUS_DRAFT) {
+			$out = $this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey, null, $object);
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
