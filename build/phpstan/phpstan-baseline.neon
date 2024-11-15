@@ -28477,24 +28477,6 @@ parameters:
 			path: ../../htdocs/product/stats/facturerec.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stats/mo.php
-
-		-
 			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -29259,24 +29241,6 @@ parameters:
 		-
 			message: '#^Variable \$objectid might not be defined\.$#'
 			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../htdocs/product/stock/stats/mo.php
 

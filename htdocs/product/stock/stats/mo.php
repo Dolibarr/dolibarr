@@ -50,6 +50,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -68,10 +69,10 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
+if (empty($sortorder)) {
 	$sortorder = "DESC";
 }
-if (!$sortfield) {
+if (empty($sortfield)) {
 	$sortfield = "c.date_valid";
 }
 
@@ -188,7 +189,7 @@ if ($id > 0 || !empty($ref)) {
 		if (!empty($search_year)) {
 			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize($search_year).')';
 		}
-		if ($socid) {
+		if ($socid > 0) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		$sql .= " GROUP BY c.rowid, c.ref, c.date_valid, c.status";
@@ -226,12 +227,8 @@ if ($id > 0 || !empty($ref)) {
 
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="search_form">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			if (!empty($sortfield)) {
-				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-			}
-			if (!empty($sortorder)) {
-				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
-			}
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("MOs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
